@@ -242,14 +242,16 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 			DocumentTypes.LIFERAY, searchContext, documents, false);
 	}
 
+	// GSearch modified
+	
 	@Override
-	@Reference(target = "(search.engine.impl=Elasticsearch)", unbind = "-")
+	@Reference(target = "(search.engine.impl=GSearch)", unbind = "-")
 	public void setSpellCheckIndexWriter(
 		SpellCheckIndexWriter spellCheckIndexWriter) {
 
 		super.setSpellCheckIndexWriter(spellCheckIndexWriter);
 	}
-
+	
 	@Override
 	public void updateDocument(SearchContext searchContext, Document document)
 		throws SearchException {

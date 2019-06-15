@@ -143,9 +143,15 @@ public class ElasticsearchQueryTranslator
 	@Reference
 	protected NestedQueryTranslator nestedQueryTranslator;
 
-	@Reference
+	// Gsearch customization to use the custom translator.
+	// Setting reference policy to dynamic and allow service with higher ranking to take precedence
+	// won't work here
+	
+	@Reference (
+		target = "(component.name=fi.soveltia.liferay.gsearch.elasticsearch.internal.query.GSearchStringQueryTranslatorImpl)"
+	)
 	protected StringQueryTranslator stringQueryTranslator;
-
+	
 	@Reference
 	protected TermQueryTranslator termQueryTranslator;
 

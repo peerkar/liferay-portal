@@ -22,6 +22,7 @@
 					"lowercase",
 					"gsearch_finnish_stop",
 					"gsearch_finnish_stemmer",
+					"gsearch_finnish_synonyms",
 					"asciifolding"
 				]
 			},
@@ -44,6 +45,7 @@
 					"lowercase",
 					"gsearch_english_stop",
 					"gsearch_english_light_stemmer",
+					"gsearch_english_synonyms",
 					"asciifolding"
 				]
 			},
@@ -64,6 +66,7 @@
 					"lowercase",
 					"gsearch_swedish_stop",
 					"gsearch_swedish_stemmer",
+					"gsearch_swedish_synonyms",
 					"asciifolding"
 				]
 			},
@@ -97,6 +100,10 @@
 				"type": "stop",
 				"stopwords": "_english_"
 			},
+			"gsearch_english_synonyms": {
+				"type": "synonym",
+				"synonyms_path": "gsearch-synonyms/english-synonyms.txt"
+			},
 			"gsearch_finnish_stemmer": {
 				"type": "stemmer",
 				"language": "finnish"
@@ -105,6 +112,10 @@
 				"type": "stop",
 				"stopwords": "_finnish_"
 			},
+			"gsearch_finnish_synonyms": {
+				"type": "synonym",
+				"synonyms_path": "gsearch-synonyms/finnish-synonyms.txt"
+			},
 			"gsearch_swedish_stemmer": {
 				"type": "stemmer",
 				"language": "swedish"
@@ -112,6 +123,10 @@
 			"gsearch_swedish_stop": {
 				"type": "stop",
 				"stopwords": "_swedish_"
+			},
+			"gsearch_swedish_synonyms": {
+				"type": "synonym",
+				"synonyms_path": "gsearch-synonyms/swedish-synonyms.txt"
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 Bundle-Name: Liferay Portal Search Elasticsearch 6 Implementation
-Bundle-SymbolicName: com.liferay.portal.search.elasticsearch6.GSEARCH-PATCHED-IMPL-70-DXP-FP70
+Bundle-SymbolicName: com.liferay.portal.search.elasticsearch6.impl
 Bundle-Version: 1.0.21
 Import-Package:\
 	!com.barchart.udt.*,\

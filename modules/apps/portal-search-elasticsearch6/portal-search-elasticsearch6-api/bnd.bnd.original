@@ -1,5 +1,5 @@
 Bundle-Name: Liferay Portal Search Elasticsearch 6 API
-Bundle-SymbolicName: com.liferay.portal.search.elasticsearch6.GSEARCH-PATCHED-API-70-DXP-FP70
+Bundle-SymbolicName: com.liferay.portal.search.elasticsearch6.api
 Bundle-Version: 1.0.5
 Export-Package:\
 	com.liferay.portal.search.elasticsearch6.configuration,\
