@@ -1,0 +1,72 @@
+{
+	"GSearchSuggestionType": {
+		"dynamic_templates": [
+			{
+				"template_keywordSearch": {
+					"mapping": {
+						"store": true,
+						"type": "text",
+						"fields": {
+							"ngram": {
+								"type": "text",
+								"analyzer": "gsearch_shingle_analyzer",
+								"search_analyzer": "gsearch_shingle_analyzer"
+							},
+							"suggest": {
+								"type": "completion",
+								"analyzer": "simple",
+								"search_analyzer": "simple"
+							}
+						}
+					},
+					"match": "keywordSearch_*",
+					"match_mapping_type": "string"
+				}
+			},
+			{
+				"template_spellCheckWord": {
+					"mapping": {
+						"store": true,
+						"type": "text",
+						"fields": {
+							"ngram": {
+								"type": "text",
+								"analyzer": "gsearch_shingle_analyzer",
+								"search_analyzer": "gsearch_shingle_analyzer"
+							},
+							"suggest": {
+								"type": "completion",
+								"analyzer": "simple",
+								"search_analyzer": "simple"
+							}
+						}
+					},
+					"match": "spellCheckWord_*",
+					"match_mapping_type": "string"
+				}
+			}
+		],
+		"properties": {
+			"companyId": {
+				"store": true,
+				"type": "keyword"
+			},
+			"groupId": {
+				"store": true,
+				"type": "keyword"
+			},
+			"priority": {
+				"store": true,
+				"type": "double"
+			},
+			"type": {
+				"store": true,
+				"type": "keyword"
+			},
+			"uid": {
+				"store": true,
+				"type": "keyword"
+			}
+		}
+	}
+}

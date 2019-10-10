@@ -1,0 +1,1030 @@
+#
+# There is insufficient memory for the Java Runtime Environment to continue.
+# Native memory allocation (mmap) failed to map 142082048 bytes for committing reserved memory.
+# Possible reasons:
+#   The system is out of physical RAM or swap space
+#   In 32 bit mode, the process size limit was hit
+# Possible solutions:
+#   Reduce memory load on the system
+#   Increase physical memory or swap space
+#   Check if swap backing store is full
+#   Use 64 bit Java on a 64 bit OS
+#   Decrease Java heap size (-Xmx/-Xms)
+#   Decrease number of Java threads
+#   Decrease Java thread stack sizes (-Xss)
+#   Set larger code cache with -XX:ReservedCodeCacheSize=
+# This output file may be truncated or incomplete.
+#
+#  Out of Memory Error (os_linux.cpp:2743), pid=47554, tid=0x00007fcb08fcd700
+#
+# JRE version: Java(TM) SE Runtime Environment (8.0_191-b12) (build 1.8.0_191-b12)
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (25.191-b12 mixed mode linux-amd64 compressed oops)
+# Failed to write core dump. Core dumps have been disabled. To enable core dumping, try "ulimit -c unlimited" before starting Java again
+#
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x00007fcb1c075800):  VMThread [stack: 0x00007fcb08ece000,0x00007fcb08fce000] [id=47568]
+
+Stack: [0x00007fcb08ece000,0x00007fcb08fce000],  sp=0x00007fcb08fcc410,  free space=1017k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [libjvm.so+0xace425]  VMError::report_and_die()+0x2c5
+V  [libjvm.so+0x4deb77]  report_vm_out_of_memory(char const*, int, unsigned long, VMErrorType, char const*)+0x67
+V  [libjvm.so+0x90c570]  os::pd_commit_memory(char*, unsigned long, unsigned long, bool)+0x100
+V  [libjvm.so+0x903eaf]  os::commit_memory(char*, unsigned long, unsigned long, bool)+0x1f
+V  [libjvm.so+0x988346]  PSVirtualSpace::expand_by(unsigned long)+0x56
+V  [libjvm.so+0x97768b]  PSOldGen::expand_by(unsigned long) [clone .part.28]+0x1b
+V  [libjvm.so+0x977848]  PSOldGen::expand(unsigned long) [clone .part.29]+0xa8
+V  [libjvm.so+0x9783f1]  PSOldGen::resize(unsigned long)+0xe1
+V  [libjvm.so+0x97e506]  PSParallelCompact::invoke_no_policy(bool) [clone .part.118]+0xa06
+V  [libjvm.so+0x9862d5]  PSScavenge::invoke()+0x215
+V  [libjvm.so+0x935fb8]  ParallelScavengeHeap::failed_mem_allocate(unsigned long)+0x68
+V  [libjvm.so+0xacff53]  VM_ParallelGCFailedAllocation::doit()+0x93
+V  [libjvm.so+0xad50f6]  VM_Operation::evaluate()+0x46
+V  [libjvm.so+0xad347d]  VMThread::evaluate_operation(VM_Operation*) [clone .constprop.44]+0xcd
+V  [libjvm.so+0xad3a3b]  VMThread::loop()+0x37b
+V  [libjvm.so+0xad3de8]  VMThread::run()+0x78
+V  [libjvm.so+0x909c92]  java_start(Thread*)+0x102
+
+VM_Operation (0x00007fcadc34cc10): ParallelGCFailedAllocation, mode: safepoint, requested by thread 0x00007fcb1e088000
+
+
+---------------  P R O C E S S  ---------------
+
+Java Threads: ( => current thread )
+  0x00007fcb1d267800 JavaThread "Cache worker for Java compile cache (/opt/git/liferay-portal/modules/.gradle/4.10.2/javaCompile)" [_thread_blocked, id=47594, stack(0x00007fcacbdfe000,0x00007fcacbeff000)]
+  0x00007fcb1d5f9000 JavaThread "Cache worker for Java compile cache (/opt/git/liferay-portal/.gradle/caches/4.10.2/javaCompile)" [_thread_blocked, id=47593, stack(0x00007fcacbeff000,0x00007fcacc000000)]
+  0x00007fcb1e097000 JavaThread "Cache worker for Build Output Cleanup Cache (/opt/git/liferay-portal/modules/.gradle/buildOutputCleanup)" [_thread_blocked, id=47592, stack(0x00007fcadc051000,0x00007fcadc152000)]
+  0x00007fcb1e093800 JavaThread "Cache worker for task history cache (/opt/git/liferay-portal/modules/.gradle/4.10.2/taskHistory)" [_thread_blocked, id=47591, stack(0x00007fcadc152000,0x00007fcadc253000)]
+  0x00007fcb1e088000 JavaThread "Task worker for ':'" [_thread_blocked, id=47590, stack(0x00007fcadc253000,0x00007fcadc354000)]
+  0x00007fcb1e04a000 JavaThread "Cache worker for file content cache (/opt/git/liferay-portal/modules/.gradle/4.10.2/fileContent)" [_thread_blocked, id=47589, stack(0x00007fcadc554000,0x00007fcadc655000)]
+  0x00007fcb1e048000 JavaThread "Cache worker for file content cache (/opt/git/liferay-portal/.gradle/caches/4.10.2/fileContent)" [_thread_blocked, id=47588, stack(0x00007fcadc655000,0x00007fcadc756000)]
+  0x00007fcb1e040000 JavaThread "Memory manager" [_thread_blocked, id=47587, stack(0x00007fcadc756000,0x00007fcadc857000)]
+  0x00007fcb1dabf000 JavaThread "Build operations Thread 2" [_thread_blocked, id=47586, stack(0x00007fcadd79e000,0x00007fcadd89f000)]
+  0x00007fcb1dabd000 JavaThread "Build operations" [_thread_blocked, id=47585, stack(0x00007fcadd89f000,0x00007fcadd9a0000)]
+  0x00007fcb1d9a8000 JavaThread "Cache worker for Artifact transforms cache (/opt/git/liferay-portal/.gradle/caches/transforms-1)" [_thread_blocked, id=47584, stack(0x00007fcaddba0000,0x00007fcaddca1000)]
+  0x00007fcb1d99e800 JavaThread "Cache worker for cache directory md-rule (/opt/git/liferay-portal/.gradle/caches/4.10.2/md-rule)" [_thread_blocked, id=47583, stack(0x00007fcaddca1000,0x00007fcaddda2000)]
+  0x00007fcb1d952000 JavaThread "Cache worker for cache directory md-supplier (/opt/git/liferay-portal/.gradle/caches/4.10.2/md-supplier)" [_thread_blocked, id=47582, stack(0x00007fcaddfa2000,0x00007fcade0a3000)]
+  0x00007fcb1d4b8000 JavaThread "Cache worker for journal cache (/opt/git/liferay-portal/.gradle/caches/journal-1)" [_thread_blocked, id=47581, stack(0x00007fcade7a2000,0x00007fcade8a3000)]
+  0x00007fcb1d377000 JavaThread "Cache worker for file hash cache (/opt/git/liferay-portal/modules/.gradle/4.10.2/fileHashes)" [_thread_blocked, id=47579, stack(0x00007fcadeaa3000,0x00007fcadeba4000)]
+  0x00007fcb1d27a000 JavaThread "File lock request listener" [_thread_in_native, id=47578, stack(0x00007fcadeba4000,0x00007fcadeca5000)]
+  0x00007fcb1d263000 JavaThread "Cache worker for file hash cache (/opt/git/liferay-portal/.gradle/caches/4.10.2/fileHashes)" [_thread_blocked, id=47577, stack(0x00007fcadeca5000,0x00007fcadeda6000)]
+  0x00007fcb1c6d7800 JavaThread "pool-1-thread-1" [_thread_blocked, id=47576, stack(0x00007fcadf696000,0x00007fcadf797000)]
+  0x00007fcb1c0bc800 JavaThread "Service Thread" daemon [_thread_blocked, id=47574, stack(0x00007fcaf3cfd000,0x00007fcaf3dfe000)]
+  0x00007fcb1c0ba000 JavaThread "C1 CompilerThread1" daemon [_thread_blocked, id=47573, stack(0x00007fcaf3dff000,0x00007fcaf3eff000)]
+  0x00007fcb1c0b7000 JavaThread "C2 CompilerThread0" daemon [_thread_blocked, id=47572, stack(0x00007fcaf3f00000,0x00007fcaf4000000)]
+  0x00007fcb1c0b5800 JavaThread "Signal Dispatcher" daemon [_thread_blocked, id=47571, stack(0x00007fcb080ca000,0x00007fcb081cb000)]
+  0x00007fcb1c081800 JavaThread "Finalizer" daemon [_thread_blocked, id=47570, stack(0x00007fcb08ccb000,0x00007fcb08dcc000)]
+  0x00007fcb1c07f000 JavaThread "Reference Handler" daemon [_thread_blocked, id=47569, stack(0x00007fcb08dcc000,0x00007fcb08ecd000)]
+  0x00007fcb1c00b000 JavaThread "main" [_thread_blocked, id=47565, stack(0x00007fcb2525c000,0x00007fcb2535c000)]
+
+Other Threads:
+=>0x00007fcb1c075800 VMThread [stack: 0x00007fcb08ece000,0x00007fcb08fce000] [id=47568]
+  0x00007fcb1c0c1800 WatcherThread [stack: 0x00007fcaf3bfd000,0x00007fcaf3cfd000] [id=47575]
+
+VM state:at safepoint (normal execution)
+
+VM Mutex/Monitor currently owned by a thread:  ([mutex/lock_event])
+[0x00007fcb1c007400] ExpandHeap_lock - owner thread: 0x00007fcb1c075800
+[0x00007fcb1c007a80] Threads_lock - owner thread: 0x00007fcb1c075800
+[0x00007fcb1c007f80] Heap_lock - owner thread: 0x00007fcb1e088000
+
+Heap:
+ PSYoungGen      total 522240K, used 0K [0x00000000d6900000, 0x0000000100000000, 0x0000000100000000)
+  eden space 394240K, 0% used [0x00000000d6900000,0x00000000d6900000,0x00000000eea00000)
+  from space 128000K, 0% used [0x00000000eea00000,0x00000000eea00000,0x00000000f6700000)
+  to   space 156672K, 0% used [0x00000000f6700000,0x00000000f6700000,0x0000000100000000)
+ ParOldGen       total 318464K, used 290773K [0x0000000083a00000, 0x0000000097100000, 0x00000000d6900000)
+  object space 318464K, 91% used [0x0000000083a00000,0x00000000955f54d8,0x0000000097100000)
+ Metaspace       used 54536K, capacity 56204K, committed 56320K, reserved 1097728K
+  class space    used 7666K, capacity 8126K, committed 8192K, reserved 1048576K
+
+Card table byte_map: [0x00007fcb21b5e000,0x00007fcb21f42000] byte_map_base: 0x00007fcb21741000
+
+Marking Bits: (ParMarkBitMap*) 0x00007fcb2470ad40
+ Begin Bits: [0x00007fcb091d0000, 0x00007fcb0b0e8000)
+ End Bits:   [0x00007fcb0b0e8000, 0x00007fcb0d000000)
+
+Polling page: 0x00007fcb2537a000
+
+CodeCache: size=245760Kb used=24344Kb max_used=24344Kb free=221415Kb
+ bounds [0x00007fcb0d000000, 0x00007fcb0e7e0000, 0x00007fcb1c000000]
+ total_blobs=8348 nmethods=7617 adapters=641
+ compilation: enabled
+
+Compilation events (10 events):
+Event: 25,823 Thread 0x00007fcb1c0ba000 8986 %     3       aQute.bnd.osgi.Clazz::doExceptions @ 10 (64 bytes)
+Event: 25,824 Thread 0x00007fcb1c0ba000 nmethod 8986% 0x00007fcb0e7b0ad0 code [0x00007fcb0e7b0cc0, 0x00007fcb0e7b14f8]
+Event: 25,829 Thread 0x00007fcb1c0ba000 8987 %     3       aQute.bnd.osgi.Clazz::doInnerClasses @ 9 (167 bytes)
+Event: 25,829 Thread 0x00007fcb1c0ba000 nmethod 8987% 0x00007fcb0e7af0d0 code [0x00007fcb0e7af320, 0x00007fcb0e7b01a8]
+Event: 25,855 Thread 0x00007fcb1c0ba000 8988       2       com.sun.proxy.$Proxy20::<init> (6 bytes)
+Event: 25,855 Thread 0x00007fcb1c0ba000 nmethod 8988 0x00007fcb0e778d90 code [0x00007fcb0e778f00, 0x00007fcb0e779128]
+Event: 25,856 Thread 0x00007fcb1c0ba000 8989   !   2       sun.reflect.GeneratedConstructorAccessor7::newInstance (53 bytes)
+Event: 25,856 Thread 0x00007fcb1c0ba000 nmethod 8989 0x00007fcb0e7ae4d0 code [0x00007fcb0e7ae6a0, 0x00007fcb0e7aec08]
+Event: 25,882 Thread 0x00007fcb1c0ba000 8990       3       aQute.bnd.osgi.Clazz::doExceptions (64 bytes)
+Event: 25,883 Thread 0x00007fcb1c0ba000 nmethod 8990 0x00007fcb0e7ad610 code [0x00007fcb0e7ad800, 0x00007fcb0e7adf98]
+
+GC Heap History (10 events):
+Event: 21,161 GC heap after
+Heap after GC invocations=13 (full 2):
+ PSYoungGen      total 378368K, used 70135K [0x00000000d6900000, 0x00000000fcb00000, 0x0000000100000000)
+  eden space 308224K, 0% used [0x00000000d6900000,0x00000000d6900000,0x00000000e9600000)
+  from space 70144K, 99% used [0x00000000e9600000,0x00000000eda7dd10,0x00000000eda80000)
+  to   space 102400K, 0% used [0x00000000f6700000,0x00000000f6700000,0x00000000fcb00000)
+ ParOldGen       total 159744K, used 159669K [0x0000000083a00000, 0x000000008d600000, 0x00000000d6900000)
+  object space 159744K, 99% used [0x0000000083a00000,0x000000008d5ed5b0,0x000000008d600000)
+ Metaspace       used 54079K, capacity 55718K, committed 56064K, reserved 1097728K
+  class space    used 7619K, capacity 8092K, committed 8192K, reserved 1048576K
+}
+Event: 21,161 GC heap before
+{Heap before GC invocations=14 (full 3):
+ PSYoungGen      total 378368K, used 70135K [0x00000000d6900000, 0x00000000fcb00000, 0x0000000100000000)
+  eden space 308224K, 0% used [0x00000000d6900000,0x00000000d6900000,0x00000000e9600000)
+  from space 70144K, 99% used [0x00000000e9600000,0x00000000eda7dd10,0x00000000eda80000)
+  to   space 102400K, 0% used [0x00000000f6700000,0x00000000f6700000,0x00000000fcb00000)
+ ParOldGen       total 159744K, used 159669K [0x0000000083a00000, 0x000000008d600000, 0x00000000d6900000)
+  object space 159744K, 99% used [0x0000000083a00000,0x000000008d5ed5b0,0x000000008d600000)
+ Metaspace       used 54079K, capacity 55718K, committed 56064K, reserved 1097728K
+  class space    used 7619K, capacity 8092K, committed 8192K, reserved 1048576K
+Event: 22,049 GC heap after
+Heap after GC invocations=14 (full 3):
+ PSYoungGen      total 378368K, used 44725K [0x00000000d6900000, 0x00000000fcb00000, 0x0000000100000000)
+  eden space 308224K, 0% used [0x00000000d6900000,0x00000000d6900000,0x00000000e9600000)
+  from space 70144K, 63% used [0x00000000e9600000,0x00000000ec1ad688,0x00000000eda80000)
+  to   space 102400K, 0% used [0x00000000f6700000,0x00000000f6700000,0x00000000fcb00000)
+ ParOldGen       total 297984K, used 159647K [0x0000000083a00000, 0x0000000095d00000, 0x00000000d6900000)
+  object space 297984K, 53% used [0x0000000083a00000,0x000000008d5e7e58,0x0000000095d00000)
+ Metaspace       used 54064K, capacity 55700K, committed 56064K, reserved 1097728K
+  class space    used 7617K, capacity 8090K, committed 8192K, reserved 1048576K
+}
+Event: 23,054 GC heap before
+{Heap before GC invocations=15 (full 3):
+ PSYoungGen      total 378368K, used 352949K [0x00000000d6900000, 0x00000000fcb00000, 0x0000000100000000)
+  eden space 308224K, 100% used [0x00000000d6900000,0x00000000e9600000,0x00000000e9600000)
+  from space 70144K, 63% used [0x00000000e9600000,0x00000000ec1ad688,0x00000000eda80000)
+  to   space 102400K, 0% used [0x00000000f6700000,0x00000000f6700000,0x00000000fcb00000)
+ ParOldGen       total 297984K, used 159647K [0x0000000083a00000, 0x0000000095d00000, 0x00000000d6900000)
+  object space 297984K, 53% used [0x0000000083a00000,0x000000008d5e7e58,0x0000000095d00000)
+ Metaspace       used 54088K, capacity 55764K, committed 56064K, reserved 1097728K
+  class space    used 7619K, capacity 8090K, committed 8192K, reserved 1048576K
+Event: 23,268 GC heap after
+Heap after GC invocations=15 (full 3):
+ PSYoungGen      total 496640K, used 102374K [0x00000000d6900000, 0x00000000ffa80000, 0x0000000100000000)
+  eden space 394240K, 0% used [0x00000000d6900000,0x00000000d6900000,0x00000000eea00000)
+  from space 102400K, 99% used [0x00000000f6700000,0x00000000fcaf9a00,0x00000000fcb00000)
+  to   space 128000K, 0% used [0x00000000eea00000,0x00000000eea00000,0x00000000f6700000)
+ ParOldGen       total 297984K, used 180248K [0x0000000083a00000, 0x0000000095d00000, 0x00000000d6900000)
+  object space 297984K, 60% used [0x0000000083a00000,0x000000008ea06250,0x0000000095d00000)
+ Metaspace       used 54088K, capacity 55764K, committed 56064K, reserved 1097728K
+  class space    used 7619K, capacity 8090K, committed 8192K, reserved 1048576K
+}
+Event: 24,418 GC heap before
+{Heap before GC invocations=16 (full 3):
+ PSYoungGen      total 496640K, used 496614K [0x00000000d6900000, 0x00000000ffa80000, 0x0000000100000000)
+  eden space 394240K, 100% used [0x00000000d6900000,0x00000000eea00000,0x00000000eea00000)
+  from space 102400K, 99% used [0x00000000f6700000,0x00000000fcaf9a00,0x00000000fcb00000)
+  to   space 128000K, 0% used [0x00000000eea00000,0x00000000eea00000,0x00000000f6700000)
+ ParOldGen       total 297984K, used 180248K [0x0000000083a00000, 0x0000000095d00000, 0x00000000d6900000)
+  object space 297984K, 60% used [0x0000000083a00000,0x000000008ea06250,0x0000000095d00000)
+ Metaspace       used 54089K, capacity 55764K, committed 56064K, reserved 1097728K
+  class space    used 7619K, capacity 8090K, committed 8192K, reserved 1048576K
+Event: 24,610 GC heap after
+Heap after GC invocations=16 (full 3):
+ PSYoungGen      total 522240K, used 127972K [0x00000000d6900000, 0x0000000100000000, 0x0000000100000000)
+  eden space 394240K, 0% used [0x00000000d6900000,0x00000000d6900000,0x00000000eea00000)
+  from space 128000K, 99% used [0x00000000eea00000,0x00000000f66f90f0,0x00000000f6700000)
+  to   space 156672K, 0% used [0x00000000f6700000,0x00000000f6700000,0x0000000100000000)
+ ParOldGen       total 297984K, used 225304K [0x0000000083a00000, 0x0000000095d00000, 0x00000000d6900000)
+  object space 297984K, 75% used [0x0000000083a00000,0x0000000091606040,0x0000000095d00000)
+ Metaspace       used 54089K, capacity 55764K, committed 56064K, reserved 1097728K
+  class space    used 7619K, capacity 8090K, committed 8192K, reserved 1048576K
+}
+Event: 25,950 GC heap before
+{Heap before GC invocations=17 (full 3):
+ PSYoungGen      total 522240K, used 522212K [0x00000000d6900000, 0x0000000100000000, 0x0000000100000000)
+  eden space 394240K, 100% used [0x00000000d6900000,0x00000000eea00000,0x00000000eea00000)
+  from space 128000K, 99% used [0x00000000eea00000,0x00000000f66f90f0,0x00000000f6700000)
+  to   space 156672K, 0% used [0x00000000f6700000,0x00000000f6700000,0x0000000100000000)
+ ParOldGen       total 297984K, used 225304K [0x0000000083a00000, 0x0000000095d00000, 0x00000000d6900000)
+  object space 297984K, 75% used [0x0000000083a00000,0x0000000091606040,0x0000000095d00000)
+ Metaspace       used 54536K, capacity 56204K, committed 56320K, reserved 1097728K
+  class space    used 7666K, capacity 8126K, committed 8192K, reserved 1048576K
+Event: 26,583 GC heap after
+Heap after GC invocations=17 (full 3):
+ PSYoungGen      total 522240K, used 522212K [0x00000000d6900000, 0x0000000100000000, 0x0000000100000000)
+  eden space 394240K, 100% used [0x00000000d6900000,0x00000000eea00000,0x00000000eea00000)
+  from space 128000K, 99% used [0x00000000eea00000,0x00000000f66f90f0,0x00000000f6700000)
+  to   space 156672K, 16% used [0x00000000f6700000,0x00000000f7f9ca18,0x0000000100000000)
+ ParOldGen       total 318464K, used 318428K [0x0000000083a00000, 0x0000000097100000, 0x00000000d6900000)
+  object space 318464K, 99% used [0x0000000083a00000,0x00000000970f7040,0x0000000097100000)
+ Metaspace       used 54536K, capacity 56204K, committed 56320K, reserved 1097728K
+  class space    used 7666K, capacity 8126K, committed 8192K, reserved 1048576K
+}
+Event: 26,585 GC heap before
+{Heap before GC invocations=18 (full 4):
+ PSYoungGen      total 522240K, used 522212K [0x00000000d6900000, 0x0000000100000000, 0x0000000100000000)
+  eden space 394240K, 100% used [0x00000000d6900000,0x00000000eea00000,0x00000000eea00000)
+  from space 128000K, 99% used [0x00000000eea00000,0x00000000f66f90f0,0x00000000f6700000)
+  to   space 156672K, 16% used [0x00000000f6700000,0x00000000f7f9ca18,0x0000000100000000)
+ ParOldGen       total 318464K, used 318428K [0x0000000083a00000, 0x0000000097100000, 0x00000000d6900000)
+  object space 318464K, 99% used [0x0000000083a00000,0x00000000970f7040,0x0000000097100000)
+ Metaspace       used 54536K, capacity 56204K, committed 56320K, reserved 1097728K
+  class space    used 7666K, capacity 8126K, committed 8192K, reserved 1048576K
+
+Deoptimization events (10 events):
+Event: 24,987 Thread 0x00007fcb1e088000 Uncommon trap: reason=class_check action=maybe_recompile pc=0x00007fcb0e448f3c method=aQute.bnd.osgi.Clazz.parseClassFileWithCollector(LaQute/bnd/osgi/ClassDataCollector;)Ljava/util/Set; @ 4
+Event: 25,001 Thread 0x00007fcb1e088000 Uncommon trap: reason=class_check action=maybe_recompile pc=0x00007fcb0e448f3c method=aQute.bnd.osgi.Clazz.parseClassFileWithCollector(LaQute/bnd/osgi/ClassDataCollector;)Ljava/util/Set; @ 4
+Event: 25,127 Thread 0x00007fcb1e088000 Uncommon trap: reason=unstable_if action=reinterpret pc=0x00007fcb0e5d9b50 method=aQute.bnd.osgi.Clazz.parseClassFileData(Ljava/io/DataInput;)Ljava/util/Set; @ 1323
+Event: 25,131 Thread 0x00007fcb1e088000 Uncommon trap: reason=class_check action=maybe_recompile pc=0x00007fcb0dd17444 method=aQute.bnd.osgi.Clazz.classConstRef(I)V @ 13
+Event: 25,142 Thread 0x00007fcb1e088000 Uncommon trap: reason=class_check action=maybe_recompile pc=0x00007fcb0dd17444 method=aQute.bnd.osgi.Clazz.classConstRef(I)V @ 13
+Event: 25,142 Thread 0x00007fcb1e088000 Uncommon trap: reason=class_check action=maybe_recompile pc=0x00007fcb0dd17444 method=aQute.bnd.osgi.Clazz.classConstRef(I)V @ 13
+Event: 25,144 Thread 0x00007fcb1e088000 Uncommon trap: reason=class_check action=maybe_recompile pc=0x00007fcb0dd17444 method=aQute.bnd.osgi.Clazz.classConstRef(I)V @ 13
+Event: 25,146 Thread 0x00007fcb1e088000 Uncommon trap: reason=class_check action=maybe_recompile pc=0x00007fcb0e448f3c method=aQute.bnd.osgi.Clazz.parseClassFileWithCollector(LaQute/bnd/osgi/ClassDataCollector;)Ljava/util/Set; @ 4
+Event: 25,399 Thread 0x00007fcb1e088000 Uncommon trap: reason=unstable_if action=reinterpret pc=0x00007fcb0e796b04 method=aQute.bnd.osgi.Descriptors$PackageRef.isPrimitivePackage()Z @ 4
+Event: 25,807 Thread 0x00007fcb1e088000 Uncommon trap: reason=unstable_if action=reinterpret pc=0x00007fcb0e3d2620 method=aQute.lib.io.ByteBufferDataInput.skipBytes(I)I @ 1
+
+Classes redefined (0 events):
+No events
+
+Internal exceptions (10 events):
+Event: 19,598 Thread 0x00007fcb1e088000 Exception <a 'java/lang/ClassNotFoundException': java/util/LinkedHashSetCustomizer> (0x00000000e67976e0) thrown at [/HUDSON/workspace/8-2-build-linux-amd64/jdk8u191/11894/hotspot/src/share/vm/classfile/systemDictionary.cpp, line 210]
+Event: 19,601 Thread 0x00007fcb1e088000 Exception <a 'java/lang/ClassNotFoundException': java/util/zip/ZipFileBeanInfo> (0x00000000e67c88e0) thrown at [/HUDSON/workspace/8-2-build-linux-amd64/jdk8u191/11894/hotspot/src/share/vm/classfile/systemDictionary.cpp, line 210]
+Event: 19,601 Thread 0x00007fcb1e088000 Exception <a 'java/lang/ClassNotFoundException': java/util/zip/ZipFileCustomizer> (0x00000000e67d1aa8) thrown at [/HUDSON/workspace/8-2-build-linux-amd64/jdk8u191/11894/hotspot/src/share/vm/classfile/systemDictionary.cpp, line 210]
+Event: 20,006 Thread 0x00007fcb1e088000 Exception <a 'java/lang/ClassNotFoundException': org/gradle/internal/logging/slf4j/OutputEventListenerBackedLoggerBeanInfo> (0x00000000d8306e78) thrown at [/HUDSON/workspace/8-2-build-linux-amd64/jdk8u191/11894/hotspot/src/share/vm/classfile/systemDiction
+Event: 20,007 Thread 0x00007fcb1e088000 Exception <a 'java/lang/ClassNotFoundException': org/gradle/internal/logging/slf4j/OutputEventListenerBackedLoggerCustomizer> (0x00000000d8344400) thrown at [/HUDSON/workspace/8-2-build-linux-amd64/jdk8u191/11894/hotspot/src/share/vm/classfile/systemDicti
+Event: 20,009 Thread 0x00007fcb1e088000 Exception <a 'java/lang/ClassNotFoundException': org/gradle/api/internal/file/DefaultSourceDirectorySetBeanInfo> (0x00000000d83d8188) thrown at [/HUDSON/workspace/8-2-build-linux-amd64/jdk8u191/11894/hotspot/src/share/vm/classfile/systemDictionary.cpp, li
+Event: 20,010 Thread 0x00007fcb1e088000 Exception <a 'java/lang/ClassNotFoundException': org/gradle/api/internal/file/DefaultSourceDirectorySetCustomizer> (0x00000000d840e730) thrown at [/HUDSON/workspace/8-2-build-linux-amd64/jdk8u191/11894/hotspot/src/share/vm/classfile/systemDictionary.cpp, 
+Event: 22,466 Thread 0x00007fcb1e088000 Implicit null exception at 0x00007fcb0e6bd23c to 0x00007fcb0e6c0541
+Event: 22,626 Thread 0x00007fcb1e040000 Exception <a 'java/io/IOException'> (0x00000000dedcf950) thrown at [/HUDSON/workspace/8-2-build-linux-amd64/jdk8u191/11894/hotspot/src/share/vm/prims/jni.cpp, line 709]
+Event: 24,986 Thread 0x00007fcb1e088000 Implicit null exception at 0x00007fcb0e55b27e to 0x00007fcb0e55b631
+
+Events (10 events):
+Event: 25,442 loading class com/unboundid/util/NotExtensible
+Event: 25,442 loading class com/unboundid/util/NotExtensible done
+Event: 25,455 loading class com/unboundid/util/Extensible
+Event: 25,455 loading class com/unboundid/util/Extensible done
+Event: 25,807 Thread 0x00007fcb1e088000 Uncommon trap: trap_request=0xffffff65 fr.pc=0x00007fcb0e3d2620
+Event: 25,807 Thread 0x00007fcb1e088000 DEOPT PACKING pc=0x00007fcb0e3d2620 sp=0x00007fcadc34cd70
+Event: 25,808 Thread 0x00007fcb1e088000 DEOPT UNPACKING pc=0x00007fcb0d04573a sp=0x00007fcadc34cd20 mode 2
+Event: 25,843 loading class io/netty/channel/ChannelHandler$Sharable
+Event: 25,843 loading class io/netty/channel/ChannelHandler$Sharable done
+Event: 25,950 Executing VM operation: ParallelGCFailedAllocation
+
+
+Dynamic libraries:
+00400000-00401000 r-xp 00000000 08:01 8128497                            /opt/java/jdk1.8.0_191/bin/java
+00600000-00601000 r--p 00000000 08:01 8128497                            /opt/java/jdk1.8.0_191/bin/java
+00601000-00602000 rw-p 00001000 08:01 8128497                            /opt/java/jdk1.8.0_191/bin/java
+01226000-01247000 rw-p 00000000 00:00 0                                  [heap]
+83a00000-97100000 rw-p 00000000 00:00 0 
+9f880000-d6900000 ---p 00000000 00:00 0 
+d6900000-100000000 rw-p 00000000 00:00 0 
+100000000-100800000 rw-p 00000000 00:00 0 
+100800000-140000000 ---p 00000000 00:00 0 
+7fcac4000000-7fcac4021000 rw-p 00000000 00:00 0 
+7fcac4021000-7fcac8000000 ---p 00000000 00:00 0 
+7fcacb1a2000-7fcacb1b5000 r--s 00345000 08:01 8129969                    /opt/java/jdk1.8.0_191/jre/lib/resources.jar
+7fcacb1b5000-7fcacb1bf000 r--s 0006b000 08:01 13370793                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.osgi/osgi.core/6.0.0/c49acdc9ac62cf69ee49cb6f1905b4fdb79ea5c/osgi.core-6.0.0.jar
+7fcacb1bf000-7fcacb1c1000 r--s 00007000 08:01 13370792                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.osgi/org.osgi.service.component.annotations/1.3.0/ef17ec0e7f73cd144599da108d72a24285d1f5d5/org.osgi.service.component.annotations-1.3.0.jar
+7fcacb1c1000-7fcacb1c2000 r--s 00003000 08:01 13370288                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.osgi/org.osgi.annotation.versioning/1.1.0/f6954fdcee1f910599fcb304522f9168c3e9cd27/org.osgi.annotation.versioning-1.1.0.jar
+7fcacb1c2000-7fcacb1c8000 r--s 00071000 08:01 5898501                    /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.codehaus.woodstox/woodstox-core-asl/4.4.1/84fee5eb1a4a1cefe65b6883c73b3fa83be3c1a1/woodstox-core-asl-4.4.1.jar
+7fcacb1c8000-7fcacb1cc000 r--s 00024000 08:01 5898492                    /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.codehaus.woodstox/stax2-api/3.1.4/ac19014b1e6a7c08aad07fe114af792676b685b7/stax2-api-3.1.4.jar
+7fcacb1cc000-7fcacb1d9000 r--s 00083000 08:01 13370700                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/commons-collections/commons-collections/3.2.2/8ad72fe39fa8c91eaaf12aadb21e0c3661fe26d5/commons-collections-3.2.2.jar
+7fcacb1d9000-7fcacb26c000 r--s 005e3000 08:01 13370789                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay.portal/com.liferay.portal.kernel/4.0.0/facac971ce854bef9616dc58fd66571ab4f4fe7a/com.liferay.portal.kernel-4.0.0.jar
+7fcacb26c000-7fcacb2de000 r--s 012a0000 08:01 13369994                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay.portal/com.liferay.portal.impl/4.0.0/960f55be0aa51d1dae5c0293e85434f27087beba/com.liferay.portal.impl-4.0.0.jar
+7fcacb2de000-7fcacb2e0000 r--s 00003000 08:01 13369993                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.portal.search.spi/3.1.0/ba0049359eff5981903c82b4e5dbf4eab1e6d326/com.liferay.portal.search.spi-3.1.0.jar
+7fcacb2e0000-7fcacb2e4000 r--s 00014000 08:01 13369992                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.portal.search.engine.adapter.api/3.3.0/3b39fad620f997e14a7f1190418d54eb19032654/com.liferay.portal.search.engine.adapter.api-3.3.0.jar
+7fcacb2e4000-7fcacb2e6000 r--s 00000000 08:01 13369991                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.portal.search.elasticsearch6.spi/1.0.0/1bad0e9a821fa6f6432eed0026d068c691cd394c/com.liferay.portal.search.elasticsearch6.spi-1.0.0.jar
+7fcacb2e6000-7fcacb2e8000 r--s 0001e000 08:01 13369990                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.portal.search.elasticsearch6.api/3.0.0/a9771843c68a2f23dc494c95b4407b1838189f04/com.liferay.portal.search.elasticsearch6.api-3.0.0.jar
+7fcacb2e8000-7fcacb2f6000 r--s 00048000 08:01 13369989                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.portal.search.api/3.8.0/77a4917915c1252c542868f6e5d3d15c0f1e6b97/com.liferay.portal.search.api-3.8.0.jar
+7fcacb2f6000-7fcacb2f8000 r--s 00003000 08:01 13370791                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.portal.configuration.metatype.api/2.0.0/464d438f548c27c20c3cbf5b4da6bab3ee5ec5f8/com.liferay.portal.configuration.metatype.api-2.0.0.jar
+7fcacb2f8000-7fcacb2f9000 r--s 00002000 08:01 13370740                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.petra.string/3.0.0/4454232934e52a4225733a1086622c0d1d1afb76/com.liferay.petra.string-3.0.0.jar
+7fcacb2f9000-7fcacb364000 r--s 00b57000 08:01 13369988                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.ibm.icu/icu4j/61.1/28d33b5e44e72edcc66a5da7a34a42147f38d987/icu4j-61.1.jar
+7fcacb364000-7fcacb368000 r--s 0004c000 08:01 13369987                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-core/2.9.9/bfff5af9fb8347d26bbb7959cb9b4fe9a2b0ca5e/jackson-core-2.9.9.jar
+7fcacb368000-7fcacb36e000 r--s 0003d000 08:01 13369986                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.yaml/snakeyaml/1.17/7a27ea250c5130b2922b86dea63cbb1cc10a660c/snakeyaml-1.17.jar
+7fcacb36e000-7fcacb373000 r--s 0005a000 08:01 13369985                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.ow2.asm/asm-debug-all/5.1/dde860d586960d55a87cd52c4fc1f5059c89cbc6/asm-debug-all-5.1.jar
+7fcacb373000-7fcacb378000 r--s 0002e000 08:01 13369984                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.locationtech.spatial4j/spatial4j/0.7/faa8ba85d503da4ab872d17ba8c00da0098ab2f2/spatial4j-0.7.jar
+7fcacb378000-7fcacb387000 r--s 000b4000 08:01 13369983                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.locationtech.jts/jts-core/1.15.0/705981b7e25d05a76a3654e597dab6ba423eb79e/jts-core-1.15.0.jar
+7fcacb387000-7fcacb389000 r--s 0001a000 08:01 13369981                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.hdrhistogram/HdrHistogram/2.1.9/e4631ce165eb400edecfa32e03d3f1be53dee754/HdrHistogram-2.1.9.jar
+7fcacb389000-7fcacb38b000 r--s 00012000 08:01 13369980                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.elasticsearch.plugin/transport-netty4-client/6.5.0/ea02d544f30f51bc36c1aa4d3ac1d8063f378e92/transport-netty4-client-6.5.0.jar
+7fcacb38b000-7fcacb38d000 r--s 00019000 08:01 13369979                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.elasticsearch.plugin/reindex-client/6.5.0/9b05d3b6f7e992edef3ee462daa2e25db7521d34/reindex-client-6.5.0.jar
+7fcacb38d000-7fcacb38f000 r--s 00011000 08:01 13369978                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.elasticsearch.plugin/percolator-client/6.5.0/c6b57e3bbcdfd9ba7ca0c687184a3b2c80415d65/percolator-client-6.5.0.jar
+7fcacb38f000-7fcacb391000 r--s 00011000 08:01 13369977                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.elasticsearch.plugin/parent-join-client/6.5.0/b314c9953ac0b6a342671cf88fb32d7b3662362c/parent-join-client-6.5.0.jar
+7fcacb391000-7fcacb393000 r--s 0000d000 08:01 13369976                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.elasticsearch.plugin/lang-mustache-client/6.5.0/133651c4166f91c7e45aa26ed0ba8efbf1f47612/lang-mustache-client-6.5.0.jar
+7fcacb393000-7fcacb394000 r--s 00003000 08:01 13369975                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.elasticsearch.plugin/elasticsearch-scripting-painless-spi/6.5.0/5bf3f732c5d3fcc638b9b5054ac25ce28f90868f/elasticsearch-scripting-painless-spi-6.5.0.jar
+7fcacb394000-7fcacb395000 r--s 00001000 08:01 13369974                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.elasticsearch.client/transport/6.5.0/2746b889e160f92991c9e94678c15981b8e9750e/transport-6.5.0.jar
+7fcacb395000-7fcacb396000 r--s 00003000 08:01 13369973                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.elasticsearch.client/sniffer/5.5.3/74f31d69cf5b6137c1a93cea239d321e7507099d/sniffer-5.5.3.jar
+7fcacb396000-7fcacb399000 r--s 00019000 08:01 13369972                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.elasticsearch/elasticsearch-x-content/6.5.0/6a2a007a489d7ae2bcfb502238ba69fa4df2ed01/elasticsearch-x-content-6.5.0.jar
+7fcacb399000-7fcacb39a000 r--s 00008000 08:01 13369971                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.elasticsearch/elasticsearch-core/6.5.0/472f626f1985f4c0a9afa905438eff533e1abb72/elasticsearch-core-6.5.0.jar
+7fcacb39a000-7fcacb39b000 r--s 00003000 08:01 13369970                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.elasticsearch/elasticsearch-cli/6.5.0/d68e59673082793ab2b0a6cd73de5c02d21143a0/elasticsearch-cli-6.5.0.jar
+7fcacb39b000-7fcacb43e000 r--s 00952000 08:01 13369969                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.elasticsearch/elasticsearch/6.5.0/6d9284811dd648481a4562a4ba8c09bdb277fb2d/elasticsearch-6.5.0.jar
+7fcacb43e000-7fcacb495000 r--s 00391000 08:01 13369967                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.bouncycastle/bcprov-jdk15on/1.59/2507204241ab450456bdb8e8c0a8f986e418bd99/bcprov-jdk15on-1.59.jar
+7fcacb495000-7fcacb4a8000 r--s 000af000 08:01 13369966                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.bouncycastle/bcpkix-jdk15on/1.59/9cef0aab8a4bb849a8476c058ce3ff302aba3fff/bcpkix-jdk15on-1.59.jar
+7fcacb4a8000-7fcacb4af000 r--s 00043000 08:01 13369965                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.bouncycastle/bcpg-jdk15on/1.59/ee93e5376bb6cf0a15c027b5f5e4393f2738e709/bcpg-jdk15on-1.59.jar
+7fcacb4af000-7fcacb4b4000 r--s 00038000 08:01 13369964                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-suggest/7.5.0/aa7d170871711ebd4dbd367d7b8ee0f1eb5e88b7/lucene-suggest-7.5.0.jar
+7fcacb4b4000-7fcacb4b5000 r--s 00003000 08:01 13369963                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-spatial/7.5.0/8de64a6a8ad22b5849f2ab5f824917723de7a349/lucene-spatial-7.5.0.jar
+7fcacb4b5000-7fcacb4ba000 r--s 0003c000 08:01 13369961                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-sandbox/7.5.0/9fa3bb1c81179e112a62c0db6749767127c616bd/lucene-sandbox-7.5.0.jar
+7fcacb4ba000-7fcacb4c4000 r--s 00054000 08:01 13369962                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-queryparser/7.5.0/3eefb522e150f2ba0009df20f3bcfa91d60e7090/lucene-queryparser-7.5.0.jar
+7fcacb4c4000-7fcacb4cb000 r--s 0003a000 08:01 13369959                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-queries/7.5.0/bfbf786b75c60a25daf33d389efd6458e17218d9/lucene-queries-7.5.0.jar
+7fcacb4cb000-7fcacb4fd000 r--s 002b9000 08:01 13369953                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-core/7.5.0/736e94305e2a0e803563c5b184877df5c7d4cb69/lucene-core-7.5.0.jar
+7fcacb4fd000-7fcacb50f000 r--s 00182000 08:01 13369951                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-analyzers-common/7.5.0/e7fbdfc2297c3ff5d194d7bef95810504e52710e/lucene-analyzers-common-7.5.0.jar
+7fcacb50f000-7fcacb530000 r--s 0016d000 08:01 13369952                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-core/2.11.2/6c2fb3f5b7cd27504726aef1b674b542a0c9cf53/log4j-core-2.11.2.jar
+7fcacb530000-7fcacb630000 rw-p 00000000 00:00 0 
+7fcacb630000-7fcacb730000 ---p 00000000 00:00 0 
+7fcacb730000-7fcacb930000 rw-p 00000000 00:00 0 
+7fcacb930000-7fcacbb30000 rw-p 00000000 00:00 0 
+7fcacbb30000-7fcacbb33000 r--s 00015000 08:01 13369960                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-misc/7.5.0/60d0a02b9297b5423d5400a6b0aa114915232b60/lucene-misc-7.5.0.jar
+7fcacbb33000-7fcacbb37000 r--s 00020000 08:01 13369957                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-join/7.5.0/65d3c275b094383640d393579cdb7aff22bcd1d/lucene-join-7.5.0.jar
+7fcacbb37000-7fcacbb3c000 r--s 0002e000 08:01 13369956                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-highlighter/7.5.0/59420a5e30f12885f160e49bb975ab6b5985bd3d/lucene-highlighter-7.5.0.jar
+7fcacbb3c000-7fcacbb3f000 r--s 00013000 08:01 13369955                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-grouping/7.5.0/f326a63640a288c302c713fcf2965fdc827b3cca/lucene-grouping-7.5.0.jar
+7fcacbb3f000-7fcacbb45000 r--s 0003c000 08:01 13369950                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-api/2.11.2/f5e9a2ffca496057d6891a3de65128efc636e26e/log4j-api-2.11.2.jar
+7fcacbb45000-7fcacbb52000 r--s 000a3000 08:01 13369949                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents/httpclient/4.4/6d220441ca681dddc55a189eae81a437309128b8/httpclient-4.4.jar
+7fcacbb52000-7fcacbb55000 r--s 00029000 08:01 13369948                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents/httpasyncclient/4.1.3/34c56f43fd3255fc239ffe33d0fbfb8195be6a24/httpasyncclient-4.1.3.jar
+7fcacbb55000-7fcacbb5b000 r--s 00044000 08:01 13369947                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.antlr/antlr4-runtime/4.5.3/2609e36f18f7e8d593cc1cddfb2ac776dc96b8e0/antlr4-runtime-4.5.3.jar
+7fcacbb5b000-7fcacbb5e000 r--s 00014000 08:01 13369946                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/net.sf.supercsv/super-csv/2.1.0/c6466dd0e28c034272b9f70a3f1896c03f1f2b27/super-csv-2.1.0.jar
+7fcacbb5e000-7fcacbb61000 r--s 00011000 08:01 13369945                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/net.sf.jopt-simple/jopt-simple/5.0.2/98cafc6081d5632b61be2c9e60650b64ddbc637c/jopt-simple-5.0.2.jar
+7fcacbb61000-7fcacbb72000 r--s 0008a000 08:01 13369944                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/joda-time/joda-time/2.9.5/5f01da7306363fad2028b916f3eab926262de928/joda-time-2.9.5.jar
+7fcacbb72000-7fcacbbb1000 r--s 0033f000 08:01 13369943                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/io.netty/netty-all/4.1.11.Final/b33ee67c342fb9598337627b3d342b129d962c1a/netty-all-4.1.11.Final.jar
+7fcacbbb1000-7fcacbbb6000 r--s 00041000 08:01 15339066                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/commons-lang/commons-lang/2.6/ce1edb914c94ebc388f086c6827e8bdeec71ac2/commons-lang-2.6.jar
+7fcacbbb6000-7fcacbbba000 r--s 00031000 08:01 13369942                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/commons-io/commons-io/2.6/815893df5f31da2ece4040fe0a12fd44b577afaf/commons-io-2.6.jar
+7fcacbbba000-7fcacbbda000 r--s 00398000 08:01 13369941                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.unboundid/unboundid-ldapsdk/4.0.2/2a3c07c4b60da2bc133be541f77023a5d7941973/unboundid-ldapsdk-4.0.2.jar
+7fcacbbda000-7fcacbbfe000 r--s 001b3000 08:01 13369939                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/org.elasticsearch.xpack.core/6.5.0/50eb3734e1e348a7f9a97580ba70efdd569247bb/org.elasticsearch.xpack.core-6.5.0.jar
+7fcacbbfe000-7fcacbdfe000 rw-p 00000000 00:00 0 
+7fcacbdfe000-7fcacbe01000 ---p 00000000 00:00 0 
+7fcacbe01000-7fcacbeff000 rw-p 00000000 00:00 0 
+7fcacbeff000-7fcacbf02000 ---p 00000000 00:00 0 
+7fcacbf02000-7fcacc000000 rw-p 00000000 00:00 0 
+7fcacc000000-7fcacc05b000 rw-p 00000000 00:00 0 
+7fcacc05b000-7fcad0000000 ---p 00000000 00:00 0 
+7fcad0000000-7fcad0021000 rw-p 00000000 00:00 0 
+7fcad0021000-7fcad4000000 ---p 00000000 00:00 0 
+7fcad4000000-7fcad429f000 rw-p 00000000 00:00 0 
+7fcad429f000-7fcad8000000 ---p 00000000 00:00 0 
+7fcad8000000-7fcad8021000 rw-p 00000000 00:00 0 
+7fcad8021000-7fcadc000000 ---p 00000000 00:00 0 
+7fcadc000000-7fcadc002000 r--s 0000b000 08:01 13369958                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-memory/7.5.0/b8cc0c311a823287264653fbd05f866e059d303c/lucene-memory-7.5.0.jar
+7fcadc002000-7fcadc004000 r--s 0000e000 08:01 13369940                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.twitter/jsr166e/1.1.0/233098147123ee5ddcd39ffc57ff648be4b7e5b2/jsr166e-1.1.0.jar
+7fcadc004000-7fcadc006000 r--s 0000b000 08:01 13369933                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.tdunning/t-digest/3.2/2ab94758b0276a8a26102adf8d528cf6d0567b9a/t-digest-3.2.jar
+7fcadc006000-7fcadc007000 r--s 00002000 08:01 13369926                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/org.elasticsearch.secure.sm/6.5.0/947fe587e95f9fd590c914d0f32104db1516202d/org.elasticsearch.secure.sm-6.5.0.jar
+7fcadc007000-7fcadc009000 r--s 00007000 08:01 13369925                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/org.elasticsearch.plugin.cli/6.5.0/9998fd92489f88be0cd27330ef9bd559d499b003/org.elasticsearch.plugin.cli-6.5.0.jar
+7fcadc009000-7fcadc00a000 r--s 00001000 08:01 13369924                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/org.elasticsearch.plugin.classloader/6.5.0/47fb4df17ec150472a133c8828190500f43456d0/org.elasticsearch.plugin.classloader-6.5.0.jar
+7fcadc00a000-7fcadc012000 r--s 00077000 08:01 13369923                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/org.elasticsearch.painless/6.5.0.LIFERAY-PATCHED-1/6eee584331103fdaf659804c8aa7bf7290d2b183/org.elasticsearch.painless-6.5.0.LIFERAY-PATCHED-1.jar
+7fcadc012000-7fcadc013000 r--s 00001000 08:01 13369921                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/org.elasticsearch.client.xpack.transport/6.5.0/528c819c3cf9b40a19a0fc5852131316542a3888/org.elasticsearch.client.xpack.transport-6.5.0.jar
+7fcadc013000-7fcadc018000 r--s 00027000 08:01 13369922                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/org.elasticsearch.analysis.common/6.5.0/523b304ed74a861c67e75b59065b5c05da82311a/org.elasticsearch.analysis.common-6.5.0.jar
+7fcadc018000-7fcadc01a000 r--s 00009000 08:01 13369920                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml/2.9.8/a1c807329eb0c75976aeb5961a506b3516ffeae3/jackson-dataformat-yaml-2.9.8.jar
+7fcadc01a000-7fcadc01c000 r--s 00013000 08:01 13369995                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.dataformat/jackson-dataformat-smile/2.9.8/dbb47a052ac2b249ae004ce32e1e0c8bd8ee526c/jackson-dataformat-smile-2.9.8.jar
+7fcadc01c000-7fcadc01e000 r--s 0000b000 08:01 13369918                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.dataformat/jackson-dataformat-cbor/2.9.8/dc290bb8be6ad98aa20e8342f92aaa88f7b5bab2/jackson-dataformat-cbor-2.9.8.jar
+7fcadc01e000-7fcadc035000 r--s 00100000 08:01 13369919                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.carrotsearch/hppc/0.7.1/8b5057f74ea378c0150a1860874a3ebdcb713767/hppc-0.7.1.jar
+7fcadc035000-7fcadc036000 r--s 00004000 08:01 12725736                   /opt/git/liferay-portal/modules/apps/portal-search-elasticsearch6/portal-search-elasticsearch6-impl/gsearch-libs/fi.soveltia.liferay.gsearch.query-5.0.0.jar
+7fcadc036000-7fcadc039000 r--s 0002a000 08:01 12725751                   /opt/git/liferay-portal/modules/apps/portal-search-elasticsearch6/portal-search-elasticsearch6-impl/ltr-1.1.0-es6.5.0/RankyMcRankFace-0.1.1.jar
+7fcadc039000-7fcadc03f000 r--s 00046000 08:01 12725752                   /opt/git/liferay-portal/modules/apps/portal-search-elasticsearch6/portal-search-elasticsearch6-impl/ltr-1.1.0-es6.5.0/ltr-1.1.0-es6.5.0.jar
+7fcadc03f000-7fcadc051000 r--s 01403000 08:01 13123619                   /opt/git/liferay-portal/modules/apps/portal-search-elasticsearch6/portal-search-elasticsearch6-impl/build/tmp/jar/com.liferay.portal.search.elasticsearch6.GSEARCH-PATCHED-IMPL-72-DXP-FP1-3.0.24.jar
+7fcadc051000-7fcadc054000 ---p 00000000 00:00 0 
+7fcadc054000-7fcadc152000 rw-p 00000000 00:00 0 
+7fcadc152000-7fcadc155000 ---p 00000000 00:00 0 
+7fcadc155000-7fcadc253000 rw-p 00000000 00:00 0 
+7fcadc253000-7fcadc256000 ---p 00000000 00:00 0 
+7fcadc256000-7fcadc554000 rw-p 00000000 00:00 0 
+7fcadc554000-7fcadc557000 ---p 00000000 00:00 0 
+7fcadc557000-7fcadc655000 rw-p 00000000 00:00 0 
+7fcadc655000-7fcadc658000 ---p 00000000 00:00 0 
+7fcadc658000-7fcadc756000 rw-p 00000000 00:00 0 
+7fcadc756000-7fcadc759000 ---p 00000000 00:00 0 
+7fcadc759000-7fcadca57000 rw-p 00000000 00:00 0 
+7fcadca57000-7fcadca5a000 r--s 0001a000 08:01 8129976                    /opt/java/jdk1.8.0_191/jre/lib/jce.jar
+7fcadca5a000-7fcadcc5a000 rw-p 00000000 00:00 0 
+7fcadcc5a000-7fcadce5a000 rw-p 00000000 00:00 0 
+7fcadce5a000-7fcadd05a000 rw-p 00000000 00:00 0 
+7fcadd05a000-7fcadd25a000 rw-p 00000000 00:00 0 
+7fcadd25a000-7fcadd45a000 rw-p 00000000 00:00 0 
+7fcadd45a000-7fcadd65a000 rw-p 00000000 00:00 0 
+7fcadd65a000-7fcadd65c000 r--s 00000000 08:01 528355                     /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.eclipse.jdt/org.eclipse.jdt.annotation/1.1.0/c154cecefedc3a8f2a2752db856d8a251ecb49c9/org.eclipse.jdt.annotation-1.1.0.jar
+7fcadd65c000-7fcadd65e000 r--s 00005000 08:01 4854463                    /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/1.7.2/81d61b7f33ebeab314e07de0cc596f8e858d97/slf4j-api-1.7.2.jar
+7fcadd65e000-7fcadd661000 r--s 0001c000 08:01 14029138                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.googlecode.javaewah/JavaEWAH/0.7.9/eceaf316a8faf0e794296ebe158ae110c7d72a5a/JavaEWAH-0.7.9.jar
+7fcadd661000-7fcadd666000 r--s 00040000 08:01 1714157                    /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.jcraft/jsch/0.1.53/658b682d5c817b27ae795637dfec047c63d29935/jsch-0.1.53.jar
+7fcadd666000-7fcadd669000 r--s 00013000 08:01 1715032                    /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.portal.tools.soy.builder/3.0.4/6d2bebafc9aa1cb97d41ec1e19716f0a8faea2f/com.liferay.portal.tools.soy.builder-3.0.4.jar
+7fcadd669000-7fcadd6bb000 r--s 00562000 08:01 15082013                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/biz.aQute.bnd/biz.aQute.bnd/3.5.0/237e135339a5f5a2b004318b6b84e9d30f7eb52b/biz.aQute.bnd-3.5.0.jar
+7fcadd6bb000-7fcadd6c3000 r--s 00028000 08:01 13766484                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/xml-apis/xml-apis/1.3.04/90b215f48fe42776c8c7f6e3509ec54e84fd65ef/xml-apis-1.3.04.jar
+7fcadd6c3000-7fcadd6ca000 r--s 0003a000 08:01 15077508                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/commons-codec/commons-codec/1.9/9ce04e34240f674bc72680f8b843b1457383161a/commons-codec-1.9.jar
+7fcadd6ca000-7fcadd6cc000 r--s 0000e000 08:01 919361                     /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/commons-logging/commons-logging/1.2/4bfc12adfe4842bf07b657f0369c4cb522955686/commons-logging-1.2.jar
+7fcadd6cc000-7fcadd6e3000 r--s 000fc000 08:01 15082951                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.springframework/spring-core/4.3.11.RELEASE/eb30ed093f628279d3aead068fd478fa343f1dad/spring-core-4.3.11.RELEASE.jar
+7fcadd6e3000-7fcadd6eb000 r--s 00048000 08:01 5641119                    /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents/httpcore/4.4.6/e3fd8ced1f52c7574af952e2e6da0df8df08eb82/httpcore-4.4.6.jar
+7fcadd6eb000-7fcadd6fa000 r--s 0009e000 08:01 19542121                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/io.spring.gradle/dependency-management-plugin/1.0.3.RELEASE/c7fc988680e19cef9bf91de0c39b891e4c8dca2d/dependency-management-plugin-1.0.3.RELEASE.jar
+7fcadd6fa000-7fcadd6fd000 r--s 00023000 08:01 15082499                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-loader-tools/1.5.7.RELEASE/e99c816906e6743b4c59977144a66713969ab22a/spring-boot-loader-tools-1.5.7.RELEASE.jar
+7fcadd6fd000-7fcadd6ff000 r--s 00008000 08:01 13766480                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/net.jodah/expiringmap/0.5.7/9ce15de4173a001d0e76ae6a73e7e555f912bbd/expiringmap-0.5.7.jar
+7fcadd6ff000-7fcadd700000 r--s 00000000 08:01 792757                     /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gogo.shell.client/1.0.0/a2c68ef23692e106082a9fa57dc8a7474f847a03/com.liferay.gogo.shell.client-1.0.0.jar
+7fcadd700000-7fcadd702000 r--s 0000a000 08:01 13369868                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.ant.bnd/3.1.0/e7e8ed8a87f7cac356f5937e9085ba1b2e9aa19d/com.liferay.ant.bnd-3.1.0.jar
+7fcadd702000-7fcadd74b000 r--s 004fb000 08:01 13369783                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/biz.aQute.bnd/biz.aQute.bnd.gradle/3.5.0/f87dfe68714f495e5e510a04ed319ca6c7a7885e/biz.aQute.bnd.gradle-3.5.0.jar
+7fcadd74b000-7fcadd750000 r--s 0002a000 08:01 6684789                    /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.2.4/a60a5e993c98c864010053cb901b7eab25306568/gson-2.2.4.jar
+7fcadd750000-7fcadd753000 r--s 00009000 08:01 15339068                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/oauth.signpost/signpost-core/1.2.1.2/bf95955dcf3d5a78c201e49b0c336787ea73f161/signpost-core-1.2.1.2.jar
+7fcadd753000-7fcadd755000 r--s 00026000 08:01 4592975                    /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.apache.maven/maven-model/3.0.4/5e149cfe15daedebbb1e8970d6a5ff1bea61b94c/maven-model-3.0.4.jar
+7fcadd755000-7fcadd759000 r--s 00040000 08:01 17708703                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/xalan/serializer/2.7.2/24247f3bb052ee068971393bdb83e04512bb1c3c/serializer-2.7.2.jar
+7fcadd759000-7fcadd75d000 r--s 0002f000 08:01 15077545                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/commons-io/commons-io/2.5/2852e6e05fbb95076fc091f6d1780f1f8fe35e0f/commons-io-2.5.jar
+7fcadd75d000-7fcadd75f000 r--s 0000b000 08:01 15080943                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.zeroturnaround/zt-exec/1.9/a6c5747098b1ede9f4a6e9c36eaebb357a4430ed/zt-exec-1.9.jar
+7fcadd75f000-7fcadd76c000 r--s 000aa000 08:01 18887635                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents/httpclient/4.5.3/d1577ae15f01ef5438c5afc62162457c00a34713/httpclient-4.5.3.jar
+7fcadd76c000-7fcadd78d000 r--s 001f0000 08:01 15080661                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.eclipse.jgit/org.eclipse.jgit/4.1.1.201511131810-r/17cf7d0cb7da8bbcc16e43f0ab5dbfc43b5cb539/org.eclipse.jgit-4.1.1.201511131810-r.jar
+7fcadd78d000-7fcadd791000 r--s 00028000 08:01 15077480                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.thoughtworks.qdox/qdox/1.12.1/f7122f6ab1f64bdf9f5970b0e89bfb355e036897/qdox-1.12.1.jar
+7fcadd791000-7fcadd793000 r--s 00008000 08:01 13369678                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.util/1.0.34/cbe4794083e0ffca4ca5a34d116b7c7df28742/com.liferay.gradle.util-1.0.34.jar
+7fcadd793000-7fcadd796000 r--s 00017000 08:01 13369679                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.node/4.6.18/2c85420818227a5607e595deaa82b237802d4590/com.liferay.gradle.plugins.node-4.6.18.jar
+7fcadd796000-7fcadd797000 r--s 00006000 08:01 13369677                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.js.transpiler/2.4.36/f393708f549a9ea90c0fedd16a1f06a459b7ec1b/com.liferay.gradle.plugins.js.transpiler-2.4.36.jar
+7fcadd797000-7fcadd799000 r--s 00004000 08:01 13369596                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.js.module.config.generator/2.1.57/c25b1e1bbb8cb7f6638296f47881c554095a94f3/com.liferay.gradle.plugins.js.module.config.generator-2.1.57.jar
+7fcadd799000-7fcadd79a000 r--s 00001000 08:01 13369464                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.gulp/2.0.59/938e3d7409bc6ccef1042f088d41b49cec378afe/com.liferay.gradle.plugins.gulp-2.0.59.jar
+7fcadd79a000-7fcadd79c000 r--s 00002000 08:01 13377713                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.xsd.builder/1.0.7/7c1f14ab7339d4827de7d66772ec1c4d3fb3b252/com.liferay.gradle.plugins.xsd.builder-1.0.7.jar
+7fcadd79c000-7fcadd79e000 r--s 00004000 08:01 13377711                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.wsdl.builder/2.0.3/58798def54230e2cb247a335d69186b123359aeb/com.liferay.gradle.plugins.wsdl.builder-2.0.3.jar
+7fcadd79e000-7fcadd7a1000 ---p 00000000 00:00 0 
+7fcadd7a1000-7fcadd89f000 rw-p 00000000 00:00 0 
+7fcadd89f000-7fcadd8a2000 ---p 00000000 00:00 0 
+7fcadd8a2000-7fcaddba0000 rw-p 00000000 00:00 0 
+7fcaddba0000-7fcaddba3000 ---p 00000000 00:00 0 
+7fcaddba3000-7fcaddca1000 rw-p 00000000 00:00 0 
+7fcaddca1000-7fcaddca4000 ---p 00000000 00:00 0 
+7fcaddca4000-7fcaddfa2000 rw-p 00000000 00:00 0 
+7fcaddfa2000-7fcaddfa5000 ---p 00000000 00:00 0 
+7fcaddfa5000-7fcade2a3000 rw-p 00000000 00:00 0 
+7fcade2a3000-7fcade4a3000 rw-p 00000000 00:00 0 
+7fcade4a3000-7fcade51c000 r--s 010fb000 08:01 8128604                    /opt/java/jdk1.8.0_191/lib/tools.jar
+7fcade51c000-7fcade51d000 r--s 00002000 08:01 13377712                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.xml.formatter/1.0.11/313c8b0e68dd0f06101942516e040f53bd42f397/com.liferay.gradle.plugins.xml.formatter-1.0.11.jar
+7fcade51d000-7fcade51e000 r--s 00003000 08:01 13377710                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.wsdd.builder/1.0.13/504fec5783f4f3bfc1f9eddbea792fa7884221fe/com.liferay.gradle.plugins.wsdd.builder-1.0.13.jar
+7fcade51e000-7fcade51f000 r--s 00002000 08:01 13377709                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.upgrade.table.builder/2.0.3/901df00aace3e9ef865f71830096652b67202cee/com.liferay.gradle.plugins.upgrade.table.builder-2.0.3.jar
+7fcade51f000-7fcade521000 r--s 00007000 08:01 13377708                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.tlddoc.builder/1.3.3/791088385f06fae604739d0f67fe80dc4ef37df5/com.liferay.gradle.plugins.tlddoc.builder-1.3.3.jar
+7fcade521000-7fcade522000 r--s 00001000 08:01 13377707                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.tld.formatter/1.0.9/79cf700841a5efab9dbed34e5b10fe0863443e1c/com.liferay.gradle.plugins.tld.formatter-1.0.9.jar
+7fcade522000-7fcade525000 r--s 00011000 08:01 13369470                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.test.integration/2.4.6/d6112fa8577030e337e780c47035ed91799db6bc/com.liferay.gradle.plugins.test.integration-2.4.6.jar
+7fcade525000-7fcade527000 r--s 00005000 08:01 13377705                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.soy/3.1.8/dba6c2f6e5a97b534f66b8222b9d2f1820ff8127/com.liferay.gradle.plugins.soy-3.1.8.jar
+7fcade527000-7fcade529000 r--s 00003000 08:01 13369462                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.source.formatter/2.3.424/f3c56087b2d9f38ca98a8b552424ef3d97cdc916/com.liferay.gradle.plugins.source.formatter-2.3.424.jar
+7fcade529000-7fcade52b000 r--s 00006000 08:01 13369463                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.service.builder/2.2.47/8c319b512de89b7c690bee02d831f62d44be3da/com.liferay.gradle.plugins.service.builder-2.2.47.jar
+7fcade52b000-7fcade52d000 r--s 00001000 08:01 13369461                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.rest.builder/1.0.21/62c9d900d3b7168ac9a9055ee449881e2e26b85c/com.liferay.gradle.plugins.rest.builder-1.0.21.jar
+7fcade52d000-7fcade52f000 r--s 00004000 08:01 13369458                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.lang.builder/3.0.12/7a1d67f094bec9179b62fdd46e4742bcac10d403/com.liferay.gradle.plugins.lang.builder-3.0.12.jar
+7fcade52f000-7fcade530000 r--s 00002000 08:01 13369457                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.javadoc.formatter/1.0.28/dd07319fe432a993725b59e089d6f812ebc3dd7e/com.liferay.gradle.plugins.javadoc.formatter-1.0.28.jar
+7fcade530000-7fcade531000 r--s 00003000 08:01 13377700                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.jasper.jspc/2.0.5/1948bfa0d760bafa16ce7fb747aaba70022c56f6/com.liferay.gradle.plugins.jasper.jspc-2.0.5.jar
+7fcade531000-7fcade533000 r--s 00002000 08:01 13377699                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.db.support/1.0.5/404e7631e13a84bd986e76e6a846b3467329fbce/com.liferay.gradle.plugins.db.support-1.0.5.jar
+7fcade533000-7fcade535000 r--s 00004000 08:01 13369456                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.css.builder/3.0.0/575c593ad53a033b2b9c2a6fea66fad9e3ef5a9c/com.liferay.gradle.plugins.css.builder-3.0.0.jar
+7fcade535000-7fcade537000 r--s 00002000 08:01 13377697                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.alloy.taglib/2.0.2/b5ab7bc0e31c8e55d0e83660ed5041a7bff85d34/com.liferay.gradle.plugins.alloy.taglib-2.0.2.jar
+7fcade537000-7fcade539000 r--s 0000b000 08:01 15082495                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-gradle-plugin/1.5.7.RELEASE/8d043a3895fc2d0be440ce06f99b1dfa5ff7a459/spring-boot-gradle-plugin-1.5.7.RELEASE.jar
+7fcade539000-7fcade53b000 r--s 00006000 08:01 6684820                    /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/org.apache.aries.jmx/org.apache.aries.jmx.api/1.1.0/fdde443a7c653db5e596981caec82cec4d25e928/org.apache.aries.jmx.api-1.1.0.jar
+7fcade53b000-7fcade53e000 r--s 00013000 08:01 14821703                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.netflix.nebula/gradle-extra-configurations-plugin/3.1.0/8f00e3d372f5526bca7d4cd9b6bc41547913f2e3/gradle-extra-configurations-plugin-3.1.0.jar
+7fcade53e000-7fcade540000 r--s 00002000 08:01 13377696                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.whip/1.0.7/d6386f7b75606283a3998f8735572525d1002191/com.liferay.gradle.plugins.whip-1.0.7.jar
+7fcade540000-7fcade542000 r--s 00006000 08:01 13369455                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.poshi.runner/2.2.14/e1ce0d38c1152a98564c38eb4d42b6328a11c5b5/com.liferay.gradle.plugins.poshi.runner-2.2.14.jar
+7fcade542000-7fcade544000 r--s 00005000 08:01 13377695                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.patcher/1.0.16/71b693343ecd5e23300caa4ac246f5163ca402e7/com.liferay.gradle.plugins.patcher-1.0.16.jar
+7fcade544000-7fcade546000 r--s 00003000 08:01 13377694                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.lang.merger/1.1.2/cd0373c2ed0685ef901854c33d64f7844b11b53c/com.liferay.gradle.plugins.lang.merger-1.1.2.jar
+7fcade546000-7fcade548000 r--s 00004000 08:01 13369459                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.jsdoc/2.0.34/5c8b2316402931d6073abf90e996b4c3c27f268c/com.liferay.gradle.plugins.jsdoc-2.0.34.jar
+7fcade548000-7fcade54a000 r--s 00005000 08:01 13369454                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.go/1.0.0/548159dc05572ba58575f2b48ffbf2248c727283/com.liferay.gradle.plugins.go-1.0.0.jar
+7fcade54a000-7fcade54c000 r--s 00003000 08:01 13377691                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.dependency.checker/1.0.3/129b29272f729fe19026722a28d68a59521c23d8/com.liferay.gradle.plugins.dependency.checker-1.0.3.jar
+7fcade54c000-7fcade54d000 r--s 00004000 08:01 13377690                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.change.log.builder/1.1.3/bc693b7f3cf70cdbbc6e65318897eef1b4c2f113/com.liferay.gradle.plugins.change.log.builder-1.1.3.jar
+7fcade54d000-7fcade54f000 r--s 00005000 08:01 13377689                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.cache/1.0.16/5397ac7fc2758a202f812687bb6489bcbbb40b74/com.liferay.gradle.plugins.cache-1.0.16.jar
+7fcade54f000-7fcade551000 r--s 00008000 08:01 13369453                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.baseline/2.1.1/a8e112f1557979da2dc7e67aa1343dd5c6599366/com.liferay.gradle.plugins.baseline-2.1.1.jar
+7fcade551000-7fcade552000 r--s 00003000 08:01 13377687                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.app.javadoc.builder/1.2.2/1d7ac4c3a6548aed12a9000e34aaa5ab579ff620/com.liferay.gradle.plugins.app.javadoc.builder-1.2.2.jar
+7fcade552000-7fcade559000 r--s 0003a000 08:01 13369452                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins/4.0.68/a838b768ce6fbdeb170fefe597efb3170a7387e6/com.liferay.gradle.plugins-4.0.68.jar
+7fcade559000-7fcade565000 r--s 0006a000 08:01 1977208                    /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.gradle.publish/plugin-publish-plugin/0.9.9/7105cd510691b4d49d30dc11cf09888153a27512/plugin-publish-plugin-0.9.9.jar
+7fcade565000-7fcade56c000 r--s 00068000 08:01 13369450                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.github.jk1/gradle-license-report/1.8/3b10e17b0f9fd4b65b41e5a45e31968202238e8f/gradle-license-report-1.8.jar
+7fcade56c000-7fcade591000 r--s 002de000 08:01 16388001                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/xalan/xalan/2.7.2/d55d3f02a56ec4c25695fe67e1334ff8c2ecea23/xalan-2.7.2.jar
+7fcade591000-7fcade595000 r--s 0002b000 08:01 14821687                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/gradle.plugin.org.ysb33r.gradle/gradletest/1.1/2784e724852698981f035a51faf86568385c8b11/gradletest-1.1.jar
+7fcade595000-7fcade596000 r--s 00008000 08:01 6172974                    /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/de.undercouch/gradle-download-task/3.3.0/ad0b59cc40d010934c2fa667a0f81cf239f9f5bd/gradle-download-task-3.3.0.jar
+7fcade596000-7fcade599000 r--s 00008000 08:01 13369446                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.maven.plugin.builder/1.2.4/babb30b8ad973eeaa2889db9cefa5963a9632ce1/com.liferay.gradle.plugins.maven.plugin.builder-1.2.4.jar
+7fcade599000-7fcade5a2000 r--s 00056000 08:01 13369448                   /opt/git/liferay-portal/.gradle/caches/modules-2/files-2.1/com.liferay/com.liferay.gradle.plugins.defaults/5.6.23/5ecab2979edb671bc14d9cf66960dd789f593043/com.liferay.gradle.plugins.defaults-5.6.23.jar
+7fcade5a2000-7fcade7a2000 rw-p 00000000 00:00 0 
+7fcade7a2000-7fcade7a5000 ---p 00000000 00:00 0 
+7fcade7a5000-7fcadeaa3000 rw-p 00000000 00:00 0 
+7fcadeaa3000-7fcadeaa6000 ---p 00000000 00:00 0 
+7fcadeaa6000-7fcadeba4000 rw-p 00000000 00:00 0 
+7fcadeba4000-7fcadeba7000 ---p 00000000 00:00 0 
+7fcadeba7000-7fcadeca5000 rw-p 00000000 00:00 0 
+7fcadeca5000-7fcadeca8000 ---p 00000000 00:00 0 
+7fcadeca8000-7fcadefa6000 rw-p 00000000 00:00 0 
+7fcadefa6000-7fcadf1a6000 rw-p 00000000 00:00 0 
+7fcadf1a6000-7fcadf1a8000 r--s 00009000 08:01 16932091                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-tooling-api-builders-4.10.2.jar
+7fcadf1a8000-7fcadf1aa000 r--s 00003000 08:01 16932092                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-tooling-native-4.10.2.jar
+7fcadf1aa000-7fcadf1ae000 r--s 00019000 08:01 16932090                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-testing-native-4.10.2.jar
+7fcadf1ae000-7fcadf1b0000 r--s 0000d000 08:01 16932106                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/jcommander-1.47.jar
+7fcadf1b0000-7fcadf1b9000 r--s 00089000 08:01 16932407                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/testng-6.3.1.jar
+7fcadf1b9000-7fcadf1be000 r--s 0005a000 08:01 16921138                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/bsh-2.0b6.jar
+7fcadf1be000-7fcadf1c2000 r--s 0001c000 08:01 16932089                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-testing-jvm-4.10.2.jar
+7fcadf1c2000-7fcadf1c4000 r--s 0000e000 08:01 16932243                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/junit-platform-commons-1.0.3.jar
+7fcadf1c4000-7fcadf1c5000 r--s 00001000 08:01 16932389                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/opentest4j-1.0.0.jar
+7fcadf1c5000-7fcadf1c8000 r--s 00013000 08:01 16932244                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/junit-platform-engine-1.0.3.jar
+7fcadf1c8000-7fcadf1c9000 r--s 00000000 08:01 16921130                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/apiguardian-api-1.0.0.jar
+7fcadf1c9000-7fcadf1cb000 r--s 0000c000 08:01 16932245                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/junit-platform-launcher-1.0.3.jar
+7fcadf1cb000-7fcadf1cc000 r--s 00003000 08:01 16932088                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-testing-junit-platform-4.10.2.jar
+7fcadf1cc000-7fcadf1d4000 r--s 00034000 08:01 16932087                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-testing-base-4.10.2.jar
+7fcadf1d4000-7fcadf1db000 r--s 00043000 08:01 16921135                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/bcpg-jdk15on-1.58.jar
+7fcadf1db000-7fcadf1de000 r--s 00010000 08:01 16932085                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-signing-4.10.2.jar
+7fcadf1de000-7fcadf1e0000 r--s 00009000 08:01 16932084                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-scala-4.10.2.jar
+7fcadf1e0000-7fcadf1e1000 r--s 00004000 08:01 16932083                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-resources-sftp-4.10.2.jar
+7fcadf1e1000-7fcadf1ea000 r--s 0005a000 08:01 16921133                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/aws-java-sdk-kms-1.11.267.jar
+7fcadf1ea000-7fcadf1ec000 r--s 00005000 08:01 16932107                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/jmespath-java-1.11.267.jar
+7fcadf1ec000-7fcadf1fe000 r--s 000bb000 08:01 16921134                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/aws-java-sdk-s3-1.11.267.jar
+7fcadf1fe000-7fcadf208000 r--s 00081000 08:01 16932099                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/ion-java-1.0.2.jar
+7fcadf208000-7fcadf21d000 r--s 000bd000 08:01 16921132                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/aws-java-sdk-core-1.11.267.jar
+7fcadf21d000-7fcadf21f000 r--s 00004000 08:01 16932082                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-resources-s3-4.10.2.jar
+7fcadf21f000-7fcadf22f000 r--s 00088000 08:01 16932199                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/joda-time-2.8.2.jar
+7fcadf22f000-7fcadf242000 r--s 00136000 08:01 16932103                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/jackson-databind-2.9.4.jar
+7fcadf242000-7fcadf245000 r--s 0000e000 08:01 16932101                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/jackson-annotations-2.9.4.jar
+7fcadf245000-7fcadf249000 r--s 0004b000 08:01 16932102                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/jackson-core-2.9.4.jar
+7fcadf249000-7fcadf24a000 r--s 00001000 08:01 16921145                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/google-http-client-jackson2-1.23.0.jar
+7fcadf24a000-7fcadf253000 r--s 0004f000 08:01 16921144                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/google-http-client-1.23.0.jar
+7fcadf253000-7fcadf256000 r--s 0000d000 08:01 16921146                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/google-oauth-client-1.23.0.jar
+7fcadf256000-7fcadf25b000 r--s 0002c000 08:01 16921142                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/google-api-client-1.23.0.jar
+7fcadf25b000-7fcadf25f000 r--s 0001c000 08:01 16921143                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/google-api-services-storage-v1-rev116-1.23.0.jar
+7fcadf25f000-7fcadf261000 r--s 00003000 08:01 16932081                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-resources-gcs-4.10.2.jar
+7fcadf261000-7fcadf264000 r--s 0000f000 08:01 16932080                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-reporting-4.10.2.jar
+7fcadf264000-7fcadf266000 r--s 00007000 08:01 16932079                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-publish-4.10.2.jar
+7fcadf266000-7fcadf268000 r--s 00009000 08:01 16921139                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/commons-cli-1.2.jar
+7fcadf268000-7fcadf26e000 r--s 0003e000 08:01 16932078                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-plugins-4.10.2.jar
+7fcadf26e000-7fcadf270000 r--s 0000b000 08:01 16932076                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-plugin-development-4.10.2.jar
+7fcadf270000-7fcadf276000 r--s 00030000 08:01 16932075                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-platform-play-4.10.2.jar
+7fcadf276000-7fcadf27c000 r--s 00033000 08:01 16932406                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/snakeyaml-1.6.jar
+7fcadf27c000-7fcadf28d000 r--s 00075000 08:01 16932074                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-platform-native-4.10.2.jar
+7fcadf28d000-7fcadf291000 r--s 0001b000 08:01 16932073                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-platform-jvm-4.10.2.jar
+7fcadf291000-7fcadf298000 r--s 00029000 08:01 16932072                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-platform-base-4.10.2.jar
+7fcadf298000-7fcadf2c3000 r--s 00247000 08:01 16921137                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/biz.aQute.bndlib-3.4.0.jar
+7fcadf2c3000-7fcadf2c4000 r--s 00004000 08:01 16932071                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-osgi-4.10.2.jar
+7fcadf2c4000-7fcadf2c7000 r--s 0000c000 08:01 16932403                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/pmaven-groovy-0.8-20100325.jar
+7fcadf2c7000-7fcadf2c8000 r--s 00004000 08:01 16932402                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/pmaven-common-0.8-20100325.jar
+7fcadf2c8000-7fcadf2c9000 r--s 00007000 08:01 16932410                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/wagon-http-shared4-2.4.jar
+7fcadf2c9000-7fcadf2ca000 r--s 00002000 08:01 16932409                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/wagon-http-2.4.jar
+7fcadf2ca000-7fcadf2cb000 r--s 00002000 08:01 16932408                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/wagon-file-2.4.jar
+7fcadf2cb000-7fcadf2cd000 r--s 00006000 08:01 16921126                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/aether-connector-wagon-1.13.1.jar
+7fcadf2cd000-7fcadf2d4000 r--s 0002d000 08:01 16932070                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-maven-4.10.2.jar
+7fcadf2d4000-7fcadf2d7000 r--s 0000b000 08:01 16932069                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-language-scala-4.10.2.jar
+7fcadf2d7000-7fcadf2e3000 r--s 0005d000 08:01 16924614                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-language-native-4.10.2.jar
+7fcadf2e3000-7fcadf2e5000 r--s 00005000 08:01 16923247                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-language-jvm-4.10.2.jar
+7fcadf2e5000-7fcadf2ed000 r--s 0003e000 08:01 16921164                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-language-java-4.10.2.jar
+7fcadf2ed000-7fcadf2ef000 r--s 0000b000 08:01 16921163                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-language-groovy-4.10.2.jar
+7fcadf2ef000-7fcadf2f6000 r--s 00035000 08:01 16932405                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/simple-4.1.21.jar
+7fcadf2f6000-7fcadf302000 r--s 00100000 08:01 16932404                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/rhino-1.7R3.jar
+7fcadf302000-7fcadf306000 r--s 00012000 08:01 16921162                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-javascript-4.10.2.jar
+7fcadf306000-7fcadf30a000 r--s 00010000 08:01 16921161                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-jacoco-4.10.2.jar
+7fcadf30a000-7fcadf30d000 r--s 00013000 08:01 16921160                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-ivy-4.10.2.jar
+7fcadf30d000-7fcadf30e000 r--s 00002000 08:01 16921159                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-ide-play-4.10.2.jar
+7fcadf30e000-7fcadf30f000 r--s 00011000 08:01 16921141                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/dd-plist-1.20.jar
+7fcadf30f000-7fcadf316000 r--s 00032000 08:01 16921158                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-ide-native-4.10.2.jar
+7fcadf316000-7fcadf320000 r--s 0005c000 08:01 16921157                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-ide-4.10.2.jar
+7fcadf320000-7fcadf322000 r--s 00008000 08:01 16921156                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-ear-4.10.2.jar
+7fcadf322000-7fcadf324000 r--s 00005000 08:01 16932104                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/jatl-0.2.2.jar
+7fcadf324000-7fcadf32b000 r--s 0003d000 08:01 16921155                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-diagnostics-4.10.2.jar
+7fcadf32b000-7fcadf330000 r--s 00028000 08:01 16921152                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-code-quality-4.10.2.jar
+7fcadf330000-7fcadf332000 r--s 0000b000 08:01 16932384                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/maven-plugin-api-3.0.4.jar
+7fcadf332000-7fcadf334000 r--s 0000b000 08:01 16932411                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/wagon-provider-api-2.4.jar
+7fcadf334000-7fcadf33a000 r--s 0003f000 08:01 16932377                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/maven-compat-3.0.4.jar
+7fcadf33a000-7fcadf33e000 r--s 0001d000 08:01 16932413                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/xbean-reflect-3.4.jar
+7fcadf33e000-7fcadf340000 r--s 00009000 08:01 16932096                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/hamcrest-core-1.3.jar
+7fcadf340000-7fcadf348000 r--s 00045000 08:01 16932242                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/junit-4.12.jar
+7fcadf348000-7fcadf34a000 r--s 0000a000 08:01 16932393                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/plexus-classworlds-2.4.jar
+7fcadf34a000-7fcadf351000 r--s 0002e000 08:01 16932395                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/plexus-container-default-1.5.5.jar
+7fcadf351000-7fcadf357000 r--s 00026000 08:01 16921151                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-build-init-4.10.2.jar
+7fcadf357000-7fcadf35e000 r--s 0002d000 08:01 16921150                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-build-comparison-4.10.2.jar
+7fcadf35e000-7fcadf35f000 r--s 00002000 08:01 16921149                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-build-cache-http-4.10.2.jar
+7fcadf35f000-7fcadf361000 r--s 00009000 08:01 16921148                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-antlr-4.10.2.jar
+7fcadf361000-7fcadf363000 r--s 00004000 08:01 16921147                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-announce-4.10.2.jar
+7fcadf363000-7fcadf365000 r--s 00011000 08:01 16921075                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/gradle-kotlin-dsl-tooling-builders-1.0-rc-6.jar
+7fcadf365000-7fcadf367000 r--s 00005000 08:01 16921074                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/gradle-kotlin-dsl-provider-plugins-1.0-rc-6.jar
+7fcadf367000-7fcadf369000 r--s 0000c000 08:01 16932077                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-plugin-use-4.10.2.jar
+7fcadf369000-7fcadf36a000 r--s 00000000 08:01 16921086                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/gradle-runtime-api-info-4.10.2.jar
+7fcadf36a000-7fcadf383000 r--s 0013a000 08:01 16932414                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/xercesImpl-2.12.0.jar
+7fcadf383000-7fcadf386000 r--s 0001c000 08:01 16932388                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/nekohtml-1.9.20.jar
+7fcadf386000-7fcadf38c000 r--s 0005b000 08:01 16932105                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/jcifs-1.3.17.jar
+7fcadf38c000-7fcadf38f000 r--s 00010000 08:01 16932457                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-resources-http-4.10.2.LIFERAY-PATCHED-3.jar
+7fcadf38f000-7fcadf394000 r--s 00040000 08:01 16932241                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/jsch-0.1.54.jar
+7fcadf394000-7fcadf3b7000 r--s 00223000 08:01 16932390                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/org.eclipse.jgit-4.5.3.201708160445-r.jar
+7fcadf3b7000-7fcadf3be000 r--s 00049000 08:01 16932098                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/httpcore-4.4.9.jar
+7fcadf3be000-7fcadf3c5000 r--s 0003f000 08:01 16921140                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/commons-codec-1.10.jar
+7fcadf3c5000-7fcadf3d3000 r--s 000ae000 08:01 16932097                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/httpclient-4.5.5.jar
+7fcadf3d3000-7fcadf3d5000 r--s 0000c000 08:01 16932093                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-version-control-4.10.2.jar
+7fcadf3d5000-7fcadf3d7000 r--s 0000d000 08:01 16921153                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-composite-builds-4.10.2.jar
+7fcadf3d7000-7fcadf3d8000 r--s 00000000 08:01 16921071                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/gradle-installation-beacon-4.10.2.jar
+7fcadf3d8000-7fcadf3da000 r--s 00006000 08:01 16932385                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/maven-repository-metadata-3.0.4.jar
+7fcadf3da000-7fcadf3dc000 r--s 0000c000 08:01 16932246                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/maven-aether-provider-3.0.4.jar
+7fcadf3dc000-7fcadf3e0000 r--s 00021000 08:01 16932383                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/maven-model-builder-3.0.4.jar
+7fcadf3e0000-7fcadf3e2000 r--s 00026000 08:01 16932382                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/maven-model-3.0.4.jar
+7fcadf3e2000-7fcadf3e4000 r--s 0000a000 08:01 16932386                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/maven-settings-3.0.4.jar
+7fcadf3e4000-7fcadf3e6000 r--s 00002000 08:01 16932391                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/plexus-cipher-1.7.jar
+7fcadf3e6000-7fcadf3e7000 r--s 00006000 08:01 16932397                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/plexus-sec-dispatcher-1.3.jar
+7fcadf3e7000-7fcadf3e9000 r--s 0000d000 08:01 16932396                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/plexus-interpolation-1.14.jar
+7fcadf3e9000-7fcadf3eb000 r--s 00000000 08:01 16932394                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/plexus-component-annotations-1.5.5.jar
+7fcadf3eb000-7fcadf3ee000 r--s 00008000 08:01 16932387                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/maven-settings-builder-3.0.4.jar
+7fcadf3ee000-7fcadf3fa000 r--s 0007d000 08:01 16932379                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/maven-core-3.0.4.jar
+7fcadf3fa000-7fcadf409000 r--s 000d9000 08:01 16932100                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/ivy-2.2.0.jar
+7fcadf409000-7fcadf45c000 r--s 00373000 08:01 16921136                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/bcprov-jdk15on-1.58.jar
+7fcadf45c000-7fcadf48c000 r--s 0018f000 08:01 16921154                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-dependency-management-4.10.2.jar
+7fcadf48c000-7fcadf494000 r-xp 00000000 08:01 8257786                    /opt/java/jdk1.8.0_191/jre/lib/amd64/libmanagement.so
+7fcadf494000-7fcadf694000 ---p 00008000 08:01 8257786                    /opt/java/jdk1.8.0_191/jre/lib/amd64/libmanagement.so
+7fcadf694000-7fcadf695000 r--p 00008000 08:01 8257786                    /opt/java/jdk1.8.0_191/jre/lib/amd64/libmanagement.so
+7fcadf695000-7fcadf696000 rw-p 00009000 08:01 8257786                    /opt/java/jdk1.8.0_191/jre/lib/amd64/libmanagement.so
+7fcadf696000-7fcadf699000 ---p 00000000 00:00 0 
+7fcadf699000-7fcadf797000 rw-p 00000000 00:00 0 
+7fcadf797000-7fcadf7bc000 r-xp 00000000 08:01 13112123                   /lib/x86_64-linux-gnu/libtinfo.so.5.9
+7fcadf7bc000-7fcadf9bc000 ---p 00025000 08:01 13112123                   /lib/x86_64-linux-gnu/libtinfo.so.5.9
+7fcadf9bc000-7fcadf9c0000 r--p 00025000 08:01 13112123                   /lib/x86_64-linux-gnu/libtinfo.so.5.9
+7fcadf9c0000-7fcadf9c1000 rw-p 00029000 08:01 13112123                   /lib/x86_64-linux-gnu/libtinfo.so.5.9
+7fcadf9c1000-7fcadf9e2000 r-xp 00000000 08:01 13112038                   /lib/x86_64-linux-gnu/libncurses.so.5.9
+7fcadf9e2000-7fcadfbe2000 ---p 00021000 08:01 13112038                   /lib/x86_64-linux-gnu/libncurses.so.5.9
+7fcadfbe2000-7fcadfbe3000 r--p 00021000 08:01 13112038                   /lib/x86_64-linux-gnu/libncurses.so.5.9
+7fcadfbe3000-7fcadfbe4000 rw-p 00022000 08:01 13112038                   /lib/x86_64-linux-gnu/libncurses.so.5.9
+7fcadfbe4000-7fcadfbe7000 r-xp 00000000 08:01 14947459                   /opt/git/liferay-portal/.gradle/native/25/linux-amd64-ncurses5/libnative-platform-curses.so
+7fcadfbe7000-7fcadfde7000 ---p 00003000 08:01 14947459                   /opt/git/liferay-portal/.gradle/native/25/linux-amd64-ncurses5/libnative-platform-curses.so
+7fcadfde7000-7fcadfde8000 rw-p 00003000 08:01 14947459                   /opt/git/liferay-portal/.gradle/native/25/linux-amd64-ncurses5/libnative-platform-curses.so
+7fcadfde8000-7fcadfdff000 r-xp 00000000 08:01 13111979                   /lib/x86_64-linux-gnu/libgcc_s.so.1
+7fcadfdff000-7fcadfffe000 ---p 00017000 08:01 13111979                   /lib/x86_64-linux-gnu/libgcc_s.so.1
+7fcadfffe000-7fcadffff000 r--p 00016000 08:01 13111979                   /lib/x86_64-linux-gnu/libgcc_s.so.1
+7fcadffff000-7fcae0000000 rw-p 00017000 08:01 13111979                   /lib/x86_64-linux-gnu/libgcc_s.so.1
+7fcae0000000-7fcae0bf6000 rw-p 00000000 00:00 0 
+7fcae0bf6000-7fcae4000000 ---p 00000000 00:00 0 
+7fcae4000000-7fcae4021000 rw-p 00000000 00:00 0 
+7fcae4021000-7fcae8000000 ---p 00000000 00:00 0 
+7fcae8000000-7fcae9d65000 rw-p 00000000 00:00 0 
+7fcae9d65000-7fcaec000000 ---p 00000000 00:00 0 
+7fcaec000000-7fcaec78a000 rw-p 00000000 00:00 0 
+7fcaec78a000-7fcaf0000000 ---p 00000000 00:00 0 
+7fcaf0000000-7fcaf0004000 r--s 00035000 08:01 16932401                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/plexus-utils-3.0.8.jar
+7fcaf0004000-7fcaf0006000 r--s 0000b000 08:01 16932351                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/maven-artifact-3.0.4.jar
+7fcaf0006000-7fcaf017f000 r-xp 00000000 08:01 16515268                   /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25
+7fcaf017f000-7fcaf037f000 ---p 00179000 08:01 16515268                   /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25
+7fcaf037f000-7fcaf0389000 r--p 00179000 08:01 16515268                   /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25
+7fcaf0389000-7fcaf038b000 rw-p 00183000 08:01 16515268                   /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25
+7fcaf038b000-7fcaf038f000 rw-p 00000000 00:00 0 
+7fcaf038f000-7fcaf0390000 r--s 00003000 08:01 16921128                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/aether-spi-1.13.1.jar
+7fcaf0390000-7fcaf0393000 r--s 0001d000 08:01 16921127                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/aether-impl-1.13.1.jar
+7fcaf0393000-7fcaf0397000 r--s 0001c000 08:01 16921129                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/aether-util-1.13.1.jar
+7fcaf0397000-7fcaf039a000 r--s 00013000 08:01 16921125                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/aether-api-1.13.1.jar
+7fcaf039a000-7fcaf039f000 r--s 00034000 08:01 16932095                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gson-2.7.jar
+7fcaf039f000-7fcaf03a1000 r--s 00012000 08:01 16921131                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/asm-util-6.2.jar
+7fcaf03a1000-7fcaf03a3000 r--s 0000e000 08:01 16932094                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/plugins/gradle-workers-4.10.2.jar
+7fcaf03a3000-7fcaf03aa000 r--s 00000000 08:01 16780197                   /usr/lib/x86_64-linux-gnu/gconv/gconv-modules.cache
+7fcaf03aa000-7fcaf03af000 r-xp 00000000 08:01 14947456                   /opt/git/liferay-portal/.gradle/native/25/linux-amd64/libnative-platform.so
+7fcaf03af000-7fcaf05ae000 ---p 00005000 08:01 14947456                   /opt/git/liferay-portal/.gradle/native/25/linux-amd64/libnative-platform.so
+7fcaf05ae000-7fcaf05af000 rw-p 00004000 08:01 14947456                   /opt/git/liferay-portal/.gradle/native/25/linux-amd64/libnative-platform.so
+7fcaf05af000-7fcaf05b1000 r--s 00006000 08:01 16921088                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/gradle-wrapper-4.10.2.jar
+7fcaf05b1000-7fcaf05c0000 r--s 0004b000 08:01 16921087                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/gradle-tooling-api-4.10.2.jar
+7fcaf05c0000-7fcaf05c2000 r--s 00002000 08:01 16921104                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/kotlin-stdlib-jdk8-1.2.61.jar
+7fcaf05c2000-7fcaf05d2000 r--s 000db000 08:01 16921101                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/kotlin-stdlib-1.2.61.jar
+7fcaf05d2000-7fcaf0607000 r--s 00241000 08:01 16921098                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/kotlin-reflect-1.2.61.jar
+7fcaf0607000-7fcaf07d2000 r--s 019b7000 08:01 16921097                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/kotlin-compiler-embeddable-1.2.61.jar
+7fcaf07d2000-7fcaf07e3000 r-xp 00000000 08:01 8257781                    /opt/java/jdk1.8.0_191/jre/lib/amd64/libnio.so
+7fcaf07e3000-7fcaf09e2000 ---p 00011000 08:01 8257781                    /opt/java/jdk1.8.0_191/jre/lib/amd64/libnio.so
+7fcaf09e2000-7fcaf09e3000 r--p 00010000 08:01 8257781                    /opt/java/jdk1.8.0_191/jre/lib/amd64/libnio.so
+7fcaf09e3000-7fcaf09e4000 rw-p 00011000 08:01 8257781                    /opt/java/jdk1.8.0_191/jre/lib/amd64/libnio.so
+7fcaf09e4000-7fcaf39e5000 rw-p 00000000 00:00 0 
+7fcaf39e5000-7fcaf39fb000 r-xp 00000000 08:01 8257778                    /opt/java/jdk1.8.0_191/jre/lib/amd64/libnet.so
+7fcaf39fb000-7fcaf3bfa000 ---p 00016000 08:01 8257778                    /opt/java/jdk1.8.0_191/jre/lib/amd64/libnet.so
+7fcaf3bfa000-7fcaf3bfb000 r--p 00015000 08:01 8257778                    /opt/java/jdk1.8.0_191/jre/lib/amd64/libnet.so
+7fcaf3bfb000-7fcaf3bfc000 rw-p 00016000 08:01 8257778                    /opt/java/jdk1.8.0_191/jre/lib/amd64/libnet.so
+7fcaf3bfc000-7fcaf3bfd000 ---p 00000000 00:00 0 
+7fcaf3bfd000-7fcaf3cfd000 rw-p 00000000 00:00 0 
+7fcaf3cfd000-7fcaf3d00000 ---p 00000000 00:00 0 
+7fcaf3d00000-7fcaf3dfe000 rw-p 00000000 00:00 0 
+7fcaf3dfe000-7fcaf3dff000 ---p 00000000 00:00 0 
+7fcaf3dff000-7fcaf3e02000 ---p 00000000 00:00 0 
+7fcaf3e02000-7fcaf3eff000 rw-p 00000000 00:00 0 
+7fcaf3eff000-7fcaf3f00000 ---p 00000000 00:00 0 
+7fcaf3f00000-7fcaf3f03000 ---p 00000000 00:00 0 
+7fcaf3f03000-7fcaf4000000 rw-p 00000000 00:00 0 
+7fcaf4000000-7fcaf4021000 rw-p 00000000 00:00 0 
+7fcaf4021000-7fcaf8000000 ---p 00000000 00:00 0 
+7fcaf8000000-7fcaf8067000 rw-p 00000000 00:00 0 
+7fcaf8067000-7fcafc000000 ---p 00000000 00:00 0 
+7fcafc000000-7fcafc036000 rw-p 00000000 00:00 0 
+7fcafc036000-7fcb00000000 ---p 00000000 00:00 0 
+7fcb00000000-7fcb00358000 rw-p 00000000 00:00 0 
+7fcb00358000-7fcb04000000 ---p 00000000 00:00 0 
+7fcb04000000-7fcb0405b000 rw-p 00000000 00:00 0 
+7fcb0405b000-7fcb08000000 ---p 00000000 00:00 0 
+7fcb08000000-7fcb08001000 r--s 00000000 08:01 16921103                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/kotlin-stdlib-jdk7-1.2.61.jar
+7fcb08001000-7fcb08007000 r--s 00015000 08:01 16921102                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/kotlin-stdlib-common-1.2.61.jar
+7fcb08007000-7fcb08009000 r--s 00009000 08:01 16921100                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/kotlin-script-runtime-1.2.61.jar
+7fcb08009000-7fcb0800a000 r--s 00002000 08:01 16921099                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/kotlin-sam-with-receiver-compiler-plugin-1.2.61.jar
+7fcb0800a000-7fcb0800c000 r--s 00000000 08:01 16921076                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/gradle-kotlin-dsl-tooling-models-1.0-rc-6.jar
+7fcb0800c000-7fcb0800e000 r--s 00003000 08:01 16921050                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/annotations-13.0.jar
+7fcb0800e000-7fcb08022000 r--s 00109000 08:01 16921073                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/gradle-kotlin-dsl-1.0-rc-6.jar
+7fcb08022000-7fcb08026000 r--s 00013000 08:01 16921065                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/gradle-build-cache-4.10.2.jar
+7fcb08026000-7fcb0802c000 r--s 00034000 08:01 16921083                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/gradle-persistent-cache-4.10.2.jar
+7fcb0802c000-7fcb08031000 r--s 00015000 08:01 16921085                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/gradle-resources-4.10.2.jar
+7fcb08031000-7fcb08032000 r--s 00003000 08:01 16921066                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/gradle-build-option-4.10.2.jar
+7fcb08032000-7fcb08033000 r--s 00006000 08:01 16921067                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/gradle-cli-4.10.2.jar
+7fcb08033000-7fcb08035000 r--s 00004000 08:01 16921106                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/log4j-over-slf4j-1.7.16.jar
+7fcb08035000-7fcb08037000 r--s 00000000 08:01 16921096                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/jul-to-slf4j-1.7.16.jar
+7fcb08037000-7fcb08039000 r--s 00003000 08:01 16921094                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/jcl-over-slf4j-1.7.16.jar
+7fcb08039000-7fcb08041000 r--s 00035000 08:01 16921078                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/gradle-logging-4.10.2.jar
+7fcb08041000-7fcb08050000 r--s 00085000 08:01 16921080                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/gradle-model-core-4.10.2.jar
+7fcb08050000-7fcb08059000 r--s 0002d000 08:01 16932420                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/xml-apis-1.4.01.jar
+7fcb08059000-7fcb080ca000 r--s 00665000 08:01 16921089                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/groovy-all-2.4.15.jar
+7fcb080ca000-7fcb080cd000 ---p 00000000 00:00 0 
+7fcb080cd000-7fcb081cb000 rw-p 00000000 00:00 0 
+7fcb081cb000-7fcb08ccb000 r--p 00000000 08:01 16521843                   /usr/lib/locale/locale-archive
+7fcb08ccb000-7fcb08cce000 ---p 00000000 00:00 0 
+7fcb08cce000-7fcb08dcc000 rw-p 00000000 00:00 0 
+7fcb08dcc000-7fcb08dcf000 ---p 00000000 00:00 0 
+7fcb08dcf000-7fcb08ecd000 rw-p 00000000 00:00 0 
+7fcb08ecd000-7fcb08ece000 ---p 00000000 00:00 0 
+7fcb08ece000-7fcb0d000000 rw-p 00000000 00:00 0 
+7fcb0d000000-7fcb0e7e0000 rwxp 00000000 00:00 0 
+7fcb0e7e0000-7fcb1c000000 ---p 00000000 00:00 0 
+7fcb1c000000-7fcb1e41f000 rw-p 00000000 00:00 0 
+7fcb1e41f000-7fcb20000000 ---p 00000000 00:00 0 
+7fcb20000000-7fcb20002000 r--s 00006000 08:01 16921064                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/gradle-base-services-groovy-4.10.2.jar
+7fcb20002000-7fcb20004000 r--s 00007000 08:01 16921081                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/gradle-model-groovy-4.10.2.jar
+7fcb20004000-7fcb20005000 r--s 00006000 08:01 16921070                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/gradle-docs-4.10.2.jar
+7fcb20005000-7fcb20006000 r--s 00000000 08:01 16921092                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/javax.inject-1.jar
+7fcb20006000-7fcb20010000 r--s 00078000 08:01 16921058                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/commons-compress-1.14.jar
+7fcb20010000-7fcb2001d000 r--s 00083000 08:01 16921057                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/commons-collections-3.2.2.jar
+7fcb2001d000-7fcb2001e000 r--s 00007000 08:01 16921054                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/asm-analysis-6.2.jar
+7fcb2001e000-7fcb20020000 r--s 0000b000 08:01 16921056                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/asm-tree-6.2.jar
+7fcb20020000-7fcb20022000 r--s 00012000 08:01 16921055                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/asm-commons-6.2.jar
+7fcb20022000-7fcb20023000 r--s 00004000 08:01 16921109                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/native-platform-freebsd-amd64-libcpp-0.14.jar
+7fcb20023000-7fcb20024000 r--s 00004000 08:01 16921110                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/native-platform-freebsd-amd64-libstdcpp-0.14.jar
+7fcb20024000-7fcb20025000 r--s 00004000 08:01 16921111                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/native-platform-freebsd-i386-libcpp-0.14.jar
+7fcb20025000-7fcb20026000 r--s 00003000 08:01 16921112                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/native-platform-freebsd-i386-libstdcpp-0.14.jar
+7fcb20026000-7fcb20027000 r--s 00002000 08:01 16921113                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/native-platform-linux-amd64-0.14.jar
+7fcb20027000-7fcb20028000 r--s 00002000 08:01 16921116                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/native-platform-linux-i386-0.14.jar
+7fcb20028000-7fcb2002a000 r--s 00002000 08:01 16921119                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/native-platform-osx-amd64-0.14.jar
+7fcb2002a000-7fcb2002b000 r--s 00003000 08:01 16921120                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/native-platform-osx-i386-0.14.jar
+7fcb2002b000-7fcb2002d000 r--s 0000b000 08:01 16921121                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/native-platform-windows-amd64-0.14.jar
+7fcb2002d000-7fcb2002e000 r--s 0000b000 08:01 16921122                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/native-platform-windows-i386-0.14.jar
+7fcb2002e000-7fcb2002f000 r--s 00001000 08:01 16921114                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/native-platform-linux-amd64-ncurses5-0.14.jar
+7fcb2002f000-7fcb20030000 r--s 00001000 08:01 16921115                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/native-platform-linux-amd64-ncurses6-0.14.jar
+7fcb20030000-7fcb20031000 r--s 00001000 08:01 16921117                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/native-platform-linux-i386-ncurses5-0.14.jar
+7fcb20031000-7fcb20035000 r--s 00012000 08:01 16921108                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/native-platform-0.14.jar
+7fcb20035000-7fcb20038000 r--s 00023000 08:01 16921091                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/jansi-1.14.jar
+7fcb20038000-7fcb2003c000 r--s 0000c000 08:01 16921082                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/gradle-native-4.10.2.jar
+7fcb2003c000-7fcb2003e000 r--s 0000f000 08:01 16932416                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/reflectasm-1.07-shaded.jar
+7fcb2003e000-7fcb20040000 r--s 00000000 08:01 16921107                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/minlog-1.2.jar
+7fcb20040000-7fcb20042000 r--s 00007000 08:01 16921123                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/objenesis-1.2.jar
+7fcb20042000-7fcb20046000 r--s 00026000 08:01 16921105                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/kryo-2.20.jar
+7fcb20046000-7fcb2004d000 r--s 0002d000 08:01 16921079                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/gradle-messaging-4.10.2.jar
+7fcb2004d000-7fcb2004f000 r--s 00006000 08:01 16921084                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/gradle-process-services-4.10.2.jar
+7fcb2004f000-7fcb20051000 r--s 00000000 08:01 16921072                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/gradle-jvm-services-4.10.2.jar
+7fcb20051000-7fcb20053000 r--s 00006000 08:01 16921095                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/jsr305-2.0.1.jar
+7fcb20053000-7fcb2007b000 r--s 001cf000 08:01 16921090                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/guava-jdk5-17.0.jar
+7fcb2007b000-7fcb2009a000 r--s 001d9000 08:01 16921051                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/ant-1.9.11.jar
+7fcb2009a000-7fcb200e0000 r--s 00265000 08:01 16921068                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/gradle-core-4.10.2.jar
+7fcb200e0000-7fcb200ed000 r--s 00037000 08:01 16921069                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/gradle-core-api-4.10.2.jar
+7fcb200ed000-7fcb200f9000 r--s 00064000 08:01 16921063                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/gradle-base-services-4.10.2.jar
+7fcb200f9000-7fcb20891000 rw-p 00000000 00:00 0 
+7fcb20891000-7fcb20a6b000 r--s 03d6c000 08:01 8129965                    /opt/java/jdk1.8.0_191/jre/lib/rt.jar
+7fcb20a6b000-7fcb216c4000 rw-p 00000000 00:00 0 
+7fcb216c4000-7fcb216c5000 ---p 00000000 00:00 0 
+7fcb216c5000-7fcb217c5000 rw-p 00000000 00:00 0 
+7fcb217c5000-7fcb217c6000 ---p 00000000 00:00 0 
+7fcb217c6000-7fcb21962000 rw-p 00000000 00:00 0 
+7fcb21962000-7fcb21b5e000 ---p 00000000 00:00 0 
+7fcb21b5e000-7fcb21bfa000 rw-p 00000000 00:00 0 
+7fcb21bfa000-7fcb21df5000 ---p 00000000 00:00 0 
+7fcb21df5000-7fcb21f41000 rw-p 00000000 00:00 0 
+7fcb21f41000-7fcb21fa2000 rw-p 00000000 00:00 0 
+7fcb21fa2000-7fcb22302000 ---p 00000000 00:00 0 
+7fcb22302000-7fcb2231c000 r-xp 00000000 08:01 8257774                    /opt/java/jdk1.8.0_191/jre/lib/amd64/libzip.so
+7fcb2231c000-7fcb2251c000 ---p 0001a000 08:01 8257774                    /opt/java/jdk1.8.0_191/jre/lib/amd64/libzip.so
+7fcb2251c000-7fcb2251d000 r--p 0001a000 08:01 8257774                    /opt/java/jdk1.8.0_191/jre/lib/amd64/libzip.so
+7fcb2251d000-7fcb2251e000 rw-p 0001b000 08:01 8257774                    /opt/java/jdk1.8.0_191/jre/lib/amd64/libzip.so
+7fcb2251e000-7fcb22529000 r-xp 00000000 08:01 13112055                   /lib/x86_64-linux-gnu/libnss_files-2.27.so
+7fcb22529000-7fcb22728000 ---p 0000b000 08:01 13112055                   /lib/x86_64-linux-gnu/libnss_files-2.27.so
+7fcb22728000-7fcb22729000 r--p 0000a000 08:01 13112055                   /lib/x86_64-linux-gnu/libnss_files-2.27.so
+7fcb22729000-7fcb2272a000 rw-p 0000b000 08:01 13112055                   /lib/x86_64-linux-gnu/libnss_files-2.27.so
+7fcb2272a000-7fcb22730000 rw-p 00000000 00:00 0 
+7fcb22730000-7fcb22747000 r-xp 00000000 08:01 13112049                   /lib/x86_64-linux-gnu/libnsl-2.27.so
+7fcb22747000-7fcb22946000 ---p 00017000 08:01 13112049                   /lib/x86_64-linux-gnu/libnsl-2.27.so
+7fcb22946000-7fcb22947000 r--p 00016000 08:01 13112049                   /lib/x86_64-linux-gnu/libnsl-2.27.so
+7fcb22947000-7fcb22948000 rw-p 00017000 08:01 13112049                   /lib/x86_64-linux-gnu/libnsl-2.27.so
+7fcb22948000-7fcb2294a000 rw-p 00000000 00:00 0 
+7fcb2294a000-7fcb22955000 r-xp 00000000 08:01 13112066                   /lib/x86_64-linux-gnu/libnss_nis-2.27.so
+7fcb22955000-7fcb22b54000 ---p 0000b000 08:01 13112066                   /lib/x86_64-linux-gnu/libnss_nis-2.27.so
+7fcb22b54000-7fcb22b55000 r--p 0000a000 08:01 13112066                   /lib/x86_64-linux-gnu/libnss_nis-2.27.so
+7fcb22b55000-7fcb22b56000 rw-p 0000b000 08:01 13112066                   /lib/x86_64-linux-gnu/libnss_nis-2.27.so
+7fcb22b56000-7fcb22b5e000 r-xp 00000000 08:01 13112051                   /lib/x86_64-linux-gnu/libnss_compat-2.27.so
+7fcb22b5e000-7fcb22d5e000 ---p 00008000 08:01 13112051                   /lib/x86_64-linux-gnu/libnss_compat-2.27.so
+7fcb22d5e000-7fcb22d5f000 r--p 00008000 08:01 13112051                   /lib/x86_64-linux-gnu/libnss_compat-2.27.so
+7fcb22d5f000-7fcb22d60000 rw-p 00009000 08:01 13112051                   /lib/x86_64-linux-gnu/libnss_compat-2.27.so
+7fcb22d60000-7fcb22d8d000 r-xp 00000000 08:01 8257768                    /opt/java/jdk1.8.0_191/jre/lib/amd64/libjava.so
+7fcb22d8d000-7fcb22f8c000 ---p 0002d000 08:01 8257768                    /opt/java/jdk1.8.0_191/jre/lib/amd64/libjava.so
+7fcb22f8c000-7fcb22f8d000 r--p 0002c000 08:01 8257768                    /opt/java/jdk1.8.0_191/jre/lib/amd64/libjava.so
+7fcb22f8d000-7fcb22f8f000 rw-p 0002d000 08:01 8257768                    /opt/java/jdk1.8.0_191/jre/lib/amd64/libjava.so
+7fcb22f8f000-7fcb22f9c000 r-xp 00000000 08:01 8257773                    /opt/java/jdk1.8.0_191/jre/lib/amd64/libverify.so
+7fcb22f9c000-7fcb2319b000 ---p 0000d000 08:01 8257773                    /opt/java/jdk1.8.0_191/jre/lib/amd64/libverify.so
+7fcb2319b000-7fcb2319d000 r--p 0000c000 08:01 8257773                    /opt/java/jdk1.8.0_191/jre/lib/amd64/libverify.so
+7fcb2319d000-7fcb2319e000 rw-p 0000e000 08:01 8257773                    /opt/java/jdk1.8.0_191/jre/lib/amd64/libverify.so
+7fcb2319e000-7fcb231a5000 r-xp 00000000 08:01 13112106                   /lib/x86_64-linux-gnu/librt-2.27.so
+7fcb231a5000-7fcb233a4000 ---p 00007000 08:01 13112106                   /lib/x86_64-linux-gnu/librt-2.27.so
+7fcb233a4000-7fcb233a5000 r--p 00006000 08:01 13112106                   /lib/x86_64-linux-gnu/librt-2.27.so
+7fcb233a5000-7fcb233a6000 rw-p 00007000 08:01 13112106                   /lib/x86_64-linux-gnu/librt-2.27.so
+7fcb233a6000-7fcb23543000 r-xp 00000000 08:01 13112028                   /lib/x86_64-linux-gnu/libm-2.27.so
+7fcb23543000-7fcb23742000 ---p 0019d000 08:01 13112028                   /lib/x86_64-linux-gnu/libm-2.27.so
+7fcb23742000-7fcb23743000 r--p 0019c000 08:01 13112028                   /lib/x86_64-linux-gnu/libm-2.27.so
+7fcb23743000-7fcb23744000 rw-p 0019d000 08:01 13112028                   /lib/x86_64-linux-gnu/libm-2.27.so
+7fcb23744000-7fcb24426000 r-xp 00000000 08:01 8257750                    /opt/java/jdk1.8.0_191/jre/lib/amd64/server/libjvm.so
+7fcb24426000-7fcb24626000 ---p 00ce2000 08:01 8257750                    /opt/java/jdk1.8.0_191/jre/lib/amd64/server/libjvm.so
+7fcb24626000-7fcb246bc000 r--p 00ce2000 08:01 8257750                    /opt/java/jdk1.8.0_191/jre/lib/amd64/server/libjvm.so
+7fcb246bc000-7fcb246ed000 rw-p 00d78000 08:01 8257750                    /opt/java/jdk1.8.0_191/jre/lib/amd64/server/libjvm.so
+7fcb246ed000-7fcb24728000 rw-p 00000000 00:00 0 
+7fcb24728000-7fcb2490f000 r-xp 00000000 08:01 13111965                   /lib/x86_64-linux-gnu/libc-2.27.so
+7fcb2490f000-7fcb24b0f000 ---p 001e7000 08:01 13111965                   /lib/x86_64-linux-gnu/libc-2.27.so
+7fcb24b0f000-7fcb24b13000 r--p 001e7000 08:01 13111965                   /lib/x86_64-linux-gnu/libc-2.27.so
+7fcb24b13000-7fcb24b15000 rw-p 001eb000 08:01 13111965                   /lib/x86_64-linux-gnu/libc-2.27.so
+7fcb24b15000-7fcb24b19000 rw-p 00000000 00:00 0 
+7fcb24b19000-7fcb24b1c000 r-xp 00000000 08:01 13111988                   /lib/x86_64-linux-gnu/libdl-2.27.so
+7fcb24b1c000-7fcb24d1b000 ---p 00003000 08:01 13111988                   /lib/x86_64-linux-gnu/libdl-2.27.so
+7fcb24d1b000-7fcb24d1c000 r--p 00002000 08:01 13111988                   /lib/x86_64-linux-gnu/libdl-2.27.so
+7fcb24d1c000-7fcb24d1d000 rw-p 00003000 08:01 13111988                   /lib/x86_64-linux-gnu/libdl-2.27.so
+7fcb24d1d000-7fcb24d34000 r-xp 00000000 08:01 8129859                    /opt/java/jdk1.8.0_191/lib/amd64/jli/libjli.so
+7fcb24d34000-7fcb24f33000 ---p 00017000 08:01 8129859                    /opt/java/jdk1.8.0_191/lib/amd64/jli/libjli.so
+7fcb24f33000-7fcb24f34000 r--p 00016000 08:01 8129859                    /opt/java/jdk1.8.0_191/lib/amd64/jli/libjli.so
+7fcb24f34000-7fcb24f35000 rw-p 00017000 08:01 8129859                    /opt/java/jdk1.8.0_191/lib/amd64/jli/libjli.so
+7fcb24f35000-7fcb24f4f000 r-xp 00000000 08:01 13112098                   /lib/x86_64-linux-gnu/libpthread-2.27.so
+7fcb24f4f000-7fcb2514e000 ---p 0001a000 08:01 13112098                   /lib/x86_64-linux-gnu/libpthread-2.27.so
+7fcb2514e000-7fcb2514f000 r--p 00019000 08:01 13112098                   /lib/x86_64-linux-gnu/libpthread-2.27.so
+7fcb2514f000-7fcb25150000 rw-p 0001a000 08:01 13112098                   /lib/x86_64-linux-gnu/libpthread-2.27.so
+7fcb25150000-7fcb25154000 rw-p 00000000 00:00 0 
+7fcb25154000-7fcb2517b000 r-xp 00000000 08:01 13111937                   /lib/x86_64-linux-gnu/ld-2.27.so
+7fcb2517b000-7fcb2517c000 r--s 00001000 08:01 16921118                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/native-platform-linux-i386-ncurses6-0.14.jar
+7fcb2517c000-7fcb2517f000 r--s 0001a000 08:01 16921061                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/fastutil-7.2.1-min.jar
+7fcb2517f000-7fcb25183000 r--s 0002a000 08:01 16921059                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/commons-io-2.4.jar
+7fcb25183000-7fcb25190000 r--s 00068000 08:01 16921077                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/gradle-launcher-4.10.2.jar
+7fcb25190000-7fcb2525b000 rw-p 00000000 00:00 0 
+7fcb2525b000-7fcb2525c000 ---p 00000000 00:00 0 
+7fcb2525c000-7fcb2525f000 ---p 00000000 00:00 0 
+7fcb2525f000-7fcb25360000 rw-p 00000000 00:00 0 
+7fcb25360000-7fcb25361000 r--s 00000000 08:01 16921093                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/jcip-annotations-1.0.jar
+7fcb25361000-7fcb25363000 r--s 0001a000 08:01 16921053                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/asm-6.2.jar
+7fcb25363000-7fcb25364000 r--s 00009000 08:01 16932418                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/slf4j-api-1.7.16.jar
+7fcb25364000-7fcb25369000 r--s 00041000 08:01 16921060                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/commons-lang-2.6.jar
+7fcb25369000-7fcb2536a000 r--s 00004000 08:01 16921052                   /opt/git/liferay-portal/.gradle/wrapper/dists/gradle-4.10.2.LIFERAY-PATCHED-3-bin/e7wcqe1ype7bnmhrlgjopgpge/gradle-4.10.2/lib/ant-launcher-1.9.11.jar
+7fcb2536a000-7fcb2536f000 r--s 000a0000 08:01 8129970                    /opt/java/jdk1.8.0_191/jre/lib/jsse.jar
+7fcb2536f000-7fcb25371000 r--s 0000c000 08:01 14290725                   /opt/git/liferay-portal/gradle/wrapper/gradle-wrapper.jar
+7fcb25371000-7fcb25379000 rw-s 00000000 08:01 13505768                   /tmp/hsperfdata_liferay/47554
+7fcb25379000-7fcb2537a000 rw-p 00000000 00:00 0 
+7fcb2537a000-7fcb2537b000 ---p 00000000 00:00 0 
+7fcb2537b000-7fcb2537c000 r--p 00027000 08:01 13111937                   /lib/x86_64-linux-gnu/ld-2.27.so
+7fcb2537c000-7fcb2537d000 rw-p 00028000 08:01 13111937                   /lib/x86_64-linux-gnu/ld-2.27.so
+7fcb2537d000-7fcb2537e000 rw-p 00000000 00:00 0 
+7ffce38b6000-7ffce38d7000 rw-p 00000000 00:00 0                          [stack]
+7ffce3943000-7ffce3946000 r--p 00000000 00:00 0                          [vvar]
+7ffce3946000-7ffce3948000 r-xp 00000000 00:00 0                          [vdso]
+ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]
+
+VM Arguments:
+jvm_args: -Dgradle.user.home=/opt/git/liferay-portal/.gradle -Dorg.gradle.appname=gradlew 
+java_command: org.gradle.wrapper.GradleWrapperMain --init-script=/opt/git/liferay-portal/modules/init.gradle build
+java_class_path (initial): /opt/git/liferay-portal/gradle/wrapper/gradle-wrapper.jar
+Launcher Type: SUN_STANDARD
+
+Environment Variables:
+JAVA_HOME=/opt/java/jdk1.8.0_191
+PATH=/opt/java/jdk1.8.0_191/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/liferay/.npm-packages/bin:/home/liferay/jpm/bin
+SHELL=/bin/bash
+DISPLAY=:0.0
+
+Signal Handlers:
+SIGSEGV: [libjvm.so+0xaced60], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGBUS: [libjvm.so+0xaced60], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGFPE: [libjvm.so+0x907ca0], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGPIPE: [libjvm.so+0x907ca0], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGXFSZ: [libjvm.so+0x907ca0], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGILL: [libjvm.so+0x907ca0], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGUSR1: SIG_DFL, sa_mask[0]=00000000000000000000000000000000, sa_flags=none
+SIGUSR2: [libjvm.so+0x907b70], sa_mask[0]=00000000000000000000000000000000, sa_flags=SA_RESTART|SA_SIGINFO
+SIGHUP: [libjvm.so+0x908190], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGINT: [libjvm.so+0x908190], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGTERM: [libjvm.so+0x908190], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGQUIT: [libjvm.so+0x908190], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+
+
+---------------  S Y S T E M  ---------------
+
+OS:DISTRIB_ID=Ubuntu
+DISTRIB_RELEASE=18.04
+DISTRIB_CODENAME=bionic
+DISTRIB_DESCRIPTION="Ubuntu 18.04.2 LTS"
+
+uname:Linux 4.15.0-64-generic #73-Ubuntu SMP Thu Sep 12 13:16:13 UTC 2019 x86_64
+libc:glibc 2.27 NPTL 2.27 
+rlimit: STACK 8192k, CORE 0k, NPROC 31573, NOFILE 1048576, AS infinity
+load average:1,10 0,38 0,64
+
+/proc/meminfo:
+MemTotal:        8144560 kB
+MemFree:          123088 kB
+MemAvailable:      39472 kB
+Buffers:             512 kB
+Cached:            67136 kB
+SwapCached:         4860 kB
+Active:          6653168 kB
+Inactive:         921468 kB
+Active(anon):    6646596 kB
+Inactive(anon):   913168 kB
+Active(file):       6572 kB
+Inactive(file):     8300 kB
+Unevictable:          64 kB
+Mlocked:              64 kB
+SwapTotal:       2097148 kB
+SwapFree:              0 kB
+Dirty:               148 kB
+Writeback:             0 kB
+AnonPages:       7502496 kB
+Mapped:            64356 kB
+Shmem:             52648 kB
+Slab:             225720 kB
+SReclaimable:      91440 kB
+SUnreclaim:       134280 kB
+KernelStack:       34016 kB
+PageTables:        55736 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:     6169428 kB
+Committed_AS:   13908460 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:           0 kB
+VmallocChunk:          0 kB
+HardwareCorrupted:     0 kB
+AnonHugePages:         0 kB
+ShmemHugePages:        0 kB
+ShmemPmdMapped:        0 kB
+CmaTotal:              0 kB
+CmaFree:               0 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+DirectMap4k:      403264 kB
+DirectMap2M:     7985152 kB
+DirectMap1G:     2097152 kB
+
+container (cgroup) information:
+container_type: cgroupv1
+cpu_cpuset_cpus: 0-1
+cpu_memory_nodes: 0
+active_processor_count: 2
+cpu_quota: -1
+cpu_period: 100000
+cpu_shares: -1
+memory_limit_in_bytes: -1
+memory_and_swap_limit_in_bytes: -2
+memory_soft_limit_in_bytes: -1
+memory_usage_in_bytes: 7696138240
+memory_max_usage_in_bytes: 7759585280
+
+
+CPU:total 2 (initial active 2) (1 cores per cpu, 1 threads per core) family 6 model 70 stepping 1, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt, avx, avx2, aes, clmul, erms, lzcnt, tsc, tscinvbit, bmi1, bmi2
+
+/proc/cpuinfo:
+processor	: 0
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 70
+model name	: Intel(R) Core(TM) i7-4870HQ CPU @ 2.50GHz
+stepping	: 1
+microcode	: 0x1b
+cpu MHz		: 2494.367
+cache size	: 6144 KB
+physical id	: 0
+siblings	: 1
+core id		: 0
+cpu cores	: 1
+apicid		: 0
+initial apicid	: 0
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 13
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon nopl xtopology tsc_reliable nonstop_tsc cpuid pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm cpuid_fault invpcid_single pti ssbd ibrs ibpb stibp fsgsbase tsc_adjust bmi1 avx2 smep bmi2 invpcid xsaveopt arat md_clear flush_l1d arch_capabilities
+bugs		: cpu_meltdown spectre_v1 spectre_v2 spec_store_bypass l1tf mds swapgs
+bogomips	: 4988.73
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 43 bits physical, 48 bits virtual
+power management:
+
+processor	: 1
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 70
+model name	: Intel(R) Core(TM) i7-4870HQ CPU @ 2.50GHz
+stepping	: 1
+microcode	: 0x1b
+cpu MHz		: 2494.367
+cache size	: 6144 KB
+physical id	: 2
+siblings	: 1
+core id		: 0
+cpu cores	: 1
+apicid		: 2
+initial apicid	: 2
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 13
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon nopl xtopology tsc_reliable nonstop_tsc cpuid pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm cpuid_fault invpcid_single pti ssbd ibrs ibpb stibp fsgsbase tsc_adjust bmi1 avx2 smep bmi2 invpcid xsaveopt arat md_clear flush_l1d arch_capabilities
+bugs		: cpu_meltdown spectre_v1 spectre_v2 spec_store_bypass l1tf mds swapgs
+bogomips	: 4988.73
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 43 bits physical, 48 bits virtual
+power management:
+
+
+
+Memory: 4k page, physical 8144560k(122972k free), swap 2097148k(0k free)
+
+vm_info: Java HotSpot(TM) 64-Bit Server VM (25.191-b12) for linux-amd64 JRE (1.8.0_191-b12), built on Oct  6 2018 05:43:09 by "java_re" with gcc 7.3.0
+
+time: Tue Oct  8 21:11:45 2019
+elapsed time: 27 seconds (0d 0h 0m 27s)
+

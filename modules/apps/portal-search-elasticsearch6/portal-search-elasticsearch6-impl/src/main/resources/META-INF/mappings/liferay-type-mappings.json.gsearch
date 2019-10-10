@@ -836,7 +836,7 @@
 				"store": true,
 				"type": "double"
 			},
-			"gsearch_dates": {
+                        "gsearch_dates": {
                                 "fields": {
                                         "raw": {
                                                 "type": "keyword"

@@ -300,8 +300,13 @@ public class ElasticsearchQueryTranslator
 
 		_existsQueryTranslator = existsQueryTranslator;
 	}
-
-	@Reference(unbind = "-")
+	
+	// GSearch
+	
+	@Reference(
+		target = "(component.name=fi.soveltia.liferay.gsearch.elasticsearch.internal.query.GSearchFunctionScoreQueryTranslatorImpl)",
+		unbind = "-"
+	)
 	protected void setFunctionScoreQueryTranslator(
 		FunctionScoreQueryTranslator functionScoreQueryTranslator) {
 
@@ -378,7 +383,12 @@ public class ElasticsearchQueryTranslator
 		_matchPhraseQueryTranslator = matchPhraseQueryTranslator;
 	}
 
-	@Reference(unbind = "-")
+	// GSearch
+	
+	@Reference(
+		target = "(component.name=fi.soveltia.liferay.gsearch.elasticsearch.internal.query.GSearchMatchQueryTranslatorImpl)",
+		unbind = "-"
+	)
 	protected void setMatchQueryTranslator(
 		MatchQueryTranslator matchQueryTranslator) {
 
@@ -434,7 +444,6 @@ public class ElasticsearchQueryTranslator
 		_regexQueryTranslator = regexQueryTranslator;
 	}
 
-	@Reference(unbind = "-")
 	protected void setScriptQueryTranslator(
 		ScriptQueryTranslator scriptQueryTranslator) {
 
@@ -448,14 +457,24 @@ public class ElasticsearchQueryTranslator
 		_simpleQueryStringQueryTranslator = simpleQueryStringQueryTranslator;
 	}
 
-	@Reference(unbind = "-")
+	// GSearch
+	
+	@Reference(
+		target = "(component.name=fi.soveltia.liferay.gsearch.elasticsearch.internal.query.GSearchStringQueryTranslatorImpl)",
+		unbind = "-"
+	)
 	protected void setStringQueryTranslator(
 		StringQueryTranslator stringQueryTranslator) {
 
 		_stringQueryTranslator = stringQueryTranslator;
 	}
 
-	@Reference(unbind = "-")
+	// GSearch
+	
+	@Reference(
+		target = "(component.name=fi.soveltia.liferay.gsearch.elasticsearch.internal.query.GSearchTermQueryTranslatorImpl)",
+		unbind = "-"
+	)
 	protected void setTermQueryTranslator(
 		TermQueryTranslator termQueryTranslator) {
 

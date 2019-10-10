@@ -236,7 +236,7 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 			}
 		}
 	}
-
+	
 	@Override
 	@Reference(target = "(search.engine.impl=Elasticsearch)", unbind = "-")
 	public void setQuerySuggester(QuerySuggester querySuggester) {

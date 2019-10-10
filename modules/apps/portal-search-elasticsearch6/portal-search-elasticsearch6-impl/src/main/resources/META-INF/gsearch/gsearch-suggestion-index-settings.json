@@ -1,0 +1,44 @@
+{
+	"analysis": {
+		"analyzer": {
+			"keyword_lowercase": {
+				"filter": "lowercase",
+				"tokenizer": "keyword"
+			},
+			"gsearch_shingle_analyzer": {
+				"type": "custom",
+				"tokenizer": "standard",
+				"filter": [
+					"standard",
+					"gsearch_shingle_filter"
+				]
+			},
+			"gsearch_ngram_analyzer": {
+				"type": "custom",
+				"tokenizer": "standard",
+				"filter": [
+					"standard",
+					"gsearch_ngram_filter"
+				]
+			}
+		},
+		"filter": {
+			"gsearch_shingle_filter": {
+				"type": "shingle",
+				"min_shingle_size": 2,
+				"max_shingle_size": 20
+			},
+			"gsearch_ngram_filter": {
+				"type": "nGram",
+				"min_gram": 2,
+				"max_gram": 20,
+				"token_chars": [
+					"letter",
+					"digit",
+					"punctuation",
+					"symbol"
+				]
+			}
+		}
+	}
+}
