@@ -3,16 +3,6 @@
 		"date_detection": false,
 		"dynamic_templates": [
 			{
-				"template_gsearch_content_length": {
-					"mapping": {
-						"store": true,
-						"type": "long"
-					},
-					"match": "gsearch_content_length_*",
-					"match_mapping_type": "long"
-				}
-			},
-			{
 				"template_long_sortable": {
 					"mapping": {
 						"store": true,
@@ -162,8 +152,8 @@
 			{
 				"template_en": {
 					"mapping": {
-						"analyzer": "gsearch_english_analyzer",
-						"search_analyzer": "gsearch_english_search_analyzer",
+						"analyzer": "english",
+						"search_analyzer": "liferay_analyzer_en",
 						"store": true,
 						"term_vector": "with_positions_offsets",
 						"type": "text"
@@ -203,8 +193,7 @@
 			{
 				"template_fi": {
 					"mapping": {
-						"analyzer": "gsearch_finnish_analyzer",
-						"search_analyzer": "gsearch_finnish_search_analyzer",
+						"analyzer": "finnish",
 						"store": true,
 						"term_vector": "with_positions_offsets",
 						"type": "text"
@@ -411,8 +400,7 @@
 			{
 				"template_sv": {
 					"mapping": {
-						"analyzer": "gsearch_swedish_analyzer",
-						"search_analyzer": "gsearch_swedish_search_analyzer",
+						"analyzer": "swedish",
 						"store": true,
 						"term_vector": "with_positions_offsets",
 						"type": "text"
@@ -547,8 +535,6 @@
 				"type": "keyword"
 			},
 			"content": {
-				"analyzer": "gsearch_standard_analyzer",
-				"search_analyzer": "gsearch_standard_search_analyzer",
 				"store": true,
 				"term_vector": "with_positions_offsets",
 				"type": "text"
@@ -580,8 +566,6 @@
 				"type": "keyword"
 			},
 			"description": {
-				"analyzer": "gsearch_standard_analyzer",
-				"search_analyzer": "gsearch_standard_search_analyzer",
 				"store": true,
 				"term_vector": "with_positions_offsets",
 				"type": "text"
@@ -777,8 +761,6 @@
 				"type": "keyword"
 			},
 			"subtitle": {
-				"analyzer": "gsearch_standard_analyzer",
-				"search_analyzer": "gsearch_standard_search_analyzer",
 				"store": true,
 				"type": "text"
 			},
@@ -791,8 +773,6 @@
 				"type": "keyword"
 			},
 			"title": {
-				"analyzer": "gsearch_standard_analyzer",
-				"search_analyzer": "gsearch_standard_search_analyzer",
 				"store": true,
 				"term_vector": "with_positions_offsets",
 				"type": "text"
@@ -832,41 +812,7 @@
 			"visible": {
 				"store": true,
 				"type": "keyword"
-			},
-			"gsearch_version_count": {
-				"store": true,
-				"type": "double"
-			},
-			"gsearch_dates": {
-                "fields": {
-	                "raw": {
-						"type": "keyword"
-	                }
-                },
-                "store": true,
-                "term_vector": "with_positions_offsets",
-                "type": "text"
-            },
-            "gsearch_locations": {
-	            "fields": {
-                    "raw": {
-						"type": "keyword"
-                    }
-	            },
-				"store": true,
-				"term_vector": "with_positions_offsets",
-				"type": "text"
-			},
-			"gsearch_persons": {
-				"fields": {
-					"raw": {
-						"type": "keyword"
-					}
-				},
-				"store": true,
-				"term_vector": "with_positions_offsets",
-				"type": "text"
-            }
+			}
 		}
 	}
 }

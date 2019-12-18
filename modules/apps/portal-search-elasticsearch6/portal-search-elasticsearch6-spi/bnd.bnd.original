@@ -1,5 +1,5 @@
 Bundle-Name: Liferay Portal Search Elasticsearch 6 SPI
-Bundle-SymbolicName: com.liferay.portal.search.elasticsearch6.GSEARCH-PATCHED-SPI-72-DXP-SP1
+Bundle-SymbolicName: com.liferay.portal.search.elasticsearch6.spi
 Bundle-Version: 1.0.4
 Export-Package:\
 	com.liferay.portal.search.elasticsearch6.spi.index,\

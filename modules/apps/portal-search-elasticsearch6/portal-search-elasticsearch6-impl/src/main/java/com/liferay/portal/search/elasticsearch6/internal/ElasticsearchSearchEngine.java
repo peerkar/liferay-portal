@@ -58,6 +58,8 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import fi.soveltia.liferay.gsearch.elasticsearch.internal.index.GSearchIndexFactory;
+
 /**
  * @author Michael C. Han
  */
@@ -110,6 +112,10 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		Client client = _elasticsearchConnectionManager.getClient();
 
 		_indexFactory.createIndices(client.admin(), companyId);
+		
+        // GSearch
+
+        _gSearchIndexFactory.createIndices(client.admin(), companyId);
 
 		_elasticsearchConnectionManager.registerCompanyId(companyId);
 
@@ -136,6 +142,11 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 			_indexFactory.deleteIndices(
 				_elasticsearchConnectionManager.getAdminClient(), companyId);
 
+            // GSearch
+
+            _gSearchIndexFactory.deleteIndices(
+            		_elasticsearchConnectionManager.getAdminClient(), companyId);			
+			
 			_elasticsearchConnectionManager.unregisterCompanyId(companyId);
 		}
 		catch (Exception e) {
@@ -334,4 +345,8 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 	private IndexNameBuilder _indexNameBuilder;
 	private SearchEngineAdapter _searchEngineAdapter;
 
+    // GSearch index factory
+    
+    @Reference
+    protected GSearchIndexFactory _gSearchIndexFactory;
 }

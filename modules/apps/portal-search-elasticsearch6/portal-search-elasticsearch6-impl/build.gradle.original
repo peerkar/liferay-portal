@@ -110,15 +110,6 @@ dependencies {
 	testCompile project(":core:petra:petra-process")
 	testCompile project(":core:petra:petra-reflect")
 	testCompile project(":core:registry-api")
-	
-	// GSearch: custom query types
-
-	compileOnly files('gsearch-libs/fi.soveltia.liferay.gsearch.query-5.0.0.jar')
-
-	// GSearch: https://github.com/o19s/elasticsearch-learning-to-rank
-
-	compileInclude files('ltr-1.1.0-es6.5.0/ltr-1.1.0-es6.5.0.jar')
-	compileInclude files('ltr-1.1.0-es6.5.0/RankyMcRankFace-0.1.1.jar')	
 }
 
 deployDependencies {
@@ -135,33 +126,4 @@ processResources {
 	into("plugins") {
 		from configurations.elasticsearchPlugins
 	}
-}
-
-// GSearch: These exludes make build to succeed. Thanks to Sampsa Sohlman (https://github.com/sammso/game-of-liferay/blob/master/build.gradle) :)
-
-gradle.taskGraph.whenReady { graph ->
-
-    def disabledTasks = [
-            "findbugsMain",
-            "compileTestIntegrationJava",
-            "findbugsTestIntegration",
-            "generateJSPJava",
-            "writeFindBugsProject",
-            "compileTestJava",
-            "findSecurityBugs",
-            "findbugsTest",
-			"pmdMain",
-			"pmdTest"
-    ]
-
-    graph.allTasks.findAll {
-        
-        if (disabledTasks.contains(it.name)) {
-                println "Disabled : " + it.name
-                it.enabled=false
-        }
-        else {
-              println "Enabled : " + it.name
-        }       
-    }
 }

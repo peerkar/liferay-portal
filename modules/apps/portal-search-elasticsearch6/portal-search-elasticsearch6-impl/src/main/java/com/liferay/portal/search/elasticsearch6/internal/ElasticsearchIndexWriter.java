@@ -322,14 +322,16 @@ public class ElasticsearchIndexWriter extends BaseIndexWriter {
 			}
 		}
 	}
+	
+    // GSearch modified
+    
+    @Override
+    @Reference(target = "(search.engine.impl=GSearch)", unbind = "-")
+    public void setSpellCheckIndexWriter(
+            SpellCheckIndexWriter spellCheckIndexWriter) {
 
-	@Override
-	@Reference(target = "(search.engine.impl=Elasticsearch)", unbind = "-")
-	public void setSpellCheckIndexWriter(
-		SpellCheckIndexWriter spellCheckIndexWriter) {
-
-		super.setSpellCheckIndexWriter(spellCheckIndexWriter);
-	}
+            super.setSpellCheckIndexWriter(spellCheckIndexWriter);
+    }
 
 	@Override
 	public void updateDocument(SearchContext searchContext, Document document) {

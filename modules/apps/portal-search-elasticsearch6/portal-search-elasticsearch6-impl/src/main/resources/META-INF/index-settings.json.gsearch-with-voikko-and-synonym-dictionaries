@@ -23,7 +23,7 @@
 					"spanish_stemmer"
 				],
 				"tokenizer": "standard"
-			},
+			},			
 			"gsearch_finnish_analyzer": {
 				"type": "custom",
 				"tokenizer": "standard",
@@ -31,6 +31,7 @@
 					"lowercase",
 					"gsearch_finnish_stop",
 					"gsearch_finnish_stemmer",
+                    "gsearch_finnish_voikko",
 					"asciifolding"
 				]
 			},
@@ -41,6 +42,7 @@
 					"lowercase",
 					"gsearch_finnish_stop",
 					"gsearch_finnish_stemmer",
+                    "gsearch_finnish_voikko",
 					"gsearch_finnish_synonyms",
 					"asciifolding"
 				]
@@ -136,7 +138,7 @@
 			"spanish_stop": {
 				"stopwords": "_spanish_",
 				"type": "stop"
-			},
+			},		
 			"gsearch_english_light_stemmer": {
 				"type": "stemmer",
 				"language": "light_english"
@@ -165,6 +167,11 @@
 				"type": "synonym",
 				"synonyms_path": "gsearch-synonyms/finnish-synonyms.txt"
 			},
+	       	"gsearch_finnish_voikko": {
+	          "type": "voikko",
+	          "libraryPath": "/usr/lib/x86_64-linux-gnu",
+			  "dictionaryPath": "/opt/software/voikko/dictionary"
+	        },
 			"gsearch_swedish_stemmer": {
 				"type": "stemmer",
 				"language": "swedish"
