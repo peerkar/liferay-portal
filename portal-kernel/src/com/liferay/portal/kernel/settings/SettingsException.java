@@ -28,12 +28,12 @@ public class SettingsException extends PortalException {
 		super(msg);
 	}
 
-	public SettingsException(String msg, Throwable cause) {
-		super(msg, cause);
+	public SettingsException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public SettingsException(Throwable cause) {
-		super(cause);
+	public SettingsException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

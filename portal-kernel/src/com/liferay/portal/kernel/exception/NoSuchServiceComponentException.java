@@ -26,12 +26,12 @@ public class NoSuchServiceComponentException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchServiceComponentException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchServiceComponentException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchServiceComponentException(Throwable cause) {
-		super(cause);
+	public NoSuchServiceComponentException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -87,15 +87,15 @@ public abstract class BaseSerialDiffPipelineAggregationTestCase
 		Assert.assertEquals(expectedKey, bucket.getKey());
 		Assert.assertEquals(expectedCount, bucket.getDocCount());
 
-		Map<String, AggregationResult> childrenAggregationResults =
-			bucket.getChildrenAggregationResults();
-
-		SerialDiffPipelineAggregationResult
-			serialDiffPipelineAggregationResult =
-				(SerialDiffPipelineAggregationResult)
-					childrenAggregationResults.get("serial_diff");
-
 		if (serialDiffValue != null) {
+			Map<String, AggregationResult> childrenAggregationResults =
+				bucket.getChildrenAggregationResults();
+
+			SerialDiffPipelineAggregationResult
+				serialDiffPipelineAggregationResult =
+					(SerialDiffPipelineAggregationResult)
+						childrenAggregationResults.get("serial_diff");
+
 			Assert.assertNotNull(serialDiffPipelineAggregationResult);
 
 			Assert.assertEquals(

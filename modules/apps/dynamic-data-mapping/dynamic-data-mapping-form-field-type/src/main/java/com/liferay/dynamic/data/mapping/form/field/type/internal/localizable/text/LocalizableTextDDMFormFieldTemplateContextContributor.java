@@ -122,9 +122,7 @@ public class LocalizableTextDDMFormFieldTemplateContextContributor
 			"displayName", locale.getDisplayName(locale)
 		).put(
 			"icon",
-			StringUtil.replace(
-				languageId, '_', "-"
-			).toLowerCase()
+			StringUtil.toLowerCase(StringUtil.replace(languageId, '_', "-"))
 		).put(
 			"localeId", languageId
 		);

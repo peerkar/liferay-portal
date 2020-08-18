@@ -1,6 +1,7 @@
 @import 'atlas-variables';
 
 $controlMenuDesktopHeight: 56px;
+$previewInfoBarHeight: 36px;
 $toolbarDesktopHeight: 56px;
 
 .style-book-editor {
@@ -35,8 +36,30 @@ $toolbarDesktopHeight: 56px;
 
 		&-frame {
 			border: none;
-			height: 100%;
+			height: calc(100% - #{$previewInfoBarHeight});
 			width: 100%;
+		}
+
+		&-info-bar {
+			align-items: center;
+			background: $primary-l1;
+			color: $white;
+			display: flex;
+			font-size: 0.875rem;
+			height: $previewInfoBarHeight;
+			justify-content: space-between;
+			padding-bottom: 1px;
+			padding-left: 24px;
+			padding-right: 24px;
+
+			.dropdown-toggle.btn {
+				&:active {
+					background-color: rgba($white, 0.25);
+				}
+				&:hover {
+					background-color: rgba($white, 0.15);
+				}
+			}
 		}
 
 		&-no-page-message {
@@ -50,15 +73,49 @@ $toolbarDesktopHeight: 56px;
 			justify-content: center;
 		}
 
-		&::after {
-			content: '';
-			cursor: not-allowed;
-			display: block;
-			height: 100%;
-			left: 0;
-			position: absolute;
-			top: 0;
-			width: 100%;
+		&-text {
+			font-weight: 700;
+		}
+	}
+
+	&__page-type-selector {
+		border-bottom: 1px solid $gray-300;
+		padding: 16px;
+	}
+
+	&__page-selector {
+		min-width: 320px;
+		padding: 0;
+
+		.dropdown-item:hover {
+			background-color: $white;
+		}
+	}
+
+	&__page-tree {
+		padding: 16px 0;
+
+		.tree-expanded > .tree-hitarea {
+			padding-right: 4px;
+		}
+
+		.tree-container:not(.tree-root-container) {
+			margin-left: 22px;
+		}
+
+		.lexicon-icon:not(.lexicon-icon-hr):not(.lexicon-icon-plus) {
+			margin-right: 4px;
+		}
+
+		.tree-node {
+			margin-bottom: 8px;
+			margin-top: 8px;
+
+			.tree-hitarea {
+				font-size: 8px;
+				margin-right: 0;
+				text-align: center;
+			}
 		}
 	}
 

@@ -90,10 +90,14 @@ else if (metadataField.equals("view-count")) {
 		String displayDate = StringPool.BLANK;
 
 		if (assetEntry.getPublishDate() != null) {
-			displayDate = LanguageUtil.format(request, "x-ago", LanguageUtil.getTimeDescription(request, System.currentTimeMillis() - assetEntry.getPublishDate().getTime(), true), false);
+			Date publishDate = assetEntry.getPublishDate();
+
+			displayDate = LanguageUtil.format(request, "x-ago", LanguageUtil.getTimeDescription(request, System.currentTimeMillis() - publishDate.getTime(), true), false);
 		}
 		else if (assetEntry.getModifiedDate() != null) {
-			displayDate = LanguageUtil.format(request, "x-ago", LanguageUtil.getTimeDescription(request, System.currentTimeMillis() - assetEntry.getModifiedDate().getTime(), true), false);
+			Date modifiedDate = assetEntry.getModifiedDate();
+
+			displayDate = LanguageUtil.format(request, "x-ago", LanguageUtil.getTimeDescription(request, System.currentTimeMillis() - modifiedDate.getTime(), true), false);
 		}
 		%>
 

@@ -28,12 +28,12 @@ public class DispatchTriggerStartDateException extends PortalException {
 		super(msg);
 	}
 
-	public DispatchTriggerStartDateException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DispatchTriggerStartDateException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DispatchTriggerStartDateException(Throwable cause) {
-		super(cause);
+	public DispatchTriggerStartDateException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

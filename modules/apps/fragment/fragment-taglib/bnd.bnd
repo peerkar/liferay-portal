@@ -1,6 +1,6 @@
 Bundle-Name: Liferay Fragment Taglib
 Bundle-SymbolicName: com.liferay.fragment.taglib
-Bundle-Version: 3.0.7
+Bundle-Version: 3.0.8
 Provide-Capability:\
 	osgi.extender;\
 		osgi.extender="jsp.taglib";\

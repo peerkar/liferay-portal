@@ -36,7 +36,7 @@
 </tr>
 <tr>
 	<td>LIST_GROUP_ITEM_ELLIPSIS_ICON_IE</td>
-	<td>//li[contains(.,'${key_pageName}')]//button[contains(@class,'dropdown-toggle')]</td>
+	<td>xpath=(//li[contains(.,'${key_pageName}')]//button[contains(@class,'dropdown-toggle')])[2]</td>
 	<td></td>
 </tr>
 <tr>
@@ -108,6 +108,11 @@
 <tr>
 	<td>DETAILS_FRIENDLY_BASE_URL</td>
 	<td>//div[contains(@class,'friendly-url')]/div[contains(@class,'form-text')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>FRIENDLY_URL</td>
+	<td>//input[contains(@name,'friendlyURL') and contains(@value,'${key_friendlyURL}')]</td>
 	<td></td>
 </tr>
 <tr>

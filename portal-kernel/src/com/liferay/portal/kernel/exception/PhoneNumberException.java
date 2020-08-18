@@ -26,12 +26,12 @@ public class PhoneNumberException extends PortalException {
 		super(msg);
 	}
 
-	public PhoneNumberException(String msg, Throwable cause) {
-		super(msg, cause);
+	public PhoneNumberException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public PhoneNumberException(Throwable cause) {
-		super(cause);
+	public PhoneNumberException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

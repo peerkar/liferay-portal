@@ -29,7 +29,7 @@ portletDisplay.setURLBack(viewChangesDisplayContext.getBackURL());
 portletDisplay.setShowBackIcon(true);
 %>
 
-<nav class="change-lists-tbar component-tbar subnav-tbar-light tbar ">
+<nav class="change-lists-tbar component-tbar subnav-tbar-light tbar">
 	<clay:container-fluid>
 		<ul class="tbar-nav">
 			<c:choose>
@@ -149,19 +149,6 @@ portletDisplay.setShowBackIcon(true);
 			/>
 		</c:when>
 		<c:otherwise>
-
-			<%
-			NavigationItemList navigationItems = NavigationItemListBuilder.add(
-				navigationItem -> {
-					navigationItem.setActive(true);
-					navigationItem.setLabel(LanguageUtil.get(request, "changes"));
-				}).build();
-			%>
-
-			<clay:navigation-bar
-				navigationItems="<%= navigationItems %>"
-			/>
-
 			<clay:container-fluid>
 				<liferay-ui:empty-result-message
 					message="no-changes-were-found"

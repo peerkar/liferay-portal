@@ -40,14 +40,14 @@ public class LARFileException extends PortalException {
 		_type = type;
 	}
 
-	public LARFileException(int type, String msg, Throwable cause) {
-		this(msg, cause);
+	public LARFileException(int type, String msg, Throwable throwable) {
+		this(msg, throwable);
 
 		_type = type;
 	}
 
-	public LARFileException(int type, Throwable cause) {
-		this(cause);
+	public LARFileException(int type, Throwable throwable) {
+		this(throwable);
 
 		_type = type;
 	}
@@ -56,12 +56,12 @@ public class LARFileException extends PortalException {
 		super(msg);
 	}
 
-	public LARFileException(String msg, Throwable cause) {
-		super(msg, cause);
+	public LARFileException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public LARFileException(Throwable cause) {
-		super(cause);
+	public LARFileException(Throwable throwable) {
+		super(throwable);
 	}
 
 	public int getType() {

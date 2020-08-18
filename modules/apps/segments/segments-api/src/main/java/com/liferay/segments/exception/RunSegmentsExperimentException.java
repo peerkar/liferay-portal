@@ -28,12 +28,12 @@ public class RunSegmentsExperimentException extends PortalException {
 		super(msg);
 	}
 
-	public RunSegmentsExperimentException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RunSegmentsExperimentException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public RunSegmentsExperimentException(Throwable cause) {
-		super(cause);
+	public RunSegmentsExperimentException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

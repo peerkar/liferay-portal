@@ -29,12 +29,14 @@ public class LayoutPageTemplateEntryNameException extends PortalException {
 		super(msg);
 	}
 
-	public LayoutPageTemplateEntryNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public LayoutPageTemplateEntryNameException(
+		String msg, Throwable throwable) {
+
+		super(msg, throwable);
 	}
 
-	public LayoutPageTemplateEntryNameException(Throwable cause) {
-		super(cause);
+	public LayoutPageTemplateEntryNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 	public static class MustNotBeDuplicate

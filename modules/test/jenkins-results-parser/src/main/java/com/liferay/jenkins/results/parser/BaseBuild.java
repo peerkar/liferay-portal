@@ -944,6 +944,29 @@ public abstract class BaseBuild implements Build {
 		return _parentBuild;
 	}
 
+	public long getQueuingDuration() {
+		JSONObject buildJSONObject = getBuildJSONObject(
+			"actions[queuingDurationMillis]");
+
+		JSONArray actionsJSONArray = buildJSONObject.getJSONArray("actions");
+
+		for (int i = 0; i < actionsJSONArray.length(); i++) {
+			Object actions = actionsJSONArray.get(i);
+
+			if (actions == JSONObject.NULL) {
+				continue;
+			}
+
+			JSONObject actionJSONObject = actionsJSONArray.getJSONObject(i);
+
+			if (actionJSONObject.has("queuingDurationMillis")) {
+				return actionJSONObject.getLong("queuingDurationMillis");
+			}
+		}
+
+		return 0;
+	}
+
 	@Override
 	public String getResult() {
 		if ((_result == null) && (getBuildURL() != null)) {
@@ -1368,6 +1391,10 @@ public abstract class BaseBuild implements Build {
 
 	@Override
 	public void reinvoke(ReinvokeRule reinvokeRule) {
+		if (badBuildNumbers.size() >= REINVOCATIONS_SIZE_MAX) {
+			return;
+		}
+
 		Build parentBuild = getParentBuild();
 
 		String parentBuildStatus = parentBuild.getStatus();
@@ -1503,7 +1530,7 @@ public abstract class BaseBuild implements Build {
 	}
 
 	@Override
-	public void update() {
+	public synchronized void update() {
 		String status = getStatus();
 
 		if ((status.equals("completed") &&
@@ -2904,14 +2931,7 @@ public abstract class BaseBuild implements Build {
 	}
 
 	protected String getReinvokedMessage() {
-		StringBuffer sb = new StringBuffer();
-
-		sb.append("Reinvoked: ");
-		sb.append(getBuildURL());
-		sb.append(" at ");
-		sb.append(getInvocationURL());
-
-		return sb.toString();
+		return "Reinvoked: " + getBuildURL();
 	}
 
 	protected JSONObject getRunningBuildJSONObject() throws IOException {

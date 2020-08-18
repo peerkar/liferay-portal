@@ -129,6 +129,7 @@ definition {
 
 		Depot.configureDDMStructures(
 			depotName = "Test Depot Name",
+			disconnectDisabled = "true",
 			siteName = "Site Name",
 			tableEntryText = "Yes");
 
@@ -211,6 +212,14 @@ definition {
 			webContentTitle = "Web Content Title");
 
 		PortletEntry.publish();
+
+		DepotNavigator.openDepotAdmin();
+
+		Depot.configureDDMStructures(
+			depotName = "Test Depot Name",
+			makeWCUnavailable = "true",
+			siteName = "Site Name",
+			tableEntryText = "No");
 
 		DepotNavigator.openDepotAdmin();
 

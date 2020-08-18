@@ -31,12 +31,12 @@ public class RecordSetDDMStructureIdException extends PortalException {
 		super(msg);
 	}
 
-	public RecordSetDDMStructureIdException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RecordSetDDMStructureIdException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public RecordSetDDMStructureIdException(Throwable cause) {
-		super(cause);
+	public RecordSetDDMStructureIdException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

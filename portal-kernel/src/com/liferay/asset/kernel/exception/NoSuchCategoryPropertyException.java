@@ -28,12 +28,12 @@ public class NoSuchCategoryPropertyException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchCategoryPropertyException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchCategoryPropertyException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchCategoryPropertyException(Throwable cause) {
-		super(cause);
+	public NoSuchCategoryPropertyException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

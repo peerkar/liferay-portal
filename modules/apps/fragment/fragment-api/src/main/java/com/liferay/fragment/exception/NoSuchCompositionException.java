@@ -28,12 +28,12 @@ public class NoSuchCompositionException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchCompositionException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchCompositionException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchCompositionException(Throwable cause) {
-		super(cause);
+	public NoSuchCompositionException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

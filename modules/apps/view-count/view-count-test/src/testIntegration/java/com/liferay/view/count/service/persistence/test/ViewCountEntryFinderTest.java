@@ -120,8 +120,8 @@ public class ViewCountEntryFinderTest {
 								return null;
 							});
 					}
-					catch (Throwable t) {
-						return ReflectionUtil.throwException(t);
+					catch (Throwable throwable) {
+						return ReflectionUtil.throwException(throwable);
 					}
 				});
 		}

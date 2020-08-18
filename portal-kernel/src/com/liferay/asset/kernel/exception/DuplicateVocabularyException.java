@@ -28,12 +28,12 @@ public class DuplicateVocabularyException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateVocabularyException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateVocabularyException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateVocabularyException(Throwable cause) {
-		super(cause);
+	public DuplicateVocabularyException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

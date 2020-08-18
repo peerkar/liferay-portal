@@ -28,12 +28,14 @@ public class DuplicateKaleoDefinitionNameException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateKaleoDefinitionNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateKaleoDefinitionNameException(
+		String msg, Throwable throwable) {
+
+		super(msg, throwable);
 	}
 
-	public DuplicateKaleoDefinitionNameException(Throwable cause) {
-		super(cause);
+	public DuplicateKaleoDefinitionNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

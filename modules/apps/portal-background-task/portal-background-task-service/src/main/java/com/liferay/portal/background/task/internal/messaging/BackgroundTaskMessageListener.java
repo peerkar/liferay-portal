@@ -157,10 +157,10 @@ public class BackgroundTaskMessageListener extends BaseMessageListener {
 				status = BackgroundTaskConstants.STATUS_FAILED;
 
 				if (exception instanceof SystemException) {
-					Throwable cause = exception.getCause();
+					Throwable throwable = exception.getCause();
 
-					if (cause instanceof Exception) {
-						exception = (Exception)cause;
+					if (throwable instanceof Exception) {
+						exception = (Exception)throwable;
 					}
 				}
 

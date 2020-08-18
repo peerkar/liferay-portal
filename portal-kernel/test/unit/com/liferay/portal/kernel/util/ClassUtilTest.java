@@ -279,9 +279,9 @@ public class ClassUtilTest {
 		catch (Exception exception) {
 			Assert.assertSame(SystemException.class, exception.getClass());
 
-			Throwable cause = exception.getCause();
+			Throwable throwable = exception.getCause();
 
-			Assert.assertSame(URISyntaxException.class, cause.getClass());
+			Assert.assertSame(URISyntaxException.class, throwable.getClass());
 		}
 	}
 
@@ -304,9 +304,10 @@ public class ClassUtilTest {
 		catch (Exception exception) {
 			Assert.assertSame(SystemException.class, exception.getClass());
 
-			Throwable cause = exception.getCause();
+			Throwable throwable = exception.getCause();
 
-			Assert.assertSame(MalformedURLException.class, cause.getClass());
+			Assert.assertSame(
+				MalformedURLException.class, throwable.getClass());
 		}
 	}
 

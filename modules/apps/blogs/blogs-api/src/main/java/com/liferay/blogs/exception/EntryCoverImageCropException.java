@@ -28,12 +28,12 @@ public class EntryCoverImageCropException extends PortalException {
 		super(msg);
 	}
 
-	public EntryCoverImageCropException(String msg, Throwable cause) {
-		super(msg, cause);
+	public EntryCoverImageCropException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public EntryCoverImageCropException(Throwable cause) {
-		super(cause);
+	public EntryCoverImageCropException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

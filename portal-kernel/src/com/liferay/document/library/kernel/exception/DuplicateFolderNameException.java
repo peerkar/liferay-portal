@@ -28,12 +28,12 @@ public class DuplicateFolderNameException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateFolderNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateFolderNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateFolderNameException(Throwable cause) {
-		super(cause);
+	public DuplicateFolderNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

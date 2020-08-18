@@ -39,6 +39,7 @@ import com.liferay.dynamic.data.mapping.util.comparator.FormInstanceVersionVersi
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -46,14 +47,10 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
+import java.text.Format;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -110,22 +107,6 @@ public class DDMFormInstanceRecordExporterImpl
 		}
 
 		return builder.build();
-	}
-
-	protected String formatDate(
-		Date date, DateTimeFormatter dateTimeFormatter) {
-
-		LocalDateTime localDateTime = LocalDateTime.ofInstant(
-			date.toInstant(), ZoneId.systemDefault());
-
-		return dateTimeFormatter.format(localDateTime);
-	}
-
-	protected DateTimeFormatter getDateTimeFormatter(Locale locale) {
-		DateTimeFormatter dateTimeFormatter =
-			DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT);
-
-		return dateTimeFormatter.withLocale(locale);
 	}
 
 	protected Map<String, String> getDDMFormFieldsLabel(
@@ -185,9 +166,9 @@ public class DDMFormInstanceRecordExporterImpl
 			List<DDMFormInstanceRecord> ddmFormInstanceRecords, Locale locale)
 		throws Exception {
 
-		DateTimeFormatter dateTimeFormatter = getDateTimeFormatter(locale);
-
 		List<Map<String, String>> ddmFormFieldValues = new ArrayList<>();
+
+		Format dateTimeFormat = FastDateFormatFactoryUtil.getDateTime(locale);
 
 		for (DDMFormInstanceRecord ddmFormInstanceRecord :
 				ddmFormInstanceRecords) {
@@ -224,9 +205,8 @@ public class DDMFormInstanceRecordExporterImpl
 
 			ddmFormFieldsValue.put(
 				_MODIFIED_DATE,
-				formatDate(
-					ddmFormInstanceRecordVersion.getStatusDate(),
-					dateTimeFormatter));
+				dateTimeFormat.format(
+					ddmFormInstanceRecordVersion.getStatusDate()));
 
 			ddmFormFieldsValue.put(
 				_AUTHOR, ddmFormInstanceRecordVersion.getUserName());

@@ -151,7 +151,7 @@ definition {
 	@description = "This is a test for LPS-101330. A user should be able to add a video fragment and the video should play."
 	@priority = "5"
 	test AddContentPageWithVideoFragment {
-		property portal.acceptance = "false";
+		property portal.acceptance = "true";
 
 		// Assert the Home page is a content page in the default site
 
@@ -289,6 +289,8 @@ definition {
 	@description = "This is a use case for LPS-86141. The fragment should be added to all cells of the Collection Display when add it to one cell."
 	@priority = "5"
 	test AddFragmentToOneCellOfCollectionDisplay {
+		property osgi.app.includes = "bookmarks";
+		property osgi.app.includes = "document-library-google-docs";
 		property portal.acceptance = "true";
 
 		task ("Add three Web Content Articles based on Basic Web Content") {
@@ -726,7 +728,7 @@ definition {
 
 			PageEditor.editLayoutGrid(
 				columnCount = "2",
-				panel = "Configuration");
+				panel = "General");
 		}
 
 		task ("Add a Collection Display fragment to column 1") {
@@ -791,7 +793,7 @@ definition {
 				key_collectionName = "Basic Components",
 				key_fragmentName = "Paragraph",
 				locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_TAB_FRAGMENT",
-				locator2 = "//div[contains(@class,'page-editor__topper__content')][div/div/div/*[contains(@class,'heading')]]",
+				locator2 = "//div[contains(@class,'page-editor__topper__content')][div/div/div/div/*[contains(@class,'heading')]]",
 				value1 = "");
 
 			PageEditor.waitForAutoSave();
@@ -1120,6 +1122,8 @@ definition {
 	@description = "This is a use case for LPS-114770. The Collection Display can select a dynamic collection with Any asset types."
 	@priority = "5"
 	test DynamicCollectionWithAnyAssetTypeIsAvailableInCollectionDisplay {
+		property portal.acceptance = "true";
+
 		task ("Add a Web Content Article,a Blogs Entry and a document") {
 			JSONWebcontent.addWebContent(
 				content = "Web Content Content",
@@ -1283,7 +1287,8 @@ definition {
 			AssetListsAdmin.selectAsset(
 				assetListName = "Manual Collection",
 				assetName = "Web Content Title",
-				assetType = "Basic Web Content");
+				assetType = "Basic Web Content",
+				itemType = "All Types");
 
 			AssetListsAdmin.openAssetListsAdmin(siteURLKey = "test-site-name");
 
@@ -1369,6 +1374,9 @@ definition {
 	@description = "This is a use case for LPS-86141. The mapped content of asset entries in selected collection should be respectively shown in each cell of the Collection Display when map content to editable field of one fragment in one cell."
 	@priority = "4"
 	test MapContentToEditableFieldOfFragmentInCollectionDisplay {
+		property osgi.app.includes = "bookmarks";
+		property osgi.app.includes = "document-library-google-docs";
+
 		task ("Add three Web Content Articles based on Basic Web Content") {
 			for (var entryTitle : list "First Web Content,Second Web Content,Third Web Content") {
 				JSONWebcontent.addWebContent(
@@ -1553,7 +1561,7 @@ definition {
 		task ("Assert only Documents and Media entry shown") {
 			AssertElementPresent(
 				key_card = "Document Title",
-				locator1 = "LexiconCard#CARD");
+				locator1 = "Card#CARD");
 
 			AssertElementNotPresent(
 				key_navItem = "Web Content",
@@ -1769,6 +1777,9 @@ definition {
 	@description = "This is a use case for LPS-86141. The changes will be propagated to others cells when edit inline content of fragment in one cell."
 	@priority = "4"
 	test PropagateChangesOfInlineContentToOtherCellsOfCollectionDisplay {
+		property osgi.app.includes = "bookmarks";
+		property osgi.app.includes = "document-library-google-docs";
+
 		task ("Add three documents") {
 			for (var entryTitle : list "First Document,Second Document,Third Document") {
 				JSONDocument.addFile(
@@ -1857,6 +1868,30 @@ definition {
 		}
 	}
 
+	@description = "This is a use case for LPS-116989. Can resize the item configuration panel."
+	@priority = "4"
+	test ResizeConfigurationPanelAndCheckRestore {
+		ContentPagesNavigator.openEditContentPage(
+			pageName = "Content Page Name",
+			siteName = "Test Site Name");
+
+		PageEditor.addFragment(
+			collectionName = "Basic Components",
+			fragmentName = "Button");
+
+		PageEditor.resizeConfigurationPanel(
+			fragmentName = "Button",
+			position = "0,-100");
+
+		PageEditor.gotoTab(tabName = "Fragments and Widgets");
+
+		PageEditor.gotoTab(tabName = "Selection");
+
+		AssertElementPresent(locator1 = "PageEditor#CONFIGURATION_PANEL_HANDLE");
+
+		AssertElementNotPresent(locator1 = "PageEditor#CONFIGURATION_PANEL_RESIZE");
+	}
+
 	@description = "This is a test for LPS-101248. Can select any custom web content template as a "Template" for web content selected in content fragment."
 	@priority = "5"
 	test SelectCustomWebContentTemplateViaContentDisplay {
@@ -1912,6 +1947,8 @@ definition {
 	@description = "This is a use case for LPS-86141. The title of asset entries in selected collection should be shown as a list in the Collection Display."
 	@priority = "5"
 	test ShowTitleOfCollectionItemsInCollectionDisplay {
+		property osgi.app.includes = "bookmarks";
+		property osgi.app.includes = "document-library-google-docs";
 		property portal.acceptance = "true";
 
 		task ("Add three Web Content Articles based on Basic Web Content") {
@@ -1949,7 +1986,8 @@ definition {
 			AssetListsAdmin.selectAsset(
 				assetListName = "Manual Collection",
 				assetType = "Blogs Entry",
-				entryList = "First Blogs Entry,Second Blogs Entry,Third Blogs Entry");
+				entryList = "First Blogs Entry,Second Blogs Entry,Third Blogs Entry",
+				itemType = "Blogs Entry");
 		}
 
 		task ("Add a Collection Display to page") {
@@ -2194,6 +2232,9 @@ definition {
 	@description = "This is a test for LPS-112093. The Blogs Entries of collection are displayed using Full Content when add a Content Display to Collection Display."
 	@priority = "4"
 	test ViewBlogEntryViaContentInCollectionDisplay {
+		property osgi.app.includes = "bookmarks";
+		property osgi.app.includes = "document-library-google-docs";
+
 		for (var i : list "1,2,3") {
 			JSONBlog.addEntry(
 				entryContent = "Blogs Entry Content ${i}",
@@ -2253,7 +2294,12 @@ definition {
 
 		PageEditor.clickConfigurableField(fragmentName = "Content Display");
 
-		PageEditor.gotoTab(tabName = "Page Structure");
+		PageEditor.gotoTab(tabName = "Selection");
+
+		AssertClick(
+			key_navItem = "General",
+			locator1 = "PageEditor#NAV_ITEM_BUTTON",
+			value1 = "General");
 
 		AssertSelectedLabel(
 			key_fieldLabel = "Template",
@@ -2264,6 +2310,9 @@ definition {
 	@description = "This is a test for LPS-112093. The documents of collection are displayed using Abstract when add a Content Display to Collection Display."
 	@priority = "4"
 	test ViewDocumentViaContentInCollectionDisplay {
+		property osgi.app.includes = "bookmarks";
+		property osgi.app.includes = "document-library-google-docs";
+
 		for (var i : list "1,2,3") {
 			JSONDocument.addFileWithUploadedFile(
 				dmDocumentDescription = "DM Document Description",
@@ -2325,7 +2374,12 @@ definition {
 
 		PageEditor.clickConfigurableField(fragmentName = "Content Display");
 
-		PageEditor.gotoTab(tabName = "Page Structure");
+		PageEditor.gotoTab(tabName = "Selection");
+
+		AssertClick(
+			key_navItem = "General",
+			locator1 = "PageEditor#NAV_ITEM_BUTTON",
+			value1 = "General");
 
 		AssertSelectedLabel(
 			key_fieldLabel = "Template",
@@ -2336,7 +2390,9 @@ definition {
 	@description = "This is a test for LPS-112249. The flags of each collection item are shown when add a Content Flags fragment to Collection Display."
 	@priority = "5"
 	test ViewFlagsViaContentFlagsInCollectionDisplay {
-		property portal.acceptance = "quarantine";
+		property osgi.app.includes = "bookmarks";
+		property osgi.app.includes = "document-library-google-docs";
+		property portal.acceptance = "true";
 
 		for (var i : list "1,2,3") {
 			JSONWebcontent.addWebContent(
@@ -2515,7 +2571,9 @@ definition {
 	@description = "This is a test for LPS-112249. The ratings of each collection item are shown when add a Content Ratings fragment to Collection Display."
 	@priority = "5"
 	test ViewRatingsViaContentRatingsInCollectionDisplay {
-		property portal.acceptance = "quarantine";
+		property osgi.app.includes = "bookmarks";
+		property osgi.app.includes = "document-library-google-docs";
+		property portal.acceptance = "true";
 
 		for (var i : list "1,2,3") {
 			JSONWebcontent.addWebContent(
@@ -2592,7 +2650,9 @@ definition {
 	@description = "This is a test for LPS-112093. The Web Content Articles of collection are displayed using Default Template when add a Content Display to Collection Display."
 	@priority = "5"
 	test ViewWebContentViaContentInCollectionDisplay {
-		property portal.acceptance = "quarantine";
+		property osgi.app.includes = "bookmarks";
+		property osgi.app.includes = "document-library-google-docs";
+		property portal.acceptance = "true";
 
 		for (var i : list "1,2,3") {
 			JSONWebcontent.addWebContent(
@@ -2653,7 +2713,12 @@ definition {
 
 		PageEditor.clickConfigurableField(fragmentName = "Content Display");
 
-		PageEditor.gotoTab(tabName = "Page Structure");
+		PageEditor.gotoTab(tabName = "Selection");
+
+		AssertClick(
+			key_navItem = "General",
+			locator1 = "PageEditor#NAV_ITEM_BUTTON",
+			value1 = "General");
 
 		AssertSelectedLabel(
 			key_fieldLabel = "Template",
@@ -2664,7 +2729,9 @@ definition {
 	@description = "This is a test for LPS-112093. Can display Web Content Articles of collection using custom template when add a Content Display to Collection Display."
 	@priority = "5"
 	test ViewWebContentWithCustomTemplateViaContentDisplayInCollectionDisplay {
-		property portal.acceptance = "quarantine";
+		property osgi.app.includes = "bookmarks";
+		property osgi.app.includes = "document-library-google-docs";
+		property portal.acceptance = "true";
 
 		WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
 
@@ -2767,7 +2834,12 @@ definition {
 
 		PageEditor.clickConfigurableField(fragmentName = "Content Display");
 
-		PageEditor.gotoTab(tabName = "Page Structure");
+		PageEditor.gotoTab(tabName = "Selection");
+
+		AssertClick(
+			key_navItem = "General",
+			locator1 = "PageEditor#NAV_ITEM_BUTTON",
+			value1 = "General");
 
 		AssertSelectedLabel(
 			key_fieldLabel = "Template",

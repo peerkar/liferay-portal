@@ -139,6 +139,10 @@ public class DDMFormValuesFactoryImpl implements DDMFormValuesFactory {
 
 				ddmFormFieldParameterNames.add(
 					defaultDDMFormFieldParameterName);
+
+				checkDDMFormFieldParameterNames(
+					ddmFormField.getNestedDDMFormFields(), StringPool.BLANK,
+					ddmFormFieldParameterNames);
 			}
 
 			for (String filteredDDMFormFieldParameterName :
@@ -462,6 +466,13 @@ public class DDMFormValuesFactoryImpl implements DDMFormValuesFactory {
 	protected Locale getDefaultLocale(
 		HttpServletRequest httpServletRequest, Locale defaultLocale,
 		Set<Locale> availableLocales) {
+
+		String defaultLanguageId = ParamUtil.getString(
+			httpServletRequest, "defaultLanguageId");
+
+		if (Validator.isNotNull(defaultLanguageId)) {
+			return LocaleUtil.fromLanguageId(defaultLanguageId);
+		}
 
 		Locale httpServletRequestLocale = LocaleUtil.fromLanguageId(
 			LanguageUtil.getLanguageId(httpServletRequest));

@@ -39,8 +39,8 @@ public class MulticastDatagramHandler implements DatagramHandler {
 	}
 
 	@Override
-	public void errorReceived(Throwable t) {
-		_log.error(t, t);
+	public void errorReceived(Throwable throwable) {
+		_log.error(throwable, throwable);
 	}
 
 	@Override

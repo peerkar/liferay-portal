@@ -74,8 +74,6 @@ public class ProjectTemplatesWorkspaceProductKeyTest
 
 	@Test
 	public void testBuildTemplateWorkspaceProductKey() throws Exception {
-		String name = "foo-portlet";
-
 		File workspaceProjectDir = buildWorkspace(
 			temporaryFolder, "gradle", "foows", _liferayVersion, mavenExecutor);
 
@@ -101,6 +99,8 @@ public class ProjectTemplatesWorkspaceProductKeyTest
 		}
 
 		if (isBuildProjects()) {
+			String name = "foo-portlet";
+
 			buildTemplateWithGradle(
 				new File(workspaceProjectDir, "modules"), "mvc-portlet", name,
 				"--liferay-version", _liferayVersion);

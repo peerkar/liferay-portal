@@ -28,12 +28,12 @@ public class ColumnTypeException extends PortalException {
 		super(msg);
 	}
 
-	public ColumnTypeException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ColumnTypeException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ColumnTypeException(Throwable cause) {
-		super(cause);
+	public ColumnTypeException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

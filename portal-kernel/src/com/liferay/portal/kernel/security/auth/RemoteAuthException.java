@@ -28,12 +28,12 @@ public class RemoteAuthException extends AuthException {
 		super(msg);
 	}
 
-	public RemoteAuthException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RemoteAuthException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public RemoteAuthException(Throwable cause) {
-		super(cause);
+	public RemoteAuthException(Throwable throwable) {
+		super(throwable);
 	}
 
 	public String getURL() {

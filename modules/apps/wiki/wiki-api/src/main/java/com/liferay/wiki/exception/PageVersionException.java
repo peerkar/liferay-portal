@@ -28,12 +28,12 @@ public class PageVersionException extends PortalException {
 		super(msg);
 	}
 
-	public PageVersionException(String msg, Throwable cause) {
-		super(msg, cause);
+	public PageVersionException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public PageVersionException(Throwable cause) {
-		super(cause);
+	public PageVersionException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

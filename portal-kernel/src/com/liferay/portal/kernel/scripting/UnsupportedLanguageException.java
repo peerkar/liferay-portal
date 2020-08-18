@@ -27,12 +27,12 @@ public class UnsupportedLanguageException extends ScriptingException {
 		super(msg);
 	}
 
-	public UnsupportedLanguageException(String msg, Throwable cause) {
-		super(msg, cause);
+	public UnsupportedLanguageException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public UnsupportedLanguageException(Throwable cause) {
-		super(cause);
+	public UnsupportedLanguageException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

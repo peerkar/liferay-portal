@@ -30,12 +30,12 @@ public class NoSuchRecordSetException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchRecordSetException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchRecordSetException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchRecordSetException(Throwable cause) {
-		super(cause);
+	public NoSuchRecordSetException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

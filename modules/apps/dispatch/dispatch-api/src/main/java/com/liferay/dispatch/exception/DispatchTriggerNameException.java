@@ -28,12 +28,12 @@ public class DispatchTriggerNameException extends PortalException {
 		super(msg);
 	}
 
-	public DispatchTriggerNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DispatchTriggerNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DispatchTriggerNameException(Throwable cause) {
-		super(cause);
+	public DispatchTriggerNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

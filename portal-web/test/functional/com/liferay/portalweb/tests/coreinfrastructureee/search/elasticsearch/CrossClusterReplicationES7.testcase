@@ -93,6 +93,169 @@ definition {
 			searchTerm = "Apple");
 	}
 
+	test BreakWorkflowSLA {
+		property test.name.skip.portal.instance = "CrossClusterReplicationES7#BreakWorkflowSLA";
+
+		OSGiConfig.deployOSGiConfigs(
+			OSGiConfigFileName = "com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConfiguration.config",
+			OSGiConfigs = "operationMode=&quot;REMOTE&quot;,logExceptionsOnly=&quot;true&quot;");
+
+		OSGiConfig.deployOSGiConfigs(
+			OSGiConfigFileName = "com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConnectionConfiguration-default_ccr.config",
+			OSGiConfigs = "active=&quot;true&quot;,connectionId=&quot;ccr&quot;,networkHostAddresses=[&quot;http://localhost:9202&quot;]");
+
+		ApplicationsMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "System Settings");
+
+		SystemSettings.gotoConfiguration(
+			configurationCategory = "Search",
+			configurationName = "Cross-Cluster Replication",
+			configurationScope = "System Scope");
+
+		SystemSettings.configureCrossClusterReplication(ccrLocalClusterConnectionID = "ccr");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			portlet = "Workflow");
+
+		Workflow.configureWorkflow(
+			workflowDefinition = "Single Approver",
+			workflowResourceValue = "Blogs Entry");
+
+		JSONBlog.addEntry(
+			entryContent = "Blogs Entry Content",
+			entryTitle = "Blogs Entry Title");
+
+		WorkflowMetrics.goToWorkflowSLASettings(workflowProcessName = "Single Approver");
+
+		Click(locator1 = "WorkflowMetricsSLA#ADD_NEW_SLA_BUTTON");
+
+		WorkflowMetrics.fillSLAForm(
+			slaDefinitionDays = "0",
+			slaDefinitionDescription = "SLA Description",
+			slaDefinitionEnd = "Process Ends: Approved",
+			slaDefinitionHours = "00:02",
+			slaDefinitionName = "SLA Name",
+			slaDefinitionStart = "Enters Task: Review");
+
+		Button.clickSave();
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Workflow.assignToMeTaskByActions(
+			workflowAssetTitle = "Blogs Entry Title",
+			workflowAssetType = "Blogs Entry",
+			workflowTask = "Review");
+
+		WorkflowMetrics.goToWorkflowProcessMetrics(workflowProcessName = "Single Approver");
+
+		WorkflowMetrics.waitForSLA(
+			key_expectedValue = "0",
+			key_status = "ONTIME");
+
+		WorkflowMetrics.checkPendingWorkflowValues(
+			key_ontime = "1",
+			key_overdue = "0",
+			key_pending = "1",
+			key_untracked = "0");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			portlet = "Workflow");
+
+		WorkflowMetrics.goToWorkflowProcessMetrics(workflowProcessName = "Single Approver");
+
+		WorkflowMetrics.waitForSLA(
+			key_expectedValue = "0",
+			key_status = "OVERDUE");
+
+		WorkflowMetrics.checkPendingWorkflowValues(
+			key_ontime = "0",
+			key_overdue = "1",
+			key_pending = "1",
+			key_untracked = "0");
+	}
+
+	test CreateBlogsEntryWithNewWorkflow {
+		property test.name.skip.portal.instance = "CrossClusterReplicationES7#CreateBlogsEntryWithNewWorkflow";
+
+		OSGiConfig.deployOSGiConfigs(
+			OSGiConfigFileName = "com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConfiguration.config",
+			OSGiConfigs = "operationMode=&quot;REMOTE&quot;,logExceptionsOnly=&quot;true&quot;");
+
+		OSGiConfig.deployOSGiConfigs(
+			OSGiConfigFileName = "com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConnectionConfiguration-default_ccr.config",
+			OSGiConfigs = "active=&quot;true&quot;,connectionId=&quot;ccr&quot;,networkHostAddresses=[&quot;http://localhost:9202&quot;]");
+
+		ApplicationsMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "System Settings");
+
+		SystemSettings.gotoConfiguration(
+			configurationCategory = "Search",
+			configurationName = "Cross-Cluster Replication",
+			configurationScope = "System Scope");
+
+		SystemSettings.configureCrossClusterReplication(ccrLocalClusterConnectionID = "ccr");
+
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
+
+		Workflow.duplicateSingleApproverWorkflow(workflowName = "CCR Single Approver");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			portlet = "Workflow");
+
+		Workflow.configureWorkflow(
+			workflowDefinition = "CCR Single Approver",
+			workflowResourceValue = "Blogs Entry");
+
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			panel = "Site Administration",
+			portlet = "Blogs");
+
+		Blogs.addWithWorkflow(
+			entryContent = "Blogs Entry Content",
+			entrySubtitle = "Subtitle",
+			entryTitle = "Blogs Entry Title");
+
+		Navigator.openURL();
+
+		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
+
+		Workflow.assignToMeTaskByActions(
+			workflowAssetTitle = "Blogs Entry Title",
+			workflowAssetType = "Blogs Entry",
+			workflowTask = "Review");
+
+		Workflow.approveTaskByActions(
+			workflowAssetTitle = "Blogs Entry Title",
+			workflowAssetType = "Blogs Entry",
+			workflowTask = "Review");
+
+		Navigator.openURL();
+
+		SearchPortlets.searchEmbedded(searchTerm = "Blogs");
+
+		SearchResultPortlet.viewSearchResults(
+			searchAssetTitle = "Blogs Entry Title",
+			searchAssetType = "Blogs Entry",
+			searchTerm = "Blogs");
+	}
+
 	test HotDeployApp {
 		property hot.deploy.osgi.app.includes = "portal-search-elasticsearch-cross-cluster-replication";
 		property test.assert.warning.exceptions = "true";
@@ -140,10 +303,6 @@ definition {
 		OSGiConfig.deployOSGiConfigs(
 			OSGiConfigFileName = "com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConnectionConfiguration-default_ccr.config",
 			OSGiConfigs = "active=&quot;true&quot;,connectionId=&quot;ccr&quot;,networkHostAddresses=[&quot;http://localhost:9202&quot;]");
-
-		AntCommand(
-			locator1 = "build-test-elasticsearch7.xml",
-			value1 = "create-follower-indices");
 
 		ApplicationsMenu.gotoPortlet(
 			category = "Configuration",
@@ -302,11 +461,13 @@ definition {
 			value1 = "Search");
 
 		AssertTextEquals.assertPartialText(
-			locator1 = "SearchAdmin#REMOTE_CLUSTER_NAME",
+			key_connectionID = "__REMOTE__",
+			locator1 = "SearchAdmin#CLUSTER_NAME",
 			value1 = "LiferayElasticsearchCluster");
 
 		AssertTextEquals.assertPartialText(
-			locator1 = "SearchAdmin#LOCAL_CLUSTER_NAME",
+			key_connectionID = "ccr",
+			locator1 = "SearchAdmin#CLUSTER_NAME",
 			value1 = "LiferayElasticsearchClusterTwo");
 
 		Navigator.openURL();
@@ -331,14 +492,17 @@ definition {
 			value1 = "Search");
 
 		AssertTextEquals.assertPartialText(
-			locator1 = "SearchAdmin#LOCAL_CLUSTER_NAME",
+			key_connectionID = "ccr",
+			locator1 = "SearchAdmin#CLUSTER_NAME",
 			value1 = "LiferayElasticsearchClusterTwo");
 
 		AssertTextEquals.assertPartialText(
 			locator1 = "Message#ERROR",
 			value1 = "Connection refused");
 
-		AssertElementNotPresent(locator1 = "SearchAdmin#REMOTE_CLUSTER_NAME");
+		AssertElementNotPresent(
+			key_connectionID = "__REMOTE__",
+			locator1 = "SearchAdmin#CLUSTER_NAME");
 
 		Navigator.openURL();
 
@@ -368,14 +532,17 @@ definition {
 			value1 = "Search");
 
 		AssertTextEquals.assertPartialText(
-			locator1 = "SearchAdmin#REMOTE_CLUSTER_NAME",
+			key_connectionID = "__REMOTE__",
+			locator1 = "SearchAdmin#CLUSTER_NAME",
 			value1 = "LiferayElasticsearchCluster");
 
 		AssertTextEquals.assertPartialText(
 			locator1 = "Message#ERROR",
 			value1 = "Connection refused");
 
-		AssertElementNotPresent(locator1 = "SearchAdmin#LOCAL_CLUSTER_NAME");
+		AssertElementNotPresent(
+			key_connectionID = "ccr",
+			locator1 = "SearchAdmin#CLUSTER_NAME");
 
 		Navigator.openURL();
 

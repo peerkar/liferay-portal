@@ -28,12 +28,12 @@ public class DuplicateSAPEntryNameException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateSAPEntryNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateSAPEntryNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateSAPEntryNameException(Throwable cause) {
-		super(cause);
+	public DuplicateSAPEntryNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

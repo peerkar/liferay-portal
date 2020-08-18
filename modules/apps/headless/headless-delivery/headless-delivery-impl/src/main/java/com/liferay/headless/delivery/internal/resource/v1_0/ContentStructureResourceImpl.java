@@ -53,6 +53,16 @@ public class ContentStructureResourceImpl
 	extends BaseContentStructureResourceImpl implements EntityModelResource {
 
 	@Override
+	public Page<ContentStructure> getAssetLibraryContentStructuresPage(
+			Long assetLibraryId, String search, Aggregation aggregation,
+			Filter filter, Pagination pagination, Sort[] sorts)
+		throws Exception {
+
+		return getSiteContentStructuresPage(
+			assetLibraryId, search, aggregation, filter, pagination, sorts);
+	}
+
+	@Override
 	public ContentStructure getContentStructure(Long contentStructureId)
 		throws Exception {
 
@@ -91,11 +101,9 @@ public class ContentStructureResourceImpl
 					GetterUtil.getLong(document.get(Field.ENTRY_CLASS_PK)))));
 	}
 
-	private ContentStructure _toContentStructure(DDMStructure ddmStructure)
-		throws Exception {
-
+	private ContentStructure _toContentStructure(DDMStructure ddmStructure) {
 		return ContentStructureUtil.toContentStructure(
-			contextAcceptLanguage.isAcceptAllLanguages(),
+			contextAcceptLanguage.isAcceptAllLanguages(), groupLocalService,
 			contextAcceptLanguage.getPreferredLocale(), _portal,
 			_userLocalService, ddmStructure);
 	}

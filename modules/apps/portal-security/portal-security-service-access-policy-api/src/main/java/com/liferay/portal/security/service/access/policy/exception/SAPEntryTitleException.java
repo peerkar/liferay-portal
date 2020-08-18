@@ -28,12 +28,12 @@ public class SAPEntryTitleException extends PortalException {
 		super(msg);
 	}
 
-	public SAPEntryTitleException(String msg, Throwable cause) {
-		super(msg, cause);
+	public SAPEntryTitleException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public SAPEntryTitleException(Throwable cause) {
-		super(cause);
+	public SAPEntryTitleException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

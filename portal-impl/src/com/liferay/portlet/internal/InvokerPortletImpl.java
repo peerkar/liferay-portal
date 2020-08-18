@@ -247,10 +247,10 @@ public class InvokerPortletImpl
 
 			_portlet.init(portletConfig);
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			cleanUp();
 
-			throw t;
+			throw throwable;
 		}
 		finally {
 			if (_portletClassLoader != null) {
@@ -573,13 +573,13 @@ public class InvokerPortletImpl
 				}
 			}
 			catch (ServletException servletException) {
-				Throwable cause = servletException.getRootCause();
+				Throwable throwable = servletException.getRootCause();
 
-				if (cause instanceof PortletException) {
-					throw (PortletException)cause;
+				if (throwable instanceof PortletException) {
+					throw (PortletException)throwable;
 				}
 
-				throw new PortletException(cause);
+				throw new PortletException(throwable);
 			}
 		}
 		else {

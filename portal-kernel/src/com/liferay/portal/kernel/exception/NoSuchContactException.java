@@ -26,12 +26,12 @@ public class NoSuchContactException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchContactException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchContactException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchContactException(Throwable cause) {
-		super(cause);
+	public NoSuchContactException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

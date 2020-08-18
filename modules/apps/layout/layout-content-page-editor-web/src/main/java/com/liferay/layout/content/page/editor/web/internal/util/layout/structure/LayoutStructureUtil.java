@@ -23,7 +23,7 @@ import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocal
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureRelLocalServiceUtil;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureServiceUtil;
 import com.liferay.layout.util.structure.DeletedLayoutStructureItem;
-import com.liferay.layout.util.structure.FragmentLayoutStructureItem;
+import com.liferay.layout.util.structure.FragmentStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.petra.function.UnsafeConsumer;
@@ -95,19 +95,24 @@ public class LayoutStructureUtil {
 		List<Long> fragmentEntryLinkIds = new ArrayList<>();
 
 		for (LayoutStructureItem layoutStructureItem : layoutStructureItems) {
-			if (!(layoutStructureItem instanceof FragmentLayoutStructureItem)) {
+			if (!(layoutStructureItem instanceof
+					FragmentStyledLayoutStructureItem)) {
+
 				continue;
 			}
 
-			FragmentLayoutStructureItem fragmentLayoutStructureItem =
-				(FragmentLayoutStructureItem)layoutStructureItem;
+			FragmentStyledLayoutStructureItem
+				fragmentStyledLayoutStructureItem =
+					(FragmentStyledLayoutStructureItem)layoutStructureItem;
 
-			if (fragmentLayoutStructureItem.getFragmentEntryLinkId() <= 0) {
+			if (fragmentStyledLayoutStructureItem.getFragmentEntryLinkId() <=
+					0) {
+
 				continue;
 			}
 
 			fragmentEntryLinkIds.add(
-				fragmentLayoutStructureItem.getFragmentEntryLinkId());
+				fragmentStyledLayoutStructureItem.getFragmentEntryLinkId());
 		}
 
 		return ArrayUtil.toLongArray(fragmentEntryLinkIds);

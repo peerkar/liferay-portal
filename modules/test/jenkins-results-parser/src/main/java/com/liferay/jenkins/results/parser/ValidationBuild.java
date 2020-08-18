@@ -168,15 +168,15 @@ public class ValidationBuild extends BaseBuild {
 				baseGitRepositoryName);
 		}
 
-		String baseGitRepositoryCommitURL =
-			"https://github.com/liferay/" + baseGitRepositoryName + "/commit/" +
-				baseGitRepositorySHA;
-
 		Element baseBranchDetailsElement = Dom4JUtil.getNewElement(
 			"p", null, "Branch Name: ",
 			Dom4JUtil.getNewAnchorElement(baseBranchURL, getBranchName()));
 
 		if (baseGitRepositorySHA != null) {
+			String baseGitRepositoryCommitURL =
+				"https://github.com/liferay/" + baseGitRepositoryName +
+					"/commit/" + baseGitRepositorySHA;
+
 			Dom4JUtil.addToElement(
 				baseBranchDetailsElement, Dom4JUtil.getNewElement("br"),
 				"Branch GIT ID: ",

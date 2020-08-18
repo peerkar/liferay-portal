@@ -21,5 +21,29 @@ CollectionItemsDetailDisplayContext collectionItemsDetailDisplayContext = (Colle
 %>
 
 <li class="control-menu-nav-item">
-	<span class="text-muted text-truncate">(<%= LanguageUtil.format(resourceBundle, "x-items", collectionItemsDetailDisplayContext.getCollectionItemsCount(), false) %>)</span>
+	<button class="btn btn-unstyled text-muted" id="<%= collectionItemsDetailDisplayContext.getNamespace() %>viewCollectionItems" />
+		(<%= LanguageUtil.format(resourceBundle, "x-items", collectionItemsDetailDisplayContext.getCollectionItemsCount(), false) %>)
+	</button>
 </li>
+
+<aui:script>
+
+	var viewCollectionItems = document.getElementById(
+		'<%= collectionItemsDetailDisplayContext.getNamespace() %>viewCollectionItems'
+	);
+
+	viewCollectionItems.addEventListener('click', function (event) {
+		Liferay.Util.openModal({
+			id: '<%= collectionItemsDetailDisplayContext.getNamespace() %>viewCollectionItemsDialog',
+			title: '<liferay-ui:message key="collection-items" />',
+			url: '<%= collectionItemsDetailDisplayContext.getViewCollectionItemsURL() %>'
+		});
+	});
+
+	var onDestroyPortlet = function () {
+		document.removeEventListener('click', viewCollectionItems);
+	};
+
+	Liferay.on('destroyPortlet', onDestroyPortlet);
+
+</aui:script>

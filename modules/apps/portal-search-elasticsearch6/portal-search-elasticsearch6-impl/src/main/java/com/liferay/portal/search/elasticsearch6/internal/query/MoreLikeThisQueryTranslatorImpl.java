@@ -32,7 +32,6 @@ import org.osgi.service.component.annotations.Component;
 
 /**
  * @author Michael C. Han
- * @author Petteri Karttunen
  */
 @Component(service = MoreLikeThisQueryTranslator.class)
 public class MoreLikeThisQueryTranslatorImpl
@@ -86,11 +85,6 @@ public class MoreLikeThisQueryTranslatorImpl
 			moreLikeThisQueryBuilder.analyzer(moreLikeThisQuery.getAnalyzer());
 		}
 
-		if (moreLikeThisQuery.getBoost() != null) {
-			moreLikeThisQueryBuilder.boost(
-				moreLikeThisQuery.getBoost());
-		}
-		
 		if (moreLikeThisQuery.getMaxDocFrequency() != null) {
 			moreLikeThisQueryBuilder.maxDocFreq(
 				moreLikeThisQuery.getMaxDocFrequency());

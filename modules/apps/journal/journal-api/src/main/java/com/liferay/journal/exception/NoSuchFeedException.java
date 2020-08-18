@@ -28,12 +28,12 @@ public class NoSuchFeedException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchFeedException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchFeedException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchFeedException(Throwable cause) {
-		super(cause);
+	public NoSuchFeedException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

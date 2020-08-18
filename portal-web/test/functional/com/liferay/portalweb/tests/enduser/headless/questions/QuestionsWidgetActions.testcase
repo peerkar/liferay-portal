@@ -169,6 +169,14 @@ definition {
 
 		Questions.gotoCategory(categoryName = "Question AddQuestionWithTheMaximumTags");
 
+		AssertElementNotPresent(locator1 = "Questions#SEARCH_QUESTION_FIELD");
+
+		AssertElementNotPresent(locator1 = "Questions#QUESTIONS_SELECT_FILTER");
+
+		AssertElementPresent(
+			key_emptyInfo = "This topic is empty.",
+			locator1 = "Questions#EMPTY_STATE_MESSAGE");
+
 		Questions.askQuestionFillingTheMandatoryFields(
 			contentField = "Body AddQuestionWithTheMaximumTags",
 			titleField = "Title AddQuestionWithTheMaximumTags");
@@ -181,9 +189,11 @@ definition {
 
 		Click(locator1 = "Questions#ASK_QUESTION_POST_YOUR_QUESTION_BUTTON");
 
-		AssertElementPresent(
-			key_titleField = "Title AddQuestionWithTheMaximumTags",
-			locator1 = "Questions#ASK_QUESTION_SEARCH_QUESTION");
+		AssertElementPresent(locator1 = "Questions#SEARCH_QUESTION_FIELD");
+
+		AssertElementPresent(locator1 = "Questions#QUESTIONS_SELECT_FILTER");
+
+		Questions.viewList(listedQuestions = "Title AddQuestionWithTheMaximumTags");
 	}
 
 	@description = "Validate if the user can view the topic selector and category label."
@@ -356,13 +366,13 @@ definition {
 		Pause(locator = "3000");
 
 		Questions.search(
-			resultsInfo = "4 Results for test",
+			resultsInfo = '''4 Results for "test"''',
 			searchKey = "Test");
 
 		Questions.viewSearchResults(questionsList = "Question1,Question2,Question3,Question4");
 
 		Questions.search(
-			resultsInfo = "1 Results for question4",
+			resultsInfo = '''1 Results for "question4"''',
 			searchKey = "Question4");
 
 		Questions.viewSearchResults(questionsList = "Question4");
@@ -370,7 +380,7 @@ definition {
 		Questions.viewNoSearchResults(questionsList = "Question1,Question2,Question3");
 
 		Questions.search(
-			resultsInfo = "1 Results for content2",
+			resultsInfo = '''1 Results for "content2"''',
 			searchKey = "Content2");
 
 		Questions.viewSearchResults(questionsList = "Question2");
@@ -378,12 +388,16 @@ definition {
 		Questions.viewNoSearchResults(questionsList = "Question1,Question3,Question4");
 
 		Questions.search(
-			resultsInfo = "1 Results for new",
+			resultsInfo = '''1 Results for "new"''',
 			searchKey = "New");
 
 		Questions.viewSearchResults(questionsList = "Question1");
 
 		Questions.viewNoSearchResults(questionsList = "Question2,Question3,Question4");
+
+		Questions.search(
+			noQuestionsResults = "true",
+			searchKey = "Questions5");
 
 		Questions.clearSearchResults();
 
@@ -584,9 +598,18 @@ definition {
 			categoryName = "Questions Test Category",
 			userEmailAddress = "test@liferay.com");
 
+		Questions.addQuestionWithoutTagByAPI(
+			bodyField = "Content Question3",
+			categoryName = "Questions Test Category",
+			titleField = "Question 3");
+
 		Navigator.gotoPage(pageName = "Questions Page");
 
 		Questions.gotoCategory(categoryName = "Questions Test Category");
+
+		AssertElementNotPresent(
+			key_topicName = "Questions Test Category",
+			locator1 = "Questions#QUESTIONS_BREADCRUMB_TOPIC_DROPDOWN_TOGGLE");
 
 		MessageBoardsAdmin.openMessageBoardsAdmin(siteURLKey = "guest");
 
@@ -615,25 +638,27 @@ definition {
 
 		Questions.gotoCategory(categoryName = "Questions Test Category");
 
-		AssertTextEquals(
-			locator1 = "Questions#QUESTIONS_TOPIC_DROPDOWN_MENU",
-			value1 = "All");
+		Questions.viewList(listedQuestions = "Question 1,Question 2,Question 3");
 
-		Questions.changeTopic(topicName = "Questions Subcategory1");
+		Questions.changeTopic(
+			parentTopicName = "Questions Test Category",
+			subTopicName = "Questions Subcategory1");
 
 		Questions.viewList(
 			listedQuestions = "Question 1",
-			unlistedQuestions = "Question 2");
+			unlistedQuestions = "Question 2,Question 3");
 
-		Questions.changeTopic(topicName = "Questions Subcategory2");
+		Questions.changeTopic(
+			parentTopicName = "Questions Test Category",
+			subTopicName = "Questions Subcategory2");
 
 		Questions.viewList(
 			listedQuestions = "Question 2",
-			unlistedQuestions = "Question 1");
+			unlistedQuestions = "Question 1,Question 3");
 
-		Questions.changeTopic(topicName = "All");
+		Questions.changeTopic(gotoParentTopic = "Questions Test Category");
 
-		Questions.viewList(listedQuestions = "Question 1,Question 2");
+		Questions.viewList(listedQuestions = "Question 1,Question 2,Question 3");
 	}
 
 	@description = "Validate if the pagination will appear and works when we have more than 4 questions."
@@ -713,6 +738,10 @@ definition {
 
 		Questions.configureFilter(filterBy = "Voted in the Last Week");
 
+		AssertElementPresent(
+			key_emptyInfo = "There are no results.",
+			locator1 = "Questions#EMPTY_STATE_MESSAGE");
+
 		for (var num : list "1 Edit,2") {
 			AssertElementNotPresent(
 				key_questionTitle = "Question ${num}",
@@ -720,6 +749,10 @@ definition {
 		}
 
 		Questions.configureFilter(filterBy = "Voted in the Last Month");
+
+		AssertElementPresent(
+			key_emptyInfo = "There are no results.",
+			locator1 = "Questions#EMPTY_STATE_MESSAGE");
 
 		for (var num : list "1 Edit,2") {
 			AssertElementNotPresent(

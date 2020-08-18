@@ -218,13 +218,14 @@ public class CalendarPortlet extends MVCPortlet {
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		long calendarId = ParamUtil.getLong(uploadPortletRequest, "calendarId");
-
 		String data = FileUtil.read(uploadPortletRequest.getFile("file"));
 
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
 		if (Validator.isNotNull(data)) {
+			long calendarId = ParamUtil.getLong(
+				uploadPortletRequest, "calendarId");
+
 			try {
 				CalendarDataHandler calendarDataHandler =
 					CalendarDataHandlerFactory.getCalendarDataHandler(
@@ -1222,16 +1223,16 @@ public class CalendarPortlet extends MVCPortlet {
 	}
 
 	@Override
-	protected boolean isSessionErrorException(Throwable cause) {
-		if (cause instanceof AssetCategoryException ||
-			cause instanceof AssetTagException ||
-			cause instanceof CalendarBookingDurationException ||
-			cause instanceof CalendarBookingRecurrenceException ||
-			cause instanceof CalendarNameException ||
-			cause instanceof CalendarResourceCodeException ||
-			cause instanceof CalendarResourceNameException ||
-			cause instanceof DuplicateCalendarResourceException ||
-			cause instanceof PrincipalException) {
+	protected boolean isSessionErrorException(Throwable throwable) {
+		if (throwable instanceof AssetCategoryException ||
+			throwable instanceof AssetTagException ||
+			throwable instanceof CalendarBookingDurationException ||
+			throwable instanceof CalendarBookingRecurrenceException ||
+			throwable instanceof CalendarNameException ||
+			throwable instanceof CalendarResourceCodeException ||
+			throwable instanceof CalendarResourceNameException ||
+			throwable instanceof DuplicateCalendarResourceException ||
+			throwable instanceof PrincipalException) {
 
 			return true;
 		}

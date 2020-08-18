@@ -1931,12 +1931,11 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 
 				WrapsDriver wrapsDriver = (WrapsDriver)webElement;
 
-				WebDriver webDriver = wrapsDriver.getWrappedDriver();
-
-				Actions actions = new Actions(webDriver);
-
 				if (keycode.equals("ALT") || keycode.equals("COMMAND") ||
 					keycode.equals("CONTROL") || keycode.equals("SHIFT")) {
+
+					Actions actions = new Actions(
+						wrapsDriver.getWrappedDriver());
 
 					actions.keyDown(webElement, keys);
 					actions.keyUp(webElement, keys);
@@ -2458,10 +2457,10 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 
 	@Override
 	public void selectPopUp(String windowID) {
-		Set<String> windowHandles = getWindowHandles();
-
 		if (windowID.equals("") || windowID.equals("null")) {
 			String title = getTitle();
+
+			Set<String> windowHandles = getWindowHandles();
 
 			for (String windowHandle : windowHandles) {
 				WebDriver.TargetLocator targetLocator = switchTo();
@@ -2625,9 +2624,9 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 	public void setTimeoutImplicit(String timeout) {
 		WebDriver.Options options = manage();
 
-		WebDriver.Timeouts timeouts = options.timeouts();
-
 		if (!PropsValues.BROWSER_TYPE.equals("safari")) {
+			WebDriver.Timeouts timeouts = options.timeouts();
+
 			timeouts.implicitlyWait(
 				GetterUtil.getInteger(timeout), TimeUnit.SECONDS);
 		}
@@ -2685,14 +2684,14 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 
 	@Override
 	public void sikuliClick(String image) throws Exception {
-		Mouse mouse = new DesktopMouse();
-
 		ScreenRegion screenRegion = new DesktopScreenRegion();
 
 		ScreenRegion imageTargetScreenRegion = screenRegion.find(
 			getImageTarget(image));
 
 		if (imageTargetScreenRegion != null) {
+			Mouse mouse = new DesktopMouse();
+
 			mouse.click(imageTargetScreenRegion.getCenter());
 		}
 	}
@@ -2700,8 +2699,6 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 	@Override
 	public void sikuliClickByIndex(String image, String index)
 		throws Exception {
-
-		Mouse mouse = new DesktopMouse();
 
 		ScreenRegion screenRegion = new DesktopScreenRegion();
 
@@ -2712,6 +2709,8 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 			GetterUtil.getInteger(index));
 
 		if (imageTargetScreenRegion != null) {
+			Mouse mouse = new DesktopMouse();
+
 			mouse.click(imageTargetScreenRegion.getCenter());
 		}
 	}
@@ -2972,11 +2971,12 @@ public abstract class BaseWebDriverImpl implements LiferaySelenium, WebDriver {
 
 			retryCount++;
 
-			String message =
-				"Actual typed value: '" + typedValue +
-					"' did not match expected typed value: '" + value + "'.";
-
 			if (retryCount < maxRetries) {
+				String message =
+					"Actual typed value: '" + typedValue +
+						"' did not match expected typed value: '" + value +
+							"'.";
+
 				System.out.println(
 					message + " Retrying LiferaySelenium.type() attempt #" +
 						(retryCount + 1) + ".");

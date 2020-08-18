@@ -26,12 +26,12 @@ public class SitemapPagePriorityException extends PortalException {
 		super(msg);
 	}
 
-	public SitemapPagePriorityException(String msg, Throwable cause) {
-		super(msg, cause);
+	public SitemapPagePriorityException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public SitemapPagePriorityException(Throwable cause) {
-		super(cause);
+	public SitemapPagePriorityException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

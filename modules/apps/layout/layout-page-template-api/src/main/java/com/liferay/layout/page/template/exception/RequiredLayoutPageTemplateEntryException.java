@@ -29,13 +29,13 @@ public class RequiredLayoutPageTemplateEntryException extends PortalException {
 	}
 
 	public RequiredLayoutPageTemplateEntryException(
-		String msg, Throwable cause) {
+		String msg, Throwable throwable) {
 
-		super(msg, cause);
+		super(msg, throwable);
 	}
 
-	public RequiredLayoutPageTemplateEntryException(Throwable cause) {
-		super(cause);
+	public RequiredLayoutPageTemplateEntryException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -28,12 +28,12 @@ public class TransformException extends PortalException {
 		super(msg);
 	}
 
-	public TransformException(String msg, Throwable cause) {
-		super(msg, cause);
+	public TransformException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public TransformException(Throwable cause) {
-		super(cause);
+	public TransformException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -26,12 +26,12 @@ public class LayoutRevisionMajorException extends PortalException {
 		super(msg);
 	}
 
-	public LayoutRevisionMajorException(String msg, Throwable cause) {
-		super(msg, cause);
+	public LayoutRevisionMajorException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public LayoutRevisionMajorException(Throwable cause) {
-		super(cause);
+	public LayoutRevisionMajorException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -28,12 +28,12 @@ public class FileMimeTypeException extends PortalException {
 		super(msg);
 	}
 
-	public FileMimeTypeException(String msg, Throwable cause) {
-		super(msg, cause);
+	public FileMimeTypeException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public FileMimeTypeException(Throwable cause) {
-		super(cause);
+	public FileMimeTypeException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

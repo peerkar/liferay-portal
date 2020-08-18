@@ -61,10 +61,10 @@ public class ServiceTrackerCustomizers {
 
 					};
 				}
-				catch (Throwable t) {
+				catch (Throwable throwable) {
 					registry.ungetService(serviceReference);
 
-					throw t;
+					throw throwable;
 				}
 			}
 

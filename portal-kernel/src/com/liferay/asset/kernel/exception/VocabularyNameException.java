@@ -28,12 +28,12 @@ public class VocabularyNameException extends PortalException {
 		super(msg);
 	}
 
-	public VocabularyNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public VocabularyNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public VocabularyNameException(Throwable cause) {
-		super(cause);
+	public VocabularyNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

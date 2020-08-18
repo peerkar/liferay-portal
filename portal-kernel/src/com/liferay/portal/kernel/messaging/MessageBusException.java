@@ -28,12 +28,12 @@ public class MessageBusException extends PortalException {
 		super(msg);
 	}
 
-	public MessageBusException(String msg, Throwable cause) {
-		super(msg, cause);
+	public MessageBusException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public MessageBusException(Throwable cause) {
-		super(cause);
+	public MessageBusException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

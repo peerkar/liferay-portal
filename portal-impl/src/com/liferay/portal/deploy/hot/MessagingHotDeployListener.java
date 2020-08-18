@@ -35,9 +35,9 @@ public class MessagingHotDeployListener extends BaseHotDeployListener {
 		try {
 			doInvokeDeploy(hotDeployEvent);
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			throwHotDeployException(
-				hotDeployEvent, "Error sending deploy message for ", t);
+				hotDeployEvent, "Error sending deploy message for ", throwable);
 		}
 	}
 
@@ -48,9 +48,10 @@ public class MessagingHotDeployListener extends BaseHotDeployListener {
 		try {
 			doInvokeUndeploy(hotDeployEvent);
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			throwHotDeployException(
-				hotDeployEvent, "Error sending undeploy message for ", t);
+				hotDeployEvent, "Error sending undeploy message for ",
+				throwable);
 		}
 	}
 

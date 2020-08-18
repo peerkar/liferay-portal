@@ -29,13 +29,13 @@ public class FormInstanceSettingsRedirectURLException extends PortalException {
 	}
 
 	public FormInstanceSettingsRedirectURLException(
-		String msg, Throwable cause) {
+		String msg, Throwable throwable) {
 
-		super(msg, cause);
+		super(msg, throwable);
 	}
 
-	public FormInstanceSettingsRedirectURLException(Throwable cause) {
-		super(cause);
+	public FormInstanceSettingsRedirectURLException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

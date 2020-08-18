@@ -28,12 +28,12 @@ public class NoSuchTimerException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchTimerException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchTimerException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchTimerException(Throwable cause) {
-		super(cause);
+	public NoSuchTimerException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

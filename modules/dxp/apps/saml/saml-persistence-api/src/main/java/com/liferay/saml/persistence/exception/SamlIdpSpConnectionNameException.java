@@ -28,12 +28,12 @@ public class SamlIdpSpConnectionNameException extends PortalException {
 		super(msg);
 	}
 
-	public SamlIdpSpConnectionNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public SamlIdpSpConnectionNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public SamlIdpSpConnectionNameException(Throwable cause) {
-		super(cause);
+	public SamlIdpSpConnectionNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

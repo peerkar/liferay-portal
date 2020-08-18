@@ -28,12 +28,12 @@ public class LiferayFileItemException extends PortalException {
 		super(msg);
 	}
 
-	public LiferayFileItemException(String msg, Throwable cause) {
-		super(msg, cause);
+	public LiferayFileItemException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public LiferayFileItemException(Throwable cause) {
-		super(cause);
+	public LiferayFileItemException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

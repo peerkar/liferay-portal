@@ -144,39 +144,37 @@ UnicodeProperties layoutTypeSettings = selLayout.getTypeSettingsProperties();
 
 						<div>
 
-							<%
-							Map<String, Object> props = HashMapBuilder.<String, Object>put(
-								"targets",
-								HashMapBuilder.<String, Object>put(
-									"description",
-									HashMapBuilder.put(
-										"defaultValue", selLayout.getDescription(locale)
-									).put(
-										"id", "descriptionSEO"
-									).build()
-								).put(
-									"title",
-									HashMapBuilder.<String, Object>put(
-										"defaultValue", layoutsSEODisplayContext.getDefaultPageTitleMap()
-									).put(
-										"id", "title"
-									).build()
-								).put(
-									"url",
-									HashMapBuilder.<String, Object>put(
-										"defaultValue", layoutsSEODisplayContext.getDefaultCanonicalURLMap()
-									).put(
-										"id", "canonicalURL"
-									).build()
-								).build()
-							).put(
-								"titleSuffix", layoutsSEODisplayContext.getPageTitleSuffix()
-							).build();
-							%>
-
 							<react:component
 								module="js/seo/PreviewSeo.es"
-								props="<%= props %>"
+								props='<%=
+									HashMapBuilder.<String, Object>put(
+										"targets",
+										HashMapBuilder.<String, Object>put(
+											"description",
+											HashMapBuilder.put(
+												"defaultValue", selLayout.getDescription(locale)
+											).put(
+												"id", "descriptionSEO"
+											).build()
+										).put(
+											"title",
+											HashMapBuilder.<String, Object>put(
+												"defaultValue", layoutsSEODisplayContext.getDefaultPageTitleMap()
+											).put(
+												"id", "title"
+											).build()
+										).put(
+											"url",
+											HashMapBuilder.<String, Object>put(
+												"defaultValue", layoutsSEODisplayContext.getDefaultCanonicalURLMap()
+											).put(
+												"id", "canonicalURL"
+											).build()
+										).build()
+									).put(
+										"titleSuffix", layoutsSEODisplayContext.getPageTitleSuffix()
+									).build()
+								%>'
 								servletContext="<%= application %>"
 							/>
 						</div>

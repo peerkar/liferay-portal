@@ -27,12 +27,12 @@ public class EncryptorException extends Exception {
 		super(msg);
 	}
 
-	public EncryptorException(String msg, Throwable cause) {
-		super(msg, cause);
+	public EncryptorException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public EncryptorException(Throwable cause) {
-		super(cause);
+	public EncryptorException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

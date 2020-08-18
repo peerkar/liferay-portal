@@ -28,12 +28,12 @@ public class ArticleVersionException extends PortalException {
 		super(msg);
 	}
 
-	public ArticleVersionException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ArticleVersionException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ArticleVersionException(Throwable cause) {
-		super(cause);
+	public ArticleVersionException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

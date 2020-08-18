@@ -28,12 +28,12 @@ public class CTEnclosureException extends PortalException {
 		super(msg);
 	}
 
-	public CTEnclosureException(String msg, Throwable cause) {
-		super(msg, cause);
+	public CTEnclosureException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public CTEnclosureException(Throwable cause) {
-		super(cause);
+	public CTEnclosureException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

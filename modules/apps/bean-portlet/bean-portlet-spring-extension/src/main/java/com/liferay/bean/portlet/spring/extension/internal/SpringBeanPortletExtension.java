@@ -215,14 +215,14 @@ public class SpringBeanPortletExtension {
 					catch (ReflectiveOperationException
 								reflectiveOperationException) {
 
-						Throwable cause =
+						Throwable throwable =
 							reflectiveOperationException.getCause();
 
-						if (cause instanceof PortletException) {
-							throw (PortletException)cause;
+						if (throwable instanceof PortletException) {
+							throw (PortletException)throwable;
 						}
 
-						throw new PortletException(cause);
+						throw new PortletException(throwable);
 					}
 				}
 
@@ -458,13 +458,13 @@ public class SpringBeanPortletExtension {
 			}
 		}
 		catch (InvocationTargetException invocationTargetException) {
-			Throwable cause = invocationTargetException.getCause();
+			Throwable throwable = invocationTargetException.getCause();
 
-			if (cause instanceof PortletException) {
-				throw (PortletException)cause;
+			if (throwable instanceof PortletException) {
+				throw (PortletException)throwable;
 			}
 
-			throw new PortletException(cause);
+			throw new PortletException(throwable);
 		}
 		catch (PortletException portletException) {
 			throw portletException;

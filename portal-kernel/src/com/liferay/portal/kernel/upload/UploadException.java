@@ -28,12 +28,12 @@ public class UploadException extends PortalException {
 		super(msg);
 	}
 
-	public UploadException(String msg, Throwable cause) {
-		super(msg, cause);
+	public UploadException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public UploadException(Throwable cause) {
-		super(cause);
+	public UploadException(Throwable throwable) {
+		super(throwable);
 	}
 
 	public boolean isExceededFileSizeLimit() {

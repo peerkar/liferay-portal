@@ -553,33 +553,34 @@ public abstract class BaseAlloyControllerImpl implements AlloyController {
 					_transactionConfig, () -> method.invoke(this));
 			}
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			Exception exception = null;
 
-			if (t instanceof Exception) {
-				exception = (Exception)t;
+			if (throwable instanceof Exception) {
+				exception = (Exception)throwable;
 			}
 			else {
-				exception = new Exception(t);
+				exception = new Exception(throwable);
 			}
 
 			Object[] arguments = null;
 			String message = "an-unexpected-system-error-occurred";
 
-			Throwable rootCause = getRootCause(exception);
+			Throwable rootCauseThrowable = getRootCause(exception);
 
-			if (rootCause instanceof AlloyException) {
-				AlloyException alloyException = (AlloyException)rootCause;
+			if (rootCauseThrowable instanceof AlloyException) {
+				AlloyException alloyException =
+					(AlloyException)rootCauseThrowable;
 
 				if (alloyException.log) {
-					log.error(rootCause, rootCause);
+					log.error(rootCauseThrowable, rootCauseThrowable);
 				}
 
 				if (ArrayUtil.isNotEmpty(alloyException.arguments)) {
 					arguments = alloyException.arguments;
 				}
 
-				message = rootCause.getMessage();
+				message = rootCauseThrowable.getMessage();
 			}
 			else {
 				log.error(exception, exception);
@@ -1150,11 +1151,11 @@ public abstract class BaseAlloyControllerImpl implements AlloyController {
 			Object... arguments)
 		throws Exception {
 
-		Throwable rootCause = getRootCause(exception);
+		Throwable rootCauseThrowable = getRootCause(exception);
 
 		if (isRespondingTo()) {
 			responseContent = buildResponseContent(
-				rootCause, translate(pattern, arguments), status);
+				rootCauseThrowable, translate(pattern, arguments), status);
 
 			return;
 		}
@@ -1162,7 +1163,7 @@ public abstract class BaseAlloyControllerImpl implements AlloyController {
 		portletRequest.setAttribute("arguments", arguments);
 
 		portletRequest.setAttribute(
-			"data", getStackTrace((Exception)rootCause));
+			"data", getStackTrace((Exception)rootCauseThrowable));
 
 		portletRequest.setAttribute("pattern", pattern);
 		portletRequest.setAttribute("status", status);

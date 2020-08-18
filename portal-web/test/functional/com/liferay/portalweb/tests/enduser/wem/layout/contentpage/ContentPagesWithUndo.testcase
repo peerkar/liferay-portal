@@ -54,7 +54,7 @@ definition {
 
 		PageEditor.gotoStyle(fragmentName = "Heading");
 
-		PageEditor.configureFragment(textAlign = "Center");
+		PageEditor.configureFragment(alignment = "Center");
 
 		PageEditor.viewFragmentStyle(
 			alignment = "center",
@@ -330,6 +330,9 @@ definition {
 	@description = "This is a test for LPS-111946. Undo can bring deleted Collection Display with collection items back."
 	@priority = "3"
 	test UndoDeletedFragmentWithCollection {
+		property osgi.app.includes = "bookmarks";
+		property osgi.app.includes = "document-library-google-docs";
+
 		for (var i : list "1,2,3") {
 			JSONWebcontent.addWebContent(
 				content = "WC WebContent Content ${i}",
@@ -613,7 +616,7 @@ definition {
 
 		PageEditor.editLayoutGrid(
 			columnCount = "1",
-			panel = "Configuration");
+			panel = "General");
 
 		PageEditor.viewGridStyle(
 			columnCount = "1",
@@ -623,7 +626,7 @@ definition {
 
 		PageEditor.editLayoutGrid(
 			columnCount = "2",
-			panel = "Configuration");
+			panel = "General");
 
 		PageEditor.viewGridStyle(
 			columnCount = "2",

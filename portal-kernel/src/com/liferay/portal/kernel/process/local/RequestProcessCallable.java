@@ -34,22 +34,22 @@ public class RequestProcessCallable<T extends Serializable>
 	@Override
 	public T call() throws ProcessException {
 		T result = null;
-		Throwable throwable = null;
+		Throwable throwable1 = null;
 
 		try {
 			result = _processCallable.call();
 
 			return result;
 		}
-		catch (Throwable t) {
-			throwable = t;
+		catch (Throwable throwable2) {
+			throwable1 = throwable2;
 
-			throw t;
+			throw throwable2;
 		}
 		finally {
 			try {
 				LocalProcessLauncher.ProcessContext.writeProcessCallable(
-					new ResponseProcessCallable<>(_id, result, throwable));
+					new ResponseProcessCallable<>(_id, result, throwable1));
 			}
 			catch (IOException ioException) {
 				throw new ProcessException(ioException);

@@ -26,12 +26,12 @@ public class ResourcePrimKeyException extends PortalException {
 		super(msg);
 	}
 
-	public ResourcePrimKeyException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ResourcePrimKeyException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ResourcePrimKeyException(Throwable cause) {
-		super(cause);
+	public ResourcePrimKeyException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

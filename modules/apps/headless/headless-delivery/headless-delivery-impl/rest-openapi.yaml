@@ -539,6 +539,9 @@ components:
                 Represents the content structure that backs structured content. This defines which form fields are
                 available and the possible types and values.
             properties:
+                assetLibraryKey:
+                    readOnly: true
+                    type: string
                 availableLanguages:
                     description:
                         The list of languages the structure has a translation for.
@@ -705,6 +708,9 @@ components:
                         type: object
                     readOnly: true
                     type: object
+                assetLibraryKey:
+                    readOnly: true
+                    type: string
                 availableLanguages:
                     items:
                         type: string
@@ -805,8 +811,10 @@ components:
                     readOnly: true
                     type: string
                 profileURL:
+                    # @review
                     description:
-                        A relative URL to the author's user profile.
+                        "A relative URL to the author's user profile.
+                        Optional field, can be embedded with nestedFields"
                     format: uri
                     readOnly: true
                     type: string
@@ -955,6 +963,9 @@ components:
                     description:
                         The document's average rating.
                     readOnly: true
+                assetLibraryKey:
+                    readOnly: true
+                    type: string
                 contentUrl:
                     description:
                         The document's relative URL.
@@ -1056,6 +1067,13 @@ components:
                         $ref: "#/components/schemas/RelatedContent"
                     readOnly: true
                     type: array
+                siteId:
+                    # @review
+                    description:
+                        The ID of the site to which this document is scoped.
+                    format: int64
+                    readOnly: true
+                    type: integer
                 sizeInBytes:
                     description:
                         The document's size in bytes.
@@ -1099,6 +1117,9 @@ components:
                         type: object
                     readOnly: true
                     type: object
+                assetLibraryKey:
+                    readOnly: true
+                    type: string
                 creator:
                     allOf:
                         - $ref: "#/components/schemas/Creator"
@@ -2253,9 +2274,11 @@ components:
         PageSectionDefinition:
             properties:
                 backgroundColor:
+                    deprecated: true
                     type: string
                 backgroundFragmentImage:
                     $ref: "#/components/schemas/FragmentImage"
+                    deprecated: true
                 backgroundImage:
                     deprecated: true
                     description:
@@ -2277,50 +2300,71 @@ components:
                 layout:
                     properties:
                         align:
+                            deprecated: true
                             enum: [Center, End, None, Start, Stretch]
                             type: string
                         borderColor:
+                            deprecated: true
                             type: string
                         borderRadius:
+                            deprecated: true
                             enum: [Circle, Large, None, Pill, Regular]
                             type: string
                         borderWidth:
+                            deprecated: true
                             type: integer
                         containerType:
                             enum: [Fixed, Fluid]
                             type: string
                         contentDisplay:
+                            deprecated: true
                             enum: [Block, Flex]
                             type: string
                         justify:
+                            deprecated: true
                             enum: [Center, End, None, SpaceAround, SpaceBetween, Start]
                             type: string
                         marginBottom:
+                            deprecated: true
                             type: integer
                         marginLeft:
+                            deprecated: true
                             type: integer
                         marginRight:
+                            deprecated: true
                             type: integer
                         marginTop:
+                            deprecated: true
                             type: integer
                         opacity:
+                            deprecated: true
                             type: integer
                         paddingBottom:
+                            deprecated: true
                             type: integer
                         paddingHorizontal:
+                            deprecated: true
                             type: integer
                         paddingLeft:
+                            deprecated: true
                             type: integer
                         paddingRight:
+                            deprecated: true
                             type: integer
                         paddingTop:
+                            deprecated: true
                             type: integer
                         shadow:
+                            deprecated: true
                             enum: [Default, Large, None, Regular, Small]
                             type: string
                         widthType:
                             enum: [Fixed, Fluid]
                             type: string
+                    type: object
+                styles:
+                    additionalProperties:
+                        type: object
                     type: object
             type: object
         PageTemplate:
@@ -2521,6 +2565,9 @@ components:
                     description:
                         The structured content's average rating.
                     readOnly: true
+                assetLibraryKey:
+                    readOnly: true
+                    type: string
                 availableLanguages:
                     description:
                         The list of languages the structured content has a translation for.
@@ -2697,6 +2744,9 @@ components:
                         type: object
                     readOnly: true
                     type: object
+                assetLibraryKey:
+                    readOnly: true
+                    type: string
                 creator:
                     allOf:
                         - $ref: "#/components/schemas/Creator"
@@ -3037,7 +3087,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.headless.delivery.client', and version '3.0.0'."
+        'com.liferay.headless.delivery.client', and version '3.0.2'."
     license:
         name: "Apache 2.0"
         url: "http://www.apache.org/licenses/LICENSE-2.0.html"
@@ -3045,6 +3095,591 @@ info:
     version: v1.0
 openapi: 3.0.1
 paths:
+    "/asset-libraries/{assetLibraryId}/content-elements":
+        get:
+            operationId: getAssetLibraryContentElementsPage
+            parameters:
+                - in: path
+                  name: assetLibraryId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
+                  name: aggregationTerms
+                  schema:
+                      items:
+                          type: string
+                      type: array
+                - in: query
+                  name: filter
+                  schema:
+                      type: string
+                - in: query
+                  name: page
+                  schema:
+                      type: integer
+                - in: query
+                  name: pageSize
+                  schema:
+                      type: integer
+                - in: query
+                  name: search
+                  schema:
+                      type: string
+                - in: query
+                  name: sort
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/ContentElement"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/ContentElement"
+                                type: array
+                    description:
+                        ""
+            tags: ["ContentElement"]
+    "/asset-libraries/{assetLibraryId}/content-sets/by-key/{key}/content-set-elements":
+        get:
+            operationId: getAssetLibraryContentSetByKeyContentSetElementsPage
+            parameters:
+                - in: path
+                  name: assetLibraryId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: path
+                  name: key
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: page
+                  schema:
+                      type: integer
+                - in: query
+                  name: pageSize
+                  schema:
+                      type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/ContentSetElement"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/ContentSetElement"
+                                type: array
+                    description:
+                        ""
+            tags: ["ContentSetElement"]
+    "/asset-libraries/{assetLibraryId}/content-sets/by-uuid/{uuid}/content-set-elements":
+        get:
+            operationId: getAssetLibraryContentSetByUuidContentSetElementsPage
+            parameters:
+                - in: path
+                  name: assetLibraryId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: path
+                  name: uuid
+                  required: true
+                  schema:
+                      type: string
+                - in: query
+                  name: page
+                  schema:
+                      type: integer
+                - in: query
+                  name: pageSize
+                  schema:
+                      type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/ContentSetElement"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/ContentSetElement"
+                                type: array
+                    description:
+                        ""
+            tags: ["ContentSetElement"]
+    "/asset-libraries/{assetLibraryId}/content-structures":
+        get:
+            operationId: getAssetLibraryContentStructuresPage
+            parameters:
+                - in: path
+                  name: assetLibraryId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
+                  name: aggregationTerms
+                  schema:
+                      items:
+                          type: string
+                      type: array
+                - in: query
+                  name: filter
+                  schema:
+                      type: string
+                - in: query
+                  name: page
+                  schema:
+                      type: integer
+                - in: query
+                  name: pageSize
+                  schema:
+                      type: integer
+                - in: query
+                  name: search
+                  schema:
+                      type: string
+                - in: query
+                  name: sort
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/ContentStructure"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/ContentStructure"
+                                type: array
+                    description:
+                        ""
+            tags: ["ContentStructure"]
+    "/asset-libraries/{assetLibraryId}/content-templates":
+        get:
+            operationId: getAssetLibraryContentTemplatesPage
+            parameters:
+                - in: path
+                  name: assetLibraryId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
+                  name: aggregationTerms
+                  schema:
+                      items:
+                          type: string
+                      type: array
+                - in: query
+                  name: filter
+                  schema:
+                      type: string
+                - in: query
+                  name: page
+                  schema:
+                      type: integer
+                - in: query
+                  name: pageSize
+                  schema:
+                      type: integer
+                - in: query
+                  name: search
+                  schema:
+                      type: string
+                - in: query
+                  name: sort
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/ContentTemplate"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/ContentTemplate"
+                                type: array
+                    description:
+                        ""
+            tags: ["ContentTemplate"]
+    "/asset-libraries/{assetLibraryId}/document-folders":
+        get:
+            operationId: getAssetLibraryDocumentFoldersPage
+            parameters:
+                - in: path
+                  name: assetLibraryId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
+                  name: aggregationTerms
+                  schema:
+                      items:
+                          type: string
+                      type: array
+                - in: query
+                  name: flatten
+                  schema:
+                      type: boolean
+                - in: query
+                  name: filter
+                  schema:
+                      type: string
+                - in: query
+                  name: page
+                  schema:
+                      type: integer
+                - in: query
+                  name: pageSize
+                  schema:
+                      type: integer
+                - in: query
+                  name: search
+                  schema:
+                      type: string
+                - in: query
+                  name: sort
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/DocumentFolder"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/DocumentFolder"
+                                type: array
+                    description:
+                        ""
+            tags: ["DocumentFolder"]
+        post:
+            operationId: postAssetLibraryDocumentFolder
+            parameters:
+                - in: path
+                  name: assetLibraryId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/DocumentFolder"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/DocumentFolder"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/DocumentFolder"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/DocumentFolder"
+                    description:
+                        ""
+            tags: ["DocumentFolder"]
+    "/asset-libraries/{assetLibraryId}/documents":
+        get:
+            operationId: getAssetLibraryDocumentsPage
+            parameters:
+                - in: path
+                  name: assetLibraryId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
+                  name: aggregationTerms
+                  schema:
+                      items:
+                          type: string
+                      type: array
+                - in: query
+                  name: flatten
+                  schema:
+                      type: boolean
+                - in: query
+                  name: filter
+                  schema:
+                      type: string
+                - in: query
+                  name: page
+                  schema:
+                      type: integer
+                - in: query
+                  name: pageSize
+                  schema:
+                      type: integer
+                - in: query
+                  name: search
+                  schema:
+                      type: string
+                - in: query
+                  name: sort
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Document"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Document"
+                                type: array
+                    description:
+                        ""
+            tags: ["Document"]
+        post:
+            operationId: postAssetLibraryDocument
+            parameters:
+                - in: path
+                  name: assetLibraryId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            requestBody:
+                content:
+                    multipart/form-data:
+                        schema:
+                            properties:
+                                document:
+                                    $ref: "#/components/schemas/Document"
+                                file:
+                                    format: binary
+                                    type: string
+                            type: object
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Document"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Document"
+                    description:
+                        ""
+            tags: ["Document"]
+    "/asset-libraries/{assetLibraryId}/structured-content-folders":
+        get:
+            operationId: getAssetLibraryStructuredContentFoldersPage
+            parameters:
+                - in: path
+                  name: assetLibraryId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
+                  name: aggregationTerms
+                  schema:
+                      items:
+                          type: string
+                      type: array
+                - in: query
+                  name: flatten
+                  schema:
+                      type: boolean
+                - in: query
+                  name: filter
+                  schema:
+                      type: string
+                - in: query
+                  name: page
+                  schema:
+                      type: integer
+                - in: query
+                  name: pageSize
+                  schema:
+                      type: integer
+                - in: query
+                  name: search
+                  schema:
+                      type: string
+                - in: query
+                  name: sort
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/StructuredContentFolder"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/StructuredContentFolder"
+                                type: array
+                    description:
+                        ""
+            tags: ["StructuredContentFolder"]
+        post:
+            operationId: postAssetLibraryStructuredContentFolder
+            parameters:
+                - in: path
+                  name: assetLibraryId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/StructuredContentFolder"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/StructuredContentFolder"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/StructuredContentFolder"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/StructuredContentFolder"
+                    description:
+                        ""
+            tags: ["StructuredContentFolder"]
+    "/asset-libraries/{assetLibraryId}/structured-contents":
+        get:
+            operationId: getAssetLibraryStructuredContentsPage
+            parameters:
+                - in: path
+                  name: assetLibraryId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
+                  name: aggregationTerms
+                  schema:
+                      items:
+                          type: string
+                      type: array
+                - in: query
+                  name: flatten
+                  schema:
+                      type: boolean
+                - in: query
+                  name: filter
+                  schema:
+                      type: string
+                - in: query
+                  name: page
+                  schema:
+                      type: integer
+                - in: query
+                  name: pageSize
+                  schema:
+                      type: integer
+                - in: query
+                  name: search
+                  schema:
+                      type: string
+                - in: query
+                  name: sort
+                  schema:
+                      type: string
+                - in: header
+                  name: Accept-Language
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/StructuredContent"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/StructuredContent"
+                                type: array
+                    description:
+                        ""
+            tags: ["StructuredContent"]
+        post:
+            operationId: postAssetLibraryStructuredContent
+            parameters:
+                - in: path
+                  name: assetLibraryId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: header
+                  name: Accept-Language
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/StructuredContent"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/StructuredContent"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/StructuredContent"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/StructuredContent"
+                    description:
+                        ""
+            tags: ["StructuredContent"]
     "/blog-posting-images/{blogPostingImageId}":
         delete:
             description:
@@ -5772,12 +6407,6 @@ paths:
         get:
             operationId: getMessageBoardThreadsRankedPage
             parameters:
-                - in: query
-                  name: aggregationTerms
-                  schema:
-                      items:
-                          type: string
-                      type: array
                 - in: query
                   name: dateCreated
                   schema:

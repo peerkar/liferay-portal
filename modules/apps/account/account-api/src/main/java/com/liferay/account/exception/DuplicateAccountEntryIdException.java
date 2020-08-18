@@ -28,12 +28,12 @@ public class DuplicateAccountEntryIdException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateAccountEntryIdException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateAccountEntryIdException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateAccountEntryIdException(Throwable cause) {
-		super(cause);
+	public DuplicateAccountEntryIdException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

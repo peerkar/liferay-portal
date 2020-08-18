@@ -26,12 +26,12 @@ public class DuplicatePasswordPolicyException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicatePasswordPolicyException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicatePasswordPolicyException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicatePasswordPolicyException(Throwable cause) {
-		super(cause);
+	public DuplicatePasswordPolicyException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

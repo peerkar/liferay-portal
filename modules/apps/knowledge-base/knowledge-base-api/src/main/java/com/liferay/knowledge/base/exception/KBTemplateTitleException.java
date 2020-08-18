@@ -28,12 +28,12 @@ public class KBTemplateTitleException extends PortalException {
 		super(msg);
 	}
 
-	public KBTemplateTitleException(String msg, Throwable cause) {
-		super(msg, cause);
+	public KBTemplateTitleException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public KBTemplateTitleException(Throwable cause) {
-		super(cause);
+	public KBTemplateTitleException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

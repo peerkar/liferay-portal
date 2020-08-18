@@ -26,12 +26,12 @@ public class RegionCodeException extends PortalException {
 		super(msg);
 	}
 
-	public RegionCodeException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RegionCodeException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public RegionCodeException(Throwable cause) {
-		super(cause);
+	public RegionCodeException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

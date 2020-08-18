@@ -25,6 +25,7 @@ import com.liferay.dynamic.data.mapping.model.DDMTemplateLinkTable;
 import com.liferay.dynamic.data.mapping.model.DDMTemplateTable;
 import com.liferay.friendly.url.model.FriendlyURLEntryTable;
 import com.liferay.journal.model.JournalArticle;
+import com.liferay.journal.model.JournalArticleLocalizationTable;
 import com.liferay.journal.model.JournalArticleResourceTable;
 import com.liferay.journal.model.JournalArticleTable;
 import com.liferay.journal.model.JournalContentSearchTable;
@@ -53,6 +54,17 @@ public class JournalArticleTableReferenceDefinition
 		childTableReferenceInfoBuilder.singleColumnReference(
 			JournalArticleTable.INSTANCE.articleId,
 			JournalContentSearchTable.INSTANCE.articleId
+		).singleColumnReference(
+			JournalArticleTable.INSTANCE.resourcePrimKey,
+			JournalArticleResourceTable.INSTANCE.resourcePrimKey
+		).referenceInnerJoin(
+			fromStep -> fromStep.from(
+				JournalArticleLocalizationTable.INSTANCE
+			).innerJoinON(
+				JournalArticleTable.INSTANCE,
+				JournalArticleTable.INSTANCE.id.eq(
+					JournalArticleLocalizationTable.INSTANCE.articlePK)
+			)
 		).referenceInnerJoin(
 			fromStep -> fromStep.from(
 				FriendlyURLEntryTable.INSTANCE
@@ -109,9 +121,6 @@ public class JournalArticleTableReferenceDefinition
 
 		parentTableReferenceInfoBuilder.groupedModel(
 			JournalArticleTable.INSTANCE
-		).singleColumnReference(
-			JournalArticleTable.INSTANCE.resourcePrimKey,
-			JournalArticleResourceTable.INSTANCE.resourcePrimKey
 		).singleColumnReference(
 			JournalArticleTable.INSTANCE.folderId,
 			JournalFolderTable.INSTANCE.folderId

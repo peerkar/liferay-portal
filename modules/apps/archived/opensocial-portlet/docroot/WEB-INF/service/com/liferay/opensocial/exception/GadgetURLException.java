@@ -28,12 +28,12 @@ public class GadgetURLException extends PortalException {
 		super(msg);
 	}
 
-	public GadgetURLException(String msg, Throwable cause) {
-		super(msg, cause);
+	public GadgetURLException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public GadgetURLException(Throwable cause) {
-		super(cause);
+	public GadgetURLException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

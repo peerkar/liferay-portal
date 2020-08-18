@@ -30,13 +30,15 @@ public class DuplicateLayoutPageTemplateCollectionTypeException
 	}
 
 	public DuplicateLayoutPageTemplateCollectionTypeException(
-		String msg, Throwable cause) {
+		String msg, Throwable throwable) {
 
-		super(msg, cause);
+		super(msg, throwable);
 	}
 
-	public DuplicateLayoutPageTemplateCollectionTypeException(Throwable cause) {
-		super(cause);
+	public DuplicateLayoutPageTemplateCollectionTypeException(
+		Throwable throwable) {
+
+		super(throwable);
 	}
 
 }

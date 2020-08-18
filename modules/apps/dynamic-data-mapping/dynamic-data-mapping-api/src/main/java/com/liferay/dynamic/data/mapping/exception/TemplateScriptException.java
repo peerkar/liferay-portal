@@ -28,12 +28,12 @@ public class TemplateScriptException extends PortalException {
 		super(msg);
 	}
 
-	public TemplateScriptException(String msg, Throwable cause) {
-		super(msg, cause);
+	public TemplateScriptException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public TemplateScriptException(Throwable cause) {
-		super(cause);
+	public TemplateScriptException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

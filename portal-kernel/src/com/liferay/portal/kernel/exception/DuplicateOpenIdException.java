@@ -26,12 +26,12 @@ public class DuplicateOpenIdException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateOpenIdException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateOpenIdException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateOpenIdException(Throwable cause) {
-		super(cause);
+	public DuplicateOpenIdException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

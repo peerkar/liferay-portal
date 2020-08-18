@@ -26,12 +26,12 @@ public class NoSuchMembershipRequestException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchMembershipRequestException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchMembershipRequestException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchMembershipRequestException(Throwable cause) {
-		super(cause);
+	public NoSuchMembershipRequestException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

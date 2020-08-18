@@ -162,7 +162,6 @@ definition {
 	test EditImportedContentPageViaImportedSiteTemplate {
 		property osgi.module.configuration.file.names = "com.liferay.layout.configuration.LayoutExportImportConfiguration.config";
 		property osgi.module.configurations = "exportDraftLayout=true";
-		property portal.upstream = "quarantine";
 		property testray.component.names = "Training";
 
 		SiteTemplates.addCP(
@@ -218,9 +217,9 @@ definition {
 			larFileName = "site-template-content-page.lar",
 			portletName = "Site Templates");
 
-		Refresh();
-
 		SiteTemplates.viewCP(siteTemplateName = "Site Template Name");
+
+		Refresh();
 
 		LexiconEntry.gotoEntryMenuItem(
 			menuItem = "Manage",

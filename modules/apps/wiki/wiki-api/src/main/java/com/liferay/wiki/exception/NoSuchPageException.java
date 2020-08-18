@@ -28,12 +28,12 @@ public class NoSuchPageException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchPageException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchPageException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchPageException(Throwable cause) {
-		super(cause);
+	public NoSuchPageException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

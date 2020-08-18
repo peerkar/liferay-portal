@@ -25,7 +25,7 @@ public class ExceptionRetryAcceptor implements RetryAcceptor {
 
 	@Override
 	public boolean acceptException(
-		Throwable t, Map<String, String> propertyMap) {
+		Throwable throwable, Map<String, String> propertyMap) {
 
 		String name = propertyMap.get(EXCEPTION_NAME);
 
@@ -35,7 +35,7 @@ public class ExceptionRetryAcceptor implements RetryAcceptor {
 		}
 
 		while (true) {
-			Class<?> clazz = t.getClass();
+			Class<?> clazz = throwable.getClass();
 
 			ClassLoader classLoader = clazz.getClassLoader();
 
@@ -46,20 +46,20 @@ public class ExceptionRetryAcceptor implements RetryAcceptor {
 			try {
 				Class<?> exceptionClass = classLoader.loadClass(name);
 
-				if (exceptionClass.isInstance(t)) {
+				if (exceptionClass.isInstance(throwable)) {
 					return true;
 				}
 			}
 			catch (ClassNotFoundException classNotFoundException) {
 			}
 
-			Throwable cause = t.getCause();
+			Throwable causeThrowable = throwable.getCause();
 
-			if ((t == cause) || (cause == null)) {
+			if ((throwable == causeThrowable) || (causeThrowable == null)) {
 				break;
 			}
 
-			t = cause;
+			throwable = causeThrowable;
 		}
 
 		return false;

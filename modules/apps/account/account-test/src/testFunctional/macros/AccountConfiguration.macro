@@ -42,6 +42,19 @@ definition {
 			assigneeType = "Organizations");
 	}
 
+	macro addBlockedEmailDomain {
+		PortalSettings.gotoConfiguration(
+			configurationCategory = "Accounts",
+			configurationName = "Email Domains",
+			configurationScope = "Virtual Instance Scope");
+
+		SystemSettings.editTextAreaSettingMultiLines(
+			settingName = "Blocked Email Domains",
+			settingValues = "${settingValues}");
+
+		SystemSettings.saveConfiguration();
+	}
+
 	macro enableAccountEmailDomain {
 		PortalSettings.gotoConfiguration(
 			configurationCategory = "Accounts",

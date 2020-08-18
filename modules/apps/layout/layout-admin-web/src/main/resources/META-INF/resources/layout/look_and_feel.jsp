@@ -94,7 +94,9 @@ if ((layoutPageTemplateEntry == null) || !Objects.equals(layoutPageTemplateEntry
 <%
 StyleBookEntry styleBookEntry = null;
 
-int styleBookEntriesCount = StyleBookEntryLocalServiceUtil.getStyleBookEntriesCount(group.getGroupId());
+Group liveGroup = StagingUtil.getLiveGroup(group);
+
+int styleBookEntriesCount = StyleBookEntryLocalServiceUtil.getStyleBookEntriesCount(liveGroup.getGroupId());
 
 boolean hasStyleBooks = styleBookEntriesCount > 0;
 
@@ -107,7 +109,7 @@ if (hasStyleBooks && (selLayout.getStyleBookEntryId() > 0)) {
 	<h3 class="sheet-subtitle"><liferay-ui:message key="style-book" /></h3>
 
 	<p>
-		<b><liferay-ui:message key="style-book-name" />:</b> <span id="<portlet:namespace />styleBookName"><%= (styleBookEntry != null) ? styleBookEntry.getName() : LanguageUtil.get(request, "default") %></span>
+		<b><liferay-ui:message key="style-book-name" />:</b> <span id="<portlet:namespace />styleBookName"><%= (styleBookEntry != null) ? styleBookEntry.getName() : LanguageUtil.get(request, "inherited") %></span>
 	</p>
 
 	<div class="button-holder">
@@ -319,7 +321,7 @@ else {
 				eventName: '<portlet:namespace />selectStyleBook',
 				title: '<liferay-ui:message key="select-style-book" />',
 				url:
-					'<portlet:renderURL windowState="<%= LiferayWindowState.POP_UP.toString() %>"><portlet:param name="mvcPath" value="/select_style_book.jsp" /></portlet:renderURL>',
+					'<portlet:renderURL windowState="<%= LiferayWindowState.POP_UP.toString() %>"><portlet:param name="mvcPath" value="/select_style_book.jsp" /><portlet:param name="selPlid" value="<%= String.valueOf(selLayout.getPlid()) %>" /><portlet:param name="editableMasterLayout" value="<%= String.valueOf(editableMasterLayout) %>" /></portlet:renderURL>',
 			});
 
 			itemSelectorDialog.open();

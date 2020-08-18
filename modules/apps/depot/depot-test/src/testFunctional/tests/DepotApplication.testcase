@@ -53,7 +53,8 @@ definition {
 		AssetListsAdmin.selectAsset(
 			assetListName = "Depot Manual Asset List",
 			assetName = "Document_2.jpeg",
-			assetType = "Basic Document");
+			assetType = "Basic Document",
+			itemType = "All Types");
 
 		AssetListsAdmin.openAssetListsAdmin(siteURLKey = "test-depot-name");
 
@@ -129,9 +130,17 @@ definition {
 
 		DepotNavigator.openDepotAdmin();
 
-		Depot.viewApplication(
-			applicationList = "Collections,Documents and Media,Web Content",
-			depotName = "Test Depot Name");
+		DepotNavigator.gotoDepotPortlet(
+			depotName = "Test Depot Name",
+			portlet = "Web Content");
+
+		DepotNavigator.gotoDepotPortletViaBreadcrumb(
+			depotName = "Test Depot Name",
+			portlet = "Documents and Media");
+
+		DepotNavigator.gotoDepotPortletViaBreadcrumb(
+			otherDepotName = "Test Depot Name",
+			portlet = "Collections");
 	}
 
 	@description = "This ensures that the Collections application can be viewed after reactivating in a depot."
@@ -212,7 +221,7 @@ definition {
 
 		Click(
 			key_card = "Test Depot Name",
-			locator1 = "LexiconCard#CARD_TITLE");
+			locator1 = "Card#CARD_TITLE");
 
 		AssertTextEquals(
 			locator1 = "ControlMenu#HEADING",
@@ -221,7 +230,7 @@ definition {
 		for (var portletName : list "Web Content,Documents and Media,Collections,Recycle Bin") {
 			AssertElementNotPresent(
 				key_card = "${portletName}",
-				locator1 = "LexiconCard#CARD");
+				locator1 = "Card#CARD");
 		}
 
 		DepotNavigator.gotoPortlet(

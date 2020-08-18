@@ -26,12 +26,12 @@ public class ImageTypeException extends PortalException {
 		super(msg);
 	}
 
-	public ImageTypeException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ImageTypeException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ImageTypeException(Throwable cause) {
-		super(cause);
+	public ImageTypeException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

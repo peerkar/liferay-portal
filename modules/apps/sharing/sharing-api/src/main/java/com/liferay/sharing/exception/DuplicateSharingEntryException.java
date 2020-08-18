@@ -28,12 +28,12 @@ public class DuplicateSharingEntryException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateSharingEntryException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateSharingEntryException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateSharingEntryException(Throwable cause) {
-		super(cause);
+	public DuplicateSharingEntryException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

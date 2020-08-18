@@ -24,14 +24,12 @@ DDLRecord record = (DDLRecord)request.getAttribute(DDLWebKeys.DYNAMIC_DATA_LISTS
 DDLRecordSet recordSet = record.getRecordSet();
 
 DDMStructure ddmStructure = recordSet.getDDMStructure();
-
-DDMFormValues ddmFormValues = recordVersion.getDDMFormValues();
 %>
 
 <liferay-ddm:html
 	classNameId="<%= PortalUtil.getClassNameId(DDMStructure.class) %>"
 	classPK="<%= ddmStructure.getPrimaryKey() %>"
-	ddmFormValues="<%= ddmFormValues %>"
+	ddmFormValues="<%= recordVersion.getDDMFormValues() %>"
 	groupId="<%= ddmStructure.getGroupId() %>"
 	readOnly="<%= true %>"
 	requestedLocale="<%= locale %>"

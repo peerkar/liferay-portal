@@ -239,7 +239,7 @@ public class GetFileActionHelper {
 	}
 
 	private void _processPrincipalException(
-			Throwable t, HttpServletRequest httpServletRequest,
+			Throwable throwable, HttpServletRequest httpServletRequest,
 			HttpServletResponse httpServletResponse)
 		throws IOException, ServletException {
 
@@ -254,7 +254,7 @@ public class GetFileActionHelper {
 
 		if ((user != null) && !user.isDefaultUser()) {
 			PortalUtil.sendError(
-				HttpServletResponse.SC_UNAUTHORIZED, (Exception)t,
+				HttpServletResponse.SC_UNAUTHORIZED, (Exception)throwable,
 				httpServletRequest, httpServletResponse);
 
 			return;

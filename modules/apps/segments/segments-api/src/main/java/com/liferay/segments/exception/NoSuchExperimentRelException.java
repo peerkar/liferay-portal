@@ -28,12 +28,12 @@ public class NoSuchExperimentRelException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchExperimentRelException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchExperimentRelException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchExperimentRelException(Throwable cause) {
-		super(cause);
+	public NoSuchExperimentRelException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

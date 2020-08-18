@@ -163,7 +163,7 @@ public class LayoutRemoteStagingBackgroundTaskExecutor
 				serviceContext.getUserId(), sourceGroupId, backgroundTask,
 				file);
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			ExportImportThreadLocal.setLayoutStagingInProcess(false);
 
 			ExportImportLifecycleManagerUtil.fireExportImportLifecycleEvent(
@@ -177,7 +177,7 @@ public class LayoutRemoteStagingBackgroundTaskExecutor
 
 			deleteTempLarOnFailure(file);
 
-			throw new SystemException(t);
+			throw new SystemException(throwable);
 		}
 		finally {
 			currentThread.setContextClassLoader(contextClassLoader);

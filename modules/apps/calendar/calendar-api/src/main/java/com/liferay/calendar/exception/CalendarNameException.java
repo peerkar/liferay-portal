@@ -28,12 +28,12 @@ public class CalendarNameException extends PortalException {
 		super(msg);
 	}
 
-	public CalendarNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public CalendarNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public CalendarNameException(Throwable cause) {
-		super(cause);
+	public CalendarNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

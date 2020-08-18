@@ -28,12 +28,14 @@ public class FeedTargetLayoutFriendlyUrlException extends PortalException {
 		super(msg);
 	}
 
-	public FeedTargetLayoutFriendlyUrlException(String msg, Throwable cause) {
-		super(msg, cause);
+	public FeedTargetLayoutFriendlyUrlException(
+		String msg, Throwable throwable) {
+
+		super(msg, throwable);
 	}
 
-	public FeedTargetLayoutFriendlyUrlException(Throwable cause) {
-		super(cause);
+	public FeedTargetLayoutFriendlyUrlException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

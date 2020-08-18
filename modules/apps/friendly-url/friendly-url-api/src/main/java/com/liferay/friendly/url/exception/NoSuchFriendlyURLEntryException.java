@@ -28,12 +28,12 @@ public class NoSuchFriendlyURLEntryException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchFriendlyURLEntryException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchFriendlyURLEntryException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchFriendlyURLEntryException(Throwable cause) {
-		super(cause);
+	public NoSuchFriendlyURLEntryException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

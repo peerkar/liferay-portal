@@ -28,12 +28,12 @@ public class DuplicateAMImageEntryException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateAMImageEntryException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateAMImageEntryException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateAMImageEntryException(Throwable cause) {
-		super(cause);
+	public DuplicateAMImageEntryException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

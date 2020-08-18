@@ -140,6 +140,7 @@ public class DepotAdminViewDepotDashboardDisplayContext {
 
 	private static final String[] _PANEL_CATEGORY_KEYS = {
 		PanelCategoryKeys.SITE_ADMINISTRATION_CONTENT,
+		PanelCategoryKeys.SITE_ADMINISTRATION_BUILD,
 		PanelCategoryKeys.SITE_ADMINISTRATION_CATEGORIZATION,
 		PanelCategoryKeys.SITE_ADMINISTRATION_RECYCLE_BIN,
 		PanelCategoryKeys.SITE_ADMINISTRATION_MEMBERS,

@@ -104,10 +104,6 @@ public class ContextContainerRequestFilter implements ContainerRequestFilter {
 		ContainerRequestContext containerRequestContext, Object instance,
 		Message message) {
 
-		Class<?> clazz = instance.getClass();
-
-		Method[] methods = clazz.getMethods();
-
 		String path = StringUtil.removeSubstring(
 			(String)message.get(Message.BASE_PATH), "/o");
 
@@ -124,6 +120,10 @@ public class ContextContainerRequestFilter implements ContainerRequestFilter {
 
 			Set<String> excludedOperationIdsList = SetUtil.fromArray(
 				excludedOperationIds.split(","));
+
+			Class<?> clazz = instance.getClass();
+
+			Method[] methods = clazz.getMethods();
 
 			for (Method method : methods) {
 				if (excludedOperationIdsList.contains(method.getName())) {

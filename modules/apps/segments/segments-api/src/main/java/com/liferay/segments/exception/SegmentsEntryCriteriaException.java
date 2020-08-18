@@ -28,12 +28,12 @@ public class SegmentsEntryCriteriaException extends PortalException {
 		super(msg);
 	}
 
-	public SegmentsEntryCriteriaException(String msg, Throwable cause) {
-		super(msg, cause);
+	public SegmentsEntryCriteriaException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public SegmentsEntryCriteriaException(Throwable cause) {
-		super(cause);
+	public SegmentsEntryCriteriaException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

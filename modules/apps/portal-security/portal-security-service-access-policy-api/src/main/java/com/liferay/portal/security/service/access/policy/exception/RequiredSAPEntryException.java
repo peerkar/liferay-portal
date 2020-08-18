@@ -28,12 +28,12 @@ public class RequiredSAPEntryException extends PortalException {
 		super(msg);
 	}
 
-	public RequiredSAPEntryException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RequiredSAPEntryException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public RequiredSAPEntryException(Throwable cause) {
-		super(cause);
+	public RequiredSAPEntryException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

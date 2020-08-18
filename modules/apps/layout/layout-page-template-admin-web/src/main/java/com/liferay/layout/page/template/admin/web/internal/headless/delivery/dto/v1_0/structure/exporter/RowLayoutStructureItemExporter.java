@@ -20,7 +20,7 @@ import com.liferay.headless.delivery.dto.v1_0.RowViewport;
 import com.liferay.headless.delivery.dto.v1_0.RowViewportDefinition;
 import com.liferay.layout.responsive.ViewportSize;
 import com.liferay.layout.util.structure.LayoutStructureItem;
-import com.liferay.layout.util.structure.RowLayoutStructureItem;
+import com.liferay.layout.util.structure.RowStyledLayoutStructureItem;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.util.MapUtil;
 
@@ -39,7 +39,7 @@ public class RowLayoutStructureItemExporter
 
 	@Override
 	public String getClassName() {
-		return RowLayoutStructureItem.class.getName();
+		return RowStyledLayoutStructureItem.class.getName();
 	}
 
 	@Override
@@ -47,18 +47,18 @@ public class RowLayoutStructureItemExporter
 		long groupId, LayoutStructureItem layoutStructureItem,
 		boolean saveInlineContent, boolean saveMappingConfiguration) {
 
-		RowLayoutStructureItem rowLayoutStructureItem =
-			(RowLayoutStructureItem)layoutStructureItem;
+		RowStyledLayoutStructureItem rowStyledLayoutStructureItem =
+			(RowStyledLayoutStructureItem)layoutStructureItem;
 
 		return new PageElement() {
 			{
 				definition = new PageRowDefinition() {
 					{
-						gutters = rowLayoutStructureItem.isGutters();
+						gutters = rowStyledLayoutStructureItem.isGutters();
 						modulesPerRow =
-							rowLayoutStructureItem.getModulesPerRow();
+							rowStyledLayoutStructureItem.getModulesPerRow();
 						numberOfColumns =
-							rowLayoutStructureItem.getNumberOfColumns();
+							rowStyledLayoutStructureItem.getNumberOfColumns();
 						reverseOrder = getReverseOrder();
 						verticalAlignment = getVerticalAlignment();
 
@@ -66,7 +66,7 @@ public class RowLayoutStructureItemExporter
 							() -> {
 								Map<String, JSONObject>
 									rowViewportConfigurations =
-										rowLayoutStructureItem.
+										rowStyledLayoutStructureItem.
 											getViewportConfigurations();
 
 								if (MapUtil.isEmpty(

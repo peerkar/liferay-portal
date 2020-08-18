@@ -28,12 +28,12 @@ public class InvalidTemplateVersionException extends PortalException {
 		super(msg);
 	}
 
-	public InvalidTemplateVersionException(String msg, Throwable cause) {
-		super(msg, cause);
+	public InvalidTemplateVersionException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public InvalidTemplateVersionException(Throwable cause) {
-		super(cause);
+	public InvalidTemplateVersionException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

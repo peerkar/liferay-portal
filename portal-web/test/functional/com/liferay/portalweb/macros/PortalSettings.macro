@@ -627,14 +627,6 @@ definition {
 		}
 	}
 
-	macro enableOpenIDCP {
-		Check(locator1 = "PortalSettingsAuthentication#AUTHENTICATION_OPEN_ID_ENABLED_CHECKBOX");
-
-		PortletEntry.save();
-
-		AssertChecked(locator1 = "PortalSettingsAuthentication#AUTHENTICATION_OPEN_ID_ENABLED_CHECKBOX");
-	}
-
 	macro enterReservedEmailAddressCP {
 		PortalSettings.gotoConfiguration(
 			configurationCategory = "User Authentication",
@@ -1044,15 +1036,6 @@ definition {
 		AssertTextEquals(
 			locator1 = "PortalSettingsAuthentication#AUTHENTICATION_NTLM_SERVICE_PASSWORD_FIELD",
 			value1 = "TEMP_OBFUSCATION_VALUE");
-	}
-
-	macro viewAuthenticationOpenIDCP {
-		PortalSettings.gotoConfiguration(
-			configurationCategory = "SSO",
-			configurationName = "OpenID",
-			configurationScope = "Virtual Instance Scope");
-
-		AssertElementPresent(locator1 = "PortalSettingsAuthentication#AUTHENTICATION_OPEN_ID_ENABLED_CHECKBOX");
 	}
 
 	macro viewAuthenticationOpenSSOCP {

@@ -43,6 +43,8 @@ definition {
 	@description = "Fragments are published automatically on any publishing process."
 	@priority = "5"
 	test AssertFragmentsAlwaysPublished {
+		property portal.acceptance = "true";
+
 		task ("Add a fragment collection to the staging site via JSON") {
 			JSONFragment.addFragmentCollection(
 				groupKey = "Test Site Name-staging",

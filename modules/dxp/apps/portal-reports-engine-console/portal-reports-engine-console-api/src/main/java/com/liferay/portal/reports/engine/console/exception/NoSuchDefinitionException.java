@@ -28,12 +28,12 @@ public class NoSuchDefinitionException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchDefinitionException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchDefinitionException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchDefinitionException(Throwable cause) {
-		super(cause);
+	public NoSuchDefinitionException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

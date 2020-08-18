@@ -69,7 +69,7 @@ public class CounterTransactionExecutorTest {
 			recordPlatformTransactionManager);
 
 		TransactionAttributeAdapter transactionAttributeAdapter =
-			_newTransactionAttributeAdapter(t -> false);
+			_newTransactionAttributeAdapter(throwable -> false);
 
 		try {
 			transactionExecutor.execute(
@@ -80,8 +80,8 @@ public class CounterTransactionExecutorTest {
 
 			Assert.fail();
 		}
-		catch (Throwable t) {
-			Assert.assertSame(appException, t);
+		catch (Throwable throwable) {
+			Assert.assertSame(appException, throwable);
 		}
 
 		recordPlatformTransactionManager.verify(
@@ -107,7 +107,7 @@ public class CounterTransactionExecutorTest {
 			recordPlatformTransactionManager);
 
 		TransactionAttributeAdapter transactionAttributeAdapter =
-			_newTransactionAttributeAdapter(t -> false);
+			_newTransactionAttributeAdapter(throwable -> false);
 
 		try {
 			transactionExecutor.execute(
@@ -118,8 +118,8 @@ public class CounterTransactionExecutorTest {
 
 			Assert.fail();
 		}
-		catch (Throwable t) {
-			Assert.assertSame(commitException, t);
+		catch (Throwable throwable) {
+			Assert.assertSame(commitException, throwable);
 
 			Throwable[] throwables = commitException.getSuppressed();
 
@@ -148,7 +148,7 @@ public class CounterTransactionExecutorTest {
 			recordPlatformTransactionManager);
 
 		TransactionAttributeAdapter transactionAttributeAdapter =
-			_newTransactionAttributeAdapter(t -> false);
+			_newTransactionAttributeAdapter(throwable -> false);
 
 		try {
 			transactionExecutor.execute(
@@ -156,8 +156,8 @@ public class CounterTransactionExecutorTest {
 
 			Assert.fail();
 		}
-		catch (Throwable t) {
-			Assert.assertSame(commitException, t);
+		catch (Throwable throwable) {
+			Assert.assertSame(commitException, throwable);
 		}
 
 		recordPlatformTransactionManager.verify(
@@ -186,7 +186,8 @@ public class CounterTransactionExecutorTest {
 			recordPlatformTransactionManager);
 
 		TransactionAttributeAdapter transactionAttributeAdapter =
-			_newTransactionAttributeAdapter(t -> t == appException);
+			_newTransactionAttributeAdapter(
+				throwable -> throwable == appException);
 
 		try {
 			transactionExecutor.execute(
@@ -197,8 +198,8 @@ public class CounterTransactionExecutorTest {
 
 			Assert.fail();
 		}
-		catch (Throwable t) {
-			Assert.assertSame(appException, t);
+		catch (Throwable throwable) {
+			Assert.assertSame(appException, throwable);
 		}
 
 		recordPlatformTransactionManager.verify(
@@ -224,7 +225,8 @@ public class CounterTransactionExecutorTest {
 			recordPlatformTransactionManager);
 
 		TransactionAttributeAdapter transactionAttributeAdapter =
-			_newTransactionAttributeAdapter(t -> t == appException);
+			_newTransactionAttributeAdapter(
+				throwable -> throwable == appException);
 
 		try {
 			transactionExecutor.execute(
@@ -235,8 +237,8 @@ public class CounterTransactionExecutorTest {
 
 			Assert.fail();
 		}
-		catch (Throwable t) {
-			Assert.assertSame(rollbackException, t);
+		catch (Throwable throwable) {
+			Assert.assertSame(rollbackException, throwable);
 
 			Throwable[] throwables = rollbackException.getSuppressed();
 

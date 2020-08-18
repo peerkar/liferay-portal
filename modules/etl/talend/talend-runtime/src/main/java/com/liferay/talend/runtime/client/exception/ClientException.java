@@ -29,8 +29,10 @@ public class ClientException extends BaseComponentException {
 		super(message, httpStatus);
 	}
 
-	public ClientException(String message, int httpStatus, Throwable cause) {
-		super(message, httpStatus, cause);
+	public ClientException(
+		String message, int httpStatus, Throwable throwable) {
+
+		super(message, httpStatus, throwable);
 	}
 
 }

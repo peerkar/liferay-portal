@@ -28,12 +28,12 @@ public class KaleoDefinitionContentException extends PortalException {
 		super(msg);
 	}
 
-	public KaleoDefinitionContentException(String msg, Throwable cause) {
-		super(msg, cause);
+	public KaleoDefinitionContentException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public KaleoDefinitionContentException(Throwable cause) {
-		super(cause);
+	public KaleoDefinitionContentException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

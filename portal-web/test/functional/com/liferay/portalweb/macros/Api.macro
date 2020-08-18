@@ -34,9 +34,11 @@ definition {
 			locator1 = "JSONWSUser#API_EXECUTE_EMAIL_ADDRESS_FIELD",
 			value1 = "${userEmailAddress}");
 
-		Type(
-			locator1 = "JSONWSUser#API_EXECUTE_FACEBOOK_ID_FIELD",
-			value1 = "${userFacebookId}");
+		if (IsElementPresent(locator1 = "JSONWSUser#API_EXECUTE_FACEBOOK_ID_FIELD")) {
+			Type(
+				locator1 = "JSONWSUser#API_EXECUTE_FACEBOOK_ID_FIELD",
+				value1 = "${userFacebookId}");
+		}
 
 		Type(
 			locator1 = "JSONWSUser#API_EXECUTE_FIRST_NAME_FIELD",

@@ -44,8 +44,6 @@ page import="com.liferay.sharing.exception.NoSuchEntryException" %><%@
 page import="com.liferay.sharing.model.SharingEntry" %><%@
 page import="com.liferay.sharing.web.internal.display.context.SharedAssetsViewDisplayContext" %>
 
-<%@ page import="java.util.Map" %>
-
 <%@ page import="javax.portlet.PortletURL" %>
 
 <liferay-frontend:defineObjects />

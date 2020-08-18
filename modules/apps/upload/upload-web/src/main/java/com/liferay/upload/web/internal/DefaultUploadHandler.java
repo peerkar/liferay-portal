@@ -100,21 +100,21 @@ public class DefaultUploadHandler implements UploadHandler {
 				WebKeys.UPLOAD_EXCEPTION);
 
 		if (uploadException != null) {
-			Throwable cause = uploadException.getCause();
+			Throwable throwable = uploadException.getCause();
 
 			if (uploadException.isExceededFileSizeLimit()) {
-				throw new FileSizeException(cause);
+				throw new FileSizeException(throwable);
 			}
 
 			if (uploadException.isExceededLiferayFileItemSizeLimit()) {
-				throw new LiferayFileItemException(cause);
+				throw new LiferayFileItemException(throwable);
 			}
 
 			if (uploadException.isExceededUploadRequestSizeLimit()) {
-				throw new UploadRequestSizeException(cause);
+				throw new UploadRequestSizeException(throwable);
 			}
 
-			throw new PortalException(cause);
+			throw new PortalException(throwable);
 		}
 
 		return uploadPortletRequest;

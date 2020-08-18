@@ -39,6 +39,7 @@ import com.liferay.translation.service.TranslationEntryLocalService;
 import java.io.IOException;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -151,13 +152,17 @@ public class TranslateMVCRenderCommand implements MVCRenderCommand {
 					translationEntry.getClassPK(),
 					translationEntry.getContent());
 
+			Collection<InfoFieldValue<Object>> infoFieldValues =
+				journalArticleInfoItemFieldValues.getInfoFieldValues();
+
+			Stream<InfoFieldValue<Object>> infoFieldValueStream =
+				infoFieldValues.stream();
+
 			return InfoItemFieldValues.builder(
-			).infoItemClassPKReference(
-				journalArticleInfoItemFieldValues.getInfoItemClassPKReference()
+			).infoItemReference(
+				journalArticleInfoItemFieldValues.getInfoItemReference()
 			).infoFieldValues(
-				journalArticleInfoItemFieldValues.getInfoFieldValues(
-				).stream(
-				).map(
+				infoFieldValueStream.map(
 					infoFieldValue -> new InfoFieldValue<>(
 						infoFieldValue.getInfoField(),
 						GetterUtil.getObject(

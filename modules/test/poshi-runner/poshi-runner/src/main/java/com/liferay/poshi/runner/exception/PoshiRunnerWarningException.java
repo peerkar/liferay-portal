@@ -26,12 +26,12 @@ public class PoshiRunnerWarningException extends Exception {
 		super(msg);
 	}
 
-	public PoshiRunnerWarningException(String msg, Throwable cause) {
-		super(msg, cause);
+	public PoshiRunnerWarningException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public PoshiRunnerWarningException(Throwable cause) {
-		super(cause);
+	public PoshiRunnerWarningException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -28,12 +28,12 @@ public class QuestionExpirationDateException extends PortalException {
 		super(msg);
 	}
 
-	public QuestionExpirationDateException(String msg, Throwable cause) {
-		super(msg, cause);
+	public QuestionExpirationDateException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public QuestionExpirationDateException(Throwable cause) {
-		super(cause);
+	public QuestionExpirationDateException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

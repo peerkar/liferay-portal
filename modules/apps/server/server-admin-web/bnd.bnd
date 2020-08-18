@@ -1,5 +1,5 @@
 Bundle-Name: Liferay Server Admin Web
 Bundle-SymbolicName: com.liferay.server.admin.web
-Bundle-Version: 4.0.14
+Bundle-Version: 4.0.17
 DynamicImport-Package: *
 Web-ContextPath: /server-admin-web

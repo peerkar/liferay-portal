@@ -32,7 +32,6 @@ import org.osgi.service.component.annotations.Component;
 
 /**
  * @author Michael C. Han
- * @author Petteri Karttunen
  */
 @Component(service = MatchQueryTranslator.class)
 public class MatchQueryTranslatorImpl
@@ -86,11 +85,7 @@ public class MatchQueryTranslatorImpl
 		if (Validator.isNotNull(matchQuery.getAnalyzer())) {
 			matchPhrasePrefixQueryBuilder.analyzer(matchQuery.getAnalyzer());
 		}
-		
-		if (matchQuery.getBoost() !=  null) {
-			matchPhrasePrefixQueryBuilder.boost(matchQuery.getBoost());
-		}
-		
+
 		if (matchQuery.getMaxExpansions() != null) {
 			matchPhrasePrefixQueryBuilder.maxExpansions(
 				matchQuery.getMaxExpansions());
@@ -109,10 +104,6 @@ public class MatchQueryTranslatorImpl
 		MatchPhraseQueryBuilder matchPhraseQueryBuilder =
 			QueryBuilders.matchPhraseQuery(field, value);
 
-		if (matchQuery.getBoost() !=  null) {
-			matchPhraseQueryBuilder.boost(matchQuery.getBoost());
-		}
-		
 		if (Validator.isNotNull(matchQuery.getAnalyzer())) {
 			matchPhraseQueryBuilder.analyzer(matchQuery.getAnalyzer());
 		}
@@ -133,10 +124,6 @@ public class MatchQueryTranslatorImpl
 		if (Validator.isNotNull(matchQuery.getAnalyzer())) {
 			matchQueryBuilder.analyzer(matchQuery.getAnalyzer());
 		}
-
-		if (matchQuery.getBoost() !=  null) {
-			matchQueryBuilder.boost(matchQuery.getBoost());
-		}		
 
 		if (matchQuery.getCutOffFrequency() != null) {
 			matchQueryBuilder.cutoffFrequency(matchQuery.getCutOffFrequency());

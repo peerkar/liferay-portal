@@ -28,12 +28,12 @@ public class DuplicateFeedIdException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateFeedIdException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateFeedIdException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateFeedIdException(Throwable cause) {
-		super(cause);
+	public DuplicateFeedIdException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

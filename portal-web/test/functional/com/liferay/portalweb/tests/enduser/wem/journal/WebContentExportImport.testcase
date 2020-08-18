@@ -472,48 +472,6 @@ definition {
 		AssertConsoleTextNotPresent(value1 = "DuplicateFriendlyURLEntryException");
 	}
 
-	@ignore = "true"
-	@priority = "5"
-	test ImportTrainingLAR {
-		property testray.component.names = "Training";
-
-		JSONLayout.addPublicLayout(
-			groupName = "Test Site Name",
-			layoutName = "Site Page Name");
-
-		WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
-
-		LAR.importPortlet(
-			larFileName = "space-content-7.0.lar",
-			siteName = "Site Name",
-			uploadFrom = "dependencies");
-
-		JSONLayout.addWidgetToPublicLayout(
-			groupName = "Test Site Name",
-			layoutName = "Site Page Name",
-			widgetName = "Web Content Display");
-
-		Navigator.gotoSitePage(
-			pageName = "Site Page Name",
-			siteName = "Test Site Name");
-
-		Portlet.gotoPortletOptions(
-			portletName = "Web Content Display",
-			portletOption = "Look and Feel Configuration");
-
-		IFrame.selectConfigurationFrame();
-
-		Portlet.selectApplicationDecorator(decorator = "Barebone");
-
-		PortletEntry.save();
-
-		Navigator.gotoSitePage(
-			pageName = "Site Page Name",
-			siteName = "Test Site Name");
-
-		Portlet.viewApplicationDecorator(decorator = "Barebone");
-	}
-
 	@priority = "5"
 	test MoveImportedWebContentArticlesToFolders {
 		property portal.acceptance = "true";

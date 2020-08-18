@@ -38,6 +38,7 @@ definition {
 	@priority = "5"
 	test ViewLayoutArchive621015 {
 		property data.archive.type = "data-archive-pages-administration";
+		property database.types = "db2,mariadb,mysql,oracle,postgresql,sybase";
 		property portal.version = "6.2.10.15";
 
 		Navigator.openURL();
@@ -51,6 +52,7 @@ definition {
 	@priority = "5"
 	test ViewLayoutArchive621021 {
 		property data.archive.type = "data-archive-pages-administration";
+		property database.types = "db2,mariadb,mysql,oracle,postgresql,sybase";
 		property portal.version = "6.2.10.21";
 
 		Navigator.openURL();
@@ -116,6 +118,7 @@ definition {
 	@priority = "5"
 	test ViewWebContentArchive621015 {
 		property data.archive.type = "data-archive-web-content-draft";
+		property database.types = "db2,mariadb,mysql,oracle,postgresql,sybase";
 		property portal.version = "6.2.10.15";
 
 		Upgrade.addWCStructureAndTemplate();
@@ -126,6 +129,7 @@ definition {
 	@priority = "5"
 	test ViewWebContentArchive621021 {
 		property data.archive.type = "data-archive-web-content-draft";
+		property database.types = "db2,mariadb,mysql,oracle,postgresql,sybase";
 		property portal.version = "6.2.10.21";
 
 		Upgrade.addWCStructureAndTemplate();

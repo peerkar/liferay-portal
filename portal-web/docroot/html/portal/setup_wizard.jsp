@@ -193,15 +193,20 @@
 											String driverClassName = PropsUtil.get(PropsKeys.SETUP_DATABASE_DRIVER_CLASS_NAME, new Filter(dbTypeString));
 
 											String url = PropsUtil.get(PropsKeys.SETUP_DATABASE_URL, new Filter(dbTypeString));
-
-											Map<String, Object> data = HashMapBuilder.<String, Object>put(
-												"driverClassName", driverClassName
-											).put(
-												"url", url
-											).build();
 										%>
 
-											<aui:option data="<%= data %>" label='<%= "database." + dbTypeString %>' selected="<%= PropsValues.JDBC_DEFAULT_URL.contains(dbTypeString) %>" value="<%= dbTypeString %>" />
+											<aui:option
+												data='<%=
+													HashMapBuilder.<String, Object>put(
+														"driverClassName", driverClassName
+													).put(
+														"url", url
+													).build()
+												%>'
+												label='<%= "database." + dbTypeString %>'
+												selected="<%= PropsValues.JDBC_DEFAULT_URL.contains(dbTypeString) %>"
+												value="<%= dbTypeString %>"
+											/>
 
 										<%
 										}

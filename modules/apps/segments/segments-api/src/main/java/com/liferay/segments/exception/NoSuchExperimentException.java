@@ -28,12 +28,12 @@ public class NoSuchExperimentException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchExperimentException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchExperimentException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchExperimentException(Throwable cause) {
-		super(cause);
+	public NoSuchExperimentException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

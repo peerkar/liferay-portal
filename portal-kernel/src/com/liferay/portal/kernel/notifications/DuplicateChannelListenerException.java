@@ -27,12 +27,12 @@ public class DuplicateChannelListenerException extends ChannelException {
 		super(msg);
 	}
 
-	public DuplicateChannelListenerException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateChannelListenerException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateChannelListenerException(Throwable cause) {
-		super(cause);
+	public DuplicateChannelListenerException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

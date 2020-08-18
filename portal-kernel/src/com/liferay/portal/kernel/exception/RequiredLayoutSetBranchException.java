@@ -26,12 +26,12 @@ public class RequiredLayoutSetBranchException extends PortalException {
 		super(msg);
 	}
 
-	public RequiredLayoutSetBranchException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RequiredLayoutSetBranchException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public RequiredLayoutSetBranchException(Throwable cause) {
-		super(cause);
+	public RequiredLayoutSetBranchException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

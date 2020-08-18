@@ -31,12 +31,12 @@ public class TasksEntryDueDateException extends PortalException {
 		super(msg);
 	}
 
-	public TasksEntryDueDateException(String msg, Throwable cause) {
-		super(msg, cause);
+	public TasksEntryDueDateException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public TasksEntryDueDateException(Throwable cause) {
-		super(cause);
+	public TasksEntryDueDateException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -18,7 +18,11 @@ import React from 'react';
 import IntegerInput from '../../../../src/main/resources/META-INF/resources/js/components/inputs/IntegerInput.es';
 import {testControlledInput} from '../../utils';
 
-const INTEGER_NUMBER_INPUT_TESTID = 'integer-number';
+const OPTIONS_INTEGER_NUMBER_INPUT_TESTID = 'options-integer';
+
+const SIMPLE_INTEGER_NUMBER_INPUT_TESTID = 'integer-number';
+
+const defaultNumberValue = '1';
 
 describe('IntegerInput', () => {
 	afterEach(cleanup);
@@ -26,15 +30,82 @@ describe('IntegerInput', () => {
 	it('renders type integer number', () => {
 		const mockOnChange = jest.fn();
 
-		const defaultNumberValue = '1';
-
 		const {asFragment, getByTestId} = render(
 			<IntegerInput onChange={mockOnChange} value={defaultNumberValue} />
 		);
 
 		expect(asFragment()).toMatchSnapshot();
 
-		const element = getByTestId(INTEGER_NUMBER_INPUT_TESTID);
+		const element = getByTestId(SIMPLE_INTEGER_NUMBER_INPUT_TESTID);
+
+		testControlledInput({
+			element,
+			mockFunc: mockOnChange,
+			newValue: '2',
+			value: defaultNumberValue,
+		});
+	});
+
+	it('renders type integer number with options', () => {
+		const mockOnChange = jest.fn();
+
+		const options = [
+			{
+				label: '1',
+				value: '1',
+			},
+			{
+				label: '2',
+				value: '2',
+			},
+		];
+
+		const {asFragment, getByTestId} = render(
+			<IntegerInput
+				onChange={mockOnChange}
+				options={options}
+				value={defaultNumberValue}
+			/>
+		);
+
+		expect(asFragment()).toMatchSnapshot();
+
+		const element = getByTestId(OPTIONS_INTEGER_NUMBER_INPUT_TESTID);
+
+		testControlledInput({
+			element,
+			mockFunc: mockOnChange,
+			newValue: '2',
+			value: defaultNumberValue,
+		});
+	});
+
+	it('renders type integer number with options disabled', () => {
+		const mockOnChange = jest.fn();
+
+		const options = [
+			{
+				disabled: true,
+				label: '1',
+				value: '1',
+			},
+			{
+				label: '2',
+				value: '2',
+			},
+		];
+
+		const {asFragment, getByTestId} = render(
+			<IntegerInput
+				onChange={mockOnChange}
+				options={options}
+				value={defaultNumberValue}
+			/>
+		);
+
+		expect(asFragment()).toMatchSnapshot();
+
+		const element = getByTestId(OPTIONS_INTEGER_NUMBER_INPUT_TESTID);
 
 		testControlledInput({
 			element,

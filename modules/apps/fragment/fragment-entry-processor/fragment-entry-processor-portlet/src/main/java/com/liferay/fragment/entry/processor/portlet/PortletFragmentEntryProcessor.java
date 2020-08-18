@@ -163,9 +163,9 @@ public class PortletFragmentEntryProcessor implements FragmentEntryProcessor {
 				continue;
 			}
 
-			String alias = tagName.substring(11);
-
 			if (Validator.isNull(portletName)) {
+				String alias = tagName.substring(11);
+
 				throw new FragmentEntryContentException(
 					LanguageUtil.format(
 						_resourceBundle,

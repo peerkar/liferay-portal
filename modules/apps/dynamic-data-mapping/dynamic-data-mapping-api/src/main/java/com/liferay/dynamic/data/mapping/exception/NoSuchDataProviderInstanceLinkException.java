@@ -30,13 +30,13 @@ public class NoSuchDataProviderInstanceLinkException
 	}
 
 	public NoSuchDataProviderInstanceLinkException(
-		String msg, Throwable cause) {
+		String msg, Throwable throwable) {
 
-		super(msg, cause);
+		super(msg, throwable);
 	}
 
-	public NoSuchDataProviderInstanceLinkException(Throwable cause) {
-		super(cause);
+	public NoSuchDataProviderInstanceLinkException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

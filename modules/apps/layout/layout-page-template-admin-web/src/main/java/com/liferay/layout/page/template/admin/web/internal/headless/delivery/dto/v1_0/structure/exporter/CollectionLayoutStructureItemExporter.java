@@ -21,7 +21,7 @@ import com.liferay.headless.delivery.dto.v1_0.PageCollectionDefinition;
 import com.liferay.headless.delivery.dto.v1_0.PageElement;
 import com.liferay.info.list.provider.item.selector.criterion.InfoListProviderItemSelectorReturnType;
 import com.liferay.item.selector.criteria.InfoListItemSelectorReturnType;
-import com.liferay.layout.util.structure.CollectionLayoutStructureItem;
+import com.liferay.layout.util.structure.CollectionStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.util.Portal;
@@ -41,7 +41,7 @@ public class CollectionLayoutStructureItemExporter
 
 	@Override
 	public String getClassName() {
-		return CollectionLayoutStructureItem.class.getName();
+		return CollectionStyledLayoutStructureItem.class.getName();
 	}
 
 	@Override
@@ -49,25 +49,30 @@ public class CollectionLayoutStructureItemExporter
 		long groupId, LayoutStructureItem layoutStructureItem,
 		boolean saveInlineContent, boolean saveMappingConfiguration) {
 
-		CollectionLayoutStructureItem collectionLayoutStructureItem =
-			(CollectionLayoutStructureItem)layoutStructureItem;
+		CollectionStyledLayoutStructureItem
+			collectionStyledLayoutStructureItem =
+				(CollectionStyledLayoutStructureItem)layoutStructureItem;
 
 		return new PageElement() {
 			{
 				definition = new PageCollectionDefinition() {
 					{
 						collectionConfig = _getCollectionConfig(
-							collectionLayoutStructureItem);
+							collectionStyledLayoutStructureItem);
 						listItemStyle =
-							collectionLayoutStructureItem.getListItemStyle();
+							collectionStyledLayoutStructureItem.
+								getListItemStyle();
 						listStyle =
-							collectionLayoutStructureItem.getListStyle();
+							collectionStyledLayoutStructureItem.getListStyle();
 						numberOfColumns =
-							collectionLayoutStructureItem.getNumberOfColumns();
+							collectionStyledLayoutStructureItem.
+								getNumberOfColumns();
 						numberOfItems =
-							collectionLayoutStructureItem.getNumberOfItems();
+							collectionStyledLayoutStructureItem.
+								getNumberOfItems();
 						templateKey =
-							collectionLayoutStructureItem.getTemplateKey();
+							collectionStyledLayoutStructureItem.
+								getTemplateKey();
 					}
 				};
 				type = PageElement.Type.COLLECTION;
@@ -76,10 +81,11 @@ public class CollectionLayoutStructureItemExporter
 	}
 
 	private CollectionConfig _getCollectionConfig(
-		CollectionLayoutStructureItem collectionLayoutStructureItem) {
+		CollectionStyledLayoutStructureItem
+			collectionStyledLayoutStructureItem) {
 
 		JSONObject jsonObject =
-			collectionLayoutStructureItem.getCollectionJSONObject();
+			collectionStyledLayoutStructureItem.getCollectionJSONObject();
 
 		if (jsonObject == null) {
 			return null;

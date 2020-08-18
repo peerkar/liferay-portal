@@ -28,12 +28,12 @@ public class AuthorizationException extends PortalException {
 		super(msg);
 	}
 
-	protected AuthorizationException(String msg, Throwable cause) {
-		super(msg, cause);
+	protected AuthorizationException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	protected AuthorizationException(Throwable cause) {
-		super(cause);
+	protected AuthorizationException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

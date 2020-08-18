@@ -28,12 +28,14 @@ public class UnsupportedMicroblogsEntryException extends PortalException {
 		super(msg);
 	}
 
-	public UnsupportedMicroblogsEntryException(String msg, Throwable cause) {
-		super(msg, cause);
+	public UnsupportedMicroblogsEntryException(
+		String msg, Throwable throwable) {
+
+		super(msg, throwable);
 	}
 
-	public UnsupportedMicroblogsEntryException(Throwable cause) {
-		super(cause);
+	public UnsupportedMicroblogsEntryException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

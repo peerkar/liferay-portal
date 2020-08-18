@@ -159,18 +159,13 @@ if (journalContentDisplayContext.isShowArticle()) {
 							/>
 
 							<c:if test="<%= articleDisplay.isPaginate() %>">
-
-								<%
-								PortletURL portletURL = renderResponse.createRenderURL();
-								%>
-
 								<liferay-ui:page-iterator
 									cur="<%= articleDisplay.getCurrentPage() %>"
 									curParam="page"
 									delta="<%= 1 %>"
 									id="articleDisplayPages"
 									maxPages="<%= 25 %>"
-									portletURL="<%= portletURL %>"
+									portletURL="<%= renderResponse.createRenderURL() %>"
 									total="<%= articleDisplay.getNumberOfPages() %>"
 									type="article"
 								/>
@@ -208,7 +203,7 @@ if (journalContentDisplayContext.isShowArticle()) {
 
 		<clay:content-row
 			cssClass="mb-4 user-tool-asset-addon-entries"
-			floatElements="true"
+			floatElements=""
 			verticalAlign="center"
 		>
 			<c:if test="<%= ratingsContentMetadataAssetAddonEntry != null %>">

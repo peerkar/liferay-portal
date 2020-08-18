@@ -5,7 +5,7 @@ definition {
 
 		FormFields.editTextMultiline(
 			fieldName = "ccrLocalClusterConnectionConfigurations",
-			fieldValue = "localhost:8080=${ccrLocalClusterConnectionID}");
+			fieldValue = "localhost:8080,${ccrLocalClusterConnectionID}");
 
 		SystemSettings.saveConfiguration();
 	}
@@ -13,10 +13,7 @@ definition {
 	macro configureDisplayStyle {
 		Click(locator1 = "Dropdown#TRIGGER");
 
-		AssertClick(
-			key_option = "${displayStyle}",
-			locator1 = "Dropdown#RESULT",
-			value1 = "${displayStyle}");
+		DropdownMenuItem.click(menuItem = "${displayStyle}");
 
 		AssertTextEquals(
 			locator1 = "Dropdown#SELECTED_VALUE",
@@ -81,6 +78,20 @@ definition {
 			key_label = "${settingName}",
 			locator1 = "TextArea#ANY_LABELED",
 			value1 = "${settingValue}");
+	}
+
+	macro editTextAreaSettingMultiLines {
+		for (var settingValue : list "${settingValues}") {
+			Type.sendKeys(
+				key_label = "${settingName}",
+				locator1 = "TextArea#ANY_LABELED",
+				value1 = "${settingValue}");
+
+			KeyPress(
+				key_label = "${settingName}",
+				locator1 = "TextArea#ANY_LABELED",
+				value1 = "\RETURN");
+		}
 	}
 
 	macro editTextSetting {
@@ -160,6 +171,13 @@ definition {
 		Click(
 			key_selectOption = "${selectOption}",
 			locator1 = "SystemSettings#DROPDOWN_MENU_OPTION");
+	}
+
+	macro viewTextareaPartialText {
+		AssertTextEquals.assertPartialText(
+			key_label = "${settingName}",
+			locator1 = "TextArea#ANY_LABELED",
+			value1 = "${settingValue}");
 	}
 
 	macro viewTextareaValue {

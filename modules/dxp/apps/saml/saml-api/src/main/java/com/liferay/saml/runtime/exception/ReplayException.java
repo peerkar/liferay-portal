@@ -28,12 +28,12 @@ public class ReplayException extends PortalException {
 		super(msg);
 	}
 
-	public ReplayException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ReplayException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ReplayException(Throwable cause) {
-		super(cause);
+	public ReplayException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

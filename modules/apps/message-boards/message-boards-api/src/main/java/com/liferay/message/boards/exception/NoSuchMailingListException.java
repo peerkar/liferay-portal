@@ -28,12 +28,12 @@ public class NoSuchMailingListException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchMailingListException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchMailingListException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchMailingListException(Throwable cause) {
-		super(cause);
+	public NoSuchMailingListException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -28,12 +28,12 @@ public class NoSuchTemplateLinkException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchTemplateLinkException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchTemplateLinkException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchTemplateLinkException(Throwable cause) {
-		super(cause);
+	public NoSuchTemplateLinkException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

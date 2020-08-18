@@ -22,6 +22,7 @@ String mfaTimeBasedOTPCompanyName = GetterUtil.getString(request.getAttribute(MF
 int mfaTimeBasedOTPDigits = GetterUtil.getInteger(request.getAttribute(MFATimeBasedOTPWebKeys.MFA_TIME_BASED_OTP_DIGITS));
 String mfaTimeBasedOTPSharedSecret = GetterUtil.getString(request.getAttribute(MFATimeBasedOTPWebKeys.MFA_TIME_BASED_OTP_SHARED_SECRET));
 int mfaTimeBasedOTPTimeCounter = GetterUtil.getInteger(request.getAttribute(MFATimeBasedOTPWebKeys.MFA_TIME_BASED_OTP_TIME_COUNTER));
+User selectedUser = PortalUtil.getSelectedUser(request);
 %>
 
 <div class="sheet-section">
@@ -31,7 +32,7 @@ int mfaTimeBasedOTPTimeCounter = GetterUtil.getInteger(request.getAttribute(MFAT
 
 	<aui:input label="mfa-timebased-otp" name="mfaTimeBasedOTP" showRequiredLabel="yes" />
 
-	<aui:input disabled="<%= true %>" label="shared-secret" name="sharedSecret" type="text" value="<%= mfaTimeBasedOTPSharedSecret %>" />
+	<aui:input label="shared-secret" name="sharedSecret" readOnly="<%= true %>" type="text" value="<%= mfaTimeBasedOTPSharedSecret %>" />
 
 	<div class="qrcode-setup" id="<portlet:namespace/>qrcode"></div>
 </div>
@@ -41,7 +42,7 @@ int mfaTimeBasedOTPTimeCounter = GetterUtil.getInteger(request.getAttribute(MFAT
 </div>
 
 <aui:script require='<%= npmResolvedPackageName + "/qrcode/generateQRCode as generateQRCode" %>'>
-	var account = '<%= HtmlUtil.escapeJS(user.getEmailAddress()) %>';
+	var account = '<%= HtmlUtil.escapeJS(selectedUser.getEmailAddress()) %>';
 	var algorithm = '<%= HtmlUtil.escapeJS(mfaTimeBasedOTPAlgorithm) %>';
 	var counter = '<%= mfaTimeBasedOTPTimeCounter %>';
 	var digits = '<%= mfaTimeBasedOTPDigits %>';

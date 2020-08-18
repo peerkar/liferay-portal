@@ -58,6 +58,89 @@ definition {
 		MultiFactorAuthentication.assertDescriptions();
 	}
 
+	@description = "This is a use case for LPS-109786"
+	@priority = "4"
+	test AssertNotificationsAfterMFADisabledOrEnabled {
+		property test.name.skip.portal.instance = "MultiFactorAuthentication#AssertNotificationsAfterMFADisabledOrEnabled";
+
+		ApplicationsMenu.gotoPortlet(
+			category = "System",
+			panel = "Control Panel",
+			portlet = "Virtual Instances");
+
+		PortalInstances.addCP(
+			mailDomain = "www.able.com",
+			virtualHost = "www.able.com",
+			webId = "www.able.com");
+
+		PortalInstances.viewCP(virtualHost = "www.able.com");
+
+		User.firstLoginPG(
+			password = "test",
+			userEmailAddress = "test@www.able.com",
+			virtualHostsURL = "http://www.able.com:8080");
+
+		PortalSettings.gotoConfiguration(
+			configurationCategory = "Multi-Factor Authentication",
+			configurationName = "Multi-Factor Authentication and Email One-Time Password Configuration",
+			configurationScope = "Virtual Instance Scope");
+
+		MultiFactorAuthentication.configureOTP(enableOTP = "true");
+
+		Navigator.openURL();
+
+		MultiFactorAuthentication.configureMFAOnSystemLevel(disabledMFA = "true");
+
+		Navigator.openSpecificURL(url = "http://www.able.com:8080");
+
+		Notifications.viewBadgeCount(notificationCount = "1");
+
+		Notifications.gotoNotifications();
+
+		AssertTextEquals(
+			key_contentBody = "Multi-factor authentication has been disabled by the system administrator and is unavailable to all instances. You will be notified when it becomes enabled again so long as you keep it enabled in Instance Settings.",
+			locator1 = "Notifications#NOTIFICATIONS_CONTENT",
+			value1 = "Multi-factor authentication has been disabled by the system administrator and is unavailable to all instances. You will be notified when it becomes enabled again so long as you keep it enabled in Instance Settings.");
+
+		Navigator.openURL();
+
+		MultiFactorAuthentication.configureMFAOnSystemLevel(disabledMFA = "false");
+
+		Navigator.openSpecificURL(url = "http://www.able.com:8080");
+
+		Notifications.viewBadgeCount(notificationCount = "2");
+
+		Notifications.gotoNotifications();
+
+		AssertTextEquals(
+			key_contentBody = "Multi-factor authentication has been enabled by the system administrator. If you do not want this you can disable it in Instance Settings.",
+			locator1 = "Notifications#NOTIFICATIONS_CONTENT",
+			value1 = "Multi-factor authentication has been enabled by the system administrator. If you do not want this you can disable it in Instance Settings.");
+
+		PortalSettings.gotoConfiguration(
+			configurationCategory = "Multi-Factor Authentication",
+			configurationName = "Multi-Factor Authentication and Email One-Time Password Configuration",
+			configurationScope = "Virtual Instance Scope");
+
+		MultiFactorAuthentication.configureOTP(enableOTP = "false");
+
+		Navigator.openURL();
+
+		MultiFactorAuthentication.configureMFAOnSystemLevel(disabledMFA = "true");
+
+		Navigator.openSpecificURL(url = "http://www.able.com:8080");
+
+		Notifications.viewBadgeCount(notificationCount = "2");
+
+		Navigator.openURL();
+
+		MultiFactorAuthentication.configureMFAOnSystemLevel(disabledMFA = "false");
+
+		Navigator.openSpecificURL(url = "http://www.able.com:8080");
+
+		Notifications.viewBadgeCount(notificationCount = "2");
+	}
+
 	@description = "This is a use case for LPS-92659"
 	@priority = "5"
 	test BlockedAfterReachAllowedFailedAttempts {
@@ -171,6 +254,74 @@ definition {
 		}
 	}
 
+	@description = "This is a use case for LPS-102468"
+	@priority = "5"
+	test DisableOTPForInstanceOnSystemLevel {
+		property test.name.skip.portal.instance = "MultiFactorAuthentication#DisableOTPForInstanceOnSystemLevel";
+
+		MultiFactorAuthentication.configureMFAOnSystemLevel(disabledMFA = "false");
+
+		ApplicationsMenu.gotoPortlet(
+			category = "System",
+			panel = "Control Panel",
+			portlet = "Virtual Instances");
+
+		PortalInstances.addCP(
+			mailDomain = "www.able.com",
+			virtualHost = "www.able.com",
+			webId = "www.able.com");
+
+		PortalInstances.viewCP(virtualHost = "www.able.com");
+
+		User.firstLoginPG(
+			password = "test",
+			userEmailAddress = "test@www.able.com",
+			virtualHostsURL = "http://www.able.com:8080");
+
+		PortalSettings.gotoConfiguration(
+			configurationCategory = "Multi-Factor Authentication",
+			configurationName = "Multi-Factor Authentication and Email One-Time Password Configuration",
+			configurationScope = "Virtual Instance Scope");
+
+		MultiFactorAuthentication.configureOTPEmailSender(
+			emailAddress = "test@www.able.com",
+			emailSenderName = "Joe Bloggs");
+
+		MultiFactorAuthentication.viewOTPEmailSenderCP(
+			emailAddress = "test@www.able.com",
+			emailSenderName = "Joe Bloggs");
+
+		MultiFactorAuthentication.configureOTP(enableOTP = "true");
+
+		SignOut.signOutOfSpecificURL(url = "http://www.able.com:8080");
+
+		SignIn.signInSpecificURL(
+			url = "http://www.able.com:8080/",
+			userEmailAddress = "test@www.able.com");
+
+		MultiFactorAuthentication.sendOTPEmailPG();
+
+		MultiFactorAuthentication.verifyOTP(
+			portalURL = "http://www.able.com:8080",
+			recipient = "test test",
+			specificURL = "http://www.able.com:8080",
+			userEmailAddress = "test@www.able.com",
+			userPassword = "test");
+
+		SignOut.signOutOfSpecificURL(url = "http://www.able.com:8080");
+
+		Navigator.openURL();
+
+		MultiFactorAuthentication.configureMFAOnSystemLevel(disabledMFA = "true");
+
+		User.logoutPG();
+
+		User.loginPG(
+			password = "test",
+			specificURL = "http://www.able.com:8080",
+			userEmailAddress = "test@www.able.com");
+	}
+
 	@description = "This is a use case for LPS-102467 and LPS-110444"
 	@priority = "5"
 	test EditEmailTemplate {
@@ -225,17 +376,7 @@ definition {
 		property database.types = "db2,hypersonic,mariadb,mysql,oracle,postgresql,sqlserver,sybase";
 		property test.name.skip.portal.instance = "MultiFactorAuthentication#EnableOTPForInstanceAsInstanceAdminUser";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Configuration",
-			panel = "Control Panel",
-			portlet = "System Settings");
-
-		SystemSettings.gotoConfiguration(
-			configurationCategory = "Multi-Factor Authentication",
-			configurationName = "Multi-Factor Authentication System Configuration",
-			configurationScope = "System Scope");
-
-		FormFields.viewCheckboxNotChecked(fieldName = "Disable Multi-Factor Authentication");
+		MultiFactorAuthentication.configureMFAOnSystemLevel(disabledMFA = "false");
 
 		ApplicationsMenu.gotoPortlet(
 			category = "System",

@@ -28,12 +28,12 @@ public class SegmentsEntryNameException extends PortalException {
 		super(msg);
 	}
 
-	public SegmentsEntryNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public SegmentsEntryNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public SegmentsEntryNameException(Throwable cause) {
-		super(cause);
+	public SegmentsEntryNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

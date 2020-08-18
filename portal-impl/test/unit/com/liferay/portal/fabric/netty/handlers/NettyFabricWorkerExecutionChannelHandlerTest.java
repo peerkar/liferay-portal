@@ -1074,9 +1074,9 @@ public class NettyFabricWorkerExecutionChannelHandlerTest {
 			Assert.fail();
 		}
 		catch (ExecutionException executionException) {
-			Throwable t = executionException.getCause();
+			throwable = executionException.getCause();
 
-			Assert.assertSame(NullPointerException.class, t.getClass());
+			Assert.assertSame(NullPointerException.class, throwable.getClass());
 		}
 
 		// Finish with result

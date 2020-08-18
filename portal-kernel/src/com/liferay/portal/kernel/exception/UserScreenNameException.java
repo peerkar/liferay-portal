@@ -203,8 +203,8 @@ public class UserScreenNameException extends PortalException {
 		super(msg);
 	}
 
-	private UserScreenNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	private UserScreenNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
 }

@@ -19,6 +19,10 @@ AUI.add(
 
 		var STR_CDATA_OPEN = '<![CDATA[';
 
+		var STR_CHAR_CRLF = '\r\n';
+
+		var STR_CHAR_TAB = '\t';
+
 		var STR_ELLIPSIS = '...';
 
 		var KaleoDesignerUtils = {};
@@ -72,7 +76,13 @@ AUI.add(
 				.replace(STR_CDATA_OPEN, '')
 				.replace(STR_CDATA_CLOSE, '');
 
-			return STR_CDATA_OPEN + value + STR_CDATA_CLOSE;
+			return (
+				STR_CHAR_CRLF +
+				STR_CDATA_OPEN +
+				value +
+				STR_CDATA_CLOSE +
+				STR_CHAR_CRLF
+			);
 		};
 
 		KaleoDesignerUtils.cdata = cdata;
@@ -94,7 +104,10 @@ AUI.add(
 			var jsonString = null;
 
 			try {
-				jsonString = JSON.stringify(val);
+				jsonString =
+					STR_CHAR_CRLF +
+					JSON.stringify(val, null, STR_CHAR_TAB) +
+					STR_CHAR_CRLF;
 			}
 			catch (e) {}
 
@@ -186,7 +199,7 @@ AUI.add(
 								cssClass: 'close',
 								discardDefaultButtonCssClasses: true,
 								labelHTML:
-									'<svg class="lexicon-icon" focusable="false"><use data-href="' +
+									'<svg class="lexicon-icon" focusable="false"><use href="' +
 									Liferay.ThemeDisplay.getPathThemeImages() +
 									'/lexicon/icons.svg#times" /><title>' +
 									Liferay.Language.get('close') +
@@ -230,6 +243,7 @@ AUI.add(
 			deleteNodesMessage: Liferay.Language.get(
 				'are-you-sure-you-want-to-delete-the-selected-nodes'
 			),
+			depot: Liferay.Language.get('depot'),
 			description: Liferay.Language.get('description'),
 			duration: Liferay.Language.get('duration'),
 			edit: Liferay.Language.get('edit'),

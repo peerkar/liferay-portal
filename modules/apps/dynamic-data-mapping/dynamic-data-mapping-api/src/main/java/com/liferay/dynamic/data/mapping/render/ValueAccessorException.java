@@ -19,8 +19,8 @@ package com.liferay.dynamic.data.mapping.render;
  */
 public class ValueAccessorException extends RuntimeException {
 
-	public ValueAccessorException(Throwable cause) {
-		super(cause);
+	public ValueAccessorException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

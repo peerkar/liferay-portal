@@ -39,13 +39,14 @@ public class RadioDDMFormFieldTypeReportProcessor
 			long formInstanceRecordId, String ddmFormInstanceReportEvent)
 		throws Exception {
 
-		JSONObject valuesJSONObject = fieldJSONObject.getJSONObject("values");
-
 		Value value = ddmFormFieldValue.getValue();
 
 		String valueString = value.getString(value.getDefaultLocale());
 
 		if (Validator.isNotNull(valueString)) {
+			JSONObject valuesJSONObject = fieldJSONObject.getJSONObject(
+				"values");
+
 			int count = valuesJSONObject.getInt(valueString, 0);
 
 			if (ddmFormInstanceReportEvent.equals(

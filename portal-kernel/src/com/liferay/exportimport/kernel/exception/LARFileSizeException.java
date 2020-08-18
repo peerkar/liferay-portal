@@ -28,12 +28,12 @@ public class LARFileSizeException extends PortalException {
 		super(msg);
 	}
 
-	public LARFileSizeException(String msg, Throwable cause) {
-		super(msg, cause);
+	public LARFileSizeException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public LARFileSizeException(Throwable cause) {
-		super(cause);
+	public LARFileSizeException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

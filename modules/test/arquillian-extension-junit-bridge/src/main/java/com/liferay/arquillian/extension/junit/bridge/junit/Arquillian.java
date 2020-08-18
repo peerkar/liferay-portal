@@ -124,8 +124,9 @@ public class Arquillian extends Runner implements Filterable {
 				_clazz.getName(),
 				runNotifierCommand -> runNotifierCommand.execute(runNotifier));
 		}
-		catch (Throwable t) {
-			runNotifier.fireTestFailure(new Failure(getDescription(), t));
+		catch (Throwable throwable) {
+			runNotifier.fireTestFailure(
+				new Failure(getDescription(), throwable));
 		}
 	}
 

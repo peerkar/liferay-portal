@@ -28,12 +28,12 @@ public class InResponseToException extends PortalException {
 		super(msg);
 	}
 
-	public InResponseToException(String msg, Throwable cause) {
-		super(msg, cause);
+	public InResponseToException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public InResponseToException(Throwable cause) {
-		super(cause);
+	public InResponseToException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

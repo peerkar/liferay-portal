@@ -153,17 +153,17 @@ public class UploadImageMVCActionCommand extends BaseMVCActionCommand {
 					WebKeys.UPLOAD_EXCEPTION);
 
 			if (uploadException != null) {
-				Throwable cause = uploadException.getCause();
+				Throwable throwable = uploadException.getCause();
 
 				if (uploadException.isExceededFileSizeLimit()) {
-					throw new FileSizeException(cause);
+					throw new FileSizeException(throwable);
 				}
 
 				if (uploadException.isExceededUploadRequestSizeLimit()) {
-					throw new UploadRequestSizeException(cause);
+					throw new UploadRequestSizeException(throwable);
 				}
 
-				throw new PortalException(cause);
+				throw new PortalException(throwable);
 			}
 			else if (cmd.equals(Constants.ADD_TEMP)) {
 				FileEntry tempImageFileEntry = addTempImageFileEntry(

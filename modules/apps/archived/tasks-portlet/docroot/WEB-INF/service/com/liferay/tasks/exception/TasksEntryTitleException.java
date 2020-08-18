@@ -31,12 +31,12 @@ public class TasksEntryTitleException extends PortalException {
 		super(msg);
 	}
 
-	public TasksEntryTitleException(String msg, Throwable cause) {
-		super(msg, cause);
+	public TasksEntryTitleException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public TasksEntryTitleException(Throwable cause) {
-		super(cause);
+	public TasksEntryTitleException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

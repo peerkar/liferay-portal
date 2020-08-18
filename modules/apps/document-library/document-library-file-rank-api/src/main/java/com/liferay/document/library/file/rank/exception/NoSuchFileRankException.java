@@ -28,12 +28,12 @@ public class NoSuchFileRankException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchFileRankException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchFileRankException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchFileRankException(Throwable cause) {
-		super(cause);
+	public NoSuchFileRankException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

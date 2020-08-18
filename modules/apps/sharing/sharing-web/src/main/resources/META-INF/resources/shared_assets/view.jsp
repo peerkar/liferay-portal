@@ -114,16 +114,16 @@ PortletURL viewAssetTypeURL = PortletURLUtil.clone(currentURLObj, liferayPortlet
 viewAssetTypeURL.setParameter("className", (String)null);
 
 PortletURL selectAssetTypeURL = sharedAssetsViewDisplayContext.getSelectAssetTypeURL();
-
-Map<String, Object> context = HashMapBuilder.<String, Object>put(
-	"selectAssetTypeURL", selectAssetTypeURL.toString()
-).put(
-	"viewAssetTypeURL", viewAssetTypeURL.toString()
-).build();
 %>
 
 <liferay-frontend:component
 	componentId='<%= liferayPortletResponse.getNamespace() + "SharedAssets" %>'
-	context="<%= context %>"
+	context='<%=
+		HashMapBuilder.<String, Object>put(
+			"selectAssetTypeURL", selectAssetTypeURL.toString()
+		).put(
+			"viewAssetTypeURL", viewAssetTypeURL.toString()
+		).build()
+	%>'
 	module="SharedAssets.es"
 />

@@ -28,12 +28,12 @@ public class NoSuchJSONWebServiceException extends PortalException {
 		super(msg);
 	}
 
-	public NoSuchJSONWebServiceException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchJSONWebServiceException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchJSONWebServiceException(Throwable cause) {
-		super(cause);
+	public NoSuchJSONWebServiceException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -28,12 +28,14 @@ public class NoSuchEntryOrganizationRelException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchEntryOrganizationRelException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchEntryOrganizationRelException(
+		String msg, Throwable throwable) {
+
+		super(msg, throwable);
 	}
 
-	public NoSuchEntryOrganizationRelException(Throwable cause) {
-		super(cause);
+	public NoSuchEntryOrganizationRelException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

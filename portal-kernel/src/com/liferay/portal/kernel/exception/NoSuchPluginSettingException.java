@@ -26,12 +26,12 @@ public class NoSuchPluginSettingException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchPluginSettingException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchPluginSettingException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchPluginSettingException(Throwable cause) {
-		super(cause);
+	public NoSuchPluginSettingException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -28,12 +28,12 @@ public class NoSuchBanException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchBanException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchBanException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchBanException(Throwable cause) {
-		super(cause);
+	public NoSuchBanException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

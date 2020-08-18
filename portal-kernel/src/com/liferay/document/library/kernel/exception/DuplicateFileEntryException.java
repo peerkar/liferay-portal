@@ -28,12 +28,12 @@ public class DuplicateFileEntryException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateFileEntryException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateFileEntryException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateFileEntryException(Throwable cause) {
-		super(cause);
+	public DuplicateFileEntryException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

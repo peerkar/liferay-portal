@@ -29,13 +29,13 @@ public class DLFileEntryPreviewNotAvailableException extends PortalException {
 	}
 
 	public DLFileEntryPreviewNotAvailableException(
-		String msg, Throwable cause) {
+		String msg, Throwable throwable) {
 
-		super(msg, cause);
+		super(msg, throwable);
 	}
 
-	public DLFileEntryPreviewNotAvailableException(Throwable cause) {
-		super(cause);
+	public DLFileEntryPreviewNotAvailableException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

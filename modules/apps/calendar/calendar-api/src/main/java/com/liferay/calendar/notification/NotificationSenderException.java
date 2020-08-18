@@ -28,12 +28,12 @@ public class NotificationSenderException extends PortalException {
 		super(msg);
 	}
 
-	public NotificationSenderException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NotificationSenderException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NotificationSenderException(Throwable cause) {
-		super(cause);
+	public NotificationSenderException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

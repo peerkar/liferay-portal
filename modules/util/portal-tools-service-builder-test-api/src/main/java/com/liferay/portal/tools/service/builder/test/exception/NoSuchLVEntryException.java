@@ -28,12 +28,12 @@ public class NoSuchLVEntryException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchLVEntryException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchLVEntryException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchLVEntryException(Throwable cause) {
-		super(cause);
+	public NoSuchLVEntryException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

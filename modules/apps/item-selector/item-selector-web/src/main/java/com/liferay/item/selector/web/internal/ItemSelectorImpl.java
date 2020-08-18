@@ -85,7 +85,7 @@ public class ItemSelectorImpl implements ItemSelector {
 		Matcher matcher = _itemSelectorURLPattern.matcher(itemSelectorURL);
 
 		if (matcher.find()) {
-			return matcher.group(1);
+			return matcher.group(2);
 		}
 
 		String namespace = _portal.getPortletNamespace(
@@ -125,7 +125,7 @@ public class ItemSelectorImpl implements ItemSelector {
 		String itemSelectorURL) {
 
 		Map<String, String[]> parameters = _http.getParameterMap(
-			itemSelectorURL);
+			_http.getQueryString(itemSelectorURL));
 
 		Map<String, String[]> itemSelectorURLParameterMap = new HashMap<>();
 
@@ -141,6 +141,17 @@ public class ItemSelectorImpl implements ItemSelector {
 
 				itemSelectorURLParameterMap.put(key, entry.getValue());
 			}
+		}
+
+		Matcher matcher = _itemSelectorURLPattern.matcher(itemSelectorURL);
+
+		if (matcher.matches()) {
+			itemSelectorURLParameterMap.put(
+				PARAMETER_CRITERIA,
+				new String[] {_http.decodePath(matcher.group(1))});
+			itemSelectorURLParameterMap.put(
+				PARAMETER_ITEM_SELECTED_EVENT_NAME,
+				new String[] {matcher.group(2)});
 		}
 
 		return getItemSelectorCriteria(itemSelectorURLParameterMap);
@@ -470,7 +481,7 @@ public class ItemSelectorImpl implements ItemSelector {
 	}
 
 	private static final Pattern _itemSelectorURLPattern = Pattern.compile(
-		"select\\/[^/]+\\/([^/]+)\\?");
+		".*select\\/([^/]+)\\/([^$?/]+).*");
 
 	@Reference
 	private Http _http;

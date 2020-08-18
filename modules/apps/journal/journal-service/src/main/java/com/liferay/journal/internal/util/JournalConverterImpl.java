@@ -158,8 +158,21 @@ public class JournalConverterImpl implements JournalConverter {
 		).build();
 	}
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), replaced by {@link
+	 *             #getContent(DDMStructure, Fields, long)}
+	 */
+	@Deprecated
 	@Override
 	public String getContent(DDMStructure ddmStructure, Fields ddmFields)
+		throws Exception {
+
+		return getContent(ddmStructure, ddmFields, ddmStructure.getGroupId());
+	}
+
+	@Override
+	public String getContent(
+			DDMStructure ddmStructure, Fields ddmFields, long groupId)
 		throws Exception {
 
 		Document document = SAXReaderUtil.createDocument();
@@ -169,9 +182,14 @@ public class JournalConverterImpl implements JournalConverter {
 		rootElement.addAttribute(
 			"available-locales", getAvailableLocales(ddmFields));
 
+		Locale defaultLocale = ddmFields.getDefaultLocale();
+
+		if (!LanguageUtil.isAvailableLocale(groupId, defaultLocale)) {
+			defaultLocale = LocaleUtil.getSiteDefault();
+		}
+
 		rootElement.addAttribute(
-			"default-locale",
-			LocaleUtil.toLanguageId(ddmFields.getDefaultLocale()));
+			"default-locale", LocaleUtil.toLanguageId(defaultLocale));
 
 		DDMFieldsCounter ddmFieldsCounter = new DDMFieldsCounter();
 

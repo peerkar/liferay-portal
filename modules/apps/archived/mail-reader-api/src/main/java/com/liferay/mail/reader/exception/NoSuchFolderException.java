@@ -28,12 +28,12 @@ public class NoSuchFolderException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchFolderException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchFolderException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchFolderException(Throwable cause) {
-		super(cause);
+	public NoSuchFolderException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

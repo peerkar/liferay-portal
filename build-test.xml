@@ -2013,10 +2013,7 @@ sendPasswordCaptchaEnabled=&quot;false&quot;</echo>
 
 	<macrodef name="prepare-database-upgrade-configuration">
 		<sequential>
-			<delete file="${liferay.home}/osgi/configs/com.liferay.portal.search.configuration.IndexStatusManagerConfiguration.cfg" />
 			<delete file="${liferay.home}/tools/portal-tools-db-upgrade-client/logs/upgrade.log" />
-
-			<echo file="${liferay.home}/osgi/configs/com.liferay.portal.search.configuration.IndexStatusManagerConfiguration.cfg">indexReadOnly=true</echo>
 
 			<if>
 				<equals arg1="${app.server.type}" arg2="jboss" />
@@ -3857,6 +3854,7 @@ go</echo>
 				<elseif>
 					<or>
 						<equals arg1="@{liferay.portal.bundle}" arg2="7.1.10.3" />
+						<equals arg1="@{liferay.portal.bundle}" arg2="7.2.0" />
 						<equals arg1="@{liferay.portal.bundle}" arg2="7.2.1" />
 						<equals arg1="@{liferay.portal.bundle}" arg2="7.2.10" />
 						<equals arg1="@{liferay.portal.bundle}" arg2="7.2.10.1" />
@@ -5263,7 +5261,7 @@ org.apache.catalina.startup.ClassLoaderFactory.level=INFO]]>
 						<and>
 							<equals arg1="${remote.elasticsearch.clusters.enabled}" arg2="true" />
 							<not>
-								<contains string="${test.name.skip.portal.instance}" substring="CrossCluster" />
+								<contains string="${test.name.skip.portal.instance}" substring="#Smoke" />
 							</not>
 						</and>
 						<then>
@@ -6496,6 +6494,15 @@ go</echo>
 	</target>
 
 	<target name="delete-dependency-file">
+		<if>
+			<not>
+				<isset property="test.app.server.liferay.home" />
+			</not>
+			<then>
+				<set-app-server-properties />
+			</then>
+		</if>
+
 		<if>
 			<isset property="liferay.dependency.wars" />
 			<then>
@@ -7942,6 +7949,50 @@ ${update.properties}</echo>
 		<apply-portal-ext-properties />
 	</target>
 
+	<target name="prepare-antisamy-config-file">
+		<property name="liferay.security.antisamy.dir" value="${project.dir}/modules/apps/portal-security/portal-security-antisamy/src/main/resources/META-INF/resources" />
+
+		<property name="liferay.config.xml" value="knowledge-base-sanitizer-configuration.xml" />
+
+		<if>
+			<available file="${liferay.security.antisamy.dir}/${liferay.config.xml}" />
+			<then>
+				<echo>Remove allowDynamicAttributes in ${liferay.security.antisamy.dir}/${liferay.config.xml}.</echo>
+
+				<replace
+					file="${liferay.security.antisamy.dir}/${liferay.config.xml}"
+				>
+					<replacetoken><![CDATA[<dynamic-tag-attributes>]]></replacetoken>
+					<replacevalue><![CDATA[<!--<dynamic-tag-attributes>-->]]></replacevalue>
+				</replace>
+
+				<replace
+					file="${liferay.security.antisamy.dir}/${liferay.config.xml}"
+				>
+					<replacetoken><![CDATA[<attribute name="data-"/>]]></replacetoken>
+					<replacevalue><![CDATA[<!--<attribute name="data-"/>-->]]></replacevalue>
+				</replace>
+
+				<replace
+					file="${liferay.security.antisamy.dir}/${liferay.config.xml}"
+				>
+					<replacetoken><![CDATA[</dynamic-tag-attributes>]]></replacetoken>
+					<replacevalue><![CDATA[<!--</dynamic-tag-attributes>-->]]></replacevalue>
+				</replace>
+
+				<replace
+					file="${liferay.security.antisamy.dir}/${liferay.config.xml}"
+				>
+					<replacetoken><![CDATA[<directive name="allowDynamicAttributes" value="true"/>]]></replacetoken>
+					<replacevalue><![CDATA[<!--<directive name="allowDynamicAttributes" value="true"/>-->]]></replacevalue>
+				</replace>
+			</then>
+			<else>
+				<echo>The file ${liferay.config.xml} is not exist.</echo>
+			</else>
+		</if>
+	</target>
+
 	<target name="prepare-encryption-PCKS12-certificate">
 		<if>
 			<equals arg1="${app.server.type}" arg2="tomcat" />
@@ -8304,6 +8355,43 @@ osb.lcs.portlet.oauth.consumer.secret=${osb.lcs.portlet.oauth.consumer.secret}</
 		<priority value="ERROR" />
 	</category>
 </log4j:configuration>]]></echo>
+
+		<get-testcase-property property.name="deploy.lcs.token.file" />
+
+		<if>
+			<equals arg1="${deploy.lcs.token.file}" arg2="true" />
+			<then>
+				<echo file="${liferay.home}/osgi/log4j/com.liferay.lcs.client.impl-log4j-ext.xml"><![CDATA[<?xml version="1.0"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+	<category name="com.liferay.lcs.client.internal.platform.http">
+		<priority value="TRACE" />
+	</category>
+	<category name="com.liferay.lcs.client.internal">
+		<priority value="TRACE" />
+	</category>
+	<category name="com.liferay.lcs.client.internal.advisor">
+		<priority value="TRACE" />
+	</category>
+	<category name="com.liferay.lcs.client.internal.lifecycle">
+		<priority value="TRACE" />
+	</category>
+	<category name="com.liferay.lcs.client.internal.task.advisor">
+		<priority value="TRACE" />
+	</category>
+	<category name="com.liferay.lcs.client.internal.task.scheduler">
+		<priority value="TRACE" />
+	</category>
+	<category name="com.liferay.lcs.client.internal.command">
+		<priority value="TRACE" />
+	</category>
+	<category name="com.liferay.lcs.client.internal.runnable">
+		<priority value="TRACE" />
+	</category>
+</log4j:configuration>]]></echo>
+			</then>
+		</if>
 	</target>
 
 	<target name="prepare-mobile-device">
@@ -9393,6 +9481,7 @@ auto.deploy.dest.dir=C:/WINDOWS/system32/config/systemprofile/liferay/websphere-
 				<prepare-edge-driver />
 
 				<echo append="true" file="${test.ext.properties.file}">
+					selenium.edge.driver.executable=${selenium.edge.driver.executable}
 					selenium.executable.dir.name=${selenium.executable.dir.name}
 				</echo>
 			</then>
@@ -10911,6 +11000,32 @@ cluster.link.bind.addr["cluster-link-control"]=127.0.0.1
 cluster.link.bind.addr["cluster-link-udp"]=127.0.0.1</echo>
 	</target>
 
+	<target name="print-lcs-log-content">
+		<var name="lcs.log.files" unset="true" />
+
+		<fileset
+			dir="${liferay.home}/logs/"
+			id="lcs.log.files"
+		>
+			<include name="lcs.*.log" />
+		</fileset>
+
+		<pathconvert pathsep="," property="lcs.log.files" refid="lcs.log.files" />
+
+		<for list="${lcs.log.files}" param="lcs.log.file">
+			<sequential>
+				<print-file file.name="@{lcs.log.file}" />
+			</sequential>
+		</for>
+
+		<if>
+			<equals arg1="${lcs.log.files}" arg2="" />
+			<then>
+				<echo>No LCS logs found.</echo>
+			</then>
+		</if>
+	</target>
+
 	<target name="print-scm-revision">
 		<echo>Portal GIT ID:</echo>
 		<echo />
@@ -11421,6 +11536,21 @@ cluster.link.bind.addr["cluster-link-udp"]=127.0.0.1</echo>
 
 							<property name="docker.database.dest.path" value="/tmp/${database.type}.sql" />
 							<property name="import.database.src.path" value="${liferay.home}/${database.type}.sql" />
+						</then>
+					</elseif>
+					<elseif>
+						<equals arg1="${database.type}" arg2="sqlserver" />
+						<then>
+							<echo file="${import.database.sh.file.path}">
+								<![CDATA[
+									#!/bin/bash
+
+									/opt/mssql-tools/bin/sqlcmd -S localhost -U ${database.sqlserver.username} -P ${database.sqlserver.password} -Q "RESTORE DATABASE ${database.sqlserver.schema} FROM  DISK='/tmp/${database.type}.bak'"
+								]]>
+							</echo>
+
+							<property name="docker.database.dest.path" value="/tmp/${database.type}.bak" />
+							<property name="import.database.src.path" value="${liferay.home}/${database.type}.bak" />
 						</then>
 					</elseif>
 					<elseif>
@@ -12526,6 +12656,19 @@ module.framework.properties.blacklist.portal.profile.names=${blacklist.portal.pr
 		Deploy project samples to the deploy directory.
 		-->
 
+		<get-testcase-property property.name="antisamy.enabled" />
+
+		<if>
+			<equals arg1="${antisamy.enabled}" arg2="true" />
+			<then>
+				<antcall target="prepare-antisamy-config-file" />
+
+				<gradle-execute dir="${project.dir}/modules/apps/portal-security/portal-security-antisamy" task="deploy">
+					<arg value="clean" />
+				</gradle-execute>
+			</then>
+		</if>
+
 		<get-testcase-property property.name="cas.enabled" />
 
 		<if>
@@ -12893,6 +13036,13 @@ url=${short.hostname}:8080</echo>
 			</then>
 			<else>
 				<antcall target="run-selenium-test" />
+
+				<if>
+					<equals arg1="${deploy.lcs.token.file}" arg2="true" />
+					<then>
+						<antcall target="print-lcs-log-content" />
+					</then>
+				</if>
 			</else>
 		</if>
 
@@ -13304,8 +13454,6 @@ url=${short.hostname}:8080</echo>
 				<fail message="${upgrade.error}${line.separator}${jstack.output}" />
 			</catch>
 		</trycatch>
-
-		<echo file="${liferay.home}/osgi/configs/com.liferay.portal.search.configuration.IndexStatusManagerConfiguration.cfg">indexReadOnly=false</echo>
 	</target>
 
 	<target name="wait-for-plugins-deployment">

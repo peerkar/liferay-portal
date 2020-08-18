@@ -28,12 +28,12 @@ public class AssetTagNameException extends PortalException {
 		super(msg);
 	}
 
-	public AssetTagNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public AssetTagNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public AssetTagNameException(Throwable cause) {
-		super(cause);
+	public AssetTagNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

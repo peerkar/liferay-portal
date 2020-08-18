@@ -26,12 +26,12 @@ public class PollerWriterClosedException extends PollerException {
 		super(msg);
 	}
 
-	public PollerWriterClosedException(String msg, Throwable cause) {
-		super(msg, cause);
+	public PollerWriterClosedException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public PollerWriterClosedException(Throwable cause) {
-		super(cause);
+	public PollerWriterClosedException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

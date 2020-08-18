@@ -32,7 +32,7 @@ import org.osgi.service.component.annotations.Component;
  * @author Eudaldo Alonso
  */
 @Component(
-	immediate = true, property = "service.ranking:Integer=300",
+	immediate = true, property = "service.ranking:Integer=700",
 	service = ContentPageEditorSidebarPanel.class
 )
 public class PageStructureContentPageEditorSidebarPanel
@@ -53,7 +53,7 @@ public class PageStructureContentPageEditorSidebarPanel
 		ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
 			"content.Language", locale, getClass());
 
-		return LanguageUtil.get(resourceBundle, "page-structure");
+		return LanguageUtil.get(resourceBundle, "selection");
 	}
 
 	@Override

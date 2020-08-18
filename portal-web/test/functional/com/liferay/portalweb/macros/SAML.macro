@@ -165,7 +165,7 @@ definition {
 				userEmailAddress = "${userEmailAddress}");
 		}
 
-		Pause(locator1 = "2000");
+		Pause(locator1 = "1000");
 
 		AssertLocation.assertPartialLocation(value1 = "${spURL}");
 	}
@@ -187,7 +187,7 @@ definition {
 				userEmailAddress = "test@liferay.com");
 		}
 
-		Pause(locator1 = "2000");
+		Pause(locator1 = "1000");
 
 		AssertLocation.assertPartialLocation(value1 = "${specificURL}");
 	}

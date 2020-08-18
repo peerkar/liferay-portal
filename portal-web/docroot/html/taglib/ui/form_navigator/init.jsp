@@ -16,8 +16,6 @@
 
 <%@ include file="/html/taglib/init.jsp" %>
 
-<portlet:defineObjects />
-
 <%
 String backURL = (String)request.getAttribute("liferay-ui:form-navigator:backURL");
 String[][] categorySectionKeys = (String[][])request.getAttribute("liferay-ui:form-navigator:categorySectionKeys");

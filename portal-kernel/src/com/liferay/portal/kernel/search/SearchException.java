@@ -28,12 +28,12 @@ public class SearchException extends PortalException {
 		super(msg);
 	}
 
-	public SearchException(String msg, Throwable cause) {
-		super(msg, cause);
+	public SearchException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public SearchException(Throwable cause) {
-		super(cause);
+	public SearchException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

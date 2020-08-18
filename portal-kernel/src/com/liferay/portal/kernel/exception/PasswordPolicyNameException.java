@@ -26,12 +26,12 @@ public class PasswordPolicyNameException extends PortalException {
 		super(msg);
 	}
 
-	public PasswordPolicyNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public PasswordPolicyNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public PasswordPolicyNameException(Throwable cause) {
-		super(cause);
+	public PasswordPolicyNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

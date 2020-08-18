@@ -73,13 +73,11 @@ public class SlaveOfflineRule {
 	}
 
 	public boolean matches(Build build) {
-		Matcher matcher = null;
-
 		if (consolePattern != null) {
 			String consoleText = build.getConsoleText();
 
 			for (String line : consoleText.split("\n")) {
-				matcher = consolePattern.matcher(line);
+				Matcher matcher = consolePattern.matcher(line);
 
 				if (matcher.find()) {
 					return true;

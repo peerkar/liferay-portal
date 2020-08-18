@@ -75,15 +75,15 @@ public class BatchEngineImportTaskExecutorImpl
 				BatchEngineTaskExecuteStatus.COMPLETED, batchEngineImportTask,
 				null);
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			_log.error(
 				"Unable to update batch engine import task " +
 					batchEngineImportTask,
-				t);
+				throwable);
 
 			_updateBatchEngineImportTask(
 				BatchEngineTaskExecuteStatus.FAILED, batchEngineImportTask,
-				t.getMessage());
+				throwable.getMessage());
 		}
 	}
 

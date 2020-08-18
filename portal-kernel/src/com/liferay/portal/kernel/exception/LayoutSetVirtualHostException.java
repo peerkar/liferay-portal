@@ -26,12 +26,12 @@ public class LayoutSetVirtualHostException extends PortalException {
 		super(msg);
 	}
 
-	public LayoutSetVirtualHostException(String msg, Throwable cause) {
-		super(msg, cause);
+	public LayoutSetVirtualHostException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public LayoutSetVirtualHostException(Throwable cause) {
-		super(cause);
+	public LayoutSetVirtualHostException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

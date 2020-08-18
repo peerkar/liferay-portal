@@ -20,30 +20,39 @@ import {getLayoutDataItemPropTypes} from '../../../prop-types/index';
 import selectLanguageId from '../../selectors/selectLanguageId';
 import InfoItemService from '../../services/InfoItemService';
 import {useSelector} from '../../store/index';
+import loadBackgroundImage from '../../utils/loadBackgroundImage';
 
 const Container = React.forwardRef(
 	({children, className, data, item, withinTopper = false}, ref) => {
 		const {
-			align,
-			backgroundColorCssClass,
+			backgroundColor,
 			backgroundImage,
 			borderColor,
 			borderRadius,
 			borderWidth,
-			contentDisplay,
-			justify,
+			fontFamily,
+			fontSize,
+			fontWeight,
+			height,
 			marginBottom,
 			marginLeft,
 			marginRight,
 			marginTop,
+			maxHeight,
+			maxWidth,
+			minHeight,
+			minWidth,
 			opacity,
+			overflow,
 			paddingBottom,
 			paddingLeft,
 			paddingRight,
 			paddingTop,
-			shadow,
-			widthType,
-		} = item.config;
+			textAlign,
+			textColor,
+		} = item.config.styles;
+
+		const {widthType} = item.config;
 
 		const languageId = useSelector(selectLanguageId);
 		const [backgroundImageValue, setBackgroundImageValue] = useState('');
@@ -86,41 +95,50 @@ const Container = React.forwardRef(
 			style.backgroundSize = 'cover';
 		}
 
-		if (borderWidth) {
-			style.borderStyle = 'solid';
-			style.borderWidth = `${borderWidth}px`;
+		if (fontSize) {
+			style.fontSize = fontSize;
 		}
 
-		if (opacity) {
-			style.opacity = Number(opacity / 100) || 1;
+		if (minHeight !== 'auto') {
+			style.minHeight = minHeight;
 		}
+
+		if (minWidth !== 'auto') {
+			style.minWidth = minWidth;
+		}
+
+		style.border = `solid ${borderWidth}px`;
+		style.maxHeight = maxHeight;
+		style.maxWidth = maxWidth;
+		style.opacity = opacity;
+		style.overflow = overflow;
 
 		const content = (
 			<div
 				{...(link ? {} : data)}
 				className={classNames(
 					className,
-					`mb-${marginBottom || 0}`,
-					`mt-${marginTop || 0}`,
-					`pb-${paddingBottom || 0}`,
-					`pl-${paddingLeft || 0}`,
-					`pr-${paddingRight || 0}`,
-					`pt-${paddingTop || 0}`,
+					fontWeight,
+					height,
+					`mb-${marginBottom}`,
+					`mt-${marginTop}`,
+					`pb-${paddingBottom}`,
+					`pl-${paddingLeft}`,
+					`pr-${paddingRight}`,
+					`pt-${paddingTop}`,
 					{
-						[align]: !!align,
-						[`bg-${backgroundColorCssClass}`]: !!backgroundColorCssClass,
-						[`border-${borderColor}`]: !!borderColor,
+						[`bg-${backgroundColor?.cssClass}`]: backgroundColor,
+						[`border-${borderColor?.cssClass}`]: borderColor,
 						[borderRadius]: !!borderRadius,
 						container: widthType === 'fixed',
-						'd-block': contentDisplay === 'block',
-						'd-flex': contentDisplay === 'flex',
 						empty: item.children.length === 0,
-						[justify]: !!justify,
-						[`ml-${marginLeft || 0}`]:
+						[`text-${fontFamily}`]: fontFamily !== 'default',
+						[`ml-${marginLeft}`]:
 							widthType !== 'fixed' && !withinTopper,
-						[`mr-${marginRight || 0}`]:
+						[`mr-${marginRight}`]:
 							widthType !== 'fixed' && !withinTopper,
-						[shadow]: !!shadow,
+						[textAlign]: textAlign !== 'none',
+						[`text-${textColor?.cssClass}`]: textColor,
 					}
 				)}
 				ref={ref}
@@ -151,31 +169,6 @@ Container.propTypes = {
 	item: getLayoutDataItemPropTypes({
 		config: PropTypes.shape({}),
 	}).isRequired,
-};
-
-const loadBackgroundImage = (backgroundImage) => {
-	if (!backgroundImage) {
-		return Promise.resolve('');
-	}
-	else if (typeof backgroundImage.url === 'string') {
-		return Promise.resolve(backgroundImage.url);
-	}
-	else if (backgroundImage.fieldId) {
-		return InfoItemService.getInfoItemFieldValue({
-			classNameId: backgroundImage.classNameId,
-			classPK: backgroundImage.classPK,
-			fieldId: backgroundImage.fieldId,
-			onNetworkStatus: () => {},
-		}).then((response) => {
-			if (response.fieldValue && response.fieldValue.url) {
-				return response.fieldValue.url;
-			}
-
-			return '';
-		});
-	}
-
-	return Promise.resolve('');
 };
 
 export default Container;

@@ -21,11 +21,14 @@ import com.liferay.headless.delivery.internal.dto.v1_0.util.CustomFieldsUtil;
 import com.liferay.journal.model.JournalFolder;
 import com.liferay.journal.service.JournalArticleService;
 import com.liferay.journal.service.JournalFolderService;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.subscription.service.SubscriptionLocalService;
 
 import org.osgi.service.component.annotations.Component;
@@ -55,11 +58,14 @@ public class StructuredContentFolderDTOConverter
 		JournalFolder journalFolder = _journalFolderService.getFolder(
 			(Long)dtoConverterContext.getId());
 
+		Group group = _groupLocalService.fetchGroup(journalFolder.getGroupId());
+
 		return new StructuredContentFolder() {
 			{
 				actions = dtoConverterContext.getActions();
+				assetLibraryKey = GroupUtil.getAssetLibraryKey(group);
 				creator = CreatorUtil.toCreator(
-					_portal,
+					_portal, dtoConverterContext.getUriInfoOptional(),
 					_userLocalService.fetchUser(journalFolder.getUserId()));
 				customFields = CustomFieldsUtil.toCustomFields(
 					dtoConverterContext.isAcceptAllLanguages(),
@@ -79,7 +85,7 @@ public class StructuredContentFolderDTOConverter
 					_journalArticleService.getArticlesCount(
 						journalFolder.getGroupId(), journalFolder.getFolderId(),
 						WorkflowConstants.STATUS_APPROVED);
-				siteId = journalFolder.getGroupId();
+				siteId = GroupUtil.getSiteId(group);
 				subscribed = _subscriptionLocalService.isSubscribed(
 					journalFolder.getCompanyId(),
 					dtoConverterContext.getUserId(),
@@ -96,6 +102,9 @@ public class StructuredContentFolderDTOConverter
 			}
 		};
 	}
+
+	@Reference
+	private GroupLocalService _groupLocalService;
 
 	@Reference
 	private JournalArticleService _journalArticleService;

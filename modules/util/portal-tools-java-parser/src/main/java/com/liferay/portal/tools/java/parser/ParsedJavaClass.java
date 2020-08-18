@@ -122,6 +122,22 @@ public class ParsedJavaClass {
 		}
 	}
 
+	public boolean containsNestedCommentToken() {
+		ParsedJavaTerm parsedJavaTerm = _lastParsedJavaTerm;
+
+		while (true) {
+			if (parsedJavaTerm == null) {
+				return false;
+			}
+
+			if (parsedJavaTerm.containsCommentToken()) {
+				return true;
+			}
+
+			parsedJavaTerm = parsedJavaTerm.getPreviousParsedJavaTerm();
+		}
+	}
+
 	public ParsedJavaTerm getLastParsedJavaTerm() {
 		return _lastParsedJavaTerm;
 	}

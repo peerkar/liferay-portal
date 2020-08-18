@@ -28,12 +28,14 @@ public class NoSuchSLADefinitionVersionException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchSLADefinitionVersionException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchSLADefinitionVersionException(
+		String msg, Throwable throwable) {
+
+		super(msg, throwable);
 	}
 
-	public NoSuchSLADefinitionVersionException(Throwable cause) {
-		super(cause);
+	public NoSuchSLADefinitionVersionException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

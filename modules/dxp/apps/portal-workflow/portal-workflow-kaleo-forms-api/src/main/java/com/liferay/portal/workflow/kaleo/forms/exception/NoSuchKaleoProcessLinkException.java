@@ -30,12 +30,12 @@ public class NoSuchKaleoProcessLinkException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchKaleoProcessLinkException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchKaleoProcessLinkException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchKaleoProcessLinkException(Throwable cause) {
-		super(cause);
+	public NoSuchKaleoProcessLinkException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

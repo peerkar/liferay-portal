@@ -28,12 +28,12 @@ public class RepositoryNameException extends PortalException {
 		super(msg);
 	}
 
-	public RepositoryNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RepositoryNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public RepositoryNameException(Throwable cause) {
-		super(cause);
+	public RepositoryNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

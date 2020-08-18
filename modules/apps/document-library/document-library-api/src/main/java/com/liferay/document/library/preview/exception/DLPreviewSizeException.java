@@ -28,12 +28,12 @@ public class DLPreviewSizeException extends PortalException {
 		super(msg);
 	}
 
-	public DLPreviewSizeException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DLPreviewSizeException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DLPreviewSizeException(Throwable cause) {
-		super(cause);
+	public DLPreviewSizeException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

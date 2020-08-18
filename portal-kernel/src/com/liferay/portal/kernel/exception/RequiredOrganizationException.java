@@ -26,12 +26,12 @@ public class RequiredOrganizationException extends PortalException {
 		super(msg);
 	}
 
-	public RequiredOrganizationException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RequiredOrganizationException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public RequiredOrganizationException(Throwable cause) {
-		super(cause);
+	public RequiredOrganizationException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

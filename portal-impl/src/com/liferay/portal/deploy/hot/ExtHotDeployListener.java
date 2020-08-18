@@ -58,10 +58,10 @@ public class ExtHotDeployListener extends BaseHotDeployListener {
 		try {
 			doInvokeDeploy(hotDeployEvent);
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			throwHotDeployException(
 				hotDeployEvent, "Error registering extension environment for ",
-				t);
+				throwable);
 		}
 	}
 
@@ -72,10 +72,10 @@ public class ExtHotDeployListener extends BaseHotDeployListener {
 		try {
 			doInvokeUndeploy(hotDeployEvent);
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			throwHotDeployException(
 				hotDeployEvent,
-				"Error unregistering extension environment for ", t);
+				"Error unregistering extension environment for ", throwable);
 		}
 	}
 

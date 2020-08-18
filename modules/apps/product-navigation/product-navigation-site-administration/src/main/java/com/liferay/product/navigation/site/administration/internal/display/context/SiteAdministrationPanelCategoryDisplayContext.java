@@ -190,9 +190,9 @@ public class SiteAdministrationPanelCategoryDisplayContext {
 						portalException.getMessage());
 			}
 			catch (SystemException systemException) {
-				Throwable cause = systemException.getCause();
+				Throwable throwable = systemException.getCause();
 
-				if (!(cause instanceof ConnectException)) {
+				if (!(throwable instanceof ConnectException)) {
 					throw systemException;
 				}
 

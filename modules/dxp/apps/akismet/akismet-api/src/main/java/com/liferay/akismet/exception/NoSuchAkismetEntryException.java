@@ -28,12 +28,12 @@ public class NoSuchAkismetEntryException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchAkismetEntryException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchAkismetEntryException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchAkismetEntryException(Throwable cause) {
-		super(cause);
+	public NoSuchAkismetEntryException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

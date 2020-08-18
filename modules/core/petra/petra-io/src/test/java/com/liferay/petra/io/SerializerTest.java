@@ -344,10 +344,10 @@ public class SerializerTest {
 			Assert.fail();
 		}
 		catch (InvocationTargetException invocationTargetException) {
-			Throwable cause = invocationTargetException.getCause();
+			Throwable throwable = invocationTargetException.getCause();
 
 			Assert.assertTrue(
-				cause.toString(), cause instanceof OutOfMemoryError);
+				throwable.toString(), throwable instanceof OutOfMemoryError);
 		}
 
 		// Normal doubling size

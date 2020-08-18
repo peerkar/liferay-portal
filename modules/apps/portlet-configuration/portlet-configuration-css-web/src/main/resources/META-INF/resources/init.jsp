@@ -38,8 +38,7 @@ page import="com.liferay.portlet.configuration.css.web.internal.display.context.
 
 <%@ page import="java.text.DecimalFormat" %>
 
-<%@ page import="java.util.Map" %><%@
-page import="java.util.Objects" %>
+<%@ page import="java.util.Objects" %>
 
 <liferay-frontend:defineObjects />
 

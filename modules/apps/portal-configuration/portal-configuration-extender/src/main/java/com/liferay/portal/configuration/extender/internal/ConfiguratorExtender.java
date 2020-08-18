@@ -171,13 +171,13 @@ public class ConfiguratorExtender implements BundleTrackerCustomizer<Bundle> {
 		try {
 			properties = namedConfigurationContent.getProperties();
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			if (_log.isWarnEnabled()) {
 				_log.warn(
 					StringBundler.concat(
 						"Supplier from description ", namedConfigurationContent,
 						" threw an exception: "),
-					t);
+					throwable);
 			}
 
 			return;

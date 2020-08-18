@@ -55,8 +55,6 @@ public class SchemaBuilder {
 	public String extractEndpointSchemaName(
 		String endpoint, String operation, JsonObject oasJsonObject) {
 
-		String schemaName = null;
-
 		if (Objects.equals(operation, OASConstants.OPERATION_GET)) {
 			String jsonFinderPath = StringUtil.replace(
 				OASConstants.
@@ -66,7 +64,7 @@ public class SchemaBuilder {
 			JsonObject schemaJsonObject = _jsonFinder.getDescendantJsonObject(
 				jsonFinderPath, oasJsonObject);
 
-			schemaName = _stripSchemaName(
+			String schemaName = _stripSchemaName(
 				schemaJsonObject.getString(OASConstants.REF));
 
 			JsonObject schemaDefinitionJsonObject = _extractSchemaJsonObject(

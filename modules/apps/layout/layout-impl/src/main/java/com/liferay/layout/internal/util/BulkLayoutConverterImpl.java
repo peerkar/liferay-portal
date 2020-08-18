@@ -102,12 +102,12 @@ public class BulkLayoutConverterImpl implements BulkLayoutConverter {
 
 				convertedLayoutPlids.add(layout.getPlid());
 			}
-			catch (Throwable t) {
+			catch (Throwable throwable) {
 				if (_log.isWarnEnabled()) {
 					_log.warn(
 						String.format(
 							"Layout with PLID %s cannot be converted", plid),
-						t);
+						throwable);
 				}
 			}
 		}

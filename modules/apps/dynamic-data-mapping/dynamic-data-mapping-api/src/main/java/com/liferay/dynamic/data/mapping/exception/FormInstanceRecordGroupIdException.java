@@ -28,12 +28,12 @@ public class FormInstanceRecordGroupIdException extends PortalException {
 		super(msg);
 	}
 
-	public FormInstanceRecordGroupIdException(String msg, Throwable cause) {
-		super(msg, cause);
+	public FormInstanceRecordGroupIdException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public FormInstanceRecordGroupIdException(Throwable cause) {
-		super(cause);
+	public FormInstanceRecordGroupIdException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

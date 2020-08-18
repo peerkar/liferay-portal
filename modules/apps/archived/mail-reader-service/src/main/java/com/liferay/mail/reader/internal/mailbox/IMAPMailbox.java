@@ -373,13 +373,13 @@ public class IMAPMailbox extends BaseMailbox {
 
 		updateFolders();
 
-		List<Folder> folders = FolderLocalServiceUtil.getFolders(
-			account.getAccountId());
-
 		String key = AccountLock.getKey(
 			user.getUserId(), account.getAccountId());
 
 		if (AccountLock.acquireLock(key)) {
+			List<Folder> folders = FolderLocalServiceUtil.getFolders(
+				account.getAccountId());
+
 			try {
 				for (Folder folder : folders) {
 					_imapAccessor.storeEnvelopes(folder.getFolderId(), true);

@@ -26,12 +26,12 @@ public class RoleNameException extends PortalException {
 		super(msg);
 	}
 
-	public RoleNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RoleNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public RoleNameException(Throwable cause) {
-		super(cause);
+	public RoleNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

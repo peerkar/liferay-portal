@@ -614,9 +614,6 @@ public class PortalRequestProcessor {
 			return _PATH_PORTAL_LOGOUT;
 		}
 
-		long companyId = PortalUtil.getCompanyId(httpServletRequest);
-		String portletId = ParamUtil.getString(httpServletRequest, "p_p_id");
-
 		// Authenticated users must be active
 
 		if (user != null) {
@@ -626,12 +623,15 @@ public class PortalRequestProcessor {
 				return _PATH_PORTAL_ERROR;
 			}
 
+			String portletId = ParamUtil.getString(
+				httpServletRequest, "p_p_id");
+
 			if (!path.equals(_PATH_PORTAL_JSON_SERVICE) &&
 				!path.equals(_PATH_PORTAL_RENDER_PORTLET) &&
 				!themeDisplay.isImpersonated() &&
 				!InterruptedPortletRequestWhitelistUtil.
 					isPortletInvocationWhitelisted(
-						companyId, portletId,
+						PortalUtil.getCompanyId(httpServletRequest), portletId,
 						PortalUtil.getStrutsAction(httpServletRequest))) {
 
 				// Authenticated users should agree to Terms of Use

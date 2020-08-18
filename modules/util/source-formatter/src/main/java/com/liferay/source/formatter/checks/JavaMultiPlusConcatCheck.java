@@ -43,9 +43,7 @@ public class JavaMultiPlusConcatCheck extends BaseJavaTermCheck {
 			String fileContent)
 		throws IOException {
 
-		if (isExcludedPath(RUN_OUTSIDE_PORTAL_EXCLUDES, absolutePath) ||
-			isModulesApp(absolutePath, true)) {
-
+		if (isExcludedPath(RUN_OUTSIDE_PORTAL_EXCLUDES, absolutePath)) {
 			return javaTerm.getContent();
 		}
 

@@ -28,12 +28,12 @@ public class DuplicateTableNameException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateTableNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateTableNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateTableNameException(Throwable cause) {
-		super(cause);
+	public DuplicateTableNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

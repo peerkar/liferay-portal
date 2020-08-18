@@ -57,8 +57,8 @@ public class UADApplicationExportController {
 
 			return _exportApplicationData(applicationKey, userId);
 		}
-		catch (Throwable t) {
-			throw t;
+		catch (Throwable throwable) {
+			throw throwable;
 		}
 	}
 

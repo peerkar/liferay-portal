@@ -23,12 +23,12 @@ public class ProcessException extends Exception {
 		super(message);
 	}
 
-	public ProcessException(String message, Throwable cause) {
-		super(message, cause);
+	public ProcessException(String message, Throwable throwable) {
+		super(message, throwable);
 	}
 
-	public ProcessException(Throwable cause) {
-		super(cause);
+	public ProcessException(Throwable throwable) {
+		super(throwable);
 	}
 
 	private static final long serialVersionUID = 1L;

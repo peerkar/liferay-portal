@@ -28,12 +28,12 @@ public class NoSuchIdpSsoSessionException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchIdpSsoSessionException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchIdpSsoSessionException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchIdpSsoSessionException(Throwable cause) {
-		super(cause);
+	public NoSuchIdpSsoSessionException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

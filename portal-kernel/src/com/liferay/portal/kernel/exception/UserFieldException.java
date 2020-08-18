@@ -29,12 +29,12 @@ public class UserFieldException extends PortalException {
 		super(msg);
 	}
 
-	public UserFieldException(String msg, Throwable cause) {
-		super(msg, cause);
+	public UserFieldException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public UserFieldException(Throwable cause) {
-		super(cause);
+	public UserFieldException(Throwable throwable) {
+		super(throwable);
 	}
 
 	public void addField(String field) {

@@ -28,12 +28,12 @@ public class NoSuchDataListViewException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchDataListViewException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchDataListViewException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchDataListViewException(Throwable cause) {
-		super(cause);
+	public NoSuchDataListViewException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

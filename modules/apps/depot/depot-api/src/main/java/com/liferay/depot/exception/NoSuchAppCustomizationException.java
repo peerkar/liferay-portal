@@ -28,12 +28,12 @@ public class NoSuchAppCustomizationException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchAppCustomizationException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchAppCustomizationException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchAppCustomizationException(Throwable cause) {
-		super(cause);
+	public NoSuchAppCustomizationException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

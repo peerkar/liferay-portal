@@ -267,15 +267,12 @@ public class MultiLanguageSearchFieldsSharedAcrossIndexersTest {
 
 		Hits hits = search(searchContext);
 
+		Stream<FileEntry> fileEntryStream = _fileEntries.stream();
+		Stream<JournalArticle> journalArticleStream = _journalArticles.stream();
+
 		List<String> keys = Stream.concat(
-			_fileEntries.stream(
-			).map(
-				FileEntry::getPrimaryKey
-			),
-			_journalArticles.stream(
-			).map(
-				JournalArticle::getResourcePrimKey
-			)
+			fileEntryStream.map(FileEntry::getPrimaryKey),
+			journalArticleStream.map(JournalArticle::getResourcePrimKey)
 		).map(
 			String::valueOf
 		).collect(

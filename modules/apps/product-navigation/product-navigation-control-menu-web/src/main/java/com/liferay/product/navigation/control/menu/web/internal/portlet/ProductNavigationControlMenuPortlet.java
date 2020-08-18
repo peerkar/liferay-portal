@@ -90,9 +90,9 @@ public class ProductNavigationControlMenuPortlet extends MVCPortlet {
 	}
 
 	@Override
-	protected boolean isSessionErrorException(Throwable cause) {
-		if ((cause instanceof SystemException) ||
-			super.isSessionErrorException(cause)) {
+	protected boolean isSessionErrorException(Throwable throwable) {
+		if ((throwable instanceof SystemException) ||
+			super.isSessionErrorException(throwable)) {
 
 			return true;
 		}

@@ -29,12 +29,12 @@ public class KBArticleUrlTitleException extends PortalException {
 		super(msg);
 	}
 
-	public KBArticleUrlTitleException(String msg, Throwable cause) {
-		super(msg, cause);
+	public KBArticleUrlTitleException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public KBArticleUrlTitleException(Throwable cause) {
-		super(cause);
+	public KBArticleUrlTitleException(Throwable throwable) {
+		super(throwable);
 	}
 
 	public static class MustNotBeDuplicate extends KBArticleUrlTitleException {

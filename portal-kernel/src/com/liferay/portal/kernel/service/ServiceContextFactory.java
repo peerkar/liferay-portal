@@ -253,10 +253,11 @@ public class ServiceContextFactory {
 		Map<String, String[]> parameters = httpServletRequest.getParameterMap();
 
 		for (Map.Entry<String, String[]> entry : parameters.entrySet()) {
-			String name = entry.getKey();
 			String[] values = entry.getValue();
 
 			if (ArrayUtil.isNotEmpty(values)) {
+				String name = entry.getKey();
+
 				if (values.length == 1) {
 					attributes.put(name, values[0]);
 				}
@@ -415,10 +416,11 @@ public class ServiceContextFactory {
 		Map<String, String[]> parameters = portletRequest.getParameterMap();
 
 		for (Map.Entry<String, String[]> entry : parameters.entrySet()) {
-			String name = entry.getKey();
 			String[] values = entry.getValue();
 
 			if (ArrayUtil.isNotEmpty(values)) {
+				String name = entry.getKey();
+
 				if (values.length == 1) {
 					attributes.put(name, values[0]);
 				}

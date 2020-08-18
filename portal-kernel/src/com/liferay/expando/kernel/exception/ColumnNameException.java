@@ -29,12 +29,12 @@ public class ColumnNameException extends PortalException {
 		super(msg);
 	}
 
-	public ColumnNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ColumnNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ColumnNameException(Throwable cause) {
-		super(cause);
+	public ColumnNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 	public static class MustValidate extends ColumnNameException {

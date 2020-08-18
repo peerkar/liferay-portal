@@ -29,13 +29,13 @@ public class LayoutPageTemplateCollectionNameException extends PortalException {
 	}
 
 	public LayoutPageTemplateCollectionNameException(
-		String msg, Throwable cause) {
+		String msg, Throwable throwable) {
 
-		super(msg, cause);
+		super(msg, throwable);
 	}
 
-	public LayoutPageTemplateCollectionNameException(Throwable cause) {
-		super(cause);
+	public LayoutPageTemplateCollectionNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

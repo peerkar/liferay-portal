@@ -201,10 +201,10 @@ public class RPCRequestTest {
 	private static class TestRPCCallable implements RPCCallable<String> {
 
 		public TestRPCCallable(
-			Throwable syncThrowable, boolean cancel, Throwable asyncThrowable,
+			Throwable throwable, boolean cancel, Throwable asyncThrowable,
 			String result) {
 
-			_syncThrowable = syncThrowable;
+			_syncThrowable = throwable;
 			_cancel = cancel;
 			_asyncThrowable = asyncThrowable;
 			_result = result;

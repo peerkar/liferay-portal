@@ -30,13 +30,15 @@ public class WorkflowMetricsSLADefinitionDuplicateNameException
 	}
 
 	public WorkflowMetricsSLADefinitionDuplicateNameException(
-		String msg, Throwable cause) {
+		String msg, Throwable throwable) {
 
-		super(msg, cause);
+		super(msg, throwable);
 	}
 
-	public WorkflowMetricsSLADefinitionDuplicateNameException(Throwable cause) {
-		super(cause);
+	public WorkflowMetricsSLADefinitionDuplicateNameException(
+		Throwable throwable) {
+
+		super(throwable);
 	}
 
 }

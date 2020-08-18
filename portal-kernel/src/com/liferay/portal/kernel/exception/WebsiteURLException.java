@@ -26,12 +26,12 @@ public class WebsiteURLException extends PortalException {
 		super(msg);
 	}
 
-	public WebsiteURLException(String msg, Throwable cause) {
-		super(msg, cause);
+	public WebsiteURLException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public WebsiteURLException(Throwable cause) {
-		super(cause);
+	public WebsiteURLException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

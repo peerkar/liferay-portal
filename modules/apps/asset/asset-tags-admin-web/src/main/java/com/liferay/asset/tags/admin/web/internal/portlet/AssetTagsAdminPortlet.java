@@ -166,12 +166,12 @@ public class AssetTagsAdminPortlet extends MVCPortlet {
 	}
 
 	@Override
-	protected boolean isSessionErrorException(Throwable cause) {
-		if (cause instanceof AssetTagException ||
-			cause instanceof AssetTagNameException ||
-			cause instanceof DuplicateTagException ||
-			cause instanceof NoSuchTagException ||
-			cause instanceof PrincipalException) {
+	protected boolean isSessionErrorException(Throwable throwable) {
+		if (throwable instanceof AssetTagException ||
+			throwable instanceof AssetTagNameException ||
+			throwable instanceof DuplicateTagException ||
+			throwable instanceof NoSuchTagException ||
+			throwable instanceof PrincipalException) {
 
 			return true;
 		}

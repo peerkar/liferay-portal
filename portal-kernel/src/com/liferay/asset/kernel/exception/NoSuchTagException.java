@@ -28,12 +28,12 @@ public class NoSuchTagException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchTagException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchTagException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchTagException(Throwable cause) {
-		super(cause);
+	public NoSuchTagException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

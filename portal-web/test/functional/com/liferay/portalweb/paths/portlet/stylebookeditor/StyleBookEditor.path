@@ -1,0 +1,61 @@
+<html>
+<head>
+<title>StyleBookEditor</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">StyleBookEditor</td></tr>
+</thead>
+<tbody>
+<!--PAGE_PREVIEW-->
+<tr>
+	<td>CONTRIBUTED_FRAGMENT_INLINE_CONTENT</td>
+	<td>//${key_element}[contains(@data-lfr-editable-id,'${key_id}') and contains(@data-lfr-editable-type,'${key_type}')][normalize-space(text())='${key_content}']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CURSOR_NOT_ALLOWED</td>
+	<td>//div[contains(@style,'cursor: not-allowed')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>NO_PAGE_MESSAGE</td>
+	<td>//div[contains(@class,'no-page-message')][normalize-space(text())='You cannot preview the style book because there are no pages in this site.']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PAGE_PREVIEW_IFRAME</td>
+	<td>//iframe[contains(@class,'page-preview')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PAGE_PREVIEW_INFO_BAR_TOGGLE</td>
+	<td>//div[contains(@class,'page-preview-info-bar')]//button[contains(@class,'dropdown-toggle')]</td>
+	<td></td>
+</tr>
+<!--SIDEBAR-->
+<tr>
+	<td>DRAFT_SAVED_MESSAGE</td>
+	<td>//div[contains(@class,'editor__toolbar')]//span[contains(@class,'editor__status')][normalize-space(text())='Draft Saved']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>FORM_CONTROL_SELECT_BUTTON</td>
+	<td>//button[contains(@class,'form-control-select')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>STYLE_BOOK_EDITOR_SIDEBAR_COLLAPSED</td>
+	<td>//*[contains(@class,'collapse-icon')][@aria-expanded='false'][normalize-space()='${key_sectionName}']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>STYLE_BOOK_EDITOR_SIDEBAR_EXPANDED</td>
+	<td>//*[contains(@class,'collapse-icon')][@aria-expanded='true'][normalize-space()='${key_sectionName}']</td>
+	<td></td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

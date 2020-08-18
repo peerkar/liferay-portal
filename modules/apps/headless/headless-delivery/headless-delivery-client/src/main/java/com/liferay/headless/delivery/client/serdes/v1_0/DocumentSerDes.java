@@ -104,6 +104,20 @@ public class DocumentSerDes {
 			sb.append(String.valueOf(document.getAggregateRating()));
 		}
 
+		if (document.getAssetLibraryKey() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"assetLibraryKey\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(document.getAssetLibraryKey()));
+
+			sb.append("\"");
+		}
+
 		if (document.getContentUrl() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -318,6 +332,16 @@ public class DocumentSerDes {
 			sb.append("]");
 		}
 
+		if (document.getSiteId() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"siteId\": ");
+
+			sb.append(document.getSiteId());
+		}
+
 		if (document.getSizeInBytes() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -444,6 +468,15 @@ public class DocumentSerDes {
 				String.valueOf(document.getAggregateRating()));
 		}
 
+		if (document.getAssetLibraryKey() == null) {
+			map.put("assetLibraryKey", null);
+		}
+		else {
+			map.put(
+				"assetLibraryKey",
+				String.valueOf(document.getAssetLibraryKey()));
+		}
+
 		if (document.getContentUrl() == null) {
 			map.put("contentUrl", null);
 		}
@@ -561,6 +594,13 @@ public class DocumentSerDes {
 				String.valueOf(document.getRelatedContents()));
 		}
 
+		if (document.getSiteId() == null) {
+			map.put("siteId", null);
+		}
+		else {
+			map.put("siteId", String.valueOf(document.getSiteId()));
+		}
+
 		if (document.getSizeInBytes() == null) {
 			map.put("sizeInBytes", null);
 		}
@@ -644,6 +684,11 @@ public class DocumentSerDes {
 					document.setAggregateRating(
 						AggregateRatingSerDes.toDTO(
 							(String)jsonParserFieldValue));
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "assetLibraryKey")) {
+				if (jsonParserFieldValue != null) {
+					document.setAssetLibraryKey((String)jsonParserFieldValue);
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "contentUrl")) {
@@ -740,6 +785,12 @@ public class DocumentSerDes {
 						).toArray(
 							size -> new RelatedContent[size]
 						));
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "siteId")) {
+				if (jsonParserFieldValue != null) {
+					document.setSiteId(
+						Long.valueOf((String)jsonParserFieldValue));
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "sizeInBytes")) {

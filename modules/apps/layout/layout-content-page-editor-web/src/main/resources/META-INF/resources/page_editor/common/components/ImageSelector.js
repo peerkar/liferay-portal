@@ -33,7 +33,13 @@ export function ImageSelector({
 			<ClayForm.Group>
 				<label htmlFor={imageTitleId}>{label}</label>
 				<ClayInput
+					className="page-editor__item-selector__content-input"
 					id={imageTitleId}
+					onClick={() =>
+						openImageSelector((image) => {
+							onImageSelected(image);
+						})
+					}
 					placeholder={Liferay.Language.get('none')}
 					readOnly
 					sizing="sm"

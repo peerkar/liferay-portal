@@ -28,12 +28,12 @@ public class MemberRequestInvalidUserException extends PortalException {
 		super(msg);
 	}
 
-	public MemberRequestInvalidUserException(String msg, Throwable cause) {
-		super(msg, cause);
+	public MemberRequestInvalidUserException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public MemberRequestInvalidUserException(Throwable cause) {
-		super(cause);
+	public MemberRequestInvalidUserException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -829,8 +829,8 @@ public class ClusterSchedulerEngine
 
 			_clusterExecutor.execute(clusterRequest);
 		}
-		catch (Throwable t) {
-			_log.error("Unable to notify slave", t);
+		catch (Throwable throwable) {
+			_log.error("Unable to notify slave", throwable);
 		}
 	}
 

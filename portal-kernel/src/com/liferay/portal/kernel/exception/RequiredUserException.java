@@ -26,12 +26,12 @@ public class RequiredUserException extends PortalException {
 		super(msg);
 	}
 
-	public RequiredUserException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RequiredUserException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public RequiredUserException(Throwable cause) {
-		super(cause);
+	public RequiredUserException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

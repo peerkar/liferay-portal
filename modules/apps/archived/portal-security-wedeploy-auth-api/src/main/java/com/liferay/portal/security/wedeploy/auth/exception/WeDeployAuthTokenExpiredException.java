@@ -28,12 +28,12 @@ public class WeDeployAuthTokenExpiredException extends PortalException {
 		super(msg);
 	}
 
-	public WeDeployAuthTokenExpiredException(String msg, Throwable cause) {
-		super(msg, cause);
+	public WeDeployAuthTokenExpiredException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public WeDeployAuthTokenExpiredException(Throwable cause) {
-		super(cause);
+	public WeDeployAuthTokenExpiredException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

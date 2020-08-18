@@ -28,12 +28,12 @@ public class TempFileNameException extends PortalException {
 		super(msg);
 	}
 
-	public TempFileNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public TempFileNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public TempFileNameException(Throwable cause) {
-		super(cause);
+	public TempFileNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

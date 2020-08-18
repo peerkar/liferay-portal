@@ -29,7 +29,6 @@ import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.facet.Facet;
-import com.liferay.portal.kernel.search.facet.SimpleFacet;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
@@ -43,6 +42,7 @@ import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
+import com.liferay.portal.vulcan.util.SearchUtil;
 import com.liferay.portal.vulcan.util.TransformUtil;
 import com.liferay.portlet.asset.util.AssetSearcher;
 
@@ -64,6 +64,16 @@ import org.osgi.service.component.annotations.ServiceScope;
 	scope = ServiceScope.PROTOTYPE, service = ContentElementResource.class
 )
 public class ContentElementResourceImpl extends BaseContentElementResourceImpl {
+
+	@Override
+	public Page<ContentElement> getAssetLibraryContentElementsPage(
+			Long assetLibraryId, String search, Aggregation aggregation,
+			Filter filter, Pagination pagination, Sort[] sorts)
+		throws Exception {
+
+		return getSiteContentElementsPage(
+			assetLibraryId, search, aggregation, filter, pagination, sorts);
+	}
 
 	@Override
 	public EntityModel getEntityModel(MultivaluedMap multivaluedMap)
@@ -99,21 +109,12 @@ public class ContentElementResourceImpl extends BaseContentElementResourceImpl {
 	}
 
 	private SearchContext _getAssetSearchContext(
-		Long siteId, String search, Aggregation aggregation, Filter filter,
+		Long groupId, String search, Aggregation aggregation, Filter filter,
 		Pagination pagination, Sort[] sorts) {
 
-		SearchContext searchContext = new SearchContext();
+		SearchUtil.SearchContext searchContext = new SearchUtil.SearchContext();
 
-		Map<String, String> aggregationTerms =
-			aggregation.getAggregationTerms();
-
-		for (String aggregationTerm : aggregationTerms.values()) {
-			Facet facet = new SimpleFacet(searchContext);
-
-			facet.setFieldName(aggregationTerm);
-
-			searchContext.addFacet(facet);
-		}
+		searchContext.addVulcanAggregation(aggregation);
 
 		BooleanQuery booleanQuery = new BooleanQueryImpl() {
 			{
@@ -169,7 +170,7 @@ public class ContentElementResourceImpl extends BaseContentElementResourceImpl {
 			searchContext.setEnd(pagination.getEndPosition());
 		}
 
-		searchContext.setGroupIds(new long[] {siteId});
+		searchContext.setGroupIds(new long[] {groupId});
 		searchContext.setKeywords(search);
 		searchContext.setLocale(contextAcceptLanguage.getPreferredLocale());
 
@@ -211,7 +212,10 @@ public class ContentElementResourceImpl extends BaseContentElementResourceImpl {
 
 						return dtoConverter.toDTO(
 							new DefaultDTOConverterContext(
-								_dtoConverterRegistry, assetEntry.getClassPK(),
+								contextAcceptLanguage.isAcceptAllLanguages(),
+								new HashMap<>(), _dtoConverterRegistry,
+								contextHttpServletRequest,
+								assetEntry.getClassPK(),
 								contextAcceptLanguage.getPreferredLocale(),
 								contextUriInfo, contextUser));
 					});

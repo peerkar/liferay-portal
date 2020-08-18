@@ -28,12 +28,12 @@ public class SourceCharsetException extends PortalException {
 		super(msg);
 	}
 
-	public SourceCharsetException(String msg, Throwable cause) {
-		super(msg, cause);
+	public SourceCharsetException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public SourceCharsetException(Throwable cause) {
-		super(cause);
+	public SourceCharsetException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

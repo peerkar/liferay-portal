@@ -28,12 +28,12 @@ public class NoSuchArticleImageException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchArticleImageException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchArticleImageException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchArticleImageException(Throwable cause) {
-		super(cause);
+	public NoSuchArticleImageException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

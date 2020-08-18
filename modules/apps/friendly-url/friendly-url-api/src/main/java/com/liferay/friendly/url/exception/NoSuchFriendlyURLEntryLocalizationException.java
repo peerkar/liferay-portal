@@ -30,13 +30,13 @@ public class NoSuchFriendlyURLEntryLocalizationException
 	}
 
 	public NoSuchFriendlyURLEntryLocalizationException(
-		String msg, Throwable cause) {
+		String msg, Throwable throwable) {
 
-		super(msg, cause);
+		super(msg, throwable);
 	}
 
-	public NoSuchFriendlyURLEntryLocalizationException(Throwable cause) {
-		super(cause);
+	public NoSuchFriendlyURLEntryLocalizationException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

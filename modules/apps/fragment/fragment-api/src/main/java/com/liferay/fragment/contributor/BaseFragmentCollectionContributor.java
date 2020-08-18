@@ -378,13 +378,13 @@ public abstract class BaseFragmentCollectionContributor
 		availableLocales.add(LocaleUtil.getDefault());
 
 		for (Locale locale : availableLocales) {
-			String languageId = LocaleUtil.toLanguageId(locale);
-
-			ResourceBundle resourceBundle =
-				resourceBundleLoader.loadResourceBundle(
-					LocaleUtil.fromLanguageId(languageId));
-
 			if (Validator.isNotNull(name)) {
+				String languageId = LocaleUtil.toLanguageId(locale);
+
+				ResourceBundle resourceBundle =
+					resourceBundleLoader.loadResourceBundle(
+						LocaleUtil.fromLanguageId(languageId));
+
 				names.put(
 					LocaleUtil.fromLanguageId(languageId),
 					LanguageUtil.get(resourceBundle, name, name));

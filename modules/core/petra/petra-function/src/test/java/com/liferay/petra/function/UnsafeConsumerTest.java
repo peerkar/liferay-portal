@@ -131,10 +131,10 @@ public class UnsafeConsumerTest {
 					throw exception;
 				});
 		}
-		catch (Throwable t) {
-			Assert.assertSame(_exceptions.get(0), t);
+		catch (Throwable throwable) {
+			Assert.assertSame(_exceptions.get(0), throwable);
 
-			Throwable[] throwables = t.getSuppressed();
+			Throwable[] throwables = throwable.getSuppressed();
 
 			Assert.assertEquals(
 				Arrays.toString(throwables), 2, throwables.length);

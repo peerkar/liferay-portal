@@ -28,12 +28,12 @@ public class SourceDriverClassNameException extends PortalException {
 		super(msg);
 	}
 
-	public SourceDriverClassNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public SourceDriverClassNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public SourceDriverClassNameException(Throwable cause) {
-		super(cause);
+	public SourceDriverClassNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

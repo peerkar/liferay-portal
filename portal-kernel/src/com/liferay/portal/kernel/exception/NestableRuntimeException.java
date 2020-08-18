@@ -26,12 +26,12 @@ public class NestableRuntimeException extends RuntimeException {
 		super(msg);
 	}
 
-	public NestableRuntimeException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NestableRuntimeException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NestableRuntimeException(Throwable cause) {
-		super(cause);
+	public NestableRuntimeException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

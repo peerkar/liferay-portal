@@ -56,6 +56,21 @@ definition {
 		PageEditor.assertFragmentSidebarLoaded();
 	}
 
+	macro addCollectionItemInCollectionPage {
+		if (isSet(itemSubtype)) {
+			Click(
+				key_title = "${title}",
+				locator1 = "ControlMenu#NEW_COLLECTION_PAGE_ITEM_BUTTON");
+
+			MenuItem.click(menuItem = "${itemSubtype}");
+		}
+		else {
+			Click(
+				key_title = "${title}",
+				locator1 = "ControlMenu#NEW_COLLECTION_PAGE_ITEM_BUTTON");
+		}
+	}
+
 	macro addPage {
 		var key_breadcrumbName="Pages";
 
@@ -110,6 +125,15 @@ definition {
 
 		Navigator.gotoNavTab(navTab = "${tabName}");
 
+		if (isSet(menuItem)) {
+			AssetListsAdmin.addSelection(
+				collectionName = "${collectionName}",
+				menuItem = "${menuItem}",
+				selectedAsset = "${selectedAsset}");
+
+			Click(locator1 = "Icon#BACK");
+		}
+
 		LexiconCard.clickCardTitle(card = "${collectionName}");
 
 		if (isSet(masterLayoutName)) {
@@ -140,6 +164,20 @@ definition {
 		SelectFrame.selectFrameTop();
 
 		PageEditor.assertFragmentSidebarLoaded();
+
+		AssertTextEquals(
+			locator1 = "ControlMenu#HEADING",
+			value1 = "${pageName}");
+
+		AssertTextEquals(
+			id = "element-text",
+			key_fragmentName = "Heading",
+			locator1 = "Fragment#CONTRIBUTED_FRAGMENT_EDITABLE_FIELD",
+			value1 = "${collectionName}");
+
+		AssertElementPresent(
+			key_fragmentName = "Collection Display",
+			locator1 = "Fragment#FRAGMENT_HEADER");
 	}
 
 	macro clickPencil {

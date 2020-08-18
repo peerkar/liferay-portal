@@ -25,8 +25,8 @@ public class NoSuchInfoItemException extends PortalException {
 		super(msg);
 	}
 
-	public NoSuchInfoItemException(String msg, Throwable cause) {
-		super(cause);
+	public NoSuchInfoItemException(String msg, Throwable throwable) {
+		super(throwable);
 	}
 
 }

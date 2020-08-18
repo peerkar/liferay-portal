@@ -28,12 +28,12 @@ public class KBArticlePriorityException extends PortalException {
 		super(msg);
 	}
 
-	public KBArticlePriorityException(String msg, Throwable cause) {
-		super(msg, cause);
+	public KBArticlePriorityException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public KBArticlePriorityException(Throwable cause) {
-		super(cause);
+	public KBArticlePriorityException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

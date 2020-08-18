@@ -28,12 +28,12 @@ public class NoSuchEntryAssetEntryRelException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchEntryAssetEntryRelException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchEntryAssetEntryRelException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchEntryAssetEntryRelException(Throwable cause) {
-		super(cause);
+	public NoSuchEntryAssetEntryRelException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

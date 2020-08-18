@@ -21,7 +21,8 @@ import com.liferay.content.dashboard.item.action.exception.ContentDashboardItemA
 import com.liferay.content.dashboard.item.action.provider.ContentDashboardItemActionProvider;
 import com.liferay.content.dashboard.web.internal.item.action.ContentDashboardItemActionProviderTracker;
 import com.liferay.content.dashboard.web.internal.item.type.ContentDashboardItemType;
-import com.liferay.info.display.url.provider.InfoEditURLProvider;
+import com.liferay.info.display.contributor.InfoDisplayContributor;
+import com.liferay.info.item.InfoItemReference;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -29,13 +30,9 @@ import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
-import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import java.util.Collections;
@@ -44,7 +41,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -62,11 +58,9 @@ public class JournalArticleContentDashboardItem
 		ContentDashboardItemActionProviderTracker
 			contentDashboardItemActionProviderTracker,
 		ContentDashboardItemType contentDashboardItemType, Group group,
-		InfoEditURLProvider<JournalArticle> infoEditURLProvider,
+		InfoDisplayContributor<JournalArticle> infoDisplayContributor,
 		JournalArticle journalArticle, Language language,
-		JournalArticle latestApprovedJournalArticle,
-		ModelResourcePermission<JournalArticle> modelResourcePermission,
-		User user) {
+		JournalArticle latestApprovedJournalArticle) {
 
 		if (ListUtil.isEmpty(assetCategories)) {
 			_assetCategories = Collections.emptyList();
@@ -86,7 +80,7 @@ public class JournalArticleContentDashboardItem
 			contentDashboardItemActionProviderTracker;
 		_contentDashboardItemType = contentDashboardItemType;
 		_group = group;
-		_infoEditURLProvider = infoEditURLProvider;
+		_infoDisplayContributor = infoDisplayContributor;
 		_journalArticle = journalArticle;
 		_language = language;
 
@@ -96,9 +90,6 @@ public class JournalArticleContentDashboardItem
 		else {
 			_latestApprovedJournalArticle = null;
 		}
-
-		_modelResourcePermission = modelResourcePermission;
-		_user = user;
 	}
 
 	@Override
@@ -135,16 +126,6 @@ public class JournalArticleContentDashboardItem
 	}
 
 	@Override
-	public String getClassName() {
-		return JournalArticle.class.getName();
-	}
-
-	@Override
-	public Long getClassPK() {
-		return _journalArticle.getResourcePrimKey();
-	}
-
-	@Override
 	public List<ContentDashboardItemAction> getContentDashboardItemActions(
 		HttpServletRequest httpServletRequest,
 		ContentDashboardItemAction.Type... types) {
@@ -164,12 +145,13 @@ public class JournalArticleContentDashboardItem
 					if (!contentDashboardItemActionProvider.isShow(
 							_journalArticle, httpServletRequest)) {
 
-						return null;
+						return Optional.<ContentDashboardItemAction>empty();
 					}
 
-					return contentDashboardItemActionProvider.
-						getContentDashboardItemAction(
-							_journalArticle, httpServletRequest);
+					return Optional.of(
+						contentDashboardItemActionProvider.
+							getContentDashboardItemAction(
+								_journalArticle, httpServletRequest));
 				}
 				catch (ContentDashboardItemActionException
 							contentDashboardItemActionException) {
@@ -179,10 +161,12 @@ public class JournalArticleContentDashboardItem
 						contentDashboardItemActionException);
 				}
 
-				return null;
+				return Optional.<ContentDashboardItemAction>empty();
 			}
 		).filter(
-			Objects::nonNull
+			Optional::isPresent
+		).map(
+			Optional::get
 		).collect(
 			Collectors.toList()
 		);
@@ -216,18 +200,28 @@ public class JournalArticleContentDashboardItem
 	}
 
 	@Override
-	public Date getExpirationDate() {
-		return _journalArticle.getExpirationDate();
+	public Object getDisplayFieldValue(String fieldName, Locale locale) {
+		try {
+			return _infoDisplayContributor.getInfoDisplayFieldValue(
+				_journalArticle, fieldName, locale);
+		}
+		catch (PortalException portalException) {
+			_log.error(portalException, portalException);
+
+			return StringPool.BLANK;
+		}
+	}
+
+	@Override
+	public InfoItemReference getInfoItemReference() {
+		return new InfoItemReference(
+			JournalArticle.class.getName(),
+			_journalArticle.getResourcePrimKey());
 	}
 
 	@Override
 	public Date getModifiedDate() {
 		return _journalArticle.getModifiedDate();
-	}
-
-	@Override
-	public Date getPublishDate() {
-		return _journalArticle.getDisplayDate();
 	}
 
 	@Override
@@ -257,28 +251,7 @@ public class JournalArticleContentDashboardItem
 
 	@Override
 	public long getUserId() {
-		return _user.getUserId();
-	}
-
-	@Override
-	public String getUserName() {
-		return _user.getFullName();
-	}
-
-	@Override
-	public String getUserPortraitURL(HttpServletRequest httpServletRequest) {
-		ThemeDisplay themeDisplay =
-			(ThemeDisplay)httpServletRequest.getAttribute(
-				WebKeys.THEME_DISPLAY);
-
-		try {
-			return _user.getPortraitURL(themeDisplay);
-		}
-		catch (PortalException portalException) {
-			_log.error(portalException, portalException);
-
-			return StringPool.BLANK;
-		}
+		return _journalArticle.getUserId();
 	}
 
 	@Override
@@ -344,12 +317,10 @@ public class JournalArticleContentDashboardItem
 		_contentDashboardItemActionProviderTracker;
 	private final ContentDashboardItemType _contentDashboardItemType;
 	private final Group _group;
-	private final InfoEditURLProvider<JournalArticle> _infoEditURLProvider;
+	private final InfoDisplayContributor<JournalArticle>
+		_infoDisplayContributor;
 	private final JournalArticle _journalArticle;
 	private final Language _language;
 	private final JournalArticle _latestApprovedJournalArticle;
-	private final ModelResourcePermission<JournalArticle>
-		_modelResourcePermission;
-	private final User _user;
 
 }

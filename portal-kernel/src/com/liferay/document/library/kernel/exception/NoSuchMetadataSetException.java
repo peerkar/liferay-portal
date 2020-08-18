@@ -28,12 +28,12 @@ public class NoSuchMetadataSetException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchMetadataSetException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchMetadataSetException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchMetadataSetException(Throwable cause) {
-		super(cause);
+	public NoSuchMetadataSetException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

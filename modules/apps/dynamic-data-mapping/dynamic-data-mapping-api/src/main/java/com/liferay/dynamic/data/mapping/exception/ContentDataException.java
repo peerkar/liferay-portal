@@ -28,12 +28,12 @@ public class ContentDataException extends PortalException {
 		super(msg);
 	}
 
-	public ContentDataException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ContentDataException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ContentDataException(Throwable cause) {
-		super(cause);
+	public ContentDataException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

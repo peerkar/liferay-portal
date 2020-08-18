@@ -28,12 +28,12 @@ public class NoSuchEventException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchEventException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchEventException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchEventException(Throwable cause) {
-		super(cause);
+	public NoSuchEventException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

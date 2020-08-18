@@ -90,15 +90,15 @@ public abstract class BaseBucketScriptPipelineAggregationTestCase
 		Assert.assertEquals(expectedKey, bucket.getKey());
 		Assert.assertEquals(expectedCount, bucket.getDocCount());
 
-		Map<String, AggregationResult> childrenAggregationResults =
-			bucket.getChildrenAggregationResults();
-
-		BucketScriptPipelineAggregationResult
-			bucketScriptPipelineAggregationResult =
-				(BucketScriptPipelineAggregationResult)
-					childrenAggregationResults.get("bucket_script");
-
 		if (bucketScriptValue != null) {
+			Map<String, AggregationResult> childrenAggregationResults =
+				bucket.getChildrenAggregationResults();
+
+			BucketScriptPipelineAggregationResult
+				bucketScriptPipelineAggregationResult =
+					(BucketScriptPipelineAggregationResult)
+						childrenAggregationResults.get("bucket_script");
+
 			Assert.assertNotNull(bucketScriptPipelineAggregationResult);
 
 			Assert.assertEquals(

@@ -2333,11 +2333,11 @@ public class OrganizationLocalServiceImpl
 	protected void reindexUsers(Organization organization)
 		throws PortalException {
 
-		long companyId = organization.getCompanyId();
-
 		long[] userIds = getUserPrimaryKeys(organization.getOrganizationId());
 
 		if (ArrayUtil.isNotEmpty(userIds)) {
+			long companyId = organization.getCompanyId();
+
 			TransactionCommitCallbackUtil.registerCallback(
 				() -> {
 					reindex(companyId, userIds);

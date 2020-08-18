@@ -1037,7 +1037,7 @@ public class AlloyMockUtil {
 		}
 
 		@Override
-		public void handlePageException(Throwable t) {
+		public void handlePageException(Throwable throwable) {
 			throw new UnsupportedOperationException();
 		}
 

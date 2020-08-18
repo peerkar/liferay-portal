@@ -75,8 +75,8 @@ public class DefaultNoticeableFuture<T>
 	}
 
 	@Override
-	public void setException(Throwable t) {
-		super.setException(t);
+	public void setException(Throwable throwable) {
+		super.setException(throwable);
 	}
 
 	@Override

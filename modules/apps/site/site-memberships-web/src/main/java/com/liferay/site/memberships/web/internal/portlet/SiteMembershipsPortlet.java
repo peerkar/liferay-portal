@@ -395,14 +395,14 @@ public class SiteMembershipsPortlet extends MVCPortlet {
 	}
 
 	@Override
-	protected boolean isSessionErrorException(Throwable cause) {
-		if (cause instanceof MembershipPolicyException ||
-			cause instanceof MembershipRequestCommentsException ||
-			cause instanceof NoSuchGroupException ||
-			cause instanceof NoSuchRoleException ||
-			cause instanceof PrincipalException ||
-			cause instanceof RequiredUserException ||
-			super.isSessionErrorException(cause)) {
+	protected boolean isSessionErrorException(Throwable throwable) {
+		if (throwable instanceof MembershipPolicyException ||
+			throwable instanceof MembershipRequestCommentsException ||
+			throwable instanceof NoSuchGroupException ||
+			throwable instanceof NoSuchRoleException ||
+			throwable instanceof PrincipalException ||
+			throwable instanceof RequiredUserException ||
+			super.isSessionErrorException(throwable)) {
 
 			return true;
 		}

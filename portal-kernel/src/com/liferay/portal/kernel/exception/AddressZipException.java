@@ -26,12 +26,12 @@ public class AddressZipException extends PortalException {
 		super(msg);
 	}
 
-	public AddressZipException(String msg, Throwable cause) {
-		super(msg, cause);
+	public AddressZipException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public AddressZipException(Throwable cause) {
-		super(cause);
+	public AddressZipException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

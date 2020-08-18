@@ -19,6 +19,7 @@ import React, {useMemo} from 'react';
 import {useActiveItemId} from '../../../app/components/Controls';
 import hasDropZoneChild from '../../../app/components/layout-data-items/hasDropZoneChild';
 import {EDITABLE_FRAGMENT_ENTRY_PROCESSOR} from '../../../app/config/constants/editableFragmentEntryProcessor';
+import {EDITABLE_TYPES} from '../../../app/config/constants/editableTypes';
 import {ITEM_TYPES} from '../../../app/config/constants/itemTypes';
 import {LAYOUT_DATA_ITEM_TYPES} from '../../../app/config/constants/layoutDataItemTypes';
 import {LAYOUT_TYPES} from '../../../app/config/constants/layoutTypes';
@@ -29,6 +30,34 @@ import {useSelector} from '../../../app/store/index';
 import getLayoutDataItemLabel from '../../../app/utils/getLayoutDataItemLabel';
 import PageStructureSidebarSection from './PageStructureSidebarSection';
 import StructureTreeNode from './StructureTreeNode';
+
+const EDITABLE_TYPE_ICONS = {
+	[EDITABLE_TYPES.backgroundImage]: 'picture',
+	[EDITABLE_TYPES.html]: 'code',
+	[EDITABLE_TYPES.image]: 'picture',
+	[EDITABLE_TYPES.link]: 'link',
+	[EDITABLE_TYPES['rich-text']]: 'text-editor',
+	[EDITABLE_TYPES.text]: 'text-editor',
+};
+
+const EDITABLE_TYPE_LABELS = {
+	[EDITABLE_TYPES.backgroundImage]: Liferay.Language.get('image'),
+	[EDITABLE_TYPES.html]: Liferay.Language.get('html'),
+	[EDITABLE_TYPES.image]: Liferay.Language.get('image'),
+	[EDITABLE_TYPES.link]: Liferay.Language.get('link'),
+	[EDITABLE_TYPES['rich-text']]: Liferay.Language.get('rich-text'),
+	[EDITABLE_TYPES.text]: Liferay.Language.get('text'),
+};
+
+const LAYOUT_DATA_ITEM_TYPE_ICONS = {
+	[LAYOUT_DATA_ITEM_TYPES.collection]: 'list',
+	[LAYOUT_DATA_ITEM_TYPES.collectionItem]: 'document',
+	[LAYOUT_DATA_ITEM_TYPES.container]: 'container',
+	[LAYOUT_DATA_ITEM_TYPES.dropZone]: 'box-container',
+	[LAYOUT_DATA_ITEM_TYPES.fragment]: 'code',
+	[LAYOUT_DATA_ITEM_TYPES.root]: 'page',
+	[LAYOUT_DATA_ITEM_TYPES.row]: 'table',
+};
 
 export default function PageStructureSidebar() {
 	const activeItemId = useActiveItemId();
@@ -72,7 +101,7 @@ export default function PageStructureSidebar() {
 
 	return (
 		<PageStructureSidebarSection>
-			<div className="page-editor__page-structure__structure-tree px-4">
+			<div className="page-editor__page-structure__structure-tree px-3">
 				{!nodes.length && (
 					<ClayAlert
 						displayType="info"
@@ -124,25 +153,33 @@ function visit(
 		masterLayoutData &&
 		Object.keys(masterLayoutData.items).includes(item.itemId);
 
+	let icon = LAYOUT_DATA_ITEM_TYPE_ICONS[item.type];
+
 	if (item.type === LAYOUT_DATA_ITEM_TYPES.fragment) {
 		const fragmentEntryLink =
 			fragmentEntryLinks[item.config.fragmentEntryLinkId];
+
+		icon = fragmentEntryLink.icon || icon;
 
 		const editables =
 			fragmentEntryLink.editableValues[
 				EDITABLE_FRAGMENT_ENTRY_PROCESSOR
 			] || {};
 
+		const editableTypes = fragmentEntryLink.editableTypes;
+
 		Object.keys(editables).forEach((editableId) => {
 			const childId = `${item.config.fragmentEntryLinkId}-${editableId}`;
+			const type = editableTypes[editableId] || EDITABLE_TYPES.text;
 
 			children.push({
 				activable: canUpdateEditables,
 				children: [],
 				disabled: !isMasterPage && itemInMasterLayout,
 				expanded: childId === activeItemId,
+				icon: EDITABLE_TYPE_ICONS[type],
 				id: childId,
-				name: editableId,
+				name: EDITABLE_TYPE_LABELS[type],
 				removable: false,
 				type: ITEM_TYPES.editable,
 			});
@@ -213,6 +250,7 @@ function visit(
 		children,
 		disabled: !isMasterPage && itemInMasterLayout,
 		expanded: item.itemId === activeItemId,
+		icon,
 		id: item.itemId,
 		name: getLayoutDataItemLabel(item, fragmentEntryLinks),
 		removable: !itemInMasterLayout && isRemovable(item, layoutData),

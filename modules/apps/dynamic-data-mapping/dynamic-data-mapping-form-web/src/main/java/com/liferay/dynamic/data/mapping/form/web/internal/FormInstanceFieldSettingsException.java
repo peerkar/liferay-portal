@@ -31,12 +31,12 @@ public class FormInstanceFieldSettingsException extends PortalException {
 		super(msg);
 	}
 
-	public FormInstanceFieldSettingsException(String msg, Throwable cause) {
-		super(msg, cause);
+	public FormInstanceFieldSettingsException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public FormInstanceFieldSettingsException(Throwable cause) {
-		super(cause);
+	public FormInstanceFieldSettingsException(Throwable throwable) {
+		super(throwable);
 	}
 
 	public static class MustSetValidValueForProperties

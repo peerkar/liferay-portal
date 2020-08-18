@@ -112,7 +112,9 @@
 												AssignableScopes newAssignableScopes = assignableScopes.subtract(assignedAssignableScopes);
 												AssignableScopes removedAssignableScopes = assignedAssignableScopes.subtract(assignableScopes);
 
-												AssignableScopes unchangedAssignableScopes = assignableScopes.subtract(newAssignableScopes).subtract(removedAssignableScopes);
+												AssignableScopes subtractAssignableScopes = assignableScopes.subtract(newAssignableScopes);
+
+												AssignableScopes unchangedAssignableScopes = subtractAssignableScopes.subtract(removedAssignableScopes);
 
 												String applicationScopeDescription = assignScopesDisplayContext.getApplicationScopeDescription(applicationName, unchangedAssignableScopes, "<br />+ ");
 												%>

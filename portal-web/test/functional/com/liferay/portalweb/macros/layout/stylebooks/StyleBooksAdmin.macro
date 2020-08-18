@@ -1,0 +1,29 @@
+definition {
+
+	macro addStyleBooks {
+		LexiconEntry.gotoAdd();
+
+		PortletEntry.inputName(name = "${styleBookName}");
+
+		Button.clickSave();
+	}
+
+	macro gotoStyleBook {
+		LexiconCard.clickCardTitle(card = "${styleBookName}");
+	}
+
+	macro gotoStyleBookEllipsisItem {
+		LexiconCard.clickEllipsisItem(
+			card = "${styleBookName}",
+			item = "${item}");
+	}
+
+	macro openStyleBooksAdmin {
+		Navigator.openWithAppendToBaseURL(urlAppend = "group/${siteURLKey}/~/control_panel/manage?p_p_id=com_liferay_style_book_web_internal_portlet_StyleBookPortlet");
+	}
+
+	macro viewStyleBooksPresent {
+		LexiconCard.viewCardPresent(card = "${styleBookName}");
+	}
+
+}

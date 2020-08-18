@@ -28,12 +28,12 @@ public class FormInstanceNameException extends PortalException {
 		super(msg);
 	}
 
-	public FormInstanceNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public FormInstanceNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public FormInstanceNameException(Throwable cause) {
-		super(cause);
+	public FormInstanceNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

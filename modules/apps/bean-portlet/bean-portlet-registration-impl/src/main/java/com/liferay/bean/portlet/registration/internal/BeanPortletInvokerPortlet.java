@@ -232,13 +232,13 @@ public class BeanPortletInvokerPortlet implements InvokerPortlet {
 				beanPortletMethod.invoke(arguments);
 			}
 			catch (ReflectiveOperationException reflectiveOperationException) {
-				Throwable cause = reflectiveOperationException.getCause();
+				Throwable throwable = reflectiveOperationException.getCause();
 
-				if (cause instanceof PortletException) {
-					throw (PortletException)cause;
+				if (throwable instanceof PortletException) {
+					throw (PortletException)throwable;
 				}
 
-				throw new PortletException(cause);
+				throw new PortletException(throwable);
 			}
 		}
 	}

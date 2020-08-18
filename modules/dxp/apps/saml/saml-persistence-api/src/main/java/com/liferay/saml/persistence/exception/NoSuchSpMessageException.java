@@ -28,12 +28,12 @@ public class NoSuchSpMessageException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchSpMessageException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchSpMessageException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchSpMessageException(Throwable cause) {
-		super(cause);
+	public NoSuchSpMessageException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

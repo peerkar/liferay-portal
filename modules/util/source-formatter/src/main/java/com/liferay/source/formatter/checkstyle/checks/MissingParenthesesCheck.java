@@ -27,7 +27,7 @@ public class MissingParenthesesCheck extends BaseCheck {
 	@Override
 	public int[] getDefaultTokens() {
 		return ArrayUtil.append(
-			_CONDITIONAL_OPERATOR_TOKEN_TYPES, TokenTypes.QUESTION);
+			CONDITIONAL_OPERATOR_TOKEN_TYPES, TokenTypes.QUESTION);
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class MissingParenthesesCheck extends BaseCheck {
 
 		if (detailAST.getType() == TokenTypes.QUESTION) {
 			if (ArrayUtil.contains(
-					_RELATIONAL_OPERATOR_TOKEN_TYPES,
+					RELATIONAL_OPERATOR_TOKEN_TYPES,
 					firstChildDetailAST.getType())) {
 
 				log(
@@ -49,7 +49,7 @@ public class MissingParenthesesCheck extends BaseCheck {
 
 		if ((firstChildDetailAST.getType() != detailAST.getType()) &&
 			ArrayUtil.contains(
-				_CONDITIONAL_OPERATOR_TOKEN_TYPES,
+				CONDITIONAL_OPERATOR_TOKEN_TYPES,
 				firstChildDetailAST.getType())) {
 
 			log(
@@ -58,7 +58,7 @@ public class MissingParenthesesCheck extends BaseCheck {
 		}
 
 		if (ArrayUtil.contains(
-				_RELATIONAL_OPERATOR_TOKEN_TYPES,
+				RELATIONAL_OPERATOR_TOKEN_TYPES,
 				firstChildDetailAST.getType())) {
 
 			log(
@@ -69,7 +69,7 @@ public class MissingParenthesesCheck extends BaseCheck {
 		DetailAST lastChildDetailAST = detailAST.getLastChild();
 
 		if (ArrayUtil.contains(
-				_RELATIONAL_OPERATOR_TOKEN_TYPES,
+				RELATIONAL_OPERATOR_TOKEN_TYPES,
 				lastChildDetailAST.getType())) {
 
 			log(
@@ -78,20 +78,10 @@ public class MissingParenthesesCheck extends BaseCheck {
 		}
 	}
 
-	private static final int[] _CONDITIONAL_OPERATOR_TOKEN_TYPES = {
-		TokenTypes.BAND, TokenTypes.BOR, TokenTypes.BXOR, TokenTypes.LAND,
-		TokenTypes.LOR
-	};
-
 	private static final String _MSG_MISSING_PARENTHESES_1 =
 		"parentheses.missing.1";
 
 	private static final String _MSG_MISSING_PARENTHESES_2 =
 		"parentheses.missing.2";
-
-	private static final int[] _RELATIONAL_OPERATOR_TOKEN_TYPES = {
-		TokenTypes.EQUAL, TokenTypes.GE, TokenTypes.GT, TokenTypes.LE,
-		TokenTypes.LT, TokenTypes.NOT_EQUAL
-	};
 
 }

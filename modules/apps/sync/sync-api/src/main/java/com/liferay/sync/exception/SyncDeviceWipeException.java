@@ -28,12 +28,12 @@ public class SyncDeviceWipeException extends PortalException {
 		super(msg);
 	}
 
-	public SyncDeviceWipeException(String msg, Throwable cause) {
-		super(msg, cause);
+	public SyncDeviceWipeException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public SyncDeviceWipeException(Throwable cause) {
-		super(cause);
+	public SyncDeviceWipeException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

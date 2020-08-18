@@ -239,10 +239,10 @@ public class LayoutSetPrototypePortlet extends MVCPortlet {
 	}
 
 	@Override
-	protected boolean isSessionErrorException(Throwable cause) {
-		if (cause instanceof NoSuchLayoutSetPrototypeException ||
-			cause instanceof PrincipalException ||
-			cause instanceof RequiredLayoutSetPrototypeException) {
+	protected boolean isSessionErrorException(Throwable throwable) {
+		if (throwable instanceof NoSuchLayoutSetPrototypeException ||
+			throwable instanceof PrincipalException ||
+			throwable instanceof RequiredLayoutSetPrototypeException) {
 
 			return true;
 		}

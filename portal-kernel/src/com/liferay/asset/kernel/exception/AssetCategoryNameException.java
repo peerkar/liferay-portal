@@ -28,12 +28,12 @@ public class AssetCategoryNameException extends PortalException {
 		super(msg);
 	}
 
-	public AssetCategoryNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public AssetCategoryNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public AssetCategoryNameException(Throwable cause) {
-		super(cause);
+	public AssetCategoryNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

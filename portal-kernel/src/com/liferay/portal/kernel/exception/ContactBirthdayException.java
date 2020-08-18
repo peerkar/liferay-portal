@@ -26,12 +26,12 @@ public class ContactBirthdayException extends PortalException {
 		super(msg);
 	}
 
-	public ContactBirthdayException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ContactBirthdayException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ContactBirthdayException(Throwable cause) {
-		super(cause);
+	public ContactBirthdayException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

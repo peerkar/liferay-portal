@@ -15,13 +15,17 @@
 import classNames from 'classnames';
 import {useIsMounted} from 'frontend-js-react-web';
 import PropTypes from 'prop-types';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 
 import setFragmentEditables from '../../actions/setFragmentEditables';
 import selectCanConfigureWidgets from '../../selectors/selectCanConfigureWidgets';
 import selectSegmentsExperienceId from '../../selectors/selectSegmentsExperienceId';
 import {useDispatch, useSelector, useSelectorCallback} from '../../store/index';
-import {useGetContent, useGetFieldValue} from '../CollectionItemContext';
+import {
+	useGetContent,
+	useGetFieldValue,
+	useToControlsId,
+} from '../CollectionItemContext';
 import {useGlobalContext} from '../GlobalContext';
 import Layout from '../Layout';
 import UnsafeHTML from '../UnsafeHTML';
@@ -36,20 +40,10 @@ const FragmentContent = ({elementRef, fragmentEntryLinkId, itemId}) => {
 	const isMounted = useIsMounted();
 	const isProcessorEnabled = useIsProcessorEnabled();
 	const globalContext = useGlobalContext();
-
+	const toControlsId = useToControlsId();
 	const getFieldValue = useGetFieldValue();
 
-	const editables = useSelectorCallback(
-		(state) => Object.values(state.editables?.[fragmentEntryLinkId] || {}),
-		[fragmentEntryLinkId]
-	);
-
 	const canConfigureWidgets = useSelector(selectCanConfigureWidgets);
-
-	const editableElements = useMemo(
-		() => editables.map((editable) => editable.element),
-		[editables]
-	);
 
 	/**
 	 * Updates editables array for the rendered fragment.
@@ -66,12 +60,16 @@ const FragmentContent = ({elementRef, fragmentEntryLinkId, itemId}) => {
 			}
 
 			dispatch(
-				setFragmentEditables(fragmentEntryLinkId, updatedEditableValues)
+				setFragmentEditables(
+					fragmentEntryLinkId,
+					toControlsId(itemId),
+					updatedEditableValues
+				)
 			);
 
 			return updatedEditableValues;
 		},
-		[dispatch, fragmentEntryLinkId, isMounted]
+		[dispatch, fragmentEntryLinkId, isMounted, itemId, toControlsId]
 	);
 
 	const fragmentEntryLink = useSelectorCallback(
@@ -137,6 +135,7 @@ const FragmentContent = ({elementRef, fragmentEntryLinkId, itemId}) => {
 	}, [
 		defaultContent,
 		editableValues,
+		fragmentEntryLinkId,
 		getFieldValue,
 		isMounted,
 		isProcessorEnabled,
@@ -167,7 +166,6 @@ const FragmentContent = ({elementRef, fragmentEntryLinkId, itemId}) => {
 	return (
 		<>
 			<FragmentContentInteractionsFilter
-				editableElements={editableElements}
 				fragmentEntryLinkId={fragmentEntryLinkId}
 				itemId={itemId}
 			>
@@ -184,8 +182,8 @@ const FragmentContent = ({elementRef, fragmentEntryLinkId, itemId}) => {
 			</FragmentContentInteractionsFilter>
 
 			<FragmentContentProcessor
-				editables={editables}
 				fragmentEntryLinkId={fragmentEntryLinkId}
+				itemId={itemId}
 			/>
 		</>
 	);

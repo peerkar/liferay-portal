@@ -28,12 +28,12 @@ public class NoSuchConditionException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchConditionException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchConditionException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchConditionException(Throwable cause) {
-		super(cause);
+	public NoSuchConditionException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

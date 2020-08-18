@@ -14,7 +14,6 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.connection;
 
-import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.petra.string.StringUtil;
@@ -153,15 +152,12 @@ public class ElasticsearchConnectionManager
 				localClusterConnectionConfigurations) {
 
 			List<String> localClusterConnectionConfigurationParts =
-				StringUtil.split(
-					localClusterConnectionConfiguration, CharPool.EQUAL);
+				StringUtil.split(localClusterConnectionConfiguration);
 
 			String hostName = localClusterConnectionConfigurationParts.get(0);
-			String connectionId = localClusterConnectionConfigurationParts.get(
-				1);
 
 			if (hostName.equals(localClusterNodeHostName)) {
-				return connectionId;
+				return localClusterConnectionConfigurationParts.get(1);
 			}
 		}
 
@@ -179,8 +175,7 @@ public class ElasticsearchConnectionManager
 				localClusterConnectionConfigurations) {
 
 			List<String> localClusterConnectionConfigurationParts =
-				StringUtil.split(
-					localClusterConnectionConfiguration, CharPool.EQUAL);
+				StringUtil.split(localClusterConnectionConfiguration);
 
 			connectionIds.add(localClusterConnectionConfigurationParts.get(1));
 		}

@@ -26,12 +26,12 @@ public class LayoutFriendlyURLsException extends LocalizedException {
 		super(msg);
 	}
 
-	public LayoutFriendlyURLsException(String msg, Throwable cause) {
-		super(msg, cause);
+	public LayoutFriendlyURLsException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public LayoutFriendlyURLsException(Throwable cause) {
-		super(cause);
+	public LayoutFriendlyURLsException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

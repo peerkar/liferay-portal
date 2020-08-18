@@ -28,12 +28,12 @@ public class DuplicateGadgetURLException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateGadgetURLException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateGadgetURLException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateGadgetURLException(Throwable cause) {
-		super(cause);
+	public DuplicateGadgetURLException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

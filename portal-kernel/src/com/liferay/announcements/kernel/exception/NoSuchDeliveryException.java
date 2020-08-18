@@ -28,12 +28,12 @@ public class NoSuchDeliveryException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchDeliveryException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchDeliveryException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchDeliveryException(Throwable cause) {
-		super(cause);
+	public NoSuchDeliveryException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

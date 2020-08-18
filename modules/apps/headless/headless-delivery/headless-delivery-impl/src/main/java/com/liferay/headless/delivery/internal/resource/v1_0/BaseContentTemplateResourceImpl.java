@@ -79,6 +79,39 @@ public abstract class BaseContentTemplateResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
+	 * curl -X 'GET' 'http://localhost:8080/o/headless-delivery/v1.0/asset-libraries/{assetLibraryId}/content-templates'  -u 'test@liferay.com:test'
+	 */
+	@Override
+	@GET
+	@Parameters(
+		value = {
+			@Parameter(in = ParameterIn.PATH, name = "assetLibraryId"),
+			@Parameter(in = ParameterIn.QUERY, name = "search"),
+			@Parameter(in = ParameterIn.QUERY, name = "filter"),
+			@Parameter(in = ParameterIn.QUERY, name = "page"),
+			@Parameter(in = ParameterIn.QUERY, name = "pageSize"),
+			@Parameter(in = ParameterIn.QUERY, name = "sort")
+		}
+	)
+	@Path("/asset-libraries/{assetLibraryId}/content-templates")
+	@Produces({"application/json", "application/xml"})
+	@Tags(value = {@Tag(name = "ContentTemplate")})
+	public Page<ContentTemplate> getAssetLibraryContentTemplatesPage(
+			@NotNull @Parameter(hidden = true) @PathParam("assetLibraryId") Long
+				assetLibraryId,
+			@Parameter(hidden = true) @QueryParam("search") String search,
+			@Context com.liferay.portal.vulcan.aggregation.Aggregation
+				aggregation,
+			@Context Filter filter, @Context Pagination pagination,
+			@Context Sort[] sorts)
+		throws Exception {
+
+		return Page.of(Collections.emptyList());
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
 	 * curl -X 'GET' 'http://localhost:8080/o/headless-delivery/v1.0/sites/{siteId}/content-templates'  -u 'test@liferay.com:test'
 	 */
 	@Override
@@ -233,6 +266,14 @@ public abstract class BaseContentTemplateResourceImpl
 		com.liferay.portal.kernel.model.User contextUser) {
 
 		this.contextUser = contextUser;
+	}
+
+	public void setGroupLocalService(GroupLocalService groupLocalService) {
+		this.groupLocalService = groupLocalService;
+	}
+
+	public void setRoleLocalService(RoleLocalService roleLocalService) {
+		this.roleLocalService = roleLocalService;
 	}
 
 	protected Map<String, String> addAction(

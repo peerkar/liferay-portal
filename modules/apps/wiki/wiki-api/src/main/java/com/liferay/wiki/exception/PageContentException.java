@@ -28,12 +28,12 @@ public class PageContentException extends PortalException {
 		super(msg);
 	}
 
-	public PageContentException(String msg, Throwable cause) {
-		super(msg, cause);
+	public PageContentException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public PageContentException(Throwable cause) {
-		super(cause);
+	public PageContentException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

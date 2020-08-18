@@ -194,14 +194,24 @@ public class UserExpandoColumnModelListener
 				locale -> encodedIndexedFieldName);
 		}
 		else if ((expandoColumn.getType() == ExpandoColumnConstants.DOUBLE) ||
-				 (expandoColumn.getType() == ExpandoColumnConstants.FLOAT)) {
+				 (expandoColumn.getType() ==
+					 ExpandoColumnConstants.DOUBLE_ARRAY) ||
+				 (expandoColumn.getType() == ExpandoColumnConstants.FLOAT) ||
+				 (expandoColumn.getType() ==
+					 ExpandoColumnConstants.FLOAT_ARRAY)) {
 
 			entityField = new DoubleEntityField(
 				encodedName, locale -> encodedIndexedFieldName);
 		}
 		else if ((expandoColumn.getType() == ExpandoColumnConstants.INTEGER) ||
+				 (expandoColumn.getType() ==
+					 ExpandoColumnConstants.INTEGER_ARRAY) ||
 				 (expandoColumn.getType() == ExpandoColumnConstants.LONG) ||
-				 (expandoColumn.getType() == ExpandoColumnConstants.SHORT)) {
+				 (expandoColumn.getType() ==
+					 ExpandoColumnConstants.LONG_ARRAY) ||
+				 (expandoColumn.getType() == ExpandoColumnConstants.SHORT) ||
+				 (expandoColumn.getType() ==
+					 ExpandoColumnConstants.SHORT_ARRAY)) {
 
 			entityField = new IntegerEntityField(
 				encodedName, locale -> encodedIndexedFieldName);

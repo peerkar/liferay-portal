@@ -28,12 +28,12 @@ public class SharepointException extends PortalException {
 		super(msg);
 	}
 
-	public SharepointException(String msg, Throwable cause) {
-		super(msg, cause);
+	public SharepointException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public SharepointException(Throwable cause) {
-		super(cause);
+	public SharepointException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

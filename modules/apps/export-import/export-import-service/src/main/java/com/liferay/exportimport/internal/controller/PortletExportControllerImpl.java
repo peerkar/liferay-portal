@@ -160,7 +160,7 @@ public class PortletExportControllerImpl implements PortletExportController {
 
 			return file;
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			ExportImportThreadLocal.setPortletExportInProcess(false);
 
 			_exportImportLifecycleManager.fireExportImportLifecycleEvent(
@@ -170,9 +170,9 @@ public class PortletExportControllerImpl implements PortletExportController {
 					exportImportConfiguration.getExportImportConfigurationId()),
 				_portletDataContextFactory.clonePortletDataContext(
 					portletDataContext),
-				t);
+				throwable);
 
-			throw t;
+			throw throwable;
 		}
 	}
 

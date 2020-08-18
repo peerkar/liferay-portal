@@ -26,12 +26,12 @@ public class NoSuchPreferencesException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchPreferencesException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchPreferencesException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchPreferencesException(Throwable cause) {
-		super(cause);
+	public NoSuchPreferencesException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

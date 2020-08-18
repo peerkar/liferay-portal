@@ -28,12 +28,12 @@ public class EntryExpirationDateException extends PortalException {
 		super(msg);
 	}
 
-	public EntryExpirationDateException(String msg, Throwable cause) {
-		super(msg, cause);
+	public EntryExpirationDateException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public EntryExpirationDateException(Throwable cause) {
-		super(cause);
+	public EntryExpirationDateException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

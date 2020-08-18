@@ -26,12 +26,12 @@ public class NoSuchPasswordTrackerException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchPasswordTrackerException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchPasswordTrackerException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchPasswordTrackerException(Throwable cause) {
-		super(cause);
+	public NoSuchPasswordTrackerException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

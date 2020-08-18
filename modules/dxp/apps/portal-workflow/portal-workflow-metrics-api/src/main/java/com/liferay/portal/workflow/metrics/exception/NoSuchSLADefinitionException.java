@@ -28,12 +28,12 @@ public class NoSuchSLADefinitionException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchSLADefinitionException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchSLADefinitionException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchSLADefinitionException(Throwable cause) {
-		super(cause);
+	public NoSuchSLADefinitionException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

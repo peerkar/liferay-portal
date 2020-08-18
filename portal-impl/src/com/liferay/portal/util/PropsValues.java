@@ -314,6 +314,12 @@ public class PropsValues {
 	public static final String AUTO_DEPLOY_WILDFLY_PREFIX = PropsUtil.get(
 		PropsKeys.AUTO_DEPLOY_WILDFLY_PREFIX);
 
+	public static final boolean AXIS_SERVLET_ENABLED = GetterUtil.getBoolean(
+		PropsUtil.get(PropsKeys.AXIS_SERVLET_ENABLED));
+
+	public static final String AXIS_SERVLET_MAPPING = PropsUtil.get(
+		PropsKeys.AXIS_SERVLET_MAPPING);
+
 	public static final boolean BASIC_AUTH_PASSWORD_REQUIRED =
 		GetterUtil.getBoolean(
 			PropsUtil.get(PropsKeys.BASIC_AUTH_PASSWORD_REQUIRED));
@@ -1126,6 +1132,10 @@ public class PropsValues {
 	public static final int INDEX_ON_STARTUP_DELAY = GetterUtil.getInteger(
 		PropsUtil.get(PropsKeys.INDEX_ON_STARTUP_DELAY));
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
+	 */
+	@Deprecated
 	public static final boolean INDEX_ON_UPGRADE = GetterUtil.getBoolean(
 		PropsUtil.get(PropsKeys.INDEX_ON_UPGRADE));
 

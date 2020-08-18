@@ -20,6 +20,7 @@ import com.liferay.analytics.reports.web.internal.data.provider.AnalyticsReports
 import com.liferay.analytics.reports.web.internal.model.TimeRange;
 import com.liferay.analytics.reports.web.internal.model.TimeSpan;
 import com.liferay.analytics.reports.web.internal.model.TrafficSource;
+import com.liferay.info.display.contributor.InfoDisplayObjectProvider;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -31,6 +32,8 @@ import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
@@ -48,6 +51,8 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Stream;
 
+import javax.portlet.PortletURL;
+import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 import javax.portlet.ResourceURL;
 
@@ -55,20 +60,23 @@ import javax.portlet.ResourceURL;
  * @author David Arques
  * @author Sarai Díaz
  */
-public class AnalyticsReportsDisplayContext {
+public class AnalyticsReportsDisplayContext<T> {
 
 	public AnalyticsReportsDisplayContext(
 		AnalyticsReportsDataProvider analyticsReportsDataProvider,
-		AnalyticsReportsInfoItem<Object> analyticsReportsInfoItem,
-		Object analyticsReportsInfoItemObject, String canonicalURL,
-		Portal portal, RenderResponse renderResponse,
+		AnalyticsReportsInfoItem<T> analyticsReportsInfoItem,
+		T analyticsReportsInfoItemObject, String canonicalURL,
+		InfoDisplayObjectProvider<T> infoDisplayObjectProvider, Portal portal,
+		RenderRequest renderRequest, RenderResponse renderResponse,
 		ResourceBundle resourceBundle, ThemeDisplay themeDisplay, User user) {
 
 		_analyticsReportsDataProvider = analyticsReportsDataProvider;
 		_analyticsReportsInfoItem = analyticsReportsInfoItem;
 		_analyticsReportsInfoItemObject = analyticsReportsInfoItemObject;
 		_canonicalURL = canonicalURL;
+		_infoDisplayObjectProvider = infoDisplayObjectProvider;
 		_portal = portal;
+		_renderRequest = renderRequest;
 		_renderResponse = renderResponse;
 		_resourceBundle = resourceBundle;
 		_themeDisplay = themeDisplay;
@@ -122,53 +130,25 @@ public class AnalyticsReportsDisplayContext {
 			"endpoints",
 			HashMapBuilder.<String, Object>put(
 				"getAnalyticsReportsHistoricalReadsURL",
-				() -> {
-					ResourceURL resourceURL =
-						_renderResponse.createResourceURL();
-
-					resourceURL.setResourceID(
-						"/analytics_reports/get_historical_reads");
-
-					return resourceURL.toString();
-				}
+				() -> String.valueOf(
+					_getResourceURL("/analytics_reports/get_historical_reads"))
 			).put(
 				"getAnalyticsReportsHistoricalViewsURL",
-				() -> {
-					ResourceURL resourceURL =
-						_renderResponse.createResourceURL();
-
-					resourceURL.setResourceID(
-						"/analytics_reports/get_historical_views");
-
-					return resourceURL.toString();
-				}
+				() -> String.valueOf(
+					_getResourceURL("/analytics_reports/get_historical_views"))
 			).put(
 				"getAnalyticsReportsTotalReadsURL",
-				() -> {
-					ResourceURL resourceURL =
-						_renderResponse.createResourceURL();
-
-					resourceURL.setResourceID(
-						"/analytics_reports/get_total_reads");
-
-					return resourceURL.toString();
-				}
+				() -> String.valueOf(
+					_getResourceURL("/analytics_reports/get_total_reads"))
 			).put(
 				"getAnalyticsReportsTotalViewsURL",
-				() -> {
-					ResourceURL resourceURL =
-						_renderResponse.createResourceURL();
-
-					resourceURL.setResourceID(
-						"/analytics_reports/get_total_views");
-
-					return resourceURL.toString();
-				}
+				() -> String.valueOf(
+					_getResourceURL("/analytics_reports/get_total_views"))
 			).build()
 		).put(
 			"languageTag",
 			() -> {
-				Locale locale = _themeDisplay.getLocale();
+				Locale locale = _getLocale();
 
 				return locale.toLanguageTag();
 			}
@@ -191,6 +171,14 @@ public class AnalyticsReportsDisplayContext {
 		).put(
 			"validAnalyticsConnection", _validAnalyticsConnection
 		).build();
+	}
+
+	private Locale _getLocale() {
+		return LocaleUtil.fromLanguageId(
+			ParamUtil.getString(
+				_portal.getOriginalServletRequest(
+					_portal.getHttpServletRequest(_renderRequest)),
+				"languageId", _themeDisplay.getLanguageId()));
 	}
 
 	private Map<String, Object> _getProps() {
@@ -229,10 +217,28 @@ public class AnalyticsReportsDisplayContext {
 		).put(
 			"title",
 			_analyticsReportsInfoItem.getTitle(
-				_analyticsReportsInfoItemObject, _themeDisplay.getLocale())
+				_analyticsReportsInfoItemObject, _getLocale())
 		).put(
 			"trafficSources", _getTrafficSourcesJSONArray()
+		).put(
+			"viewURLs",
+			_getViewURLsJSONArray(
+				_analyticsReportsInfoItem, _analyticsReportsInfoItemObject)
 		).build();
+	}
+
+	private ResourceURL _getResourceURL(String resourceID) {
+		ResourceURL resourceURL = _renderResponse.createResourceURL();
+
+		resourceURL.setParameter(
+			"classNameId",
+			String.valueOf(_infoDisplayObjectProvider.getClassNameId()));
+		resourceURL.setParameter(
+			"classPK", String.valueOf(_infoDisplayObjectProvider.getClassPK()));
+
+		resourceURL.setResourceID(resourceID);
+
+		return resourceURL;
 	}
 
 	private JSONArray _getTimeSpansJSONArray() {
@@ -311,8 +317,7 @@ public class AnalyticsReportsDisplayContext {
 					).findFirst(
 					).map(
 						trafficSource -> trafficSource.toJSONObject(
-							helpMessageMap.get(name), _themeDisplay.getLocale(),
-							title)
+							helpMessageMap.get(name), _getLocale(), title)
 					).orElse(
 						JSONUtil.put(
 							"helpMessage", helpMessageMap.get(name)
@@ -327,15 +332,48 @@ public class AnalyticsReportsDisplayContext {
 		return trafficSourcesJSONArray;
 	}
 
+	private String _getViewURL(Locale locale) {
+		PortletURL portletURL = _renderResponse.createRenderURL();
+
+		portletURL.setParameter("languageId", LocaleUtil.toLanguageId(locale));
+
+		return String.valueOf(portletURL);
+	}
+
+	private <T> JSONArray _getViewURLsJSONArray(
+		AnalyticsReportsInfoItem<T> analyticsReportsInfoItem, T model) {
+
+		List<Locale> locales = analyticsReportsInfoItem.getAvailableLocales(
+			model);
+
+		Stream<Locale> stream = locales.stream();
+
+		return JSONUtil.putAll(
+			stream.map(
+				locale -> JSONUtil.put(
+					"default",
+					Objects.equals(
+						locale,
+						analyticsReportsInfoItem.getDefaultLocale(model))
+				).put(
+					"languageId", LocaleUtil.toBCP47LanguageId(locale)
+				).put(
+					"viewURL", _getViewURL(locale)
+				)
+			).toArray());
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		AnalyticsReportsDisplayContext.class);
 
 	private final AnalyticsReportsDataProvider _analyticsReportsDataProvider;
-	private final AnalyticsReportsInfoItem<Object> _analyticsReportsInfoItem;
-	private final Object _analyticsReportsInfoItemObject;
+	private final AnalyticsReportsInfoItem<T> _analyticsReportsInfoItem;
+	private final T _analyticsReportsInfoItemObject;
 	private final String _canonicalURL;
 	private Map<String, Object> _data;
+	private final InfoDisplayObjectProvider<T> _infoDisplayObjectProvider;
 	private final Portal _portal;
+	private final RenderRequest _renderRequest;
 	private final RenderResponse _renderResponse;
 	private final ResourceBundle _resourceBundle;
 	private final ThemeDisplay _themeDisplay;

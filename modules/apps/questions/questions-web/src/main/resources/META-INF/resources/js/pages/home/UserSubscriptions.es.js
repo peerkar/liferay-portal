@@ -20,7 +20,7 @@ import React, {useEffect, useState} from 'react';
 import {withRouter} from 'react-router-dom';
 
 import Alert from '../../components/Alert.es';
-import DeleteThread from '../../components/DeleteThread.es';
+import DeleteQuestion from '../../components/DeleteQuestion.es';
 import Link from '../../components/Link.es';
 import QuestionRow from '../../components/QuestionRow.es';
 import {
@@ -29,11 +29,11 @@ import {
 	unsubscribeMyUserAccountQuery,
 } from '../../utils/client.es';
 import {historyPushWithSlug} from '../../utils/utils.es';
-import NavigationBar from '../NavigationBar.es';
 
 export default withRouter(({history}) => {
 	const [entity, setEntity] = useState({});
 	const [info, setInfo] = useState({});
+	const [questionToDelete, setQuestionToDelete] = useState({});
 
 	const {data: threads, refetch: refetchThreads} = useQuery(
 		getSubscriptionsQuery,
@@ -100,6 +100,7 @@ export default withRouter(({history}) => {
 			actions.push({
 				label: 'Delete',
 				onClick: () => {
+					setQuestionToDelete(question);
 					setShowDeleteModalPanel(true);
 				},
 			});
@@ -131,21 +132,17 @@ export default withRouter(({history}) => {
 	};
 
 	return (
-		<>
-			<NavigationBar />
-
-			<section className="questions-section questions-section-list">
-				<div className="c-p-5 questions-container row">
-					<div className="col-xl-8 offset-xl-2">
-						<h2 className="sheet-subtitle">Topics</h2>
-						<Topics />
-						<h2 className="mt-5 sheet-subtitle">Questions</h2>
-						<Questions />
-					</div>
+		<section className="questions-section questions-section-list">
+			<div className="c-p-5 questions-container row">
+				<div className="col-xl-8 offset-xl-2">
+					<h2 className="sheet-subtitle">Topics</h2>
+					<Topics />
+					<h2 className="mt-5 sheet-subtitle">Questions</h2>
+					<Questions />
 				</div>
-				<Alert displayType={'success'} info={info} />
-			</section>
-		</>
+			</div>
+			<Alert displayType={'success'} info={info} />
+		</section>
 	);
 
 	function Topics() {
@@ -230,12 +227,13 @@ export default withRouter(({history}) => {
 								question={data.graphQLNode}
 								showSectionLabel={true}
 							/>
-							<DeleteThread
-								question={data.graphQLNode}
-								showDeleteModalPanel={showDeleteModalPanel}
-							/>
 						</div>
 					))}
+				<DeleteQuestion
+					deleteModalVisibility={showDeleteModalPanel}
+					question={questionToDelete}
+					setDeleteModalVisibility={setShowDeleteModalPanel}
+				/>
 			</div>
 		);
 	}

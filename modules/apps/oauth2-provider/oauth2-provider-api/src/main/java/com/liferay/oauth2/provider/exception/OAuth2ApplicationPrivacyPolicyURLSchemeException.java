@@ -30,13 +30,15 @@ public class OAuth2ApplicationPrivacyPolicyURLSchemeException
 	}
 
 	public OAuth2ApplicationPrivacyPolicyURLSchemeException(
-		String msg, Throwable cause) {
+		String msg, Throwable throwable) {
 
-		super(msg, cause);
+		super(msg, throwable);
 	}
 
-	public OAuth2ApplicationPrivacyPolicyURLSchemeException(Throwable cause) {
-		super(cause);
+	public OAuth2ApplicationPrivacyPolicyURLSchemeException(
+		Throwable throwable) {
+
+		super(throwable);
 	}
 
 }

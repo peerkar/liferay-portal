@@ -29,12 +29,14 @@ public class NoSuchTaskAssignmentInstanceException
 		super(msg);
 	}
 
-	public NoSuchTaskAssignmentInstanceException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchTaskAssignmentInstanceException(
+		String msg, Throwable throwable) {
+
+		super(msg, throwable);
 	}
 
-	public NoSuchTaskAssignmentInstanceException(Throwable cause) {
-		super(cause);
+	public NoSuchTaskAssignmentInstanceException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -28,12 +28,12 @@ public class VerifyException extends PortalException {
 		super(msg);
 	}
 
-	public VerifyException(String msg, Throwable cause) {
-		super(msg, cause);
+	public VerifyException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public VerifyException(Throwable cause) {
-		super(cause);
+	public VerifyException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

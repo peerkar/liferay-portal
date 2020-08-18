@@ -28,12 +28,12 @@ public class DuplicateMFAEmailOTPEntryException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateMFAEmailOTPEntryException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateMFAEmailOTPEntryException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateMFAEmailOTPEntryException(Throwable cause) {
-		super(cause);
+	public DuplicateMFAEmailOTPEntryException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

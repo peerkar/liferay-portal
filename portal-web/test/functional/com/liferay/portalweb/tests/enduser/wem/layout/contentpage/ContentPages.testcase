@@ -285,10 +285,14 @@ definition {
 			collectionName = "Layout Elements",
 			fragmentName = "Grid");
 
-		DragAndDrop.DragAndDropObject(
+		Click.clickNoWaitForVisible(
+			key_fragmentName = "Grid",
+			locator1 = "Fragment#FRAGMENT_HEADER");
+
+		DragAndDrop.dragAndDrop(
 			key_position = "3",
 			locator1 = "PageEditor#GRID_COLUMN_RESIZER",
-			position = "530,0");
+			value1 = "530,0");
 
 		PageEditor.waitForAutoSave();
 
@@ -444,7 +448,7 @@ definition {
 
 			PageEditor.editLayoutGrid(
 				columnCount = "2",
-				panel = "Configuration",
+				panel = "General",
 				spaceBetweenColumns = "true");
 		}
 
@@ -475,7 +479,7 @@ definition {
 		task ("Edit the row's properties") {
 			PageEditor.editLayoutGrid(
 				columnCount = "3",
-				panel = "Configuration",
+				panel = "General",
 				spaceBetweenColumns = "false");
 		}
 
@@ -497,8 +501,8 @@ definition {
 		task ("Assert the Container has Fixed Width, padding bottom 4 and padding top 2") {
 			PageEditor.viewContainerStyle(
 				containerWidth = "Fixed Width",
-				paddingBottom = "5",
-				paddingTop = "4",
+				paddingBottom = "4",
+				paddingTop = "2",
 				position = "1");
 		}
 	}
@@ -1373,6 +1377,8 @@ definition {
 	@description = "This is a test for LPS-110707. Can resize the width of device viewport when edit content page."
 	@priority = "5"
 	test ResizeDeviceViewpoint {
+		property portal.acceptance = "true";
+
 		ContentPagesNavigator.openEditContentPage(
 			pageName = "Test Content Page Name",
 			siteName = "Test Site Name");
@@ -1476,7 +1482,7 @@ definition {
 				position = "2");
 
 			AssertElementPresent(
-				key_elementHeader = "//*[contains(@class,'component-heading')][contains(@class,'text-white')]",
+				key_elementHeader = "//div[contains(@class,'page-editor__topper__bar') and contains(.,'Heading')]//following-sibling::div[contains(@class,'page-editor__topper__content')]/div[contains(@class,'text-white')]",
 				key_position = "2",
 				locator1 = "PageEditor#CONTAINER_CONTAINER_NESTED_ELEMENT");
 		}
@@ -1779,7 +1785,7 @@ definition {
 
 			Select(
 				locator1 = "PageEditorEditableLink#FIELD",
-				value1 = "Basic Web Content *");
+				value1 = "Basic Web Content");
 
 			SelectFrame(value1 = "relative=top");
 

@@ -388,14 +388,16 @@ public class ReportsEngineDisplayContext {
 		EntryDisplayTerms displayTerms =
 			(EntryDisplayTerms)entrySearch.getDisplayTerms();
 
-		Date startDate = PortalUtil.getDate(
-			displayTerms.getStartDateMonth(), displayTerms.getStartDateDay(),
-			displayTerms.getStartDateYear(), _themeDisplay.getTimeZone(), null);
-		Date endDate = PortalUtil.getDate(
-			displayTerms.getEndDateMonth(), displayTerms.getEndDateDay() + 1,
-			displayTerms.getEndDateYear(), _themeDisplay.getTimeZone(), null);
-
 		if (displayTerms.isAdvancedSearch()) {
+			Date startDate = PortalUtil.getDate(
+				displayTerms.getStartDateMonth(),
+				displayTerms.getStartDateDay(), displayTerms.getStartDateYear(),
+				_themeDisplay.getTimeZone(), null);
+			Date endDate = PortalUtil.getDate(
+				displayTerms.getEndDateMonth(),
+				displayTerms.getEndDateDay() + 1, displayTerms.getEndDateYear(),
+				_themeDisplay.getTimeZone(), null);
+
 			int total = EntryServiceUtil.getEntriesCount(
 				_themeDisplay.getSiteGroupId(),
 				displayTerms.getDefinitionName(), null, startDate, endDate,

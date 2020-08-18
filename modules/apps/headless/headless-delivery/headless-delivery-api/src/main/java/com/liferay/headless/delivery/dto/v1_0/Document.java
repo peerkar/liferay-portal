@@ -150,6 +150,34 @@ public class Document {
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	protected AggregateRating aggregateRating;
 
+	@Schema
+	public String getAssetLibraryKey() {
+		return assetLibraryKey;
+	}
+
+	public void setAssetLibraryKey(String assetLibraryKey) {
+		this.assetLibraryKey = assetLibraryKey;
+	}
+
+	@JsonIgnore
+	public void setAssetLibraryKey(
+		UnsafeSupplier<String, Exception> assetLibraryKeyUnsafeSupplier) {
+
+		try {
+			assetLibraryKey = assetLibraryKeyUnsafeSupplier.get();
+		}
+		catch (RuntimeException re) {
+			throw re;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	protected String assetLibraryKey;
+
 	@Schema(description = "The document's relative URL.")
 	public String getContentUrl() {
 		return contentUrl;
@@ -587,6 +615,38 @@ public class Document {
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	protected RelatedContent[] relatedContents;
 
+	@Schema(
+		description = "The ID of the site to which this document is scoped."
+	)
+	public Long getSiteId() {
+		return siteId;
+	}
+
+	public void setSiteId(Long siteId) {
+		this.siteId = siteId;
+	}
+
+	@JsonIgnore
+	public void setSiteId(
+		UnsafeSupplier<Long, Exception> siteIdUnsafeSupplier) {
+
+		try {
+			siteId = siteIdUnsafeSupplier.get();
+		}
+		catch (RuntimeException re) {
+			throw re;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField(
+		description = "The ID of the site to which this document is scoped."
+	)
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	protected Long siteId;
+
 	@Schema(description = "The document's size in bytes.")
 	public Long getSizeInBytes() {
 		return sizeInBytes;
@@ -819,6 +879,20 @@ public class Document {
 			sb.append(String.valueOf(aggregateRating));
 		}
 
+		if (assetLibraryKey != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"assetLibraryKey\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(assetLibraryKey));
+
+			sb.append("\"");
+		}
+
 		if (contentUrl != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -1029,6 +1103,16 @@ public class Document {
 			}
 
 			sb.append("]");
+		}
+
+		if (siteId != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"siteId\": ");
+
+			sb.append(siteId);
 		}
 
 		if (sizeInBytes != null) {

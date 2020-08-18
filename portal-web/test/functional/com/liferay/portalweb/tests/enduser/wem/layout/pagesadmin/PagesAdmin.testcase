@@ -24,6 +24,164 @@ definition {
 		}
 	}
 
+	@description = "This is use case for LPS-107776. Can add collection items in a collection page based on dynamic collection with all types."
+	@priority = "5"
+	test AddCollectionItemsInCollectionPageBasedOnDynamicCollection {
+		property osgi.app.includes = "bookmarks";
+		property osgi.app.includes = "document-library-google-docs";
+		property portal.acceptance = "true";
+
+		task ("Add a dynamic collection with All Types") {
+			JSONAssetlist.addDynamicAssetListEntryWithItemType(
+				groupName = "Test Site Name",
+				itemType = "All Types",
+				title = "Dynamic Collection");
+		}
+
+		task ("Add a collection page based on dynamic collection") {
+			SitePages.openPagesAdmin(siteURLKey = "test-site-name");
+
+			ContentPages.addPublicCollectionPage(
+				collectionName = "Dynamic Collection",
+				pageName = "Test Collection Page Name",
+				tabName = "Collections");
+		}
+
+		task ("Assert there is no collection items shown in Collection Display") {
+			AssertVisible(
+				key_colPosition = "1",
+				key_entryTitle = "Title",
+				key_fragmentName = "Collection Display",
+				key_rowPosition = "1",
+				locator1 = "PageEditor#COLLECTION_ITEM_TITLE");
+
+			AssertTextEquals(
+				locator1 = "ControlMenu#VIEW_COLLECTION_ITEMS_BUTTON",
+				value1 = "(0 Items)");
+		}
+
+		task ("Add a web content article based on Basic Web Content in collection page") {
+			ContentPages.addCollectionItemInCollectionPage(
+				itemSubtype = "Basic Web Content",
+				title = "New Collection Page Item");
+
+			WebContent.addCP(
+				webContentContent = "Web Content Content",
+				webContentTitle = "Web Content Title");
+
+			PortletEntry.publish();
+		}
+
+		task ("Assert the web content article is shown in Collection Display") {
+			AssertVisible(
+				key_colPosition = "1",
+				key_entryTitle = "Web Content Title",
+				key_fragmentName = "Collection Display",
+				key_rowPosition = "1",
+				locator1 = "PageEditor#COLLECTION_ITEM_TITLE");
+
+			AssertTextEquals(
+				locator1 = "ControlMenu#VIEW_COLLECTION_ITEMS_BUTTON",
+				value1 = "(1 Items)");
+		}
+
+		task ("Add a Blogs entry in collection page") {
+			ContentPages.addCollectionItemInCollectionPage(
+				itemSubtype = "Blogs Entry",
+				title = "New Collection Page Item");
+
+			BlogsEntry.addEntryContent(
+				entryContent = "Blogs Entry Content",
+				entryTitle = "Blogs Entry Title");
+
+			PortletEntry.publish();
+		}
+
+		task ("Assert the Blogs entry is shown in Collection Display") {
+			var n = "1";
+
+			for (var title : list "Blogs Entry Title,Web Content Title") {
+				AssertVisible(
+					key_colPosition = "1",
+					key_entryTitle = "${title}",
+					key_fragmentName = "Collection Display",
+					key_rowPosition = "${n}",
+					locator1 = "PageEditor#COLLECTION_ITEM_TITLE");
+
+				var n = ${n} + 1;
+			}
+
+			AssertTextEquals(
+				locator1 = "ControlMenu#VIEW_COLLECTION_ITEMS_BUTTON",
+				value1 = "(2 Items)");
+		}
+
+		task ("Add a document based on Basic Document in collection page") {
+			ContentPages.addCollectionItemInCollectionPage(
+				itemSubtype = "Basic Document",
+				title = "New Collection Page Item");
+
+			DMDocument.editDocument(
+				dmDocumentFile = "Document_1.png",
+				dmDocumentTitle = "Document Title");
+
+			PortletEntry.publish();
+		}
+
+		task ("Assert the document is shown in Collection Display") {
+			var n = "1";
+
+			for (var title : list "Document Title,Blogs Entry Title,Web Content Title") {
+				AssertVisible(
+					key_colPosition = "1",
+					key_entryTitle = "${title}",
+					key_fragmentName = "Collection Display",
+					key_rowPosition = "${n}",
+					locator1 = "PageEditor#COLLECTION_ITEM_TITLE");
+
+				var n = ${n} + 1;
+			}
+
+			AssertTextEquals(
+				locator1 = "ControlMenu#VIEW_COLLECTION_ITEMS_BUTTON",
+				value1 = "(3 Items)");
+		}
+	}
+
+	@description = "This is a test for LPS-107775. Can add new collections when add a collection page from pages admin."
+	@priority = "5"
+	test AddcollectionViaAddingCollectionPage {
+		property portal.acceptance = "true";
+
+		SitePages.openPagesAdmin(siteURLKey = "test-site-name");
+
+		ContentPages.addPublicCollectionPage(
+			collectionName = "Manual Collection Name",
+			menuItem = "Manual Selection",
+			pageName = "Manual Collection Page Name",
+			selectedAsset = "All Types",
+			tabName = "Collections");
+
+		PageEditor.clickPublish();
+
+		ContentPages.addPublicCollectionPage(
+			collectionName = "Dynamic Collection Name",
+			menuItem = "Dynamic Selection",
+			pageName = "Dynamic Collection Page Name",
+			selectedAsset = "All Types",
+			tabName = "Collections");
+
+		PageEditor.clickPublish();
+
+		Page.view(
+			pageName = "Manual Collection Page Name",
+			privacy = "Public Pages");
+
+		Page.view(
+			pageName = "Dynamic Collection Page Name",
+			privacy = "Public Pages");
+	}
+
 	@description = "This is for LPS-110108. Add a Draft page and check label."
 	@priority = "4"
 	test AddDraftPageAndViewLabel {
@@ -94,6 +252,69 @@ definition {
 			privacy = "Public Pages");
 	}
 
+	@description = "This is use case for LPS-107776. Only can add specific type collection items in a collection page based on manual collection with single item type."
+	@priority = "4"
+	test AddSingleTypeCollectionItemsInCollectionPageBasedOnManualCollectionWithSingleItemType {
+		task ("Add a manual collection with Web Content Article item type") {
+			JSONAssetlist.addManualAssetListEntry(
+				groupName = "Test Site Name",
+				title = "Manual Collection");
+
+			AssetListsAdmin.openAssetListsAdmin(siteURLKey = "test-site-name");
+
+			Click(
+				key_title = "Manual Collection",
+				locator1 = "AssetLists#ASSET_LIST_ENTRY_TITLE");
+
+			AssetListsAdmin.configureItemTypeInManualCollection(itemType = "Web Content Article");
+		}
+
+		task ("Add a collection page based on maual collection") {
+			SitePages.openPagesAdmin(siteURLKey = "test-site-name");
+
+			ContentPages.addPublicCollectionPage(
+				collectionName = "Manual Collection",
+				pageName = "Test Collection Page Name",
+				tabName = "Collections");
+		}
+
+		task ("Assert there is no collection items shown in Collection Display") {
+			AssertVisible(
+				key_colPosition = "1",
+				key_entryTitle = "Title",
+				key_fragmentName = "Collection Display",
+				key_rowPosition = "1",
+				locator1 = "PageEditor#COLLECTION_ITEM_TITLE");
+
+			AssertTextEquals(
+				locator1 = "ControlMenu#VIEW_COLLECTION_ITEMS_BUTTON",
+				value1 = "(0 Items)");
+		}
+
+		task ("Add a web content article based on Basic Web Content in collection page") {
+			ContentPages.addCollectionItemInCollectionPage(title = "New Basic Web Content");
+
+			WebContent.addCP(
+				webContentContent = "Web Content Content",
+				webContentTitle = "Web Content Title");
+
+			PortletEntry.publish();
+		}
+
+		task ("Assert the web content article is shown in Collection Display") {
+			AssertVisible(
+				key_colPosition = "1",
+				key_entryTitle = "Web Content Title",
+				key_fragmentName = "Collection Display",
+				key_rowPosition = "1",
+				locator1 = "PageEditor#COLLECTION_ITEM_TITLE");
+
+			AssertTextEquals(
+				locator1 = "ControlMenu#VIEW_COLLECTION_ITEMS_BUTTON",
+				value1 = "(1 Items)");
+		}
+	}
+
 	@description = "This is for LPS-110108. Management Toolbar shows count of selected items and all visible items are selected after checking the Select All checkbox."
 	@priority = "5"
 	test CheckAndViewCountViaManagementToolbar {
@@ -129,6 +350,8 @@ definition {
 	@description = "This is a test for LPS-110183. Can access to display page in Collection Items modal when the collection item has associated display page template."
 	@priority = "5"
 	test GoToCollectionItemDisplayPage {
+		property portal.acceptance = "true";
+
 		JSONLayoutpagetemplate.addDisplayPageTemplateEntry(
 			contentType = "Web Content Article",
 			displayPageTemplateEntryName = "Display Page Name",
@@ -171,7 +394,9 @@ definition {
 		AssetListsAdmin.selectAsset(
 			assetListName = "Manual Collection",
 			assetType = "Basic Web Content",
-			entryList = "WC WebContent Title 1,WC WebContent Title 2,WC WebContent Title 3");
+			entryList = "WC WebContent Title 1,WC WebContent Title 2,WC WebContent Title 3",
+			itemSubtype = "Basic Web Content",
+			itemType = "Web Content Article");
 
 		SitePages.openPagesAdmin(siteURLKey = "test-site-name");
 
@@ -867,6 +1092,10 @@ definition {
 	@description = "This is a test for LPS-110183. Can view information about collection items of collection page."
 	@priority = "5"
 	test ViewCollectionItemViaPageFinderAndPageAdmin {
+		property portal.acceptance = "true";
+		property osgi.app.includes = "bookmarks";
+		property osgi.app.includes = "document-library-google-docs";
+
 		JSONWebcontent.addWebContent(
 			content = "Webcontent Content",
 			groupName = "Test Site Name",

@@ -106,9 +106,10 @@ public class PortletRegistryImpl implements PortletRegistry {
 				fragmentEntryLink.getEditableValues());
 
 			String portletId = jsonObject.getString("portletId");
-			String instanceId = jsonObject.getString("instanceId");
 
 			if (Validator.isNotNull(portletId)) {
+				String instanceId = jsonObject.getString("instanceId");
+
 				portletIds.add(PortletIdCodec.encode(portletId, instanceId));
 			}
 		}

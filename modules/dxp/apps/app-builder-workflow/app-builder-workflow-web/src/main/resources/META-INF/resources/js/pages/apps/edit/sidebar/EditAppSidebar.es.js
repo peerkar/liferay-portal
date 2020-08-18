@@ -18,13 +18,15 @@ import classNames from 'classnames';
 import {Sidebar} from 'data-engine-taglib';
 import React, {useContext, useEffect, useState} from 'react';
 
-import {AutocompleteMultiSelect} from '../../../../components/autocomplete/AutocompleteMultiSelect.es';
+import AutocompleteMultiSelect from '../../../../components/autocomplete/AutocompleteMultiSelect.es';
 import ButtonInfo from '../../../../components/button-info/ButtonInfo.es';
 import {UPDATE_STEP} from '../configReducer.es';
 import ActionsTab from './ActionsTab.es';
 import DataAndViewsTab from './DataAndViewsTab.es';
 
 export default function EditAppSidebar() {
+	const editAppContext = useContext(EditAppContext);
+
 	const {
 		config: {
 			currentStep,
@@ -36,7 +38,7 @@ export default function EditAppSidebar() {
 			tableView,
 		},
 		dispatchConfig,
-	} = useContext(EditAppContext);
+	} = editAppContext;
 
 	const [currentTab, setCurrentTab] = useState();
 
@@ -146,7 +148,6 @@ export default function EditAppSidebar() {
 				) : (
 					<div className="tab-title">
 						<ClayButton
-							data-testid="back-button"
 							displayType="secondary"
 							onClick={() => setCurrentTab(null)}
 							small
@@ -276,7 +277,7 @@ export default function EditAppSidebar() {
 						)}
 					</>
 				) : (
-					currentTab.content()
+					currentTab.content(editAppContext)
 				)}
 			</Sidebar.Body>
 		</Sidebar>

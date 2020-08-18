@@ -27,12 +27,12 @@ public class UnknownChannelException extends ChannelException {
 		super(msg);
 	}
 
-	public UnknownChannelException(String msg, Throwable cause) {
-		super(msg, cause);
+	public UnknownChannelException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public UnknownChannelException(Throwable cause) {
-		super(cause);
+	public UnknownChannelException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

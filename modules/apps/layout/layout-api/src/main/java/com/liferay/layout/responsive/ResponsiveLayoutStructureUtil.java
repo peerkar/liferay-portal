@@ -16,6 +16,7 @@ package com.liferay.layout.responsive;
 
 import com.liferay.layout.util.structure.ColumnLayoutStructureItem;
 import com.liferay.layout.util.structure.RowLayoutStructureItem;
+import com.liferay.layout.util.structure.RowStyledLayoutStructureItem;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -32,8 +33,21 @@ import java.util.Objects;
  */
 public class ResponsiveLayoutStructureUtil {
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), replaced by {@link #getColumnCssClass(RowStyledLayoutStructureItem, ColumnLayoutStructureItem)}
+	 */
+	@Deprecated
 	public static String getColumnCssClass(
 		RowLayoutStructureItem rowLayoutStructureItem,
+		ColumnLayoutStructureItem columnLayoutStructureItem) {
+
+		return getColumnCssClass(
+			(RowStyledLayoutStructureItem)rowLayoutStructureItem,
+			columnLayoutStructureItem);
+	}
+
+	public static String getColumnCssClass(
+		RowStyledLayoutStructureItem rowStyledLayoutStructureItem,
 		ColumnLayoutStructureItem columnLayoutStructureItem) {
 
 		StringBundler sb = new StringBundler();
@@ -100,18 +114,29 @@ public class ResponsiveLayoutStructureUtil {
 		return defaultValue;
 	}
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), replaced by {@link #getRowCssClass(RowStyledLayoutStructureItem)}
+	 */
+	@Deprecated
 	public static String getRowCssClass(
 		RowLayoutStructureItem rowLayoutStructureItem) {
+
+		return getRowCssClass(
+			(RowStyledLayoutStructureItem)rowLayoutStructureItem);
+	}
+
+	public static String getRowCssClass(
+		RowStyledLayoutStructureItem rowStyledLayoutStructureItem) {
 
 		StringBundler sb = new StringBundler();
 
 		sb.append("align-items-lg-");
 		sb.append(
 			_getVerticalAlignmentCssClass(
-				rowLayoutStructureItem.getVerticalAlignment()));
+				rowStyledLayoutStructureItem.getVerticalAlignment()));
 
 		Map<String, JSONObject> rowViewportConfigurations =
-			rowLayoutStructureItem.getViewportConfigurations();
+			rowStyledLayoutStructureItem.getViewportConfigurations();
 
 		for (ViewportSize viewportSize : ViewportSize.values()) {
 			if (Objects.equals(viewportSize, ViewportSize.DESKTOP)) {
@@ -122,7 +147,7 @@ public class ResponsiveLayoutStructureUtil {
 				getResponsivePropertyValue(
 					viewportSize, rowViewportConfigurations,
 					"verticalAlignment",
-					rowLayoutStructureItem.getVerticalAlignment()));
+					rowStyledLayoutStructureItem.getVerticalAlignment()));
 
 			sb.append(StringPool.SPACE);
 			sb.append("align-items");
@@ -132,13 +157,13 @@ public class ResponsiveLayoutStructureUtil {
 
 		sb.append(StringPool.SPACE);
 
-		if (rowLayoutStructureItem.isReverseOrder() &&
-			(rowLayoutStructureItem.getModulesPerRow() > 1)) {
+		if (rowStyledLayoutStructureItem.isReverseOrder() &&
+			(rowStyledLayoutStructureItem.getModulesPerRow() > 1)) {
 
 			sb.append("flex-lg-row-reverse");
 		}
-		else if (rowLayoutStructureItem.isReverseOrder() &&
-				 (rowLayoutStructureItem.getModulesPerRow() == 1)) {
+		else if (rowStyledLayoutStructureItem.isReverseOrder() &&
+				 (rowStyledLayoutStructureItem.getModulesPerRow() == 1)) {
 
 			sb.append("flex-lg-column-reverse");
 		}
@@ -154,12 +179,12 @@ public class ResponsiveLayoutStructureUtil {
 			boolean reverseOrder = GetterUtil.getBoolean(
 				getResponsivePropertyValue(
 					viewportSize, rowViewportConfigurations, "reverseOrder",
-					rowLayoutStructureItem.isReverseOrder()));
+					rowStyledLayoutStructureItem.isReverseOrder()));
 
 			int modulesPerRow = GetterUtil.getInteger(
 				getResponsivePropertyValue(
 					viewportSize, rowViewportConfigurations, "modulesPerRow",
-					rowLayoutStructureItem.getModulesPerRow()));
+					rowStyledLayoutStructureItem.getModulesPerRow()));
 
 			sb.append(StringPool.SPACE);
 
@@ -181,7 +206,7 @@ public class ResponsiveLayoutStructureUtil {
 			}
 		}
 
-		if (!rowLayoutStructureItem.isGutters()) {
+		if (!rowStyledLayoutStructureItem.isGutters()) {
 			sb.append(StringPool.SPACE);
 			sb.append("no-gutters");
 		}

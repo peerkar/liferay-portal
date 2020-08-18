@@ -71,10 +71,10 @@ public class DataRecordValuesUtil {
 			ddmFormValues.setDefaultLocale(locale);
 		}
 
-		Map<String, DDMFormField> ddmFormFields = ddmForm.getDDMFormFieldsMap(
-			true);
-
 		if (MapUtil.isNotEmpty(dataRecordValues)) {
+			Map<String, DDMFormField> ddmFormFields =
+				ddmForm.getDDMFormFieldsMap(true);
+
 			for (Map.Entry<String, DDMFormField> entry :
 					ddmFormFields.entrySet()) {
 

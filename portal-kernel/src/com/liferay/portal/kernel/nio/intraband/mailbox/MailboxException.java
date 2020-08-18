@@ -26,12 +26,12 @@ public class MailboxException extends Exception {
 		super(message);
 	}
 
-	public MailboxException(String message, Throwable cause) {
-		super(message, cause);
+	public MailboxException(String message, Throwable throwable) {
+		super(message, throwable);
 	}
 
-	public MailboxException(Throwable cause) {
-		super(cause);
+	public MailboxException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

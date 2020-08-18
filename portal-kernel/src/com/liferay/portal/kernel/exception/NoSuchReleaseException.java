@@ -26,12 +26,12 @@ public class NoSuchReleaseException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchReleaseException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchReleaseException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchReleaseException(Throwable cause) {
-		super(cause);
+	public NoSuchReleaseException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

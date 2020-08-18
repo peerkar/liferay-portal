@@ -26,12 +26,12 @@ public class NoSuchWebDAVPropsException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchWebDAVPropsException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchWebDAVPropsException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchWebDAVPropsException(Throwable cause) {
-		super(cause);
+	public NoSuchWebDAVPropsException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

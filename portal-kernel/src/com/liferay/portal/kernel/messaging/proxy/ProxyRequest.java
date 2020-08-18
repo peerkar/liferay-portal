@@ -82,13 +82,13 @@ public class ProxyRequest implements Externalizable {
 			return _method.invoke(object, _arguments);
 		}
 		catch (InvocationTargetException invocationTargetException) {
-			Throwable t = invocationTargetException.getCause();
+			Throwable throwable = invocationTargetException.getCause();
 
-			if (t instanceof Exception) {
-				throw (Exception)t;
+			if (throwable instanceof Exception) {
+				throw (Exception)throwable;
 			}
 
-			throw new Exception(t);
+			throw new Exception(throwable);
 		}
 	}
 

@@ -35,13 +35,13 @@ public class Log4jLogImpl implements Log {
 	}
 
 	@Override
-	public void debug(Object msg, Throwable t) {
-		_logger.log(_logWrapperClassName, Level.DEBUG, msg, t);
+	public void debug(Object msg, Throwable throwable) {
+		_logger.log(_logWrapperClassName, Level.DEBUG, msg, throwable);
 	}
 
 	@Override
-	public void debug(Throwable t) {
-		_logger.log(_logWrapperClassName, Level.DEBUG, null, t);
+	public void debug(Throwable throwable) {
+		_logger.log(_logWrapperClassName, Level.DEBUG, null, throwable);
 	}
 
 	@Override
@@ -50,13 +50,13 @@ public class Log4jLogImpl implements Log {
 	}
 
 	@Override
-	public void error(Object msg, Throwable t) {
-		_logger.log(_logWrapperClassName, Level.ERROR, msg, t);
+	public void error(Object msg, Throwable throwable) {
+		_logger.log(_logWrapperClassName, Level.ERROR, msg, throwable);
 	}
 
 	@Override
-	public void error(Throwable t) {
-		_logger.log(_logWrapperClassName, Level.ERROR, null, t);
+	public void error(Throwable throwable) {
+		_logger.log(_logWrapperClassName, Level.ERROR, null, throwable);
 	}
 
 	@Override
@@ -65,13 +65,13 @@ public class Log4jLogImpl implements Log {
 	}
 
 	@Override
-	public void fatal(Object msg, Throwable t) {
-		_logger.log(_logWrapperClassName, Level.FATAL, msg, t);
+	public void fatal(Object msg, Throwable throwable) {
+		_logger.log(_logWrapperClassName, Level.FATAL, msg, throwable);
 	}
 
 	@Override
-	public void fatal(Throwable t) {
-		_logger.log(_logWrapperClassName, Level.FATAL, null, t);
+	public void fatal(Throwable throwable) {
+		_logger.log(_logWrapperClassName, Level.FATAL, null, throwable);
 	}
 
 	@Override
@@ -80,13 +80,13 @@ public class Log4jLogImpl implements Log {
 	}
 
 	@Override
-	public void info(Object msg, Throwable t) {
-		_logger.log(_logWrapperClassName, Level.INFO, msg, t);
+	public void info(Object msg, Throwable throwable) {
+		_logger.log(_logWrapperClassName, Level.INFO, msg, throwable);
 	}
 
 	@Override
-	public void info(Throwable t) {
-		_logger.log(_logWrapperClassName, Level.INFO, null, t);
+	public void info(Throwable throwable) {
+		_logger.log(_logWrapperClassName, Level.INFO, null, throwable);
 	}
 
 	@Override
@@ -130,13 +130,13 @@ public class Log4jLogImpl implements Log {
 	}
 
 	@Override
-	public void trace(Object msg, Throwable t) {
-		_logger.log(_logWrapperClassName, Level.TRACE, msg, t);
+	public void trace(Object msg, Throwable throwable) {
+		_logger.log(_logWrapperClassName, Level.TRACE, msg, throwable);
 	}
 
 	@Override
-	public void trace(Throwable t) {
-		_logger.log(_logWrapperClassName, Level.TRACE, null, t);
+	public void trace(Throwable throwable) {
+		_logger.log(_logWrapperClassName, Level.TRACE, null, throwable);
 	}
 
 	@Override
@@ -145,13 +145,13 @@ public class Log4jLogImpl implements Log {
 	}
 
 	@Override
-	public void warn(Object msg, Throwable t) {
-		_logger.log(_logWrapperClassName, Level.WARN, msg, t);
+	public void warn(Object msg, Throwable throwable) {
+		_logger.log(_logWrapperClassName, Level.WARN, msg, throwable);
 	}
 
 	@Override
-	public void warn(Throwable t) {
-		_logger.log(_logWrapperClassName, Level.WARN, null, t);
+	public void warn(Throwable throwable) {
+		_logger.log(_logWrapperClassName, Level.WARN, null, throwable);
 	}
 
 	private final Logger _logger;

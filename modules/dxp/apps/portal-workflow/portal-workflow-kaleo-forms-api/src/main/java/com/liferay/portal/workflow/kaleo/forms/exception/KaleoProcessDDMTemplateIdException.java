@@ -31,12 +31,12 @@ public class KaleoProcessDDMTemplateIdException extends PortalException {
 		super(msg);
 	}
 
-	public KaleoProcessDDMTemplateIdException(String msg, Throwable cause) {
-		super(msg, cause);
+	public KaleoProcessDDMTemplateIdException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public KaleoProcessDDMTemplateIdException(Throwable cause) {
-		super(cause);
+	public KaleoProcessDDMTemplateIdException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -28,12 +28,12 @@ public class PushNotificationsException extends PortalException {
 		super(msg);
 	}
 
-	public PushNotificationsException(String msg, Throwable cause) {
-		super(msg, cause);
+	public PushNotificationsException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public PushNotificationsException(Throwable cause) {
-		super(cause);
+	public PushNotificationsException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

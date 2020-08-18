@@ -28,12 +28,12 @@ public class CategoryPropertyValueException extends PortalException {
 		super(msg);
 	}
 
-	public CategoryPropertyValueException(String msg, Throwable cause) {
-		super(msg, cause);
+	public CategoryPropertyValueException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public CategoryPropertyValueException(Throwable cause) {
-		super(cause);
+	public CategoryPropertyValueException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

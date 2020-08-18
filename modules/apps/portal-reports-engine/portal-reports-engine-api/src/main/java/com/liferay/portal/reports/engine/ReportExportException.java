@@ -26,12 +26,12 @@ public class ReportExportException extends ReportGenerationException {
 		super(msg);
 	}
 
-	public ReportExportException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ReportExportException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ReportExportException(Throwable cause) {
-		super(cause);
+	public ReportExportException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

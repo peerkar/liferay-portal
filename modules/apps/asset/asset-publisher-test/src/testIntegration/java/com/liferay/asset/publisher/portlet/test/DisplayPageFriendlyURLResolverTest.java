@@ -216,10 +216,11 @@ public class DisplayPageFriendlyURLResolverTest {
 	private void _assertCause(
 		NoSuchLayoutException noSuchLayoutException, String urlTitle) {
 
-		Throwable cause = noSuchLayoutException.getCause();
+		Throwable throwable = noSuchLayoutException.getCause();
 
 		Assert.assertTrue(
-			String.valueOf(cause), cause instanceof NoSuchArticleException);
+			String.valueOf(throwable),
+			throwable instanceof NoSuchArticleException);
 
 		urlTitle = urlTitle.substring(
 			JournalArticleConstants.CANONICAL_URL_SEPARATOR.length());
@@ -229,7 +230,7 @@ public class DisplayPageFriendlyURLResolverTest {
 				"No JournalArticle exists with the key {groupId=",
 				_group.getGroupId(), ", urlTitle=", urlTitle, ", status=",
 				WorkflowConstants.STATUS_PENDING, "}"),
-			cause.getMessage());
+			throwable.getMessage());
 	}
 
 	private Map<String, Object> _getRequestContext() {

@@ -81,9 +81,6 @@ public class PortletPermissionsImporterHelper {
 			return;
 		}
 
-		String resourcePrimKey = _portletPermission.getPrimaryKey(
-			plid, portletId);
-
 		Map<Long, String[]> roleIdsToActionIds = new HashMap<>();
 
 		for (Map<String, Object> widgetPermissionsMap : widgetPermissionsMaps) {
@@ -149,6 +146,9 @@ public class PortletPermissionsImporterHelper {
 		}
 
 		if (MapUtil.isNotEmpty(roleIdsToActionIds)) {
+			String resourcePrimKey = _portletPermission.getPrimaryKey(
+				plid, portletId);
+
 			_resourcePermissionService.setIndividualResourcePermissions(
 				layout.getGroupId(), layout.getCompanyId(), portletName,
 				resourcePrimKey, roleIdsToActionIds);

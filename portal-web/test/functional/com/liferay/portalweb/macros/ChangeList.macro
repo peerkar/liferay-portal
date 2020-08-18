@@ -2,7 +2,7 @@ definition {
 
 	macro cancelPublicationCreation {
 		ApplicationsMenu.gotoPortlet(
-			category = "Content",
+			category = "Publications",
 			panel = "Applications",
 			portlet = "Manage Publications");
 
@@ -18,7 +18,7 @@ definition {
 	macro createNewPublication {
 		if ("${gotoManagePublications}" == "true") {
 			ApplicationsMenu.gotoPortlet(
-				category = "Content",
+				category = "Publications",
 				panel = "Applications",
 				portlet = "Manage Publications");
 
@@ -86,11 +86,44 @@ definition {
 		Alert.viewSuccessMessage();
 	}
 
-	macro publishPublication {
-		Click(locator1 = "ChangeList#CHANGE_LIST_INDICATOR_BUTTON");
+	macro GotoViewDiffInConflictingChanges {
+		Click(
+			key_entryTitle = "${entryTitle}",
+			locator1 = "ChangeList#CONFICTING_CHANGES_VIEW_BUTTON",
+			value1 = "View");
+
+		SelectFrame(locator1 = "IFrame#MODAL_BODY");
+
+		SelectFrameTop(value1 = "relative=top");
+
+		AssertElementPresent(
+			key_iframeTitle = "${entryTitle}",
+			locator1 = "IFrame#IFRAME_TITLE");
+
+		SelectFrame(locator1 = "IFrame#MODAL_BODY");
+	}
+
+	macro prepareToPublish {
+		if ("${gotoManagePublications}" == "true") {
+			ApplicationsMenu.gotoPortlet(
+				category = "Publications",
+				panel = "Applications",
+				portlet = "Manage Publications");
+
+			LexiconEntry.changeDisplayStyle(displayStyle = "list");
+
+			Click(
+				key_publicationName = "${publicationName}",
+				locator1 = "ChangeList#LIST_PUBLICATION_ELLIPSIS");
+		}
+		else {
+			Click(locator1 = "ChangeList#CHANGE_LIST_INDICATOR_BUTTON");
+		}
 
 		MenuItem.click(menuItem = "Prepare to Publish");
+	}
 
+	macro publishPublication {
 		Click(locator1 = "ChangeList#PUBLISH_BUTTON");
 
 		Alert.viewSuccessMessage();
@@ -112,6 +145,35 @@ definition {
 			value1 = "Published");
 	}
 
+	macro revertPublication {
+		var key_publicationName = "${publicationName}";
+
+		Click(locator1 = "ChangeList#REVERT_BUTTON");
+
+		AssertTextEquals(
+			locator1 = "ChangeList#PUBLICATION_NAME",
+			value1 = "Revert &quot;${publicationName}&quot;");
+
+		Button.click(button = "Revert and Create Publication");
+
+		Alert.viewSuccessMessage();
+
+		AssertTextPresent(
+			key_publicationName = "Revert &quot;${publicationName}&quot;",
+			locator1 = "ChangeList#CHANGE_LIST_INDICATOR_TITLE",
+			value1 = "Revert &quot;${publicationName}&quot;");
+	}
+
+	macro search {
+		Search.searchCP(searchTerm = "${publicationName}");
+
+		key_publicationName = "${publicationName}";
+
+		AssertTextEquals(
+			locator1 = "ChangeList#PUBLISHED_PUBLICATIONS_NAME",
+			value1 = "${publicationName}");
+	}
+
 	macro selectPublication {
 		Click(locator1 = "ChangeList#CHANGE_LIST_INDICATOR_BUTTON");
 
@@ -128,6 +190,54 @@ definition {
 		AssertTextPresent(
 			locator1 = "ChangeList#CHANGE_LIST_INDICATOR_TITLE",
 			value1 = "${publicationName}");
+	}
+
+	macro viewAutomaticallyResolved {
+		AssertElementPresent(locator1 = "ChangeList#AUTOMATICALLY_RESOLVED_TABLE");
+
+		AssertElementPresent(
+			key_entryTitle = "${entryTitle}",
+			key_successMessage = "${successMessage}",
+			locator1 = "ChangeList#CONFICTING_CHANGES_SUCCESS_CONTENT");
+	}
+
+	macro viewChangesDiff {
+		if (contains("${entryTitle}", "modified")) {
+			AssertTextEquals.assertPartialText(
+				key_publicationName = "Production",
+				locator1 = "ChangeList#PUBLICATION_NAME_IN_DIFF",
+				value1 = "Production");
+
+			AssertTextEquals.assertPartialText(
+				key_publicationName = "${publicationName}",
+				locator1 = "ChangeList#PUBLICATION_NAME_IN_DIFF",
+				value1 = "${publicationName}");
+
+			key_columnName = "${columnName}";
+			key_columnValueInProduction = "${columnValueInProduction}";
+			key_columnValueInPublication = "${columnValueInPublication}";
+
+			if (isSet(columnValueInProduction)) {
+				AssertTextEquals.assertPartialText(
+					locator1 = "ChangeList#COLUMN_VALUE_IN_PRODUCTION",
+					value1 = "${columnValueInProduction}");
+			}
+
+			AssertTextEquals.assertPartialText(
+				locator1 = "ChangeList#COLUMN_VALUE_IN_PUBLICATION",
+				value1 = "${columnValueInPublication}");
+		}
+	}
+
+	macro viewNeedsManualResolution {
+		AssertElementPresent(locator1 = "ChangeList#NEEDS_MANUAL_RESOLUTION_TABLE");
+
+		AssertElementPresent(
+			key_entryTitle = "${entryTitle}",
+			key_warningMessage = "${warningMessage}",
+			locator1 = "ChangeList#CONFICTING_CHANGES_WARNING_CONTENT");
+
+		AssertVisible(locator1 = "ChangeList#DISABLED_PUBLISH_BUTTON");
 	}
 
 	macro viewNoStagingMenuitemsNotAvailable {

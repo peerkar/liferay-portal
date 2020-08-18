@@ -186,8 +186,8 @@ public class DistributedRegistry {
 							distributed.matchType());
 					}
 				}
-				catch (Throwable t) {
-					throw new RuntimeException(t);
+				catch (Throwable throwable) {
+					throw new RuntimeException(throwable);
 				}
 			}
 

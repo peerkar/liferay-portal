@@ -28,12 +28,12 @@ public class CaptchaException extends PortalException {
 		super(msg);
 	}
 
-	public CaptchaException(String msg, Throwable cause) {
-		super(msg, cause);
+	public CaptchaException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public CaptchaException(Throwable cause) {
-		super(cause);
+	public CaptchaException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -28,12 +28,12 @@ public class NoSuchDLFileVersionDiffException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchDLFileVersionDiffException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchDLFileVersionDiffException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchDLFileVersionDiffException(Throwable cause) {
-		super(cause);
+	public NoSuchDLFileVersionDiffException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

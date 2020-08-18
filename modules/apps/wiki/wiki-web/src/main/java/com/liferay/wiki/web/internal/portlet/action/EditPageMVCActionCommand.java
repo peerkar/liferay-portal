@@ -220,9 +220,9 @@ public class EditPageMVCActionCommand extends BaseMVCActionCommand {
 					actionRequest, exception.getClass(), exception);
 			}
 			else {
-				Throwable cause = exception.getCause();
+				Throwable throwable = exception.getCause();
 
-				if (cause instanceof SanitizerException) {
+				if (throwable instanceof SanitizerException) {
 					SessionErrors.add(actionRequest, SanitizerException.class);
 				}
 				else {

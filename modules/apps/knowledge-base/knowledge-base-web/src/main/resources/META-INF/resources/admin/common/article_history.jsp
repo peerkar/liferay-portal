@@ -85,15 +85,13 @@ List<KBArticle> kbArticles = KBArticleServiceUtil.getKBArticleVersions(scopeGrou
 								<portlet:param name="sourceVersion" value="<%= String.valueOf(curKBArticle.getVersion()) %>" />
 							</portlet:renderURL>
 
-							<%
-							Map<String, Object> data = HashMapBuilder.<String, Object>put(
-								"uri", compareVersionsURL
-							).build();
-							%>
-
 							<liferay-ui:icon
 								cssClass="compare-to-link"
-								data="<%= data %>"
+								data='<%=
+									HashMapBuilder.<String, Object>put(
+										"uri", compareVersionsURL
+									).build()
+								%>'
 								label="<%= true %>"
 								message="compare-to"
 								url="javascript:;"

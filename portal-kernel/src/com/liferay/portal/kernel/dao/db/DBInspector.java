@@ -50,9 +50,9 @@ public class DBInspector {
 		try {
 			return _connection.getSchema();
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			if (_log.isDebugEnabled()) {
-				_log.debug(t, t);
+				_log.debug(throwable, throwable);
 			}
 
 			return null;

@@ -38,8 +38,8 @@ public class SyncProcessRPCCallable<T extends Serializable>
 		try {
 			defaultNoticeableFuture.set(_processCallable.call());
 		}
-		catch (Throwable t) {
-			defaultNoticeableFuture.setException(t);
+		catch (Throwable throwable) {
+			defaultNoticeableFuture.setException(throwable);
 		}
 
 		return defaultNoticeableFuture;

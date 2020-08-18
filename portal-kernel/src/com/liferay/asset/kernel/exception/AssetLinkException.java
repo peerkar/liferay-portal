@@ -28,12 +28,12 @@ public class AssetLinkException extends PortalException {
 		super(msg);
 	}
 
-	public AssetLinkException(String msg, Throwable cause) {
-		super(msg, cause);
+	public AssetLinkException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public AssetLinkException(Throwable cause) {
-		super(cause);
+	public AssetLinkException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

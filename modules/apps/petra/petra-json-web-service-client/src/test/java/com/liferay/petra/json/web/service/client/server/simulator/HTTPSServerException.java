@@ -19,8 +19,8 @@ package com.liferay.petra.json.web.service.client.server.simulator;
  */
 public class HTTPSServerException extends RuntimeException {
 
-	public HTTPSServerException(Throwable cause) {
-		super(cause);
+	public HTTPSServerException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

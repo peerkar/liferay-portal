@@ -544,8 +544,8 @@ public class ListServiceTrackerMapTest {
 							Assert.assertEquals(
 								contentTrackedOnes, Arrays.asList(trackedOne));
 						}
-						catch (Throwable t) {
-							throwables.add(t);
+						catch (Throwable throwable) {
+							throwables.add(throwable);
 						}
 					}
 

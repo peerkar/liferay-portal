@@ -20,11 +20,9 @@
 ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);
 
 JournalArticle article = (JournalArticle)row.getObject();
-
-String href = (String)request.getAttribute(WebKeys.SEARCH_ENTRY_HREF);
 %>
 
-<aui:a href="<%= href %>" title="<%= HtmlUtil.escape(article.getTitle(locale)) %>">
+<aui:a href="<%= (String)request.getAttribute(WebKeys.SEARCH_ENTRY_HREF) %>" title="<%= HtmlUtil.escape(article.getTitle(locale)) %>">
 	<%= HtmlUtil.escape(article.getTitle(locale)) %>
 </aui:a>
 

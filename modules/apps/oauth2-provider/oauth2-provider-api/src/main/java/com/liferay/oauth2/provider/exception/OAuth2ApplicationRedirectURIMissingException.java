@@ -30,13 +30,13 @@ public class OAuth2ApplicationRedirectURIMissingException
 	}
 
 	public OAuth2ApplicationRedirectURIMissingException(
-		String msg, Throwable cause) {
+		String msg, Throwable throwable) {
 
-		super(msg, cause);
+		super(msg, throwable);
 	}
 
-	public OAuth2ApplicationRedirectURIMissingException(Throwable cause) {
-		super(cause);
+	public OAuth2ApplicationRedirectURIMissingException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

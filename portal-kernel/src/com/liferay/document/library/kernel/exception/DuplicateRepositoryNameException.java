@@ -28,12 +28,12 @@ public class DuplicateRepositoryNameException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateRepositoryNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateRepositoryNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateRepositoryNameException(Throwable cause) {
-		super(cause);
+	public DuplicateRepositoryNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

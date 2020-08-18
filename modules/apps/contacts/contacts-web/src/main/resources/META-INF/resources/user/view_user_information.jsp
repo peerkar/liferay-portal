@@ -224,7 +224,9 @@ if (addresses.isEmpty()) {
 
 			<%
 			for (Address address : addresses) {
-				String mailingName = LanguageUtil.get(request, address.getType().getName());
+				ListType listType = address.getType();
+
+				String mailingName = LanguageUtil.get(request, listType.getName());
 			%>
 
 				<li class="<%= address.isPrimary() ? "primary" : "" %>">

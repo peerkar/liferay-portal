@@ -28,12 +28,12 @@ public class RequiredSegmentsEntryException extends PortalException {
 		super(msg);
 	}
 
-	public RequiredSegmentsEntryException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RequiredSegmentsEntryException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public RequiredSegmentsEntryException(Throwable cause) {
-		super(cause);
+	public RequiredSegmentsEntryException(Throwable throwable) {
+		super(throwable);
 	}
 
 	public static class

@@ -28,12 +28,12 @@ public class SyncClientMinBuildException extends PortalException {
 		super(msg);
 	}
 
-	public SyncClientMinBuildException(String msg, Throwable cause) {
-		super(msg, cause);
+	public SyncClientMinBuildException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public SyncClientMinBuildException(Throwable cause) {
-		super(cause);
+	public SyncClientMinBuildException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

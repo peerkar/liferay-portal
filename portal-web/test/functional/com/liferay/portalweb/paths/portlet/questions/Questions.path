@@ -54,6 +54,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>EMPTY_STATE_MESSAGE</td>
+	<td>//div[contains(@class,'questions-container')]//div[contains(@class,'empty')]//span[contains(text(),'${key_emptyInfo}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>ITEMS_PER_PAGE_SELECT</td>
 	<td>//div[contains(@class,'pagination-items-per-page')]/button[contains(@class,'toggle')]</td>
 	<td></td>
@@ -74,8 +79,28 @@
 	<td></td>
 </tr>
 <tr>
+	<td>QUESTIONS_BREADCRUMB_ACTIVE_SUBTOPIC</td>
+	<td>//ol[contains(@class,'breadcrumb')]//li[contains(.,'${key_topicName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>QUESTIONS_BREADCRUMB_PARENT_TOPIC_BUTTON</td>
+	<td>//button[contains(@class,'dropdown') and contains(.,'${key_topicName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>QUESTIONS_BREADCRUMB_TOPIC_DROPDOWN_OPTION</td>
+	<td>//div[contains(@class,'dropdown-menu')]//span[contains(.,'${key_topicName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>QUESTIONS_BREADCRUMB_TOPIC_DROPDOWN_TOGGLE</td>
+	<td>//button[contains(@class,'dropdown-toggle') and contains(.,'${key_topicName}')]//*[name()='svg'][contains(@class,'caret-bottom')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>QUESTIONS_CATEGORY_TITLE</td>
-	<td>//div[contains(@class,'questions-breadcrumb')]//li[contains(.,'${key_categoryTitle}')]</td>
+	<td>//div[contains(@class,'questions-root')]//ol[contains(@class,'breadcrumb')]//li[contains(.,'${key_categoryTitle}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -109,16 +134,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>QUESTIONS_TOPIC_DROPDOWN_MENU</td>
-	<td>//div[contains(@class,'questions-container')]//div[contains(@class,'dropdown')]/button</td>
-	<td></td>
-</tr>
-<tr>
-	<td>QUESTIONS_TOPIC_DROPDOWN_OPTION</td>
-	<td>//div[contains(@class,'dropdown-menu')]//span[contains(.,'${key_topicName}')]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>QUESTIONS_IMAGE_NAME</td>
 	<td>//img[contains(@src,'${key_imageFileName}')]</td>
 	<td></td>
@@ -144,6 +159,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>QUESTIONS_DETAILS_TITLE</td>
+	<td>//div[contains(@class,'questions-container')]//h1[contains(.,'${key_questionTitle}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>QUESTIONS_TITLE</td>
 	<td>//a[contains(@class,'questions-title')]/h2[contains(.,'${key_questionTitle}')]</td>
 	<td></td>
@@ -156,6 +176,11 @@
 <tr>
 	<td>QUESTIONS_SELECT_FILTER</td>
 	<td>//select[contains(@id,'questionsFilter')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>QUESTIONS_TAGS_SELECT_FILTER</td>
+	<td>//select[contains(@id,'tagsOrderBy')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -174,18 +199,28 @@
 	<td></td>
 </tr>
 <tr>
+	<td>SEARCH_INFO</td>
+	<td>//div[contains(@class,'questions-container')]//span[contains(.,'${key_resultsInfo}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>SEARCH_QUESTION_FIELD</td>
 	<td>//div[contains(@class,'questions')]//input[contains(@placeholder,'Search')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>SEARCH_RESULTS_CLEAR_BUTTON</td>
-	<td>//button[contains(.,'Clear')]</td>
+	<td>//div[contains(@class,'input-group-item')]//button[contains(@class,'btn-monospaced')]//*[name()='svg'][contains(@class,'times-circle')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>TAGS_LIST_TAB_NAMES</td>
 	<td>//a[contains(@href, '${key_tagName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>TAGS_LIST_TAB_NO_RESULTS</td>
+	<td>//div[contains(@class,'container')]//div[contains(@class,'questions')]//span[@class='text-truncate']</td>
 	<td></td>
 </tr>
 <tr>

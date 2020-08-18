@@ -41,10 +41,10 @@ public class DefaultTransactionExecutor extends BaseTransactionExecutor {
 			_platformTransactionManager.commit(
 				transactionStatusAdapter.getTransactionStatus());
 		}
-		catch (Throwable t) {
-			transactionManagerThrowable = t;
+		catch (Throwable throwable) {
+			transactionManagerThrowable = throwable;
 
-			throw t;
+			throw throwable;
 		}
 		finally {
 			if (transactionManagerThrowable == null) {
@@ -71,12 +71,12 @@ public class DefaultTransactionExecutor extends BaseTransactionExecutor {
 
 	@Override
 	public void rollback(
-			Throwable throwable,
+			Throwable throwable1,
 			TransactionAttributeAdapter transactionAttributeAdapter,
 			TransactionStatusAdapter transactionStatusAdapter)
 		throws Throwable {
 
-		boolean rollback = transactionAttributeAdapter.rollbackOn(throwable);
+		boolean rollback = transactionAttributeAdapter.rollbackOn(throwable1);
 
 		Throwable transactionManagerThrowable = null;
 
@@ -90,22 +90,22 @@ public class DefaultTransactionExecutor extends BaseTransactionExecutor {
 					transactionStatusAdapter.getTransactionStatus());
 			}
 
-			throw throwable;
+			throw throwable1;
 		}
-		catch (Throwable t) {
-			if (t != throwable) {
-				t.addSuppressed(throwable);
+		catch (Throwable throwable2) {
+			if (throwable2 != throwable1) {
+				throwable2.addSuppressed(throwable1);
 
-				transactionManagerThrowable = t;
+				transactionManagerThrowable = throwable2;
 			}
 
-			throw t;
+			throw throwable2;
 		}
 		finally {
 			if (rollback) {
 				TransactionLifecycleManager.fireTransactionRollbackedEvent(
 					transactionAttributeAdapter, transactionStatusAdapter,
-					throwable);
+					throwable1);
 			}
 			else if (transactionManagerThrowable == null) {
 				TransactionLifecycleManager.fireTransactionCommittedEvent(
@@ -121,7 +121,7 @@ public class DefaultTransactionExecutor extends BaseTransactionExecutor {
 
 			if (transactionManagerThrowable == null) {
 				transactionStatusAdapter.reportLifecycleListenerThrowables(
-					throwable);
+					throwable1);
 			}
 			else {
 				transactionStatusAdapter.reportLifecycleListenerThrowables(

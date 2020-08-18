@@ -518,14 +518,14 @@ public abstract class BaseIndexingTestCase {
 	}
 
 	private void _handle(SearchException searchException) {
-		Throwable t = searchException.getCause();
+		Throwable throwable = searchException.getCause();
 
-		if (t instanceof RuntimeException) {
-			throw (RuntimeException)t;
+		if (throwable instanceof RuntimeException) {
+			throw (RuntimeException)throwable;
 		}
 
-		if (t != null) {
-			throw new RuntimeException(t);
+		if (throwable != null) {
+			throw new RuntimeException(throwable);
 		}
 	}
 

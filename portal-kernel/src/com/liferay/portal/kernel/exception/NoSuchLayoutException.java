@@ -26,12 +26,12 @@ public class NoSuchLayoutException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchLayoutException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchLayoutException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchLayoutException(Throwable cause) {
-		super(cause);
+	public NoSuchLayoutException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

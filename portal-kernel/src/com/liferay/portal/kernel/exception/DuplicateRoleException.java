@@ -26,12 +26,12 @@ public class DuplicateRoleException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateRoleException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateRoleException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateRoleException(Throwable cause) {
-		super(cause);
+	public DuplicateRoleException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

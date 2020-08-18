@@ -28,12 +28,12 @@ public class OAuthPortletUndeployedException extends PortalException {
 		super(msg);
 	}
 
-	public OAuthPortletUndeployedException(String msg, Throwable cause) {
-		super(msg, cause);
+	public OAuthPortletUndeployedException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public OAuthPortletUndeployedException(Throwable cause) {
-		super(cause);
+	public OAuthPortletUndeployedException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

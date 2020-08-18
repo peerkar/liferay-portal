@@ -863,9 +863,9 @@ public class StagedLayoutSetStagedModelDataHandler
 			settingsUnicodeProperties.getProperty(
 				Sites.MERGE_FAIL_FRIENDLY_URL_LAYOUTS);
 
-		LayoutSet stagedLayoutSet = importedLayoutSet.getLayoutSet();
-
 		if (Validator.isNull(mergeFailFriendlyURLLayouts)) {
+			LayoutSet stagedLayoutSet = importedLayoutSet.getLayoutSet();
+
 			UnicodeProperties importedSettingsUnicodeProperties =
 				stagedLayoutSet.getSettingsProperties();
 
@@ -905,9 +905,9 @@ public class StagedLayoutSetStagedModelDataHandler
 			settingsUnicodeProperties.getProperty(
 				Sites.MERGE_FAIL_FRIENDLY_URL_LAYOUTS);
 
-		LayoutSet stagedLayoutSet = importedLayoutSet.getLayoutSet();
-
 		if (Validator.isNull(mergeFailFriendlyURLLayouts)) {
+			LayoutSet stagedLayoutSet = importedLayoutSet.getLayoutSet();
+
 			UnicodeProperties importedSettingsUnicodeProperties =
 				stagedLayoutSet.getSettingsProperties();
 

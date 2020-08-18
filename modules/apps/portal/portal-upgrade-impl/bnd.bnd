@@ -1,6 +1,6 @@
 Bundle-Name: Liferay Portal Upgrade Implementation
 Bundle-SymbolicName: com.liferay.portal.upgrade.impl
-Bundle-Version: 4.0.9
+Bundle-Version: 4.0.11
 Import-Package:\
 	org.apache.felix.service.command;resolution:=optional,\
 	\

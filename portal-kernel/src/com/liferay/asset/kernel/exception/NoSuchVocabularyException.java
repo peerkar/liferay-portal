@@ -28,12 +28,12 @@ public class NoSuchVocabularyException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchVocabularyException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchVocabularyException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchVocabularyException(Throwable cause) {
-		super(cause);
+	public NoSuchVocabularyException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

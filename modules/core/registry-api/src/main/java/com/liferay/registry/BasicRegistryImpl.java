@@ -439,8 +439,8 @@ public class BasicRegistryImpl implements Registry {
 			try {
 				serviceTracker.addingService(basicServiceReference);
 			}
-			catch (Throwable t) {
-				t.printStackTrace();
+			catch (Throwable throwable) {
+				throwable.printStackTrace();
 			}
 		}
 	}
@@ -469,8 +469,8 @@ public class BasicRegistryImpl implements Registry {
 			try {
 				serviceTracker.modifiedService(basicServiceReference, service);
 			}
-			catch (Throwable t) {
-				t.printStackTrace();
+			catch (Throwable throwable) {
+				throwable.printStackTrace();
 			}
 		}
 	}
@@ -493,8 +493,8 @@ public class BasicRegistryImpl implements Registry {
 			try {
 				serviceTracker.remove(basicServiceReference);
 			}
-			catch (Throwable t) {
-				t.printStackTrace();
+			catch (Throwable throwable) {
+				throwable.printStackTrace();
 			}
 		}
 	}
@@ -699,7 +699,6 @@ public class BasicRegistryImpl implements Registry {
 			}
 
 			for (Map.Entry<String, Object> entry : entrySet) {
-				String key = entry.getKey();
 				Object value = entry.getValue();
 
 				Object[] array = null;
@@ -719,6 +718,8 @@ public class BasicRegistryImpl implements Registry {
 				}
 
 				if (array.length > 0) {
+					String key = entry.getKey();
+
 					for (Object object : array) {
 						stringBuilder.append('(');
 						stringBuilder.append(key);

@@ -46,7 +46,7 @@ definition {
 		task ("Assert Export action is disabled") {
 			Click.waitForMenuToggleJSClick(
 				key_card = "Custom Masters Page Template",
-				locator1 = "LexiconCard#CARD_ELLIPSIS");
+				locator1 = "Card#CARD_ELLIPSIS");
 
 			AssertVisible(
 				key_menuItem = "Export",
@@ -61,8 +61,10 @@ definition {
 	}
 
 	@description = "This is a use case for LPS-102207. Can export a master page template containing the layout elements and nested elements and import."
-	@priority = "4"
+	@priority = "5"
 	test ExportImportMastersPageTemplateWithCompositionOfFragments {
+		property portal.acceptance = "true";
+
 		task ("Add a custom master") {
 			JSONLayoutpagetemplate.addMasterPageTemplateEntry(
 				groupName = "Test Site Name",
@@ -179,8 +181,10 @@ definition {
 	}
 
 	@description = "This is a use case for LPS-102207. Can export a master page template containing the custom configuration settings of fragments and import."
-	@priority = "4"
+	@priority = "5"
 	test ExportImportMastersPageTemplateWithCustomConfigurationSettingOfFragments {
+		property portal.acceptance = "true";
+
 		task ("Add a custom master") {
 			JSONLayoutpagetemplate.addMasterPageTemplateEntry(
 				groupName = "Test Site Name",
@@ -218,8 +222,8 @@ definition {
 			PageEditor.gotoStyle(fragmentName = "Heading");
 
 			PageEditor.configureFragment(
+				alignment = "Center",
 				marginBottom = "1",
-				textAlign = "Center",
 				textColor = "danger");
 
 			PageEditor.gotoConfiguration(fragmentName = "Heading");
@@ -705,7 +709,7 @@ definition {
 				checkboxName = "Overwrite Existing Page Templates",
 				locator1 = "Checkbox#ANY_CHECKBOX");
 
-			Click(locator1 = "Button#IMPORT");
+			Button.clickImport();
 
 			Alert.viewSuccessMessage();
 
@@ -735,7 +739,7 @@ definition {
 				locator1 = "TextInput#FILE",
 				value1 = "master-page-invalid-value.zip");
 
-			Click(locator1 = "Button#IMPORT");
+			Button.clickImport();
 		}
 
 		task ("Assert the specific error message is shown on Import popup") {

@@ -33,12 +33,12 @@ public class BaseFutureListener<T> implements FutureListener<T> {
 		try {
 			completeWithResult(future, future.get());
 		}
-		catch (Throwable t) {
-			if (t instanceof ExecutionException) {
-				t = t.getCause();
+		catch (Throwable throwable) {
+			if (throwable instanceof ExecutionException) {
+				throwable = throwable.getCause();
 			}
 
-			completeWithException(future, t);
+			completeWithException(future, throwable);
 		}
 	}
 

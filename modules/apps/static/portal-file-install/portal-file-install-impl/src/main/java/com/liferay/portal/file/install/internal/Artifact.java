@@ -31,12 +31,12 @@ public class Artifact {
 		return _checksum;
 	}
 
-	public FileInstaller getFileInstaller() {
-		return _fileInstaller;
+	public File getFile() {
+		return _file;
 	}
 
-	public File getPath() {
-		return _path;
+	public FileInstaller getFileInstaller() {
+		return _fileInstaller;
 	}
 
 	public void setBundleId(long bundleId) {
@@ -47,17 +47,17 @@ public class Artifact {
 		_checksum = checksum;
 	}
 
+	public void setFile(File file) {
+		_file = file;
+	}
+
 	public void setFileInstaller(FileInstaller fileInstaller) {
 		_fileInstaller = fileInstaller;
 	}
 
-	public void setPath(File path) {
-		_path = path;
-	}
-
 	private long _bundleId = -1;
 	private long _checksum;
+	private File _file;
 	private FileInstaller _fileInstaller;
-	private File _path;
 
 }

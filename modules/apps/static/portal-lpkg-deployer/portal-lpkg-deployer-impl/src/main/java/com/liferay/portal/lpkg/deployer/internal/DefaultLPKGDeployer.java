@@ -251,8 +251,8 @@ public class DefaultLPKGDeployer implements LPKGDeployer {
 		try {
 			_activate(bundleContext);
 		}
-		catch (Throwable t) {
-			_throwableCollector.collect(t);
+		catch (Throwable throwable) {
+			_throwableCollector.collect(throwable);
 		}
 	}
 

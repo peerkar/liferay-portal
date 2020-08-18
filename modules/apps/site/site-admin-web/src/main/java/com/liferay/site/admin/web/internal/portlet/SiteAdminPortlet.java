@@ -514,27 +514,27 @@ public class SiteAdminPortlet extends MVCPortlet {
 	}
 
 	@Override
-	protected boolean isSessionErrorException(Throwable cause) {
-		if (cause instanceof AssetCategoryException ||
-			cause instanceof AssetTagException ||
-			cause instanceof AuthException ||
-			cause instanceof DuplicateGroupException ||
-			cause instanceof GroupFriendlyURLException ||
-			cause instanceof GroupInheritContentException ||
-			cause instanceof GroupKeyException ||
-			cause instanceof GroupNameException ||
-			cause instanceof GroupParentException ||
-			cause instanceof LayoutSetVirtualHostException ||
-			cause instanceof LocaleException ||
-			cause instanceof NoSuchBackgroundTaskException ||
-			cause instanceof NoSuchLayoutSetException ||
-			cause instanceof PendingBackgroundTaskException ||
-			cause instanceof RemoteAuthException ||
-			cause instanceof RemoteExportException ||
-			cause instanceof RemoteOptionsException ||
-			cause instanceof RequiredGroupException ||
-			cause instanceof SystemException ||
-			super.isSessionErrorException(cause)) {
+	protected boolean isSessionErrorException(Throwable throwable) {
+		if (throwable instanceof AssetCategoryException ||
+			throwable instanceof AssetTagException ||
+			throwable instanceof AuthException ||
+			throwable instanceof DuplicateGroupException ||
+			throwable instanceof GroupFriendlyURLException ||
+			throwable instanceof GroupInheritContentException ||
+			throwable instanceof GroupKeyException ||
+			throwable instanceof GroupNameException ||
+			throwable instanceof GroupParentException ||
+			throwable instanceof LayoutSetVirtualHostException ||
+			throwable instanceof LocaleException ||
+			throwable instanceof NoSuchBackgroundTaskException ||
+			throwable instanceof NoSuchLayoutSetException ||
+			throwable instanceof PendingBackgroundTaskException ||
+			throwable instanceof RemoteAuthException ||
+			throwable instanceof RemoteExportException ||
+			throwable instanceof RemoteOptionsException ||
+			throwable instanceof RequiredGroupException ||
+			throwable instanceof SystemException ||
+			super.isSessionErrorException(throwable)) {
 
 			return true;
 		}
@@ -778,14 +778,14 @@ public class SiteAdminPortlet extends MVCPortlet {
 			active = ParamUtil.getBoolean(
 				actionRequest, "active", liveGroup.isActive());
 
-			UnicodeProperties unicodeProperties =
-				PropertiesParamUtil.getProperties(
-					actionRequest, "TypeSettingsProperties--");
-
-			Locale defaultLocale = LocaleUtil.fromLanguageId(
-				unicodeProperties.getProperty("languageId"));
-
 			if (!liveGroup.isGuest() && !liveGroup.isOrganization()) {
+				UnicodeProperties unicodeProperties =
+					PropertiesParamUtil.getProperties(
+						actionRequest, "TypeSettingsProperties--");
+
+				Locale defaultLocale = LocaleUtil.fromLanguageId(
+					unicodeProperties.getProperty("languageId"));
+
 				validateDefaultLocaleGroupName(nameMap, defaultLocale);
 			}
 

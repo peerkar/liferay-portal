@@ -460,18 +460,18 @@ public class LockLocalServiceTest {
 		private boolean _isExpectedException(
 			RuntimeException runtimeException) {
 
-			Throwable cause = runtimeException.getCause();
+			Throwable throwable = runtimeException.getCause();
 
 			DB db = DBManagerUtil.getDB();
 
 			if ((db.getDBType() == DBType.SYBASE) &&
-				(cause instanceof GenericJDBCException)) {
+				(throwable instanceof GenericJDBCException)) {
 
-				cause = cause.getCause();
+				throwable = throwable.getCause();
 
-				String message = cause.getMessage();
+				String message = throwable.getMessage();
 
-				if ((cause instanceof BatchUpdateException) &&
+				if ((throwable instanceof BatchUpdateException) &&
 					message.contains(
 						"Attempt to insert duplicate key row in object " +
 							"'Lock_' with unique index 'IX_228562AD'\n")) {

@@ -716,9 +716,10 @@ public class ExecutorIntrabandTest {
 			Assert.fail();
 		}
 		catch (ExecutionException executionException) {
-			Throwable cause = executionException.getCause();
+			Throwable throwable = executionException.getCause();
 
-			Assert.assertEquals(IllegalStateException.class, cause.getClass());
+			Assert.assertEquals(
+				IllegalStateException.class, throwable.getClass());
 		}
 
 		writingThread.join();

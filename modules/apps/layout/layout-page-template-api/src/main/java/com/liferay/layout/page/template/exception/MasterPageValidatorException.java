@@ -21,12 +21,12 @@ import com.liferay.portal.kernel.exception.PortalException;
  */
 public class MasterPageValidatorException extends PortalException {
 
-	public MasterPageValidatorException(String msg, Throwable cause) {
-		super(msg, cause);
+	public MasterPageValidatorException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public MasterPageValidatorException(Throwable cause) {
-		super(cause);
+	public MasterPageValidatorException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

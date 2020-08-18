@@ -26,12 +26,12 @@ public class NoSuchVirtualHostException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchVirtualHostException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchVirtualHostException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchVirtualHostException(Throwable cause) {
-		super(cause);
+	public NoSuchVirtualHostException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -277,7 +277,7 @@ public class JspAnalyzerPlugin implements AnalyzerPlugin {
 
 			clazz.parseClassFile();
 		}
-		catch (Throwable e) {
+		catch (Throwable throwable) {
 			return;
 		}
 

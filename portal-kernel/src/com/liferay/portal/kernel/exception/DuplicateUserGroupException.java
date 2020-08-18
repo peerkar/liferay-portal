@@ -26,12 +26,12 @@ public class DuplicateUserGroupException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateUserGroupException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateUserGroupException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateUserGroupException(Throwable cause) {
-		super(cause);
+	public DuplicateUserGroupException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

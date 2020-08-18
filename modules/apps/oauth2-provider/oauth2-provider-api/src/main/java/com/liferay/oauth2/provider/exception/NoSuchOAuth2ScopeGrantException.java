@@ -28,12 +28,12 @@ public class NoSuchOAuth2ScopeGrantException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchOAuth2ScopeGrantException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchOAuth2ScopeGrantException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchOAuth2ScopeGrantException(Throwable cause) {
-		super(cause);
+	public NoSuchOAuth2ScopeGrantException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -26,12 +26,12 @@ public class CountryA2Exception extends PortalException {
 		super(msg);
 	}
 
-	public CountryA2Exception(String msg, Throwable cause) {
-		super(msg, cause);
+	public CountryA2Exception(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public CountryA2Exception(Throwable cause) {
-		super(cause);
+	public CountryA2Exception(Throwable throwable) {
+		super(throwable);
 	}
 
 }

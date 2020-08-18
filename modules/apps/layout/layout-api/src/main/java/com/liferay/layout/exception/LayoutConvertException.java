@@ -28,12 +28,12 @@ public class LayoutConvertException extends PortalException {
 		super(msg);
 	}
 
-	public LayoutConvertException(String msg, Throwable cause) {
-		super(msg, cause);
+	public LayoutConvertException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public LayoutConvertException(Throwable cause) {
-		super(cause);
+	public LayoutConvertException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

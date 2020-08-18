@@ -182,7 +182,7 @@ public class ResourceActionLocalServiceImpl
 					resourceAction = resourceActionPersistence.update(
 						resourceAction);
 				}
-				catch (Throwable t) {
+				catch (Throwable throwable) {
 					resourceAction =
 						resourceActionLocalService.addResourceAction(
 							name, actionId, bitwiseValue);

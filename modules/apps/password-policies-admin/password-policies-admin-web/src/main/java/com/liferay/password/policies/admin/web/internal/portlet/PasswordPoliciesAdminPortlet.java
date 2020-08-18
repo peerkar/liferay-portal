@@ -266,12 +266,12 @@ public class PasswordPoliciesAdminPortlet extends MVCPortlet {
 	}
 
 	@Override
-	protected boolean isSessionErrorException(Throwable cause) {
-		if (cause instanceof DuplicatePasswordPolicyException ||
-			cause instanceof NoSuchPasswordPolicyException ||
-			cause instanceof PasswordPolicyNameException ||
-			cause instanceof PrincipalException ||
-			cause instanceof RequiredPasswordPolicyException) {
+	protected boolean isSessionErrorException(Throwable throwable) {
+		if (throwable instanceof DuplicatePasswordPolicyException ||
+			throwable instanceof NoSuchPasswordPolicyException ||
+			throwable instanceof PasswordPolicyNameException ||
+			throwable instanceof PrincipalException ||
+			throwable instanceof RequiredPasswordPolicyException) {
 
 			return true;
 		}

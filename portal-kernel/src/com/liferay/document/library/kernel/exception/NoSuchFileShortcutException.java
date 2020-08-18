@@ -28,12 +28,12 @@ public class NoSuchFileShortcutException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchFileShortcutException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchFileShortcutException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchFileShortcutException(Throwable cause) {
-		super(cause);
+	public NoSuchFileShortcutException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

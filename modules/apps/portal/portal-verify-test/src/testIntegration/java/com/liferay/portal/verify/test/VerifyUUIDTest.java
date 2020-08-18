@@ -234,8 +234,8 @@ public class VerifyUUIDTest extends BaseVerifyProcessTestCase {
 			try {
 				UnsafeConsumer.accept(callables, Callable<Void>::call);
 			}
-			catch (Throwable t) {
-				ReflectionUtil.throwException(t);
+			catch (Throwable throwable) {
+				ReflectionUtil.throwException(throwable);
 			}
 		}
 

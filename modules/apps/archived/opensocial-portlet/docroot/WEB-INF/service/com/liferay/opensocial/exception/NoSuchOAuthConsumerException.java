@@ -28,12 +28,12 @@ public class NoSuchOAuthConsumerException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchOAuthConsumerException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchOAuthConsumerException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchOAuthConsumerException(Throwable cause) {
-		super(cause);
+	public NoSuchOAuthConsumerException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

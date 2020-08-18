@@ -31,7 +31,7 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.journal.web.internal.asset.model.JournalArticleAssetRenderer;
 import com.liferay.journal.web.internal.configuration.JournalWebConfiguration;
-import com.liferay.journal.web.internal.configuration.util.FFImportExportTranslationConfigurationUtil;
+import com.liferay.journal.web.internal.configuration.util.FFTranslationWorkflowConfigurationUtil;
 import com.liferay.journal.web.internal.portlet.JournalPortlet;
 import com.liferay.journal.web.internal.security.permission.resource.JournalArticlePermission;
 import com.liferay.journal.web.internal.security.permission.resource.JournalFolderPermission;
@@ -144,7 +144,9 @@ public class JournalArticleActionDropdownItemsProvider {
 			() -> hasViewPermission && (previewContentArticleAction != null),
 			previewContentArticleAction
 		).add(
-			() -> importExportTranslationEnabled,
+			() ->
+				importExportTranslationEnabled &&
+				FFTranslationWorkflowConfigurationUtil.enabled(),
 			_getTranslateActionUnsafeConsumer()
 		).add(
 			() -> importExportTranslationEnabled,
@@ -783,9 +785,7 @@ public class JournalArticleActionDropdownItemsProvider {
 	private boolean _isImportExportTranslationEnabled(
 		boolean hasViewPermission) {
 
-		if (hasViewPermission &&
-			FFImportExportTranslationConfigurationUtil.enabled()) {
-
+		if (hasViewPermission) {
 			Set<Locale> availableLocales = LanguageUtil.getAvailableLocales(
 				_themeDisplay.getSiteGroupId());
 

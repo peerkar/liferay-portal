@@ -29,12 +29,12 @@ public class RequiredNodeException extends PortalException {
 		super(msg);
 	}
 
-	public RequiredNodeException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RequiredNodeException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public RequiredNodeException(Throwable cause) {
-		super(cause);
+	public RequiredNodeException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

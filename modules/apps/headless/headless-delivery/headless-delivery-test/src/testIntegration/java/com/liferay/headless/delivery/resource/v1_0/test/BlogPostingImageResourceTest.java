@@ -58,8 +58,8 @@ public class BlogPostingImageResourceTest
 
 			Assert.fail();
 		}
-		catch (Throwable e) {
-			Assert.assertTrue(e instanceof Problem.ProblemException);
+		catch (Throwable throwable) {
+			Assert.assertTrue(throwable instanceof Problem.ProblemException);
 		}
 
 		folder = BlogsEntryLocalServiceUtil.fetchAttachmentsFolder(

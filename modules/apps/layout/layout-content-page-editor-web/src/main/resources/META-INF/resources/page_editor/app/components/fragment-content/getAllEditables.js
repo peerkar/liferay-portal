@@ -40,7 +40,7 @@ export default function getAllEditables(fragmentElement) {
 				editableId,
 				editableValueNamespace: EDITABLE_FRAGMENT_ENTRY_PROCESSOR,
 				element: fragmentElement.querySelector(
-					`lfr-editable#${editableId}`
+					`lfr-editable[id="${editableId}"]`
 				),
 				processor: Processors[type] || Processors.fallback,
 				type,

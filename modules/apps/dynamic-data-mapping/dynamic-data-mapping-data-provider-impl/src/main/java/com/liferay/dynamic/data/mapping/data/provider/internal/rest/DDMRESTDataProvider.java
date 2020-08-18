@@ -88,11 +88,11 @@ public class DDMRESTDataProvider implements DDMDataProvider {
 			return doGetData(ddmDataProviderRequest);
 		}
 		catch (HttpException httpException) {
-			Throwable cause = httpException.getCause();
+			Throwable throwable = httpException.getCause();
 
-			if (cause instanceof ConnectException) {
+			if (throwable instanceof ConnectException) {
 				if (_log.isWarnEnabled()) {
-					_log.warn(cause, cause);
+					_log.warn(throwable, throwable);
 				}
 
 				DDMDataProviderResponse.Builder builder =

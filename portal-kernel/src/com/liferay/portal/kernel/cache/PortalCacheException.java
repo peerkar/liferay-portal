@@ -26,12 +26,12 @@ public class PortalCacheException extends RuntimeException {
 		super(msg);
 	}
 
-	public PortalCacheException(String msg, Throwable cause) {
-		super(msg, cause);
+	public PortalCacheException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public PortalCacheException(Throwable cause) {
-		super(cause);
+	public PortalCacheException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

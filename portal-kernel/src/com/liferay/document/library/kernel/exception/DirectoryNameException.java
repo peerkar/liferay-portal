@@ -28,12 +28,12 @@ public class DirectoryNameException extends PortalException {
 		super(msg);
 	}
 
-	public DirectoryNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DirectoryNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DirectoryNameException(Throwable cause) {
-		super(cause);
+	public DirectoryNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

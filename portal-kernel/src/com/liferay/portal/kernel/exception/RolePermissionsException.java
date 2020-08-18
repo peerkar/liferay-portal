@@ -26,12 +26,12 @@ public class RolePermissionsException extends PortalException {
 		super(msg);
 	}
 
-	public RolePermissionsException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RolePermissionsException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public RolePermissionsException(Throwable cause) {
-		super(cause);
+	public RolePermissionsException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

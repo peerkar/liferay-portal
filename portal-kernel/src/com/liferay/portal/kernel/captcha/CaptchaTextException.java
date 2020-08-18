@@ -26,12 +26,12 @@ public class CaptchaTextException extends CaptchaException {
 		super(msg);
 	}
 
-	public CaptchaTextException(String msg, Throwable cause) {
-		super(msg, cause);
+	public CaptchaTextException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public CaptchaTextException(Throwable cause) {
-		super(cause);
+	public CaptchaTextException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

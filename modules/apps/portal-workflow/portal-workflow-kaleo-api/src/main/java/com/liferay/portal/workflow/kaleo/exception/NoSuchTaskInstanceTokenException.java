@@ -28,12 +28,12 @@ public class NoSuchTaskInstanceTokenException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchTaskInstanceTokenException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchTaskInstanceTokenException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchTaskInstanceTokenException(Throwable cause) {
-		super(cause);
+	public NoSuchTaskInstanceTokenException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

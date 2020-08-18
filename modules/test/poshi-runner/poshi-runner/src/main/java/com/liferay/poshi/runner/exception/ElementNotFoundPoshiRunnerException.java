@@ -26,12 +26,14 @@ public class ElementNotFoundPoshiRunnerException extends RuntimeException {
 		super(msg);
 	}
 
-	public ElementNotFoundPoshiRunnerException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ElementNotFoundPoshiRunnerException(
+		String msg, Throwable throwable) {
+
+		super(msg, throwable);
 	}
 
-	public ElementNotFoundPoshiRunnerException(Throwable cause) {
-		super(cause);
+	public ElementNotFoundPoshiRunnerException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

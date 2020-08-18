@@ -62,6 +62,7 @@ ContentDashboardAdminManagementToolbarDisplayContext contentDashboardAdminManage
 
 				<div class="sheet-section">
 					<liferay-ui:search-container
+						cssClass="table-hover"
 						id="content"
 						searchContainer="<%= contentDashboardAdminDisplayContext.getSearchContainer() %>"
 					>
@@ -70,6 +71,19 @@ ContentDashboardAdminManagementToolbarDisplayContext contentDashboardAdminManage
 							keyProperty="id"
 							modelVar="contentDashboardItem"
 						>
+
+							<%
+							InfoItemReference infoItemReference = contentDashboardItem.getInfoItemReference();
+
+							String rowId = String.valueOf(infoItemReference.getClassPK());
+
+							row.setData(
+								HashMapBuilder.<String, Object>put(
+									"rowId", row.getRowId()
+								).build());
+							row.setRowId(rowId);
+							%>
+
 							<liferay-ui:search-container-column-text
 								cssClass="table-cell-expand table-title"
 								name="title"
@@ -97,7 +111,7 @@ ContentDashboardAdminManagementToolbarDisplayContext contentDashboardAdminManage
 								cssClass="text-center"
 								name="author"
 							>
-								<span class="lfr-portal-tooltip" title="<%= HtmlUtil.escape(contentDashboardItem.getUserName()) %>">
+								<span class="lfr-portal-tooltip" title="<%= HtmlUtil.escape(String.valueOf(contentDashboardItem.getDisplayFieldValue("authorName", locale))) %>">
 									<liferay-ui:user-portrait
 										userId="<%= contentDashboardItem.getUserId() %>"
 									/>

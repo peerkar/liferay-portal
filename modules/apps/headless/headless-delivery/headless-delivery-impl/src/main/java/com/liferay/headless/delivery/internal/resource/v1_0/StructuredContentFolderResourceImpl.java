@@ -16,7 +16,7 @@ package com.liferay.headless.delivery.internal.resource.v1_0;
 
 import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
 import com.liferay.expando.kernel.service.ExpandoTableLocalService;
-import com.liferay.headless.common.spi.service.context.ServiceContextUtil;
+import com.liferay.headless.common.spi.service.context.ServiceContextRequestUtil;
 import com.liferay.headless.delivery.dto.v1_0.StructuredContentFolder;
 import com.liferay.headless.delivery.internal.dto.v1_0.converter.StructuredContentFolderDTOConverter;
 import com.liferay.headless.delivery.internal.dto.v1_0.util.CustomFieldsUtil;
@@ -71,6 +71,19 @@ public class StructuredContentFolderResourceImpl
 		throws Exception {
 
 		_journalFolderService.deleteFolder(structuredContentFolderId);
+	}
+
+	@Override
+	public Page<StructuredContentFolder>
+			getAssetLibraryStructuredContentFoldersPage(
+				Long assetLibraryId, Boolean flatten, String search,
+				Aggregation aggregation, Filter filter, Pagination pagination,
+				Sort[] sorts)
+		throws Exception {
+
+		return getSiteStructuredContentFoldersPage(
+			assetLibraryId, flatten, search, aggregation, filter, pagination,
+			sorts);
 	}
 
 	@Override
@@ -159,6 +172,16 @@ public class StructuredContentFolderResourceImpl
 	}
 
 	@Override
+	public StructuredContentFolder postAssetLibraryStructuredContentFolder(
+			Long assetLibraryId,
+			StructuredContentFolder structuredContentFolder)
+		throws Exception {
+
+		return postSiteStructuredContentFolder(
+			assetLibraryId, structuredContentFolder);
+	}
+
+	@Override
 	public StructuredContentFolder postSiteStructuredContentFolder(
 			Long siteId, StructuredContentFolder structuredContentFolder)
 		throws Exception {
@@ -198,9 +221,9 @@ public class StructuredContentFolderResourceImpl
 				journalFolder.getParentFolderId(),
 				structuredContentFolder.getName(),
 				structuredContentFolder.getDescription(), false,
-				ServiceContextUtil.createServiceContext(
+				ServiceContextRequestUtil.createServiceContext(
 					_getExpandoBridgeAttributes(structuredContentFolder),
-					journalFolder.getGroupId(),
+					journalFolder.getGroupId(), contextHttpServletRequest,
 					structuredContentFolder.getViewableByAsString())));
 	}
 
@@ -237,9 +260,10 @@ public class StructuredContentFolderResourceImpl
 			_journalFolderService.addFolder(
 				siteId, parentFolderId, structuredContentFolder.getName(),
 				structuredContentFolder.getDescription(),
-				ServiceContextUtil.createServiceContext(
+				ServiceContextRequestUtil.createServiceContext(
 					_getExpandoBridgeAttributes(structuredContentFolder),
-					siteId, structuredContentFolder.getViewableByAsString())));
+					siteId, contextHttpServletRequest,
+					structuredContentFolder.getViewableByAsString())));
 	}
 
 	private Map<String, Serializable> _getExpandoBridgeAttributes(

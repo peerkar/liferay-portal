@@ -26,12 +26,12 @@ public class PortletActiveException extends PortalException {
 		super(msg);
 	}
 
-	public PortletActiveException(String msg, Throwable cause) {
-		super(msg, cause);
+	public PortletActiveException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public PortletActiveException(Throwable cause) {
-		super(cause);
+	public PortletActiveException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -18,6 +18,7 @@ import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.model.AssetTag;
 import com.liferay.content.dashboard.item.action.ContentDashboardItemAction;
 import com.liferay.content.dashboard.web.internal.item.type.ContentDashboardItemType;
+import com.liferay.info.item.InfoItemReference;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 
@@ -41,10 +42,6 @@ public interface ContentDashboardItem<T> {
 
 	public List<Locale> getAvailableLocales();
 
-	public String getClassName();
-
-	public Long getClassPK();
-
 	public List<ContentDashboardItemAction> getContentDashboardItemActions(
 		HttpServletRequest httpServletRequest,
 		ContentDashboardItemAction.Type... types);
@@ -57,21 +54,17 @@ public interface ContentDashboardItem<T> {
 
 	public Locale getDefaultLocale();
 
-	public Date getExpirationDate();
+	public Object getDisplayFieldValue(String fieldName, Locale locale);
+
+	public InfoItemReference getInfoItemReference();
 
 	public Date getModifiedDate();
-
-	public Date getPublishDate();
 
 	public String getScopeName(Locale locale);
 
 	public String getTitle(Locale locale);
 
 	public long getUserId();
-
-	public String getUserName();
-
-	public String getUserPortraitURL(HttpServletRequest httpServletRequest);
 
 	public List<Version> getVersions(Locale locale);
 

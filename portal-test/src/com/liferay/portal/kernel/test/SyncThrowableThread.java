@@ -39,8 +39,8 @@ public class SyncThrowableThread<V> extends Thread {
 
 			return _futureTask.get();
 		}
-		catch (Throwable t) {
-			return ReflectionUtil.throwException(t);
+		catch (Throwable throwable) {
+			return ReflectionUtil.throwException(throwable);
 		}
 	}
 

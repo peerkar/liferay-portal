@@ -45,8 +45,8 @@ public class RequiredLocaleException extends PortalException {
 		_messageKey = messageKey;
 	}
 
-	public RequiredLocaleException(Throwable cause) {
-		super(cause);
+	public RequiredLocaleException(Throwable throwable) {
+		super(throwable);
 	}
 
 	public String[] getMessageArguments() {

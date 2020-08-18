@@ -28,12 +28,12 @@ public class XmlRpcException extends PortalException {
 		super(msg);
 	}
 
-	public XmlRpcException(String msg, Throwable cause) {
-		super(msg, cause);
+	public XmlRpcException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public XmlRpcException(Throwable cause) {
-		super(cause);
+	public XmlRpcException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

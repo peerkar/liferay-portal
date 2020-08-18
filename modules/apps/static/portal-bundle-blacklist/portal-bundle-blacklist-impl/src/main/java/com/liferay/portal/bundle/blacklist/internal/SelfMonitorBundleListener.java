@@ -74,8 +74,8 @@ public class SelfMonitorBundleListener implements BundleListener {
 					uninstalledBundleData.getLocation(),
 					uninstalledBundleData.getStartLevel());
 			}
-			catch (Throwable t) {
-				ReflectionUtil.throwException(t);
+			catch (Throwable throwable) {
+				ReflectionUtil.throwException(throwable);
 			}
 		}
 

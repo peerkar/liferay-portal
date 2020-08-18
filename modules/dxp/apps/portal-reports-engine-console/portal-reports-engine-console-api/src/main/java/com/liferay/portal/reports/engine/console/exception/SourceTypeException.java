@@ -28,12 +28,12 @@ public class SourceTypeException extends PortalException {
 		super(msg);
 	}
 
-	public SourceTypeException(String msg, Throwable cause) {
-		super(msg, cause);
+	public SourceTypeException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public SourceTypeException(Throwable cause) {
-		super(cause);
+	public SourceTypeException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

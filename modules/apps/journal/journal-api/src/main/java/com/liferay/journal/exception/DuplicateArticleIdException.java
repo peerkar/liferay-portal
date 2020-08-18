@@ -28,12 +28,12 @@ public class DuplicateArticleIdException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateArticleIdException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateArticleIdException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateArticleIdException(Throwable cause) {
-		super(cause);
+	public DuplicateArticleIdException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

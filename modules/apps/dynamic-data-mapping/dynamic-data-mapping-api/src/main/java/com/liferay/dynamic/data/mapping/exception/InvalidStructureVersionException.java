@@ -28,12 +28,12 @@ public class InvalidStructureVersionException extends PortalException {
 		super(msg);
 	}
 
-	public InvalidStructureVersionException(String msg, Throwable cause) {
-		super(msg, cause);
+	public InvalidStructureVersionException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public InvalidStructureVersionException(Throwable cause) {
-		super(cause);
+	public InvalidStructureVersionException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

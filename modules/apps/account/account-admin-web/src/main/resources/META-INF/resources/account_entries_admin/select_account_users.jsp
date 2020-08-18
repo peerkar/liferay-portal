@@ -71,20 +71,21 @@ String eventName = ParamUtil.getString(request, "eventName", liferayPortletRespo
 
 			<c:if test="<%= selectAccountUsersManagementToolbarDisplayContext.isSingleSelect() %>">
 				<liferay-ui:search-container-column-text>
-
-					<%
-					Map<String, Object> data = HashMapBuilder.<String, Object>put(
-						"emailaddress", accountUserDisplay.getEmailAddress()
-					).put(
-						"entityid", accountUserDisplay.getUserId()
-					).put(
-						"entityname", accountUserDisplay.getName()
-					).put(
-						"jobtitle", accountUserDisplay.getJobTitle()
-					).build();
-					%>
-
-					<aui:button cssClass="choose-user selector-button" data="<%= data %>" value="choose" />
+					<aui:button
+						cssClass="choose-user selector-button"
+						data='<%=
+							HashMapBuilder.<String, Object>put(
+								"emailaddress", accountUserDisplay.getEmailAddress()
+							).put(
+								"entityid", accountUserDisplay.getUserId()
+							).put(
+								"entityname", accountUserDisplay.getName()
+							).put(
+								"jobtitle", accountUserDisplay.getJobTitle()
+							).build()
+						%>'
+						value="choose"
+					/>
 				</liferay-ui:search-container-column-text>
 			</c:if>
 		</liferay-ui:search-container-row>

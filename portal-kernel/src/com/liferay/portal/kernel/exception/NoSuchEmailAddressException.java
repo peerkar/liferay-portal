@@ -26,12 +26,12 @@ public class NoSuchEmailAddressException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchEmailAddressException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchEmailAddressException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchEmailAddressException(Throwable cause) {
-		super(cause);
+	public NoSuchEmailAddressException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

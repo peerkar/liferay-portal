@@ -13,7 +13,7 @@
  */
 
 import ClayLayout from '@clayui/layout';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 
 import CollectionService from '../../services/CollectionService';
 import {useDispatch, useSelector} from '../../store/index';
@@ -59,61 +59,72 @@ const NotCollectionSelectedMessage = () => (
 const Grid = ({
 	child,
 	collection,
-	collectionFields,
+	collectionConfig,
 	collectionId,
 	collectionLength,
-	numberOfColumns,
-	numberOfItems,
 }) => {
-	const maxNumberOfItems = Math.min(collectionLength, numberOfItems);
-	const numberOfRows = Math.ceil(maxNumberOfItems / numberOfColumns);
+	const maxNumberOfItems = Math.min(
+		collectionLength,
+		collectionConfig.numberOfItems
+	);
+	const numberOfRows = Math.ceil(
+		maxNumberOfItems / collectionConfig.numberOfColumns
+	);
 
-	const createRows = () => {
-		const rows = [];
+	return Array.from({length: numberOfRows}).map((_, i) => (
+		<ClayLayout.Row key={`row-${i}`}>
+			{Array.from({length: collectionConfig.numberOfColumns}).map(
+				(_, j) => {
+					const key = `col-${i}-${j}`;
+					const index = i * collectionConfig.numberOfColumns + j;
 
-		for (let i = 0; i < numberOfRows; i++) {
-			const columns = [];
+					return (
+						<ClayLayout.Col
+							key={key}
+							size={12 / collectionConfig.numberOfColumns}
+						>
+							{index < maxNumberOfItems && (
+								<ColumnContext
+									collectionConfig={collectionConfig}
+									collectionId={collectionId}
+									collectionItem={collection[index]}
+									index={index}
+								>
+									{React.cloneElement(child)}
+								</ColumnContext>
+							)}
+						</ClayLayout.Col>
+					);
+				}
+			)}
+		</ClayLayout.Row>
+	));
+};
 
-			for (let j = 0; j < numberOfColumns; j++) {
-				const index = [i, j].join('-');
-				const itemCount = i * numberOfColumns + j;
+const ColumnContext = ({
+	children,
+	collectionConfig,
+	collectionId,
+	collectionItem,
+	index,
+}) => {
+	const contextValue = useMemo(
+		() => ({
+			collectionConfig,
+			collectionItem,
+			collectionItemIndex: index,
+			fromControlsId: index === 0 ? null : fromControlsId,
+			toControlsId:
+				index === 0 ? null : getToControlsId(collectionId, index),
+		}),
+		[collectionConfig, collectionId, collectionItem, index]
+	);
 
-				columns.push(
-					<ClayLayout.Col key={index} size={12 / numberOfColumns}>
-						{itemCount < maxNumberOfItems && (
-							<CollectionItemContextProvider
-								key={index}
-								value={{
-									collectionFields,
-									collectionItem:
-										collection[i * numberOfColumns + j],
-									collectionItemIndex:
-										i * numberOfColumns + j,
-									fromControlsId:
-										itemCount === 0 ? null : fromControlsId,
-									toControlsId:
-										itemCount === 0
-											? null
-											: getToControlsId(
-													collectionId,
-													index
-											  ),
-								}}
-							>
-								{React.cloneElement(child)}
-							</CollectionItemContextProvider>
-						)}
-					</ClayLayout.Col>
-				);
-			}
-
-			rows.push(<ClayLayout.Row key={i}>{columns}</ClayLayout.Row>);
-		}
-
-		return rows;
-	};
-
-	return createRows();
+	return (
+		<CollectionItemContextProvider value={contextValue}>
+			{children}
+		</CollectionItemContextProvider>
+	);
 };
 
 const DEFAULT_COLLECTION = {
@@ -165,26 +176,6 @@ const Collection = React.forwardRef(({children, item}, ref) => {
 		segmentsExperienceId,
 	]);
 
-	const [collectionFields, setCollectionFields] = useState([]);
-
-	useEffect(() => {
-		if (collectionConfig.collection) {
-			CollectionService.getCollectionMappingFields({
-				itemSubtype: collectionConfig.collection.itemSubtype || '',
-				itemType: collectionConfig.collection.itemType,
-				onNetworkStatus: dispatch,
-			})
-				.then((response) => {
-					setCollectionFields(response);
-				})
-				.catch((error) => {
-					if (process.env.NODE_ENV === 'development') {
-						console.error(error);
-					}
-				});
-		}
-	}, [dispatch, collectionConfig.collection]);
-
 	return (
 		<div className="page-editor__collection" ref={ref}>
 			{!collectionIsMapped(collectionConfig) ? (
@@ -195,11 +186,9 @@ const Collection = React.forwardRef(({children, item}, ref) => {
 				<Grid
 					child={child}
 					collection={collection.items}
-					collectionFields={collectionFields}
+					collectionConfig={collectionConfig}
 					collectionId={item.itemId}
 					collectionLength={collection.items.length}
-					numberOfColumns={collectionConfig.numberOfColumns}
-					numberOfItems={collectionConfig.numberOfItems}
 				/>
 			)}
 		</div>

@@ -47,14 +47,9 @@ boolean showStripeMessage = workflowDefinitionLinkDisplayContext.showStripeMessa
 			className="com.liferay.portal.workflow.web.internal.search.WorkflowDefinitionLinkSearchEntry"
 			modelVar="workflowDefinitionLinkSearchEntry"
 		>
-
-			<%
-			String randomNamespace = StringUtil.randomString(8) + StringPool.UNDERLINE;
-			%>
-
 			<liferay-ui:search-container-row-parameter
 				name="randomNamespace"
-				value="<%= randomNamespace %>"
+				value="<%= StringUtil.randomString(8) + StringPool.UNDERLINE %>"
 			/>
 
 			<liferay-ui:search-container-row-parameter

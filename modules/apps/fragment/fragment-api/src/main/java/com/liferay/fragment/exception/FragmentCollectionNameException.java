@@ -28,12 +28,12 @@ public class FragmentCollectionNameException extends PortalException {
 		super(msg);
 	}
 
-	public FragmentCollectionNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public FragmentCollectionNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public FragmentCollectionNameException(Throwable cause) {
-		super(cause);
+	public FragmentCollectionNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

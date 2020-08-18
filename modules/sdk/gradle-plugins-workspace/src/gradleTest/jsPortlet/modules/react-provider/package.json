@@ -1,0 +1,21 @@
+{
+	"dependencies": {
+		"highcharts": "7.1.1",
+		"prop-types": "15.6.2",
+		"react": "16.8.6",
+		"react-dom": "16.8.6",
+		"react-jsx-highcharts": "3.5.0"
+	},
+	"description": "React Provider",
+	"devDependencies": {
+		"liferay-npm-build-support": "^2.8.0",
+		"liferay-npm-bundler": "^2.8.0"
+	},
+	"name": "react-provider",
+	"scripts": {
+		"build": "npm run copy-assets && liferay-npm-bundler",
+		"copy-assets": "lnbs-copy-assets",
+		"deploy": "npm run build && lnbs-deploy"
+	},
+	"version": "1.0.0"
+}

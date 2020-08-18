@@ -194,8 +194,6 @@ public class LiferayVideoConverter extends LiferayConverter {
 
 			int streamIndex = inputIPacket.getStreamIndex();
 
-			IStreamCoder inputIStreamCoder = inputIStreamCoders[streamIndex];
-
 			IStreamCoder outputIStreamCoder = outputIStreamCoders[streamIndex];
 
 			if (outputIStreamCoder == null) {
@@ -205,6 +203,8 @@ public class LiferayVideoConverter extends LiferayConverter {
 			IStream iStream = _inputIContainer.getStream(streamIndex);
 
 			long timeStampOffset = getStreamTimeStampOffset(iStream);
+
+			IStreamCoder inputIStreamCoder = inputIStreamCoders[streamIndex];
 
 			if (inputIStreamCoder.getCodecType() ==
 					ICodec.Type.CODEC_TYPE_AUDIO) {

@@ -44,14 +44,14 @@ public class LARTypeException extends PortalException {
 		_type = type;
 	}
 
-	public LARTypeException(int type, String msg, Throwable cause) {
-		this(msg, cause);
+	public LARTypeException(int type, String msg, Throwable throwable) {
+		this(msg, throwable);
 
 		_type = type;
 	}
 
-	public LARTypeException(int type, Throwable cause) {
-		this(cause);
+	public LARTypeException(int type, Throwable throwable) {
+		this(throwable);
 
 		_type = type;
 	}
@@ -65,12 +65,12 @@ public class LARTypeException extends PortalException {
 		_expectedLARTypes = expectedLARTypes;
 	}
 
-	public LARTypeException(String msg, Throwable cause) {
-		super(msg, cause);
+	public LARTypeException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public LARTypeException(Throwable cause) {
-		super(cause);
+	public LARTypeException(Throwable throwable) {
+		super(throwable);
 	}
 
 	public String getActualLARType() {

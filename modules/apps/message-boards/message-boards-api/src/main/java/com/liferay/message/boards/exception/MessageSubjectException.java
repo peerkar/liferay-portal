@@ -28,12 +28,12 @@ public class MessageSubjectException extends PortalException {
 		super(msg);
 	}
 
-	public MessageSubjectException(String msg, Throwable cause) {
-		super(msg, cause);
+	public MessageSubjectException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public MessageSubjectException(Throwable cause) {
-		super(cause);
+	public MessageSubjectException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -26,12 +26,12 @@ public class DuplicateTeamException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateTeamException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateTeamException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateTeamException(Throwable cause) {
-		super(cause);
+	public DuplicateTeamException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

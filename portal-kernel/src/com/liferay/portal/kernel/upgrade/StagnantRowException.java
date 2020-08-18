@@ -25,8 +25,8 @@ public class StagnantRowException extends PortalException {
 		super(msg);
 	}
 
-	public StagnantRowException(String msg, Throwable cause) {
-		super(msg, cause);
+	public StagnantRowException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
 }

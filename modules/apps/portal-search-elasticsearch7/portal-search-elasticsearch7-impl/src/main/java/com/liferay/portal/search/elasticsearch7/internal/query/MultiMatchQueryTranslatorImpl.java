@@ -18,7 +18,6 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.query.MultiMatchQuery;
 
 import java.util.Map;
-import java.util.Set;
 
 import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
@@ -38,11 +37,8 @@ public class MultiMatchQueryTranslatorImpl
 
 	@Override
 	public QueryBuilder translate(MultiMatchQuery multiMatchQuery) {
-		Set<String> fields = multiMatchQuery.getFields();
-
 		MultiMatchQueryBuilder multiMatchQueryBuilder =
-			QueryBuilders.multiMatchQuery(
-				multiMatchQuery.getValue(), fields.toArray(new String[0]));
+			QueryBuilders.multiMatchQuery(multiMatchQuery.getValue());
 
 		if (Validator.isNotNull(multiMatchQuery.getAnalyzer())) {
 			multiMatchQueryBuilder.analyzer(multiMatchQuery.getAnalyzer());
@@ -55,7 +51,17 @@ public class MultiMatchQueryTranslatorImpl
 
 		Map<String, Float> fieldsBoosts = multiMatchQuery.getFieldsBoosts();
 
-		fieldsBoosts.forEach(multiMatchQueryBuilder::field);
+		for (Map.Entry<String, Float> entry : fieldsBoosts.entrySet()) {
+			Float boost = entry.getValue();
+			String field = entry.getKey();
+
+			if (boost == null) {
+				multiMatchQueryBuilder.field(field);
+			}
+			else {
+				multiMatchQueryBuilder.field(field, boost);
+			}
+		}
 
 		if (multiMatchQuery.getFuzziness() != null) {
 			multiMatchQueryBuilder.fuzziness(

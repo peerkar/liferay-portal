@@ -119,6 +119,7 @@ Group group = siteAdministrationPanelCategoryDisplayContext.getGroup();
 	PortletURL portletURL = PortletURLFactoryUtil.create(request, ProductNavigationProductMenuPortletKeys.PRODUCT_NAVIGATION_PRODUCT_MENU, RenderRequest.RENDER_PHASE);
 
 	portletURL.setParameter("mvcPath", "/portlet/pages_tree.jsp");
+	portletURL.setParameter("redirect", themeDisplay.getURLCurrent());
 	portletURL.setParameter("selPpid", portletDisplay.getId());
 	portletURL.setWindowState(LiferayWindowState.EXCLUSIVE);
 	%>

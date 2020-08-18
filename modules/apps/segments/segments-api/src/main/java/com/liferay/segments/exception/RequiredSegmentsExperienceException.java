@@ -28,12 +28,14 @@ public class RequiredSegmentsExperienceException extends PortalException {
 		super(msg);
 	}
 
-	public RequiredSegmentsExperienceException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RequiredSegmentsExperienceException(
+		String msg, Throwable throwable) {
+
+		super(msg, throwable);
 	}
 
-	public RequiredSegmentsExperienceException(Throwable cause) {
-		super(cause);
+	public RequiredSegmentsExperienceException(Throwable throwable) {
+		super(throwable);
 	}
 
 	public static class

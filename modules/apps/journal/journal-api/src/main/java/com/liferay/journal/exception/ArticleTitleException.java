@@ -29,12 +29,12 @@ public class ArticleTitleException extends PortalException {
 		super(msg);
 	}
 
-	public ArticleTitleException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ArticleTitleException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ArticleTitleException(Throwable cause) {
-		super(cause);
+	public ArticleTitleException(Throwable throwable) {
+		super(throwable);
 	}
 
 	public static class MustNotExceedMaximumLength

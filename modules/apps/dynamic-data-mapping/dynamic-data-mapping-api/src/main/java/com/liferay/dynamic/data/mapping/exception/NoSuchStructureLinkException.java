@@ -28,12 +28,12 @@ public class NoSuchStructureLinkException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchStructureLinkException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchStructureLinkException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchStructureLinkException(Throwable cause) {
-		super(cause);
+	public NoSuchStructureLinkException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

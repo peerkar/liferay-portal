@@ -57,9 +57,9 @@ public class DispatchIoHandler implements IoHandler {
 	}
 
 	@Override
-	public void exceptionCaught(IoSession ioSession, Throwable cause) {
+	public void exceptionCaught(IoSession ioSession, Throwable throwable) {
 		if (_log.isDebugEnabled()) {
-			_log.debug(cause, cause);
+			_log.debug(throwable, throwable);
 		}
 	}
 

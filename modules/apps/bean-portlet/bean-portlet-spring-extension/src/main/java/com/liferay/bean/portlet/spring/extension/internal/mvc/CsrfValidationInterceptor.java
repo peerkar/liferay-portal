@@ -92,14 +92,14 @@ public class CsrfValidationInterceptor extends BeanPortletMethodInterceptor {
 				ClientDataRequest clientDataRequest =
 					(ClientDataRequest)args[0];
 
-				ThemeDisplay themeDisplay =
-					(ThemeDisplay)clientDataRequest.getAttribute(
-						WebKeys.THEME_DISPLAY);
-
 				String method = StringUtil.toLowerCase(
 					clientDataRequest.getMethod());
 
 				if (method.equals("post")) {
+					ThemeDisplay themeDisplay =
+						(ThemeDisplay)clientDataRequest.getAttribute(
+							WebKeys.THEME_DISPLAY);
+
 					try {
 						AuthTokenUtil.checkCSRFToken(
 							themeDisplay.getRequest(),

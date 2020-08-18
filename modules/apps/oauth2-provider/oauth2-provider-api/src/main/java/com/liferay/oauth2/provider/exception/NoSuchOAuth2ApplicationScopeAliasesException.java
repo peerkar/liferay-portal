@@ -30,13 +30,13 @@ public class NoSuchOAuth2ApplicationScopeAliasesException
 	}
 
 	public NoSuchOAuth2ApplicationScopeAliasesException(
-		String msg, Throwable cause) {
+		String msg, Throwable throwable) {
 
-		super(msg, cause);
+		super(msg, throwable);
 	}
 
-	public NoSuchOAuth2ApplicationScopeAliasesException(Throwable cause) {
-		super(cause);
+	public NoSuchOAuth2ApplicationScopeAliasesException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

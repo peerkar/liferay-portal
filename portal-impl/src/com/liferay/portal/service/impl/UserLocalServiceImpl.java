@@ -5015,9 +5015,9 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 		catch (ModelListenerException modelListenerException) {
 			Throwable throwable = modelListenerException.getCause();
 
-			String msg = GetterUtil.getString(throwable.getMessage());
-
 			if (LDAPSettingsUtil.isPasswordPolicyEnabled(user.getCompanyId())) {
+				String msg = GetterUtil.getString(throwable.getMessage());
+
 				String[] errorPasswordHistoryKeywords =
 					LDAPSettingsUtil.getErrorPasswordHistoryKeywords(
 						user.getCompanyId());

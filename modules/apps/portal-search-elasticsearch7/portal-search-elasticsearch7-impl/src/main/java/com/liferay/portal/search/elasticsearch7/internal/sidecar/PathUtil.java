@@ -64,9 +64,14 @@ public class PathUtil {
 							Path dir, IOException ioException)
 						throws IOException {
 
+						FileTime fileTime = fileTimes.remove(dir);
+
+						if (fileTime == null) {
+							return FileVisitResult.CONTINUE;
+						}
+
 						Files.setLastModifiedTime(
-							toPath.resolve(fromPath.relativize(dir)),
-							fileTimes.remove(dir));
+							toPath.resolve(fromPath.relativize(dir)), fileTime);
 
 						return FileVisitResult.CONTINUE;
 					}

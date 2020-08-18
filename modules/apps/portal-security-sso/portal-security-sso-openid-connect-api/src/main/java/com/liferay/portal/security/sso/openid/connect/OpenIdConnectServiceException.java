@@ -25,8 +25,8 @@ public class OpenIdConnectServiceException extends PortalException {
 		super(msg);
 	}
 
-	public OpenIdConnectServiceException(String msg, Throwable cause) {
-		super(msg, cause);
+	public OpenIdConnectServiceException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
 	public static class AuthenticationException
@@ -36,8 +36,8 @@ public class OpenIdConnectServiceException extends PortalException {
 			super(msg);
 		}
 
-		public AuthenticationException(String msg, Throwable cause) {
-			super(msg, cause);
+		public AuthenticationException(String msg, Throwable throwable) {
+			super(msg, throwable);
 		}
 
 	}
@@ -49,8 +49,10 @@ public class OpenIdConnectServiceException extends PortalException {
 			super(msg);
 		}
 
-		public NoOpenIdConnectSessionException(String msg, Throwable cause) {
-			super(msg, cause);
+		public NoOpenIdConnectSessionException(
+			String msg, Throwable throwable) {
+
+			super(msg, throwable);
 		}
 
 	}
@@ -62,8 +64,8 @@ public class OpenIdConnectServiceException extends PortalException {
 			super(msg);
 		}
 
-		public ProviderException(String msg, Throwable cause) {
-			super(msg, cause);
+		public ProviderException(String msg, Throwable throwable) {
+			super(msg, throwable);
 		}
 
 	}
@@ -74,8 +76,8 @@ public class OpenIdConnectServiceException extends PortalException {
 			super(msg);
 		}
 
-		public TokenException(String msg, Throwable cause) {
-			super(msg, cause);
+		public TokenException(String msg, Throwable throwable) {
+			super(msg, throwable);
 		}
 
 	}
@@ -87,8 +89,8 @@ public class OpenIdConnectServiceException extends PortalException {
 			super(msg);
 		}
 
-		public UserInfoException(String msg, Throwable cause) {
-			super(msg, cause);
+		public UserInfoException(String msg, Throwable throwable) {
+			super(msg, throwable);
 		}
 
 	}
@@ -100,8 +102,8 @@ public class OpenIdConnectServiceException extends PortalException {
 			super(msg);
 		}
 
-		public UserMappingException(String msg, Throwable cause) {
-			super(msg, cause);
+		public UserMappingException(String msg, Throwable throwable) {
+			super(msg, throwable);
 		}
 
 	}

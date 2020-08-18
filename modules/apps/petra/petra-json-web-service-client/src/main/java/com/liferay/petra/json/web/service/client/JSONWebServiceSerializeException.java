@@ -23,12 +23,14 @@ public class JSONWebServiceSerializeException extends JSONWebServiceException {
 		super(message);
 	}
 
-	public JSONWebServiceSerializeException(String message, Throwable cause) {
-		super(message, cause);
+	public JSONWebServiceSerializeException(
+		String message, Throwable throwable) {
+
+		super(message, throwable);
 	}
 
-	public JSONWebServiceSerializeException(Throwable cause) {
-		super(cause);
+	public JSONWebServiceSerializeException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

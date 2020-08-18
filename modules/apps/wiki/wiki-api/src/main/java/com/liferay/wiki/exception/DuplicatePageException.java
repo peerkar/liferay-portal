@@ -28,12 +28,12 @@ public class DuplicatePageException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicatePageException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicatePageException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicatePageException(Throwable cause) {
-		super(cause);
+	public DuplicatePageException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

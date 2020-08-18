@@ -28,12 +28,12 @@ public class EntityIdException extends PortalException {
 		super(msg);
 	}
 
-	public EntityIdException(String msg, Throwable cause) {
-		super(msg, cause);
+	public EntityIdException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public EntityIdException(Throwable cause) {
-		super(cause);
+	public EntityIdException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

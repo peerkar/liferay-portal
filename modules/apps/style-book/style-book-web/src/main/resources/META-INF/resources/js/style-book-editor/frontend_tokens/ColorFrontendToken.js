@@ -18,7 +18,7 @@ import {debounce} from 'frontend-js-web';
 import PropTypes from 'prop-types';
 import React, {useEffect, useRef, useState} from 'react';
 
-import {config} from '../config';
+import {useId} from '../useId';
 
 const debouncedOnValueSelect = debounce(
 	(onValueSelect, value) => onValueSelect(value),
@@ -34,8 +34,7 @@ export default function ColorFrontendToken({
 	const [customColors, setCustomColors] = useState([]);
 	const [color, setColor] = useState(value || '');
 	const ref = useRef(null);
-
-	const id = `${config.namespace}_frontendTokenId_${name}`;
+	const id = useId();
 
 	useEffect(() => {
 		if (ref.current) {

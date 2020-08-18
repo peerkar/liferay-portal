@@ -28,12 +28,12 @@ public class InvalidSharingEntryUserException extends PortalException {
 		super(msg);
 	}
 
-	public InvalidSharingEntryUserException(String msg, Throwable cause) {
-		super(msg, cause);
+	public InvalidSharingEntryUserException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public InvalidSharingEntryUserException(Throwable cause) {
-		super(cause);
+	public InvalidSharingEntryUserException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

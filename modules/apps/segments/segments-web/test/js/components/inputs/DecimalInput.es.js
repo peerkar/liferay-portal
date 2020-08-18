@@ -18,7 +18,11 @@ import React from 'react';
 import DecimalInput from '../../../../src/main/resources/META-INF/resources/js/components/inputs/DecimalInput.es';
 import {testControlledInput} from '../../utils';
 
-const DECIMAL_NUMBER_INPUT_TESTID = 'decimal-number';
+const OPTIONS_DECIMAL_NUMBER_INPUT_TESTID = 'options-decimal';
+
+const SIMPLE_DECIMAL_NUMBER_INPUT_TESTID = 'decimal-number';
+
+const defaultNumberValue = '1.00';
 
 describe('DecimalInput', () => {
 	afterEach(cleanup);
@@ -35,7 +39,7 @@ describe('DecimalInput', () => {
 
 		expect(asFragment()).toMatchSnapshot();
 
-		const element = getByTestId(DECIMAL_NUMBER_INPUT_TESTID);
+		const element = getByTestId(SIMPLE_DECIMAL_NUMBER_INPUT_TESTID);
 
 		testControlledInput({
 			element,
@@ -50,7 +54,7 @@ describe('DecimalInput', () => {
 
 		const {getByTestId} = render(<DecimalInput onChange={mockOnChange} />);
 
-		const element = getByTestId(DECIMAL_NUMBER_INPUT_TESTID);
+		const element = getByTestId(SIMPLE_DECIMAL_NUMBER_INPUT_TESTID);
 
 		fireEvent.change(element, {
 			target: {value: '1.009'},
@@ -59,5 +63,74 @@ describe('DecimalInput', () => {
 		fireEvent.blur(element);
 
 		expect(mockOnChange.mock.calls[1][0]).toMatchObject({value: '1.01'});
+	});
+
+	it('renders type decimal number with options', () => {
+		const mockOnChange = jest.fn();
+
+		const options = [
+			{
+				label: '1.00',
+				value: '1.00',
+			},
+			{
+				label: '2.00',
+				value: '2.00',
+			},
+		];
+
+		const {asFragment, getByTestId} = render(
+			<DecimalInput
+				onChange={mockOnChange}
+				options={options}
+				value={defaultNumberValue}
+			/>
+		);
+
+		expect(asFragment()).toMatchSnapshot();
+
+		const element = getByTestId(OPTIONS_DECIMAL_NUMBER_INPUT_TESTID);
+
+		testControlledInput({
+			element,
+			mockFunc: mockOnChange,
+			newValue: '2.00',
+			value: defaultNumberValue,
+		});
+	});
+
+	it('renders type decimal number with options disabled', () => {
+		const mockOnChange = jest.fn();
+
+		const options = [
+			{
+				disabled: true,
+				label: '1.00',
+				value: '1.00',
+			},
+			{
+				label: '2.00',
+				value: '2.00',
+			},
+		];
+
+		const {asFragment, getByTestId} = render(
+			<DecimalInput
+				onChange={mockOnChange}
+				options={options}
+				value={defaultNumberValue}
+			/>
+		);
+
+		expect(asFragment()).toMatchSnapshot();
+
+		const element = getByTestId(OPTIONS_DECIMAL_NUMBER_INPUT_TESTID);
+
+		testControlledInput({
+			element,
+			mockFunc: mockOnChange,
+			newValue: '2.00',
+			value: defaultNumberValue,
+		});
 	});
 });

@@ -4642,12 +4642,12 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		Organization organization = organizationLocalService.getOrganization(
 			organizationId);
 
-		long companyId = organization.getCompanyId();
-
 		long[] userIds = organizationLocalService.getUserPrimaryKeys(
 			organizationId);
 
 		if (ArrayUtil.isNotEmpty(userIds)) {
+			long companyId = organization.getCompanyId();
+
 			TransactionCommitCallbackUtil.registerCallback(
 				() -> {
 					reindex(companyId, userIds);
@@ -4662,12 +4662,12 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 
 		UserGroup userGroup = userGroupLocalService.getUserGroup(userGroupId);
 
-		long companyId = userGroup.getCompanyId();
-
 		long[] userIds = organizationLocalService.getUserPrimaryKeys(
 			userGroupId);
 
 		if (ArrayUtil.isNotEmpty(userIds)) {
+			long companyId = userGroup.getCompanyId();
+
 			TransactionCommitCallbackUtil.registerCallback(
 				() -> {
 					reindex(companyId, userIds);

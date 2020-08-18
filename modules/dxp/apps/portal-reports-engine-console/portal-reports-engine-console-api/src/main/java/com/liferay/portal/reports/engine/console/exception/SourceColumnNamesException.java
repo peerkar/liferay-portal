@@ -28,12 +28,12 @@ public class SourceColumnNamesException extends PortalException {
 		super(msg);
 	}
 
-	public SourceColumnNamesException(String msg, Throwable cause) {
-		super(msg, cause);
+	public SourceColumnNamesException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public SourceColumnNamesException(Throwable cause) {
-		super(cause);
+	public SourceColumnNamesException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

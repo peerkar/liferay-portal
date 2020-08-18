@@ -28,12 +28,12 @@ public class NoSuchAppDataRecordLinkException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchAppDataRecordLinkException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchAppDataRecordLinkException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchAppDataRecordLinkException(Throwable cause) {
-		super(cause);
+	public NoSuchAppDataRecordLinkException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

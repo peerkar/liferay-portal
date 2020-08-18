@@ -109,6 +109,8 @@ definition {
 	}
 
 	test AddAndEditOAuthSAPEntries {
+		property test.name.skip.portal.instance = "OAuth2#AddAndEditOAuthSAPEntries";
+
 		ApplicationsMenu.gotoPortlet(
 			category = "Security",
 			panel = "Control Panel",
@@ -324,6 +326,7 @@ definition {
 	@priority = "4"
 	test AssertClientCredentialsIsUserScoped {
 		property portal.upstream = "quarantine";
+		property test.name.skip.portal.instance = "OAuth2#AssertClientCredentialsIsUserScoped";
 
 		JSONWebcontent.addWebContent(
 			content = "WC Content",

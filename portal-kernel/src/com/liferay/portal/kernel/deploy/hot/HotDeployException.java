@@ -29,12 +29,12 @@ public class HotDeployException extends PortalException {
 		super(msg);
 	}
 
-	public HotDeployException(String msg, Throwable cause) {
-		super(msg, cause);
+	public HotDeployException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public HotDeployException(Throwable cause) {
-		super(cause);
+	public HotDeployException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

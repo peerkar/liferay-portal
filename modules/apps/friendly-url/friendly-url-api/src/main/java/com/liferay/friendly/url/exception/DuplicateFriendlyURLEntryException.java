@@ -28,12 +28,12 @@ public class DuplicateFriendlyURLEntryException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateFriendlyURLEntryException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateFriendlyURLEntryException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateFriendlyURLEntryException(Throwable cause) {
-		super(cause);
+	public DuplicateFriendlyURLEntryException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

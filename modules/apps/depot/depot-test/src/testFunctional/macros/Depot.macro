@@ -61,7 +61,7 @@ definition {
 		LexiconEntry.changeDisplayStyle(displayStyle = "cards");
 
 		AssertTextEquals(
-			locator1 = "LexiconCard#CARD_TITLE",
+			locator1 = "Card#CARD_TITLE",
 			value1 = "${orgName}");
 
 		LexiconCard.checkCardCheckbox(card = "${orgName}");
@@ -197,17 +197,46 @@ definition {
 
 		DepotNavigator.gotoSites(depotName = "${depotName}");
 
-		LexiconTable.clickEllipsisItem(
-			item = "Make Web Content Structures Available",
-			tableEntry = "${siteName}");
+		if (isSet(makeWCUnavailable)) {
+			LexiconTable.clickEllipsisItem(
+				item = "Make Web Content Structures Unavailable",
+				tableEntry = "${siteName}");
 
-		Alert.viewSuccessMessage();
+			AssertConfirm(value1 = "After disabling structure sharing, any site content that uses the structures will be invalid. Do you want to disable structure sharing?");
 
-		AssertTextEquals(
-			key_tableEntry = "${siteName}",
-			key_tableEntryText = "${tableEntryText}",
-			locator1 = "LexiconTable#TABLE_ENTRY_TEXT_2",
-			value1 = "${tableEntryText}");
+			Alert.viewSuccessMessage();
+
+			AssertTextEquals(
+				key_tableEntry = "${siteName}",
+				key_tableEntryText = "${tableEntryText}",
+				locator1 = "LexiconTable#TABLE_ENTRY_TEXT",
+				value1 = "${tableEntryText}");
+		}
+		else {
+			LexiconTable.clickEllipsisItem(
+				item = "Make Web Content Structures Available",
+				tableEntry = "${siteName}");
+
+			AssertConfirm(value1 = "You will not be able to disconnect this site when structure sharing is enabled. In order to disconnect this site from this asset library, you must disable structure sharing first.");
+
+			Alert.viewSuccessMessage();
+
+			AssertTextEquals(
+				key_tableEntry = "${siteName}",
+				key_tableEntryText = "${tableEntryText}",
+				locator1 = "LexiconTable#TABLE_ENTRY_TEXT_2",
+				value1 = "${tableEntryText}");
+
+			if (isSet(disconnectDisabled)) {
+				Click.waitForMenuToggleJSClick(
+					key_tableEntry = "${siteName}",
+					locator1 = "LexiconTable#TABLE_ENTRY_ELLIPSIS");
+
+				AssertElementPresent(
+					key_menuItem = "Disconnect",
+					locator1 = "MenuItem#DISABLED_MENU_ITEM_2");
+			}
+		}
 	}
 
 	macro configureDefaultLanguage {
@@ -549,20 +578,20 @@ definition {
 
 		Click(
 			key_card = "${depotName}",
-			locator1 = "LexiconCard#CARD_TITLE");
+			locator1 = "Card#CARD_TITLE");
 
 		if (isSet(noApplication)) {
 			for (var applicationList : list "${applicationList}") {
 				AssertElementNotPresent(
 					key_card = "${applicationList}",
-					locator1 = "LexiconCard#CARD");
+					locator1 = "Card#CARD");
 			}
 		}
 		else {
 			for (var applicationList : list "${applicationList}") {
 				AssertVisible(
 					key_card = "${applicationList}",
-					locator1 = "LexiconCard#CARD");
+					locator1 = "Card#CARD");
 			}
 		}
 	}
@@ -688,13 +717,13 @@ definition {
 
 		if (isSet(dmFolderName)) {
 			Click(
-				key_dmDocumentName = "${dmFolderName}",
-				locator1 = "Link#DOCUMENT_IN_FTP");
+				key_text = "${dmFolderName}",
+				locator1 = "Link#ANY");
 		}
 
 		AssertTextEquals(
-			key_dmDocumentName = "${dmDocumentTitle}",
-			locator1 = "Link#DOCUMENT_IN_FTP",
+			key_text = "${dmDocumentTitle}",
+			locator1 = "Link#ANY",
 			value1 = "${dmDocumentTitle}");
 	}
 
@@ -787,7 +816,7 @@ definition {
 
 		AssertVisible(
 			key_card = "${userFirstName} ${userLastName}",
-			locator1 = "LexiconCard#CARD_ELLIPSIS");
+			locator1 = "Card#CARD_ELLIPSIS");
 	}
 
 	macro viewMemberOrganization {
@@ -830,13 +859,13 @@ definition {
 
 		if (isSet(dmFolderName)) {
 			Click(
-				key_dmDocumentName = "${dmFolderName}",
-				locator1 = "Link#DOCUMENT_IN_FTP");
+				key_text = "${dmFolderName}",
+				locator1 = "Link#ANY");
 		}
 
 		AssertElementNotPresent(
-			key_dmDocumentName = "${dmDocumentTitle}",
-			locator1 = "Link#DOCUMENT_IN_FTP");
+			key_text = "${dmDocumentTitle}",
+			locator1 = "Link#ANY");
 	}
 
 	macro viewNoWorkflowResource {
@@ -862,7 +891,7 @@ definition {
 			var key_card = "${depotName}";
 
 			AssertTextEquals(
-				locator1 = "LexiconCard#CARD_TITLE",
+				locator1 = "Card#CARD_TITLE",
 				value1 = "${depotName}");
 		}
 
@@ -870,7 +899,7 @@ definition {
 			for (var depotName : list "${excludedResults}") {
 				var key_card = "${depotName}";
 
-				AssertElementNotPresent(locator1 = "LexiconCard#CARD_TITLE");
+				AssertElementNotPresent(locator1 = "Card#CARD_TITLE");
 			}
 		}
 	}

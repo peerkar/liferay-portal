@@ -1522,8 +1522,35 @@ definition {
 
 		User.loginPG(
 			password = "test",
-			userEmailAddress = "test@liferay.com",
+			userEmailAddress = "test@liferay.com");
+	}
+
+	@priority = "4"
+	test LogoutUserViaURL {
+		property custom.properties = "jsonws.web.service.paths.excludes=";
+
+		var portalURL = PropsUtil.get("portal.url");
+
+		JSONUser.addUser(
+			userEmailAddress = "userea@liferay.com",
+			userFirstName = "userfn",
+			userLastName = "userln",
 			userScreenName = "usersn");
+
+		JSONUser.setFirstPassword(
+			agreeToTermsAndAnswerReminderQuery = "true",
+			requireReset = "false",
+			userEmailAddress = "userea@liferay.com");
+
+		User.logoutPG();
+
+		User.loginPG(
+			password = "test",
+			userEmailAddress = "userea@liferay.com");
+
+		Navigator.openSpecificURL(url = "${portalURL}/c/portal/logout");
+
+		User.viewLoggedOutPG();
 	}
 
 	@priority = "4"
@@ -1888,27 +1915,20 @@ definition {
 
 	@priority = "4"
 	test ViewLoginForDeactivatedUserViaDeactivateButton {
+		property custom.properties = "jsonws.web.service.paths.excludes=";
+
 		var portalURL = PropsUtil.get("portal.url");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
-
-		User.addCP(
+		JSONUser.addUser(
 			userEmailAddress = "userea@liferay.com",
 			userFirstName = "userfn",
 			userLastName = "userln",
 			userScreenName = "usersn");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
-
-		User.editPasswordCP(
-			userEmailAddress = "userea@liferay.com",
-			userScreenName = "usersn");
+		JSONUser.setFirstPassword(
+			agreeToTermsAndAnswerReminderQuery = "true",
+			requireReset = "false",
+			userEmailAddress = "userea@liferay.com");
 
 		ApplicationsMenu.gotoPortlet(
 			category = "Users",
@@ -1917,7 +1937,7 @@ definition {
 
 		User.deactivateCP(userFirstName = "userfn");
 
-		Navigator.openSpecificURL(url = "${portalURL}/c/portal/logout");
+		User.logoutPG();
 
 		User.loginUserInvalidPG(
 			password = "test",
@@ -1925,8 +1945,7 @@ definition {
 
 		User.loginPG(
 			password = "test",
-			userEmailAddress = "test@liferay.com",
-			userScreenName = "usersn");
+			userEmailAddress = "test@liferay.com");
 	}
 
 	@priority = "4"

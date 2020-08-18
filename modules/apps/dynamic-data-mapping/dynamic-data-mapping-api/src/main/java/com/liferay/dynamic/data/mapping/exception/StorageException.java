@@ -28,12 +28,12 @@ public class StorageException extends PortalException {
 		super(msg);
 	}
 
-	public StorageException(String msg, Throwable cause) {
-		super(msg, cause);
+	public StorageException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public StorageException(Throwable cause) {
-		super(cause);
+	public StorageException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

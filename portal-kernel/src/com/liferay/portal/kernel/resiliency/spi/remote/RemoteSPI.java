@@ -255,7 +255,7 @@ public abstract class RemoteSPI implements ProcessCallable<SPI>, Remote, SPI {
 		}
 
 		@Override
-		public boolean shutdown(int shutdownCode, Throwable shutdownThrowable) {
+		public boolean shutdown(int shutdownCode, Throwable throwable) {
 			Runtime runtime = Runtime.getRuntime();
 
 			runtime.removeShutdownHook(this);

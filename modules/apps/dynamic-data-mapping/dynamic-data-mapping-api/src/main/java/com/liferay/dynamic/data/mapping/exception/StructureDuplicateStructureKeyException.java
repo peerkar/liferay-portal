@@ -29,13 +29,13 @@ public class StructureDuplicateStructureKeyException extends PortalException {
 	}
 
 	public StructureDuplicateStructureKeyException(
-		String msg, Throwable cause) {
+		String msg, Throwable throwable) {
 
-		super(msg, cause);
+		super(msg, throwable);
 	}
 
-	public StructureDuplicateStructureKeyException(Throwable cause) {
-		super(cause);
+	public StructureDuplicateStructureKeyException(Throwable throwable) {
+		super(throwable);
 	}
 
 	public String getStructureKey() {

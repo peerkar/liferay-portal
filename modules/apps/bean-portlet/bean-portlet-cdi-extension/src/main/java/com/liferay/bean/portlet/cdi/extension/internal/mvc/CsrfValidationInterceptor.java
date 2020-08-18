@@ -96,14 +96,14 @@ public class CsrfValidationInterceptor implements Serializable {
 				ClientDataRequest clientDataRequest =
 					(ClientDataRequest)args[0];
 
-				ThemeDisplay themeDisplay =
-					(ThemeDisplay)clientDataRequest.getAttribute(
-						WebKeys.THEME_DISPLAY);
-
 				String requestMethod = StringUtil.toLowerCase(
 					clientDataRequest.getMethod());
 
 				if (requestMethod.equals("post")) {
+					ThemeDisplay themeDisplay =
+						(ThemeDisplay)clientDataRequest.getAttribute(
+							WebKeys.THEME_DISPLAY);
+
 					try {
 						AuthTokenUtil.checkCSRFToken(
 							themeDisplay.getRequest(),

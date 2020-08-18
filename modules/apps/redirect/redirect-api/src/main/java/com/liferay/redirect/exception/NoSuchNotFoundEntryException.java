@@ -28,12 +28,12 @@ public class NoSuchNotFoundEntryException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchNotFoundEntryException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchNotFoundEntryException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchNotFoundEntryException(Throwable cause) {
-		super(cause);
+	public NoSuchNotFoundEntryException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

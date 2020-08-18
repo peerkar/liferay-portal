@@ -28,12 +28,12 @@ public class NoSuchLinkException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchLinkException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchLinkException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchLinkException(Throwable cause) {
-		super(cause);
+	public NoSuchLinkException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -28,12 +28,12 @@ public class SourceFileException extends PortalException {
 		super(msg);
 	}
 
-	public SourceFileException(String msg, Throwable cause) {
-		super(msg, cause);
+	public SourceFileException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public SourceFileException(Throwable cause) {
-		super(cause);
+	public SourceFileException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

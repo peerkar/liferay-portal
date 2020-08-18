@@ -203,11 +203,11 @@ public class DDMFormInstanceRecordUADDisplay
 					ddmFormInstanceRecord,
 					LocaleThreadLocal.getThemeDisplayLocale());
 
-				return StringUtil.toLowerCase(
-					formattedName
-				).contains(
-					StringUtil.toLowerCase(keywords)
-				);
+				String lowerCaseFormattedName = StringUtil.toLowerCase(
+					formattedName);
+
+				return lowerCaseFormattedName.contains(
+					StringUtil.toLowerCase(keywords));
 			}
 		).collect(
 			Collectors.toList()

@@ -424,7 +424,7 @@ public class InstrumentationAgent {
 
 				return new ClassDefinition(clazz, _bytes);
 			}
-			catch (Throwable t) {
+			catch (Throwable throwable) {
 				return null;
 			}
 		}

@@ -28,12 +28,12 @@ public class DuplicateDispatchTriggerException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateDispatchTriggerException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateDispatchTriggerException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateDispatchTriggerException(Throwable cause) {
-		super(cause);
+	public DuplicateDispatchTriggerException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

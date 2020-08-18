@@ -105,11 +105,12 @@ const OptionList = ({options = [], icon}) => {
 		<ul className="list-unstyled mt-3">
 			{options.map(
 				(
-					{imagePreviewURL, isActive, isDefault, name, onClick},
+					{imagePreviewURL, isActive, name, onClick, subtitle},
 					index
 				) => (
 					<li key={index}>
 						<ClayCard
+							aria-label={name}
 							className={classNames({
 								'page-editor__sidebar__design-options__tab-card--active': isActive,
 							})}
@@ -140,19 +141,12 @@ const OptionList = ({options = [], icon}) => {
 										<section className="autofit-section">
 											<ClayCard.Description displayType="title">
 												{name}
-
-												{isDefault && (
-													<ClayIcon
-														className={classNames(
-															'ml-2',
-															{
-																'text-primary': isActive,
-															}
-														)}
-														symbol={'check-circle'}
-													/>
-												)}
 											</ClayCard.Description>
+											{subtitle && (
+												<ClayCard.Description displayType="subtitle">
+													{subtitle}
+												</ClayCard.Description>
+											)}
 										</section>
 									</div>
 								</ClayCard.Row>
@@ -166,17 +160,28 @@ const OptionList = ({options = [], icon}) => {
 };
 
 function getTabs(masterLayoutPlid) {
+	const styleBooks = [
+		{
+			name:
+				config.layoutType === LAYOUT_TYPES.master
+					? Liferay.Language.get('default-style-book')
+					: Liferay.Language.get('inherited-from-master'),
+			styleBookEntryId: '0',
+			subtitle:
+				config.defaultStyleBookEntryName ||
+				Liferay.Language.get('provided-by-theme'),
+		},
+		...config.styleBooks,
+	];
+
 	const tabs = [
 		{
 			icon: 'magic',
 			label: Liferay.Language.get('style-book'),
-			options: config.styleBooks.map((styleBook) => ({
+			options: styleBooks.map((styleBook) => ({
 				...styleBook,
 				isActive:
 					config.styleBookEntryId === styleBook.styleBookEntryId,
-				isDefault:
-					config.defaultStyleBookEntryId ===
-					styleBook.styleBookEntryId,
 				onClick: () => {
 					LayoutService.changeStyleBookEntry({
 						onNetworkStatus: () => {},
@@ -198,7 +203,6 @@ function getTabs(masterLayoutPlid) {
 			options: config.masterLayouts.map((masterLayout) => ({
 				...masterLayout,
 				isActive: masterLayoutPlid === masterLayout.masterLayoutPlid,
-				isDefault: false,
 				onClick: (dispatch) =>
 					dispatch(
 						changeMasterLayout({

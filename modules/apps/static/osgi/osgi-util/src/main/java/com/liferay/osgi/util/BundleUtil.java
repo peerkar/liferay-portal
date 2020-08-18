@@ -97,9 +97,9 @@ public class BundleUtil {
 
 		Map<String, String[]> parameters = _getParameterMap(location);
 
-		String[] lpkgPath = parameters.get("lpkgPath");
-		String[] protocol = parameters.get("protocol");
-		String[] webContextPath = parameters.get("Web-ContextPath");
+		String[] lpkgPaths = parameters.get("lpkgPath");
+		String[] protocols = parameters.get("protocol");
+		String[] webContextPaths = parameters.get("Web-ContextPath");
 
 		if (parameters.isEmpty() && location.endsWith(".lpkg")) {
 			URI uri = new URI(location);
@@ -109,18 +109,19 @@ public class BundleUtil {
 			bundle = bundleContext.installBundle(
 				location, lpkgDeployer.toBundle(new File(uri.getPath())));
 		}
-		else if (ArrayUtil.isNotEmpty(lpkgPath)) {
-			bundle = bundleContext.getBundle(lpkgPath[0]);
+		else if (ArrayUtil.isNotEmpty(lpkgPaths)) {
+			bundle = bundleContext.getBundle(lpkgPaths[0]);
 
 			refreshBundles(
 				bundleContext, Collections.<Bundle>singletonList(bundle));
 
 			return;
 		}
-		else if (ArrayUtil.isNotEmpty(protocol) && protocol[0].equals("lpkg") &&
-				 ArrayUtil.isNotEmpty(webContextPath)) {
+		else if (ArrayUtil.isNotEmpty(protocols) &&
+				 protocols[0].equals("lpkg") &&
+				 ArrayUtil.isNotEmpty(webContextPaths)) {
 
-			String contextName = webContextPath[0].substring(1);
+			String contextName = webContextPaths[0].substring(1);
 
 			for (Bundle installedBundle : bundleContext.getBundles()) {
 				Dictionary<String, String> headers = installedBundle.getHeaders(
@@ -182,8 +183,8 @@ public class BundleUtil {
 				throw frameworkEvent.getThrowable();
 			}
 		}
-		catch (Throwable t) {
-			ReflectionUtil.throwException(t);
+		catch (Throwable throwable) {
+			ReflectionUtil.throwException(throwable);
 		}
 	}
 

@@ -1,7 +1,7 @@
 Bundle-Activator: com.liferay.portal.template.soy.internal.activator.PortalTemplateSoyImplBundleActivator
 Bundle-Name: Liferay Portal Template Soy Implementation
 Bundle-SymbolicName: com.liferay.portal.template.soy.impl
-Bundle-Version: 3.0.10
+Bundle-Version: 3.0.12
 Import-Package:\
 	!com.google.errorprone.annotations,\
 	!com.google.errorprone.annotations.concurrent,\

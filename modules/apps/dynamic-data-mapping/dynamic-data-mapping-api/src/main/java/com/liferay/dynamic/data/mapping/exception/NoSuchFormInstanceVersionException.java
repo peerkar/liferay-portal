@@ -28,12 +28,12 @@ public class NoSuchFormInstanceVersionException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchFormInstanceVersionException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchFormInstanceVersionException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchFormInstanceVersionException(Throwable cause) {
-		super(cause);
+	public NoSuchFormInstanceVersionException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

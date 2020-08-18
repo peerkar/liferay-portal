@@ -28,12 +28,12 @@ public class AccountEntryNameException extends PortalException {
 		super(msg);
 	}
 
-	public AccountEntryNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public AccountEntryNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public AccountEntryNameException(Throwable cause) {
-		super(cause);
+	public AccountEntryNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

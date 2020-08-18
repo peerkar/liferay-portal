@@ -28,12 +28,12 @@ public class CategoryNameException extends PortalException {
 		super(msg);
 	}
 
-	public CategoryNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public CategoryNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public CategoryNameException(Throwable cause) {
-		super(cause);
+	public CategoryNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

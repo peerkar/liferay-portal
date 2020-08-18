@@ -28,12 +28,12 @@ public class NoSuchEagerBlobEntityException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchEagerBlobEntityException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchEagerBlobEntityException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchEagerBlobEntityException(Throwable cause) {
-		super(cause);
+	public NoSuchEagerBlobEntityException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

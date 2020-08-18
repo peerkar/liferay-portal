@@ -14,25 +14,16 @@
 
 package com.liferay.jenkins.results.parser;
 
-import java.io.File;
-
 /**
  * @author Michael Hashimoto
  */
 public class PortalHotfixReleaseJob extends BasePortalReleaseJob {
 
-	public PortalHotfixReleaseJob(String jobName, String portalBranchName) {
-		super(jobName, portalBranchName);
+	public PortalHotfixReleaseJob(
+		String jobName, String portalBranchName, BuildProfile buildProfile,
+		String testSuiteName) {
 
-		GitWorkingDirectory jenkinsGitWorkingDirectory =
-			getJenkinsGitWorkingDirectory();
-
-		jobPropertiesFiles.add(
-			new File(
-				jenkinsGitWorkingDirectory.getWorkingDirectory(),
-				"commands/dependencies/test-portal-hotfix-release.properties"));
-
-		readJobProperties();
+		super(jobName, portalBranchName, buildProfile, testSuiteName);
 	}
 
 }

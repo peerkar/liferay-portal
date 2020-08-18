@@ -68,43 +68,41 @@ List<Long> dataLayoutIds = appBuilderAppPortletTabContext.getDataLayoutIds();
 						<div id="<portlet:namespace />-edit-entry-app">
 							<liferay-portlet:resourceURL copyCurrentRenderParameters="<%= false %>" var="baseResourceURL" />
 
-							<%
-							Map<String, Object> props = HashMapBuilder.<String, Object>put(
-								"appDeploymentType", request.getAttribute(AppBuilderWebKeys.APP_DEPLOYMENT_TYPE)
-							).put(
-								"appId", appBuilderApp.getAppBuilderAppId()
-							).put(
-								"appTab", request.getAttribute(AppBuilderWebKeys.APP_TAB)
-							).put(
-								"basePortletURL", String.valueOf(renderResponse.createRenderURL())
-							).put(
-								"baseResourceURL", String.valueOf(baseResourceURL)
-							).put(
-								"containerElementId", liferayPortletResponse.getNamespace() + "container" + dataLayoutIds.get(0)
-							).put(
-								"controlMenuElementId", liferayPortletResponse.getNamespace() + "-control-menu"
-							).put(
-								"dataDefinitionId", appBuilderApp.getDdmStructureId()
-							).put(
-								"dataLayoutId", appBuilderApp.getDdmStructureLayoutId()
-							).put(
-								"dataLayoutIds", dataLayoutIds
-							).put(
-								"dataListViewId", appBuilderApp.getDeDataListViewId()
-							).put(
-								"dataRecordId", ParamUtil.getLong(request, "dataRecordId")
-							).put(
-								"redirect", ParamUtil.getString(request, "redirect")
-							).put(
-								"showFormView", request.getAttribute(AppBuilderWebKeys.SHOW_FORM_VIEW)
-							).put(
-								"showTableView", request.getAttribute(AppBuilderWebKeys.SHOW_TABLE_VIEW)
-							).build();
-							%>
-
 							<react:component
 								module="js/pages/entry/EditEntryApp.es"
-								props="<%= props %>"
+								props='<%=
+									HashMapBuilder.<String, Object>put(
+										"appDeploymentType", request.getAttribute(AppBuilderWebKeys.APP_DEPLOYMENT_TYPE)
+									).put(
+										"appId", appBuilderApp.getAppBuilderAppId()
+									).put(
+										"appTab", request.getAttribute(AppBuilderWebKeys.APP_TAB)
+									).put(
+										"basePortletURL", String.valueOf(renderResponse.createRenderURL())
+									).put(
+										"baseResourceURL", String.valueOf(baseResourceURL)
+									).put(
+										"containerElementId", liferayPortletResponse.getNamespace() + "container" + dataLayoutIds.get(0)
+									).put(
+										"controlMenuElementId", liferayPortletResponse.getNamespace() + "-control-menu"
+									).put(
+										"dataDefinitionId", appBuilderApp.getDdmStructureId()
+									).put(
+										"dataLayoutId", appBuilderApp.getDdmStructureLayoutId()
+									).put(
+										"dataLayoutIds", dataLayoutIds
+									).put(
+										"dataListViewId", appBuilderApp.getDeDataListViewId()
+									).put(
+										"dataRecordId", ParamUtil.getLong(request, "dataRecordId")
+									).put(
+										"redirect", ParamUtil.getString(request, "redirect")
+									).put(
+										"showFormView", request.getAttribute(AppBuilderWebKeys.SHOW_FORM_VIEW)
+									).put(
+										"showTableView", request.getAttribute(AppBuilderWebKeys.SHOW_TABLE_VIEW)
+									).build()
+								%>'
 							/>
 						</div>
 					</div>

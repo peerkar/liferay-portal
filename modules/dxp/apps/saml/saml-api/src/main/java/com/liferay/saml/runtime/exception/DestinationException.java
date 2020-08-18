@@ -28,12 +28,12 @@ public class DestinationException extends PortalException {
 		super(msg);
 	}
 
-	public DestinationException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DestinationException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DestinationException(Throwable cause) {
-		super(cause);
+	public DestinationException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -102,7 +102,7 @@ public class PortalPreferencesImpl
 
 		if (_portalPreferences == null) {
 			return new PortalPreferencesImpl(
-				getOwnerId(), getOwnerType(), getOriginalXML(),
+				getOwnerId(), getOwnerType(), originalXML,
 				new HashMap<>(getOriginalPreferences()), isSignedIn());
 		}
 
@@ -233,8 +233,8 @@ public class PortalPreferencesImpl
 
 			throw concurrentModificationException;
 		}
-		catch (Throwable t) {
-			_log.error(t, t);
+		catch (Throwable throwable) {
+			_log.error(throwable, throwable);
 		}
 	}
 
@@ -256,8 +256,8 @@ public class PortalPreferencesImpl
 
 			throw concurrentModificationException;
 		}
-		catch (Throwable t) {
-			_log.error(t, t);
+		catch (Throwable throwable) {
+			_log.error(throwable, throwable);
 		}
 	}
 
@@ -317,8 +317,8 @@ public class PortalPreferencesImpl
 
 			throw concurrentModificationException;
 		}
-		catch (Throwable t) {
-			_log.error(t, t);
+		catch (Throwable throwable) {
+			_log.error(throwable, throwable);
 		}
 	}
 
@@ -377,8 +377,8 @@ public class PortalPreferencesImpl
 
 			throw concurrentModificationException;
 		}
-		catch (Throwable t) {
-			_log.error(t, t);
+		catch (Throwable throwable) {
+			_log.error(throwable, throwable);
 		}
 	}
 
@@ -402,26 +402,26 @@ public class PortalPreferencesImpl
 				_portalPreferences = _reload(getOwnerId(), getOwnerType());
 			}
 		}
-		catch (Throwable t) {
-			throw new IOException(t);
+		catch (Throwable throwable) {
+			throw new IOException(throwable);
 		}
 	}
 
-	protected boolean isCausedByStaleObjectException(Throwable t) {
-		Throwable cause = t.getCause();
+	protected boolean isCausedByStaleObjectException(Throwable throwable) {
+		Throwable causeThrowable = throwable.getCause();
 
-		while (t != cause) {
-			if (t instanceof StaleObjectStateException) {
+		while (throwable != causeThrowable) {
+			if (throwable instanceof StaleObjectStateException) {
 				return true;
 			}
 
-			if (cause == null) {
+			if (causeThrowable == null) {
 				return false;
 			}
 
-			t = cause;
+			throwable = causeThrowable;
 
-			cause = t.getCause();
+			causeThrowable = throwable.getCause();
 		}
 
 		return false;

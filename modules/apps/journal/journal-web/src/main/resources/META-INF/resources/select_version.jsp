@@ -58,15 +58,19 @@ portletURL.setParameter("sourceVersion", String.valueOf(sourceVersion));
 					curTargetVersion = curSourceVersion;
 					curSourceVersion = tempVersion;
 				}
-
-				Map<String, Object> data = HashMapBuilder.<String, Object>put(
-					"sourceversion", curSourceVersion
-				).put(
-					"targetversion", curTargetVersion
-				).build();
 				%>
 
-				<aui:a cssClass="selector-button" data="<%= data %>" href="javascript:;">
+				<aui:a
+					cssClass="selector-button"
+					data='<%=
+						HashMapBuilder.<String, Object>put(
+							"sourceversion", curSourceVersion
+						).put(
+							"targetversion", curTargetVersion
+						).build()
+					%>'
+					href="javascript:;"
+				>
 					<%= String.valueOf(curArticle.getVersion()) %>
 				</aui:a>
 			</liferay-ui:search-container-column-text>

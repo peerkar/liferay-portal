@@ -20,9 +20,9 @@ package com.liferay.talend.runtime.client.exception;
 public class ResponseContentClientException extends ClientException {
 
 	public ResponseContentClientException(
-		String message, int httpStatus, Throwable cause) {
+		String message, int httpStatus, Throwable throwable) {
 
-		super(message, httpStatus, cause);
+		super(message, httpStatus, throwable);
 	}
 
 }

@@ -28,12 +28,12 @@ public class MaxAddMenuFavItemsException extends PortalException {
 		super(msg);
 	}
 
-	public MaxAddMenuFavItemsException(String msg, Throwable cause) {
-		super(msg, cause);
+	public MaxAddMenuFavItemsException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public MaxAddMenuFavItemsException(Throwable cause) {
-		super(cause);
+	public MaxAddMenuFavItemsException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

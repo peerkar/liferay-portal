@@ -28,12 +28,12 @@ public class NoSuchNodeException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchNodeException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchNodeException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchNodeException(Throwable cause) {
-		super(cause);
+	public NoSuchNodeException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

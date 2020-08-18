@@ -40,22 +40,37 @@ function getFilterOptions() {
 	return [
 		{
 			label: Liferay.Language.get('latest-created'),
+			title: Liferay.Language.get(
+				'showing-questions-ordered-by-last-created-first'
+			),
 			value: 'latest-created',
 		},
 		{
 			label: Liferay.Language.get('latest-edited'),
+			title: Liferay.Language.get(
+				'showing-questions-ordered-by-last-edited-first'
+			),
 			value: 'latest-edited',
 		},
 		{
 			label: Liferay.Language.get('voted-in-the-last-week'),
+			title: Liferay.Language.get(
+				'showing-questions-that-have-at-least-one-vote-in-the-last-week-ordered-by-votes-received'
+			),
 			value: 'week',
 		},
 		{
 			label: Liferay.Language.get('voted-in-the-last-month'),
+			title: Liferay.Language.get(
+				'showing-questions-that-have-at-least-one-vote-in-the-last-month-ordered-by-votes-received'
+			),
 			value: 'month',
 		},
 		{
 			label: Liferay.Language.get('most-voted'),
+			title: Liferay.Language.get(
+				'showing-questions-that-have-at-least-one-vote-ordered-by-votes-received'
+			),
 			value: 'most-voted',
 		},
 	];
@@ -213,12 +228,9 @@ export default withRouter(
 
 		return (
 			<section className="questions-section questions-section-list">
+				<Breadcrumb section={section} />
 				<div className="questions-container">
 					<div className="row">
-						<div className="c-mt-3 col col-xl-12">
-							<Breadcrumb section={section} />
-						</div>
-
 						<div className="c-mt-3 col col-xl-12">
 							<QuestionsNavigationBar />
 						</div>
@@ -247,7 +259,7 @@ export default withRouter(
 								emptyState={
 									!search && !filter ? (
 										<ClayEmptyState
-											description="There are no questions inside this topic, be the first to ask something!"
+											description="There are no questions inside this topic. Be the first to ask something!"
 											imgSrc={
 												context.includeContextPath +
 												'/assets/empty_questions_list.png'
@@ -335,6 +347,7 @@ export default withRouter(
 											<ClaySelect.Option
 												key={option.value}
 												label={option.label}
+												title={option.title}
 												value={option.value}
 											/>
 										))}
@@ -380,13 +393,26 @@ export default withRouter(
 												/>
 											</button>
 										)}
-										{!loading && (
-											<ClayButtonWithIcon
-												displayType="unstyled"
-												symbol="search"
-												type="submit"
-											/>
-										)}
+										{!loading &&
+											((!!search && (
+												<ClayButtonWithIcon
+													displayType="unstyled"
+													onClick={() => {
+														setLoading(true);
+														historyPushParser(
+															buildURL('', 1, 20)
+														);
+													}}
+													symbol="times-circle"
+													type="submit"
+												/>
+											)) || (
+												<ClayButtonWithIcon
+													displayType="unstyled"
+													symbol="search"
+													type="search"
+												/>
+											))}
 									</ClayInput.GroupInsetItem>
 								</ClayInput.GroupItem>
 

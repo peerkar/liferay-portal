@@ -28,12 +28,12 @@ public class ReportGenerationException extends PortalException {
 		super(msg);
 	}
 
-	public ReportGenerationException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ReportGenerationException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ReportGenerationException(Throwable cause) {
-		super(cause);
+	public ReportGenerationException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -75,10 +75,10 @@ public class MySitesItemSelectorViewDisplayContext
 		GroupSearch groupSearch = _groupSearchProvider.getGroupSearch(
 			_portletRequest, portletURL);
 
-		GroupItemSelectorCriterion groupItemSelectorCriterion =
-			getGroupItemSelectorCriterion();
-
 		if (groupSearch.getStart() == 0) {
+			GroupItemSelectorCriterion groupItemSelectorCriterion =
+				getGroupItemSelectorCriterion();
+
 			if (groupItemSelectorCriterion.isIncludeUserPersonalSite()) {
 				_prependGroup(
 					groupSearch,

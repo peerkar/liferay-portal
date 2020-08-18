@@ -232,15 +232,6 @@ public class AddCollectionLayoutMVCActionCommand
 			Layout layout, String collectionType, String collectionPK)
 		throws Exception {
 
-		LayoutPageTemplateStructure layoutPageTemplateStructure =
-			_layoutPageTemplateStructureLocalService.
-				fetchLayoutPageTemplateStructure(
-					layout.getGroupId(), layout.getPlid(), true);
-
-		LayoutStructure layoutStructure = LayoutStructure.of(
-			layoutPageTemplateStructure.getData(
-				SegmentsExperienceConstants.ID_DEFAULT));
-
 		String layoutDefinitionJSON = StringPool.BLANK;
 
 		if (Objects.equals(
@@ -259,6 +250,15 @@ public class AddCollectionLayoutMVCActionCommand
 		}
 
 		if (Validator.isNotNull(layoutDefinitionJSON)) {
+			LayoutPageTemplateStructure layoutPageTemplateStructure =
+				_layoutPageTemplateStructureLocalService.
+					fetchLayoutPageTemplateStructure(
+						layout.getGroupId(), layout.getPlid(), true);
+
+			LayoutStructure layoutStructure = LayoutStructure.of(
+				layoutPageTemplateStructure.getData(
+					SegmentsExperienceConstants.ID_DEFAULT));
+
 			_layoutPageTemplatesImporter.importPageElement(
 				layout, layoutStructure, layoutStructure.getMainItemId(),
 				layoutDefinitionJSON, 0);

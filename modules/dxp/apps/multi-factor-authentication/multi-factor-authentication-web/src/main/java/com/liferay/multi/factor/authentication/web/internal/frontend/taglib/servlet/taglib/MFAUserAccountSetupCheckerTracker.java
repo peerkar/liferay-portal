@@ -18,6 +18,7 @@ import com.liferay.frontend.taglib.servlet.taglib.ScreenNavigationEntry;
 import com.liferay.multi.factor.authentication.email.otp.configuration.MFAEmailOTPConfiguration;
 import com.liferay.multi.factor.authentication.spi.checker.setup.SetupMFAChecker;
 import com.liferay.osgi.util.ServiceTrackerFactory;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -58,8 +59,14 @@ public class MFAUserAccountSetupCheckerTracker {
 				MFAEmailOTPConfiguration.class, properties);
 
 		if (mfaEmailOTPConfiguration.enabled()) {
+			long companyId = GetterUtil.getLong(properties.get("companyId"));
+
+			String filterString = StringBundler.concat(
+				"(&(companyId=", companyId, ")(objectClass=",
+				SetupMFAChecker.class.getName(), "))");
+
 			_serviceTracker = ServiceTrackerFactory.open(
-				bundleContext, SetupMFAChecker.class,
+				bundleContext, filterString,
 				new MFACheckerSetupServiceTrackerCustomizer());
 		}
 	}
@@ -73,7 +80,7 @@ public class MFAUserAccountSetupCheckerTracker {
 
 	private BundleContext _bundleContext;
 	private ServiceTracker
-		<SetupMFAChecker, ServiceRegistration<ScreenNavigationEntry<User>>>
+		<Object, ServiceRegistration<ScreenNavigationEntry<User>>>
 			_serviceTracker;
 
 	@Reference(
@@ -83,14 +90,13 @@ public class MFAUserAccountSetupCheckerTracker {
 
 	private class MFACheckerSetupServiceTrackerCustomizer
 		implements ServiceTrackerCustomizer
-			<SetupMFAChecker,
-			 ServiceRegistration<ScreenNavigationEntry<User>>> {
+			<Object, ServiceRegistration<ScreenNavigationEntry<User>>> {
 
 		@Override
 		public ServiceRegistration<ScreenNavigationEntry<User>> addingService(
-			ServiceReference<SetupMFAChecker> serviceReference) {
+			ServiceReference<Object> serviceReference) {
 
-			SetupMFAChecker setupMFAChecker = _bundleContext.getService(
+			Object setupMFAChecker = _bundleContext.getService(
 				serviceReference);
 
 			if (setupMFAChecker == null) {
@@ -100,13 +106,14 @@ public class MFAUserAccountSetupCheckerTracker {
 			return (ServiceRegistration)_bundleContext.registerService(
 				ScreenNavigationEntry.class,
 				new MFAUserAccountSetupScreenNavigationEntry(
-					serviceReference, _servletContext, setupMFAChecker),
+					serviceReference, _servletContext,
+					(SetupMFAChecker)setupMFAChecker),
 				_buildProperties(serviceReference));
 		}
 
 		@Override
 		public void modifiedService(
-			ServiceReference<SetupMFAChecker> serviceReference,
+			ServiceReference<Object> serviceReference,
 			ServiceRegistration<ScreenNavigationEntry<User>>
 				serviceRegistration) {
 
@@ -116,7 +123,7 @@ public class MFAUserAccountSetupCheckerTracker {
 
 		@Override
 		public void removedService(
-			ServiceReference<SetupMFAChecker> serviceReference,
+			ServiceReference<Object> serviceReference,
 			ServiceRegistration<ScreenNavigationEntry<User>>
 				serviceRegistration) {
 
@@ -126,7 +133,7 @@ public class MFAUserAccountSetupCheckerTracker {
 		}
 
 		private Dictionary<String, Object> _buildProperties(
-			ServiceReference<SetupMFAChecker> serviceReference) {
+			ServiceReference<Object> serviceReference) {
 
 			Dictionary<String, Object> dictionary = new HashMapDictionary<>();
 

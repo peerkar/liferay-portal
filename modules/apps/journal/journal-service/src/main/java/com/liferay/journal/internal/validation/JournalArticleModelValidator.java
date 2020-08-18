@@ -206,7 +206,9 @@ public class JournalArticleModelValidator
 		}
 
 		if (!validSmallImageExtension) {
-			throw new ArticleSmallImageNameException(smallImageName);
+			throw new ArticleSmallImageNameException(
+				"Invalid image extension " +
+					FileUtil.getExtension(smallImageName));
 		}
 
 		long smallImageMaxSize =
@@ -358,8 +360,6 @@ public class JournalArticleModelValidator
 
 	@Override
 	public ModelValidationResults validateModel(JournalArticle article) {
-		long groupId = article.getGroupId();
-		String content = article.getContent();
 		String ddmStructureKey = article.getDDMStructureKey();
 		String ddmTemplateKey = article.getDDMTemplateKey();
 		boolean smallImage = article.isSmallImage();
@@ -375,11 +375,16 @@ public class JournalArticleModelValidator
 			if (image != null) {
 				smallImageBytes = image.getTextObj();
 
-				try {
-					smallImageFile = FileUtil.createTempFile(smallImageBytes);
-				}
-				catch (IOException ioException) {
-					smallImageBytes = null;
+				if (smallImageBytes != null) {
+					try {
+						smallImageFile = FileUtil.createTempFile(
+							image.getType());
+
+						FileUtil.write(smallImageFile, smallImageBytes, false);
+					}
+					catch (IOException ioException) {
+						smallImageBytes = null;
+					}
 				}
 			}
 		}
@@ -411,9 +416,10 @@ public class JournalArticleModelValidator
 
 		try {
 			validateReferences(
-				groupId, ddmStructureKey, ddmTemplateKey,
+				article.getGroupId(), ddmStructureKey, ddmTemplateKey,
 				article.getLayoutUuid(), smallImage, smallImageURL,
-				smallImageBytes, article.getSmallImageId(), content);
+				smallImageBytes, article.getSmallImageId(),
+				article.getContent());
 		}
 		catch (ExportImportContentValidationException
 					exportImportContentValidationException) {
@@ -481,8 +487,9 @@ public class JournalArticleModelValidator
 
 			Image image = _imageLocalService.fetchImage(smallImageId);
 
-			if (image == null) {
-				throw new NoSuchImageException();
+			if ((image == null) || (smallImageBytes == null)) {
+				throw new NoSuchImageException(
+					"Small image ID " + smallImageId);
 			}
 		}
 

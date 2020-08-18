@@ -17,6 +17,7 @@ package com.liferay.change.tracking.internal.reference;
 import com.liferay.change.tracking.spi.reference.TableReferenceDefinition;
 import com.liferay.petra.sql.dsl.Column;
 import com.liferay.petra.sql.dsl.Table;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
@@ -53,7 +54,7 @@ public class TableReferenceDefinitionManager {
 				"No table reference definition for " + table);
 		}
 
-		return _getClassNameId(tableReferenceInfo);
+		return tableReferenceInfo.getClassNameId();
 	}
 
 	public Map<Long, TableReferenceInfo<?>> getCombinedTableReferenceInfos() {
@@ -71,7 +72,7 @@ public class TableReferenceDefinitionManager {
 					_tableReferenceInfos.values()) {
 
 				combinedTableReferenceInfos.put(
-					_getClassNameId(tableReferenceInfo),
+					tableReferenceInfo.getClassNameId(),
 					_getCombinedTableReferenceInfo(tableReferenceInfo));
 			}
 
@@ -82,6 +83,53 @@ public class TableReferenceDefinitionManager {
 		}
 
 		return combinedTableReferenceInfos;
+	}
+
+	public boolean isChildModelOptional(
+		long childModelClassNameId, long parentModelClassNameId) {
+
+		Map<Long, TableReferenceInfo<?>> combinedTableReferenceInfos =
+			getCombinedTableReferenceInfos();
+
+		TableReferenceInfo<?> parentTableReferenceInfo =
+			combinedTableReferenceInfos.get(parentModelClassNameId);
+
+		if (parentTableReferenceInfo == null) {
+			throw new IllegalArgumentException(
+				"{parentModelClassNameId=" + parentModelClassNameId + "}");
+		}
+
+		Map<Table<?>, List<TableJoinHolder>> childTableJoinHoldersMap =
+			parentTableReferenceInfo.getChildTableJoinHoldersMap();
+
+		TableReferenceInfo<?> childTableReferenceInfo =
+			combinedTableReferenceInfos.get(childModelClassNameId);
+
+		if (childTableReferenceInfo == null) {
+			throw new IllegalArgumentException(
+				"{childModelClassNameId=" + childModelClassNameId + "}");
+		}
+
+		TableReferenceDefinition<?> childTableReferenceDefinition =
+			childTableReferenceInfo.getTableReferenceDefinition();
+
+		List<TableJoinHolder> tableJoinHolders = childTableJoinHoldersMap.get(
+			childTableReferenceDefinition.getTable());
+
+		if (tableJoinHolders == null) {
+			throw new IllegalArgumentException(
+				StringBundler.concat(
+					"{childModelClassNameId=", childModelClassNameId,
+					", parentModelClassNameId=", parentModelClassNameId, "}"));
+		}
+
+		for (TableJoinHolder tableJoinHolder : tableJoinHolders) {
+			if (!tableJoinHolder.isReversed()) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	@Activate
@@ -113,17 +161,6 @@ public class TableReferenceDefinitionManager {
 		}
 
 		return copy;
-	}
-
-	private long _getClassNameId(TableReferenceInfo<?> tableReferenceInfo) {
-		TableReferenceDefinition<?> tableReferenceDefinition =
-			tableReferenceInfo.getTableReferenceDefinition();
-
-		BasePersistence<?> basePersistence =
-			tableReferenceDefinition.getBasePersistence();
-
-		return _classNameLocalService.getClassNameId(
-			basePersistence.getModelClass());
 	}
 
 	private <T extends Table<T>> TableReferenceInfo<T>
@@ -197,7 +234,8 @@ public class TableReferenceDefinitionManager {
 		}
 
 		return new TableReferenceInfo<>(
-			tableReferenceDefinition, combinedParentTableJoinHoldersMap,
+			tableReferenceDefinition, tableReferenceInfo.getClassNameId(),
+			combinedParentTableJoinHoldersMap,
 			combinedChildTableJoinHoldersMap);
 	}
 
@@ -272,9 +310,15 @@ public class TableReferenceDefinitionManager {
 				return null;
 			}
 
+			BasePersistence<?> basePersistence =
+				tableReferenceDefinition.getBasePersistence();
+
+			long classNameId = _classNameLocalService.getClassNameId(
+				basePersistence.getModelClass());
+
 			TableReferenceInfo<T> tableReferenceInfo =
 				TableReferenceInfoFactory.create(
-					tableReferenceDefinition, primaryKeyColumn);
+					tableReferenceDefinition, classNameId, primaryKeyColumn);
 
 			synchronized (TableReferenceDefinitionManager.this) {
 				_tableReferenceInfos.put(

@@ -28,12 +28,12 @@ public class RequiredFragmentEntryException extends PortalException {
 		super(msg);
 	}
 
-	public RequiredFragmentEntryException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RequiredFragmentEntryException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public RequiredFragmentEntryException(Throwable cause) {
-		super(cause);
+	public RequiredFragmentEntryException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -28,12 +28,14 @@ public class FormInstanceRecordExporterException extends PortalException {
 		super(msg);
 	}
 
-	public FormInstanceRecordExporterException(String msg, Throwable cause) {
-		super(msg, cause);
+	public FormInstanceRecordExporterException(
+		String msg, Throwable throwable) {
+
+		super(msg, throwable);
 	}
 
-	public FormInstanceRecordExporterException(Throwable cause) {
-		super(cause);
+	public FormInstanceRecordExporterException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

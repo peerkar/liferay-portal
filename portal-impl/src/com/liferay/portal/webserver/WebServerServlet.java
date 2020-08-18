@@ -325,9 +325,10 @@ public class WebServerServlet extends HttpServlet {
 			PortalUtil.sendError(
 				exception, httpServletRequest, httpServletResponse);
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			PortalUtil.sendError(
-				new Exception(t), httpServletRequest, httpServletResponse);
+				new Exception(throwable), httpServletRequest,
+				httpServletResponse);
 		}
 	}
 
@@ -522,10 +523,11 @@ public class WebServerServlet extends HttpServlet {
 		else {
 			String uuid = ParamUtil.getString(httpServletRequest, "uuid");
 			long groupId = ParamUtil.getLong(httpServletRequest, "groupId");
-			boolean igSmallImage = ParamUtil.getBoolean(
-				httpServletRequest, "igSmallImage");
 
 			if (Validator.isNotNull(uuid) && (groupId > 0)) {
+				boolean igSmallImage = ParamUtil.getBoolean(
+					httpServletRequest, "igSmallImage");
+
 				try {
 					FileEntry fileEntry =
 						DLAppServiceUtil.getFileEntryByUuidAndGroupId(
@@ -824,13 +826,14 @@ public class WebServerServlet extends HttpServlet {
 	}
 
 	protected void processPrincipalException(
-			Throwable t, User user, HttpServletRequest httpServletRequest,
+			Throwable throwable, User user,
+			HttpServletRequest httpServletRequest,
 			HttpServletResponse httpServletResponse)
 		throws IOException, ServletException {
 
 		if (!user.isDefaultUser()) {
 			PortalUtil.sendError(
-				HttpServletResponse.SC_UNAUTHORIZED, (Exception)t,
+				HttpServletResponse.SC_UNAUTHORIZED, (Exception)throwable,
 				httpServletRequest, httpServletResponse);
 
 			return;

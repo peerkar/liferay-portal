@@ -106,10 +106,10 @@ public class AppWorkflowResourceHelper {
 				companyId, String.valueOf(appId));
 		}
 		catch (WorkflowException workflowException) {
-			Throwable cause = workflowException.getCause();
+			Throwable throwable = workflowException.getCause();
 
-			if (cause instanceof NoSuchModelException) {
-				throw (NoSuchModelException)cause;
+			if (throwable instanceof NoSuchModelException) {
+				throw (NoSuchModelException)throwable;
 			}
 
 			throw workflowException;

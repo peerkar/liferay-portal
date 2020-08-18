@@ -119,8 +119,7 @@ DDMStructure ddmStructure = (DDMStructure)row.getObject();
 				/>
 			</c:when>
 			<c:otherwise>
-				<portlet:actionURL name="/journal/delete_ddm_structure" var="deleteURL">
-					<portlet:param name="mvcPath" value="/view_ddm_structures.jsp" />
+				<portlet:actionURL copyCurrentRenderParameters="<%= true %>" name="/journal/delete_ddm_structure" var="deleteURL">
 					<portlet:param name="redirect" value="<%= currentURL %>" />
 					<portlet:param name="ddmStructureId" value="<%= String.valueOf(ddmStructure.getStructureId()) %>" />
 				</portlet:actionURL>

@@ -28,12 +28,12 @@ public class NoSuchAppDeploymentException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchAppDeploymentException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchAppDeploymentException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchAppDeploymentException(Throwable cause) {
-		super(cause);
+	public NoSuchAppDeploymentException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

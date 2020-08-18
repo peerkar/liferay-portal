@@ -28,12 +28,12 @@ public class RequiredCalendarException extends PortalException {
 		super(msg);
 	}
 
-	public RequiredCalendarException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RequiredCalendarException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public RequiredCalendarException(Throwable cause) {
-		super(cause);
+	public RequiredCalendarException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

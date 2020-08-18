@@ -73,16 +73,14 @@
 													<portlet:param name="mvcPath" value="/view_vocabularies.jsp" />
 												</portlet:renderURL>
 
-												<%
-												Map<String, Object> additionalProps = HashMapBuilder.<String, Object>put(
-													"deleteVocabulariesURL", deleteVocabulariesURL.toString()
-												).put(
-													"viewVocabulariesURL", viewVocabulariesURL.toString()
-												).build();
-												%>
-
 												<clay:dropdown-actions
-													additionalProps="<%= additionalProps %>"
+													additionalProps='<%=
+														HashMapBuilder.<String, Object>put(
+															"deleteVocabulariesURL", deleteVocabulariesURL.toString()
+														).put(
+															"viewVocabulariesURL", viewVocabulariesURL.toString()
+														).build()
+													%>'
 													dropdownItems="<%= assetCategoriesDisplayContext.getVocabulariesDropdownItems() %>"
 													propsTransformer="js/ActionsComponentPropsTransformer"
 												/>

@@ -28,12 +28,12 @@ public class EntryScoreException extends PortalException {
 		super(msg);
 	}
 
-	public EntryScoreException(String msg, Throwable cause) {
-		super(msg, cause);
+	public EntryScoreException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public EntryScoreException(Throwable cause) {
-		super(cause);
+	public EntryScoreException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

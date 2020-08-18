@@ -255,7 +255,7 @@ public class ProjectTemplatesUtil {
 
 			return templateName.replace('.', '-');
 		}
-		catch (Throwable th) {
+		catch (Throwable throwable) {
 			return name;
 		}
 	}

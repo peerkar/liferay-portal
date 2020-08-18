@@ -295,7 +295,7 @@ public class LayoutsAdminDisplayContext {
 
 	public String getCopyLayoutRenderURL(Layout layout) throws Exception {
 		PortletURL copyLayoutRenderURL =
-			_liferayPortletResponse.createActionURL();
+			_liferayPortletResponse.createRenderURL();
 
 		copyLayoutRenderURL.setParameter(
 			"mvcRenderCommandName", "/layout/add_layout");
@@ -1266,9 +1266,9 @@ public class LayoutsAdminDisplayContext {
 			return _privateLayout;
 		}
 
-		Layout selLayout = getSelLayout();
-
 		if (getSelLayout() != null) {
+			Layout selLayout = getSelLayout();
+
 			_privateLayout = selLayout.isPrivateLayout();
 
 			return _privateLayout;
@@ -1298,6 +1298,10 @@ public class LayoutsAdminDisplayContext {
 
 	public boolean isShowAddChildPageAction(Layout layout)
 		throws PortalException {
+
+		if (layout == null) {
+			return true;
+		}
 
 		return LayoutPermissionUtil.contains(
 			themeDisplay.getPermissionChecker(), layout, ActionKeys.ADD_LAYOUT);

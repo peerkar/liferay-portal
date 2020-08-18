@@ -85,15 +85,15 @@ public abstract class BaseDerivativePipelineAggregationTestCase
 		Assert.assertEquals(expectedKey, bucket.getKey());
 		Assert.assertEquals(expectedCount, bucket.getDocCount());
 
-		Map<String, AggregationResult> childrenAggregationResults =
-			bucket.getChildrenAggregationResults();
-
-		DerivativePipelineAggregationResult
-			derivativePipelineAggregationResult =
-				(DerivativePipelineAggregationResult)
-					childrenAggregationResults.get("derivative");
-
 		if (derivativeValue != null) {
+			Map<String, AggregationResult> childrenAggregationResults =
+				bucket.getChildrenAggregationResults();
+
+			DerivativePipelineAggregationResult
+				derivativePipelineAggregationResult =
+					(DerivativePipelineAggregationResult)
+						childrenAggregationResults.get("derivative");
+
 			Assert.assertNotNull(derivativePipelineAggregationResult);
 
 			Assert.assertEquals(

@@ -28,12 +28,12 @@ public class NoSuchAttachmentException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchAttachmentException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchAttachmentException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchAttachmentException(Throwable cause) {
-		super(cause);
+	public NoSuchAttachmentException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

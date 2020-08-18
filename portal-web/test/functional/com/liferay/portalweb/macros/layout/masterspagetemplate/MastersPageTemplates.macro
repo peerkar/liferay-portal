@@ -39,11 +39,27 @@ definition {
 
 		AssertElementPresent(
 			key_card = "${masterLayoutName}",
-			locator1 = "LexiconCard#CARD_SELECTED");
+			locator1 = "Card#CARD_SELECTED");
 
 		SelectFrameTop();
 
 		Button.clickDone();
+	}
+
+	macro selectMasterViaPageDesignOptions {
+		Navigator.gotoNavTab(navTab = "Master");
+
+		MetalComponent.waitForCard(card = "${masterLayoutName}");
+
+		Click(
+			key_card = "${masterLayoutName}",
+			locator1 = "Card#CARD_TYPE_ASSET");
+
+		AssertElementPresent(
+			key_card = "${masterLayoutName}",
+			locator1 = "Card#CARD_SELECTED");
+
+		PageEditor.waitForAutoSave();
 	}
 
 }

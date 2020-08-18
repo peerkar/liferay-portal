@@ -28,12 +28,12 @@ public class KBFolderParentException extends PortalException {
 		super(msg);
 	}
 
-	public KBFolderParentException(String msg, Throwable cause) {
-		super(msg, cause);
+	public KBFolderParentException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public KBFolderParentException(Throwable cause) {
-		super(cause);
+	public KBFolderParentException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

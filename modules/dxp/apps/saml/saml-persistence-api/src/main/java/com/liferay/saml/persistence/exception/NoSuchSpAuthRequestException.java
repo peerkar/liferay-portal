@@ -28,12 +28,12 @@ public class NoSuchSpAuthRequestException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchSpAuthRequestException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchSpAuthRequestException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchSpAuthRequestException(Throwable cause) {
-		super(cause);
+	public NoSuchSpAuthRequestException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

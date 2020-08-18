@@ -28,12 +28,12 @@ public class WikiAttachmentSizeException extends PortalException {
 		super(msg);
 	}
 
-	public WikiAttachmentSizeException(String msg, Throwable cause) {
-		super(msg, cause);
+	public WikiAttachmentSizeException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public WikiAttachmentSizeException(Throwable cause) {
-		super(cause);
+	public WikiAttachmentSizeException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

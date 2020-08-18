@@ -19,12 +19,12 @@ package com.liferay.petra.json.validator;
  */
 public class JSONValidatorException extends Exception {
 
-	public JSONValidatorException(String msg, Throwable cause) {
-		super(msg, cause);
+	public JSONValidatorException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public JSONValidatorException(Throwable cause) {
-		super(cause);
+	public JSONValidatorException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

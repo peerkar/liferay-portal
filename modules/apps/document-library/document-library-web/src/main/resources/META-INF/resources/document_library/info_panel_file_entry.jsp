@@ -139,9 +139,9 @@ long assetClassPK = DLAssetHelperUtil.getAssetClassPK(fileEntry, fileVersion);
 															{
 																ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(WebKeys.THEME_DISPLAY);
 
-																Map<String, Object> data = new HashMap<>();
-
-																data.put("analytics-file-entry-id", String.valueOf(fileEntry.getFileEntryId()));
+																Map<String, Object> data = HashMapBuilder.<String, Object>put(
+																	"analytics-file-entry-id", String.valueOf(fileEntry.getFileEntryId())
+																).build();
 
 																add(
 																	dropdownItem -> {

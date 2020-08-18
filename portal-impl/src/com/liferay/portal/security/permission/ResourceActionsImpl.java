@@ -626,6 +626,27 @@ public class ResourceActionsImpl implements ResourceActions {
 	}
 
 	@Override
+	public void read(
+			String servletContextName, Document document,
+			Set<String> portletNames)
+		throws ResourceActionsException {
+
+		DocumentType documentType = document.getDocumentType();
+
+		String publicId = GetterUtil.getString(documentType.getPublicId());
+
+		if (publicId.equals(
+				"-//Liferay//DTD Resource Action Mapping 6.0.0//EN")) {
+
+			if (_log.isWarnEnabled()) {
+				_log.warn("Please update document to use the 6.1.0 format");
+			}
+		}
+
+		_read(servletContextName, document, portletNames);
+	}
+
+	@Override
 	public void readAndCheck(
 			String servletContextName, ClassLoader classLoader,
 			String... sources)
@@ -1182,9 +1203,6 @@ public class ResourceActionsImpl implements ResourceActions {
 				"There are more than 64 actions for resource " + name);
 		}
 
-		Set<String> groupDefaultActions =
-			resourceActionsBag.getGroupDefaultActions();
-
 		Element groupDefaultsElement = _getPermissionsChildElement(
 			resourceElement, "site-member-defaults");
 
@@ -1200,6 +1218,9 @@ public class ResourceActionsImpl implements ResourceActions {
 		}
 
 		if (groupDefaultsElement != null) {
+			Set<String> groupDefaultActions =
+				resourceActionsBag.getGroupDefaultActions();
+
 			groupDefaultActions.clear();
 
 			_readActionKeys(groupDefaultActions, groupDefaultsElement);
@@ -1217,13 +1238,13 @@ public class ResourceActionsImpl implements ResourceActions {
 			_readActionKeys(guestDefaultActions, guestDefaultsElement);
 		}
 
-		Set<String> guestUnsupportedActions =
-			resourceActionsBag.getGuestUnsupportedActions();
-
 		Element guestUnsupportedElement = _getPermissionsChildElement(
 			resourceElement, "guest-unsupported");
 
 		if (guestUnsupportedElement != null) {
+			Set<String> guestUnsupportedActions =
+				resourceActionsBag.getGuestUnsupportedActions();
+
 			guestUnsupportedActions.clear();
 
 			_readActionKeys(guestUnsupportedActions, guestUnsupportedElement);

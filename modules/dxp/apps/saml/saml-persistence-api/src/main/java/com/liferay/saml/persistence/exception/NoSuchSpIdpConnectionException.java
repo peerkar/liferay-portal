@@ -28,12 +28,12 @@ public class NoSuchSpIdpConnectionException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchSpIdpConnectionException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchSpIdpConnectionException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchSpIdpConnectionException(Throwable cause) {
-		super(cause);
+	public NoSuchSpIdpConnectionException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

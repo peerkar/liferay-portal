@@ -28,12 +28,12 @@ public class InvalidLockException extends PortalException {
 		super(msg);
 	}
 
-	public InvalidLockException(String msg, Throwable cause) {
-		super(msg, cause);
+	public InvalidLockException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public InvalidLockException(Throwable cause) {
-		super(cause);
+	public InvalidLockException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

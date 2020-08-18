@@ -21,7 +21,7 @@ import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructureRel;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureRelLocalService;
-import com.liferay.layout.util.structure.FragmentLayoutStructureItem;
+import com.liferay.layout.util.structure.FragmentStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -135,23 +135,26 @@ public class LayoutPageTemplateStructureDataHandlerHelper {
 		for (LayoutStructureItem layoutStructureItem :
 				layoutStructure.getLayoutStructureItems()) {
 
-			if (!(layoutStructureItem instanceof FragmentLayoutStructureItem)) {
+			if (!(layoutStructureItem instanceof
+					FragmentStyledLayoutStructureItem)) {
+
 				continue;
 			}
 
-			FragmentLayoutStructureItem fragmentLayoutStructureItem =
-				(FragmentLayoutStructureItem)layoutStructureItem;
+			FragmentStyledLayoutStructureItem
+				fragmentStyledLayoutStructureItem =
+					(FragmentStyledLayoutStructureItem)layoutStructureItem;
 
 			long fragmentEntryLinkId = MapUtil.getLong(
 				fragmentEntryLinkIds,
-				fragmentLayoutStructureItem.getFragmentEntryLinkId(),
-				fragmentLayoutStructureItem.getFragmentEntryLinkId());
+				fragmentStyledLayoutStructureItem.getFragmentEntryLinkId(),
+				fragmentStyledLayoutStructureItem.getFragmentEntryLinkId());
 
 			if (fragmentEntryLinkId <= 0) {
 				continue;
 			}
 
-			fragmentLayoutStructureItem.setFragmentEntryLinkId(
+			fragmentStyledLayoutStructureItem.setFragmentEntryLinkId(
 				fragmentEntryLinkId);
 		}
 

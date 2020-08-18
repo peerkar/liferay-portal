@@ -1,4 +1,8 @@
 body.has-control-menu .fieldset-modal {
+	.modal-body {
+		overflow-x: hidden;
+	}
+
 	.multi-panel-sidebar {
 		position: absolute;
 		top: 0;
@@ -15,6 +19,11 @@ body.has-control-menu .fieldset-modal {
 	.add-fieldset,
 	.tbar-item:not(.tbar-item--fields) {
 		display: none;
+	}
+
+	.sheet {
+		margin: 0 auto;
+		max-width: 808px;
 	}
 }
 

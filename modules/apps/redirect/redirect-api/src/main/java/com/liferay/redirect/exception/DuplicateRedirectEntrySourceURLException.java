@@ -29,13 +29,13 @@ public class DuplicateRedirectEntrySourceURLException extends PortalException {
 	}
 
 	public DuplicateRedirectEntrySourceURLException(
-		String msg, Throwable cause) {
+		String msg, Throwable throwable) {
 
-		super(msg, cause);
+		super(msg, throwable);
 	}
 
-	public DuplicateRedirectEntrySourceURLException(Throwable cause) {
-		super(cause);
+	public DuplicateRedirectEntrySourceURLException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

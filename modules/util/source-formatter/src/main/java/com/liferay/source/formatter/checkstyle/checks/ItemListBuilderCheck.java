@@ -16,6 +16,8 @@ package com.liferay.source.formatter.checkstyle.checks;
 
 import com.liferay.portal.kernel.util.ListUtil;
 
+import com.puppycrawl.tools.checkstyle.api.DetailAST;
+
 import java.util.List;
 
 /**
@@ -26,6 +28,11 @@ public class ItemListBuilderCheck extends BaseBuilderCheck {
 	@Override
 	protected boolean allowNullValues() {
 		return true;
+	}
+
+	@Override
+	protected String getAssignClassName(DetailAST assignDetailAST) {
+		return getNewInstanceTypeName(assignDetailAST);
 	}
 
 	@Override
@@ -40,6 +47,12 @@ public class ItemListBuilderCheck extends BaseBuilderCheck {
 				"LabelItemList", "LabelItemListBuilder", "add"),
 			new BaseBuilderCheck.BuilderInformation(
 				"NavigationItemList", "NavigationItemListBuilder", "add"));
+	}
+
+	@Override
+	protected List<String> getSupportsFunctionMethodNames() {
+		return ListUtil.fromArray(
+			"add", "addCheckbox", "addGroup", "addRadio", "addRadioGroup");
 	}
 
 	@Override

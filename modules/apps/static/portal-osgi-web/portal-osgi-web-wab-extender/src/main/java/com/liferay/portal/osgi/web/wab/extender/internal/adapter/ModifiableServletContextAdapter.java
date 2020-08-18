@@ -266,11 +266,11 @@ public class ModifiableServletContextAdapter
 		try {
 			return clazz.newInstance();
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			_log.error(
 				"Bundle " + _bundle + " is unable to load filter " + clazz);
 
-			throw new ServletException(t);
+			throw new ServletException(throwable);
 		}
 	}
 
@@ -280,11 +280,11 @@ public class ModifiableServletContextAdapter
 		try {
 			return clazz.newInstance();
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			_log.error(
 				"Bundle " + _bundle + " is unable to load listener " + clazz);
 
-			throw new ServletException(t);
+			throw new ServletException(throwable);
 		}
 	}
 
@@ -294,11 +294,11 @@ public class ModifiableServletContextAdapter
 		try {
 			return clazz.newInstance();
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			_log.error(
 				"Bundle " + _bundle + " is unable to load servlet " + clazz);
 
-			throw new ServletException(t);
+			throw new ServletException(throwable);
 		}
 	}
 

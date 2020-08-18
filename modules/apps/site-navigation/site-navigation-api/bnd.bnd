@@ -1,6 +1,6 @@
 Bundle-Name: Liferay Site Navigation API
 Bundle-SymbolicName: com.liferay.site.navigation.api
-Bundle-Version: 4.2.4
+Bundle-Version: 4.2.6
 Export-Package:\
 	com.liferay.site.navigation.constants,\
 	com.liferay.site.navigation.exception,\

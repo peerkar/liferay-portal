@@ -692,8 +692,6 @@ public class BuildPluginDescriptorTask extends DefaultTask {
 	}
 
 	private String _getDependencyName(Dependency dependency) {
-		Logger logger = getLogger();
-
 		if (dependency instanceof ProjectDependency) {
 			ProjectDependency projectDependency = (ProjectDependency)dependency;
 
@@ -704,6 +702,8 @@ public class BuildPluginDescriptorTask extends DefaultTask {
 				return GradleUtil.getArchivesBaseName(dependencyProject);
 			}
 			catch (IllegalStateException illegalStateException) {
+				Logger logger = getLogger();
+
 				if (logger.isWarnEnabled()) {
 					logger.warn(
 						"Unable to find name for " + dependency,

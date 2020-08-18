@@ -86,6 +86,7 @@ definition {
 	@priority = "5"
 	test PublishStagingArchiveAfterUpgrade621015 {
 		property data.archive.type = "data-archive-staging-unpublished";
+		property database.types = "db2,mariadb,mysql,oracle,postgresql,sybase";
 		property portal.version = "6.2.10.15";
 
 		Upgrade.publishStagedSite();
@@ -94,6 +95,7 @@ definition {
 	@priority = "5"
 	test PublishStagingArchiveAfterUpgrade621021 {
 		property data.archive.type = "data-archive-staging-unpublished";
+		property database.types = "db2,mariadb,mysql,oracle,postgresql,sybase";
 		property portal.version = "6.2.10.21";
 
 		Upgrade.publishStagedSite();

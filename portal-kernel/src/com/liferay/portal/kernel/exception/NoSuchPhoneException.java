@@ -26,12 +26,12 @@ public class NoSuchPhoneException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchPhoneException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchPhoneException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchPhoneException(Throwable cause) {
-		super(cause);
+	public NoSuchPhoneException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

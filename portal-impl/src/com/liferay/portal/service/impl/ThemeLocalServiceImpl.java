@@ -581,13 +581,13 @@ public class ThemeLocalServiceImpl extends ThemeLocalServiceBaseImpl {
 
 		Element rootElement = document.getRootElement();
 
-		Version portalVersion = _getVersion(ReleaseInfo.getVersion());
-
 		boolean compatible = false;
 
 		Element compatibilityElement = rootElement.element("compatibility");
 
 		if (compatibilityElement != null) {
+			Version portalVersion = _getVersion(ReleaseInfo.getVersion());
+
 			List<Element> versionElements = compatibilityElement.elements(
 				"version");
 

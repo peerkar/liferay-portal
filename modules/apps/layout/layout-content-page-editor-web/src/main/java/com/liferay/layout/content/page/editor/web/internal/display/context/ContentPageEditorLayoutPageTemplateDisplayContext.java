@@ -153,19 +153,9 @@ public class ContentPageEditorLayoutPageTemplateDisplayContext
 						themeDisplay.getLocale());
 				}
 			}
-
-			return null;
 		}
 
-		StringBuilder sb = new StringBuilder(4);
-
-		sb.append(
-			LanguageUtil.get(themeDisplay.getLocale(), "unknown-variation"));
-		sb.append(StringPool.OPEN_PARENTHESIS);
-		sb.append(layoutPageTemplateEntry.getClassTypeId());
-		sb.append(StringPool.CLOSE_PARENTHESIS);
-
-		return sb.toString();
+		return null;
 	}
 
 	private String _getMappingTypeLabel() {

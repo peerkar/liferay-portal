@@ -26,12 +26,12 @@ public class RequiredUserGroupException extends PortalException {
 		super(msg);
 	}
 
-	public RequiredUserGroupException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RequiredUserGroupException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public RequiredUserGroupException(Throwable cause) {
-		super(cause);
+	public RequiredUserGroupException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

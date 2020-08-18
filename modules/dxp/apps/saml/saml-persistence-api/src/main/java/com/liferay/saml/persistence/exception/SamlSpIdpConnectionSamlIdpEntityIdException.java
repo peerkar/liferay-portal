@@ -30,13 +30,13 @@ public class SamlSpIdpConnectionSamlIdpEntityIdException
 	}
 
 	public SamlSpIdpConnectionSamlIdpEntityIdException(
-		String msg, Throwable cause) {
+		String msg, Throwable throwable) {
 
-		super(msg, cause);
+		super(msg, throwable);
 	}
 
-	public SamlSpIdpConnectionSamlIdpEntityIdException(Throwable cause) {
-		super(cause);
+	public SamlSpIdpConnectionSamlIdpEntityIdException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

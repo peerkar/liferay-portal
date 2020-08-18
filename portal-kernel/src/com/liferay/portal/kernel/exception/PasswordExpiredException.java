@@ -26,12 +26,12 @@ public class PasswordExpiredException extends PortalException {
 		super(msg);
 	}
 
-	public PasswordExpiredException(String msg, Throwable cause) {
-		super(msg, cause);
+	public PasswordExpiredException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public PasswordExpiredException(Throwable cause) {
-		super(cause);
+	public PasswordExpiredException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

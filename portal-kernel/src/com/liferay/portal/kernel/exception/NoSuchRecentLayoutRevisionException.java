@@ -26,12 +26,14 @@ public class NoSuchRecentLayoutRevisionException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchRecentLayoutRevisionException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchRecentLayoutRevisionException(
+		String msg, Throwable throwable) {
+
+		super(msg, throwable);
 	}
 
-	public NoSuchRecentLayoutRevisionException(Throwable cause) {
-		super(cause);
+	public NoSuchRecentLayoutRevisionException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

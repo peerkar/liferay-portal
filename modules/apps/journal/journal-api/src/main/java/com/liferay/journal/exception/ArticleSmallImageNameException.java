@@ -28,12 +28,12 @@ public class ArticleSmallImageNameException extends PortalException {
 		super(msg);
 	}
 
-	public ArticleSmallImageNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ArticleSmallImageNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ArticleSmallImageNameException(Throwable cause) {
-		super(cause);
+	public ArticleSmallImageNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

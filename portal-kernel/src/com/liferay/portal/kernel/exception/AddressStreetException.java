@@ -26,12 +26,12 @@ public class AddressStreetException extends PortalException {
 		super(msg);
 	}
 
-	public AddressStreetException(String msg, Throwable cause) {
-		super(msg, cause);
+	public AddressStreetException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public AddressStreetException(Throwable cause) {
-		super(cause);
+	public AddressStreetException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

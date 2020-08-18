@@ -1069,8 +1069,8 @@ public class IntrabandProxyUtil {
 				ClassLoader.class, "defineClass", String.class, byte[].class,
 				int.class, int.class);
 		}
-		catch (Throwable t) {
-			throw new ExceptionInInitializerError(t);
+		catch (Throwable throwable) {
+			throw new ExceptionInInitializerError(throwable);
 		}
 	}
 

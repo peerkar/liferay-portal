@@ -26,12 +26,12 @@ public class PortletItemNameException extends PortalException {
 		super(msg);
 	}
 
-	public PortletItemNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public PortletItemNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public PortletItemNameException(Throwable cause) {
-		super(cause);
+	public PortletItemNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

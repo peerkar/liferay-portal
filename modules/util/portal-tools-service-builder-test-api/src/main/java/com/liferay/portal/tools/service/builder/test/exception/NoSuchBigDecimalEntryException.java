@@ -28,12 +28,12 @@ public class NoSuchBigDecimalEntryException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchBigDecimalEntryException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchBigDecimalEntryException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchBigDecimalEntryException(Throwable cause) {
-		super(cause);
+	public NoSuchBigDecimalEntryException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

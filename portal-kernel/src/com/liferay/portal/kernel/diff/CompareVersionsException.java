@@ -31,14 +31,14 @@ public class CompareVersionsException extends PortalException {
 		_version = 0;
 	}
 
-	public CompareVersionsException(String msg, Throwable cause) {
-		super(msg, cause);
+	public CompareVersionsException(String msg, Throwable throwable) {
+		super(msg, throwable);
 
 		_version = 0;
 	}
 
-	public CompareVersionsException(Throwable cause) {
-		super(cause);
+	public CompareVersionsException(Throwable throwable) {
+		super(throwable);
 
 		_version = 0;
 	}

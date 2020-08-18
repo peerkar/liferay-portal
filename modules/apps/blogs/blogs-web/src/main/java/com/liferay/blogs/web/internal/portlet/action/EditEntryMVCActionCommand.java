@@ -37,6 +37,7 @@ import com.liferay.document.library.kernel.exception.FileSizeException;
 import com.liferay.friendly.url.exception.DuplicateFriendlyURLEntryException;
 import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.change.tracking.CTTransactionException;
 import com.liferay.portal.kernel.editor.constants.EditorConstants;
 import com.liferay.portal.kernel.exception.ImageResolutionException;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -127,21 +128,21 @@ public class EditEntryMVCActionCommand extends BaseMVCActionCommand {
 					WebKeys.UPLOAD_EXCEPTION);
 
 			if (uploadException != null) {
-				Throwable cause = uploadException.getCause();
+				Throwable throwable = uploadException.getCause();
 
 				if (uploadException.isExceededFileSizeLimit()) {
-					throw new FileSizeException(cause);
+					throw new FileSizeException(throwable);
 				}
 
 				if (uploadException.isExceededLiferayFileItemSizeLimit()) {
-					throw new LiferayFileItemException(cause);
+					throw new LiferayFileItemException(throwable);
 				}
 
 				if (uploadException.isExceededUploadRequestSizeLimit()) {
-					throw new UploadRequestSizeException(cause);
+					throw new UploadRequestSizeException(throwable);
 				}
 
-				throw new PortalException(cause);
+				throw new PortalException(throwable);
 			}
 			else if (cmd.equals(Constants.ADD) ||
 					 cmd.equals(Constants.UPDATE)) {
@@ -230,6 +231,9 @@ public class EditEntryMVCActionCommand extends BaseMVCActionCommand {
 
 			hideDefaultSuccessMessage(actionRequest);
 		}
+		catch (CTTransactionException ctTransactionException) {
+			throw ctTransactionException;
+		}
 		catch (DuplicateFriendlyURLEntryException | EntryContentException |
 			   EntryCoverImageCropException | EntryDescriptionException |
 			   EntryDisplayDateException | EntrySmallImageNameException |
@@ -252,8 +256,8 @@ public class EditEntryMVCActionCommand extends BaseMVCActionCommand {
 
 			hideDefaultSuccessMessage(actionRequest);
 		}
-		catch (Throwable t) {
-			_log.error(t, t);
+		catch (Throwable throwable) {
+			_log.error(throwable, throwable);
 
 			actionResponse.setRenderParameter("mvcPath", "/blogs/error.jsp");
 

@@ -19,9 +19,11 @@ import com.liferay.portal.kernel.exception.ResourceActionsException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.model.Role;
+import com.liferay.portal.kernel.xml.Document;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -173,6 +175,11 @@ public interface ResourceActions {
 	public void read(
 			String servletContextName, ClassLoader classLoader,
 			String... sources)
+		throws ResourceActionsException;
+
+	public void read(
+			String servletContextName, Document document,
+			Set<String> portletNames)
 		throws ResourceActionsException;
 
 	public void readAndCheck(

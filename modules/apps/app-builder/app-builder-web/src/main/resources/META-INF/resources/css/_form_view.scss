@@ -99,7 +99,8 @@
 
 		.sidebar-body {
 			background-color: transparent;
-			height: auto;
+			height: calc(100vh - 200px);
+			overflow-x: hidden;
 			padding-left: 20px;
 			padding-right: 30px;
 

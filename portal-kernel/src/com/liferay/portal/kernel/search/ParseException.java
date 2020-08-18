@@ -28,12 +28,12 @@ public class ParseException extends PortalException {
 		super(msg);
 	}
 
-	public ParseException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ParseException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ParseException(Throwable cause) {
-		super(cause);
+	public ParseException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

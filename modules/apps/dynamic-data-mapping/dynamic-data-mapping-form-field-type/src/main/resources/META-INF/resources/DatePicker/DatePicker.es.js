@@ -78,16 +78,14 @@ const getDelimiter = (dateFormat) => {
 	return dateDelimiter;
 };
 
-const useDateFormat = () => {
-	return useMemo(() => {
-		const dateFormat = Liferay.AUI.getDateFormat();
-		const dateDelimiter = getDelimiter(dateFormat);
+const getDateFormat = () => {
+	const dateFormat = Liferay.AUI.getDateFormat();
+	const dateDelimiter = getDelimiter(dateFormat);
 
-		return {
-			dateMask: getDateMask(dateFormat, dateDelimiter),
-			inputMask: getInputMask(dateFormat, dateDelimiter),
-		};
-	}, []);
+	return {
+		dateMask: getDateMask(dateFormat, dateDelimiter),
+		inputMask: getInputMask(dateFormat, dateDelimiter),
+	};
 };
 
 const transformToDate = (date) => {
@@ -140,7 +138,7 @@ const DatePicker = ({
 		};
 	});
 
-	const {dateMask, inputMask} = useDateFormat();
+	const {dateMask, inputMask} = getDateFormat();
 
 	useEffect(() => {
 		if (inputRef.current && inputMask && dateMask) {

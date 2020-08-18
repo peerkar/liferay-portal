@@ -34,7 +34,7 @@ import com.liferay.dynamic.data.mapping.validator.DDMFormValuesValidator;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
 import com.liferay.expando.kernel.service.ExpandoTableLocalService;
 import com.liferay.headless.common.spi.resource.SPIRatingResource;
-import com.liferay.headless.common.spi.service.context.ServiceContextUtil;
+import com.liferay.headless.common.spi.service.context.ServiceContextRequestUtil;
 import com.liferay.headless.delivery.dto.v1_0.ContentField;
 import com.liferay.headless.delivery.dto.v1_0.Rating;
 import com.liferay.headless.delivery.dto.v1_0.StructuredContent;
@@ -145,6 +145,18 @@ public class StructuredContentResourceImpl
 	}
 
 	@Override
+	public Page<StructuredContent> getAssetLibraryStructuredContentsPage(
+			Long assetLibraryId, Boolean flatten, String search,
+			Aggregation aggregation, Filter filter, Pagination pagination,
+			Sort[] sorts)
+		throws Exception {
+
+		return getSiteStructuredContentsPage(
+			assetLibraryId, flatten, search, aggregation, filter, pagination,
+			sorts);
+	}
+
+	@Override
 	public Page<StructuredContent> getContentStructureStructuredContentsPage(
 			Long contentStructureId, String search, Aggregation aggregation,
 			Filter filter, Pagination pagination, Sort[] sorts)
@@ -247,10 +259,10 @@ public class StructuredContentResourceImpl
 					"com.liferay.journal", siteId)
 			).build(),
 			booleanQuery -> {
-				BooleanFilter booleanFilter =
-					booleanQuery.getPreBooleanFilter();
-
 				if (!GetterUtil.getBoolean(flatten)) {
+					BooleanFilter booleanFilter =
+						booleanQuery.getPreBooleanFilter();
+
 					booleanFilter.add(
 						new TermFilter(
 							com.liferay.portal.kernel.search.Field.FOLDER_ID,
@@ -402,12 +414,20 @@ public class StructuredContentResourceImpl
 				localDateTime.getHour(), localDateTime.getMinute(), 0, 0, 0, 0,
 				0, true, 0, 0, 0, 0, 0, true, true, false, null, null, null,
 				null,
-				ServiceContextUtil.createServiceContext(
+				ServiceContextRequestUtil.createServiceContext(
 					structuredContent.getTaxonomyCategoryIds(),
 					structuredContent.getKeywords(),
 					_getExpandoBridgeAttributes(structuredContent),
-					journalArticle.getGroupId(),
+					journalArticle.getGroupId(), contextHttpServletRequest,
 					structuredContent.getViewableByAsString())));
+	}
+
+	@Override
+	public StructuredContent postAssetLibraryStructuredContent(
+			Long assetLibraryId, StructuredContent structuredContent)
+		throws Exception {
+
+		return postSiteStructuredContent(assetLibraryId, structuredContent);
 	}
 
 	@Override
@@ -503,11 +523,11 @@ public class StructuredContentResourceImpl
 				localDateTime.getHour(), localDateTime.getMinute(), 0, 0, 0, 0,
 				0, true, 0, 0, 0, 0, 0, true, true, false, null, null, null,
 				null,
-				ServiceContextUtil.createServiceContext(
+				ServiceContextRequestUtil.createServiceContext(
 					structuredContent.getTaxonomyCategoryIds(),
 					structuredContent.getKeywords(),
 					_getExpandoBridgeAttributes(structuredContent),
-					journalArticle.getGroupId(),
+					journalArticle.getGroupId(), contextHttpServletRequest,
 					structuredContent.getViewableByAsString())));
 	}
 
@@ -617,10 +637,11 @@ public class StructuredContentResourceImpl
 				localDateTime.getHour(), localDateTime.getMinute(), 0, 0, 0, 0,
 				0, true, 0, 0, 0, 0, 0, true, true, false, null, null, null,
 				null,
-				ServiceContextUtil.createServiceContext(
+				ServiceContextRequestUtil.createServiceContext(
 					structuredContent.getTaxonomyCategoryIds(),
 					structuredContent.getKeywords(),
 					_getExpandoBridgeAttributes(structuredContent), siteId,
+					contextHttpServletRequest,
 					structuredContent.getViewableByAsString())));
 	}
 

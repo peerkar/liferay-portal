@@ -28,12 +28,14 @@ public class DuplicateSiteNavigationMenuException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateSiteNavigationMenuException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateSiteNavigationMenuException(
+		String msg, Throwable throwable) {
+
+		super(msg, throwable);
 	}
 
-	public DuplicateSiteNavigationMenuException(Throwable cause) {
-		super(cause);
+	public DuplicateSiteNavigationMenuException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

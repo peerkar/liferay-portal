@@ -20,17 +20,12 @@
 </tr>
 <tr>
 	<td>ENTRIES</td>
-	<td>//a[contains(@class,'dropdown') and contains(.,'Entries')] | //button[contains(@class,'dropdown') and contains(.,'Entries')]</td>
+	<td>//*[contains(@class,'dropdown') and contains(.,'Entries')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>FRIENDLY_URL_LOCALE</td>
 	<td>//button[contains(@id,'friendlyURLMenu')]//span[contains(@class,'btn-section')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>RESULT</td>
-	<td>//div[contains(@class,'dropdown-menu')]//ul//li/button[text()='${key_option}']</td>
 	<td></td>
 </tr>
 <tr>

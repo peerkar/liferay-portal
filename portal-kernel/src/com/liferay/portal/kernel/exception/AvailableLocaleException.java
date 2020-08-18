@@ -26,12 +26,12 @@ public class AvailableLocaleException extends PortalException {
 		super(msg);
 	}
 
-	public AvailableLocaleException(String msg, Throwable cause) {
-		super(msg, cause);
+	public AvailableLocaleException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public AvailableLocaleException(Throwable cause) {
-		super(cause);
+	public AvailableLocaleException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

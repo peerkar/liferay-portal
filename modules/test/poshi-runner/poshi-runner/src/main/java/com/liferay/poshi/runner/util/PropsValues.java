@@ -84,6 +84,9 @@ public class PropsValues {
 
 	public static final String PROJECT_DIR = PropsUtil.get("project.dir");
 
+	public static final Boolean PROXY_SERVER_ENABLED = GetterUtil.getBoolean(
+		PropsUtil.get("proxy.server.enabled"));
+
 	public static final boolean SAVE_SCREENSHOT = GetterUtil.getBoolean(
 		PropsUtil.get("save.screenshot"));
 

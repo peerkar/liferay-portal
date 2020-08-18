@@ -17,7 +17,7 @@
 <%@ include file="/blogs/info/item/renderer/init.jsp" %>
 
 <%
-AssetRenderer assetRenderer = (AssetRenderer)request.getAttribute(WebKeys.ASSET_RENDERER);
+AssetRenderer<?> assetRenderer = (AssetRenderer)request.getAttribute(WebKeys.ASSET_RENDERER);
 BlogsEntry entry = (BlogsEntry)request.getAttribute(WebKeys.BLOGS_ENTRY);
 %>
 

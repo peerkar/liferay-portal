@@ -32,13 +32,13 @@ public class RecordSetDuplicateRecordSetKeyException extends PortalException {
 	}
 
 	public RecordSetDuplicateRecordSetKeyException(
-		String msg, Throwable cause) {
+		String msg, Throwable throwable) {
 
-		super(msg, cause);
+		super(msg, throwable);
 	}
 
-	public RecordSetDuplicateRecordSetKeyException(Throwable cause) {
-		super(cause);
+	public RecordSetDuplicateRecordSetKeyException(Throwable throwable) {
+		super(throwable);
 	}
 
 	public String getRecordSetKey() {

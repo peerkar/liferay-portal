@@ -31,12 +31,12 @@ public class RecordSetNameException extends PortalException {
 		super(msg);
 	}
 
-	public RecordSetNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RecordSetNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public RecordSetNameException(Throwable cause) {
-		super(cause);
+	public RecordSetNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

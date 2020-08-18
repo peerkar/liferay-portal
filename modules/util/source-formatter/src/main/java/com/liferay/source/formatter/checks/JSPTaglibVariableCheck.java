@@ -63,7 +63,7 @@ public class JSPTaglibVariableCheck extends BaseJSPTermsCheck {
 						fileName,
 						"Variable '" + variableName +
 							"' should start with 'taglib'",
-						getLineNumber(content, matcher.start()));
+						getLineNumber(content, matcher.start(1)));
 				}
 
 				continue;
@@ -73,7 +73,8 @@ public class JSPTaglibVariableCheck extends BaseJSPTermsCheck {
 				populateContentsMap(fileName, content);
 
 				String newContent = StringUtil.replaceFirst(
-					content, variableName, taglibValue, matcher.start(5));
+					content, "<%= " + variableName + " %>\"",
+					"<%= " + taglibValue + " %>\"", matcher.start(5));
 
 				Set<String> checkedFileNames = new HashSet<>();
 				Set<String> includeFileNames = new HashSet<>();
@@ -129,7 +130,7 @@ public class JSPTaglibVariableCheck extends BaseJSPTermsCheck {
 	}
 
 	private static final Pattern _taglibVariablePattern = Pattern.compile(
-		"(\t*[\\w<>\\[\\], ]+ (\\w+) = ([^{]((?!;\n).)*);)\n\\s*%>\\s+" +
+		"\n(\t*[\\w<>\\[\\],\\? ]+ (\\w+) = ([^{]((?!;\n).)*);)\n\\s*%>\\s+" +
 			"(<[\\S\\s]*?>)(\n|\\Z)",
 		Pattern.DOTALL);
 

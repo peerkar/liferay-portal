@@ -28,12 +28,12 @@ public class NoSuchChoiceException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchChoiceException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchChoiceException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchChoiceException(Throwable cause) {
-		super(cause);
+	public NoSuchChoiceException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

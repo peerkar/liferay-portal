@@ -21,7 +21,7 @@ String backURL = ParamUtil.getString(request, "backURL", String.valueOf(renderRe
 
 User selUser = PortalUtil.getSelectedUser(request, false);
 
-SearchContainer<AccountEntryDisplay> accountEntryDisplaySearchContainer = AccountEntryDisplaySearchContainerFactory.create(selUser.getUserId(), liferayPortletRequest, liferayPortletResponse);
+SearchContainer<AccountEntryDisplay> accountEntryDisplaySearchContainer = AccountEntryDisplaySearchContainerFactory.createWithUserId(selUser.getUserId(), liferayPortletRequest, liferayPortletResponse);
 
 accountEntryDisplaySearchContainer.setRowChecker(null);
 
@@ -233,7 +233,7 @@ portletDisplay.setURLBack(backURL);
 				selectedData: searchContainerData,
 				title: '<liferay-ui:message arguments="account" key="select-x" />',
 				url:
-					'<portlet:renderURL windowState="<%= LiferayWindowState.POP_UP.toString() %>"><portlet:param name="mvcPath" value="/account_users_admin/select_account_entry.jsp" /><portlet:param name="userId" value="<%= String.valueOf(selUser.getUserId()) %>" /></portlet:renderURL>',
+					'<portlet:renderURL windowState="<%= LiferayWindowState.POP_UP.toString() %>"><portlet:param name="mvcPath" value="/account_users_admin/select_account_entry.jsp" /><portlet:param name="singleSelect" value="<%= Boolean.TRUE.toString() %>" /><portlet:param name="userId" value="<%= String.valueOf(selUser.getUserId()) %>" /></portlet:renderURL>',
 			});
 		});
 	}

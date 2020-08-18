@@ -608,8 +608,8 @@ public class UnsyncPrintWriterTest extends BaseWriterTestCase {
 		try {
 			return (Writer)_writerField.get(unsyncPrintWriter);
 		}
-		catch (Throwable t) {
-			throw new RuntimeException(t);
+		catch (Throwable throwable) {
+			throw new RuntimeException(throwable);
 		}
 	}
 

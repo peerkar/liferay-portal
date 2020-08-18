@@ -257,12 +257,13 @@ public class AopServiceManagerTest {
 			Assert.assertTrue(
 				throwable.toString(), throwable instanceof ServiceException);
 
-			Throwable cause = throwable.getCause();
+			Throwable causeThrowable = throwable.getCause();
 
 			Assert.assertTrue(
-				cause.toString(), cause instanceof IllegalArgumentException);
+				causeThrowable.toString(),
+				causeThrowable instanceof IllegalArgumentException);
 
-			String message = cause.getMessage();
+			String message = causeThrowable.getMessage();
 
 			Assert.assertTrue(
 				message, message.startsWith("Prototype AopService "));

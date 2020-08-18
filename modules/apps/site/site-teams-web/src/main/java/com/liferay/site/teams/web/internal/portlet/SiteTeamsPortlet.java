@@ -204,13 +204,13 @@ public class SiteTeamsPortlet extends MVCPortlet {
 	}
 
 	@Override
-	protected boolean isSessionErrorException(Throwable cause) {
-		if (cause instanceof DuplicateTeamException ||
-			cause instanceof NoSuchGroupException ||
-			cause instanceof NoSuchTeamException ||
-			cause instanceof PrincipalException ||
-			cause instanceof TeamNameException ||
-			super.isSessionErrorException(cause)) {
+	protected boolean isSessionErrorException(Throwable throwable) {
+		if (throwable instanceof DuplicateTeamException ||
+			throwable instanceof NoSuchGroupException ||
+			throwable instanceof NoSuchTeamException ||
+			throwable instanceof PrincipalException ||
+			throwable instanceof TeamNameException ||
+			super.isSessionErrorException(throwable)) {
 
 			return true;
 		}

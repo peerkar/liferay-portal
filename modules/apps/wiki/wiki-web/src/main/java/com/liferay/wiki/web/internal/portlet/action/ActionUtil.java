@@ -181,9 +181,6 @@ public class ActionUtil {
 			long nodeId, PortletRequest portletRequest)
 		throws PortalException {
 
-		ThemeDisplay themeDisplay = (ThemeDisplay)portletRequest.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
 		WikiWebComponentProvider wikiWebComponentProvider =
 			WikiWebComponentProvider.getWikiWebComponentProvider();
 
@@ -194,6 +191,10 @@ public class ActionUtil {
 			nodeId, wikiGroupServiceConfiguration.frontPageName(), 0);
 
 		if (page == null) {
+			ThemeDisplay themeDisplay =
+				(ThemeDisplay)portletRequest.getAttribute(
+					WebKeys.THEME_DISPLAY);
+
 			ServiceContext serviceContext = ServiceContextFactory.getInstance(
 				WikiPage.class.getName(), portletRequest);
 

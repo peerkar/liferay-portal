@@ -40,10 +40,6 @@ public class CommonTermsQueryTranslatorImpl
 			commonTermsQueryBuilder.analyzer(commonTermsQuery.getAnalyzer());
 		}
 
-		if (commonTermsQuery.getBoost() != null) {
-			commonTermsQueryBuilder.boost(commonTermsQuery.getBoost());
-		}
-
 		if (commonTermsQuery.getCutoffFrequency() != null) {
 			commonTermsQueryBuilder.cutoffFrequency(
 				commonTermsQuery.getCutoffFrequency());

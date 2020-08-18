@@ -26,12 +26,12 @@ public class RSSFeedException extends PortalException {
 		super(msg);
 	}
 
-	public RSSFeedException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RSSFeedException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public RSSFeedException(Throwable cause) {
-		super(cause);
+	public RSSFeedException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

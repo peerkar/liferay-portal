@@ -29,12 +29,12 @@ public class CircularRedirectEntryException extends PortalException {
 		super(msg);
 	}
 
-	public CircularRedirectEntryException(String msg, Throwable cause) {
-		super(msg, cause);
+	public CircularRedirectEntryException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public CircularRedirectEntryException(Throwable cause) {
-		super(cause);
+	public CircularRedirectEntryException(Throwable throwable) {
+		super(throwable);
 	}
 
 	public static class DestinationURLMustNotBeEqualToSourceURL

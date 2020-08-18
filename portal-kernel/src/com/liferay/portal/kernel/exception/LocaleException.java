@@ -44,14 +44,14 @@ public class LocaleException extends PortalException {
 		_type = type;
 	}
 
-	public LocaleException(int type, String msg, Throwable cause) {
-		super(msg, cause);
+	public LocaleException(int type, String msg, Throwable throwable) {
+		super(msg, throwable);
 
 		_type = type;
 	}
 
-	public LocaleException(int type, Throwable cause) {
-		super(cause);
+	public LocaleException(int type, Throwable throwable) {
+		super(throwable);
 
 		_type = type;
 	}

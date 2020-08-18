@@ -26,12 +26,12 @@ public class CompanyMxException extends PortalException {
 		super(msg);
 	}
 
-	public CompanyMxException(String msg, Throwable cause) {
-		super(msg, cause);
+	public CompanyMxException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public CompanyMxException(Throwable cause) {
-		super(cause);
+	public CompanyMxException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

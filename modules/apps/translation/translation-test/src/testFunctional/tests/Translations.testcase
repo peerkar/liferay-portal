@@ -1,8 +1,6 @@
 @component-name = "portal-collaboration"
 definition {
 
-	property osgi.module.configuration.file.names = "com.liferay.journal.web.internal.configuration.FFImportExportTranslationConfiguration.config";
-	property osgi.module.configurations = "enabled=B&quot;true&quot;";
 	property portal.release = "true";
 	property portal.upstream = "true";
 	property testray.main.component.name = "Translations Management";
@@ -146,6 +144,48 @@ definition {
 			languageList = "Spanish (Spain)");
 
 		Translations.assertFileNameFromTempFolder(webContentTitle = "Web Content Title");
+	}
+
+	@description = "This ensures that user can import the exported xliff file with 1.2 version."
+	@priority = "5"
+	test ImportExportedXLIFF {
+		JSONWebcontent.addWebContent(
+			content = "WebContent",
+			description = "Description",
+			groupName = "Guest",
+			title = "WebContentTitle");
+
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
+
+		Translations.gotoExportTranslation(webContentTitle = "WebContentTitle");
+
+		Translations.exportTranslation(
+			defaultLanguage = "English (United States)",
+			exportFileFormat = "application/x-xliff+xml",
+			languageList = "Spanish (Spain)");
+
+		Translations.translateFile(
+			contentTranslateion = "Contenidoweb",
+			descriptionTranslateion = "Descripcion",
+			titleTranslation = "Titulodelcontenidoweb",
+			translationFileName = "WebContentTitle-en_US-es_ES",
+			translationZipFileName = "WebContentTitle-en_US.zip",
+			webContentContent = "WebContent",
+			webContentDescription = "Description",
+			webContentTitle = "WebContentTitle");
+
+		Translations.importTranslation(
+			fileName = "WebContentTitle-en_US-es_ES.xlf",
+			webContentTitle = "WebContentTitle");
+
+		WebContentNavigator.gotoEditCP(webContentTitle = "WebContentTitle");
+
+		PortletEntry.changeLocale(locale = "es-ES");
+
+		WebContent.viewCP(
+			webContentContent = "Contenidoweb",
+			webContentDescription = "Descripcion",
+			webContentTitle = "Titulodelcontenidoweb");
 	}
 
 	@description = "This ensures that a translated file(.xlf) with an available language can be imported."
@@ -355,6 +395,9 @@ definition {
 	@description = "This ensures that the translator can select which target language she wants to translate."
 	@priority = "5"
 	test TranslateCustomizedWC {
+		property osgi.module.configuration.file.names = "com.liferay.translation.internal.configuration.FFTranslationWorkflowConfiguration.config";
+		property osgi.module.configurations = "enabled=B&quot;true&quot;";
+
 		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
 
 		NavItem.gotoStructures();
@@ -390,10 +433,7 @@ definition {
 
 		WebContentNavigator.gotoAddWithStructureCP(structureName = "WC Structure Name");
 
-		var webContentSourceHTML = '''
-<h2 class="text-center">This is a HTML title</h2>
-
-<p class="text-center">This is a HTML Content</p>''';
+		var webContentSourceHTML = '''<h2 class="text-center">This is a HTML title</h2>''';
 
 		WebContent.addWithStructureCP(
 			description = "WC WebContent Description",
@@ -415,9 +455,7 @@ definition {
 			currentTargetLocale = "ar-SA",
 			newTargetLocale = "es-ES");
 
-		var webContentHTML = '''This is a HTML title
-
-This is a HTML Content''';
+		var webContentHTML = "This is a HTML title";
 
 		Translations.viewBaseFields(
 			webContentDecimal = "1.1",
@@ -429,10 +467,7 @@ This is a HTML Content''';
 			webContentTextBox = "This is a text box.",
 			webContentTitle = "WC WebContent Title");
 
-		var webContentSourceHTML = '''
-<h2 class="text-center">Este es un título HTML</h2>
-
-<p class="text-center">Este es un contenido HTML</p>''';
+		var webContentSourceHTML = '''<h2 class="text-center">Este es un título HTML</h2>''';
 
 		Translations.translateFields(
 			webContentDecimal = "2.2",
@@ -452,7 +487,7 @@ This is a HTML Content''';
 			currentTargetLocale = "ar-SA",
 			newTargetLocale = "es-ES");
 
-		var webContentHTML = "Este es un título HTML Este es un contenido HTML";
+		var webContentHTML = "Este es un título HTML";
 
 		Translations.viewTargetFields(
 			webContentDecimal = "22,0",
@@ -493,6 +528,9 @@ This is a HTML Content''';
 	@description = "This ensures that the translator can select which base language she wants to translate."
 	@priority = "5"
 	test TranslateWebContent {
+		property osgi.module.configuration.file.names = "com.liferay.translation.internal.configuration.FFTranslationWorkflowConfiguration.config";
+		property osgi.module.configurations = "enabled=B&quot;true&quot;";
+
 		JSONWebcontent.addWebContent(
 			content = "WC WebContent Content",
 			groupName = "Guest",
@@ -581,6 +619,9 @@ This is a HTML Content''';
 	@description = "This ensures that the user can see translation options after move all available languages to current."
 	@priority = "4"
 	test ViewOptionsWithAllLanguages {
+		property osgi.module.configuration.file.names = "com.liferay.translation.internal.configuration.FFTranslationWorkflowConfiguration.config";
+		property osgi.module.configurations = "enabled=B&quot;true&quot;";
+
 		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
 
 		NavItem.gotoStructures();
@@ -643,6 +684,9 @@ This is a HTML Content''';
 	@description = "This ensures that the user can see translation options after move one more available language to current."
 	@priority = "5"
 	test ViewOptionsWithOneMoreLanguage {
+		property osgi.module.configuration.file.names = "com.liferay.translation.internal.configuration.FFTranslationWorkflowConfiguration.config";
+		property osgi.module.configurations = "enabled=B&quot;true&quot;";
+
 		JSONWebcontent.addWebContent(
 			content = "Web Content Content",
 			groupName = "Guest",

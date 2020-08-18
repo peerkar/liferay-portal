@@ -28,12 +28,12 @@ public class NoSuchFileEntryReferenceException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchFileEntryReferenceException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchFileEntryReferenceException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchFileEntryReferenceException(Throwable cause) {
-		super(cause);
+	public NoSuchFileEntryReferenceException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

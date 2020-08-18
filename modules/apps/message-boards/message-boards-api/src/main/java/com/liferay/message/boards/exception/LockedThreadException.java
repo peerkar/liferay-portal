@@ -28,12 +28,12 @@ public class LockedThreadException extends PortalException {
 		super(msg);
 	}
 
-	public LockedThreadException(String msg, Throwable cause) {
-		super(msg, cause);
+	public LockedThreadException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public LockedThreadException(Throwable cause) {
-		super(cause);
+	public LockedThreadException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

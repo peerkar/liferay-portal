@@ -28,12 +28,12 @@ public class LDAPServerNameException extends PortalException {
 		super(msg);
 	}
 
-	public LDAPServerNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public LDAPServerNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public LDAPServerNameException(Throwable cause) {
-		super(cause);
+	public LDAPServerNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

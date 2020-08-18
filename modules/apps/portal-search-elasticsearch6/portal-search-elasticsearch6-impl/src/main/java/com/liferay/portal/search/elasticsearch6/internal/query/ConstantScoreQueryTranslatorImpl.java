@@ -18,7 +18,6 @@ import com.liferay.portal.search.query.ConstantScoreQuery;
 import com.liferay.portal.search.query.Query;
 import com.liferay.portal.search.query.QueryVisitor;
 
-import org.elasticsearch.index.query.ConstantScoreQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
@@ -40,14 +39,7 @@ public class ConstantScoreQueryTranslatorImpl
 
 		QueryBuilder queryBuilder = query.accept(queryVisitor);
 
-		ConstantScoreQueryBuilder constantScoreQueryBuilder =
-				QueryBuilders.constantScoreQuery(queryBuilder);
-		
-		if (constantScoreQuery.getBoost() != null) {
-			constantScoreQueryBuilder.boost(constantScoreQuery.getBoost());
-		}
-		
-		return constantScoreQueryBuilder;
+		return QueryBuilders.constantScoreQuery(queryBuilder);
 	}
 
 }

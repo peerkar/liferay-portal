@@ -26,12 +26,12 @@ public class ImageResolutionException extends PortalException {
 		super(msg);
 	}
 
-	public ImageResolutionException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ImageResolutionException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ImageResolutionException(Throwable cause) {
-		super(cause);
+	public ImageResolutionException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

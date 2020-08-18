@@ -24,26 +24,20 @@ const DEFAULT_RENDER_DATA = {
 	portletId: 'UNKNOWN_PORTLET_ID',
 };
 
-const TOAST_AUTO_CLOSE_INTERVAL = 5000;
-
-const TYPES = {
-	HTML: 'html',
-	TEXT: 'text',
+const DEFAULT_TOAST_TYPE_TITLES = {
+	danger: Liferay.Language.get('error'),
+	info: Liferay.Language.get('info'),
+	success: Liferay.Language.get('success'),
+	warning: Liferay.Language.get('warning'),
 };
+
+const TOAST_AUTO_CLOSE_INTERVAL = 5000;
 
 const TPL_ALERT_CONTAINER = `
 	<div class="alert-container container">
 		<div class="alert-notifications alert-notifications-fixed" id=${DEFAULT_ALERT_CONTAINER_ID}></div>
 	</div>
 `;
-
-const Text = ({allowHTML, string = null}) => {
-	if (allowHTML) {
-		return <div dangerouslySetInnerHTML={{__html: string}} />;
-	}
-
-	return string;
-};
 
 const getRootElement = ({container, containerId}) => {
 	if (container || containerId) {
@@ -104,12 +98,10 @@ function openToast({
 	container,
 	containerId,
 	message = '',
-	messageType = TYPES.TEXT,
 	onClick = () => {},
 	onClose = () => {},
 	renderData = DEFAULT_RENDER_DATA,
 	title,
-	titleType = TYPES.TEXT,
 	toastProps = {},
 	type = 'success',
 	variant,
@@ -123,12 +115,25 @@ function openToast({
 			onClose({event});
 		}
 
-		if (!container || !containerId) {
-			rootElement.parentNode.removeChild(rootElement);
-		}
+		if (!event || !event.defaultPrevented) {
+			if (!container || !containerId) {
+				rootElement.parentNode.removeChild(rootElement);
+			}
 
-		unmountComponentAtNode(rootElement);
+			unmountComponentAtNode(rootElement);
+		}
 	};
+
+	let titleHTML =
+		title === undefined ? DEFAULT_TOAST_TYPE_TITLES[type] : title;
+
+	if (titleHTML) {
+		titleHTML = titleHTML.replace(/:$/, '');
+		titleHTML = `<strong class="lead">${titleHTML}:</strong>`;
+	}
+	else {
+		titleHTML = '';
+	}
 
 	render(
 		<ClayAlert
@@ -136,15 +141,14 @@ function openToast({
 			displayType={type}
 			onClick={(event) => onClick({event, onClose: onCloseFn})}
 			onClose={onCloseFn}
-			title={
-				title && (
-					<Text allowHTML={titleType === TYPES.HTML} string={title} />
-				)
-			}
 			variant={variant}
 			{...toastProps}
 		>
-			<Text allowHTML={messageType === TYPES.HTML} string={message} />
+			<div
+				dangerouslySetInnerHTML={{
+					__html: `${titleHTML}${message}`,
+				}}
+			/>
 		</ClayAlert>,
 		renderData,
 		rootElement

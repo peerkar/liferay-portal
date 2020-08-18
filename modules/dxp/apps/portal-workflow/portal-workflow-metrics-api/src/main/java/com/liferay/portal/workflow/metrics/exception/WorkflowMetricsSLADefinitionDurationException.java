@@ -30,13 +30,13 @@ public class WorkflowMetricsSLADefinitionDurationException
 	}
 
 	public WorkflowMetricsSLADefinitionDurationException(
-		String msg, Throwable cause) {
+		String msg, Throwable throwable) {
 
-		super(msg, cause);
+		super(msg, throwable);
 	}
 
-	public WorkflowMetricsSLADefinitionDurationException(Throwable cause) {
-		super(cause);
+	public WorkflowMetricsSLADefinitionDurationException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -69,12 +69,12 @@ public class SamlAdminPortlet extends MVCPortlet {
 	}
 
 	@Override
-	protected boolean isSessionErrorException(Throwable cause) {
+	protected boolean isSessionErrorException(Throwable throwable) {
 		if (_log.isDebugEnabled()) {
-			_log.debug(cause.getMessage(), cause);
+			_log.debug(throwable.getMessage(), throwable);
 		}
 		else if (_log.isInfoEnabled()) {
-			_log.info(cause.getMessage());
+			_log.info(throwable.getMessage());
 		}
 
 		return true;

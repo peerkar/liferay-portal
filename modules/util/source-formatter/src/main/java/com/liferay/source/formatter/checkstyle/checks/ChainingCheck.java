@@ -606,60 +606,6 @@ public class ChainingCheck extends BaseCheck {
 		}
 	}
 
-	private DetailAST _getOuterMethodCallDetailAST(DetailAST detailAST) {
-		while (true) {
-			if ((detailAST.getType() != TokenTypes.DOT) &&
-				(detailAST.getType() != TokenTypes.METHOD_CALL)) {
-
-				return null;
-			}
-
-			DetailAST parentDetailAST = detailAST.getParent();
-
-			if ((detailAST.getType() == TokenTypes.METHOD_CALL) &&
-				(parentDetailAST.getType() != TokenTypes.DOT)) {
-
-				break;
-			}
-
-			detailAST = parentDetailAST;
-		}
-
-		while (true) {
-			DetailAST parentDetailAST = detailAST.getParent();
-
-			if (parentDetailAST == null) {
-				return null;
-			}
-
-			if (parentDetailAST.getType() == TokenTypes.METHOD_CALL) {
-				detailAST = parentDetailAST;
-
-				break;
-			}
-
-			detailAST = parentDetailAST;
-		}
-
-		while (true) {
-			if ((detailAST.getType() != TokenTypes.DOT) &&
-				(detailAST.getType() != TokenTypes.METHOD_CALL)) {
-
-				return null;
-			}
-
-			DetailAST childDetailAST = detailAST.getFirstChild();
-
-			if ((detailAST.getType() == TokenTypes.DOT) &&
-				(childDetailAST.getType() != TokenTypes.METHOD_CALL)) {
-
-				return detailAST.getParent();
-			}
-
-			detailAST = childDetailAST;
-		}
-	}
-
 	private List<String> _getRequiredChainingMethodNames(
 		String fullyQualifiedClassName) {
 
@@ -847,15 +793,6 @@ public class ChainingCheck extends BaseCheck {
 					}
 				}
 			}
-		}
-
-		DetailAST outerMethodCallDetailAST = _getOuterMethodCallDetailAST(
-			methodCallDetailAST);
-
-		if (outerMethodCallDetailAST != null) {
-			return _isAllowedChainingMethodCall(
-				outerMethodCallDetailAST,
-				_getChainedMethodNames(outerMethodCallDetailAST), detailAST);
 		}
 
 		return false;

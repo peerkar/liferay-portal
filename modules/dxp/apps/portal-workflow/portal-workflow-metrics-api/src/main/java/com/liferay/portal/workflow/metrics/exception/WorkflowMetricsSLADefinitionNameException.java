@@ -29,13 +29,13 @@ public class WorkflowMetricsSLADefinitionNameException extends PortalException {
 	}
 
 	public WorkflowMetricsSLADefinitionNameException(
-		String msg, Throwable cause) {
+		String msg, Throwable throwable) {
 
-		super(msg, cause);
+		super(msg, throwable);
 	}
 
-	public WorkflowMetricsSLADefinitionNameException(Throwable cause) {
-		super(cause);
+	public WorkflowMetricsSLADefinitionNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -16,7 +16,6 @@ package com.liferay.portal.search.elasticsearch6.internal.query;
 
 import com.liferay.portal.search.query.ExistsQuery;
 
-import org.elasticsearch.index.query.ExistsQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
@@ -24,23 +23,13 @@ import org.osgi.service.component.annotations.Component;
 
 /**
  * @author Michael C. Han
- * @author Petteri Karttunen
  */
 @Component(service = ExistsQueryTranslator.class)
 public class ExistsQueryTranslatorImpl implements ExistsQueryTranslator {
 
 	@Override
 	public QueryBuilder translate(ExistsQuery existsQuery) {
-		
-		ExistsQueryBuilder existsQueryBuilder = 
-				QueryBuilders.existsQuery(existsQuery.getField());
-
-		if (existsQuery.getBoost() != null) {
-			existsQueryBuilder.boost(
-					existsQuery.getBoost());
-		}
-
-		return existsQueryBuilder;
+		return QueryBuilders.existsQuery(existsQuery.getField());
 	}
 
 }

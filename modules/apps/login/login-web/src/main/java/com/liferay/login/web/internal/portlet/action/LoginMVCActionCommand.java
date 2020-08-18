@@ -117,12 +117,13 @@ public class LoginMVCActionCommand extends BaseMVCActionCommand {
 		}
 		catch (Exception exception) {
 			if (exception instanceof AuthException) {
-				Throwable cause = exception.getCause();
+				Throwable throwable = exception.getCause();
 
-				if (cause instanceof PasswordExpiredException ||
-					cause instanceof UserLockoutException) {
+				if (throwable instanceof PasswordExpiredException ||
+					throwable instanceof UserLockoutException) {
 
-					SessionErrors.add(actionRequest, cause.getClass(), cause);
+					SessionErrors.add(
+						actionRequest, throwable.getClass(), throwable);
 				}
 				else {
 					if (_log.isInfoEnabled()) {

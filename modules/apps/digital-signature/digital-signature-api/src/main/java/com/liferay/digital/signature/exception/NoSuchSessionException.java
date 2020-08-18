@@ -23,8 +23,8 @@ public class NoSuchSessionException extends DSSignatureException {
 		super(message);
 	}
 
-	public NoSuchSessionException(String message, Throwable cause) {
-		super(message, cause);
+	public NoSuchSessionException(String message, Throwable throwable) {
+		super(message, throwable);
 	}
 
 }

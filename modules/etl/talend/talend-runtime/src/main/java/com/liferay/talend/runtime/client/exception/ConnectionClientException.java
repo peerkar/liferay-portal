@@ -24,9 +24,9 @@ public class ConnectionClientException extends ClientException {
 	}
 
 	public ConnectionClientException(
-		String message, int httpStatus, Throwable cause) {
+		String message, int httpStatus, Throwable throwable) {
 
-		super(message, httpStatus, cause);
+		super(message, httpStatus, throwable);
 	}
 
 }

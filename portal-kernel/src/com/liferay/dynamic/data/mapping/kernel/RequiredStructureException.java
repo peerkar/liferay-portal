@@ -28,12 +28,12 @@ public class RequiredStructureException extends PortalException {
 		super(msg);
 	}
 
-	public RequiredStructureException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RequiredStructureException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public RequiredStructureException(Throwable cause) {
-		super(cause);
+	public RequiredStructureException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

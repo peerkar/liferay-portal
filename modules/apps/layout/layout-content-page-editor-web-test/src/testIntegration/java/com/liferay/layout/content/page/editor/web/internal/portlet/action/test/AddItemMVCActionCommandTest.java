@@ -18,7 +18,7 @@ import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
 import com.liferay.layout.util.constants.LayoutDataItemTypeConstants;
-import com.liferay.layout.util.structure.ContainerLayoutStructureItem;
+import com.liferay.layout.util.structure.ContainerStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.petra.string.StringPool;
@@ -134,7 +134,7 @@ public class AddItemMVCActionCommandTest {
 			LayoutDataItemTypeConstants.TYPE_CONTAINER,
 			layoutStructureItem.getItemType());
 		Assert.assertTrue(
-			layoutStructureItem instanceof ContainerLayoutStructureItem);
+			layoutStructureItem instanceof ContainerStyledLayoutStructureItem);
 	}
 
 	@Test
@@ -186,7 +186,7 @@ public class AddItemMVCActionCommandTest {
 			LayoutDataItemTypeConstants.TYPE_CONTAINER,
 			layoutStructureItem.getItemType());
 		Assert.assertTrue(
-			layoutStructureItem instanceof ContainerLayoutStructureItem);
+			layoutStructureItem instanceof ContainerStyledLayoutStructureItem);
 	}
 
 	private Layout _addLayout() throws Exception {

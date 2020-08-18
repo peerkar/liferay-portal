@@ -28,12 +28,12 @@ public class UpgradeException extends PortalException {
 		super(msg);
 	}
 
-	public UpgradeException(String msg, Throwable cause) {
-		super(msg, cause);
+	public UpgradeException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public UpgradeException(Throwable cause) {
-		super(cause);
+	public UpgradeException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

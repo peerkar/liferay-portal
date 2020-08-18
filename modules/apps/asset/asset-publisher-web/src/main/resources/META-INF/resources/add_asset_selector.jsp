@@ -68,15 +68,18 @@ String redirect = PortalUtil.getLayoutFullURL(layout, themeDisplay);
 							PortletURL portletURL = assetPublisherAddItemHolder.getPortletURL();
 
 							portletURL.setParameter("redirect", redirect);
-
-							Map<String, Object> data = HashMapBuilder.<String, Object>put(
-								"title", LanguageUtil.format((HttpServletRequest)pageContext.getRequest(), "new-x", HtmlUtil.escape(message), false)
-							).put(
-								"url", assetHelper.getAddURLPopUp(curGroupId, plid, portletURL, false, null)
-							).build();
 						%>
 
-							<aui:option data="<%= data %>" label="<%= HtmlUtil.escape(message) %>" />
+							<aui:option
+								data='<%=
+									HashMapBuilder.<String, Object>put(
+										"title", LanguageUtil.format((HttpServletRequest)pageContext.getRequest(), "new-x", HtmlUtil.escape(message), false)
+									).put(
+										"url", assetHelper.getAddURLPopUp(curGroupId, plid, portletURL, false, null)
+									).build()
+								%>'
+								label="<%= HtmlUtil.escape(message) %>"
+							/>
 
 						<%
 						}

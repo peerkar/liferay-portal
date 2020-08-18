@@ -28,12 +28,12 @@ public class QuestionDescriptionException extends PortalException {
 		super(msg);
 	}
 
-	public QuestionDescriptionException(String msg, Throwable cause) {
-		super(msg, cause);
+	public QuestionDescriptionException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public QuestionDescriptionException(Throwable cause) {
-		super(cause);
+	public QuestionDescriptionException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -28,12 +28,12 @@ public class StatusException extends PortalException {
 		super(msg);
 	}
 
-	public StatusException(String msg, Throwable cause) {
-		super(msg, cause);
+	public StatusException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public StatusException(Throwable cause) {
-		super(cause);
+	public StatusException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

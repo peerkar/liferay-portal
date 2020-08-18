@@ -12,7 +12,9 @@
  * details.
  */
 
+import ClayAlert from '@clayui/alert';
 import ClayTabs from '@clayui/tabs';
+import PropTypes from 'prop-types';
 import React, {useEffect, useMemo, useState} from 'react';
 
 import {useCollectionActiveItemContext} from '../../../app/components/CollectionActiveItemContext';
@@ -54,7 +56,8 @@ function ItemConfigurationContent() {
 		() =>
 			Object.entries(panelsIds)
 				.filter(([, show]) => show)
-				.map(([key]) => ({...PANELS[key], panelId: key})),
+				.map(([key]) => ({...PANELS[key], panelId: key}))
+				.sort((panelA, panelB) => panelB.priority - panelA.priority),
 		[panelsIds]
 	);
 
@@ -69,13 +72,21 @@ function ItemConfigurationContent() {
 	}, [panels]);
 
 	if (!activeItem || !panels.length) {
-		return null;
+		return (
+			<PageStructureSidebarSection resizable size={0.6}>
+				<p className="bg-light m-3 p-5 rounded small text-center text-secondary">
+					{Liferay.Language.get(
+						'select-an-element-of-the-page-to-show-this-panel'
+					)}
+				</p>
+			</PageStructureSidebarSection>
+		);
 	}
 
 	return (
-		<PageStructureSidebarSection resizable>
+		<PageStructureSidebarSection resizable size={1.5}>
 			<div className="page-editor__page-structure__item-configuration">
-				<ClayTabs className="border-bottom" modern>
+				<ClayTabs className="border-bottom pt-2 px-3" modern>
 					{panels.map((panel) => (
 						<ClayTabs.Item
 							active={panel.panelId === activePanelId}
@@ -101,22 +112,57 @@ function ItemConfigurationContent() {
 						(panel) => panel.panelId === activePanelId
 					)}
 				>
-					{panels.map((panel) => {
-						const Component = panel.component;
-
-						return (
-							<ClayTabs.TabPane
-								aria-labelledby={`${tabIdPrefix}-${panel.panelId}`}
-								className="p-3"
-								id={`${panelIdPrefix}-${panel.panelId}`}
-								key={panel.panelId}
-							>
-								<Component item={activeItem} />
-							</ClayTabs.TabPane>
-						);
-					})}
+					{panels.map((panel) => (
+						<ClayTabs.TabPane
+							aria-labelledby={`${tabIdPrefix}-${panel.panelId}`}
+							className="p-3"
+							id={`${panelIdPrefix}-${panel.panelId}`}
+							key={panel.panelId}
+						>
+							<ItemConfigurationComponent
+								Component={panel.component}
+								item={activeItem}
+							/>
+						</ClayTabs.TabPane>
+					))}
 				</ClayTabs.Content>
 			</div>
 		</PageStructureSidebarSection>
 	);
 }
+
+class ItemConfigurationComponent extends React.Component {
+	static getDerivedStateFromError(error) {
+		return {error};
+	}
+
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			error: null,
+		};
+	}
+
+	render() {
+		const {Component, item} = this.props;
+
+		return this.state.error ? (
+			<ClayAlert
+				displayType="danger"
+				title={Liferay.Language.get('error')}
+			>
+				{Liferay.Language.get(
+					'an-unexpected-error-occurred-while-rendering-this-item'
+				)}
+			</ClayAlert>
+		) : (
+			<Component item={item} />
+		);
+	}
+}
+
+ItemConfigurationComponent.propTypes = {
+	Component: PropTypes.func.isRequired,
+	item: PropTypes.object.isRequired,
+};

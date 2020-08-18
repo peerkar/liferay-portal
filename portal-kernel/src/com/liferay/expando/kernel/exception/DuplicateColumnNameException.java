@@ -28,12 +28,12 @@ public class DuplicateColumnNameException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateColumnNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateColumnNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateColumnNameException(Throwable cause) {
-		super(cause);
+	public DuplicateColumnNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

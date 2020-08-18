@@ -29,12 +29,14 @@ public class NoSuchDataDefinitionFieldLinkException
 		super(msg);
 	}
 
-	public NoSuchDataDefinitionFieldLinkException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchDataDefinitionFieldLinkException(
+		String msg, Throwable throwable) {
+
+		super(msg, throwable);
 	}
 
-	public NoSuchDataDefinitionFieldLinkException(Throwable cause) {
-		super(cause);
+	public NoSuchDataDefinitionFieldLinkException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

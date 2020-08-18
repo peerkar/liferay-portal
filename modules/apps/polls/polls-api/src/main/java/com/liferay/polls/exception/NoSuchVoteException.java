@@ -28,12 +28,12 @@ public class NoSuchVoteException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchVoteException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchVoteException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchVoteException(Throwable cause) {
-		super(cause);
+	public NoSuchVoteException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

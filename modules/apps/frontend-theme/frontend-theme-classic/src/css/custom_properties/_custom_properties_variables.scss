@@ -84,7 +84,20 @@ $theme-colors-cp: map-deep-merge(
 		--container-max-#{$key}: #{$value};
 	}
 
+	// Aspect ratios
+
+	--aspect-ratio: 100%;
+	--aspect-ratio-4-to-3: 75%;
+	--aspect-ratio-8-to-3: 37.5%;
+	--aspect-ratio-16-to-9: 56.25%;
+
+	// Transitions
+
+	--transition-collapse: #{$transition-collapse};
+	--transition-fade: #{$transition-fade};
+
 	// Border radius
+
 	--border-radius-circle: 50%;
 	--border-radius-lg: #{$border-radius-lg};
 	--border-radius-sm: #{$border-radius-sm};
@@ -126,147 +139,45 @@ $theme-colors-cp: map-deep-merge(
 	--h5-font-size: #{$h5-font-size};
 	--h6-font-size: #{$h6-font-size};
 
+	// Display
+
+	--display1-size: #{$display1-size};
+	--display2-size: #{$display2-size};
+	--display3-size: #{$display3-size};
+	--display4-size: #{$display4-size};
+
+	--display1-weight: #{$display1-weight};
+	--display2-weight: #{$display2-weight};
+	--display3-weight: #{$display3-weight};
+	--display4-weight: #{$display4-weight};
+
+	--display-line-height: #{$display-line-height};
+
+	// Lead
+
+	--lead-font-size: #{$lead-font-size};
+	--lead-font-weight: #{$lead-font-weight};
+
+	// Text muted
+
+	--text-muted: #{$text-muted};
+
+	// Blockquotes
+
+	--blockquote-font-size: #{$font-size-base} * 1.25;
+	--blockquote-small-color: #{$gray-600};
+	--blockquote-small-font-size: #{$small-font-size};
+
+	// Separator
+
+	--hr-border-color: #{$hr-border-color};
+	--hr-border-width: #{$hr-border-width};
+	--hr-margin-y: #{$hr-margin-y};
+
 	// Body
 
 	--body-color: $body-color;
 	--body-bg: $body-bg;
-
-	// Buttons
-
-	--btn-primary-bg-dark: var(--primary-d1);
-	--btn-primary-bg: var(--primary);
-	--btn-primary-border: var(--primary);
-	--btn-primary-color: var(--white);
-
-	--btn-secondary-bg-dark: var(--gray-100);
-	--btn-secondary-bg: var(--white);
-	--btn-secondary-border: var(--gray-400);
-	--btn-secondary-color: var(--secondary);
-
-	--btn-padding-y: #{$btn-padding-y};
-	--btn-padding-x: #{$btn-padding-x};
-	--btn-font-size: #{$btn-font-size};
-	--btn-line-height: #{$btn-line-height};
-	--btn-border-radius: #{$btn-border-radius};
-
-	--btn-padding-y-lg: #{$btn-padding-y-lg};
-	--btn-padding-x-lg: #{$btn-padding-x-lg};
-	--btn-font-size-lg: #{$btn-font-size-lg};
-	--btn-line-height-lg: #{$btn-line-height-lg};
-	--btn-border-radius-lg: #{$btn-border-radius-lg};
-
-	--btn-padding-y-sm: #{$btn-padding-y-sm};
-	--btn-padding-x-sm: #{$btn-padding-x-sm};
-	--btn-font-size-sm: #{$btn-font-size-sm};
-	--btn-line-height-sm: #{$btn-line-height-sm};
-	--btn-border-radius-sm: #{$btn-border-radius-sm};
-
-	--btn-monospaced-padding-y: #{$btn-monospaced-padding-y};
-	--btn-monospaced-padding-x: #{$btn-monospaced-padding-x};
-	--btn-monospaced-size: #{$btn-monospaced-size};
-
-	--btn-monospaced-padding-y-sm: #{$btn-monospaced-padding-y-sm};
-	--btn-monospaced-padding-x-sm: #{$btn-monospaced-padding-x-sm};
-	--btn-monospaced-size-sm: #{$btn-monospaced-size-sm};
-
-	--btn-monospaced-padding-y-lg: #{$btn-monospaced-padding-y-lg};
-	--btn-monospaced-padding-x-lg: #{$btn-monospaced-padding-x-lg};
-	--btn-monospaced-size-lg: #{$btn-monospaced-size-lg};
-
-	--btn-section-font-size: #{$btn-section-font-size};
-	--btn-section-font-size-lg: #{$btn-section-font-size-lg};
-	--btn-section-font-size-sm: #{$btn-section-font-size-sm};
-
-	--btn-inline-item-font-size: #{$btn-inline-item-font-size};
-	--btn-inline-item-font-size-lg: #{$btn-inline-item-font-size-lg};
-	--btn-inline-item-font-size-sm: #{$btn-inline-item-font-size};
-	// $btn-inline-item-font-size-sm is not defined in Clay
-
-	// Alerts
-
-	--alert-padding-y: #{$alert-padding-y};
-	--alert-padding-x: #{$alert-padding-x};
-
-	--alert-primary-color: #{$alert-primary-color};
-	--alert-primary-bg: #{$alert-primary-bg};
-	--alert-primary-border-color: #{$alert-primary-border-color};
-
-	--alert-success-color: #{$alert-success-color};
-	--alert-success-bg: #{$alert-success-bg};
-	--alert-success-border-color: #{$alert-success-border-color};
-
-	--alert-info-color: #{$alert-info-color};
-	--alert-info-bg: #{$alert-info-bg};
-	--alert-info-border-color: #{$alert-info-border-color};
-
-	--alert-warning-color: #{$alert-warning-color};
-	--alert-warning-bg: #{$alert-warning-bg};
-	--alert-warning-border-color: #{$alert-warning-border-color};
-
-	--alert-danger-color: #{$alert-danger-color};
-	--alert-danger-bg: #{$alert-danger-bg};
-	--alert-danger-border-color: #{$alert-danger-border-color};
-
-	// Cards
-
-	--card-bg: #{$card-bg};
-	--card-border-color: #{$card-border-color};
-	--card-border-radius: #{$card-border-radius};
-	--card-border-width: #{$card-border-width};
-	--card-cap-bg: #{$card-cap-bg};
-	--card-cap-color: inherit;
-	--card-color: inherit;
-	--card-overflow: inherit;
-	--card-spacer-x: #{$card-spacer-x};
-	--card-spacer-y: #{$card-spacer-y};
-
-	// Forms
-
-	--input-bg: #{$input-bg};
-	--input-border-color: #{$input-border-color};
-	--input-border-radius: #{$input-border-radius};
-	--input-border-width: #{$input-border-width};
-	--input-color: #{$input-color};
-	--input-height: #{$input-height};
-	--input-group-inset-item-padding-left: #{$input-group-inset-item-padding-left};
-	--input-group-inset-item-padding-right: #{$input-group-inset-item-padding-right};
-	--input-line-height: #{$input-line-height};
-	--input-padding-x: #{$input-padding-x};
-	--input-padding-y: #{$input-padding-y};
-
-	--input-focus-color: #{$input-focus-color};
-	--input-focus-bg: #{$input-focus-bg};
-	--input-focus-border-color: #{$input-focus-border-color};
-
-	--custom-control-indicator-checked-border-color: #{$custom-control-indicator-checked-border-color};
-	--custom-control-indicator-checked-bg: #{$custom-control-indicator-checked-bg};
-
-	--input-label-font-size: inherit;
-	--input-label-margin-bottom: #{$input-label-margin-bottom};
-
-	--input-font-size-sm: #{$input-font-size-sm};
-	--input-height-sm: #{$input-height-sm};
-
-	--input-font-size-lg: #{$input-font-size-lg};
-	--input-height-lg: #{$input-height-lg};
-
-	// Nav and Navbar
-
-	--navbar-active-color: #{$navbar-light-active-color};
-	--navbar-brand-color: inherit;
-	--navbar-brand-font-size: #{$navbar-brand-font-size};
-	--navbar-color: #{$navbar-light-color};
-	--navbar-font-size: #{$navbar-font-size};
-	--navbar-hover-color: #{$navbar-light-hover-color};
-	--navbar-light-active-color: #{$navbar-light-active-color};
-	--navbar-light-hover-color: #{$navbar-light-hover-color};
-
-	--nav-font-size: #{$nav-font-size};
-	--nav-link-active-color: inherit;
-	--nav-link-color: inherit;
-	--nav-link-hover-color: inherit;
-	--nav-link-padding-x: #{$nav-link-padding-x};
-	--nav-link-padding-y: #{$nav-link-padding-y};
 
 	// Portlet vars
 
@@ -283,48 +194,4 @@ $theme-colors-cp: map-deep-merge(
 	--portlet-topper-color: var(--white);
 	--portlet-topper-link-color: var(--portlet-topper-color);
 	--portlet-topper-link-hover-color: var(--portlet-topper-link-color);
-
-	// Table list
-
-	--table-cell-padding: #{$table-cell-padding};
-
-	--table-list-active-bg: #{$table-list-active-bg};
-
-	--table-list-font-size: inherit;
-
-	--table-list-bg: #{$table-list-bg};
-	--table-list-color: #{$table-list-color};
-
-	--table-list-head-bg: inherit;
-	--table-list-head-color: inherit;
-
-	--table-list-border-radius: #{$table-list-border-radius};
-	--table-list-border-color: #{$table-list-border-color};
-	--table-list-border-x-width: #{$table-list-border-x-width};
-	--table-list-border-y-width: #{$table-list-border-y-width};
-
-	--table-list-divider-bg: #{$table-divider-bg};
-	--table-list-divider-color: #{$table-divider-color};
-	--table-list-divider-padding-x: #{$table-list-divider-padding-x};
-	--table-list-divider-padding-y: #{$table-list-divider-padding-y};
-
-	// List group
-
-	--list-group-bg: #{$list-group-bg};
-	--list-group-border-color: #{$list-group-border-color};
-	--list-group-border-radius: #{$list-group-border-radius};
-	--list-group-border-width: #{$list-group-border-width};
-	--list-group-color: inherit;
-
-	--list-group-active-bg: #{$list-group-active-bg};
-	--list-group-active-border-color: #{$list-group-active-border-color};
-	--list-group-active-color: #{$list-group-active-color};
-
-	--list-group-font-size: inherit;
-	--list-group-item-padding-x: #{$list-group-item-padding-x};
-	--list-group-item-padding-y: #{$list-group-item-padding-y};
-
-	--list-group-header-bg: #{$list-group-header-bg};
-	--list-group-header-padding-x: #{$list-group-header-padding-x};
-	--list-group-header-padding-y: #{$list-group-header-padding-y};
 }

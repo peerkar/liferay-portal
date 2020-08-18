@@ -81,7 +81,8 @@ public class JavaSignature extends BaseJavaTerm {
 					((_returnJavaType == null) ||
 					 Objects.equals(_returnJavaType.toString(), "void"))) {
 
-					appendSingleLine(sb, _objectName, "", "()" + suffix, -1);
+					appendSingleLine(
+						sb, _objectName, "", "()" + suffix, NO_MAX_LINE_LENGTH);
 				}
 				else {
 					append(
@@ -97,7 +98,8 @@ public class JavaSignature extends BaseJavaTerm {
 					((_returnJavaType == null) ||
 					 Objects.equals(_returnJavaType.toString(), "void"))) {
 
-					appendSingleLine(sb, _objectName, "", "() ", -1);
+					appendSingleLine(
+						sb, _objectName, "", "() ", NO_MAX_LINE_LENGTH);
 				}
 				else {
 					appendNewLine(
@@ -129,7 +131,7 @@ public class JavaSignature extends BaseJavaTerm {
 			}
 
 			if ((_genericJavaTypes == null) && (_returnJavaType == null)) {
-				appendSingleLine(sb, _objectName, "", "(", -1);
+				appendSingleLine(sb, _objectName, "", "(", NO_MAX_LINE_LENGTH);
 				appendNewLine(
 					sb, _javaParameters, indent, "", ")" + suffix,
 					maxLineLength);
@@ -170,7 +172,7 @@ public class JavaSignature extends BaseJavaTerm {
 		}
 
 		if ((_genericJavaTypes == null) && (_returnJavaType == null)) {
-			appendSingleLine(sb, _objectName, " ", "(", -1);
+			appendSingleLine(sb, _objectName, " ", "(", NO_MAX_LINE_LENGTH);
 		}
 		else {
 			appendNewLine(

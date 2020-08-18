@@ -28,12 +28,14 @@ public class DuplicateAssetListEntryTitleException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateAssetListEntryTitleException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateAssetListEntryTitleException(
+		String msg, Throwable throwable) {
+
+		super(msg, throwable);
 	}
 
-	public DuplicateAssetListEntryTitleException(Throwable cause) {
-		super(cause);
+	public DuplicateAssetListEntryTitleException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

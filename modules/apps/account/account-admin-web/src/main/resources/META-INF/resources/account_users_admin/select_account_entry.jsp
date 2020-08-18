@@ -19,11 +19,21 @@
 <%
 SearchContainer<AccountEntryDisplay> accountEntryDisplaySearchContainer = AccountEntryDisplaySearchContainerFactory.create(liferayPortletRequest, liferayPortletResponse);
 
-accountEntryDisplaySearchContainer.setRowChecker(null);
+long accountGroupId = ParamUtil.getLong(request, "accountGroupId");
+
+if (accountGroupId > 0) {
+	accountEntryDisplaySearchContainer.setRowChecker(new AccountGroupAccountEntryRowChecker(liferayPortletResponse, accountGroupId));
+}
+
+SelectAccountEntryManagementToolbarDisplayContext selectAccountEntryManagementToolbarDisplayContext = new SelectAccountEntryManagementToolbarDisplayContext(request, liferayPortletRequest, liferayPortletResponse, accountEntryDisplaySearchContainer);
+
+if (selectAccountEntryManagementToolbarDisplayContext.isSingleSelect()) {
+	accountEntryDisplaySearchContainer.setRowChecker(null);
+}
 %>
 
 <clay:management-toolbar
-	displayContext="<%= new SelectAccountEntryManagementToolbarDisplayContext(request, liferayPortletRequest, liferayPortletResponse, accountEntryDisplaySearchContainer) %>"
+	displayContext="<%= selectAccountEntryManagementToolbarDisplayContext %>"
 />
 
 <clay:container-fluid
@@ -63,20 +73,24 @@ accountEntryDisplaySearchContainer.setRowChecker(null);
 				translate="<%= true %>"
 			/>
 
-			<liferay-ui:search-container-column-text>
-
-				<%
-				Map<String, Object> data = HashMapBuilder.<String, Object>put(
-					"accountentryid", accountEntryDisplay.getAccountEntryId()
-				).put(
-					"entityid", accountEntryDisplay.getAccountEntryId()
-				).put(
-					"entityname", accountEntryDisplay.getName()
-				).build();
-				%>
-
-				<aui:button cssClass="choose-account selector-button" data="<%= data %>" disabled="<%= disabled %>" value="choose" />
-			</liferay-ui:search-container-column-text>
+			<c:if test="<%= selectAccountEntryManagementToolbarDisplayContext.isSingleSelect() %>">
+				<liferay-ui:search-container-column-text>
+					<aui:button
+						cssClass="choose-account selector-button"
+						data='<%=
+							HashMapBuilder.<String, Object>put(
+								"accountentryid", accountEntryDisplay.getAccountEntryId()
+							).put(
+								"entityid", accountEntryDisplay.getAccountEntryId()
+							).put(
+								"entityname", accountEntryDisplay.getName()
+							).build()
+						%>'
+						disabled="<%= disabled %>"
+						value="choose"
+					/>
+				</liferay-ui:search-container-column-text>
+			</c:if>
 		</liferay-ui:search-container-row>
 
 		<liferay-ui:search-iterator
@@ -85,9 +99,39 @@ accountEntryDisplaySearchContainer.setRowChecker(null);
 	</liferay-ui:search-container>
 </clay:container-fluid>
 
-<aui:script>
-	Liferay.Util.selectEntityHandler(
-		'#<portlet:namespace />selectAccountEntry',
-		'<%= HtmlUtil.escapeJS(liferayPortletResponse.getNamespace() + "selectAccountEntry") %>'
-	);
-</aui:script>
+<c:choose>
+	<c:when test="<%= selectAccountEntryManagementToolbarDisplayContext.isSingleSelect() %>">
+		<aui:script>
+			Liferay.Util.selectEntityHandler(
+				'#<portlet:namespace />selectAccountEntry',
+				'<%= HtmlUtil.escapeJS(liferayPortletResponse.getNamespace() + "selectAccountEntry") %>'
+			);
+		</aui:script>
+	</c:when>
+	<c:otherwise>
+		<aui:script use="liferay-search-container">
+			var searchContainer = Liferay.SearchContainer.get(
+				'<portlet:namespace />accountEntries'
+			);
+
+			searchContainer.on('rowToggled', function (event) {
+				var selectedItems = event.elements.allSelectedElements;
+
+				var result = {};
+
+				if (!selectedItems.isEmpty()) {
+					result = {
+						data: {
+							value: selectedItems.get('value').join(','),
+						},
+					};
+				}
+
+				Liferay.Util.getOpener().Liferay.fire(
+					'<%= HtmlUtil.escapeJS(liferayPortletResponse.getNamespace() + "selectAccountEntries") %>',
+					result
+				);
+			});
+		</aui:script>
+	</c:otherwise>
+</c:choose>

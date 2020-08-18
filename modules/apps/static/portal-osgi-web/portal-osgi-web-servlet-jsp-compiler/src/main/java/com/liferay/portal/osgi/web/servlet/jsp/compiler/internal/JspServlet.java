@@ -325,8 +325,8 @@ public class JspServlet extends HttpServlet {
 	}
 
 	@Override
-	public void log(String message, Throwable t) {
-		_jspServlet.log(message, t);
+	public void log(String message, Throwable throwable) {
+		_jspServlet.log(message, throwable);
 	}
 
 	@Override

@@ -111,11 +111,11 @@ public class InstanceWrapperBuilder {
 		sb.append("_IW getInstance() {return _instance;}\n");
 
 		for (JavaMethod javaMethod : javaMethods) {
-			String methodName = javaMethod.getName();
-
 			if (!javaMethod.isPublic() || !javaMethod.isStatic()) {
 				continue;
 			}
+
+			String methodName = javaMethod.getName();
 
 			if (methodName.equals("getInstance")) {
 				methodName = "getWrappedInstance";

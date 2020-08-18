@@ -7,12 +7,16 @@
 
 	&.resized {
 		flex-basis: auto;
-		flex-grow: 0;
 		flex-shrink: 0;
 	}
 
 	& ~ & {
 		border-top: solid $gray-300 thin;
+	}
+
+	&__custom-styles {
+		border-bottom: 1px solid $secondary-l1;
+		padding-bottom: 1rem;
 	}
 
 	&__resize-handler {

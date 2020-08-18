@@ -28,12 +28,12 @@ public class ArticleIdException extends PortalException {
 		super(msg);
 	}
 
-	public ArticleIdException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ArticleIdException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ArticleIdException(Throwable cause) {
-		super(cause);
+	public ArticleIdException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

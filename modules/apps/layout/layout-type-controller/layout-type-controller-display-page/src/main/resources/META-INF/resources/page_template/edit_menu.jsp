@@ -17,7 +17,7 @@
 <%@ include file="/page_template/init.jsp" %>
 
 <%
-EditDisplayPageMenuDisplayContext editDisplayPageMenuDisplayContext = new EditDisplayPageMenuDisplayContext(request);
+EditDisplayPageMenuDisplayContext editDisplayPageMenuDisplayContext = (EditDisplayPageMenuDisplayContext)request.getAttribute(DisplayPageLayoutTypeControllerWebKeys.EDIT_DISPLAY_PAGE_MENU_DISPLAY_CONTEXT);
 %>
 
 <clay:dropdown-menu

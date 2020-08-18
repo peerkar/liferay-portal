@@ -28,12 +28,12 @@ public class DuplicateAppException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateAppException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateAppException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateAppException(Throwable cause) {
-		super(cause);
+	public DuplicateAppException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

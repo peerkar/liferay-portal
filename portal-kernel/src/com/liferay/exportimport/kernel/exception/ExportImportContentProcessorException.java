@@ -32,12 +32,14 @@ public class ExportImportContentProcessorException extends PortalException {
 		_className = className;
 	}
 
-	public ExportImportContentProcessorException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ExportImportContentProcessorException(
+		String msg, Throwable throwable) {
+
+		super(msg, throwable);
 	}
 
-	public ExportImportContentProcessorException(Throwable cause) {
-		super(cause);
+	public ExportImportContentProcessorException(Throwable throwable) {
+		super(throwable);
 	}
 
 	public String getClassName() {

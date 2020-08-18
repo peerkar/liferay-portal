@@ -255,8 +255,8 @@ public class SampleSQLBuilder {
 						).build(),
 						sampleSQLWriter);
 				}
-				catch (Throwable t) {
-					_freeMarkerThrowable = t;
+				catch (Throwable throwable) {
+					_freeMarkerThrowable = throwable;
 				}
 				finally {
 					charPipe.close();

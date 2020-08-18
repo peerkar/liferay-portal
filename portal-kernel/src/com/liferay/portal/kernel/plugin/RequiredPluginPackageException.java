@@ -30,12 +30,12 @@ public class RequiredPluginPackageException extends PortalException {
 		super(msg);
 	}
 
-	public RequiredPluginPackageException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RequiredPluginPackageException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public RequiredPluginPackageException(Throwable cause) {
-		super(cause);
+	public RequiredPluginPackageException(Throwable throwable) {
+		super(throwable);
 	}
 
 	public String getContext() {

@@ -28,12 +28,12 @@ public class PluginPackageException extends SystemException {
 		super(msg);
 	}
 
-	public PluginPackageException(String msg, Throwable cause) {
-		super(msg, cause);
+	public PluginPackageException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public PluginPackageException(Throwable cause) {
-		super(cause);
+	public PluginPackageException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

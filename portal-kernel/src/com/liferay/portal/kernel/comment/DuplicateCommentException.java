@@ -28,12 +28,12 @@ public class DuplicateCommentException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateCommentException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateCommentException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateCommentException(Throwable cause) {
-		super(cause);
+	public DuplicateCommentException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

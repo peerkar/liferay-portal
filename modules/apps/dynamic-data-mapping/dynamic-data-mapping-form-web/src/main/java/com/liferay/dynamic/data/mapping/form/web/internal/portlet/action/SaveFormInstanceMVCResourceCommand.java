@@ -57,7 +57,7 @@ public class SaveFormInstanceMVCResourceCommand
 
 			writeResponse(resourceRequest, resourceResponse, formInstance);
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			resourceResponse.setProperty(
 				ResourceResponse.HTTP_STATUS_CODE,
 				String.valueOf(HttpServletResponse.SC_BAD_REQUEST));

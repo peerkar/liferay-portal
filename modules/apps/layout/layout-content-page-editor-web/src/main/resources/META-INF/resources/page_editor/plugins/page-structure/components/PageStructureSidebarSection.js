@@ -21,6 +21,7 @@ import {NotDraggableArea} from '../../../app/utils/useDragAndDrop';
 export default function PageStructureSidebarSection({
 	children,
 	resizable = false,
+	size = 1,
 }) {
 	const [handlerElement, setHandlerElement] = useState(null);
 	const [panelElement, setPanelElement] = useState(null);
@@ -73,6 +74,10 @@ export default function PageStructureSidebarSection({
 		};
 	}, [handlerElement, panelElement]);
 
+	useEffect(() => {
+		setPanelHeight(null);
+	}, [resizable, size]);
+
 	return (
 		<>
 			{resizable && (
@@ -94,7 +99,7 @@ export default function PageStructureSidebarSection({
 					resized: !!panelHeight,
 				})}
 				ref={setPanelElement}
-				style={{height: panelHeight}}
+				style={{flexGrow: panelHeight ? 0 : size, height: panelHeight}}
 			>
 				{children}
 			</div>
@@ -104,4 +109,5 @@ export default function PageStructureSidebarSection({
 
 PageStructureSidebarSection.propTypes = {
 	resizable: PropTypes.bool,
+	size: PropTypes.number,
 };

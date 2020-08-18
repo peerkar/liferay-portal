@@ -28,12 +28,12 @@ public class NoSuchResourceException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchResourceException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchResourceException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchResourceException(Throwable cause) {
-		super(cause);
+	public NoSuchResourceException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

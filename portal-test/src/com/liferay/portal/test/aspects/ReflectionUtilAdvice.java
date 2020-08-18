@@ -26,21 +26,18 @@ import org.aspectj.lang.annotation.Aspect;
 @Aspect
 public class ReflectionUtilAdvice {
 
-	public static void setDeclaredFieldThrowable(
-		Throwable declaredFieldThrowable) {
-
-		_declaredFieldThrowable = declaredFieldThrowable;
+	public static void setDeclaredFieldThrowable(Throwable throwable) {
+		_declaredFieldThrowable = throwable;
 	}
 
-	public static void setDeclaredMethodThrowable(
-			Throwable declaredMethodThrowable)
+	public static void setDeclaredMethodThrowable(Throwable throwable)
 		throws ClassNotFoundException {
 
 		Class.forName(
 			ReflectionUtil.class.getName(), true,
 			ReflectionUtil.class.getClassLoader());
 
-		_declaredMethodThrowable = declaredMethodThrowable;
+		_declaredMethodThrowable = throwable;
 	}
 
 	@Around(

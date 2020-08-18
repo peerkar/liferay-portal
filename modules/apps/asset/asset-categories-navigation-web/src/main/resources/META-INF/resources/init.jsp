@@ -32,8 +32,6 @@ page import="com.liferay.asset.kernel.model.AssetCategory" %><%@
 page import="com.liferay.portal.kernel.util.Constants" %><%@
 page import="com.liferay.portal.kernel.util.HashMapBuilder" %>
 
-<%@ page import="java.util.Map" %>
-
 <liferay-theme:defineObjects />
 
 <portlet:defineObjects />

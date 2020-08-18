@@ -26,12 +26,12 @@ public class MembershipRequestCommentsException extends PortalException {
 		super(msg);
 	}
 
-	public MembershipRequestCommentsException(String msg, Throwable cause) {
-		super(msg, cause);
+	public MembershipRequestCommentsException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public MembershipRequestCommentsException(Throwable cause) {
-		super(cause);
+	public MembershipRequestCommentsException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

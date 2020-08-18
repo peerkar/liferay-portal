@@ -16,13 +16,8 @@
 
 <%@ include file="/management_bar_navigation/init.jsp" %>
 
-<%
-boolean disabled = GetterUtil.getBoolean(request.getAttribute("liferay-frontend:management-bar-navigation:disabled"));
-List<ManagementBarFilterItem> managementBarFilterItems = (List<ManagementBarFilterItem>)request.getAttribute("liferay-frontend:management-bar-navigation:managementBarFilterItems");
-%>
-
 <liferay-frontend:management-bar-filter
-	disabled="<%= disabled %>"
-	managementBarFilterItems="<%= managementBarFilterItems %>"
+	disabled='<%= GetterUtil.getBoolean(request.getAttribute("liferay-frontend:management-bar-navigation:disabled")) %>'
+	managementBarFilterItems='<%= (List<ManagementBarFilterItem>)request.getAttribute("liferay-frontend:management-bar-navigation:managementBarFilterItems") %>'
 	value='<%= (String)request.getAttribute("liferay-frontend:management-bar-navigation:label") %>'
 />

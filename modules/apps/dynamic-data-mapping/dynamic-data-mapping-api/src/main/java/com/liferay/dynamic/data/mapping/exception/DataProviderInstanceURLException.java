@@ -28,12 +28,12 @@ public class DataProviderInstanceURLException extends PortalException {
 		super(msg);
 	}
 
-	public DataProviderInstanceURLException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DataProviderInstanceURLException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DataProviderInstanceURLException(Throwable cause) {
-		super(cause);
+	public DataProviderInstanceURLException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

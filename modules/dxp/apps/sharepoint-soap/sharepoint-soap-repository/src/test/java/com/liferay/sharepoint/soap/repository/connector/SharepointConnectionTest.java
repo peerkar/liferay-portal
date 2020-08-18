@@ -14,6 +14,7 @@
 
 package com.liferay.sharepoint.soap.repository.connector;
 
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
@@ -71,8 +72,8 @@ public class SharepointConnectionTest {
 	public void setUp() throws Exception {
 		_fileExtension1 = "txt";
 
-		_fileName1 =
-			"File1 " + _TIMESTAMP + StringPool.PERIOD + _fileExtension1;
+		_fileName1 = StringBundler.concat(
+			"File1 ", _TIMESTAMP, StringPool.PERIOD, _fileExtension1);
 
 		_fileName2 = "File2 " + _TIMESTAMP + ".txt";
 
@@ -203,8 +204,8 @@ public class SharepointConnectionTest {
 	public void testCopyFile() throws Exception {
 		addSharepointObjects(true, false, true, false);
 
-		String copiedFilePath =
-			"/Folder1 " + _TIMESTAMP + "/CopiedFile " + _TIMESTAMP + ".txt";
+		String copiedFilePath = StringBundler.concat(
+			"/Folder1 ", _TIMESTAMP, "/CopiedFile ", _TIMESTAMP, ".txt");
 
 		Assert.assertNull(
 			_sharepointConnection.getSharepointObject(copiedFilePath));
@@ -222,8 +223,8 @@ public class SharepointConnectionTest {
 	public void testCopyFolder() throws Exception {
 		addSharepointObjects(false, false, true, true);
 
-		String copiedFolderPath =
-			"/Folder2 " + _TIMESTAMP + "/CopiedFolder " + _TIMESTAMP;
+		String copiedFolderPath = StringBundler.concat(
+			"/Folder2 ", _TIMESTAMP, "/CopiedFolder ", _TIMESTAMP);
 
 		Assert.assertNull(
 			_sharepointConnection.getSharepointObject(copiedFolderPath));
@@ -233,10 +234,12 @@ public class SharepointConnectionTest {
 
 		Assert.assertNotNull(
 			_sharepointConnection.getSharepointObject(
-				_folderPath1 + "/Subfile1 " + _TIMESTAMP + ".txt"));
+				StringBundler.concat(
+					_folderPath1, "/Subfile1 ", _TIMESTAMP, ".txt")));
 		Assert.assertNotNull(
 			_sharepointConnection.getSharepointObject(
-				_folderPath1 + "/Subfile2 " + _TIMESTAMP + ".txt"));
+				StringBundler.concat(
+					_folderPath1, "/Subfile2 ", _TIMESTAMP, ".txt")));
 		Assert.assertNotNull(
 			_sharepointConnection.getSharepointObject(
 				_folderPath1 + "/Subfolder1 " + _TIMESTAMP));
@@ -245,10 +248,12 @@ public class SharepointConnectionTest {
 				_folderPath1 + "/Subfolder2 " + _TIMESTAMP));
 		Assert.assertNotNull(
 			_sharepointConnection.getSharepointObject(
-				copiedFolderPath + "/Subfile1 " + _TIMESTAMP + ".txt"));
+				StringBundler.concat(
+					copiedFolderPath, "/Subfile1 ", _TIMESTAMP, ".txt")));
 		Assert.assertNotNull(
 			_sharepointConnection.getSharepointObject(
-				copiedFolderPath + "/Subfile2 " + _TIMESTAMP + ".txt"));
+				StringBundler.concat(
+					copiedFolderPath, "/Subfile2 ", _TIMESTAMP, ".txt")));
 		Assert.assertNotNull(
 			_sharepointConnection.getSharepointObject(
 				copiedFolderPath + "/Subfolder1 " + _TIMESTAMP));
@@ -531,8 +536,8 @@ public class SharepointConnectionTest {
 	public void testMoveFile() throws Exception {
 		addSharepointObjects(true, false, true, false);
 
-		String movedFilePath =
-			_folderPath1 + "/MovedFile " + _TIMESTAMP + ".txt";
+		String movedFilePath = StringBundler.concat(
+			_folderPath1, "/MovedFile ", _TIMESTAMP, ".txt");
 
 		Assert.assertNull(
 			_sharepointConnection.getSharepointObject(movedFilePath));
@@ -557,10 +562,12 @@ public class SharepointConnectionTest {
 
 		Assert.assertNotNull(
 			_sharepointConnection.getSharepointObject(
-				movedFolderPath + "/Subfile1 " + _TIMESTAMP + ".txt"));
+				StringBundler.concat(
+					movedFolderPath, "/Subfile1 ", _TIMESTAMP, ".txt")));
 		Assert.assertNotNull(
 			_sharepointConnection.getSharepointObject(
-				movedFolderPath + "/Subfile2 " + _TIMESTAMP + ".txt"));
+				StringBundler.concat(
+					movedFolderPath, "/Subfile2 ", _TIMESTAMP, ".txt")));
 		Assert.assertNotNull(
 			_sharepointConnection.getSharepointObject(
 				movedFolderPath + "/Subfolder1 " + _TIMESTAMP));

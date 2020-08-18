@@ -20,13 +20,13 @@ import com.liferay.content.dashboard.web.internal.item.action.ContentDashboardIt
 import com.liferay.content.dashboard.web.internal.item.type.ContentDashboardItemTypeFactory;
 import com.liferay.content.dashboard.web.internal.item.type.ContentDashboardItemTypeFactoryTracker;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
-import com.liferay.info.display.url.provider.InfoEditURLProviderTracker;
+import com.liferay.info.display.contributor.InfoDisplayContributor;
+import com.liferay.info.display.contributor.InfoDisplayContributorTracker;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.portal.kernel.exception.NoSuchModelException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.Language;
-import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -67,6 +67,11 @@ public class JournalArticleContentDashboardItemFactory
 
 		DDMStructure ddmStructure = journalArticle.getDDMStructure();
 
+		InfoDisplayContributor<JournalArticle> infoDisplayContributor =
+			(InfoDisplayContributor<JournalArticle>)
+				infoDisplayContributorTracker.getInfoDisplayContributor(
+					JournalArticle.class.getName());
+
 		JournalArticle latestApprovedJournalArticle =
 			_journalArticleLocalService.fetchLatestArticle(
 				classPK, WorkflowConstants.STATUS_APPROVED);
@@ -77,12 +82,12 @@ public class JournalArticleContentDashboardItemFactory
 			contentDashboardItemTypeFactory.create(
 				ddmStructure.getStructureId()),
 			_groupLocalService.fetchGroup(journalArticle.getGroupId()),
-			_infoEditURLProviderTracker.getInfoEditURLProvider(
-				JournalArticle.class.getName()),
-			journalArticle, _language, latestApprovedJournalArticle,
-			_modelResourcePermission,
-			_userLocalService.fetchUser(journalArticle.getUserId()));
+			infoDisplayContributor, journalArticle, _language,
+			latestApprovedJournalArticle);
 	}
+
+	@Reference
+	protected InfoDisplayContributorTracker infoDisplayContributorTracker;
 
 	@Reference
 	private AssetEntryLocalService _assetEntryLocalService;
@@ -99,18 +104,10 @@ public class JournalArticleContentDashboardItemFactory
 	private GroupLocalService _groupLocalService;
 
 	@Reference
-	private InfoEditURLProviderTracker _infoEditURLProviderTracker;
-
-	@Reference
 	private JournalArticleLocalService _journalArticleLocalService;
 
 	@Reference
 	private Language _language;
-
-	@Reference(
-		target = "(model.class.name=com.liferay.journal.model.JournalArticle)"
-	)
-	private ModelResourcePermission<JournalArticle> _modelResourcePermission;
 
 	@Reference
 	private UserLocalService _userLocalService;

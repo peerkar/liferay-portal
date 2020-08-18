@@ -28,12 +28,12 @@ public class DuplicateCategoryException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateCategoryException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateCategoryException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateCategoryException(Throwable cause) {
-		super(cause);
+	public DuplicateCategoryException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

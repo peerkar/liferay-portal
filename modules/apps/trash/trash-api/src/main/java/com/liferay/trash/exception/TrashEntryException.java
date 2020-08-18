@@ -28,12 +28,12 @@ public class TrashEntryException extends PortalException {
 		super(msg);
 	}
 
-	public TrashEntryException(String msg, Throwable cause) {
-		super(msg, cause);
+	public TrashEntryException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public TrashEntryException(Throwable cause) {
-		super(cause);
+	public TrashEntryException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

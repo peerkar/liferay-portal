@@ -135,11 +135,7 @@ public class JournalArticleItemSelectorViewDisplayContext {
 	public String getGroupCssIcon(long groupId) throws PortalException {
 		Group group = GroupServiceUtil.getGroup(groupId);
 
-		if (group.isSite()) {
-			return "sites";
-		}
-
-		return "books";
+		return group.getIconCssClass();
 	}
 
 	public String getGroupLabel(long groupId, Locale locale)
@@ -147,7 +143,7 @@ public class JournalArticleItemSelectorViewDisplayContext {
 
 		Group group = GroupServiceUtil.getGroup(groupId);
 
-		return group.getName(locale);
+		return group.getDescriptiveName(locale);
 	}
 
 	public String getItemSelectedEventName() {
@@ -489,6 +485,7 @@ public class JournalArticleItemSelectorViewDisplayContext {
 		searchContext.setEnd(end);
 		searchContext.setFolderIds(folderIds);
 		searchContext.setGroupIds(_getGroupIds());
+		searchContext.setIncludeInternalAssetCategories(true);
 		searchContext.setKeywords(getKeywords());
 
 		QueryConfig queryConfig = searchContext.getQueryConfig();

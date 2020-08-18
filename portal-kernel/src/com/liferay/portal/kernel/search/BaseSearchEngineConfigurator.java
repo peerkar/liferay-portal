@@ -464,12 +464,12 @@ public abstract class BaseSearchEngineConfigurator
 			"destination.name", destination.getName()
 		).build();
 
-		Registry registry = RegistryUtil.getRegistry();
-
 		ServiceRegistrar<Destination> destinationServiceRegistrar =
 			_destinationServiceRegistrars.get(searchEngineId);
 
 		if (destinationServiceRegistrar == null) {
+			Registry registry = RegistryUtil.getRegistry();
+
 			destinationServiceRegistrar = registry.getServiceRegistrar(
 				Destination.class);
 

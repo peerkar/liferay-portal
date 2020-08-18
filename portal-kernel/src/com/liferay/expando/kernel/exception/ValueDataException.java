@@ -28,12 +28,12 @@ public class ValueDataException extends PortalException {
 		super(msg);
 	}
 
-	public ValueDataException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ValueDataException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ValueDataException(Throwable cause) {
-		super(cause);
+	public ValueDataException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

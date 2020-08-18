@@ -30,13 +30,13 @@ public class DuplicateAccountEntryOrganizationRelException
 	}
 
 	public DuplicateAccountEntryOrganizationRelException(
-		String msg, Throwable cause) {
+		String msg, Throwable throwable) {
 
-		super(msg, cause);
+		super(msg, throwable);
 	}
 
-	public DuplicateAccountEntryOrganizationRelException(Throwable cause) {
-		super(cause);
+	public DuplicateAccountEntryOrganizationRelException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

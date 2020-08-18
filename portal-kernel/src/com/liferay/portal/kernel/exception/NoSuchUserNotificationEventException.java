@@ -26,12 +26,14 @@ public class NoSuchUserNotificationEventException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchUserNotificationEventException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchUserNotificationEventException(
+		String msg, Throwable throwable) {
+
+		super(msg, throwable);
 	}
 
-	public NoSuchUserNotificationEventException(Throwable cause) {
-		super(cause);
+	public NoSuchUserNotificationEventException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

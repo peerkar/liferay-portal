@@ -36,10 +36,6 @@ public class DateRangeTermQueryTranslatorImpl
 		RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery(
 			dateRangeTermQuery.getField());
 
-		if (dateRangeTermQuery.getBoost() != null) {
-			rangeQueryBuilder.boost(dateRangeTermQuery.getBoost());
-		}
-		
 		if (dateRangeTermQuery.getDateFormat() != null) {
 			rangeQueryBuilder.format(dateRangeTermQuery.getDateFormat());
 		}

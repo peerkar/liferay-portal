@@ -20,11 +20,11 @@ import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocal
 import com.liferay.layout.test.util.LayoutTestUtil;
 import com.liferay.layout.util.constants.LayoutDataItemTypeConstants;
 import com.liferay.layout.util.structure.ColumnLayoutStructureItem;
-import com.liferay.layout.util.structure.ContainerLayoutStructureItem;
+import com.liferay.layout.util.structure.ContainerStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.layout.util.structure.RootLayoutStructureItem;
-import com.liferay.layout.util.structure.RowLayoutStructureItem;
+import com.liferay.layout.util.structure.RowStyledLayoutStructureItem;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Group;
@@ -224,7 +224,7 @@ public class ConvertLayoutMVCActionCommandTest {
 		Assert.assertNotNull(containerLayoutStructureItem);
 		Assert.assertTrue(
 			containerLayoutStructureItem instanceof
-				ContainerLayoutStructureItem);
+				ContainerStyledLayoutStructureItem);
 		Assert.assertEquals(
 			containerLayoutStructureItem.getItemType(),
 			LayoutDataItemTypeConstants.TYPE_CONTAINER);
@@ -240,7 +240,7 @@ public class ConvertLayoutMVCActionCommandTest {
 
 		Assert.assertNotNull(rowLayoutStructureItem);
 		Assert.assertTrue(
-			rowLayoutStructureItem instanceof RowLayoutStructureItem);
+			rowLayoutStructureItem instanceof RowStyledLayoutStructureItem);
 		Assert.assertEquals(
 			rowLayoutStructureItem.getItemType(),
 			LayoutDataItemTypeConstants.TYPE_ROW);

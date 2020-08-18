@@ -28,12 +28,12 @@ public class NoSuchTaskAssignmentException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchTaskAssignmentException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchTaskAssignmentException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchTaskAssignmentException(Throwable cause) {
-		super(cause);
+	public NoSuchTaskAssignmentException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

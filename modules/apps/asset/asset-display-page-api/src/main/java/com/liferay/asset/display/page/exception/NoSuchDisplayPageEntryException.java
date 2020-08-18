@@ -28,12 +28,12 @@ public class NoSuchDisplayPageEntryException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchDisplayPageEntryException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchDisplayPageEntryException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchDisplayPageEntryException(Throwable cause) {
-		super(cause);
+	public NoSuchDisplayPageEntryException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -29,6 +29,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>NEW_COLLECTION_PAGE_ITEM_BUTTON</td>
+	<td>//*[@data-qa-id='controlMenu']//a[@*='${key_title}']//*[name()='svg'][contains(@class,'lexicon-icon-plus')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>PAGE_TYPE</td>
 	<td>//*[@data-qa-id='controlMenu']//span[contains(@class,'text-truncate')]</td>
 	<td></td>
@@ -51,6 +56,11 @@
 <tr>
 	<td>TOGGLE_CONTROLS</td>
 	<td>//*[@data-qa-id='showControls' and contains(.,'Toggle Controls')]//*[name()='svg'][contains(@class,'${key_status}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>VIEW_COLLECTION_ITEMS_BUTTON</td>
+	<td>//*[@data-qa-id='controlMenu']//button[contains(@id,'viewCollectionItems')]</td>
 	<td></td>
 </tr>
 <tr>

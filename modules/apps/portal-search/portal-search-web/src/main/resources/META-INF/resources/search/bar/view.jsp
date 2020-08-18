@@ -34,9 +34,7 @@ page import="com.liferay.portal.kernel.util.WebKeys" %><%@
 page import="com.liferay.portal.search.web.internal.search.bar.portlet.SearchBarPortletDisplayContext" %><%@
 page import="com.liferay.portal.search.web.internal.search.bar.portlet.configuration.SearchBarPortletInstanceConfiguration" %>
 
-<%@ page import="java.util.ArrayList" %><%@
-page import="java.util.List" %><%@
-page import="java.util.Map" %>
+<%@ page import="java.util.ArrayList" %>
 
 <liferay-theme:defineObjects />
 
@@ -64,22 +62,20 @@ SearchBarPortletDisplayContext searchBarPortletDisplayContext = (SearchBarPortle
 
 			<%
 			SearchBarPortletInstanceConfiguration searchBarPortletInstanceConfiguration = searchBarPortletDisplayContext.getSearchBarPortletInstanceConfiguration();
-
-			List<SearchBarPortletDisplayContext> entries = new ArrayList<>();
-
-			Map<String, Object> contextObjects = HashMapBuilder.<String, Object>put(
-				"namespace", liferayPortletResponse.getNamespace()
-			).put(
-				"searchBarPortletDisplayContext", searchBarPortletDisplayContext
-			).build();
 			%>
 
 			<liferay-ddm:template-renderer
 				className="<%= SearchBarPortletDisplayContext.class.getName() %>"
-				contextObjects="<%= contextObjects %>"
+				contextObjects='<%=
+					HashMapBuilder.<String, Object>put(
+						"namespace", liferayPortletResponse.getNamespace()
+					).put(
+						"searchBarPortletDisplayContext", searchBarPortletDisplayContext
+					).build()
+				%>'
 				displayStyle="<%= searchBarPortletInstanceConfiguration.displayStyle() %>"
 				displayStyleGroupId="<%= searchBarPortletDisplayContext.getDisplayStyleGroupId() %>"
-				entries="<%= entries %>"
+				entries="<%= new ArrayList<>() %>"
 			>
 				<aui:fieldset cssClass="search-bar">
 					<aui:input cssClass="search-bar-empty-search-input" name="emptySearchEnabled" type="hidden" value="<%= searchBarPortletDisplayContext.isEmptySearchEnabled() %>" />

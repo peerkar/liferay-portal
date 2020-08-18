@@ -28,12 +28,12 @@ public class NoSuchDeviceException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchDeviceException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchDeviceException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchDeviceException(Throwable cause) {
-		super(cause);
+	public NoSuchDeviceException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

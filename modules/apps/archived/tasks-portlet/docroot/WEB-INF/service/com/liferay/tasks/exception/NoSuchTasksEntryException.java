@@ -31,12 +31,12 @@ public class NoSuchTasksEntryException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchTasksEntryException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchTasksEntryException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchTasksEntryException(Throwable cause) {
-		super(cause);
+	public NoSuchTasksEntryException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

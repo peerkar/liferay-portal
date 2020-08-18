@@ -26,12 +26,12 @@ public class PollerResponseClosedException extends PollerException {
 		super(msg);
 	}
 
-	public PollerResponseClosedException(String msg, Throwable cause) {
-		super(msg, cause);
+	public PollerResponseClosedException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public PollerResponseClosedException(Throwable cause) {
-		super(cause);
+	public PollerResponseClosedException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

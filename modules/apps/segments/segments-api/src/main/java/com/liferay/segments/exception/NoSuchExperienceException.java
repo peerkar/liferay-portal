@@ -28,12 +28,12 @@ public class NoSuchExperienceException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchExperienceException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchExperienceException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchExperienceException(Throwable cause) {
-		super(cause);
+	public NoSuchExperienceException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

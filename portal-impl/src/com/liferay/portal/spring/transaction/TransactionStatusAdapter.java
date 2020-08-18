@@ -96,15 +96,12 @@ public class TransactionStatusAdapter
 	}
 
 	@Override
-	public void suppressLifecycleListenerThrowable(
-		Throwable lifecycleListenerThrowable) {
-
+	public void suppressLifecycleListenerThrowable(Throwable throwable) {
 		if (_lifecycleListenerThrowable == null) {
-			_lifecycleListenerThrowable = lifecycleListenerThrowable;
+			_lifecycleListenerThrowable = throwable;
 		}
 		else {
-			_lifecycleListenerThrowable.addSuppressed(
-				lifecycleListenerThrowable);
+			_lifecycleListenerThrowable.addSuppressed(throwable);
 		}
 	}
 

@@ -298,7 +298,7 @@ public class CSSBuilder implements AutoCloseable {
 
 				System.out.println("Using native Sass compiler");
 			}
-			catch (Throwable t) {
+			catch (Throwable throwable) {
 				System.out.println(
 					"Unable to load native compiler, falling back to Ruby");
 
@@ -313,7 +313,7 @@ public class CSSBuilder implements AutoCloseable {
 
 				System.out.println("Using native 32-bit Sass compiler");
 			}
-			catch (Throwable t) {
+			catch (Throwable throwable) {
 				System.out.println(
 					"Unable to load native compiler, falling back to Ruby");
 

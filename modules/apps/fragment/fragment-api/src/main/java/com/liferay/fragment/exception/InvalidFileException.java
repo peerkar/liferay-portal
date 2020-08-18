@@ -28,12 +28,12 @@ public class InvalidFileException extends PortalException {
 		super(msg);
 	}
 
-	public InvalidFileException(String msg, Throwable cause) {
-		super(msg, cause);
+	public InvalidFileException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public InvalidFileException(Throwable cause) {
-		super(cause);
+	public InvalidFileException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

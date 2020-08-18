@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.elasticsearch6.internal.script.ScriptTranslator;
 import com.liferay.portal.search.query.TermsSetQuery;
 
-import java.util.List;
-
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.TermsSetQueryBuilder;
 import org.elasticsearch.script.Script;
@@ -29,23 +27,15 @@ import org.osgi.service.component.annotations.Component;
 
 /**
  * @author Marco Leo
- * @author Petteri Karttunen
  */
 @Component(service = TermsSetQueryTranslator.class)
 public class TermsSetQueryTranslatorImpl implements TermsSetQueryTranslator {
 
 	@Override
 	public QueryBuilder translate(TermsSetQuery termsSetQuery) {
-		
-		String field = termsSetQuery.getFieldName();
-		List<Object> values = ListUtil.toList(termsSetQuery.getValues());
-		
 		TermsSetQueryBuilder termsSetQueryBuilder = new TermsSetQueryBuilder(
-			field, values);
-		
-		if (termsSetQuery.getBoost() !=  null) {
-			termsSetQueryBuilder.boost(termsSetQuery.getBoost());
-		}
+			termsSetQuery.getFieldName(),
+			ListUtil.toList(termsSetQuery.getValues()));
 
 		if (!Validator.isBlank(termsSetQuery.getMinimumShouldMatchField())) {
 			termsSetQueryBuilder.setMinimumShouldMatchField(

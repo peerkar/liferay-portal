@@ -419,7 +419,7 @@ public interface BaseProjectTemplatesTestCase {
 				testWarsDiff(gradleOutputFile, mavenOutputFile);
 			}
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			if (TEST_DEBUG_BUNDLE_DIFFS) {
 				Path dirPath = Paths.get("build");
 
@@ -431,7 +431,7 @@ public interface BaseProjectTemplatesTestCase {
 					dirPath.resolve(mavenOutputFileName));
 			}
 
-			throw t;
+			throw throwable;
 		}
 	}
 

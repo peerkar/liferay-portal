@@ -28,6 +28,17 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 
+<#assign
+	javaMethodSignatures = freeMarkerTool.getResourceTestCaseJavaMethodSignatures(configYAML, openAPIYAML, schemaName)
+
+	generateDepotEntry = freeMarkerTool.containsJavaMethodSignature(javaMethodSignatures, "AssetLibrary")
+/>
+
+<#if generateDepotEntry>
+	import com.liferay.depot.model.DepotEntry;
+	import com.liferay.depot.service.DepotEntryLocalServiceUtil;
+</#if>
+
 import com.liferay.petra.function.UnsafeTriConsumer;
 import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.petra.string.StringBundler;
@@ -44,8 +55,10 @@ import com.liferay.portal.kernel.model.role.RoleConstants;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -117,6 +130,17 @@ public abstract class Base${schemaName}ResourceTestCase {
 		testGroup = GroupTestUtil.addGroup();
 
 		testCompany = CompanyLocalServiceUtil.getCompany(testGroup.getCompanyId());
+
+		<#if generateDepotEntry>
+			testDepotEntry = DepotEntryLocalServiceUtil.addDepotEntry(
+				Collections.singletonMap(LocaleUtil.getDefault(), RandomTestUtil.randomString()),
+				null, new ServiceContext() {
+					{
+						setCompanyId(testGroup.getCompanyId());
+						setUserId(TestPropsValues.getUserId());
+					}
+				});
+		</#if>
 
 		_${schemaVarName}Resource.setContextCompany(testCompany);
 
@@ -213,7 +237,6 @@ public abstract class Base${schemaName}ResourceTestCase {
 		enumSchemas = freeMarkerTool.getDTOEnumSchemas(openAPIYAML, schema)
 		generateGetMultipartFilesMethod = false
 		generateSearchTestRule = false
-		javaMethodSignatures = freeMarkerTool.getResourceTestCaseJavaMethodSignatures(configYAML, openAPIYAML, schemaName)
 		properties = freeMarkerTool.getDTOProperties(configYAML, openAPIYAML, schema)
 		randomDataTypes = ["Boolean", "Double", "Integer", "Long", "String"]
 	/>
@@ -309,7 +332,7 @@ public abstract class Base${schemaName}ResourceTestCase {
 
 			<#if properties?keys?seq_contains("id")>
 				protected ${schemaName} test${javaMethodSignature.methodName?cap_first}_add${schemaName}() throws Exception {
-					<#if freeMarkerTool.hasPostSchemaJavaMethodSignature(javaMethodSignatures, "siteId", schemaName)>
+					<#if freeMarkerTool.hasPostSchemaJavaMethodSignature(javaMethodSignatures, "assetLibraryId", schemaName) || freeMarkerTool.hasPostSchemaJavaMethodSignature(javaMethodSignatures, "siteId", schemaName)>
 						<#assign postSchemaJavaMethodSignature = freeMarkerTool.getPostSchemaJavaMethodSignature(javaMethodSignatures, "siteId", schemaName) />
 
 						return ${schemaVarName}Resource.postSite${schemaName}(testGroup.getGroupId(), random${schemaName}()
@@ -860,7 +883,9 @@ public abstract class Base${schemaName}ResourceTestCase {
 
 				<#list javaMethodSignature.pathJavaMethodParameters as javaMethodParameter>
 					protected ${javaMethodParameter.parameterType} test${javaMethodSignature.methodName?cap_first}_get${javaMethodParameter.parameterName?cap_first}() throws Exception {
-						<#if stringUtil.equals(javaMethodParameter.parameterName, "siteId")>
+						<#if stringUtil.equals(javaMethodParameter.parameterName, "assetLibraryId")>
+							return testDepotEntry.getDepotEntryId();
+						<#elseif stringUtil.equals(javaMethodParameter.parameterName, "siteId")>
 							return testGroup.getGroupId();
 						<#else>
 							throw new UnsupportedOperationException("This method needs to be implemented");
@@ -915,7 +940,7 @@ public abstract class Base${schemaName}ResourceTestCase {
 
 			<#if properties?keys?seq_contains("id")>
 				protected ${schemaName} test${javaMethodSignature.methodName?cap_first}_add${schemaName}() throws Exception {
-					<#if freeMarkerTool.hasPostSchemaJavaMethodSignature(javaMethodSignatures, "siteId", schemaName)>
+					<#if freeMarkerTool.hasPostSchemaJavaMethodSignature(javaMethodSignatures, "assetLibraryId", schemaName) || freeMarkerTool.hasPostSchemaJavaMethodSignature(javaMethodSignatures, "siteId", schemaName)>
 						<#assign postSchemaJavaMethodSignature = freeMarkerTool.getPostSchemaJavaMethodSignature(javaMethodSignatures, "siteId", schemaName) />
 
 						return ${schemaVarName}Resource.postSite${schemaName}(testGroup.getGroupId(), random${schemaName}()
@@ -1115,7 +1140,7 @@ public abstract class Base${schemaName}ResourceTestCase {
 
 			<#if properties?keys?seq_contains("id")>
 				protected ${schemaName} test${javaMethodSignature.methodName?cap_first}_add${schemaName}() throws Exception {
-					<#if freeMarkerTool.hasPostSchemaJavaMethodSignature(javaMethodSignatures, "siteId", schemaName)>
+					<#if freeMarkerTool.hasPostSchemaJavaMethodSignature(javaMethodSignatures, "assetLibraryId", schemaName) || freeMarkerTool.hasPostSchemaJavaMethodSignature(javaMethodSignatures, "siteId", schemaName)>
 						<#assign postSchemaJavaMethodSignature = freeMarkerTool.getPostSchemaJavaMethodSignature(javaMethodSignatures, "siteId", schemaName) />
 
 						return ${schemaVarName}Resource.postSite${schemaName}(testGroup.getGroupId(), random${schemaName}()
@@ -1204,7 +1229,7 @@ public abstract class Base${schemaName}ResourceTestCase {
 			}
 
 			protected ${schemaName} test${javaMethodSignature.methodName?cap_first}_add${schemaName}() throws Exception {
-				<#if freeMarkerTool.hasPostSchemaJavaMethodSignature(javaMethodSignatures, "siteId", schemaName)>
+				<#if freeMarkerTool.hasPostSchemaJavaMethodSignature(javaMethodSignatures, "assetLibraryId", schemaName) || freeMarkerTool.hasPostSchemaJavaMethodSignature(javaMethodSignatures, "siteId", schemaName)>
 					<#assign postSchemaJavaMethodSignature = freeMarkerTool.getPostSchemaJavaMethodSignature(javaMethodSignatures, "siteId", schemaName) />
 
 					return ${schemaVarName}Resource.postSite${schemaName}(testGroup.getGroupId(), random${schemaName}()
@@ -1302,7 +1327,13 @@ public abstract class Base${schemaName}ResourceTestCase {
 									<#if stringUtil.equals(javaMethodParameter.parameterName, "siteId")>
 										put("siteKey", "\"" + ${javaMethodParameter.parameterName} + "\"");
 									<#else>
-										put("${javaMethodParameter.parameterName}", ${javaMethodParameter.parameterName});
+										put("${javaMethodParameter.parameterName}",
+											<#if stringUtil.equals(javaMethodParameter.parameterType, "java.lang.String")>
+												"\"" + ${javaMethodParameter.parameterName} + "\""
+											<#else>
+												${javaMethodParameter.parameterName}
+											</#if>
+										);
 									</#if>
 								</#list>
 							}
@@ -1656,7 +1687,7 @@ public abstract class Base${schemaName}ResourceTestCase {
 		}
 	}
 
-	protected void assertValid(${configYAML.apiPackagePath}.client.dto.${escapedVersion}.${schemaName} ${schemaVarName}) {
+	protected void assertValid(${configYAML.apiPackagePath}.client.dto.${escapedVersion}.${schemaName} ${schemaVarName}) throws Exception {
 		boolean valid = true;
 
 		<#if properties?keys?seq_contains("dateCreated")>
@@ -1678,9 +1709,17 @@ public abstract class Base${schemaName}ResourceTestCase {
 		</#if>
 
 		<#if properties?keys?seq_contains("siteId")>
-			if (!Objects.equals(${schemaVarName}.getSiteId(), testGroup.getGroupId())) {
-				valid = false;
-			}
+			<#if generateDepotEntry>
+				Group group = testDepotEntry.getGroup();
+
+				if (!Objects.equals(${schemaVarName}.getAssetLibraryKey(), group.getGroupKey()) && !Objects.equals(${schemaVarName}.getSiteId(), testGroup.getGroupId())) {
+					valid = false;
+				}
+			<#else>
+				if (!Objects.equals(${schemaVarName}.getSiteId(), testGroup.getGroupId())) {
+					valid = false;
+				}
+			</#if>
 		</#if>
 
 		for (String additionalAssertFieldName : getAdditionalAssertFieldNames()) {
@@ -1860,7 +1899,7 @@ public abstract class Base${schemaName}ResourceTestCase {
 			return true;
 		}
 
-		<#if properties?keys?seq_contains("siteId")>
+		<#if !properties?keys?seq_contains("assetLibraryKey") && properties?keys?seq_contains("siteId")>
 			if (!Objects.equals(${schemaVarName}1.getSiteId(), ${schemaVarName}2.getSiteId())) {
 				return false;
 			}
@@ -1868,7 +1907,7 @@ public abstract class Base${schemaName}ResourceTestCase {
 
 		for (String additionalAssertFieldName : getAdditionalAssertFieldNames()) {
 			<#list properties?keys as propertyName>
-				<#if stringUtil.equals(propertyName, "siteId")>
+				<#if stringUtil.equals(propertyName, "assetLibraryKey") || stringUtil.equals(propertyName, "siteId")>
 					 <#continue>
 				</#if>
 
@@ -2122,6 +2161,11 @@ public abstract class Base${schemaName}ResourceTestCase {
 	protected ${schemaName}Resource ${schemaVarName}Resource;
 	protected Group irrelevantGroup;
 	protected Company testCompany;
+
+	<#if generateDepotEntry>
+		protected DepotEntry testDepotEntry;
+	</#if>
+
 	protected Group testGroup;
 
 	protected class GraphQLField {

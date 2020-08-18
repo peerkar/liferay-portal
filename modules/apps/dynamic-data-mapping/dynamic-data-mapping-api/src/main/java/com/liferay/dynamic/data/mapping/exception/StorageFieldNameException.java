@@ -26,12 +26,12 @@ public class StorageFieldNameException extends StorageException {
 		super(msg);
 	}
 
-	public StorageFieldNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public StorageFieldNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public StorageFieldNameException(Throwable cause) {
-		super(cause);
+	public StorageFieldNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

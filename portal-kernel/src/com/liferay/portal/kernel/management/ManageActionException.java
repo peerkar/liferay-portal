@@ -28,12 +28,12 @@ public class ManageActionException extends PortalException {
 		super(msg);
 	}
 
-	public ManageActionException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ManageActionException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ManageActionException(Throwable cause) {
-		super(cause);
+	public ManageActionException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

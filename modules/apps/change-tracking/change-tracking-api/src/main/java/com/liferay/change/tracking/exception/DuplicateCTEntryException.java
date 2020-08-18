@@ -28,12 +28,12 @@ public class DuplicateCTEntryException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateCTEntryException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateCTEntryException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateCTEntryException(Throwable cause) {
-		super(cause);
+	public DuplicateCTEntryException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

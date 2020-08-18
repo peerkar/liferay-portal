@@ -117,13 +117,13 @@ public class UserWorkflowPortlet extends BaseWorkflowPortlet {
 			RenderRequest renderRequest)
 		throws PortalException {
 
-		PermissionChecker permissionChecker =
-			PermissionThreadLocal.getPermissionChecker();
-
 		long workflowInstanceId = ParamUtil.getLong(
 			renderRequest, "workflowInstanceId");
 
 		if (workflowInstanceId != 0) {
+			PermissionChecker permissionChecker =
+				PermissionThreadLocal.getPermissionChecker();
+
 			WorkflowInstance workflowInstance =
 				WorkflowInstanceManagerUtil.getWorkflowInstance(
 					permissionChecker.getCompanyId(),

@@ -96,7 +96,7 @@ public class ManageCollaboratorsMVCActionCommand extends BaseMVCActionCommand {
 					return null;
 				});
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			HttpServletResponse httpServletResponse =
 				_portal.getHttpServletResponse(actionResponse);
 
@@ -105,7 +105,7 @@ public class ManageCollaboratorsMVCActionCommand extends BaseMVCActionCommand {
 			String errorMessage =
 				"an-unexpected-error-occurred-while-updating-permissions";
 
-			if (t instanceof PrincipalException) {
+			if (throwable instanceof PrincipalException) {
 				errorMessage =
 					"you-do-not-have-permission-to-update-these-permissions";
 			}

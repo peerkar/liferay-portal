@@ -193,6 +193,16 @@ public class EditableFragmentEntryProcessor implements FragmentEntryProcessor {
 							value, fragmentEntryProcessorContext.getLocale(),
 							null);
 
+					if (mappedValueConfigJSONObject.has("alt")) {
+						String alt = mappedValueConfigJSONObject.getString(
+							"alt", StringPool.BLANK);
+
+						alt = _fragmentEntryProcessorHelper.processTemplate(
+							alt, fragmentEntryProcessorContext);
+
+						mappedValueConfigJSONObject.put("alt", alt);
+					}
+
 					value = StringUtil.replace(
 						editableElementParser.getFieldTemplate(), "field_name",
 						value);

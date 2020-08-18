@@ -26,12 +26,12 @@ public class InvalidRepositoryIdException extends RepositoryException {
 		super(msg);
 	}
 
-	public InvalidRepositoryIdException(String msg, Throwable cause) {
-		super(msg, cause);
+	public InvalidRepositoryIdException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public InvalidRepositoryIdException(Throwable cause) {
-		super(cause);
+	public InvalidRepositoryIdException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

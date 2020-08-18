@@ -28,12 +28,12 @@ public class NoSuchFileEntryMetadataException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchFileEntryMetadataException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchFileEntryMetadataException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchFileEntryMetadataException(Throwable cause) {
-		super(cause);
+	public NoSuchFileEntryMetadataException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

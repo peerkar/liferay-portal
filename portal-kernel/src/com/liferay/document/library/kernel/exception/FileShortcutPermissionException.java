@@ -28,12 +28,12 @@ public class FileShortcutPermissionException extends PortalException {
 		super(msg);
 	}
 
-	public FileShortcutPermissionException(String msg, Throwable cause) {
-		super(msg, cause);
+	public FileShortcutPermissionException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public FileShortcutPermissionException(Throwable cause) {
-		super(cause);
+	public FileShortcutPermissionException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

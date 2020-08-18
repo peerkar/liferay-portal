@@ -26,12 +26,12 @@ public class CookieNotSupportedException extends PortalException {
 		super(msg);
 	}
 
-	public CookieNotSupportedException(String msg, Throwable cause) {
-		super(msg, cause);
+	public CookieNotSupportedException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public CookieNotSupportedException(Throwable cause) {
-		super(cause);
+	public CookieNotSupportedException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

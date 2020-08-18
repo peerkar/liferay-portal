@@ -28,12 +28,12 @@ public class TableNameException extends PortalException {
 		super(msg);
 	}
 
-	public TableNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public TableNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public TableNameException(Throwable cause) {
-		super(cause);
+	public TableNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

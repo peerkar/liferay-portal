@@ -44,12 +44,12 @@ public abstract class NoticeableFutureConverter<T, V>
 					try {
 						_defaultNoticeableFuture.set(convert(future.get()));
 					}
-					catch (Throwable t) {
-						if (t instanceof ExecutionException) {
-							t = t.getCause();
+					catch (Throwable throwable) {
+						if (throwable instanceof ExecutionException) {
+							throwable = throwable.getCause();
 						}
 
-						_defaultNoticeableFuture.setException(t);
+						_defaultNoticeableFuture.setException(throwable);
 					}
 				}
 

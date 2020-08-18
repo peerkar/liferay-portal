@@ -28,12 +28,12 @@ public class NoSuchLocalizedEntryException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchLocalizedEntryException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchLocalizedEntryException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchLocalizedEntryException(Throwable cause) {
-		super(cause);
+	public NoSuchLocalizedEntryException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

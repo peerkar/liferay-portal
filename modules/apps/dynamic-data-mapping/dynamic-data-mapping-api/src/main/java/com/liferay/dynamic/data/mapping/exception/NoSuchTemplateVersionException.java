@@ -28,12 +28,12 @@ public class NoSuchTemplateVersionException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchTemplateVersionException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchTemplateVersionException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchTemplateVersionException(Throwable cause) {
-		super(cause);
+	public NoSuchTemplateVersionException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

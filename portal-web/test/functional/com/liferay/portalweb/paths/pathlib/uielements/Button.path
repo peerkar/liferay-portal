@@ -9,11 +9,6 @@
 </thead>
 <tbody>
 <tr>
-	<td>ADD</td>
-	<td>//a[contains(text(),'Add')] | //button[contains(@type,'submit') and contains(.,'Add')] | //button[contains(@type,'button') and contains(.,'Add')]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>ADD_ACTION</td>
 	<td>//span[contains(.,'Add Action')]</td>
 	<td></td>
@@ -65,7 +60,7 @@
 </tr>
 <tr>
 	<td>ANY</td>
-	<td>//*[contains(@class,'btn')][normalize-space(text())='${key_text}'] | //button[normalize-space(text())='${key_text}']</td>
+	<td>//*[contains(@class,'btn')][normalize-space(text())='${key_text}']</td>
 	<td></td>
 </tr>
 <tr>
@@ -165,7 +160,7 @@
 </tr>
 <tr>
 	<td>CLOSE_MODAL</td>
-	<td>//h3[contains(@class,'modal-title') and contains(.,'${key_modalTitle}')]/../div/button[contains(@class,'close')] | //button[contains(@class,'close')]</td>
+	<td>//*[contains(@class,'modal-header') and contains(.,'${key_modalTitle}')]//*[contains(@class,'close')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -342,11 +337,6 @@
 	<td>IGNORE_REDIRECT_URLS</td>
 	<td>//button[*[name()='svg'][contains(@class,'lexicon-icon-hidden')]]</td>
 	<td></td>
-</tr>s
-<tr>
-	<td>IMPORT</td>
-	<td>//div[contains(@class,'footer')]//button[contains(.,'Import')]</td>
-	<td></td>
 </tr>
 <tr>
 	<td>INFO</td>
@@ -426,6 +416,11 @@
 <tr>
 	<td>MOVE_TO_RECYCLE_BIN</td>
 	<td>//a[contains(@class,'btn') and contains(.,'Move to Recycle Bin')] | //button[contains(.,'Move to Recycle Bin')] | //*[contains(@class, 'icon-trash')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>NEW</td>
+	<td>//button[@*='New']</td>
 	<td></td>
 </tr>
 <tr>

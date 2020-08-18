@@ -19,9 +19,11 @@
 <clay:container-fluid
 	cssClass="container-view"
 >
-	<liferay-ui:breadcrumb
-		showLayout="<%= false %>"
-	/>
+	<c:if test="<%= GetterUtil.getBoolean(request.getAttribute(DepotAdminWebKeys.SHOW_BREADCRUMB)) %>">
+		<liferay-ui:breadcrumb
+			showLayout="<%= false %>"
+		/>
+	</c:if>
 
 	<liferay-frontend:screen-navigation
 		containerCssClass="col-lg-8"

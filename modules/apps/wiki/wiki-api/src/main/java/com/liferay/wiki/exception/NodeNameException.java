@@ -28,12 +28,12 @@ public class NodeNameException extends PortalException {
 		super(msg);
 	}
 
-	public NodeNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NodeNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NodeNameException(Throwable cause) {
-		super(cause);
+	public NodeNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

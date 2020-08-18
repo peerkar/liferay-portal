@@ -28,12 +28,12 @@ public class NoSuchConfigurationException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchConfigurationException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchConfigurationException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchConfigurationException(Throwable cause) {
-		super(cause);
+	public NoSuchConfigurationException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

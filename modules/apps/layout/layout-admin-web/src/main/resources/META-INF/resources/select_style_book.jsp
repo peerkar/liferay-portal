@@ -17,15 +17,29 @@
 <%@ include file="/init.jsp" %>
 
 <%
+boolean editableMasterLayout = ParamUtil.getBoolean(request, "editableMasterLayout");
 String eventName = ParamUtil.getString(request, "eventName", liferayPortletResponse.getNamespace() + "selectStyleBook");
 
 SelectLayoutPageTemplateEntryDisplayContext selectLayoutPageTemplateEntryDisplayContext = new SelectLayoutPageTemplateEntryDisplayContext(request);
+
+String defaultStyleBookLabel = LanguageUtil.get(resourceBundle, "default-style-book");
+
+if (editableMasterLayout) {
+	defaultStyleBookLabel = LanguageUtil.get(resourceBundle, "inherited-from-master");
+}
+
+StyleBookEntry layoutStyleBookEntry = selectLayoutPageTemplateEntryDisplayContext.getLayoutStyleBookEntry(layoutsAdminDisplayContext.getSelLayout());
 
 List<StyleBookEntry> styleBookEntries = selectLayoutPageTemplateEntryDisplayContext.getStyleBookEntries();
 %>
 
 <aui:form cssClass="container-fluid-1280 mt-3" name="fm">
 	<ul class="card-page card-page-equal-height">
+		<li class="card-page-item col-md-3 col-sm-6 form-check-card">
+			<clay:vertical-card
+				verticalCard="<%= new DefaultStylebookLayoutVerticalCard(defaultStyleBookLabel, layoutStyleBookEntry, renderRequest) %>"
+			/>
+		</li>
 
 		<%
 		for (StyleBookEntry styleBookEntry : styleBookEntries) {

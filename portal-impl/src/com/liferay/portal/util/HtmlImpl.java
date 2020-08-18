@@ -1056,6 +1056,8 @@ public class HtmlImpl implements Html {
 	).put(
 		"lt", "<"
 	).put(
+		"nbsp", " "
+	).put(
 		"rsquo", "\u2019"
 	).build();
 

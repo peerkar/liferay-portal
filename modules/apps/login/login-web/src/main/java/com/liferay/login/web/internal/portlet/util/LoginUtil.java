@@ -129,14 +129,13 @@ public class LoginUtil {
 		String companyPortletPreferencesTemplateKey,
 		String portalPropertiesTemplateKey) {
 
-		PortletPreferences companyPortletPreferences =
-			PrefsPropsUtil.getPreferences(companyId, true);
-
 		String xml = LocalizationUtil.getLocalizationXmlFromPreferences(
 			portletPreferences, portletRequest, portletPreferencesTemplateKey,
 			"preferences", null);
 
 		if (xml == null) {
+			PortletPreferences companyPortletPreferences =
+				PrefsPropsUtil.getPreferences(companyId, true);
 			String defaultContent = ContentUtil.get(
 				PortalClassLoaderUtil.getClassLoader(),
 				PropsUtil.get(portalPropertiesTemplateKey));

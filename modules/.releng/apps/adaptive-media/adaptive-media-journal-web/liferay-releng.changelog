@@ -7,3 +7,8 @@
 # Bundle Version 4.0.1
 #
 8a2172ee057669c007cfc1ddf1cea44e4c29d779^..da76ba3e5b6a3d49af698f747eb279ccb81eca9a=LPS-105380
+
+#
+# Bundle Version 4.0.5
+#
+da76ba3e5b6a3d49af698f747eb279ccb81eca9a^..827fda7352ca7a4c9d1169fecc0ea7e7ddaed340=LPS-116999 LRQA-60221

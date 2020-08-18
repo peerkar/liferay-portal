@@ -95,10 +95,10 @@ public class ModerationPortlet extends MVCPortlet {
 	}
 
 	@Override
-	protected boolean isSessionErrorException(Throwable cause) {
-		if (cause instanceof NoSuchMessageException ||
-			cause instanceof PrincipalException ||
-			cause instanceof RequiredMessageException) {
+	protected boolean isSessionErrorException(Throwable throwable) {
+		if (throwable instanceof NoSuchMessageException ||
+			throwable instanceof PrincipalException ||
+			throwable instanceof RequiredMessageException) {
 
 			return true;
 		}

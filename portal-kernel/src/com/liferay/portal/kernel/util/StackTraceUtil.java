@@ -23,14 +23,14 @@ import java.io.PrintWriter;
  */
 public class StackTraceUtil {
 
-	public static String getStackTrace(Throwable t) {
+	public static String getStackTrace(Throwable throwable) {
 		String stackTrace = null;
 
 		try (UnsyncStringWriter unsyncStringWriter = new UnsyncStringWriter();
 			PrintWriter printWriter = UnsyncPrintWriterPool.borrow(
 				unsyncStringWriter)) {
 
-			t.printStackTrace(printWriter);
+			throwable.printStackTrace(printWriter);
 
 			printWriter.flush();
 

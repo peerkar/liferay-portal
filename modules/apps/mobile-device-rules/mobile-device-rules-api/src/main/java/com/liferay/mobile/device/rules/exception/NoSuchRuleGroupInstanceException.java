@@ -28,12 +28,12 @@ public class NoSuchRuleGroupInstanceException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchRuleGroupInstanceException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchRuleGroupInstanceException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchRuleGroupInstanceException(Throwable cause) {
-		super(cause);
+	public NoSuchRuleGroupInstanceException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

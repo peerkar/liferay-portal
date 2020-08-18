@@ -15,9 +15,11 @@
 package com.liferay.layout.content.page.editor.web.internal.display.context;
 
 import com.liferay.document.library.kernel.model.DLFileEntryConstants;
+import com.liferay.exportimport.kernel.staging.StagingUtil;
 import com.liferay.fragment.constants.FragmentEntryLinkConstants;
 import com.liferay.fragment.contributor.FragmentCollectionContributor;
 import com.liferay.fragment.contributor.FragmentCollectionContributorTracker;
+import com.liferay.fragment.entry.processor.util.EditableFragmentEntryProcessorUtil;
 import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.model.FragmentComposition;
 import com.liferay.fragment.model.FragmentEntry;
@@ -66,6 +68,7 @@ import com.liferay.layout.page.template.util.PaddingConverter;
 import com.liferay.layout.page.template.util.comparator.LayoutPageTemplateEntryNameComparator;
 import com.liferay.layout.responsive.ViewportSize;
 import com.liferay.layout.util.constants.LayoutConverterTypeConstants;
+import com.liferay.layout.util.structure.CommonStylesUtil;
 import com.liferay.layout.util.structure.DropZoneLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
@@ -123,6 +126,8 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PortletKeys;
+import com.liferay.portal.kernel.util.ResourceBundleLoader;
+import com.liferay.portal.kernel.util.ResourceBundleLoaderUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -203,11 +208,15 @@ public class ContentPageEditorDisplayContext {
 		_fragmentRendererTracker = fragmentRendererTracker;
 		_itemSelector = itemSelector;
 		_pageEditorConfiguration = pageEditorConfiguration;
-		_portletRequest = portletRequest;
 		_renderResponse = renderResponse;
+		_resourceBundleLoader =
+			ResourceBundleLoaderUtil.
+				getResourceBundleLoaderByBundleSymbolicName(
+					"com.liferay.layout.content.page.editor.web");
 
 		this.httpServletRequest = httpServletRequest;
 		this.infoItemServiceTracker = infoItemServiceTracker;
+		this.portletRequest = portletRequest;
 
 		themeDisplay = (ThemeDisplay)httpServletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
@@ -258,6 +267,11 @@ public class ContentPageEditorDisplayContext {
 			).put(
 				"collectionSelectorURL", _getCollectionSelectorURL()
 			).put(
+				"commonStyles",
+				CommonStylesUtil.getCommongStylesJSONArray(
+					_resourceBundleLoader.loadResourceBundle(
+						themeDisplay.getLocale()))
+			).put(
 				"containerItemFlexEnabled",
 				_ffLayoutContentPageEditorConfiguration.
 					containerItemFlexEnabled()
@@ -267,19 +281,8 @@ public class ContentPageEditorDisplayContext {
 				"defaultLanguageId",
 				LocaleUtil.toLanguageId(themeDisplay.getSiteDefaultLocale())
 			).put(
-				"defaultStyleBookEntryId",
-				() -> {
-					StyleBookEntry styleBookEntry =
-						StyleBookEntryLocalServiceUtil.
-							fetchDefaultStyleBookEntry(
-								themeDisplay.getScopeGroupId());
-
-					if (styleBookEntry == null) {
-						return 0;
-					}
-
-					return styleBookEntry.getStyleBookEntryId();
-				}
+				"defaultStyleBookEntryName",
+				() -> _getDefaultStyleBookEntryName()
 			).put(
 				"deleteFragmentEntryLinkCommentURL",
 				getFragmentEntryActionURL(
@@ -365,7 +368,7 @@ public class ContentPageEditorDisplayContext {
 			).put(
 				"layoutConversionWarningMessages",
 				MultiSessionMessages.get(
-					_portletRequest, "layoutConversionWarningMessages")
+					portletRequest, "layoutConversionWarningMessages")
 			).put(
 				"layoutType", String.valueOf(_getLayoutType())
 			).put(
@@ -684,6 +687,7 @@ public class ContentPageEditorDisplayContext {
 
 	protected final HttpServletRequest httpServletRequest;
 	protected final InfoItemServiceTracker infoItemServiceTracker;
+	protected final PortletRequest portletRequest;
 	protected final ThemeDisplay themeDisplay;
 
 	private Map<String, Object> _getAvailableLanguages() {
@@ -848,6 +852,37 @@ public class ContentPageEditorDisplayContext {
 		).build();
 
 		return _defaultConfigurations;
+	}
+
+	private String _getDefaultStyleBookEntryName() {
+		StyleBookEntry styleBookEntry = null;
+
+		Layout layout = themeDisplay.getLayout();
+
+		if (layout.getStyleBookEntryId() > 0) {
+			styleBookEntry = StyleBookEntryLocalServiceUtil.fetchStyleBookEntry(
+				layout.getStyleBookEntryId());
+		}
+
+		if ((styleBookEntry == null) && (layout.getMasterLayoutPlid() > 0)) {
+			Layout masterLayout = LayoutLocalServiceUtil.fetchLayout(
+				layout.getMasterLayoutPlid());
+
+			styleBookEntry = StyleBookEntryLocalServiceUtil.fetchStyleBookEntry(
+				masterLayout.getStyleBookEntryId());
+		}
+
+		if (styleBookEntry == null) {
+			styleBookEntry =
+				StyleBookEntryLocalServiceUtil.fetchDefaultStyleBookEntry(
+					layout.getGroupId());
+		}
+
+		if (styleBookEntry != null) {
+			return styleBookEntry.getName();
+		}
+
+		return null;
 	}
 
 	private String _getDiscardDraftURL() {
@@ -1315,10 +1350,6 @@ public class ContentPageEditorDisplayContext {
 
 		try {
 			for (FragmentEntryLink fragmentEntryLink : fragmentEntryLinks) {
-				FragmentEntry fragmentEntry =
-					FragmentEntryServiceUtil.fetchFragmentEntry(
-						fragmentEntryLink.getFragmentEntryId());
-
 				DefaultFragmentRendererContext fragmentRendererContext =
 					new DefaultFragmentRendererContext(fragmentEntryLink);
 
@@ -1344,6 +1375,16 @@ public class ContentPageEditorDisplayContext {
 						_itemSelector, httpServletRequest,
 						liferayPortletResponse, configurationJSONObject);
 
+				FragmentEntry fragmentEntry =
+					FragmentEntryServiceUtil.fetchFragmentEntry(
+						fragmentEntryLink.getFragmentEntryId());
+
+				if (fragmentEntry == null) {
+					fragmentEntry =
+						_fragmentCollectionContributorTracker.getFragmentEntry(
+							fragmentEntryLink.getRendererKey());
+				}
+
 				Map<String, Object> fragmentEntryLinkMap =
 					HashMapBuilder.<String, Object>put(
 						"comments",
@@ -1358,6 +1399,10 @@ public class ContentPageEditorDisplayContext {
 						_fragmentEntryConfigurationParser.
 							getConfigurationDefaultValuesJSONObject(
 								configuration)
+					).put(
+						"editableTypes",
+						EditableFragmentEntryProcessorUtil.getEditableTypes(
+							fragmentEntryLink.getHtml())
 					).put(
 						"editableValues",
 						JSONFactoryUtil.createJSONObject(
@@ -1388,6 +1433,10 @@ public class ContentPageEditorDisplayContext {
 						_getFragmentEntry(
 							fragmentEntryLink, fragmentEntry, content)
 					).build();
+
+				if (fragmentEntry != null) {
+					fragmentEntryLinkMap.put("icon", fragmentEntry.getIcon());
+				}
 
 				fragmentEntryLinksMap.put(
 					String.valueOf(fragmentEntryLink.getFragmentEntryLinkId()),
@@ -1878,8 +1927,9 @@ public class ContentPageEditorDisplayContext {
 
 		List<StyleBookEntry> styleBookEntries =
 			StyleBookEntryLocalServiceUtil.getStyleBookEntries(
-				themeDisplay.getScopeGroupId(), QueryUtil.ALL_POS,
-				QueryUtil.ALL_POS, new StyleBookEntryNameComparator(true));
+				StagingUtil.getLiveGroupId(themeDisplay.getScopeGroupId()),
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+				new StyleBookEntryNameComparator(true));
 
 		for (StyleBookEntry styleBookEntry : styleBookEntries) {
 			styleBooks.add(
@@ -2123,10 +2173,10 @@ public class ContentPageEditorDisplayContext {
 	private Integer _layoutType;
 	private LayoutStructure _masterLayoutStructure;
 	private final PageEditorConfiguration _pageEditorConfiguration;
-	private final PortletRequest _portletRequest;
 	private Layout _publishedLayout;
 	private String _redirect;
 	private final RenderResponse _renderResponse;
+	private final ResourceBundleLoader _resourceBundleLoader;
 	private List<Map<String, Object>> _sidebarPanels;
 	private ItemSelectorCriterion _urlItemSelectorCriterion;
 

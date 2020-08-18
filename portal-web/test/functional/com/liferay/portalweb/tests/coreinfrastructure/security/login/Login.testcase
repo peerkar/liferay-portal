@@ -523,57 +523,6 @@ definition {
 	}
 
 	@ignore = "true"
-	@priority = "4"
-	test OpenIDSmoke {
-		property dummy.socket.proxy.disabled = "true";
-		property osgi.app.includes = "portal-security-sso-openid";
-		property osgi.module.configuration.file.names = "com.liferay.captcha.configuration.CaptchaConfiguration.config";
-		property osgi.module.configurations = "createAccountCaptchaEnabled=&quot;false&quot;";
-		property test.name.skip.portal.instance = "Login#OpenIDSmoke";
-		var openIDPassword = PropsUtil.get("email.password.1");
-		var openIDUsername = PropsUtil.get("email.address.1");
-
-		User.firstLoginPG();
-
-		PortalSettings.gotoConfiguration(
-			configurationCategory = "SSO",
-			configurationName = "OpenID",
-			configurationScope = "Virtual Instance Scope");
-
-		PortalSettings.enableOpenIDCP();
-
-		User.logoutPG();
-
-		User.createUserViaOpenID(
-			openIDPassword = "${openIDPassword}",
-			openIDURL = "https://me.yahoo.com/liferayqa",
-			openIDUsername = "${openIDUsername}",
-			userEmailAddress = "userea@liferay.com",
-			userFirstName = "userfn",
-			userLastName = "userln",
-			userScreenName = "usersn");
-
-		User.loginUserPG(
-			password = "test",
-			userEmailAddress = "test@liferay.com");
-
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
-
-		User.editPasswordCP(
-			userEmailAddress = "userea@liferay.com",
-			userScreenName = "usersn");
-
-		User.logoutPG();
-
-		User.loginUserWithOpenIDEnabledPG(
-			openIDURL = "https://me.yahoo.com/liferayqa",
-			userFirstName = "userfn");
-	}
-
-	@ignore = "true"
 	@priority = "5"
 	test OpenSSOSmoke {
 		property dummy.socket.proxy.disabled = "true";
@@ -704,8 +653,6 @@ definition {
 		PortalSettings.viewAuthenticationGeneralCP();
 
 		PortalSettings.viewAuthenticationLDAPCP();
-
-		PortalSettings.viewAuthenticationOpenIDCP();
 
 		PortalSettings.viewAuthenticationOpenSSOCP();
 

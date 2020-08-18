@@ -28,12 +28,12 @@ public class NoSuchCounterException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchCounterException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchCounterException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchCounterException(Throwable cause) {
-		super(cause);
+	public NoSuchCounterException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

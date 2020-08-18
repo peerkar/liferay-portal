@@ -28,12 +28,12 @@ public class CalendarBookingEndTimeException extends PortalException {
 		super(msg);
 	}
 
-	public CalendarBookingEndTimeException(String msg, Throwable cause) {
-		super(msg, cause);
+	public CalendarBookingEndTimeException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public CalendarBookingEndTimeException(Throwable cause) {
-		super(cause);
+	public CalendarBookingEndTimeException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

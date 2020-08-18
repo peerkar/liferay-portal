@@ -28,12 +28,12 @@ public class EntryEmailAddressException extends PortalException {
 		super(msg);
 	}
 
-	public EntryEmailAddressException(String msg, Throwable cause) {
-		super(msg, cause);
+	public EntryEmailAddressException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public EntryEmailAddressException(Throwable cause) {
-		super(cause);
+	public EntryEmailAddressException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

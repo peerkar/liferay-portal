@@ -26,12 +26,12 @@ public class OlderVersionException extends UpgradeException {
 		super(msg);
 	}
 
-	public OlderVersionException(String msg, Throwable cause) {
-		super(msg, cause);
+	public OlderVersionException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public OlderVersionException(Throwable cause) {
-		super(cause);
+	public OlderVersionException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -113,10 +113,10 @@ public class ServiceReferenceAnnotationBeanPostProcessor
 					targetBean,
 					_bundleContext.getService(osgiServiceReference));
 			}
-			catch (Throwable t) {
+			catch (Throwable throwable) {
 				throw new BeanCreationException(
 					beanClass.getName(),
-					"Unable to inject bean reference fields", t);
+					"Unable to inject bean reference fields", throwable);
 			}
 
 			_serviceReferences.add(osgiServiceReference);

@@ -26,12 +26,12 @@ public class AddressCityException extends PortalException {
 		super(msg);
 	}
 
-	public AddressCityException(String msg, Throwable cause) {
-		super(msg, cause);
+	public AddressCityException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public AddressCityException(Throwable cause) {
-		super(cause);
+	public AddressCityException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

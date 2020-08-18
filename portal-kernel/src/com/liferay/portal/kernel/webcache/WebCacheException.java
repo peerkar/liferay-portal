@@ -28,12 +28,12 @@ public class WebCacheException extends PortalException {
 		super(msg);
 	}
 
-	public WebCacheException(String msg, Throwable cause) {
-		super(msg, cause);
+	public WebCacheException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public WebCacheException(Throwable cause) {
-		super(cause);
+	public WebCacheException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

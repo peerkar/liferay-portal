@@ -15,7 +15,7 @@ import {ClayRadio, ClayRadioGroup} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
 import {ClayTooltipProvider} from '@clayui/tooltip';
 import SelectObjects from 'app-builder-web/js/pages/apps/SelectObjectsDropDown.es';
-import EditAppContext, {
+import {
 	UPDATE_APP,
 	UPDATE_DATA_LAYOUT_ID,
 	UPDATE_DATA_LIST_VIEW_ID,
@@ -24,7 +24,7 @@ import {sub} from 'app-builder-web/js/utils/lang.es';
 import {concatValues} from 'app-builder-web/js/utils/utils.es';
 import classNames from 'classnames';
 import {DataDefinitionUtils} from 'data-engine-taglib';
-import React, {useContext} from 'react';
+import React from 'react';
 
 import SelectDropdown from '../../../../components/select-dropdown/SelectDropdown.es';
 import {
@@ -93,20 +93,18 @@ const SelectTableView = (props) => {
 	return <SelectDropdown {...props} />;
 };
 
-export default function DataAndViewsTab() {
-	const {
-		config: {
-			currentStep,
-			dataObject,
-			formView,
-			listItems: {fetching, formViews, tableViews},
-			stepIndex,
-			tableView,
-		},
-		dispatch,
-		dispatchConfig,
-	} = useContext(EditAppContext);
-
+export default function DataAndViewsTab({
+	config: {
+		currentStep,
+		dataObject,
+		formView,
+		listItems: {fetching, formViews, tableViews},
+		stepIndex,
+		tableView,
+	},
+	dispatch,
+	dispatchConfig,
+}) {
 	const {
 		appWorkflowDataLayoutLinks: stepFormViews = [],
 		errors: {

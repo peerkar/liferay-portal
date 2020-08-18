@@ -28,12 +28,12 @@ public class RepositoryException extends SystemException {
 		super(msg);
 	}
 
-	public RepositoryException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RepositoryException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public RepositoryException(Throwable cause) {
-		super(cause);
+	public RepositoryException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

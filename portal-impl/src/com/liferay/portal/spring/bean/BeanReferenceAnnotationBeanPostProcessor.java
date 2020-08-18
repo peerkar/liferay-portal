@@ -159,9 +159,10 @@ public class BeanReferenceAnnotationBeanPostProcessor
 			try {
 				field.set(targetBean, referencedBean);
 			}
-			catch (Throwable t) {
+			catch (Throwable throwable) {
 				throw new BeanCreationException(
-					targetBeanName, "Could not inject BeanReference fields", t);
+					targetBeanName, "Could not inject BeanReference fields",
+					throwable);
 			}
 		}
 

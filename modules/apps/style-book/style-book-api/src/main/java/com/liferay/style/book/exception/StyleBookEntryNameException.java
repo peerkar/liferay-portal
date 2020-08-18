@@ -28,12 +28,12 @@ public class StyleBookEntryNameException extends PortalException {
 		super(msg);
 	}
 
-	public StyleBookEntryNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public StyleBookEntryNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public StyleBookEntryNameException(Throwable cause) {
-		super(cause);
+	public StyleBookEntryNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -28,12 +28,12 @@ public class NoSuchGadgetException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchGadgetException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchGadgetException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchGadgetException(Throwable cause) {
-		super(cause);
+	public NoSuchGadgetException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

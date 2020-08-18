@@ -33,12 +33,12 @@ public class DataDefinitionValidationException extends RuntimeException {
 		super(msg);
 	}
 
-	public DataDefinitionValidationException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DataDefinitionValidationException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DataDefinitionValidationException(Throwable cause) {
-		super(cause);
+	public DataDefinitionValidationException(Throwable throwable) {
+		super(throwable);
 	}
 
 	public static class MustNotDuplicateFieldName

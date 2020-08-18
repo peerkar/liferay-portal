@@ -30,13 +30,13 @@ public class OAuth2ApplicationRedirectURIFragmentException
 	}
 
 	public OAuth2ApplicationRedirectURIFragmentException(
-		String msg, Throwable cause) {
+		String msg, Throwable throwable) {
 
-		super(msg, cause);
+		super(msg, throwable);
 	}
 
-	public OAuth2ApplicationRedirectURIFragmentException(Throwable cause) {
-		super(cause);
+	public OAuth2ApplicationRedirectURIFragmentException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

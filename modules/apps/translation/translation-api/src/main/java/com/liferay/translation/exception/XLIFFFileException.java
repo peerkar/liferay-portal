@@ -30,12 +30,12 @@ public class XLIFFFileException extends PortalException {
 			super(msg);
 		}
 
-		public MustBeSupportedLanguage(String msg, Throwable cause) {
-			super(msg, cause);
+		public MustBeSupportedLanguage(String msg, Throwable throwable) {
+			super(msg, throwable);
 		}
 
-		public MustBeSupportedLanguage(Throwable cause) {
-			super(cause);
+		public MustBeSupportedLanguage(Throwable throwable) {
+			super(throwable);
 		}
 
 	}
@@ -49,12 +49,12 @@ public class XLIFFFileException extends PortalException {
 			super(msg);
 		}
 
-		public MustBeValid(String msg, Throwable cause) {
-			super(msg, cause);
+		public MustBeValid(String msg, Throwable throwable) {
+			super(msg, throwable);
 		}
 
-		public MustBeValid(Throwable cause) {
-			super(cause);
+		public MustBeValid(Throwable throwable) {
+			super(throwable);
 		}
 
 	}
@@ -68,12 +68,12 @@ public class XLIFFFileException extends PortalException {
 			super(msg);
 		}
 
-		public MustBeWellFormed(String msg, Throwable cause) {
-			super(msg, cause);
+		public MustBeWellFormed(String msg, Throwable throwable) {
+			super(msg, throwable);
 		}
 
-		public MustBeWellFormed(Throwable cause) {
-			super(cause);
+		public MustBeWellFormed(Throwable throwable) {
+			super(throwable);
 		}
 
 	}
@@ -87,12 +87,12 @@ public class XLIFFFileException extends PortalException {
 			super(msg);
 		}
 
-		public MustHaveCorrectEncoding(String msg, Throwable cause) {
-			super(msg, cause);
+		public MustHaveCorrectEncoding(String msg, Throwable throwable) {
+			super(msg, throwable);
 		}
 
-		public MustHaveCorrectEncoding(Throwable cause) {
-			super(cause);
+		public MustHaveCorrectEncoding(Throwable throwable) {
+			super(throwable);
 		}
 
 	}
@@ -106,12 +106,12 @@ public class XLIFFFileException extends PortalException {
 			super(msg);
 		}
 
-		public MustHaveValidId(String msg, Throwable cause) {
-			super(msg, cause);
+		public MustHaveValidId(String msg, Throwable throwable) {
+			super(msg, throwable);
 		}
 
-		public MustHaveValidId(Throwable cause) {
-			super(cause);
+		public MustHaveValidId(Throwable throwable) {
+			super(throwable);
 		}
 
 	}
@@ -125,12 +125,12 @@ public class XLIFFFileException extends PortalException {
 			super(msg);
 		}
 
-		public MustHaveValidParameter(String msg, Throwable cause) {
-			super(msg, cause);
+		public MustHaveValidParameter(String msg, Throwable throwable) {
+			super(msg, throwable);
 		}
 
-		public MustHaveValidParameter(Throwable cause) {
-			super(cause);
+		public MustHaveValidParameter(Throwable throwable) {
+			super(throwable);
 		}
 
 	}
@@ -144,12 +144,12 @@ public class XLIFFFileException extends PortalException {
 			super(msg);
 		}
 
-		public MustNotHaveMoreThanOne(String msg, Throwable cause) {
-			super(msg, cause);
+		public MustNotHaveMoreThanOne(String msg, Throwable throwable) {
+			super(msg, throwable);
 		}
 
-		public MustNotHaveMoreThanOne(Throwable cause) {
-			super(cause);
+		public MustNotHaveMoreThanOne(Throwable throwable) {
+			super(throwable);
 		}
 
 	}
@@ -161,12 +161,12 @@ public class XLIFFFileException extends PortalException {
 		super(msg);
 	}
 
-	private XLIFFFileException(String msg, Throwable cause) {
-		super(msg, cause);
+	private XLIFFFileException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	private XLIFFFileException(Throwable cause) {
-		super(cause);
+	private XLIFFFileException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

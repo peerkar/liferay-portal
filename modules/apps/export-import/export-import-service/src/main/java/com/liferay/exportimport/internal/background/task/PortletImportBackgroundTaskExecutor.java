@@ -108,8 +108,8 @@ public class PortletImportBackgroundTaskExecutor
 
 				throw exportImportIOException;
 			}
-			catch (Throwable t) {
-				throw new SystemException(t);
+			catch (Throwable throwable) {
+				throw new SystemException(throwable);
 			}
 			finally {
 				FileUtil.delete(file);

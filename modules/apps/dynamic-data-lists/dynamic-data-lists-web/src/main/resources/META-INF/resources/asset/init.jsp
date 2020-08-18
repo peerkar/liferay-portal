@@ -22,7 +22,6 @@ page import="com.liferay.dynamic.data.lists.model.DDLRecord" %><%@
 page import="com.liferay.dynamic.data.lists.model.DDLRecordSet" %><%@
 page import="com.liferay.dynamic.data.lists.model.DDLRecordVersion" %><%@
 page import="com.liferay.dynamic.data.mapping.model.DDMStructure" %><%@
-page import="com.liferay.dynamic.data.mapping.storage.DDMFormValues" %><%@
 page import="com.liferay.portal.kernel.util.PortalUtil" %>
 
 <liferay-theme:defineObjects />

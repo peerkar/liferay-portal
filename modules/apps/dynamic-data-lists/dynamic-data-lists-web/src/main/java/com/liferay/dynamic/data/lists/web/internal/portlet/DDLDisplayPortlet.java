@@ -188,10 +188,10 @@ public class DDLDisplayPortlet extends MVCPortlet {
 	}
 
 	@Override
-	protected boolean isSessionErrorException(Throwable cause) {
-		if (cause instanceof NoSuchRecordSetException ||
-			cause instanceof PortletPreferencesException ||
-			cause instanceof PrincipalException) {
+	protected boolean isSessionErrorException(Throwable throwable) {
+		if (throwable instanceof NoSuchRecordSetException ||
+			throwable instanceof PortletPreferencesException ||
+			throwable instanceof PrincipalException) {
 
 			return true;
 		}

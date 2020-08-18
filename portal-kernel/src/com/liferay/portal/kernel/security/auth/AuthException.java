@@ -35,12 +35,12 @@ public class AuthException extends PortalException {
 		super(msg);
 	}
 
-	public AuthException(String msg, Throwable cause) {
-		super(msg, cause);
+	public AuthException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public AuthException(Throwable cause) {
-		super(cause);
+	public AuthException(Throwable throwable) {
+		super(throwable);
 	}
 
 	public int getType() {

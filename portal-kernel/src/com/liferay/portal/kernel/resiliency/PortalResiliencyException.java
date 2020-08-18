@@ -25,12 +25,12 @@ public class PortalResiliencyException extends Exception {
 		super(message);
 	}
 
-	public PortalResiliencyException(String message, Throwable cause) {
-		super(message, cause);
+	public PortalResiliencyException(String message, Throwable throwable) {
+		super(message, throwable);
 	}
 
-	public PortalResiliencyException(Throwable cause) {
-		super(cause);
+	public PortalResiliencyException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

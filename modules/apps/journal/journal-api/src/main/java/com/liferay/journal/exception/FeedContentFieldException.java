@@ -28,12 +28,12 @@ public class FeedContentFieldException extends PortalException {
 		super(msg);
 	}
 
-	public FeedContentFieldException(String msg, Throwable cause) {
-		super(msg, cause);
+	public FeedContentFieldException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public FeedContentFieldException(Throwable cause) {
-		super(cause);
+	public FeedContentFieldException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

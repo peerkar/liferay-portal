@@ -696,8 +696,8 @@ public class NettyRepositoryTest {
 	@Aspect
 	public static class DefaultNoticeableFutureAdvice {
 
-		public static void setConvertThrowable(Throwable convertThrowable) {
-			_convertThrowable = convertThrowable;
+		public static void setConvertThrowable(Throwable throwable) {
+			_convertThrowable = throwable;
 		}
 
 		@Around(

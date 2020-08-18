@@ -127,25 +127,25 @@ renderResponse.setTitle(title);
 											"value", parentCategory.getCategoryId()
 										).build());
 								}
-
-								Map<String, Object> props = HashMapBuilder.<String, Object>put(
-									"categoryIds", Collections.singletonList(parentCategoryId)
-								).put(
-									"groupIds", Collections.singletonList(scopeGroupId)
-								).put(
-									"namespace", liferayPortletResponse.getNamespace()
-								).put(
-									"portletURL", assetCategoriesDisplayContext.getCategorySelectorURL()
-								).put(
-									"selectedCategories", selectedCategories
-								).put(
-									"vocabularyIds", Collections.singletonList(vocabularyId)
-								).build();
 								%>
 
 								<react:component
 									module="js/AssetCategoriesSelectorTag.es"
-									props="<%= props %>"
+									props='<%=
+										HashMapBuilder.<String, Object>put(
+											"categoryIds", Collections.singletonList(parentCategoryId)
+										).put(
+											"groupIds", Collections.singletonList(scopeGroupId)
+										).put(
+											"namespace", liferayPortletResponse.getNamespace()
+										).put(
+											"portletURL", assetCategoriesDisplayContext.getCategorySelectorURL()
+										).put(
+											"selectedCategories", selectedCategories
+										).put(
+											"vocabularyIds", Collections.singletonList(vocabularyId)
+										).build()
+									%>'
 								/>
 							</div>
 						</aui:field-wrapper>

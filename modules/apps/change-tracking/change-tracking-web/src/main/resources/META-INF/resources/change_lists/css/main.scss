@@ -1,32 +1,8 @@
-.change-lists-table {
-	.change-list-description {
-		color: #6b6c7e;
-	}
-
-	.change-list-name {
-		color: #272833;
-		font-weight: 600;
-	}
-}
-
-.change-lists-tbar {
-	font-size: 14px;
-	height: auto;
-	min-height: 3.5rem;
-
-	.change-list-name {
-		color: #272833;
-		font-size: 18px;
-		font-weight: 600;
-
-		.label {
-			margin-left: 0.5rem;
-			vertical-align: middle;
-		}
-	}
-}
-
 .change-lists-conflicts-table {
+	.autofit-col {
+		padding-left: 0;
+	}
+
 	.entry-title {
 		margin-top: 0.25rem;
 	}
@@ -49,16 +25,53 @@
 	}
 }
 
-.select-change-list-table {
-	border-collapse: collapse;
+.change-lists-discard-container {
+	padding-top: 48px;
 
-	td:first-child {
-		vertical-align: top;
+	button:hover {
+		cursor: pointer;
 	}
 }
 
-#selectChangeListManagementToolbar nav:last-child {
-	margin-bottom: 0;
+.change-lists-table {
+	.change-list-description {
+		color: #6b6c7e;
+	}
+
+	.change-list-name {
+		color: #272833;
+		font-weight: 600;
+	}
+
+	.change-row-button {
+		background-color: inherit;
+		border: none;
+		padding: 0;
+		text-align: left;
+
+		&:active:focus,
+		&:focus {
+			box-shadow: none;
+			outline: none;
+		}
+	}
+}
+
+.change-lists-tbar {
+	font-size: 14px;
+	height: auto;
+	min-height: 3.5rem;
+
+	.change-list-name {
+		color: #272833;
+		font-size: 18px;
+		font-weight: 600;
+
+		.label {
+			margin-left: 0.5rem;
+			vertical-align: middle;
+		}
+	}
 }
 
 .change-lists-view-changes-wrapper {
@@ -72,7 +85,13 @@
 		margin-top: 20px;
 
 		.panel-body {
-			margin-top: 16px;
+			margin-top: 1rem;
+			padding-bottom: 0;
+			padding-top: 0;
+
+			.custom-control:only-child {
+				margin-bottom: 1rem;
+			}
 		}
 
 		.sheet {
@@ -83,24 +102,23 @@
 			button:hover {
 				cursor: pointer;
 			}
+		}
 
-			.change-row-button {
-				background-color: inherit;
-				border: none;
-				padding: 0;
-				text-align: left;
-
-				&:active:focus,
-				&:focus {
-					box-shadow: none;
-					outline: none;
-				}
-			}
+		.taglib-empty-result-message {
+			margin-top: 0;
 		}
 	}
 
 	.management-bar {
 		margin-bottom: 0;
+
+		.navbar-nav {
+			flex-grow: 1;
+
+			.nav-item-expand {
+				flex-grow: 1;
+			}
+		}
 	}
 
 	.navigation-bar {
@@ -122,4 +140,16 @@
 
 .change-lists-view-entry-wrapper {
 	margin-top: 16px;
+}
+
+.select-change-list-table {
+	border-collapse: collapse;
+
+	td:first-child {
+		vertical-align: top;
+	}
+}
+
+#selectChangeListManagementToolbar nav:last-child {
+	margin-bottom: 0;
 }

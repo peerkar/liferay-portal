@@ -26,12 +26,12 @@ public class ContactClassNameException extends PortalException {
 		super(msg);
 	}
 
-	public ContactClassNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ContactClassNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ContactClassNameException(Throwable cause) {
-		super(cause);
+	public ContactClassNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

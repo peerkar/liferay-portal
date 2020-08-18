@@ -29,13 +29,13 @@ public class RequiredRedirectEntrySourceURLException extends PortalException {
 	}
 
 	public RequiredRedirectEntrySourceURLException(
-		String msg, Throwable cause) {
+		String msg, Throwable throwable) {
 
-		super(msg, cause);
+		super(msg, throwable);
 	}
 
-	public RequiredRedirectEntrySourceURLException(Throwable cause) {
-		super(cause);
+	public RequiredRedirectEntrySourceURLException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

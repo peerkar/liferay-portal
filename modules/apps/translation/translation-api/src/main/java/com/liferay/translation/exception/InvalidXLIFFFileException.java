@@ -30,12 +30,12 @@ public class InvalidXLIFFFileException extends PortalException {
 		super(msg);
 	}
 
-	public InvalidXLIFFFileException(String msg, Throwable cause) {
-		super(msg, cause);
+	public InvalidXLIFFFileException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public InvalidXLIFFFileException(Throwable cause) {
-		super(cause);
+	public InvalidXLIFFFileException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

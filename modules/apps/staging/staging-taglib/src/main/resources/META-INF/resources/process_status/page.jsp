@@ -16,9 +16,23 @@
 
 <%@ include file="/process_status/init.jsp" %>
 
+<%
+String displayType = "info";
+
+if (backgroundTaskStatus == BackgroundTaskConstants.STATUS_FAILED) {
+	displayType = "danger";
+}
+else if (backgroundTaskStatus == BackgroundTaskConstants.STATUS_IN_PROGRESS) {
+	displayType = "warning";
+}
+else if (backgroundTaskStatus == BackgroundTaskConstants.STATUS_SUCCESSFUL) {
+	displayType = "success";
+}
+%>
+
 <clay:label
-	cssClass="process-status"
+	cssClass='<%= "process-status background-task-status-" + backgroundTaskStatusLabel %>'
 	data-qa-id="processResult"
-	displayType="<%= clayClassPostfix %>"
+	displayType="<%= displayType %>"
 	label="<%= backgroundTaskStatusLabel %>"
 />

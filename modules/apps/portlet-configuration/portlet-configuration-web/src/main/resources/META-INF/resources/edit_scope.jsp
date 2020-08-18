@@ -89,11 +89,9 @@ for (Layout scopeGroupLayout : LayoutLocalServiceUtil.getScopeGroupLayouts(layou
 
 								availableGroupScopeLayoutUuid = availableGroupLayout.getUuid();
 							}
-
-							String value = availableGroupScopeType + "," + availableGroupScopeLayoutUuid;
 						%>
 
-							<aui:option label="<%= HtmlUtil.escape(availableGroup.getDescriptiveName(locale)) %>" selected="<%= (group != null) && (group.getGroupId() == availableGroup.getGroupId()) %>" value="<%= value %>" />
+							<aui:option label="<%= HtmlUtil.escape(availableGroup.getDescriptiveName(locale)) %>" selected="<%= (group != null) && (group.getGroupId() == availableGroup.getGroupId()) %>" value='<%= availableGroupScopeType + "," + availableGroupScopeLayoutUuid %>' />
 
 						<%
 						}

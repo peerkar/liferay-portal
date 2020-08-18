@@ -30,13 +30,13 @@ public class DuplicateAppBuilderWorkflowTaskLinkException
 	}
 
 	public DuplicateAppBuilderWorkflowTaskLinkException(
-		String msg, Throwable cause) {
+		String msg, Throwable throwable) {
 
-		super(msg, cause);
+		super(msg, throwable);
 	}
 
-	public DuplicateAppBuilderWorkflowTaskLinkException(Throwable cause) {
-		super(cause);
+	public DuplicateAppBuilderWorkflowTaskLinkException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

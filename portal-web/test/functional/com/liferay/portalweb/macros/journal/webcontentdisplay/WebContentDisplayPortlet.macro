@@ -38,7 +38,7 @@ definition {
 
 			AssertTextEquals.assertPartialText(
 				key_card = "${webContentTitle}",
-				locator1 = "LexiconCard#CARD_TITLE",
+				locator1 = "Card#CARD_TITLE",
 				value1 = "${webContentTitle}");
 		}
 
@@ -300,7 +300,7 @@ definition {
 
 		Click(
 			key_card = "${otherSiteName}",
-			locator1 = "LexiconCard#CARD_TITLE_LINK");
+			locator1 = "Card#CARD_TITLE_LINK");
 
 		var key_listEntry = "${webContentTitle}";
 
@@ -316,7 +316,7 @@ definition {
 
 		AssertTextEquals.assertPartialText(
 			key_card = "${webContentTitle}",
-			locator1 = "LexiconCard#CARD_TITLE",
+			locator1 = "Card#CARD_TITLE",
 			value1 = "${webContentTitle}");
 
 		PortletEntry.save();
@@ -334,8 +334,6 @@ definition {
 		SelectFrame(locator1 = "IFrame#MODAL_BODY");
 
 		Pause(locator1 = "3000");
-
-		WaitForLiferayEvent.initializeLiferayEventLog();
 
 		AssertClick(
 			locator1 = "WCDConfiguration#SELECT_WEB_CONTENT_BUTTON",
@@ -364,11 +362,13 @@ definition {
 
 			Click(locator1 = "ContentRow#ENTRY_CONTENT_ENTRY_NAME");
 
+			SelectFrame(value1 = "relative=top");
+
 			SelectFrame(locator1 = "IFrame#MODAL_BODY");
 
 			AssertTextEquals.assertPartialText(
 				key_card = "${webContentTitle}",
-				locator1 = "LexiconCard#CARD_TITLE",
+				locator1 = "Card#CARD_TITLE",
 				value1 = "${webContentTitle}");
 		}
 
@@ -384,11 +384,13 @@ definition {
 					value1 = "${webContentTitle}");
 			}
 
+			SelectFrame(value1 = "relative=top");
+
 			SelectFrame(locator1 = "IFrame#MODAL_BODY");
 
 			AssertTextEquals(
 				key_card = "${webContentTitle}",
-				locator1 = "LexiconCard#CARD_TITLE",
+				locator1 = "Card#CARD_TITLE",
 				value1 = "${webContentTitle}");
 		}
 

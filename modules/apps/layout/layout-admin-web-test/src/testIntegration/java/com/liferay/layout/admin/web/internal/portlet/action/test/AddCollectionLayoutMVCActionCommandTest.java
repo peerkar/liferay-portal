@@ -22,9 +22,9 @@ import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
 import com.liferay.layout.test.util.LayoutTestUtil;
 import com.liferay.layout.util.constants.LayoutDataItemTypeConstants;
-import com.liferay.layout.util.structure.CollectionLayoutStructureItem;
-import com.liferay.layout.util.structure.ContainerLayoutStructureItem;
-import com.liferay.layout.util.structure.FragmentLayoutStructureItem;
+import com.liferay.layout.util.structure.CollectionStyledLayoutStructureItem;
+import com.liferay.layout.util.structure.ContainerStyledLayoutStructureItem;
+import com.liferay.layout.util.structure.FragmentStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.layout.util.structure.RootLayoutStructureItem;
@@ -291,7 +291,7 @@ public class AddCollectionLayoutMVCActionCommandTest {
 		Assert.assertNotNull(containerLayoutStructureItem);
 		Assert.assertTrue(
 			containerLayoutStructureItem instanceof
-				ContainerLayoutStructureItem);
+				ContainerStyledLayoutStructureItem);
 		Assert.assertEquals(
 			containerLayoutStructureItem.getItemType(),
 			LayoutDataItemTypeConstants.TYPE_CONTAINER);
@@ -302,20 +302,22 @@ public class AddCollectionLayoutMVCActionCommandTest {
 		Assert.assertEquals(
 			containerItemIds.toString(), 2, containerItemIds.size());
 
-		FragmentLayoutStructureItem fragmentLayoutStructureItem =
-			(FragmentLayoutStructureItem)layoutStructure.getLayoutStructureItem(
-				containerItemIds.get(0));
+		FragmentStyledLayoutStructureItem fragmentStyledLayoutStructureItem =
+			(FragmentStyledLayoutStructureItem)
+				layoutStructure.getLayoutStructureItem(containerItemIds.get(0));
 
-		Assert.assertNotNull(fragmentLayoutStructureItem);
+		Assert.assertNotNull(fragmentStyledLayoutStructureItem);
 
-		CollectionLayoutStructureItem collectionLayoutStructureItem =
-			(CollectionLayoutStructureItem)
-				layoutStructure.getLayoutStructureItem(containerItemIds.get(1));
+		CollectionStyledLayoutStructureItem
+			collectionStyledLayoutStructureItem =
+				(CollectionStyledLayoutStructureItem)
+					layoutStructure.getLayoutStructureItem(
+						containerItemIds.get(1));
 
-		Assert.assertNotNull(collectionLayoutStructureItem);
+		Assert.assertNotNull(collectionStyledLayoutStructureItem);
 
 		JSONObject collectionJSONObject =
-			collectionLayoutStructureItem.getCollectionJSONObject();
+			collectionStyledLayoutStructureItem.getCollectionJSONObject();
 
 		Assert.assertNotNull(collectionJSONObject);
 

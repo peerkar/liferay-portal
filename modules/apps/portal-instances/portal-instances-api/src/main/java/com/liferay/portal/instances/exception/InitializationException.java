@@ -28,12 +28,12 @@ public class InitializationException extends PortalException {
 		super(msg);
 	}
 
-	public InitializationException(String msg, Throwable cause) {
-		super(msg, cause);
+	public InitializationException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public InitializationException(Throwable cause) {
-		super(cause);
+	public InitializationException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

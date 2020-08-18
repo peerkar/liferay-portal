@@ -69,11 +69,11 @@ public class ServiceWrapperRegistry {
 			try {
 				return _getServiceBag(serviceWrapper);
 			}
-			catch (Throwable t) {
+			catch (Throwable throwable) {
 				_log.error(
 					"Unable to get service bag for " +
 						serviceWrapper.getClass(),
-					t);
+					throwable);
 			}
 
 			return null;

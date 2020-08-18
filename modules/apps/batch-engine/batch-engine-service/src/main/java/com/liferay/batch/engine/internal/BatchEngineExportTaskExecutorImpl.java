@@ -82,15 +82,15 @@ public class BatchEngineExportTaskExecutorImpl
 				BatchEngineTaskExecuteStatus.COMPLETED, batchEngineExportTask,
 				null);
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			_log.error(
 				"Unable to update batch engine export task " +
 					batchEngineExportTask,
-				t);
+				throwable);
 
 			_updateBatchEngineExportTask(
 				BatchEngineTaskExecuteStatus.FAILED, batchEngineExportTask,
-				t.getMessage());
+				throwable.getMessage());
 		}
 	}
 

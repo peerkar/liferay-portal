@@ -129,13 +129,13 @@ public class LiferayAudioConverter extends LiferayConverter {
 
 			int streamIndex = inputIPacket.getStreamIndex();
 
-			IStreamCoder inputIStreamCoder = inputIStreamCoders[streamIndex];
-
 			IStreamCoder outputIStreamCoder = outputIStreamCoders[streamIndex];
 
 			if (outputIStreamCoder == null) {
 				continue;
 			}
+
+			IStreamCoder inputIStreamCoder = inputIStreamCoders[streamIndex];
 
 			if (inputIStreamCoder.getCodecType() ==
 					ICodec.Type.CODEC_TYPE_AUDIO) {

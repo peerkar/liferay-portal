@@ -58,11 +58,11 @@ public class SegmentsExperimentTemplateContextContributor
 			return;
 		}
 
-		String cssClass = GetterUtil.getString(
-			contextObjects.get("bodyCssClass"));
-
 		if (_segmentsExperimentProductNavigationControlMenuEntry.
 				isPanelStateOpen(httpServletRequest)) {
+
+			String cssClass = GetterUtil.getString(
+				contextObjects.get("bodyCssClass"));
 
 			contextObjects.put(
 				"bodyCssClass",

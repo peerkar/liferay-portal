@@ -52,8 +52,10 @@ import com.liferay.headless.delivery.internal.dto.v1_0.util.RelatedContentUtil;
 import com.liferay.headless.delivery.internal.dto.v1_0.util.TaxonomyCategoryBriefUtil;
 import com.liferay.journal.service.JournalArticleService;
 import com.liferay.portal.kernel.comment.CommentManager;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -61,6 +63,7 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 import com.liferay.portal.vulcan.util.TransformUtil;
 import com.liferay.ratings.kernel.service.RatingsStatsLocalService;
@@ -102,6 +105,7 @@ public class DocumentDTOConverter
 			(Long)dtoConverterContext.getId());
 
 		FileVersion fileVersion = fileEntry.getFileVersion();
+		Group group = _groupLocalService.fetchGroup(fileEntry.getGroupId());
 
 		return new Document() {
 			{
@@ -112,13 +116,14 @@ public class DocumentDTOConverter
 					_ratingsStatsLocalService.fetchStats(
 						DLFileEntry.class.getName(),
 						fileEntry.getFileEntryId()));
+				assetLibraryKey = GroupUtil.getAssetLibraryKey(group);
 				contentUrl = _dlURLHelper.getPreviewURL(
 					fileEntry, fileVersion, null, "");
 				contentValue = ContentValueUtil.toContentValue(
 					"contentValue", fileEntry::getContentStream,
 					dtoConverterContext.getUriInfoOptional());
 				creator = CreatorUtil.toCreator(
-					_portal,
+					_portal, dtoConverterContext.getUriInfoOptional(),
 					_userLocalService.fetchUser(fileEntry.getUserId()));
 				customFields = CustomFieldsUtil.toCustomFields(
 					dtoConverterContext.isAcceptAllLanguages(),
@@ -145,6 +150,7 @@ public class DocumentDTOConverter
 					dtoConverterContext.getDTOConverterRegistry(),
 					DLFileEntry.class.getName(), fileEntry.getFileEntryId(),
 					dtoConverterContext.getLocale());
+				siteId = GroupUtil.getSiteId(group);
 				sizeInBytes = fileEntry.getSize();
 				taxonomyCategoryBriefs = TransformUtil.transformToArray(
 					_assetCategoryLocalService.getCategories(
@@ -343,6 +349,9 @@ public class DocumentDTOConverter
 
 	@Reference
 	private DLURLHelper _dlURLHelper;
+
+	@Reference
+	private GroupLocalService _groupLocalService;
 
 	@Reference
 	private JournalArticleService _journalArticleService;

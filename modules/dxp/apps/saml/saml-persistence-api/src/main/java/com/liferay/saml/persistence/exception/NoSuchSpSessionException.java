@@ -28,12 +28,12 @@ public class NoSuchSpSessionException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchSpSessionException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchSpSessionException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchSpSessionException(Throwable cause) {
-		super(cause);
+	public NoSuchSpSessionException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

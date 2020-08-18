@@ -44,7 +44,7 @@ definition {
 
 			Click.waitForMenuToggleJSClick(
 				key_card = "Display Page Name",
-				locator1 = "LexiconCard#CARD_ELLIPSIS");
+				locator1 = "Card#CARD_ELLIPSIS");
 
 			MenuItem.viewPresent(menuItem = "Discard Draft");
 
@@ -132,9 +132,7 @@ definition {
 		task ("Assert the display page still exists") {
 			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
 
-			AssertVisible(
-				key_cardText = "Display Page Name",
-				locator1 = "Card#SPECIFIC_LARGE_TEXT");
+			LexiconCard.viewCardPresent(card = "Display Page Name");
 		}
 	}
 

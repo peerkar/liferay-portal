@@ -28,12 +28,12 @@ public class WinnerSegmentsExperienceException extends PortalException {
 		super(msg);
 	}
 
-	public WinnerSegmentsExperienceException(String msg, Throwable cause) {
-		super(msg, cause);
+	public WinnerSegmentsExperienceException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public WinnerSegmentsExperienceException(Throwable cause) {
-		super(cause);
+	public WinnerSegmentsExperienceException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

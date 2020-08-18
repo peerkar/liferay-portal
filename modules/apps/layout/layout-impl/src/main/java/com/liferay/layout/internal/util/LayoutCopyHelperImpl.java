@@ -27,7 +27,7 @@ import com.liferay.layout.seo.model.LayoutSEOEntry;
 import com.liferay.layout.seo.service.LayoutSEOEntryLocalService;
 import com.liferay.layout.service.LayoutClassedModelUsageLocalService;
 import com.liferay.layout.util.LayoutCopyHelper;
-import com.liferay.layout.util.structure.FragmentLayoutStructureItem;
+import com.liferay.layout.util.structure.FragmentStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.portal.kernel.comment.CommentManager;
@@ -96,8 +96,8 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 		try {
 			return TransactionInvokerUtil.invoke(_transactionConfig, callable);
 		}
-		catch (Throwable t) {
-			throw new Exception(t);
+		catch (Throwable throwable) {
+			throw new Exception(throwable);
 		}
 		finally {
 			ServiceContextThreadLocal.pushServiceContext(currentServiceContext);
@@ -488,15 +488,18 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 		for (LayoutStructureItem layoutStructureItem :
 				layoutStructure.getLayoutStructureItems()) {
 
-			if (!(layoutStructureItem instanceof FragmentLayoutStructureItem)) {
+			if (!(layoutStructureItem instanceof
+					FragmentStyledLayoutStructureItem)) {
+
 				continue;
 			}
 
-			FragmentLayoutStructureItem fragmentLayoutStructureItem =
-				(FragmentLayoutStructureItem)layoutStructureItem;
+			FragmentStyledLayoutStructureItem
+				fragmentStyledLayoutStructureItem =
+					(FragmentStyledLayoutStructureItem)layoutStructureItem;
 
 			FragmentEntryLink fragmentEntryLink = fragmentEntryLinkMap.get(
-				fragmentLayoutStructureItem.getFragmentEntryLinkId());
+				fragmentStyledLayoutStructureItem.getFragmentEntryLinkId());
 
 			if (fragmentEntryLink == null) {
 				continue;
@@ -528,7 +531,7 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 				_fragmentEntryLinkLocalService.addFragmentEntryLink(
 					newFragmentEntryLink);
 
-			fragmentLayoutStructureItem.setFragmentEntryLinkId(
+			fragmentStyledLayoutStructureItem.setFragmentEntryLinkId(
 				newFragmentEntryLink.getFragmentEntryLinkId());
 
 			_commentManager.copyDiscussion(

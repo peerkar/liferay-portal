@@ -28,12 +28,12 @@ public class MailingListInServerNameException extends PortalException {
 		super(msg);
 	}
 
-	public MailingListInServerNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public MailingListInServerNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public MailingListInServerNameException(Throwable cause) {
-		super(cause);
+	public MailingListInServerNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

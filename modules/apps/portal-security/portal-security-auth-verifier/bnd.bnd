@@ -1,4 +1,4 @@
 Bundle-Name: Liferay Portal Security Auth Verifier
 Bundle-SymbolicName: com.liferay.portal.security.auth.verifier
-Bundle-Version: 5.0.9
+Bundle-Version: 5.0.10
 -metatype-inherit: True

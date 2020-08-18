@@ -28,12 +28,12 @@ public class FormInstanceNotPublishedException extends PortalException {
 		super(msg);
 	}
 
-	public FormInstanceNotPublishedException(String msg, Throwable cause) {
-		super(msg, cause);
+	public FormInstanceNotPublishedException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public FormInstanceNotPublishedException(Throwable cause) {
-		super(cause);
+	public FormInstanceNotPublishedException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

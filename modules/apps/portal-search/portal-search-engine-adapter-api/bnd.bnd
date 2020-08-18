@@ -1,6 +1,6 @@
 Bundle-Name: Liferay Portal Search Engine Adapter API
 Bundle-SymbolicName: com.liferay.portal.search.engine.adapter.api
-Bundle-Version: 4.3.0
+Bundle-Version: 4.4.0
 Export-Package:\
 	com.liferay.portal.search.engine.adapter,\
 	com.liferay.portal.search.engine.adapter.ccr,\
@@ -10,6 +10,6 @@ Export-Package:\
 	com.liferay.portal.search.engine.adapter.search,\
 	com.liferay.portal.search.engine.adapter.snapshot
 Import-Package:\
-	com.liferay.portal.kernel.search;version="[8.1.0,9.2.0)",\
+	com.liferay.portal.kernel.search;version="[8.1.0,9.3.0)",\
 	\
 	*

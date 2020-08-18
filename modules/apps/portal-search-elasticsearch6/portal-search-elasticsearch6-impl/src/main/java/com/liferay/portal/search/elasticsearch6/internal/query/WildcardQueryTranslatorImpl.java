@@ -19,27 +19,19 @@ import com.liferay.portal.search.query.WildcardQuery;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.WildcardQueryBuilder;
+
 import org.osgi.service.component.annotations.Component;
 
 /**
  * @author Miguel Angelo Caldas Gallindo
- * @author Petteri Karttunen
  */
 @Component(service = WildcardQueryTranslator.class)
 public class WildcardQueryTranslatorImpl implements WildcardQueryTranslator {
 
 	@Override
 	public QueryBuilder translate(WildcardQuery wildcardQuery) {
-		
-		String field = wildcardQuery.getField();
-		String value = wildcardQuery.getValue();
-
 		WildcardQueryBuilder wildcardQueryBuilder = QueryBuilders.wildcardQuery(
-			field, value);
-
-		if (wildcardQuery.getBoost() !=  null) {
-			wildcardQueryBuilder.boost(wildcardQuery.getBoost());
-		}
+			wildcardQuery.getField(), wildcardQuery.getValue());
 
 		if (wildcardQuery.getRewrite() != null) {
 			wildcardQueryBuilder.rewrite(wildcardQuery.getRewrite());

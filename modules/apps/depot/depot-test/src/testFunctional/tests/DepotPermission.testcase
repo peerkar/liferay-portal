@@ -102,7 +102,7 @@ definition {
 
 		Click.waitForMenuToggleJSClick(
 			key_card = "usersn1",
-			locator1 = "LexiconCard#CARD_ELLIPSIS");
+			locator1 = "Card#CARD_ELLIPSIS");
 
 		for (var item : list "Remove Membership,Assign Roles") {
 			AssertVisible(
@@ -176,7 +176,7 @@ definition {
 
 		Click.waitForMenuToggleJSClick(
 			key_card = "usersn1",
-			locator1 = "LexiconCard#CARD_ELLIPSIS");
+			locator1 = "Card#CARD_ELLIPSIS");
 
 		for (var item : list "Remove Membership,Assign Roles") {
 			AssertElementNotPresent(
@@ -320,7 +320,7 @@ definition {
 
 		AssertTextEquals(
 			key_card = "Test Depot Name",
-			locator1 = "LexiconCard#CARD_TITLE",
+			locator1 = "Card#CARD_TITLE",
 			value1 = "Test Depot Name");
 
 		DepotNavigator.gotoEdit(depotName = "Test Depot Name");
@@ -385,7 +385,7 @@ definition {
 
 		AssertTextEquals(
 			key_card = "Test Depot Name",
-			locator1 = "LexiconCard#CARD_TITLE",
+			locator1 = "Card#CARD_TITLE",
 			value1 = "Test Depot Name");
 
 		AssertElementNotPresent(
@@ -414,7 +414,7 @@ definition {
 
 		Role.definePermissionCP(
 			assetLibrariesScope = "true",
-			permissionDefinitionKey = "SITE_ADMIN_CONTENT_COLLECTIONS_ASSET_LIST_ENTRY_DELETE_CHECKBOX",
+			permissionDefinitionKey = "SITE_ADMIN_BUILDER_COLLECTIONS_ASSET_LIST_ENTRY_DELETE_CHECKBOX",
 			permissionDefinitionValue = "Delete",
 			roleTitle = "Depot Regrole Name",
 			siteNameScope = "Test Depot Name");

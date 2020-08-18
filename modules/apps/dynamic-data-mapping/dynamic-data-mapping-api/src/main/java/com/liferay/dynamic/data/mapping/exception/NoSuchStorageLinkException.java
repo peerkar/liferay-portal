@@ -28,12 +28,12 @@ public class NoSuchStorageLinkException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchStorageLinkException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchStorageLinkException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchStorageLinkException(Throwable cause) {
-		super(cause);
+	public NoSuchStorageLinkException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

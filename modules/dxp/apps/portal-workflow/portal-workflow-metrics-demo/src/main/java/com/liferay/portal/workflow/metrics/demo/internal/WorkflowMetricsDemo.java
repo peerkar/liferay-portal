@@ -118,12 +118,11 @@ public class WorkflowMetricsDemo extends BasePortalInstanceLifecycleListener {
 		).forEach(
 			i -> {
 				try {
+					LocalDateTime plusDaysLocalDateTime =
+						startLocalDateTime.plusDays(RandomUtil.nextInt(40));
+
 					LocalDateTime createLocalDateTime =
-						startLocalDateTime.plusDays(
-							RandomUtil.nextInt(40)
-						).plusMinutes(
-							1
-						);
+						plusDaysLocalDateTime.plusMinutes(1);
 
 					long creatorUserId = _getRandomElement(userIds);
 
@@ -140,12 +139,11 @@ public class WorkflowMetricsDemo extends BasePortalInstanceLifecycleListener {
 						return;
 					}
 
+					LocalDateTime plusHoursLocalDateTime =
+						createLocalDateTime.plusHours(RandomUtil.nextInt(i));
+
 					LocalDateTime completionLocalDateTime =
-						createLocalDateTime.plusHours(
-							RandomUtil.nextInt(i)
-						).plusMinutes(
-							1
-						);
+						plusHoursLocalDateTime.plusMinutes(1);
 
 					if (completionLocalDateTime.isAfter(nowLocalDateTime)) {
 						completionLocalDateTime = nowLocalDateTime;
@@ -169,11 +167,11 @@ public class WorkflowMetricsDemo extends BasePortalInstanceLifecycleListener {
 							return;
 						}
 
-						completionLocalDateTime = createLocalDateTime.plusHours(
-							RandomUtil.nextInt(i)
-						).plusMinutes(
-							1
-						);
+						plusHoursLocalDateTime = createLocalDateTime.plusHours(
+							RandomUtil.nextInt(i));
+
+						completionLocalDateTime =
+							plusHoursLocalDateTime.plusMinutes(1);
 
 						if (completionLocalDateTime.isAfter(nowLocalDateTime)) {
 							completionLocalDateTime = nowLocalDateTime;
@@ -195,11 +193,11 @@ public class WorkflowMetricsDemo extends BasePortalInstanceLifecycleListener {
 							return;
 						}
 
-						completionLocalDateTime = createLocalDateTime.plusHours(
-							RandomUtil.nextInt(i)
-						).plusMinutes(
-							1
-						);
+						plusHoursLocalDateTime = createLocalDateTime.plusHours(
+							RandomUtil.nextInt(i));
+
+						completionLocalDateTime =
+							plusHoursLocalDateTime.plusMinutes(1);
 
 						if (completionLocalDateTime.isAfter(nowLocalDateTime)) {
 							completionLocalDateTime = nowLocalDateTime;
@@ -223,11 +221,11 @@ public class WorkflowMetricsDemo extends BasePortalInstanceLifecycleListener {
 							return;
 						}
 
-						completionLocalDateTime = createLocalDateTime.plusHours(
-							RandomUtil.nextInt(i)
-						).plusMinutes(
-							1
-						);
+						plusHoursLocalDateTime = createLocalDateTime.plusHours(
+							RandomUtil.nextInt(i));
+
+						completionLocalDateTime =
+							plusHoursLocalDateTime.plusMinutes(1);
 
 						if (completionLocalDateTime.isAfter(nowLocalDateTime)) {
 							completionLocalDateTime = nowLocalDateTime;
@@ -251,12 +249,12 @@ public class WorkflowMetricsDemo extends BasePortalInstanceLifecycleListener {
 								return;
 							}
 
-							completionLocalDateTime =
+							plusHoursLocalDateTime =
 								createLocalDateTime.plusHours(
-									RandomUtil.nextInt(i)
-								).plusMinutes(
-									1
-								);
+									RandomUtil.nextInt(i));
+
+							completionLocalDateTime =
+								plusHoursLocalDateTime.plusMinutes(1);
 
 							if (completionLocalDateTime.isAfter(
 									nowLocalDateTime)) {

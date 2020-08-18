@@ -28,12 +28,12 @@ public class EntryUrlTitleException extends PortalException {
 		super(msg);
 	}
 
-	public EntryUrlTitleException(String msg, Throwable cause) {
-		super(msg, cause);
+	public EntryUrlTitleException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public EntryUrlTitleException(Throwable cause) {
-		super(cause);
+	public EntryUrlTitleException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

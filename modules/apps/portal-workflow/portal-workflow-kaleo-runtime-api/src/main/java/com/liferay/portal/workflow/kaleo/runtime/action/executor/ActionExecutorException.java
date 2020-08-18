@@ -28,12 +28,12 @@ public class ActionExecutorException extends WorkflowException {
 		super(msg);
 	}
 
-	public ActionExecutorException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ActionExecutorException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ActionExecutorException(Throwable cause) {
-		super(cause);
+	public ActionExecutorException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

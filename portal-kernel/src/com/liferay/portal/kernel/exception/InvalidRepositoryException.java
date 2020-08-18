@@ -26,12 +26,12 @@ public class InvalidRepositoryException extends PortalException {
 		super(msg);
 	}
 
-	public InvalidRepositoryException(String msg, Throwable cause) {
-		super(msg, cause);
+	public InvalidRepositoryException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public InvalidRepositoryException(Throwable cause) {
-		super(cause);
+	public InvalidRepositoryException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

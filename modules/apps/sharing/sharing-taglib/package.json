@@ -1,7 +1,7 @@
 {
 	"dependencies": {
 		"@clayui/icon": "3.0.5",
-		"@clayui/layout": "3.1.1",
+		"@clayui/layout": "3.2.0",
 		"@clayui/sticker": "3.2.0",
 		"frontend-js-web": "*",
 		"prop-types": "15.7.2",
@@ -16,5 +16,5 @@
 		"format": "liferay-npm-scripts fix",
 		"test": "liferay-npm-scripts test"
 	},
-	"version": "2.0.15"
+	"version": "2.0.17"
 }

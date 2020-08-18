@@ -26,12 +26,12 @@ public class WorkflowDefinitionFileException extends WorkflowException {
 		super(msg);
 	}
 
-	public WorkflowDefinitionFileException(String msg, Throwable cause) {
-		super(msg, cause);
+	public WorkflowDefinitionFileException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public WorkflowDefinitionFileException(Throwable cause) {
-		super(cause);
+	public WorkflowDefinitionFileException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

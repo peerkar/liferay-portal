@@ -30,6 +30,7 @@ import com.liferay.jenkins.results.parser.failure.message.generator.PoshiTestFai
 import com.liferay.jenkins.results.parser.failure.message.generator.PoshiValidationFailureMessageGenerator;
 import com.liferay.jenkins.results.parser.failure.message.generator.RebaseFailureMessageGenerator;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 
@@ -200,6 +201,63 @@ public abstract class TopLevelBuild extends BaseBuild {
 		String tempMapName = "git." + gitRepositoryType + ".properties";
 
 		return getTempMap(tempMapName);
+	}
+
+	public BuildDatabase getBuildDatabase() {
+		if (fromArchive) {
+			return null;
+		}
+
+		if (_buildDatabase != null) {
+			return _buildDatabase;
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		if (JenkinsResultsParserUtil.isWindows()) {
+			sb.append("C:");
+		}
+
+		sb.append("/tmp/jenkins/");
+
+		JenkinsMaster jenkinsMaster = getJenkinsMaster();
+
+		sb.append(jenkinsMaster.getName());
+
+		sb.append("/");
+		sb.append(getJobName());
+		sb.append("/");
+		sb.append(getBuildNumber());
+
+		File buildDatabaseFile = new File(
+			sb.toString(), BuildDatabase.FILE_NAME_BUILD_DATABASE);
+
+		try {
+			String buildDatabaseFileContent = null;
+
+			if (buildDatabaseFile.exists()) {
+				buildDatabaseFileContent = JenkinsResultsParserUtil.read(
+					buildDatabaseFile);
+			}
+
+			if ((buildDatabaseFileContent == null) ||
+				buildDatabaseFileContent.isEmpty()) {
+
+				buildDatabaseFileContent = JenkinsResultsParserUtil.toString(
+					_getBuildDatabaseURL());
+
+				JenkinsResultsParserUtil.write(
+					buildDatabaseFile, buildDatabaseFileContent);
+			}
+		}
+		catch (IOException ioException) {
+			throw new RuntimeException(ioException);
+		}
+
+		_buildDatabase = new DefaultBuildDatabase(
+			buildDatabaseFile.getParentFile());
+
+		return _buildDatabase;
 	}
 
 	public String getCompanionBranchName() {
@@ -460,7 +518,7 @@ public abstract class TopLevelBuild extends BaseBuild {
 	}
 
 	@Override
-	public void update() {
+	public synchronized void update() {
 		long start = System.currentTimeMillis();
 
 		super.update();
@@ -677,15 +735,15 @@ public abstract class TopLevelBuild extends BaseBuild {
 				baseGitRepositoryName);
 		}
 
-		String baseGitRepositoryCommitURL =
-			"https://github.com/liferay/" + baseGitRepositoryName + "/commit/" +
-				baseGitRepositorySHA;
-
 		Element baseGitBranchDetailsElement = Dom4JUtil.getNewElement(
 			"p", null, "Branch Name: ",
 			Dom4JUtil.getNewAnchorElement(baseBranchURL, getBranchName()));
 
 		if (baseGitRepositorySHA != null) {
+			String baseGitRepositoryCommitURL =
+				"https://github.com/liferay/" + baseGitRepositoryName +
+					"/commit/" + baseGitRepositorySHA;
+
 			Dom4JUtil.addToElement(
 				baseGitBranchDetailsElement, Dom4JUtil.getNewElement("br"),
 				"Branch GIT ID: ",
@@ -1115,6 +1173,10 @@ public abstract class TopLevelBuild extends BaseBuild {
 				"p", null, "Start Time: ",
 				toJenkinsReportDateString(
 					new Date(getStartTime()), getJenkinsReportTimeZoneName())),
+			Dom4JUtil.getNewElement(
+				"p", null, "Invocation Delay Time: ",
+				JenkinsResultsParserUtil.toDurationString(
+					getQueuingDuration())),
 			Dom4JUtil.getNewElement(
 				"p", null, "Build Time: ",
 				JenkinsResultsParserUtil.toDurationString(getDuration())),
@@ -1613,6 +1675,19 @@ public abstract class TopLevelBuild extends BaseBuild {
 	protected static final Pattern gitRepositoryTempMapNamePattern =
 		Pattern.compile("git\\.(?<gitRepositoryType>.*)\\.properties");
 
+	private String _getBuildDatabaseURL() {
+		if (fromArchive) {
+			return getBuildURL() + "/build-database.json";
+		}
+
+		JenkinsMaster jenkinsMaster = getJenkinsMaster();
+
+		return JenkinsResultsParserUtil.combine(
+			"https://", jenkinsMaster.getName(), ".liferay.com/",
+			"userContent/jobs/", getJobName(), "/builds/",
+			String.valueOf(getBuildNumber()), "/build-database.json");
+	}
+
 	private Map<Map<String, String>, Integer> _getSlaveUsageByLabels() {
 		Map<Map<String, String>, Integer> slaveUsages = new HashMap<>();
 
@@ -1671,6 +1746,7 @@ public abstract class TopLevelBuild extends BaseBuild {
 	private static ExecutorService _executorService =
 		JenkinsResultsParserUtil.getNewThreadPoolExecutor(10, true);
 
+	private BuildDatabase _buildDatabase;
 	private boolean _compareToUpstream = true;
 	private Build _controllerBuild;
 	private long _lastDownstreamBuildsListingTimestamp = -1L;

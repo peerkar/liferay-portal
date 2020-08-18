@@ -16,13 +16,9 @@
 
 <%@ include file="/init.jsp" %>
 
-<%
-SearchContainer<?> searchContainer = (SearchContainer)request.getAttribute("edit_role_assignments.jsp-searchContainer");
-%>
-
 <liferay-ui:search-container
 	id="assigneesSearch"
-	searchContainer="<%= searchContainer %>"
+	searchContainer='<%= (SearchContainer)request.getAttribute("edit_role_assignments.jsp-searchContainer") %>'
 	var="segmentsEntrySearchContainer"
 >
 	<liferay-ui:search-container-row

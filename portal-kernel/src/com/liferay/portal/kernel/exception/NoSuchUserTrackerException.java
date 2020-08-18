@@ -26,12 +26,12 @@ public class NoSuchUserTrackerException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchUserTrackerException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchUserTrackerException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchUserTrackerException(Throwable cause) {
-		super(cause);
+	public NoSuchUserTrackerException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

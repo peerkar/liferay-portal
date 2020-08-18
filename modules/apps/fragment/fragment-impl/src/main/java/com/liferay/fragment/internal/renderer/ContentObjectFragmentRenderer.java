@@ -235,8 +235,6 @@ public class ContentObjectFragmentRenderer implements FragmentRenderer {
 			return new Tuple(defaultInfoItemRenderer);
 		}
 
-		String templateKey = templateJSONObject.getString("templateKey");
-
 		String infoItemRendererKey = templateJSONObject.getString(
 			"infoItemRendererKey");
 
@@ -246,7 +244,8 @@ public class ContentObjectFragmentRenderer implements FragmentRenderer {
 					infoItemRendererKey);
 
 		if (infoItemRenderer != null) {
-			return new Tuple(infoItemRenderer, templateKey);
+			return new Tuple(
+				infoItemRenderer, templateJSONObject.getString("templateKey"));
 		}
 
 		return new Tuple(defaultInfoItemRenderer);

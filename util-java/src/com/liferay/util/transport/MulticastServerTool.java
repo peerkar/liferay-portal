@@ -38,8 +38,8 @@ public class MulticastServerTool {
 			DatagramHandler handler = new DatagramHandler() {
 
 				@Override
-				public void errorReceived(Throwable t) {
-					t.printStackTrace();
+				public void errorReceived(Throwable throwable) {
+					throwable.printStackTrace();
 				}
 
 				@Override

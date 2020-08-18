@@ -28,12 +28,12 @@ public class NoSuchOAuth2ApplicationException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchOAuth2ApplicationException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchOAuth2ApplicationException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchOAuth2ApplicationException(Throwable cause) {
-		super(cause);
+	public NoSuchOAuth2ApplicationException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

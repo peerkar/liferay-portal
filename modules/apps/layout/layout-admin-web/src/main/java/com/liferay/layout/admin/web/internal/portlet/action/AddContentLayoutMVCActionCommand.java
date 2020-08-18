@@ -115,11 +115,11 @@ public class AddContentLayoutMVCActionCommand
 				SitesUtil.mergeLayoutPrototypeLayout(layout.getGroup(), layout);
 			}
 			else {
-				ThemeDisplay themeDisplay =
-					(ThemeDisplay)actionRequest.getAttribute(
-						WebKeys.THEME_DISPLAY);
-
 				if (layoutPageTemplateEntryId > 0) {
+					ThemeDisplay themeDisplay =
+						(ThemeDisplay)actionRequest.getAttribute(
+							WebKeys.THEME_DISPLAY);
+
 					LayoutPageTemplateEntryPermission.check(
 						themeDisplay.getPermissionChecker(),
 						layoutPageTemplateEntryId, ActionKeys.VIEW);

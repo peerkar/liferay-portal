@@ -26,12 +26,12 @@ public class ObjectNotFoundException extends ORMException {
 		super(msg);
 	}
 
-	public ObjectNotFoundException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ObjectNotFoundException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ObjectNotFoundException(Throwable cause) {
-		super(cause);
+	public ObjectNotFoundException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

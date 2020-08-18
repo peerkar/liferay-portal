@@ -28,12 +28,14 @@ public class DuplicateAccountEntryUserRelException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateAccountEntryUserRelException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateAccountEntryUserRelException(
+		String msg, Throwable throwable) {
+
+		super(msg, throwable);
 	}
 
-	public DuplicateAccountEntryUserRelException(Throwable cause) {
-		super(cause);
+	public DuplicateAccountEntryUserRelException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -28,12 +28,12 @@ public class FeedTargetPortletIdException extends PortalException {
 		super(msg);
 	}
 
-	public FeedTargetPortletIdException(String msg, Throwable cause) {
-		super(msg, cause);
+	public FeedTargetPortletIdException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public FeedTargetPortletIdException(Throwable cause) {
-		super(cause);
+	public FeedTargetPortletIdException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

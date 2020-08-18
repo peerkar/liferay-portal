@@ -57,6 +57,16 @@ public class ContentTemplateResourceImpl
 	extends BaseContentTemplateResourceImpl {
 
 	@Override
+	public Page<ContentTemplate> getAssetLibraryContentTemplatesPage(
+			Long assetLibraryId, String search, Aggregation aggregation,
+			Filter filter, Pagination pagination, Sort[] sorts)
+		throws Exception {
+
+		return getSiteContentTemplatesPage(
+			assetLibraryId, search, aggregation, filter, pagination, sorts);
+	}
+
+	@Override
 	public ContentTemplate getContentTemplate(
 			Long siteId, String contentTemplateId)
 		throws Exception {
@@ -66,8 +76,8 @@ public class ContentTemplateResourceImpl
 			contentTemplateId);
 
 		return ContentTemplateUtil.toContentTemplate(
-			ddmTemplate, _getDtoConverterContext(ddmTemplate), _portal,
-			_userLocalService);
+			ddmTemplate, _getDtoConverterContext(ddmTemplate),
+			groupLocalService, _portal, _userLocalService);
 	}
 
 	@Override
@@ -109,8 +119,8 @@ public class ContentTemplateResourceImpl
 					GetterUtil.getLong(document.get(Field.ENTRY_CLASS_PK)));
 
 				return ContentTemplateUtil.toContentTemplate(
-					ddmTemplate, _getDtoConverterContext(ddmTemplate), _portal,
-					_userLocalService);
+					ddmTemplate, _getDtoConverterContext(ddmTemplate),
+					groupLocalService, _portal, _userLocalService);
 			});
 	}
 

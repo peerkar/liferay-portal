@@ -26,12 +26,12 @@ public class DuplicateOrganizationException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateOrganizationException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateOrganizationException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateOrganizationException(Throwable cause) {
-		super(cause);
+	public DuplicateOrganizationException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

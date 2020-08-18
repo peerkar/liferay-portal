@@ -28,12 +28,12 @@ public class AuditException extends PortalException {
 		super(msg);
 	}
 
-	public AuditException(String msg, Throwable cause) {
-		super(msg, cause);
+	public AuditException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public AuditException(Throwable cause) {
-		super(cause);
+	public AuditException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

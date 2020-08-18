@@ -49,9 +49,9 @@ public class ThemeHotDeployListener extends BaseHotDeployListener {
 		try {
 			doInvokeDeploy(hotDeployEvent);
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			throwHotDeployException(
-				hotDeployEvent, "Error registering themes for ", t);
+				hotDeployEvent, "Error registering themes for ", throwable);
 		}
 	}
 
@@ -62,9 +62,9 @@ public class ThemeHotDeployListener extends BaseHotDeployListener {
 		try {
 			doInvokeUndeploy(hotDeployEvent);
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			throwHotDeployException(
-				hotDeployEvent, "Error unregistering themes for ", t);
+				hotDeployEvent, "Error unregistering themes for ", throwable);
 		}
 	}
 

@@ -29,12 +29,12 @@ public class ConfigurationException extends PortalException {
 		super(msg);
 	}
 
-	public ConfigurationException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ConfigurationException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ConfigurationException(Throwable cause) {
-		super(cause);
+	public ConfigurationException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

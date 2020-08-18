@@ -28,12 +28,12 @@ public class AutoLoginException extends PortalException {
 		super(msg);
 	}
 
-	public AutoLoginException(String msg, Throwable cause) {
-		super(msg, cause);
+	public AutoLoginException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public AutoLoginException(Throwable cause) {
-		super(cause);
+	public AutoLoginException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

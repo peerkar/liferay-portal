@@ -28,12 +28,12 @@ public class NoSuchClassTypeFieldException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchClassTypeFieldException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchClassTypeFieldException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchClassTypeFieldException(Throwable cause) {
-		super(cause);
+	public NoSuchClassTypeFieldException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

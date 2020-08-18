@@ -42,6 +42,10 @@ public class AssetCategoryTitlesKeywordQueryContributor
 		SearchContext searchContext =
 			keywordQueryContributorHelper.getSearchContext();
 
+		if (!searchContext.isIncludeInternalAssetCategories()) {
+			return;
+		}
+
 		Localization localization = getLocalization();
 
 		queryHelper.addSearchTerm(

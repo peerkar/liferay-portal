@@ -37,7 +37,7 @@ for (String servletContextName : ServletContextPool.keySet()) {
 			invokerPortletName = portletConfig.getPortletName();
 		}
 
-		String path = StringPool.SLASH.concat(invokerPortletName).concat("/invoke");
+		String path = StringBundler.concat(StringPool.SLASH, invokerPortletName, "/invoke");
 
 		RequestDispatcher requestDispatcher = servletContext.getRequestDispatcher(path);
 

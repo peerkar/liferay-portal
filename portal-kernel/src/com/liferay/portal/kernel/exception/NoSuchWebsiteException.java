@@ -26,12 +26,12 @@ public class NoSuchWebsiteException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchWebsiteException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchWebsiteException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchWebsiteException(Throwable cause) {
-		super(cause);
+	public NoSuchWebsiteException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

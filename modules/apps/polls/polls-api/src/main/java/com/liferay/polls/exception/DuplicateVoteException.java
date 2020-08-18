@@ -28,12 +28,12 @@ public class DuplicateVoteException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateVoteException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateVoteException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateVoteException(Throwable cause) {
-		super(cause);
+	public DuplicateVoteException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -24,6 +24,8 @@ import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
+import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.graphql.annotation.GraphQLField;
 import com.liferay.portal.vulcan.graphql.annotation.GraphQLName;
@@ -353,6 +355,10 @@ public class Query {
 
 		@GraphQLField(description = "")
 		public Account parentAccount() throws Exception {
+			if (_account.getParentAccountId() == null) {
+				return null;
+			}
+
 			return _applyComponentServiceObjects(
 				_accountResourceComponentServiceObjects,
 				Query.this::_populateResourceContext,
@@ -392,6 +398,8 @@ public class Query {
 		accountResource.setContextHttpServletResponse(_httpServletResponse);
 		accountResource.setContextUriInfo(_uriInfo);
 		accountResource.setContextUser(_user);
+		accountResource.setGroupLocalService(_groupLocalService);
+		accountResource.setRoleLocalService(_roleLocalService);
 	}
 
 	private void _populateResourceContext(
@@ -404,6 +412,8 @@ public class Query {
 		accountRoleResource.setContextHttpServletResponse(_httpServletResponse);
 		accountRoleResource.setContextUriInfo(_uriInfo);
 		accountRoleResource.setContextUser(_user);
+		accountRoleResource.setGroupLocalService(_groupLocalService);
+		accountRoleResource.setRoleLocalService(_roleLocalService);
 	}
 
 	private void _populateResourceContext(
@@ -416,6 +426,8 @@ public class Query {
 		accountUserResource.setContextHttpServletResponse(_httpServletResponse);
 		accountUserResource.setContextUriInfo(_uriInfo);
 		accountUserResource.setContextUser(_user);
+		accountUserResource.setGroupLocalService(_groupLocalService);
+		accountUserResource.setRoleLocalService(_roleLocalService);
 	}
 
 	private static ComponentServiceObjects<AccountResource>
@@ -426,12 +438,14 @@ public class Query {
 		_accountUserResourceComponentServiceObjects;
 
 	private AcceptLanguage _acceptLanguage;
-	private BiFunction<Object, String, Filter> _filterBiFunction;
-	private BiFunction<Object, String, Sort[]> _sortsBiFunction;
 	private com.liferay.portal.kernel.model.Company _company;
-	private com.liferay.portal.kernel.model.User _user;
+	private BiFunction<Object, String, Filter> _filterBiFunction;
+	private GroupLocalService _groupLocalService;
 	private HttpServletRequest _httpServletRequest;
 	private HttpServletResponse _httpServletResponse;
+	private RoleLocalService _roleLocalService;
+	private BiFunction<Object, String, Sort[]> _sortsBiFunction;
 	private UriInfo _uriInfo;
+	private com.liferay.portal.kernel.model.User _user;
 
 }

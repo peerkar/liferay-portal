@@ -46,11 +46,12 @@ public class DTOOpenAPIParser {
 
 		for (Map.Entry<String, Schema> entry : propertySchemas.entrySet()) {
 			Schema propertySchema = entry.getValue();
-			String propertySchemaName = entry.getKey();
 
 			List<String> enumValues = propertySchema.getEnumValues();
 
 			if ((enumValues != null) && !enumValues.isEmpty()) {
+				String propertySchemaName = entry.getKey();
+
 				enumSchemas.put(
 					_getEnumName(openAPIYAML, propertySchemaName),
 					propertySchema);

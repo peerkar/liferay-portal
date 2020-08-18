@@ -26,12 +26,12 @@ public class NoSuchTicketException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchTicketException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchTicketException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchTicketException(Throwable cause) {
-		super(cause);
+	public NoSuchTicketException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

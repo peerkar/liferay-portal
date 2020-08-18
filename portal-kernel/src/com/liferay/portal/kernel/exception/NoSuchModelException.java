@@ -26,12 +26,12 @@ public class NoSuchModelException extends PortalException {
 		super(msg);
 	}
 
-	public NoSuchModelException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchModelException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchModelException(Throwable cause) {
-		super(cause);
+	public NoSuchModelException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -28,12 +28,12 @@ public class NoSuchLockException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchLockException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchLockException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchLockException(Throwable cause) {
-		super(cause);
+	public NoSuchLockException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

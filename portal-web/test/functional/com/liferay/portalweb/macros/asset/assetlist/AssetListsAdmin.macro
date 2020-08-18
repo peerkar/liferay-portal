@@ -86,6 +86,28 @@ definition {
 		Alert.viewSuccessMessage();
 	}
 
+	macro addSelection {
+		Click(locator1 = "Button#NEW");
+
+		MenuItem.click(menuItem = "${menuItem}");
+
+		PortletEntry.inputText(
+			fieldLabel = "Title",
+			text = "${collectionName}");
+
+		Button.clickSave();
+
+		Select(
+			locator1 = "APConfiguration#SOURCE_SCOPE_ASSET_TYPE_SELECT",
+			value1 = "${selectedAsset}");
+
+		Pause(locator1 = "3000");
+
+		PortletEntry.save();
+
+		Alert.viewSuccessMessage();
+	}
+
 	macro addTagsFilter {
 		Panel.expandPanel(panel = "Filter");
 
@@ -130,6 +152,26 @@ definition {
 			value1 = "${selectedAsset}");
 
 		Pause(locator1 = "3000");
+
+		PortletEntry.save();
+	}
+
+	macro configureItemTypeInManualCollection {
+		if (isSet(itemType)) {
+			Select(
+				locator1 = "APConfiguration#SOURCE_SCOPE_ASSET_TYPE_SELECT",
+				value1 = "${itemType}");
+
+			Pause(locator1 = "3000");
+		}
+
+		if (isSet(itemSubtype)) {
+			Select(
+				locator1 = "APConfiguration#SOURCE_SCOPE_ASSET_SUBTYPE_SELECT",
+				value1 = "${itemSubtype}");
+
+			Pause(locator1 = "3000");
+		}
 
 		PortletEntry.save();
 	}
@@ -266,6 +308,14 @@ definition {
 
 		Click(locator1 = "AssetLists#ASSET_LIST_ENTRY_TITLE");
 
+		Pause(locator1 = "3000");
+
+		if (IsElementPresent(locator1 = "APConfiguration#SOURCE_SCOPE_ASSET_TYPE_SELECT")) {
+			AssetListsAdmin.configureItemTypeInManualCollection(
+				itemSubtype = "${itemSubtype}",
+				itemType = "${itemType}");
+		}
+
 		Click(locator1 = "AssetLists#ASSET_LIST_SELECT_BUTTON");
 
 		Click(locator1 = "AssetLists#ASSET_TYPE_DROPDOWN_ITEM");
@@ -326,6 +376,24 @@ definition {
 		Click(locator1 = "AssetLists#ASSET_LIST_ENTRY_TITLE");
 
 		if (isSet(manualSelection)) {
+			if (IsElementPresent(locator1 = "APConfiguration#SOURCE_SCOPE_ASSET_TYPE_SELECT")) {
+				if (isSet(itemType)) {
+					Select(
+						locator1 = "APConfiguration#SOURCE_SCOPE_ASSET_TYPE_SELECT",
+						value1 = "${itemType}");
+				}
+
+				if (isSet(itemSubtype)) {
+					Select(
+						locator1 = "APConfiguration#SOURCE_SCOPE_ASSET_SUBTYPE_SELECT",
+						value1 = "${itemSubtype}");
+				}
+
+				Pause(locator1 = "3000");
+
+				PortletEntry.save();
+			}
+
 			if (isSet(allAssetsDisabled)) {
 				AssertElementNotPresent(locator1 = "AssetLists#ASSET_LIST_SELECT_BUTTON");
 			}

@@ -23,8 +23,8 @@ public class SharepointException extends Exception {
 		super(message);
 	}
 
-	public SharepointException(String message, Throwable cause) {
-		super(message, cause);
+	public SharepointException(String message, Throwable throwable) {
+		super(message, throwable);
 	}
 
 }

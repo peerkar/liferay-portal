@@ -28,12 +28,12 @@ public class EntrySmallImageScaleException extends PortalException {
 		super(msg);
 	}
 
-	public EntrySmallImageScaleException(String msg, Throwable cause) {
-		super(msg, cause);
+	public EntrySmallImageScaleException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public EntrySmallImageScaleException(Throwable cause) {
-		super(cause);
+	public EntrySmallImageScaleException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

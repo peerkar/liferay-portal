@@ -125,28 +125,26 @@ renderResponse.setTitle(siteNavigationAdminDisplayContext.getSiteNavigationMenuN
 			<portlet:param name="mvcPath" value="/site_navigation_menu_settings.jsp" />
 		</portlet:renderURL>
 
-		<%
-		Map<String, Object> props = HashMapBuilder.<String, Object>put(
-			"editSiteNavigationMenuItemParentURL", editSiteNavigationMenuItemParentURL.toString()
-		).put(
-			"editSiteNavigationMenuItemURL", editSiteNavigationMenuItemURL.toString()
-		).put(
-			"editSiteNavigationMenuSettingsURL", editSiteNavigationMenuSettingsURL.toString()
-		).put(
-			"id", liferayPortletResponse.getNamespace() + "sidebar"
-		).put(
-			"redirect", currentURL
-		).put(
-			"siteNavigationMenuId", siteNavigationAdminDisplayContext.getSiteNavigationMenuId()
-		).put(
-			"siteNavigationMenuName", siteNavigationAdminDisplayContext.getSiteNavigationMenuName()
-		).build();
-		%>
-
 		<react:component
 			componentId="contextualSidebar"
 			module="js/ContextualSidebar"
-			props="<%= props %>"
+			props='<%=
+				HashMapBuilder.<String, Object>put(
+					"editSiteNavigationMenuItemParentURL", editSiteNavigationMenuItemParentURL.toString()
+				).put(
+					"editSiteNavigationMenuItemURL", editSiteNavigationMenuItemURL.toString()
+				).put(
+					"editSiteNavigationMenuSettingsURL", editSiteNavigationMenuSettingsURL.toString()
+				).put(
+					"id", liferayPortletResponse.getNamespace() + "sidebar"
+				).put(
+					"redirect", currentURL
+				).put(
+					"siteNavigationMenuId", siteNavigationAdminDisplayContext.getSiteNavigationMenuId()
+				).put(
+					"siteNavigationMenuName", siteNavigationAdminDisplayContext.getSiteNavigationMenuName()
+				).build()
+			%>'
 		/>
 	</div>
 </c:if>

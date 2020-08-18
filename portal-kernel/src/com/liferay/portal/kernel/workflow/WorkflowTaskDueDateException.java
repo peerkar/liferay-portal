@@ -26,12 +26,12 @@ public class WorkflowTaskDueDateException extends WorkflowException {
 		super(msg);
 	}
 
-	public WorkflowTaskDueDateException(String msg, Throwable cause) {
-		super(msg, cause);
+	public WorkflowTaskDueDateException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public WorkflowTaskDueDateException(Throwable cause) {
-		super(cause);
+	public WorkflowTaskDueDateException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -35,30 +35,27 @@ boolean newCustomObject = ParamUtil.getBoolean(request, "newCustomObject");
 		<portlet:renderURL var="basePortletURL" />
 
 		<div class="app-builder-form-view-app" id="<%= editFormViewRootElementId %>">
-
-			<%
-			Map<String, Object> props = HashMapBuilder.<String, Object>put(
-				"basePortletURL", basePortletURL.toString()
-			).put(
-				"customObjectSidebarElementId", customObjectSidebarElementId
-			).put(
-				"dataDefinitionId", dataDefinitionId
-			).put(
-				"dataLayoutBuilderElementId", dataLayoutBuilderElementId
-			).put(
-				"dataLayoutBuilderId", componentId
-			).put(
-				"dataLayoutId", dataLayoutId
-			).put(
-				"newCustomObject", newCustomObject
-			).put(
-				"showTranslationManager", request.getAttribute(AppBuilderWebKeys.SHOW_TRANSLATION_MANAGER)
-			).build();
-			%>
-
 			<react:component
 				module="js/pages/form-view/EditFormViewApp.es"
-				props="<%= props %>"
+				props='<%=
+					HashMapBuilder.<String, Object>put(
+						"basePortletURL", basePortletURL.toString()
+					).put(
+						"customObjectSidebarElementId", customObjectSidebarElementId
+					).put(
+						"dataDefinitionId", dataDefinitionId
+					).put(
+						"dataLayoutBuilderElementId", dataLayoutBuilderElementId
+					).put(
+						"dataLayoutBuilderId", componentId
+					).put(
+						"dataLayoutId", dataLayoutId
+					).put(
+						"newCustomObject", newCustomObject
+					).put(
+						"showTranslationManager", request.getAttribute(AppBuilderWebKeys.SHOW_TRANSLATION_MANAGER)
+					).build()
+				%>'
 			/>
 		</div>
 

@@ -82,8 +82,8 @@ public class ASMWrapperUtil {
 				return (T)constructor.newInstance(
 					delegateObject, defaultObject);
 			}
-			catch (Throwable t) {
-				throw new RuntimeException(t);
+			catch (Throwable throwable) {
+				throw new RuntimeException(throwable);
 			}
 		}
 	}
@@ -273,8 +273,8 @@ public class ASMWrapperUtil {
 			_toStringMethod = ReflectionUtil.getDeclaredMethod(
 				Object.class, "toString");
 		}
-		catch (Throwable t) {
-			throw new ExceptionInInitializerError(t);
+		catch (Throwable throwable) {
+			throw new ExceptionInInitializerError(throwable);
 		}
 	}
 

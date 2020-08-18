@@ -12,6 +12,7 @@
  * details.
  */
 
+import {FieldSupport} from 'dynamic-data-mapping-form-builder';
 import {PagesVisitor} from 'dynamic-data-mapping-form-renderer';
 import {createContext} from 'react';
 
@@ -35,12 +36,11 @@ import {
 	UPDATE_FIELD_TYPES,
 	UPDATE_FOCUSED_CUSTOM_OBJECT_FIELD,
 	UPDATE_FOCUSED_FIELD,
+	UPDATE_HOVERED_FIELD,
 	UPDATE_IDS,
 	UPDATE_PAGES,
 } from './actions.es';
-import {getAllDataDefinitionFieldsFromAllFieldSets} from './utils/dataDefinition.es';
 import * as DataLayoutVisitor from './utils/dataLayoutVisitor.es';
-import generateDataDefinitionFieldName from './utils/generateDataDefinitionFieldName.es';
 
 const AppContext = createContext();
 
@@ -75,15 +75,14 @@ const initialState = {
 	fieldTypes: [],
 	focusedCustomObjectField: {},
 	focusedField: {},
+	hoveredField: {},
 	sidebarOpen: true,
 	sidebarPanelId: 'fields',
 	spritemap: `${Liferay.ThemeDisplay.getPathThemeImages()}/lexicon/icons.svg`,
 };
 
 const addCustomObjectField = ({
-	dataDefinition,
 	dataLayoutBuilder,
-	fieldSets,
 	fieldTypeName,
 	fieldTypes,
 }) => {
@@ -97,13 +96,7 @@ const addCustomObjectField = ({
 		label: {
 			[themeDisplay.getLanguageId()]: fieldType.label,
 		},
-		name: generateDataDefinitionFieldName(
-			[
-				...dataDefinition.dataDefinitionFields,
-				...getAllDataDefinitionFieldsFromAllFieldSets(fieldSets),
-			],
-			fieldType.label
-		),
+		name: FieldSupport.getDefaultFieldName(),
 	};
 };
 
@@ -197,11 +190,12 @@ const setDataDefinitionFields = (
 	);
 };
 
-const setDataLayout = (dataLayoutBuilder) => {
-	const {pages, rules} = dataLayoutBuilder.getStore();
+const setDataLayout = (dataLayout, dataLayoutBuilder) => {
+	const {dataRules} = dataLayout;
+	const {pages} = dataLayoutBuilder.getStore();
 	const {layout} = dataLayoutBuilder.getDataDefinitionAndDataLayout(
 		pages,
-		rules || []
+		dataRules || []
 	);
 
 	return layout;
@@ -281,6 +275,10 @@ const createReducer = (dataLayoutBuilder) => {
 				const {
 					dataLayout: {dataRules},
 				} = state;
+
+				dataLayoutBuilder.dispatch('ruleDeleted', {
+					ruleId: ruleEditedIndex,
+				});
 
 				return {
 					...state,
@@ -504,7 +502,16 @@ const createReducer = (dataLayoutBuilder) => {
 
 				return {
 					...state,
+					focusedCustomObjectField: {},
 					focusedField: {},
+				};
+			}
+			case UPDATE_HOVERED_FIELD: {
+				const {hoveredField} = action.payload;
+
+				return {
+					...state,
+					hoveredField: hoveredField || state.hoveredField,
 				};
 			}
 			case UPDATE_CONFIG: {
@@ -539,7 +546,7 @@ const createReducer = (dataLayoutBuilder) => {
 					},
 					dataLayout: {
 						...dataLayout,
-						...setDataLayout(dataLayoutBuilder),
+						...setDataLayout(dataLayout, dataLayoutBuilder),
 					},
 				};
 			}

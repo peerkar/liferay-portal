@@ -30,13 +30,13 @@ public class OAuth2ApplicationHomePageURLSchemeException
 	}
 
 	public OAuth2ApplicationHomePageURLSchemeException(
-		String msg, Throwable cause) {
+		String msg, Throwable throwable) {
 
-		super(msg, cause);
+		super(msg, throwable);
 	}
 
-	public OAuth2ApplicationHomePageURLSchemeException(Throwable cause) {
-		super(cause);
+	public OAuth2ApplicationHomePageURLSchemeException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

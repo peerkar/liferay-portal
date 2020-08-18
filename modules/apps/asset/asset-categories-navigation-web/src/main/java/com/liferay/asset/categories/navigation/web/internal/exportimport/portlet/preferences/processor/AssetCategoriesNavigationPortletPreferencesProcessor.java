@@ -151,8 +151,6 @@ public class AssetCategoriesNavigationPortletPreferencesProcessor
 		String[] oldValues = StringUtil.split(
 			portletPreferencesOldValue, StringPool.POUND);
 
-		String uuid = oldValues[0];
-
 		long groupId = portletDataContext.getScopeGroupId();
 
 		if (oldValues.length > 1) {
@@ -165,6 +163,8 @@ public class AssetCategoriesNavigationPortletPreferencesProcessor
 		}
 
 		if (className.equals(AssetVocabulary.class.getName())) {
+			String uuid = oldValues[0];
+
 			AssetVocabulary assetVocabulary =
 				_assetVocabularyLocalService.
 					fetchAssetVocabularyByUuidAndGroupId(uuid, groupId);

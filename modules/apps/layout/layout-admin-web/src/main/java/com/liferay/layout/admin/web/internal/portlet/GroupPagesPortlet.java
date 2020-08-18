@@ -219,27 +219,28 @@ public class GroupPagesPortlet extends MVCPortlet {
 	}
 
 	@Override
-	protected boolean isSessionErrorException(Throwable cause) {
-		if (cause instanceof AssetCategoryException ||
-			cause instanceof DDMFormValuesValidationException ||
-			cause instanceof DuplicateLayoutPageTemplateCollectionException ||
-			cause instanceof GroupInheritContentException ||
-			cause instanceof ImageTypeException ||
-			cause instanceof LayoutFriendlyURLException ||
-			cause instanceof LayoutFriendlyURLsException ||
-			cause instanceof LayoutNameException ||
-			cause instanceof LayoutPageTemplateCollectionNameException ||
-			cause instanceof LayoutParentLayoutIdException ||
-			cause instanceof LayoutSetVirtualHostException ||
-			cause instanceof LayoutTypeException ||
-			cause instanceof NoSuchGroupException ||
-			cause instanceof PrincipalException ||
-			cause instanceof RequiredLayoutException ||
-			cause instanceof RequiredLayoutPrototypeException ||
-			cause instanceof SitemapChangeFrequencyException ||
-			cause instanceof SitemapIncludeException ||
-			cause instanceof SitemapPagePriorityException ||
-			cause instanceof UploadException) {
+	protected boolean isSessionErrorException(Throwable throwable) {
+		if (throwable instanceof AssetCategoryException ||
+			throwable instanceof DDMFormValuesValidationException ||
+			throwable instanceof
+				DuplicateLayoutPageTemplateCollectionException ||
+			throwable instanceof GroupInheritContentException ||
+			throwable instanceof ImageTypeException ||
+			throwable instanceof LayoutFriendlyURLException ||
+			throwable instanceof LayoutFriendlyURLsException ||
+			throwable instanceof LayoutNameException ||
+			throwable instanceof LayoutPageTemplateCollectionNameException ||
+			throwable instanceof LayoutParentLayoutIdException ||
+			throwable instanceof LayoutSetVirtualHostException ||
+			throwable instanceof LayoutTypeException ||
+			throwable instanceof NoSuchGroupException ||
+			throwable instanceof PrincipalException ||
+			throwable instanceof RequiredLayoutException ||
+			throwable instanceof RequiredLayoutPrototypeException ||
+			throwable instanceof SitemapChangeFrequencyException ||
+			throwable instanceof SitemapIncludeException ||
+			throwable instanceof SitemapPagePriorityException ||
+			throwable instanceof UploadException) {
 
 			return true;
 		}

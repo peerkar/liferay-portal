@@ -30,13 +30,17 @@ import com.liferay.petra.string.CharPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
+import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalServiceUtil;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.translation.info.field.TranslationInfoFieldChecker;
+import com.liferay.translation.model.TranslationEntry;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -85,6 +89,8 @@ public class JournalTranslateDisplayContext {
 
 		_targetLocale = LocaleUtil.fromLanguageId(_targetLanguageId);
 
+		_themeDisplay = (ThemeDisplay)_httpServletRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
 		_translationInfoFieldChecker =
 			(TranslationInfoFieldChecker)_httpServletRequest.getAttribute(
 				TranslationInfoFieldChecker.class.getName());
@@ -148,8 +154,16 @@ public class JournalTranslateDisplayContext {
 			languageId, CharPool.UNDERLINE, CharPool.DASH);
 	}
 
-	public String getPublishButtonLabel() throws PortalException {
-		return _journalEditArticleDisplayContext.getPublishButtonLabel();
+	public String getPublishButtonLabel() {
+		if (WorkflowDefinitionLinkLocalServiceUtil.hasWorkflowDefinitionLink(
+				_themeDisplay.getCompanyId(),
+				_journalEditArticleDisplayContext.getGroupId(),
+				TranslationEntry.class.getName())) {
+
+			return "submit-for-publication";
+		}
+
+		return "publish";
 	}
 
 	public String getSaveButtonLabel() {
@@ -234,6 +248,7 @@ public class JournalTranslateDisplayContext {
 	private final Locale _sourceLocale;
 	private final String _targetLanguageId;
 	private final Locale _targetLocale;
+	private final ThemeDisplay _themeDisplay;
 	private final TranslationInfoFieldChecker _translationInfoFieldChecker;
 
 }

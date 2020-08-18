@@ -23,8 +23,8 @@ public class SharepointRuntimeException extends RuntimeException {
 		super(message);
 	}
 
-	public SharepointRuntimeException(String message, Throwable cause) {
-		super(message, cause);
+	public SharepointRuntimeException(String message, Throwable throwable) {
+		super(message, throwable);
 	}
 
 }

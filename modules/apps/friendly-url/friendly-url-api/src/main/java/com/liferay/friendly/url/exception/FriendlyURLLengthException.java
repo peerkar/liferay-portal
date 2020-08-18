@@ -28,12 +28,12 @@ public class FriendlyURLLengthException extends PortalException {
 		super(msg);
 	}
 
-	public FriendlyURLLengthException(String msg, Throwable cause) {
-		super(msg, cause);
+	public FriendlyURLLengthException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public FriendlyURLLengthException(Throwable cause) {
-		super(cause);
+	public FriendlyURLLengthException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

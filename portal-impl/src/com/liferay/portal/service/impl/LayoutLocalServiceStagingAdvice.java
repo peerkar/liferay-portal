@@ -155,7 +155,7 @@ public class LayoutLocalServiceStagingAdvice implements BeanFactoryAware {
 			Map<Locale, String> descriptionMap, Map<Locale, String> keywordsMap,
 			Map<Locale, String> robotsMap, String type, boolean hidden,
 			Map<Locale, String> friendlyURLMap, boolean hasIconImage,
-			byte[] iconBytes, long masterLayoutPlid,
+			byte[] iconBytes, long masterLayoutPlid, long styleBookEntryId,
 			ServiceContext serviceContext)
 		throws PortalException {
 
@@ -195,7 +195,7 @@ public class LayoutLocalServiceStagingAdvice implements BeanFactoryAware {
 				groupId, privateLayout, layoutId, parentLayoutId, nameMap,
 				titleMap, descriptionMap, keywordsMap, robotsMap, type, hidden,
 				friendlyURLMap, hasIconImage, iconBytes, masterLayoutPlid,
-				serviceContext);
+				styleBookEntryId, serviceContext);
 		}
 
 		layoutLocalService.updateAsset(
@@ -754,7 +754,8 @@ public class LayoutLocalServiceStagingAdvice implements BeanFactoryAware {
 					_invoke(method, arguments), showIncomplete);
 			}
 			else if (methodName.equals("updateLayout") &&
-					 ((arguments.length == 15) || (arguments.length == 16))) {
+					 ((arguments.length == 15) || (arguments.length == 16) ||
+					  (arguments.length == 17))) {
 
 				Map<Locale, String> friendlyURLMap = null;
 
@@ -770,16 +771,23 @@ public class LayoutLocalServiceStagingAdvice implements BeanFactoryAware {
 				}
 
 				long masterLayoutPlid = 0;
+				long styleBookEntryId = 0;
 
 				ServiceContext serviceContext = null;
 
 				if (arguments.length == 15) {
 					serviceContext = (ServiceContext)arguments[14];
 				}
-				else {
+				else if (arguments.length == 16) {
 					masterLayoutPlid = (Long)arguments[14];
 
 					serviceContext = (ServiceContext)arguments[15];
+				}
+				else if (arguments.length == 17) {
+					masterLayoutPlid = (Long)arguments[14];
+					styleBookEntryId = (Long)arguments[15];
+
+					serviceContext = (ServiceContext)arguments[16];
 				}
 
 				returnValue = updateLayout(
@@ -792,7 +800,7 @@ public class LayoutLocalServiceStagingAdvice implements BeanFactoryAware {
 					(Map<Locale, String>)arguments[8], (String)arguments[9],
 					(Boolean)arguments[10], friendlyURLMap,
 					(Boolean)arguments[12], (byte[])arguments[13],
-					masterLayoutPlid, serviceContext);
+					masterLayoutPlid, styleBookEntryId, serviceContext);
 			}
 			else {
 				try {

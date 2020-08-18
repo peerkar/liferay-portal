@@ -28,12 +28,12 @@ public class DepotEntryNameException extends PortalException {
 		super(msg);
 	}
 
-	public DepotEntryNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DepotEntryNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DepotEntryNameException(Throwable cause) {
-		super(cause);
+	public DepotEntryNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

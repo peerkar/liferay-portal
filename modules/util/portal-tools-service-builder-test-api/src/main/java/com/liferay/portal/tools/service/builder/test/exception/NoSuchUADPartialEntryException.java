@@ -28,12 +28,12 @@ public class NoSuchUADPartialEntryException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchUADPartialEntryException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchUADPartialEntryException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchUADPartialEntryException(Throwable cause) {
-		super(cause);
+	public NoSuchUADPartialEntryException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

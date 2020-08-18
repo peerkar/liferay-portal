@@ -14,6 +14,8 @@
 
 package com.liferay.info.internal.display.contributor;
 
+import com.liferay.asset.info.item.provider.AssetEntryInfoItemFieldSetProvider;
+import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.info.display.contributor.InfoDisplayContributor;
 import com.liferay.info.display.contributor.InfoDisplayContributorTracker;
 import com.liferay.info.item.provider.InfoItemCapabilitiesProvider;
@@ -22,9 +24,11 @@ import com.liferay.info.item.provider.InfoItemFieldValuesProvider;
 import com.liferay.info.item.provider.InfoItemFormProvider;
 import com.liferay.info.item.provider.InfoItemFormVariationsProvider;
 import com.liferay.info.item.provider.InfoItemObjectProvider;
+import com.liferay.layout.page.template.info.item.capability.DisplayPageInfoItemCapability;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory;
 import com.liferay.osgi.util.ServiceTrackerFactory;
+import com.liferay.portal.kernel.util.ListUtil;
 
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -37,6 +41,7 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
@@ -127,7 +132,11 @@ public class InfoDisplayContributorTrackerImpl
 						InfoDisplayContributorWrapper
 							infoDisplayContributorWrapper =
 								new InfoDisplayContributorWrapper(
-									infoDisplayContributor);
+									_assetEntryInfoItemFieldSetProvider,
+									_assetEntryLocalService,
+									infoDisplayContributor,
+									ListUtil.fromArray(
+										_displayPageInfoItemCapability));
 
 						return (ServiceRegistration<InfoDisplayContributor<?>>)
 							bundleContext.registerService(
@@ -207,6 +216,16 @@ public class InfoDisplayContributorTrackerImpl
 
 		return dictionary;
 	}
+
+	@Reference
+	private AssetEntryInfoItemFieldSetProvider
+		_assetEntryInfoItemFieldSetProvider;
+
+	@Reference
+	private AssetEntryLocalService _assetEntryLocalService;
+
+	@Reference
+	private DisplayPageInfoItemCapability _displayPageInfoItemCapability;
 
 	private ServiceTrackerMap<String, InfoDisplayContributor<?>>
 		_infoDisplayContributorByURLSeparatorMap;

@@ -28,12 +28,12 @@ public class SyncDLObjectChecksumException extends PortalException {
 		super(msg);
 	}
 
-	public SyncDLObjectChecksumException(String msg, Throwable cause) {
-		super(msg, cause);
+	public SyncDLObjectChecksumException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public SyncDLObjectChecksumException(Throwable cause) {
-		super(cause);
+	public SyncDLObjectChecksumException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

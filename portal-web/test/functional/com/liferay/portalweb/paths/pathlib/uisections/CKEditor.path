@@ -54,6 +54,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>BODY_SOURCE_VALUE</td>
+	<td>//input[contains(@id,'AdminPortlet_content')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>SOURCE_URL</td>
 	<td>//input[contains(@id,'sourceURL')]</td>
 	<td></td>

@@ -28,12 +28,12 @@ public class NoSuchDefinitionVersionException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchDefinitionVersionException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchDefinitionVersionException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchDefinitionVersionException(Throwable cause) {
-		super(cause);
+	public NoSuchDefinitionVersionException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

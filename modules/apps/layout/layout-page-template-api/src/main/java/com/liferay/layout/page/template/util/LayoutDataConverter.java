@@ -17,11 +17,11 @@ package com.liferay.layout.page.template.util;
 import com.liferay.fragment.constants.FragmentConstants;
 import com.liferay.layout.util.constants.LayoutDataItemTypeConstants;
 import com.liferay.layout.util.structure.ColumnLayoutStructureItem;
-import com.liferay.layout.util.structure.ContainerLayoutStructureItem;
+import com.liferay.layout.util.structure.ContainerStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.DropZoneLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
-import com.liferay.layout.util.structure.RowLayoutStructureItem;
+import com.liferay.layout.util.structure.RowStyledLayoutStructureItem;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
@@ -77,47 +77,50 @@ public class LayoutDataConverter {
 			if (inputRowJSONObject.getInt("type") ==
 					FragmentConstants.TYPE_COMPONENT) {
 
-				ContainerLayoutStructureItem containerLayoutStructureItem =
-					(ContainerLayoutStructureItem)
-						layoutStructure.addContainerLayoutStructureItem(
-							rootLayoutStructureItem.getItemId(), i);
+				ContainerStyledLayoutStructureItem
+					containerStyledLayoutStructureItem =
+						(ContainerStyledLayoutStructureItem)
+							layoutStructure.addContainerLayoutStructureItem(
+								rootLayoutStructureItem.getItemId(), i);
 
 				JSONObject inputRowConfigJSONObject =
 					inputRowJSONObject.getJSONObject("config");
 
 				if (inputRowConfigJSONObject != null) {
-					containerLayoutStructureItem.setBackgroundColorCssClass(
-						inputRowConfigJSONObject.getString(
-							"backgroundColorCssClass"));
-					containerLayoutStructureItem.setBackgroundImageJSONObject(
-						_getBackgroundImageJSONObject(
-							inputRowConfigJSONObject));
-					containerLayoutStructureItem.setPaddingBottom(
+					containerStyledLayoutStructureItem.
+						setBackgroundColorCssClass(
+							inputRowConfigJSONObject.getString(
+								"backgroundColorCssClass"));
+					containerStyledLayoutStructureItem.
+						setBackgroundImageJSONObject(
+							_getBackgroundImageJSONObject(
+								inputRowConfigJSONObject));
+					containerStyledLayoutStructureItem.setPaddingBottom(
 						inputRowConfigJSONObject.getInt("paddingVertical", 0));
-					containerLayoutStructureItem.setPaddingLeft(
+					containerStyledLayoutStructureItem.setPaddingLeft(
 						inputRowConfigJSONObject.getInt(
 							"paddingHorizontal", 0));
-					containerLayoutStructureItem.setPaddingRight(
+					containerStyledLayoutStructureItem.setPaddingRight(
 						inputRowConfigJSONObject.getInt(
 							"paddingHorizontal", 0));
-					containerLayoutStructureItem.setPaddingTop(
+					containerStyledLayoutStructureItem.setPaddingTop(
 						inputRowConfigJSONObject.getInt("paddingVertical", 0));
-					containerLayoutStructureItem.setWidthType(
+					containerStyledLayoutStructureItem.setWidthType(
 						inputRowConfigJSONObject.getString(
 							"widthType", "fluid"));
 				}
 
-				RowLayoutStructureItem rowLayoutStructureItem =
-					(RowLayoutStructureItem)
+				RowStyledLayoutStructureItem rowStyledLayoutStructureItem =
+					(RowStyledLayoutStructureItem)
 						layoutStructure.addRowLayoutStructureItem(
-							containerLayoutStructureItem.getItemId(), 0,
+							containerStyledLayoutStructureItem.getItemId(), 0,
 							columnsJSONArray.length());
 
 				if (inputRowConfigJSONObject != null) {
 					boolean columnSpacing = inputRowConfigJSONObject.getBoolean(
 						"columnSpacing", true);
 
-					rowLayoutStructureItem.setGutters(columnSpacing);
+					rowStyledLayoutStructureItem.setGutters(columnSpacing);
 				}
 
 				for (int j = 0; j < columnsJSONArray.length(); j++) {
@@ -127,7 +130,7 @@ public class LayoutDataConverter {
 					ColumnLayoutStructureItem columnLayoutStructureItem =
 						(ColumnLayoutStructureItem)
 							layoutStructure.addColumnLayoutStructureItem(
-								rowLayoutStructureItem.getItemId(), j);
+								rowStyledLayoutStructureItem.getItemId(), j);
 
 					columnLayoutStructureItem.setSize(
 						inputColumnJSONObject.getInt("size"));

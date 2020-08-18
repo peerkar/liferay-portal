@@ -76,7 +76,8 @@ public class LayoutPageTemplateStructureModelImpl
 	public static final String TABLE_NAME = "LayoutPageTemplateStructure";
 
 	public static final Object[][] TABLE_COLUMNS = {
-		{"mvccVersion", Types.BIGINT}, {"uuid_", Types.VARCHAR},
+		{"mvccVersion", Types.BIGINT}, {"ctCollectionId", Types.BIGINT},
+		{"uuid_", Types.VARCHAR},
 		{"layoutPageTemplateStructureId", Types.BIGINT},
 		{"groupId", Types.BIGINT}, {"companyId", Types.BIGINT},
 		{"userId", Types.BIGINT}, {"userName", Types.VARCHAR},
@@ -89,6 +90,7 @@ public class LayoutPageTemplateStructureModelImpl
 
 	static {
 		TABLE_COLUMNS_MAP.put("mvccVersion", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("ctCollectionId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("uuid_", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("layoutPageTemplateStructureId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("groupId", Types.BIGINT);
@@ -102,7 +104,7 @@ public class LayoutPageTemplateStructureModelImpl
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table LayoutPageTemplateStructure (mvccVersion LONG default 0 not null,uuid_ VARCHAR(75) null,layoutPageTemplateStructureId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,classNameId LONG,classPK LONG)";
+		"create table LayoutPageTemplateStructure (mvccVersion LONG default 0 not null,ctCollectionId LONG default 0 not null,uuid_ VARCHAR(75) null,layoutPageTemplateStructureId LONG not null,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,classNameId LONG,classPK LONG,primary key (layoutPageTemplateStructureId, ctCollectionId))";
 
 	public static final String TABLE_SQL_DROP =
 		"drop table LayoutPageTemplateStructure";
@@ -150,7 +152,9 @@ public class LayoutPageTemplateStructureModelImpl
 	 *
 	 * @param soapModel the soap model instance to convert
 	 * @return the normal model instance
+	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
 	 */
+	@Deprecated
 	public static LayoutPageTemplateStructure toModel(
 		LayoutPageTemplateStructureSoap soapModel) {
 
@@ -162,6 +166,7 @@ public class LayoutPageTemplateStructureModelImpl
 			new LayoutPageTemplateStructureImpl();
 
 		model.setMvccVersion(soapModel.getMvccVersion());
+		model.setCtCollectionId(soapModel.getCtCollectionId());
 		model.setUuid(soapModel.getUuid());
 		model.setLayoutPageTemplateStructureId(
 			soapModel.getLayoutPageTemplateStructureId());
@@ -182,7 +187,9 @@ public class LayoutPageTemplateStructureModelImpl
 	 *
 	 * @param soapModels the soap model instances to convert
 	 * @return the normal model instances
+	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
 	 */
+	@Deprecated
 	public static List<LayoutPageTemplateStructure> toModels(
 		LayoutPageTemplateStructureSoap[] soapModels) {
 
@@ -339,6 +346,12 @@ public class LayoutPageTemplateStructureModelImpl
 			(BiConsumer<LayoutPageTemplateStructure, Long>)
 				LayoutPageTemplateStructure::setMvccVersion);
 		attributeGetterFunctions.put(
+			"ctCollectionId", LayoutPageTemplateStructure::getCtCollectionId);
+		attributeSetterBiConsumers.put(
+			"ctCollectionId",
+			(BiConsumer<LayoutPageTemplateStructure, Long>)
+				LayoutPageTemplateStructure::setCtCollectionId);
+		attributeGetterFunctions.put(
 			"uuid", LayoutPageTemplateStructure::getUuid);
 		attributeSetterBiConsumers.put(
 			"uuid",
@@ -415,6 +428,17 @@ public class LayoutPageTemplateStructureModelImpl
 	@Override
 	public void setMvccVersion(long mvccVersion) {
 		_mvccVersion = mvccVersion;
+	}
+
+	@JSON
+	@Override
+	public long getCtCollectionId() {
+		return _ctCollectionId;
+	}
+
+	@Override
+	public void setCtCollectionId(long ctCollectionId) {
+		_ctCollectionId = ctCollectionId;
 	}
 
 	@JSON
@@ -686,6 +710,7 @@ public class LayoutPageTemplateStructureModelImpl
 			new LayoutPageTemplateStructureImpl();
 
 		layoutPageTemplateStructureImpl.setMvccVersion(getMvccVersion());
+		layoutPageTemplateStructureImpl.setCtCollectionId(getCtCollectionId());
 		layoutPageTemplateStructureImpl.setUuid(getUuid());
 		layoutPageTemplateStructureImpl.setLayoutPageTemplateStructureId(
 			getLayoutPageTemplateStructureId());
@@ -806,6 +831,9 @@ public class LayoutPageTemplateStructureModelImpl
 				new LayoutPageTemplateStructureCacheModel();
 
 		layoutPageTemplateStructureCacheModel.mvccVersion = getMvccVersion();
+
+		layoutPageTemplateStructureCacheModel.ctCollectionId =
+			getCtCollectionId();
 
 		layoutPageTemplateStructureCacheModel.uuid = getUuid();
 
@@ -936,6 +964,7 @@ public class LayoutPageTemplateStructureModelImpl
 	}
 
 	private long _mvccVersion;
+	private long _ctCollectionId;
 	private String _uuid;
 	private String _originalUuid;
 	private long _layoutPageTemplateStructureId;

@@ -22,7 +22,7 @@ import org.json.JSONObject;
 /**
  * @author Michael Hashimoto
  */
-public class JenkinsSlave implements Comparable<JenkinsSlave> {
+public class JenkinsSlave implements JenkinsNode<JenkinsSlave> {
 
 	public JenkinsSlave() {
 		this(
@@ -120,12 +120,21 @@ public class JenkinsSlave implements Comparable<JenkinsSlave> {
 		return BuildFactory.newBuild(buildURL, null);
 	}
 
+	@Override
 	public JenkinsMaster getJenkinsMaster() {
 		return _jenkinsMaster;
 	}
 
+	@Override
 	public String getName() {
 		return _name;
+	}
+
+	@Override
+	public int hashCode() {
+		String hashCodeString = _jenkinsMaster.getName() + "_" + _name;
+
+		return hashCodeString.hashCode();
 	}
 
 	public boolean isIdle() {

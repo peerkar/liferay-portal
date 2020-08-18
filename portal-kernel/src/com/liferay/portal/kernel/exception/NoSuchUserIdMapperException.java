@@ -26,12 +26,12 @@ public class NoSuchUserIdMapperException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchUserIdMapperException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchUserIdMapperException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchUserIdMapperException(Throwable cause) {
-		super(cause);
+	public NoSuchUserIdMapperException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

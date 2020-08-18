@@ -28,12 +28,12 @@ public class KBCommentContentException extends PortalException {
 		super(msg);
 	}
 
-	public KBCommentContentException(String msg, Throwable cause) {
-		super(msg, cause);
+	public KBCommentContentException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public KBCommentContentException(Throwable cause) {
-		super(cause);
+	public KBCommentContentException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

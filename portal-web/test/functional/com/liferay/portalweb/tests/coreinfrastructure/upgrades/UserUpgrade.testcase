@@ -106,6 +106,7 @@ definition {
 	@priority = "5"
 	test ResetTestUserPasswordAfterUpgrade72101 {
 		property data.archive.type = "data-archive-portal";
+		property database.types = "db2,mariadb,mysql,oracle,postgresql,sybase";
 		property portal.version = "7.2.10.1";
 		property setup.wizard.enabled = "true";
 
@@ -116,6 +117,7 @@ definition {
 	@priority = "5"
 	test ResetTestUserPasswordAfterUpgrade621015 {
 		property data.archive.type = "data-archive-portal";
+		property database.types = "db2,mariadb,mysql,oracle,postgresql,sybase";
 		property portal.version = "6.2.10.15";
 		property setup.wizard.enabled = "true";
 
@@ -126,6 +128,7 @@ definition {
 	@priority = "5"
 	test ResetTestUserPasswordAfterUpgrade621021 {
 		property data.archive.type = "data-archive-portal";
+		property database.types = "db2,mariadb,mysql,oracle,postgresql,sybase";
 		property portal.version = "6.2.10.21";
 		property setup.wizard.enabled = "true";
 

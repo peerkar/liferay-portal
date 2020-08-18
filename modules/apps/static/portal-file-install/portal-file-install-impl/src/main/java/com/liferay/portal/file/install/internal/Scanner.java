@@ -14,13 +14,15 @@
 
 package com.liferay.portal.file.install.internal;
 
-import java.io.Closeable;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -31,22 +33,14 @@ import java.util.zip.CRC32;
 /**
  * @author Matthew Tambara
  */
-public class Scanner implements Closeable {
-
-	public static final String SUBDIR_MODE_JAR = "jar";
+public class Scanner {
 
 	public static final String SUBDIR_MODE_RECURSE = "recurse";
 
-	public static final String SUBDIR_MODE_SKIP = "skip";
-
-	public Scanner(File directory) {
-		this(directory, null, null);
-	}
-
 	public Scanner(
-		File directory, final String filterString, String subdirMode) {
+		List<File> dirs, final String filterString, String subdirMode) {
 
-		watchedDirectory = _canon(directory);
+		_watchedDirs = _canononize(dirs);
 
 		if ((filterString != null) && (filterString.length() > 0)) {
 			_filenameFilter = new FilenameFilter() {
@@ -66,23 +60,11 @@ public class Scanner implements Closeable {
 			_filenameFilter = null;
 		}
 
-		if ((subdirMode == null) || SUBDIR_MODE_JAR.equals(subdirMode)) {
-			jarSubdir = true;
-		}
-		else {
-			jarSubdir = false;
-		}
-
-		skipSubdir = SUBDIR_MODE_SKIP.equals(subdirMode);
 		_recurseSubdir = SUBDIR_MODE_RECURSE.equals(subdirMode);
 	}
 
-	@Override
-	public void close() throws IOException {
-	}
-
 	public long getChecksum(File file) {
-		Long checksum = storedChecksums.get(file);
+		Long checksum = _storedChecksums.get(file);
 
 		if (checksum != null) {
 			return checksum;
@@ -92,46 +74,44 @@ public class Scanner implements Closeable {
 	}
 
 	public void initialize(Map<File, Long> checksums) {
-		storedChecksums.putAll(checksums);
+		_storedChecksums.putAll(checksums);
 	}
 
 	public Set<File> scan(boolean reportImmediately) {
-		File[] list = watchedDirectory.listFiles(_filenameFilter);
-
-		Set<File> files = _processFiles(reportImmediately, list);
+		Set<File> files = _processFiles(reportImmediately, _list());
 
 		return new TreeSet<>(files);
 	}
 
 	public void updateChecksum(File file) {
-		if ((file != null) && storedChecksums.containsKey(file)) {
-			long newChecksum = checksum(file);
+		if ((file != null) && _storedChecksums.containsKey(file)) {
+			long newChecksum = _checksum(file);
 
-			storedChecksums.put(file, newChecksum);
+			_storedChecksums.put(file, newChecksum);
 		}
 	}
 
-	protected static long checksum(File file) {
+	private static List<File> _canononize(List<File> files) {
+		List<File> canonicalFiles = new ArrayList<>(files.size());
+
+		for (File file : files) {
+			try {
+				canonicalFiles.add(file.getCanonicalFile());
+			}
+			catch (IOException ioException) {
+				canonicalFiles.add(file);
+			}
+		}
+
+		return canonicalFiles;
+	}
+
+	private static long _checksum(File file) {
 		CRC32 crc32 = new CRC32();
 
 		_checksum(file, crc32);
 
 		return crc32.getValue();
-	}
-
-	protected final boolean jarSubdir;
-	protected final Map<File, Long> lastChecksums = new HashMap<>();
-	protected final boolean skipSubdir;
-	protected final Map<File, Long> storedChecksums = new HashMap<>();
-	protected final File watchedDirectory;
-
-	private static File _canon(File file) {
-		try {
-			return file.getCanonicalFile();
-		}
-		catch (IOException ioException) {
-			return file;
-		}
 	}
 
 	private static void _checksum(File file, CRC32 crc32) {
@@ -162,6 +142,20 @@ public class Scanner implements Closeable {
 		}
 	}
 
+	private File[] _list() {
+		List<File> files = new ArrayList<>();
+
+		for (File dir : _watchedDirs) {
+			File[] list = dir.listFiles(_filenameFilter);
+
+			if (list != null) {
+				Collections.addAll(files, list);
+			}
+		}
+
+		return files.toArray(new File[0]);
+	}
+
 	private Set<File> _processFiles(boolean reportImmediately, File[] list) {
 		if (list == null) {
 			return new HashSet<>();
@@ -169,38 +163,35 @@ public class Scanner implements Closeable {
 
 		Set<File> files = new HashSet<>();
 
-		Set<File> removed = new HashSet<>(storedChecksums.keySet());
+		Set<File> removed = new HashSet<>(_storedChecksums.keySet());
 
 		for (File file : list) {
 			if (file.isDirectory()) {
-				if (skipSubdir) {
-					continue;
-				}
-				else if (_recurseSubdir) {
+				if (_recurseSubdir) {
 					files.addAll(
 						_processFiles(
 							reportImmediately,
 							file.listFiles(_filenameFilter)));
-
-					continue;
 				}
+
+				continue;
 			}
 
 			long lastChecksum = 0;
 
-			if (lastChecksums.get(file) != null) {
-				lastChecksum = lastChecksums.get(file);
+			if (_lastChecksums.get(file) != null) {
+				lastChecksum = _lastChecksums.get(file);
 			}
 
 			long storedChecksum = 0;
 
-			if (storedChecksums.get(file) != null) {
-				storedChecksum = storedChecksums.get(file);
+			if (_storedChecksums.get(file) != null) {
+				storedChecksum = _storedChecksums.get(file);
 			}
 
-			long newChecksum = checksum(file);
+			long newChecksum = _checksum(file);
 
-			lastChecksums.put(file, newChecksum);
+			_lastChecksums.put(file, newChecksum);
 
 			// Only handle file when it does not change anymore and it has
 			// changed since last reported
@@ -208,7 +199,7 @@ public class Scanner implements Closeable {
 			if (((newChecksum == lastChecksum) || reportImmediately) &&
 				(newChecksum != storedChecksum)) {
 
-				storedChecksums.put(file, newChecksum);
+				_storedChecksums.put(file, newChecksum);
 				files.add(file);
 			}
 
@@ -223,14 +214,17 @@ public class Scanner implements Closeable {
 
 			// Remove no longer used checksums
 
-			lastChecksums.remove(file);
-			storedChecksums.remove(file);
+			_lastChecksums.remove(file);
+			_storedChecksums.remove(file);
 		}
 
 		return files;
 	}
 
 	private final FilenameFilter _filenameFilter;
+	private final Map<File, Long> _lastChecksums = new HashMap<>();
 	private final boolean _recurseSubdir;
+	private final Map<File, Long> _storedChecksums = new HashMap<>();
+	private final List<File> _watchedDirs;
 
 }

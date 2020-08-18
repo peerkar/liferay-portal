@@ -458,26 +458,28 @@ public class FileImpl implements com.liferay.portal.kernel.util.File {
 				}
 			}
 		}
-		catch (Throwable t) {
-			Throwable throwable = ExceptionUtils.getRootCause(t);
+		catch (Throwable throwable) {
+			Throwable rootCauseThrowable = ExceptionUtils.getRootCause(
+				throwable);
 
-			if (throwable instanceof EncryptedDocumentException ||
-				throwable instanceof UnsupportedZipFeatureException) {
+			if (rootCauseThrowable instanceof EncryptedDocumentException ||
+				rootCauseThrowable instanceof UnsupportedZipFeatureException) {
 
 				if (_log.isWarnEnabled()) {
 					_log.warn(
 						"Unable to extract text from an encrypted file " +
 							fileName,
-						t);
+						throwable);
 				}
 			}
-			else if (t instanceof TikaException) {
+			else if (throwable instanceof TikaException) {
 				if (_log.isWarnEnabled()) {
-					_log.warn("Unable to extract text from " + fileName, t);
+					_log.warn(
+						"Unable to extract text from " + fileName, throwable);
 				}
 			}
 			else {
-				_log.error(t, t);
+				_log.error(throwable, throwable);
 			}
 		}
 

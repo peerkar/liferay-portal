@@ -26,12 +26,12 @@ public class OrganizationTypeException extends PortalException {
 		super(msg);
 	}
 
-	public OrganizationTypeException(String msg, Throwable cause) {
-		super(msg, cause);
+	public OrganizationTypeException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public OrganizationTypeException(Throwable cause) {
-		super(cause);
+	public OrganizationTypeException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

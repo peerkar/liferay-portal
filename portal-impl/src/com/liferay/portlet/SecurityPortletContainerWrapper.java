@@ -322,10 +322,6 @@ public class SecurityPortletContainerWrapper implements PortletContainer {
 		Layout ownerLayout = null;
 		LayoutTypePortlet ownerLayoutTypePortlet = null;
 
-		ThemeDisplay themeDisplay =
-			(ThemeDisplay)httpServletRequest.getAttribute(
-				WebKeys.THEME_DISPLAY);
-
 		Layout requestLayout = (Layout)httpServletRequest.getAttribute(
 			WebKeys.LAYOUT);
 
@@ -345,6 +341,10 @@ public class SecurityPortletContainerWrapper implements PortletContainer {
 		if (ownerLayout == null) {
 			return httpServletRequest;
 		}
+
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)httpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
 
 		Layout currentLayout = themeDisplay.getLayout();
 

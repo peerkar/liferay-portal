@@ -28,12 +28,14 @@ public class FragmentEntryConfigurationException extends PortalException {
 		super(msg);
 	}
 
-	public FragmentEntryConfigurationException(String msg, Throwable cause) {
-		super(msg, cause);
+	public FragmentEntryConfigurationException(
+		String msg, Throwable throwable) {
+
+		super(msg, throwable);
 	}
 
-	public FragmentEntryConfigurationException(Throwable cause) {
-		super(cause);
+	public FragmentEntryConfigurationException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

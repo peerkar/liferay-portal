@@ -28,12 +28,12 @@ public class FolderNameException extends PortalException {
 		super(msg);
 	}
 
-	public FolderNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public FolderNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public FolderNameException(Throwable cause) {
-		super(cause);
+	public FolderNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -28,12 +28,12 @@ public class NoSuchDLObjectException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchDLObjectException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchDLObjectException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchDLObjectException(Throwable cause) {
-		super(cause);
+	public NoSuchDLObjectException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

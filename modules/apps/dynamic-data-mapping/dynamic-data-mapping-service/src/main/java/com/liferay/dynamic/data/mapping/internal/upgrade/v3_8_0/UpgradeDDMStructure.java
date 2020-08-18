@@ -28,6 +28,7 @@ import com.liferay.dynamic.data.mapping.io.DDMFormSerializerSerializeRequest;
 import com.liferay.dynamic.data.mapping.io.DDMFormSerializerSerializeResponse;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayoutColumn;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayoutPage;
@@ -37,28 +38,28 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.jdbc.AutoBatchPreparedStatementUtil;
 import com.liferay.portal.kernel.json.JSONArray;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
-import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONUtil;
-import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.upgrade.UpgradeException;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
-import com.liferay.portal.kernel.upgrade.util.UpgradeProcessUtil;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.util.Tuple;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Random;
+import java.util.Set;
 
 /**
- * @author Marcela Cunha
+ * @author Marcos Martins
  */
 public class UpgradeDDMStructure extends UpgradeProcess {
 
@@ -66,177 +67,145 @@ public class UpgradeDDMStructure extends UpgradeProcess {
 		DDMFormDeserializer ddmFormDeserializer,
 		DDMFormLayoutDeserializer ddmFormLayoutDeserializer,
 		DDMFormLayoutSerializer ddmFormLayoutSerializer,
-		DDMFormSerializer ddmFormSerializer) {
+		DDMFormSerializer ddmFormSerializer, JSONFactory jsonFactory) {
 
 		_ddmFormDeserializer = ddmFormDeserializer;
 		_ddmFormLayoutDeserializer = ddmFormLayoutDeserializer;
 		_ddmFormLayoutSerializer = ddmFormLayoutSerializer;
 		_ddmFormSerializer = ddmFormSerializer;
+		_jsonFactory = jsonFactory;
 	}
 
 	@Override
 	protected void doUpgrade() throws Exception {
-		_upgradeStructureDefinition();
-		_upgradeStructureLayoutDefinition();
-		_upgradeStructureVersionDefinition();
+		_upgradeDDMStructureLayout();
+
+		_upgradeDDMStructureVersion();
+
+		_upgradeDDMStructure();
 	}
 
-	private DDMFormField _createFieldSetDDMFormField(
-		Locale defaultLocale, String name, Long parentStructureId,
-		Long parentStructureLayoutId) {
+	private String _generateDDMFormFieldName() {
+		String ddmFormFieldName = "Field";
 
-		return new DDMFormField(name, "fieldset") {
-			{
-				setDataType("string");
-				setIndexType("keyword");
-				setLabel(
-					new LocalizedValue() {
-						{
-							addString(defaultLocale, StringPool.BLANK);
-						}
-					});
-				setLocalizable(true);
-				setReadOnly(false);
-				setPredefinedValue(
-					new LocalizedValue() {
-						{
-							addString(defaultLocale, StringPool.BLANK);
-						}
-					});
-				setProperty("ddmStructureId", parentStructureId);
-				setProperty("ddmStructureLayoutId", parentStructureLayoutId);
-				setProperty("upgradedStructure", true);
-				setRepeatable(false);
-				setRequired(false);
-				setShowLabel(false);
-				setTip(
-					new LocalizedValue() {
-						{
-							addString(defaultLocale, StringPool.BLANK);
-						}
-					});
-				setVisibilityExpression(StringPool.BLANK);
-			}
-		};
+		Random random = new Random();
+
+		for (int i = 0; i < _DDM_FORM_FIELD_NAME_RANDOM_NUMBERS_LENGTH; i++) {
+			ddmFormFieldName = ddmFormFieldName.concat(
+				String.valueOf(random.nextInt(10)));
+		}
+
+		return ddmFormFieldName;
 	}
 
-	private void _upgradeColorField(JSONObject jsonObject) {
-		jsonObject.put(
-			"dataType", "string"
-		).put(
-			"type", "color"
-		).put(
-			"visibilityExpression", StringPool.BLANK
-		);
-	}
-
-	private void _upgradeDateField(JSONObject jsonObject) {
-		jsonObject.put(
-			"dataType", "string"
-		).put(
-			"type", "date"
-		).put(
-			"visibilityExpression", StringPool.BLANK
-		);
-	}
-
-	private String _upgradeDDMFormLayoutDefinition(String content)
-		throws Exception {
-
-		DDMFormLayoutDeserializerDeserializeResponse
-			ddmFormLayoutDeserializerDeserializeResponse =
-				_ddmFormLayoutDeserializer.deserialize(
-					DDMFormLayoutDeserializerDeserializeRequest.Builder.
-						newBuilder(
-							content
-						).build());
+	private DDMForm _getDDMForm(String definition) throws Exception {
+		DDMFormDeserializerDeserializeResponse
+			ddmFormDeserializerDeserializeResponse =
+				_ddmFormDeserializer.deserialize(
+					DDMFormDeserializerDeserializeRequest.Builder.newBuilder(
+						definition
+					).build());
 
 		Exception exception =
-			ddmFormLayoutDeserializerDeserializeResponse.getException();
+			ddmFormDeserializerDeserializeResponse.getException();
 
 		if (exception != null) {
 			throw new UpgradeException(exception);
 		}
 
-		DDMFormLayout ddmFormLayout =
-			ddmFormLayoutDeserializerDeserializeResponse.getDDMFormLayout();
-
-		ddmFormLayout.setPaginationMode(DDMFormLayout.SINGLE_PAGE_MODE);
-
-		for (DDMFormLayoutPage ddmFormLayoutPage :
-				ddmFormLayout.getDDMFormLayoutPages()) {
-
-			LocalizedValue localizedValue = ddmFormLayoutPage.getTitle();
-
-			if (localizedValue == null) {
-				localizedValue = new LocalizedValue();
-
-				localizedValue.addString(
-					ddmFormLayout.getDefaultLocale(),
-					LanguageUtil.get(ddmFormLayout.getDefaultLocale(), "page"));
-
-				for (Locale locale : ddmFormLayout.getAvailableLocales()) {
-					localizedValue.addString(
-						locale, LanguageUtil.get(locale, "page"));
-				}
-			}
-			else {
-				if (Validator.isNull(
-						localizedValue.getString(
-							ddmFormLayout.getDefaultLocale()))) {
-
-					localizedValue.addString(
-						ddmFormLayout.getDefaultLocale(),
-						LanguageUtil.get(
-							ddmFormLayout.getDefaultLocale(), "page"));
-				}
-			}
-
-			ddmFormLayoutPage.setTitle(localizedValue);
-
-			localizedValue = ddmFormLayoutPage.getDescription();
-
-			if (localizedValue == null) {
-				localizedValue = new LocalizedValue();
-
-				localizedValue.addString(
-					ddmFormLayout.getDefaultLocale(),
-					LanguageUtil.get(
-						ddmFormLayout.getDefaultLocale(), "description"));
-
-				for (Locale locale : ddmFormLayout.getAvailableLocales()) {
-					localizedValue.addString(
-						locale, LanguageUtil.get(locale, "description"));
-				}
-			}
-			else {
-				if (Validator.isNull(
-						localizedValue.getString(
-							ddmFormLayout.getDefaultLocale()))) {
-
-					localizedValue.addString(
-						ddmFormLayout.getDefaultLocale(),
-						LanguageUtil.get(
-							ddmFormLayout.getDefaultLocale(), "description"));
-				}
-			}
-
-			ddmFormLayoutPage.setDescription(localizedValue);
-		}
-
-		DDMFormLayoutSerializerSerializeResponse
-			ddmFormLayoutSerializerSerializeResponse =
-				_ddmFormLayoutSerializer.serialize(
-					DDMFormLayoutSerializerSerializeRequest.Builder.newBuilder(
-						ddmFormLayout
-					).build());
-
-		return ddmFormLayoutSerializerSerializeResponse.getContent();
+		return ddmFormDeserializerDeserializeResponse.getDDMForm();
 	}
 
-	private String _upgradeDDMFormLayoutDefinition(
-			String definition, Long structureId)
+	private void _upgradeDDMStructure() throws Exception {
+		StringBundler sb = new StringBundler(6);
+
+		sb.append("select DDMStructure.structureId, ");
+		sb.append("DDMStructureVersion.definition from DDMStructure inner ");
+		sb.append("join DDMStructureVersion on DDMStructure.structureid = ");
+		sb.append("DDMStructureVersion.structureid where ");
+		sb.append("DDMStructure.version = DDMStructureVersion.version and ");
+		sb.append("DDMStructure.classnameId = ?");
+
+		try (PreparedStatement ps1 = connection.prepareStatement(sb.toString());
+			PreparedStatement ps2 =
+				AutoBatchPreparedStatementUtil.concurrentAutoBatch(
+					connection,
+					"update DDMStructure set definition = ? where " +
+						"structureId = ?")) {
+
+			ps1.setLong(
+				1, PortalUtil.getClassNameId(DDMFormInstance.class.getName()));
+
+			try (ResultSet rs = ps1.executeQuery()) {
+				while (rs.next()) {
+					String structureVersionDefinition = rs.getString(
+						"definition");
+
+					ps2.setString(1, structureVersionDefinition);
+
+					long structureId = rs.getLong("structureId");
+
+					ps2.setLong(2, structureId);
+
+					ps2.addBatch();
+				}
+
+				ps2.executeBatch();
+			}
+		}
+	}
+
+	private void _upgradeDDMStructureLayout() throws Exception {
+		StringBundler sb = new StringBundler(9);
+
+		sb.append("select DDMStructureLayout.structureLayoutId, ");
+		sb.append("DDMStructureLayout.structureVersionId, ");
+		sb.append("DDMStructureLayout.definition from DDMStructureLayout ");
+		sb.append("inner join DDMStructureVersion on ");
+		sb.append("DDMStructureLayout.structureVersionId = ");
+		sb.append("DDMStructureVersion.structureVersionId inner join ");
+		sb.append("DDMStructure on DDMStructure.structureId = ");
+		sb.append("DDMStructureVersion.structureId where ");
+		sb.append("DDMStructure.classnameId = ?");
+
+		try (PreparedStatement ps1 = connection.prepareStatement(sb.toString());
+			PreparedStatement ps2 =
+				AutoBatchPreparedStatementUtil.concurrentAutoBatch(
+					connection,
+					"update DDMStructureLayout set definition = ? where " +
+						"structureLayoutId = ?")) {
+
+			ps1.setLong(
+				1, PortalUtil.getClassNameId(DDMFormInstance.class.getName()));
+
+			try (ResultSet rs = ps1.executeQuery()) {
+				while (rs.next()) {
+					String definition = rs.getString("definition");
+
+					long structureVersionId = rs.getLong("structureVersionId");
+
+					ps2.setString(
+						1,
+						_upgradeDDMStructureLayoutDefinition(
+							definition, structureVersionId));
+
+					long structureLayoutId = rs.getLong("structureLayoutId");
+
+					ps2.setLong(2, structureLayoutId);
+
+					ps2.addBatch();
+				}
+
+				ps2.executeBatch();
+			}
+		}
+	}
+
+	private String _upgradeDDMStructureLayoutDefinition(
+			String definition, long structureVersionId)
 		throws Exception {
+
+		List<Tuple> ddmFormFieldTuples = new ArrayList<>();
 
 		DDMFormLayoutDeserializerDeserializeResponse
 			ddmFormLayoutDeserializerDeserializeResponse =
@@ -256,23 +225,41 @@ public class UpgradeDDMStructure extends UpgradeProcess {
 		DDMFormLayout ddmFormLayout =
 			ddmFormLayoutDeserializerDeserializeResponse.getDDMFormLayout();
 
-		DDMFormLayoutPage ddmFormLayoutPage =
-			ddmFormLayout.getDDMFormLayoutPage(0);
+		if (Objects.equals(ddmFormLayout.getPaginationMode(), "pagination")) {
+			ddmFormLayout.setPaginationMode(DDMFormLayout.WIZARD_MODE);
+		}
 
-		List<DDMFormLayoutRow> ddmFormLayoutRowList =
-			ddmFormLayoutPage.getDDMFormLayoutRows();
+		for (DDMFormLayoutPage ddmFormLayoutPage :
+				ddmFormLayout.getDDMFormLayoutPages()) {
 
-		DDMFormLayoutRow ddmFormLayoutRow = new DDMFormLayoutRow();
+			for (DDMFormLayoutRow ddmFormLayoutRow :
+					ddmFormLayoutPage.getDDMFormLayoutRows()) {
 
-		DDMFormField ddmFormField = _fieldSetMap.get(structureId);
+				for (DDMFormLayoutColumn ddmFormLayoutColumn :
+						ddmFormLayoutRow.getDDMFormLayoutColumns()) {
 
-		ddmFormLayoutRow.addDDMFormLayoutColumn(
-			new DDMFormLayoutColumn(
-				DDMFormLayoutColumn.FULL, ddmFormField.getName()));
+					List<String> ddmFormFieldNames =
+						ddmFormLayoutColumn.getDDMFormFieldNames();
 
-		ddmFormLayoutRowList.add(0, ddmFormLayoutRow);
+					if (ddmFormFieldNames.size() > 1) {
+						String ddmFormFieldName = _generateDDMFormFieldName();
 
-		ddmFormLayoutPage.setDDMFormLayoutRows(ddmFormLayoutRowList);
+						ddmFormFieldTuples.add(
+							new Tuple(
+								ddmFormFieldName, "Fields Group",
+								ddmFormLayoutColumn.getSize(),
+								ddmFormFieldNames));
+
+						ddmFormLayoutColumn.setDDMFormFieldNames(
+							Arrays.asList(ddmFormFieldName));
+					}
+				}
+			}
+		}
+
+		if (!ddmFormFieldTuples.isEmpty()) {
+			_nestedFieldsMap.put(structureVersionId, ddmFormFieldTuples);
+		}
 
 		DDMFormLayoutSerializerSerializeResponse
 			ddmFormLayoutSerializerSerializeResponse =
@@ -284,56 +271,123 @@ public class UpgradeDDMStructure extends UpgradeProcess {
 		return ddmFormLayoutSerializerSerializeResponse.getContent();
 	}
 
-	private void _upgradeDecimalField(JSONObject jsonObject) {
-		jsonObject.put(
-			"dataType", "double"
-		).put(
-			"type", "numeric"
-		).put(
-			"visibilityExpression", StringPool.BLANK
-		);
-	}
+	private void _upgradeDDMStructureVersion() throws Exception {
+		StringBundler sb = new StringBundler(5);
 
-	private String _upgradeDefinition(long companyId, String definition)
-		throws Exception {
+		sb.append("select DDMStructureVersion.structureVersionId, ");
+		sb.append("DDMStructureVersion.definition from DDMStructure inner ");
+		sb.append("join DDMStructureVersion on DDMStructure.structureId = ");
+		sb.append("DDMStructureVersion.structureId where ");
+		sb.append("DDMStructure.classnameId = ?");
 
-		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(definition);
+		try (PreparedStatement ps1 = connection.prepareStatement(sb.toString());
+			PreparedStatement ps2 =
+				AutoBatchPreparedStatementUtil.concurrentAutoBatch(
+					connection,
+					"update DDMStructureVersion set definition = ? where " +
+						"structureVersionId = ?")) {
 
-		jsonObject.put(
-			"fields",
-			_upgradeFields(companyId, jsonObject.getJSONArray("fields")));
+			ps1.setLong(
+				1, PortalUtil.getClassNameId(DDMFormInstance.class.getName()));
 
-		return jsonObject.toString();
-	}
+			try (ResultSet rs = ps1.executeQuery()) {
+				while (rs.next()) {
+					String definition = rs.getString("definition");
 
-	private String _upgradeDefinition(
-			String definition, Long parentStructureId,
-			Long parentStructureLayoutId, Long structureId)
-		throws Exception {
+					long structureVersionId = rs.getLong("structureVersionId");
 
-		DDMFormDeserializerDeserializeResponse
-			ddmFormDeserializerDeserializeResponse =
-				_ddmFormDeserializer.deserialize(
-					DDMFormDeserializerDeserializeRequest.Builder.newBuilder(
-						definition
-					).build());
+					ps2.setString(
+						1,
+						_upgradeDDMStructureVersionDefinition(
+							definition, structureVersionId));
 
-		Exception exception =
-			ddmFormDeserializerDeserializeResponse.getException();
+					ps2.setLong(2, structureVersionId);
 
-		if (exception != null) {
-			throw new UpgradeException(exception);
+					ps2.addBatch();
+				}
+
+				ps2.executeBatch();
+			}
 		}
+	}
 
-		DDMForm ddmForm = ddmFormDeserializerDeserializeResponse.getDDMForm();
+	private String _upgradeDDMStructureVersionDefinition(
+			String definition, long structureVersionId)
+		throws Exception {
 
-		_fieldSetMap.computeIfAbsent(
-			structureId,
-			key -> _createFieldSetDDMFormField(
-				ddmForm.getDefaultLocale(), StringUtil.randomString(),
-				parentStructureId, parentStructureLayoutId));
+		DDMForm ddmForm = _getDDMForm(definition);
 
-		ddmForm.addDDMFormField(_fieldSetMap.get(structureId));
+		Map<String, DDMFormField> ddmFormFieldsMap =
+			ddmForm.getDDMFormFieldsMap(false);
+
+		List<Tuple> ddmFormFieldTuples = _nestedFieldsMap.get(
+			structureVersionId);
+
+		if (ddmFormFieldTuples != null) {
+			for (Tuple ddmFormFieldTuple : ddmFormFieldTuples) {
+				String fieldSetDDMFormFieldName =
+					(String)ddmFormFieldTuple.getObject(
+						_DDM_FORM_FIELD_TUPLE_NAME);
+
+				DDMFormField fieldSetDDMFormField = new DDMFormField(
+					fieldSetDDMFormFieldName, "fieldset");
+
+				LocalizedValue localizedValue = new LocalizedValue();
+
+				Set<Locale> locales = ddmForm.getAvailableLocales();
+
+				locales.forEach(
+					locale -> localizedValue.addString(
+						locale,
+						(String)ddmFormFieldTuple.getObject(
+							_DDM_FORM_FIELD_TUPLE_LABEL)));
+
+				fieldSetDDMFormField.setLabel(localizedValue);
+
+				fieldSetDDMFormField.setProperty(
+					"ddmStructureId", StringPool.BLANK);
+				fieldSetDDMFormField.setProperty(
+					"ddmStructureLayoutId", StringPool.BLANK);
+
+				JSONArray rows = _jsonFactory.createJSONArray();
+
+				List<String> nestedNames =
+					(List<String>)ddmFormFieldTuple.getObject(
+						_DDM_FORM_FIELD_TUPLE_NESTED_FIELD_NAMES);
+
+				nestedNames.forEach(
+					ddmFormFieldName -> {
+						fieldSetDDMFormField.addNestedDDMFormField(
+							ddmFormFieldsMap.get(ddmFormFieldName));
+
+						rows.put(
+							JSONUtil.put(
+								"columns",
+								JSONUtil.put(
+									JSONUtil.put(
+										"fields", JSONUtil.put(ddmFormFieldName)
+									).put(
+										"size",
+										ddmFormFieldTuple.getObject(
+											_DDM_FORM_FIELD_TUPLE_COLUMN_SIZE)
+									))));
+
+						ddmFormFieldsMap.remove(ddmFormFieldName);
+					});
+
+				fieldSetDDMFormField.setProperty("rows", rows);
+
+				fieldSetDDMFormField.setShowLabel(false);
+
+				ddmFormFieldsMap.put(
+					fieldSetDDMFormFieldName, fieldSetDDMFormField);
+			}
+
+			List<DDMFormField> ddmFormFields = new ArrayList<>(
+				ddmFormFieldsMap.values());
+
+			ddmForm.setDDMFormFields(ddmFormFields);
+		}
 
 		DDMFormSerializerSerializeResponse ddmFormSerializerSerializeResponse =
 			_ddmFormSerializer.serialize(
@@ -344,462 +398,21 @@ public class UpgradeDDMStructure extends UpgradeProcess {
 		return ddmFormSerializerSerializeResponse.getContent();
 	}
 
-	private void _upgradeDocumentLibraryField(JSONObject jsonObject) {
-		jsonObject.put(
-			"dataType", "string"
-		).put(
-			"type", "document_library"
-		).put(
-			"visibilityExpression", StringPool.BLANK
-		);
-	}
+	private static final int _DDM_FORM_FIELD_NAME_RANDOM_NUMBERS_LENGTH = 8;
 
-	private JSONArray _upgradeFields(long companyId, JSONArray fieldsJSONArray)
-		throws Exception {
+	private static final int _DDM_FORM_FIELD_TUPLE_COLUMN_SIZE = 2;
 
-		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+	private static final int _DDM_FORM_FIELD_TUPLE_LABEL = 1;
 
-		if (fieldsJSONArray != null) {
-			for (int i = 0; i < fieldsJSONArray.length(); i++) {
-				JSONObject jsonObject = fieldsJSONArray.getJSONObject(i);
+	private static final int _DDM_FORM_FIELD_TUPLE_NAME = 0;
 
-				String type = jsonObject.getString("type");
-
-				if (StringUtil.equals(type, "ddm-color")) {
-					_upgradeColorField(jsonObject);
-				}
-				else if (StringUtil.equals(type, "ddm-date")) {
-					_upgradeDateField(jsonObject);
-				}
-				else if (type.startsWith("ddm-decimal")) {
-					_upgradeDecimalField(jsonObject);
-				}
-				else if (type.startsWith("ddm-documentlibrary")) {
-					_upgradeDocumentLibraryField(jsonObject);
-				}
-				else if (type.startsWith("ddm-geolocation")) {
-					_upgradeGeolocation(jsonObject);
-				}
-				else if (type.startsWith("ddm-image")) {
-					_upgradeImageField(jsonObject);
-				}
-				else if (type.startsWith("ddm-integer")) {
-					_upgradeIntegerField(jsonObject);
-				}
-				else if (type.startsWith("ddm-journal-article")) {
-					_upgradeJournalArticleField(jsonObject);
-				}
-				else if (type.startsWith("ddm-link-to-page")) {
-					_upgradeLinkToPageField(jsonObject);
-				}
-				else if (type.startsWith("ddm-number")) {
-					_upgradeNumberField(jsonObject);
-				}
-				else if (StringUtil.equals(type, "ddm-separator")) {
-					_upgradeSeparatorField(jsonObject);
-				}
-				else if (type.startsWith("ddm-text-html")) {
-					_upgradeHTMLField(jsonObject);
-				}
-				else if (type.startsWith("ddm-")) {
-					jsonObject.put(
-						"dataType", "string"
-					).put(
-						"type", type.substring(4)
-					);
-				}
-				else if (StringUtil.equals(type, "select")) {
-					_upgradeSelectField(jsonObject);
-				}
-				else if (StringUtil.equals(type, "text")) {
-					_upgradeTextField(companyId, jsonObject);
-				}
-				else if (StringUtil.equals(type, "textarea")) {
-					_upgradeTextArea(companyId, jsonObject);
-				}
-
-				if (!StringUtil.equals(type, "separator") &&
-					Validator.isNull(jsonObject.getString("indexType"))) {
-
-					jsonObject.put("indexType", "none");
-				}
-
-				if (jsonObject.has("nestedFields")) {
-					jsonObject.put(
-						"nestedFields",
-						_upgradeFields(
-							companyId,
-							jsonObject.getJSONArray("nestedFields")));
-				}
-
-				jsonArray.put(jsonObject);
-			}
-		}
-
-		return jsonArray;
-	}
-
-	private void _upgradeGeolocation(JSONObject jsonObject) {
-		jsonObject.put(
-			"dataType", "string"
-		).put(
-			"type", "geolocation"
-		);
-	}
-
-	private void _upgradeHTMLField(JSONObject jsonObject) {
-		jsonObject.put(
-			"dataType", "string"
-		).put(
-			"type", "rich_text"
-		).put(
-			"visibilityExpression", StringPool.BLANK
-		);
-	}
-
-	private void _upgradeImageField(JSONObject jsonObject) {
-		jsonObject.put(
-			"dataType", "string"
-		).put(
-			"type", "image"
-		).put(
-			"visibilityExpression", StringPool.BLANK
-		);
-	}
-
-	private void _upgradeIntegerField(JSONObject jsonObject) {
-		jsonObject.put(
-			"type", "numeric"
-		).put(
-			"visibilityExpression", StringPool.BLANK
-		);
-	}
-
-	private void _upgradeJournalArticleField(JSONObject jsonObject) {
-		jsonObject.put(
-			"dataType", "string"
-		).put(
-			"type", "journal_article"
-		);
-	}
-
-	private void _upgradeLinkToPageField(JSONObject jsonObject) {
-		jsonObject.put(
-			"dataType", "string"
-		).put(
-			"type", "link_to_layout"
-		);
-	}
-
-	private void _upgradeNumberField(JSONObject jsonObject) {
-		jsonObject.put(
-			"dataType", "double"
-		).put(
-			"type", "numeric"
-		).put(
-			"visibilityExpression", StringPool.BLANK
-		);
-	}
-
-	private String _upgradeParentStructureDefinition(
-			String definition, Long parentStructureId, Long structureId)
-		throws Exception {
-
-		StringBundler sb1 = new StringBundler(8);
-
-		sb1.append("select DDMStructureLayout.structureLayoutId  from ");
-		sb1.append("DDMStructureLayout inner join DDMStructureVersion on ");
-		sb1.append("DDMStructureVersion.structureVersionId = ");
-		sb1.append("DDMStructureLayout.structureVersionId inner join ");
-		sb1.append("DDMStructure on DDMStructure.structureId = ");
-		sb1.append("DDMStructureVersion.structureId and DDMStructure.version ");
-		sb1.append("= DDMStructureVersion.version where ");
-		sb1.append("DDMStructure.structureId = ?");
-
-		try (PreparedStatement ps1 = connection.prepareStatement(
-				sb1.toString())) {
-
-			ps1.setLong(1, parentStructureId);
-
-			try (ResultSet rs = ps1.executeQuery()) {
-				if (rs.next()) {
-					return _upgradeDefinition(
-						definition, parentStructureId,
-						rs.getLong("structureLayoutId"), structureId);
-				}
-			}
-		}
-
-		return definition;
-	}
-
-	private void _upgradeSelectField(JSONObject jsonObject) {
-		jsonObject.put(
-			"dataSourceType", "[manual]"
-		).put(
-			"ddmDataProviderInstanceId", "[]"
-		).put(
-			"ddmDataProviderInstanceOutput", "[]"
-		).put(
-			"fieldNamespace", StringPool.BLANK
-		).put(
-			"visibilityExpression", StringPool.BLANK
-		);
-	}
-
-	private void _upgradeSeparatorField(JSONObject jsonObject) {
-		jsonObject.put(
-			"dataType", StringPool.BLANK
-		).put(
-			"type", "separator"
-		);
-	}
-
-	private void _upgradeStructureDefinition() throws Exception {
-		try (PreparedStatement ps1 = connection.prepareStatement(
-				"select * from DDMStructure where classNameId = ? or " +
-					"classNameId = ? ");
-			PreparedStatement ps2 =
-				AutoBatchPreparedStatementUtil.concurrentAutoBatch(
-					connection,
-					"update DDMStructure set definition = ? where " +
-						"structureId = ?")) {
-
-			ps1.setLong(
-				1,
-				PortalUtil.getClassNameId(
-					"com.liferay.document.library.kernel.model." +
-						"DLFileEntryMetadata"));
-			ps1.setLong(
-				2,
-				PortalUtil.getClassNameId(
-					"com.liferay.journal.model.JournalArticle"));
-
-			try (ResultSet rs = ps1.executeQuery()) {
-				while (rs.next()) {
-					String definition = rs.getString("definition");
-
-					if (Validator.isNotNull(rs.getLong("parentStructureId"))) {
-						definition = _upgradeParentStructureDefinition(
-							definition, rs.getLong("parentStructureId"),
-							rs.getLong("structureId"));
-					}
-
-					ps2.setString(
-						1,
-						_upgradeDefinition(
-							rs.getLong("companyId"), definition));
-
-					ps2.setLong(2, rs.getLong("structureId"));
-					ps2.addBatch();
-				}
-
-				ps2.executeBatch();
-			}
-		}
-	}
-
-	private void _upgradeStructureLayoutDefinition() throws Exception {
-		StringBundler sb1 = new StringBundler(13);
-
-		sb1.append("select DDMStructure.structureId, ");
-		sb1.append("DDMStructure.parentStructureId, DDMStructure.classNameId ");
-		sb1.append(", DDMStructure.structureKey, ");
-		sb1.append("DDMStructureLayout.structureLayoutId, ");
-		sb1.append("DDMStructureLayout.definition from DDMStructureLayout ");
-		sb1.append("inner join DDMStructureVersion on ");
-		sb1.append("DDMStructureVersion.structureVersionId = ");
-		sb1.append("DDMStructureLayout.structureVersionId inner join ");
-		sb1.append("DDMStructure on DDMStructure.structureId = ");
-		sb1.append("DDMStructureVersion.structureId and DDMStructure.version ");
-		sb1.append("= DDMStructureVersion.version where ");
-		sb1.append("DDMStructure.classNameId = ? or DDMStructure.classNameId ");
-		sb1.append("= ?");
-
-		try (PreparedStatement ps1 = connection.prepareStatement(
-				sb1.toString());
-			PreparedStatement ps2 =
-				AutoBatchPreparedStatementUtil.concurrentAutoBatch(
-					connection,
-					"update DDMStructureLayout set definition = ?, " +
-						"classNameId = ?, structureLayoutKey = ? where " +
-							"structureLayoutId = ?")) {
-
-			ps1.setLong(
-				1,
-				PortalUtil.getClassNameId(
-					"com.liferay.document.library.kernel.model." +
-						"DLFileEntryMetadata"));
-			ps1.setLong(
-				2,
-				PortalUtil.getClassNameId(
-					"com.liferay.journal.model.JournalArticle"));
-
-			try (ResultSet rs = ps1.executeQuery()) {
-				while (rs.next()) {
-					String definition = rs.getString("definition");
-
-					if (Validator.isNotNull(rs.getLong("parentStructureId"))) {
-						definition = _upgradeDDMFormLayoutDefinition(
-							definition, rs.getLong("structureId"));
-					}
-
-					ps2.setString(
-						1, _upgradeDDMFormLayoutDefinition(definition));
-					ps2.setLong(2, rs.getLong("classNameId"));
-					ps2.setString(3, rs.getString("structureKey"));
-					ps2.setLong(4, rs.getLong("structureLayoutId"));
-
-					ps2.addBatch();
-				}
-
-				ps2.executeBatch();
-			}
-		}
-	}
-
-	private void _upgradeStructureVersionDefinition() throws Exception {
-		StringBundler sb1 = new StringBundler(6);
-
-		sb1.append("select DDMStructure.structureKey, DDMStructureVersion.* ");
-		sb1.append("from DDMStructureVersion inner join DDMStructure on ");
-		sb1.append("DDMStructure.structureId = ");
-		sb1.append("DDMStructureVersion.structureId where ");
-		sb1.append("DDMStructure.classNameId = ? or DDMStructure.classNameId ");
-		sb1.append("= ?");
-
-		try (PreparedStatement ps1 = connection.prepareStatement(
-				sb1.toString());
-			PreparedStatement ps2 =
-				AutoBatchPreparedStatementUtil.concurrentAutoBatch(
-					connection,
-					"update DDMStructureVersion set definition = ? where " +
-						"structureVersionId = ?")) {
-
-			ps1.setLong(
-				1,
-				PortalUtil.getClassNameId(
-					"com.liferay.document.library.kernel.model." +
-						"DLFileEntryMetadata"));
-			ps1.setLong(
-				2,
-				PortalUtil.getClassNameId(
-					"com.liferay.journal.model.JournalArticle"));
-
-			try (ResultSet rs = ps1.executeQuery()) {
-				while (rs.next()) {
-					String definition = rs.getString("definition");
-
-					if (Validator.isNotNull(rs.getLong("parentStructureId"))) {
-						definition = _upgradeParentStructureDefinition(
-							definition, rs.getLong("parentStructureId"),
-							rs.getLong("structureId"));
-					}
-
-					ps2.setString(
-						1,
-						_upgradeDefinition(
-							rs.getLong("companyId"), definition));
-
-					ps2.setLong(2, rs.getLong("structureVersionId"));
-					ps2.addBatch();
-				}
-
-				ps2.executeBatch();
-			}
-		}
-	}
-
-	private void _upgradeTextArea(long companyId, JSONObject jsonObject)
-		throws Exception {
-
-		jsonObject.put(
-			"autocomplete", false
-		).put(
-			"dataSourceType", "manual"
-		).put(
-			"ddmDataProviderInstanceId", "[]"
-		).put(
-			"ddmDataProviderInstanceOutput", "[]"
-		).put(
-			"displayStyle", "multiline"
-		).put(
-			"fieldNamespace", StringPool.BLANK
-		).put(
-			"options",
-			JSONUtil.put(
-				JSONUtil.put(
-					"label",
-					JSONUtil.put(
-						UpgradeProcessUtil.getDefaultLanguageId(companyId),
-						GetterUtil.getString("Option"))
-				).put(
-					"value", "Option"
-				))
-		).put(
-			"placeholder",
-			JSONUtil.put(
-				UpgradeProcessUtil.getDefaultLanguageId(companyId),
-				StringPool.BLANK)
-		).put(
-			"tooltip",
-			JSONUtil.put(
-				UpgradeProcessUtil.getDefaultLanguageId(companyId),
-				StringPool.BLANK)
-		).put(
-			"type", "text"
-		).put(
-			"visibilityExpression", StringPool.BLANK
-		);
-	}
-
-	private void _upgradeTextField(long companyId, JSONObject jsonObject)
-		throws Exception {
-
-		jsonObject.put(
-			"autocomplete", false
-		).put(
-			"dataSourceType", "manual"
-		).put(
-			"ddmDataProviderInstanceId", "[]"
-		).put(
-			"ddmDataProviderInstanceOutput", "[]"
-		).put(
-			"displayStyle", "singleline"
-		).put(
-			"fieldNamespace", StringPool.BLANK
-		).put(
-			"options",
-			JSONUtil.put(
-				JSONUtil.put(
-					"label",
-					JSONUtil.put(
-						UpgradeProcessUtil.getDefaultLanguageId(companyId),
-						GetterUtil.getString("Option"))
-				).put(
-					"value", "Option"
-				))
-		).put(
-			"placeholder",
-			JSONUtil.put(
-				UpgradeProcessUtil.getDefaultLanguageId(companyId),
-				StringPool.BLANK)
-		).put(
-			"tooltip",
-			JSONUtil.put(
-				UpgradeProcessUtil.getDefaultLanguageId(companyId),
-				StringPool.BLANK)
-		).put(
-			"type", "text"
-		).put(
-			"visibilityExpression", StringPool.BLANK
-		);
-	}
+	private static final int _DDM_FORM_FIELD_TUPLE_NESTED_FIELD_NAMES = 3;
 
 	private final DDMFormDeserializer _ddmFormDeserializer;
 	private final DDMFormLayoutDeserializer _ddmFormLayoutDeserializer;
 	private final DDMFormLayoutSerializer _ddmFormLayoutSerializer;
 	private final DDMFormSerializer _ddmFormSerializer;
-	private final Map<Long, DDMFormField> _fieldSetMap = new HashMap<>();
+	private final JSONFactory _jsonFactory;
+	private final Map<Long, List<Tuple>> _nestedFieldsMap = new HashMap<>();
 
 }

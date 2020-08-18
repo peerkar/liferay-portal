@@ -280,14 +280,14 @@ public class LiferaySourceOrSink implements OASSource, SourceOrSink {
 					"error.validation.connection.testconnection.jersey",
 					processingException.getLocalizedMessage()));
 		}
-		catch (Throwable t) {
-			_logger.error(t.getMessage(), t);
+		catch (Throwable throwable) {
+			_logger.error(throwable.getMessage(), throwable);
 
 			return new ValidationResult(
 				ValidationResult.Result.ERROR,
 				i18nMessages.getMessage(
 					"error.validation.connection.testconnection.general",
-					t.getLocalizedMessage()));
+					throwable.getLocalizedMessage()));
 		}
 	}
 

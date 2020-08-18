@@ -26,12 +26,12 @@ public class EmailAddressException extends PortalException {
 		super(msg);
 	}
 
-	public EmailAddressException(String msg, Throwable cause) {
-		super(msg, cause);
+	public EmailAddressException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public EmailAddressException(Throwable cause) {
-		super(cause);
+	public EmailAddressException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

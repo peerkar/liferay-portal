@@ -15,10 +15,11 @@
 package com.liferay.analytics.reports.web.internal.portlet.test;
 
 import com.liferay.analytics.reports.web.internal.portlet.action.test.util.MockHttpUtil;
+import com.liferay.analytics.reports.web.internal.portlet.action.test.util.MockInfoDisplayObjectProviderUtil;
 import com.liferay.analytics.reports.web.internal.portlet.action.test.util.MockThemeDisplayUtil;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.asset.display.page.constants.AssetDisplayPageWebKeys;
-import com.liferay.info.display.contributor.InfoDisplayObjectProvider;
+import com.liferay.info.display.contributor.InfoDisplayContributorTracker;
 import com.liferay.layout.test.util.LayoutTestUtil;
 import com.liferay.petra.function.UnsafeSupplier;
 import com.liferay.petra.string.StringPool;
@@ -42,6 +43,7 @@ import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HashMapDictionary;
 import com.liferay.portal.kernel.util.Http;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PrefsProps;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
@@ -50,10 +52,10 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.util.HttpImpl;
 import com.liferay.portal.util.PrefsPropsImpl;
 
 import java.util.Dictionary;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -87,7 +89,7 @@ public class AnalyticsReportsPortletTest {
 	}
 
 	@Test
-	public void testGetData() throws Exception {
+	public void testGetPropsTrafficSources() throws Exception {
 		PrefsProps prefsProps = PrefsPropsUtil.getPrefsProps();
 
 		PrefsPropsWrapper prefsPropsWrapper = _getPrefsPropsWrapper(prefsProps);
@@ -143,10 +145,10 @@ public class AnalyticsReportsPortletTest {
 				mockLiferayPortletRenderRequest,
 				_getMockLiferayPortletRenderResponse());
 
-			Map<String, Object> data = _getProps(
+			Map<String, Object> props = _getProps(
 				mockLiferayPortletRenderRequest);
 
-			JSONArray jsonArray = (JSONArray)data.get("trafficSources");
+			JSONArray jsonArray = (JSONArray)props.get("trafficSources");
 
 			Assert.assertEquals(2, jsonArray.length());
 
@@ -197,56 +199,35 @@ public class AnalyticsReportsPortletTest {
 		}
 	}
 
-	private InfoDisplayObjectProvider<Object> _getInfoDisplayObjectProvider() {
-		return new InfoDisplayObjectProvider() {
+	@Test
+	public void testGetPropsViewURLs() throws Exception {
+		MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
+			_getMockLiferayPortletRenderRequest();
 
-			@Override
-			public long getClassNameId() {
-				return _portal.getClassNameId(
-					"com.liferay.journal.model.JournalArticle");
-			}
+		_portlet.render(
+			mockLiferayPortletRenderRequest,
+			_getMockLiferayPortletRenderResponse());
 
-			@Override
-			public long getClassPK() {
-				return 0;
-			}
+		Map<String, Object> props = _getProps(mockLiferayPortletRenderRequest);
 
-			@Override
-			public long getClassTypeId() {
-				return 0;
-			}
+		JSONArray jsonArray = (JSONArray)props.get("viewURLs");
 
-			@Override
-			public String getDescription(Locale locale) {
-				return null;
-			}
+		Assert.assertEquals(String.valueOf(jsonArray), jsonArray.length(), 1);
 
-			@Override
-			public Object getDisplayObject() {
-				return null;
-			}
+		JSONObject jsonObject = jsonArray.getJSONObject(0);
 
-			@Override
-			public long getGroupId() {
-				return 0;
-			}
+		Assert.assertEquals(Boolean.TRUE, jsonObject.getBoolean("default"));
 
-			@Override
-			public String getKeywords(Locale locale) {
-				return null;
-			}
+		Assert.assertEquals(
+			LocaleUtil.toBCP47LanguageId(LocaleUtil.getDefault()),
+			jsonObject.getString("languageId"));
 
-			@Override
-			public String getTitle(Locale locale) {
-				return null;
-			}
+		Http http = new HttpImpl();
 
-			@Override
-			public String getURLTitle(Locale locale) {
-				return null;
-			}
-
-		};
+		Assert.assertEquals(
+			LocaleUtil.toLanguageId(LocaleUtil.getDefault()),
+			http.getParameter(
+				jsonObject.getString("viewURL"), "param_languageId"));
 	}
 
 	private MockLiferayPortletRenderRequest
@@ -291,8 +272,8 @@ public class AnalyticsReportsPortletTest {
 
 		mockLiferayPortletRenderRequest.setAttribute(
 			AssetDisplayPageWebKeys.INFO_DISPLAY_OBJECT_PROVIDER,
-			_getInfoDisplayObjectProvider());
-
+			MockInfoDisplayObjectProviderUtil.getInfoDisplayObjectProvider(
+				_infoDisplayContributorTracker, _portal));
 		mockLiferayPortletRenderRequest.setAttribute(
 			WebKeys.THEME_DISPLAY,
 			MockThemeDisplayUtil.getThemeDisplay(
@@ -358,6 +339,9 @@ public class AnalyticsReportsPortletTest {
 
 	@Inject
 	private Http _http;
+
+	@Inject
+	private InfoDisplayContributorTracker _infoDisplayContributorTracker;
 
 	private Layout _layout;
 

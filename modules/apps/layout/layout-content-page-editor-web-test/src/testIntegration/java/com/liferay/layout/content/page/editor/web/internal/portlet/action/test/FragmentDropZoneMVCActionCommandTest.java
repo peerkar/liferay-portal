@@ -23,9 +23,9 @@ import com.liferay.fragment.service.FragmentEntryLinkLocalService;
 import com.liferay.fragment.service.FragmentEntryLocalService;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
 import com.liferay.layout.util.constants.LayoutDataItemTypeConstants;
-import com.liferay.layout.util.structure.ContainerLayoutStructureItem;
+import com.liferay.layout.util.structure.ContainerStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.FragmentDropZoneLayoutStructureItem;
-import com.liferay.layout.util.structure.FragmentLayoutStructureItem;
+import com.liferay.layout.util.structure.FragmentStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.petra.string.StringPool;
@@ -340,7 +340,7 @@ public class FragmentDropZoneMVCActionCommandTest {
 
 			Assert.assertTrue(
 				fragmentLayoutStructureItem instanceof
-					FragmentLayoutStructureItem);
+					FragmentStyledLayoutStructureItem);
 
 			List<String> fragmentChildrenItemIds =
 				fragmentLayoutStructureItem.getChildrenItemIds();
@@ -362,7 +362,7 @@ public class FragmentDropZoneMVCActionCommandTest {
 
 			Assert.assertTrue(
 				containerLayoutStructureItem instanceof
-					ContainerLayoutStructureItem);
+					ContainerStyledLayoutStructureItem);
 		}
 	}
 

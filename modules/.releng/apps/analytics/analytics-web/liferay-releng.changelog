@@ -27,3 +27,8 @@ afb86c3d5e9d04c9596873e5a22579f2657fb24a^..8dd13f7491ecef1cfaabdac2c5e711e750c4a
 # Bundle Version 3.0.7
 #
 8dd13f7491ecef1cfaabdac2c5e711e750c4aa24^..860b255edfc0c037af2c7f2e050d3d777089b5db=LRAC-6111
+
+#
+# Bundle Version 3.0.9
+#
+860b255edfc0c037af2c7f2e050d3d777089b5db^..c2e5aef73f30c93d053bd12e5176abe24ec08b0e=LPS-105380 LRAC-5773

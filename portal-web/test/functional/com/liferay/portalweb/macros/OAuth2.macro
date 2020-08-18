@@ -28,7 +28,7 @@ definition {
 			configurationName = "Bundle PrefixHandlerFactory",
 			configurationScope = "System Scope");
 
-		Click(locator1 = "Button#ADD");
+		Button.clickAdd();
 
 		FormFields.editTextMultiline(
 			fieldName = "osgi.jaxrs.name",
@@ -228,7 +228,7 @@ definition {
 
 		Button.click(button = "Authorize");
 
-		Pause(locator1 = "5000");
+		Pause(locator1 = "3000");
 
 		var currentURL = selenium.getCurrentUrl();
 
@@ -335,7 +335,7 @@ definition {
 
 			SelectFrame(locator1 = "IFrame#MODAL_BODY");
 
-			Pause(locator1 = "3000");
+			Pause(locator1 = "2000");
 
 			Click(
 				key_clientCredentialsUser = "${clientCredentialsUser}",

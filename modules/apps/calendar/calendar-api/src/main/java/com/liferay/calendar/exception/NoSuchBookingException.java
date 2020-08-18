@@ -28,12 +28,12 @@ public class NoSuchBookingException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchBookingException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchBookingException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchBookingException(Throwable cause) {
-		super(cause);
+	public NoSuchBookingException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

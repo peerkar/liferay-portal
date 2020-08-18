@@ -26,12 +26,12 @@ public class NoSuchCompanyException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchCompanyException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchCompanyException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchCompanyException(Throwable cause) {
-		super(cause);
+	public NoSuchCompanyException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

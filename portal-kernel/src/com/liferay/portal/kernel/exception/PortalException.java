@@ -36,12 +36,12 @@ public class PortalException extends NestableException {
 		super(msg);
 	}
 
-	public PortalException(String msg, Throwable cause) {
-		super(msg, cause);
+	public PortalException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public PortalException(Throwable cause) {
-		super(cause);
+	public PortalException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

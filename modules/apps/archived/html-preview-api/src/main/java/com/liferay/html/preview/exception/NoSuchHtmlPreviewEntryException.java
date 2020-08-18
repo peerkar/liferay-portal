@@ -28,12 +28,12 @@ public class NoSuchHtmlPreviewEntryException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchHtmlPreviewEntryException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchHtmlPreviewEntryException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchHtmlPreviewEntryException(Throwable cause) {
-		super(cause);
+	public NoSuchHtmlPreviewEntryException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

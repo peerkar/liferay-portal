@@ -28,12 +28,12 @@ public class NoSuchNotificationException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchNotificationException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchNotificationException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchNotificationException(Throwable cause) {
-		super(cause);
+	public NoSuchNotificationException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -27,7 +27,7 @@
 						nav_item_href_link = ""
 					/>
 
-					<#if navItem.isSelected()>
+					<#if navItem.isChildSelected() || navItem.isSelected()>
 						<#assign nav_item_css_class = "active" />
 					</#if>
 

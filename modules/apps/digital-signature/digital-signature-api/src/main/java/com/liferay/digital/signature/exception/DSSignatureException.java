@@ -23,8 +23,8 @@ public class DSSignatureException extends Exception {
 		super(message);
 	}
 
-	public DSSignatureException(String message, Throwable cause) {
-		super(message, cause);
+	public DSSignatureException(String message, Throwable throwable) {
+		super(message, throwable);
 	}
 
 }

@@ -26,12 +26,12 @@ public class PendingBackgroundTaskException extends PortalException {
 		super(msg);
 	}
 
-	public PendingBackgroundTaskException(String msg, Throwable cause) {
-		super(msg, cause);
+	public PendingBackgroundTaskException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public PendingBackgroundTaskException(Throwable cause) {
-		super(cause);
+	public PendingBackgroundTaskException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

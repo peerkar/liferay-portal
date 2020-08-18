@@ -26,12 +26,12 @@ public class NoSuchTeamException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchTeamException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchTeamException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchTeamException(Throwable cause) {
-		super(cause);
+	public NoSuchTeamException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

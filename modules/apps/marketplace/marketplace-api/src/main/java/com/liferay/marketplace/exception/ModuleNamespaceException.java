@@ -28,12 +28,12 @@ public class ModuleNamespaceException extends PortalException {
 		super(msg);
 	}
 
-	public ModuleNamespaceException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ModuleNamespaceException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ModuleNamespaceException(Throwable cause) {
-		super(cause);
+	public ModuleNamespaceException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

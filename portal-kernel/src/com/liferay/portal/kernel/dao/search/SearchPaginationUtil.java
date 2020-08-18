@@ -36,13 +36,13 @@ public class SearchPaginationUtil {
 			return new int[] {0, 0};
 		}
 
-		int[] startAndEnd = {start, end};
-
 		int delta = end - start;
 
 		if (delta < 0) {
 			return new int[] {0, 0};
 		}
+
+		int[] startAndEnd = {start, end};
 
 		while ((start > 0) && (start >= total)) {
 			int cur = start / delta;

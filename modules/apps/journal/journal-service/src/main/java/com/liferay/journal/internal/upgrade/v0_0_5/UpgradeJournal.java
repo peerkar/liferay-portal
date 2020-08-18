@@ -584,11 +584,13 @@ public class UpgradeJournal extends UpgradeProcess {
 
 			while (rs.next()) {
 				long id = rs.getLong("id_");
-				long groupId = rs.getLong("groupId");
 				String content = rs.getString("content");
+
 				String ddmStructureKey = rs.getString("DDMStructureKey");
 
 				if (Validator.isNull(ddmStructureKey)) {
+					long groupId = rs.getLong("groupId");
+
 					content = convertStaticContentToDynamic(groupId, content);
 
 					updateJournalArticle(id, name, name, content);

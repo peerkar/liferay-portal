@@ -104,6 +104,17 @@
 							</c:choose>
 						</h5>
 
+						<h6 class="text-default">
+							<liferay-ui:message key="location" />:
+							<span class="text-secondary">
+								<clay:icon
+									symbol="<%= assetBrowserDisplayContext.getGroupCssIcon(assetRenderer.getGroupId()) %>"
+								/>
+
+								<small><%= assetBrowserDisplayContext.getGroupLabel(assetRenderer.getGroupId(), locale) %></small>
+							</span>
+						</h6>
+
 						<c:if test="<%= Validator.isNull(assetBrowserDisplayContext.getTypeSelection()) %>">
 							<h6 class="text-muted">
 								<%= HtmlUtil.escape(assetRendererFactory.getTypeName(locale, assetBrowserDisplayContext.getSubtypeSelectionId())) %>
@@ -132,7 +143,6 @@
 				<c:when test='<%= Objects.equals(assetBrowserDisplayContext.getDisplayStyle(), "list") %>'>
 					<liferay-ui:search-container-column-text
 						name="title"
-						truncate="<%= true %>"
 					>
 						<c:choose>
 							<c:when test="<%= (assetEntry.getEntryId() != assetBrowserDisplayContext.getRefererAssetEntryId()) && !assetBrowserDisplayContext.isMultipleSelection() %>">
@@ -149,16 +159,26 @@
 					<c:if test="<%= Validator.isNull(assetBrowserDisplayContext.getTypeSelection()) %>">
 						<liferay-ui:search-container-column-text
 							name="type"
-							truncate="<%= true %>"
 							value="<%= HtmlUtil.escape(assetRendererFactory.getTypeName(locale, assetBrowserDisplayContext.getSubtypeSelectionId())) %>"
 						/>
 					</c:if>
 
 					<liferay-ui:search-container-column-text
 						name="description"
-						truncate="<%= true %>"
 						value="<%= HtmlUtil.escape(assetRenderer.getSummary(renderRequest, renderResponse)) %>"
 					/>
+
+					<liferay-ui:search-container-column-text
+						name="location"
+					>
+						<span class="text-secondary">
+							<clay:icon
+								symbol="<%= assetBrowserDisplayContext.getGroupCssIcon(assetRenderer.getGroupId()) %>"
+							/>
+
+							<small><%= assetBrowserDisplayContext.getGroupLabel(assetRenderer.getGroupId(), locale) %></small>
+						</span>
+					</liferay-ui:search-container-column-text>
 
 					<liferay-ui:search-container-column-text
 						name="author"
@@ -176,11 +196,6 @@
 							status="<%= assetRenderer.getStatus() %>"
 						/>
 					</c:if>
-
-					<liferay-ui:search-container-column-text
-						name="<%= assetBrowserDisplayContext.getGroupTypeTitle() %>"
-						value="<%= HtmlUtil.escape(group.getDescriptiveName(locale)) %>"
-					/>
 				</c:when>
 			</c:choose>
 		</liferay-ui:search-container-row>

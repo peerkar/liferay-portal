@@ -26,12 +26,12 @@ public class NoSuchUserGroupException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchUserGroupException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchUserGroupException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchUserGroupException(Throwable cause) {
-		super(cause);
+	public NoSuchUserGroupException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -28,12 +28,12 @@ public class EntryFullNameException extends PortalException {
 		super(msg);
 	}
 
-	public EntryFullNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public EntryFullNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public EntryFullNameException(Throwable cause) {
-		super(cause);
+	public EntryFullNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

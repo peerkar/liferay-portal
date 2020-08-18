@@ -28,12 +28,12 @@ public class TemplateNameException extends PortalException {
 		super(msg);
 	}
 
-	public TemplateNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public TemplateNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public TemplateNameException(Throwable cause) {
-		super(cause);
+	public TemplateNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

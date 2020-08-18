@@ -131,12 +131,12 @@ else {
 <clay:sheet-section>
 	<h3 class="sheet-subtitle"><liferay-ui:message key="password" /></h3>
 
-	<!-- Begin LPS-38289 and LPS-55993 and LPS-61876 -->
+	<!-- Begin LPS-38289, LPS-55993, and LPS-61876 -->
 
 	<input class="hide" type="password" />
 	<input class="hide" type="password" />
 
-	<!-- End LPS-38289 and LPS-55993 and LPS-61876 -->
+	<!-- End LPS-38289, LPS-55993, and LPS-61876 -->
 
 	<c:if test="<%= portletName.equals(myAccountPortletId) %>">
 		<aui:input autocomplete="off" label="current-password" name="password0" required="<%= true %>" size="30" type="password" />

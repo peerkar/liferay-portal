@@ -265,12 +265,12 @@ public class KaleoFormsAdminPortlet extends MVCPortlet {
 
 				TransactionInvokerUtil.invoke(_transactionConfig, callable);
 			}
-			catch (Throwable t) {
-				if (t instanceof PortalException) {
-					throw (PortalException)t;
+			catch (Throwable throwable) {
+				if (throwable instanceof PortalException) {
+					throw (PortalException)throwable;
 				}
 
-				throw new SystemException(t);
+				throw new SystemException(throwable);
 			}
 		}
 	}
@@ -741,19 +741,19 @@ public class KaleoFormsAdminPortlet extends MVCPortlet {
 	}
 
 	@Override
-	protected boolean isSessionErrorException(Throwable cause) {
-		if (cause instanceof DuplicateKaleoDefinitionNameException ||
-			cause instanceof KaleoDefinitionContentException ||
-			cause instanceof KaleoDefinitionNameException ||
-			cause instanceof KaleoProcessDDMTemplateIdException ||
-			cause instanceof NoSuchDefinitionException ||
-			cause instanceof NoSuchDefinitionVersionException ||
-			cause instanceof RecordSetDDMStructureIdException ||
-			cause instanceof RecordSetNameException ||
-			cause instanceof RequiredStructureException ||
-			cause instanceof RequiredWorkflowDefinitionException ||
-			cause instanceof StructureDefinitionException ||
-			cause instanceof WorkflowException) {
+	protected boolean isSessionErrorException(Throwable throwable) {
+		if (throwable instanceof DuplicateKaleoDefinitionNameException ||
+			throwable instanceof KaleoDefinitionContentException ||
+			throwable instanceof KaleoDefinitionNameException ||
+			throwable instanceof KaleoProcessDDMTemplateIdException ||
+			throwable instanceof NoSuchDefinitionException ||
+			throwable instanceof NoSuchDefinitionVersionException ||
+			throwable instanceof RecordSetDDMStructureIdException ||
+			throwable instanceof RecordSetNameException ||
+			throwable instanceof RequiredStructureException ||
+			throwable instanceof RequiredWorkflowDefinitionException ||
+			throwable instanceof StructureDefinitionException ||
+			throwable instanceof WorkflowException) {
 
 			return true;
 		}

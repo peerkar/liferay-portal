@@ -26,19 +26,19 @@ public class AntException extends Exception {
 		super(message);
 	}
 
-	public AntException(String message, Throwable cause) {
-		super(message, cause);
+	public AntException(String message, Throwable throwable) {
+		super(message, throwable);
 	}
 
 	public AntException(
-		String message, Throwable cause, boolean enableSuppression,
+		String message, Throwable throwable, boolean enableSuppression,
 		boolean writableStackTrace) {
 
-		super(message, cause, enableSuppression, writableStackTrace);
+		super(message, throwable, enableSuppression, writableStackTrace);
 	}
 
-	public AntException(Throwable cause) {
-		super(cause);
+	public AntException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

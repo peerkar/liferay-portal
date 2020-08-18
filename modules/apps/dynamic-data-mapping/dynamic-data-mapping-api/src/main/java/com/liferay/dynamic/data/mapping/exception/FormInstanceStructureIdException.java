@@ -28,12 +28,12 @@ public class FormInstanceStructureIdException extends PortalException {
 		super(msg);
 	}
 
-	public FormInstanceStructureIdException(String msg, Throwable cause) {
-		super(msg, cause);
+	public FormInstanceStructureIdException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public FormInstanceStructureIdException(Throwable cause) {
-		super(cause);
+	public FormInstanceStructureIdException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

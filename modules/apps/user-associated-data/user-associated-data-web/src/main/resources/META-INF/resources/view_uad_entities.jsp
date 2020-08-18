@@ -84,12 +84,7 @@ long[] groupIds = viewUADEntitiesDisplay.getGroupIds();
 		</div>
 
 		<liferay-ui:error key="deleteUADEntityException">
-
-			<%
-			String message = (String)errorException;
-			%>
-
-			<liferay-ui:message key="<%= message %>" localizeKey="<%= false %>" />
+			<liferay-ui:message key="<%= (String)errorException %>" localizeKey="<%= false %>" />
 		</liferay-ui:error>
 
 		<c:if test="<%= !Objects.equals(viewUADEntitiesDisplay.getApplicationKey(), UADConstants.ALL_APPLICATIONS) %>">

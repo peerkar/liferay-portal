@@ -38,14 +38,14 @@ const getRows = (rows, nestedFields) => {
 
 	return normalizedRows.map((row) => ({
 		...row,
-		columns: row.columns.map((column) => ({
-			...column,
-			fields: column.fields.map((fieldName) => {
-				return nestedFields.find(
-					(nestedField) => nestedField.fieldName === fieldName
-				);
-			}),
-		})),
+		columns: row.columns.map((column) => {
+			return {
+				...column,
+				fields: nestedFields.filter((nestedField) =>
+					column.fields.includes(nestedField.fieldName)
+				),
+			};
+		}),
 	}));
 };
 

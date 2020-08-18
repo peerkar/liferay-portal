@@ -37,6 +37,30 @@ public class TranslationEntryServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to <code>com.liferay.translation.service.impl.TranslationEntryServiceImpl</code> and rerun ServiceBuilder to regenerate this class.
 	 */
+	public static com.liferay.translation.model.TranslationEntry
+			addOrUpdateTranslationEntry(
+				long groupId,
+				com.liferay.info.item.InfoItemReference infoItemReference,
+				String content, String contentType,
+				com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().addOrUpdateTranslationEntry(
+			groupId, infoItemReference, content, contentType, serviceContext);
+	}
+
+	public static com.liferay.translation.model.TranslationEntry
+			addOrUpdateTranslationEntry(
+				long groupId, String languageId,
+				com.liferay.info.item.InfoItemReference infoItemReference,
+				com.liferay.info.item.InfoItemFieldValues infoItemFieldValues,
+				com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().addOrUpdateTranslationEntry(
+			groupId, languageId, infoItemReference, infoItemFieldValues,
+			serviceContext);
+	}
 
 	/**
 	 * Returns the OSGi service identifier.

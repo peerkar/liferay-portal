@@ -26,12 +26,12 @@ public class RoleAssignmentException extends PortalException {
 		super(msg);
 	}
 
-	public RoleAssignmentException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RoleAssignmentException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public RoleAssignmentException(Throwable cause) {
-		super(cause);
+	public RoleAssignmentException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

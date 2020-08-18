@@ -1,6 +1,6 @@
 Bundle-Name: Liferay HTML Preview Service
 Bundle-SymbolicName: com.liferay.html.preview.service
-Bundle-Version: 3.0.10
+Bundle-Version: 3.0.12
 Liferay-Require-SchemaVersion: 2.0.0
 Liferay-Service: true
 -dsannotations-options: inherit

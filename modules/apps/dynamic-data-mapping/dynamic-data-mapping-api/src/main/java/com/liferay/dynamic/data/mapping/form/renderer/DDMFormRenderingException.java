@@ -28,12 +28,12 @@ public class DDMFormRenderingException extends PortalException {
 		super(msg);
 	}
 
-	public DDMFormRenderingException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DDMFormRenderingException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DDMFormRenderingException(Throwable cause) {
-		super(cause);
+	public DDMFormRenderingException(Throwable throwable) {
+		super(throwable);
 	}
 
 	private static final long serialVersionUID = 1L;

@@ -28,12 +28,12 @@ public class AssertionException extends PortalException {
 		super(msg);
 	}
 
-	public AssertionException(String msg, Throwable cause) {
-		super(msg, cause);
+	public AssertionException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public AssertionException(Throwable cause) {
-		super(cause);
+	public AssertionException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -28,11 +28,11 @@ import com.liferay.info.constants.InfoDisplayWebKeys;
 import com.liferay.info.display.contributor.InfoDisplayContributor;
 import com.liferay.info.display.contributor.InfoDisplayContributorTracker;
 import com.liferay.info.display.contributor.InfoDisplayObjectProvider;
-import com.liferay.info.display.url.provider.InfoEditURLProvider;
 import com.liferay.info.display.url.provider.InfoEditURLProviderTracker;
 import com.liferay.info.exception.NoSuchInfoItemException;
 import com.liferay.info.field.InfoFieldValue;
-import com.liferay.info.item.InfoItemReference;
+import com.liferay.info.item.ClassPKInfoItemIdentifier;
+import com.liferay.info.item.InfoItemIdentifier;
 import com.liferay.info.item.InfoItemServiceTracker;
 import com.liferay.info.item.provider.InfoItemDetailsProvider;
 import com.liferay.info.item.provider.InfoItemFieldValuesProvider;
@@ -100,14 +100,6 @@ public abstract class BaseAssetDisplayPageFriendlyURLResolver
 		String infoItemClassName = portal.getClassName(
 			infoDisplayObjectProvider.getClassNameId());
 
-		InfoEditURLProvider<?> infoEditURLProvider =
-			infoEditURLProviderTracker.getInfoEditURLProvider(
-				infoItemClassName);
-
-		httpServletRequest.setAttribute(
-			AssetDisplayPageWebKeys.INFO_EDIT_URL_PROVIDER,
-			infoEditURLProvider);
-
 		Object infoItem = _getInfoItem(friendlyURL, infoDisplayObjectProvider);
 
 		httpServletRequest.setAttribute(InfoDisplayWebKeys.INFO_ITEM, infoItem);
@@ -127,10 +119,6 @@ public abstract class BaseAssetDisplayPageFriendlyURLResolver
 		httpServletRequest.setAttribute(
 			InfoDisplayWebKeys.INFO_ITEM_FIELD_VALUES_PROVIDER,
 			infoItemFieldValuesProvider);
-
-		httpServletRequest.setAttribute(
-			InfoDisplayWebKeys.INFO_ITEM_SERVICE_TRACKER,
-			infoItemServiceTracker);
 
 		Locale locale = portal.getLocale(httpServletRequest);
 		Layout layout = _getInfoDisplayObjectProviderLayout(
@@ -349,12 +337,12 @@ public abstract class BaseAssetDisplayPageFriendlyURLResolver
 					portal.getClassName(
 						infoDisplayObjectProvider.getClassNameId()));
 
-		InfoItemReference infoItemReference = new InfoItemReference(
+		InfoItemIdentifier infoItemIdentifier = new ClassPKInfoItemIdentifier(
 			infoDisplayObjectProvider.getClassPK());
 
-		infoItemReference.setVersion(InfoItemReference.VERSION_LATEST);
+		infoItemIdentifier.setVersion(InfoItemIdentifier.VERSION_LATEST);
 
-		return infoItemObjectProvider.getInfoItem(infoItemReference);
+		return infoItemObjectProvider.getInfoItem(infoItemIdentifier);
 	}
 
 	private String _getInfoURLSeparator(String friendlyURL) {

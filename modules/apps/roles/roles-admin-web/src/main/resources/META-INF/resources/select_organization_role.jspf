@@ -219,12 +219,14 @@ else {
 						<c:if test="<%= Validator.isNull(p_u_i_d) || OrganizationMembershipPolicyUtil.isRoleAllowed((selUser != null) ? selUser.getUserId() : 0, selectedOrganization.getOrganizationId(), role.getRoleId()) %>">
 
 							<%
+							Group selectedOrganizationGroup = selectedOrganization.getGroup();
+
 							Map<String, Object> data = HashMapBuilder.<String, Object>put(
 								"entityid", role.getRoleId()
 							).put(
 								"entityname", role.getTitle(locale)
 							).put(
-								"groupdescriptivename", selectedOrganization.getGroup().getDescriptiveName(locale)
+								"groupdescriptivename", selectedOrganizationGroup.getDescriptiveName(locale)
 							).put(
 								"groupid", selectedOrganization.getGroupId()
 							).put(

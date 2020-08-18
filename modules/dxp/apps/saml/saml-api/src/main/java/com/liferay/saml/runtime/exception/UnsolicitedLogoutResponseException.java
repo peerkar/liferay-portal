@@ -28,12 +28,12 @@ public class UnsolicitedLogoutResponseException extends PortalException {
 		super(msg);
 	}
 
-	public UnsolicitedLogoutResponseException(String msg, Throwable cause) {
-		super(msg, cause);
+	public UnsolicitedLogoutResponseException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public UnsolicitedLogoutResponseException(Throwable cause) {
-		super(cause);
+	public UnsolicitedLogoutResponseException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

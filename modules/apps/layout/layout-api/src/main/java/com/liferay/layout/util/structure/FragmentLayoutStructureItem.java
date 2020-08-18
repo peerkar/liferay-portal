@@ -14,77 +14,16 @@
 
 package com.liferay.layout.util.structure;
 
-import com.liferay.layout.util.constants.LayoutDataItemTypeConstants;
-import com.liferay.petra.lang.HashUtil;
-import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.json.JSONUtil;
-
-import java.util.Objects;
-
 /**
+ * @deprecated As of Athanasius (7.3.x), replaced by {@link FragmentStyledLayoutStructureItem}
  * @author Eudaldo Alonso
  */
-public class FragmentLayoutStructureItem extends LayoutStructureItem {
+@Deprecated
+public class FragmentLayoutStructureItem
+	extends FragmentStyledLayoutStructureItem {
 
 	public FragmentLayoutStructureItem(String parentItemId) {
 		super(parentItemId);
 	}
-
-	@Override
-	public boolean equals(Object object) {
-		if (this == object) {
-			return true;
-		}
-
-		if (!(object instanceof FragmentLayoutStructureItem)) {
-			return false;
-		}
-
-		FragmentLayoutStructureItem fragmentLayoutStructureItem =
-			(FragmentLayoutStructureItem)object;
-
-		if (!Objects.equals(
-				_fragmentEntryLinkId,
-				fragmentLayoutStructureItem._fragmentEntryLinkId)) {
-
-			return false;
-		}
-
-		return super.equals(object);
-	}
-
-	public long getFragmentEntryLinkId() {
-		return _fragmentEntryLinkId;
-	}
-
-	@Override
-	public JSONObject getItemConfigJSONObject() {
-		return JSONUtil.put(
-			"fragmentEntryLinkId", String.valueOf(_fragmentEntryLinkId));
-	}
-
-	@Override
-	public String getItemType() {
-		return LayoutDataItemTypeConstants.TYPE_FRAGMENT;
-	}
-
-	@Override
-	public int hashCode() {
-		return HashUtil.hash(0, getItemId());
-	}
-
-	public void setFragmentEntryLinkId(long fragmentEntryLinkId) {
-		_fragmentEntryLinkId = fragmentEntryLinkId;
-	}
-
-	@Override
-	public void updateItemConfig(JSONObject itemConfigJSONObject) {
-		if (itemConfigJSONObject.has("fragmentEntryLinkId")) {
-			setFragmentEntryLinkId(
-				itemConfigJSONObject.getLong("fragmentEntryLinkId"));
-		}
-	}
-
-	private long _fragmentEntryLinkId;
 
 }

@@ -28,12 +28,12 @@ public class AppPropertiesException extends PortalException {
 		super(msg);
 	}
 
-	public AppPropertiesException(String msg, Throwable cause) {
-		super(msg, cause);
+	public AppPropertiesException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public AppPropertiesException(Throwable cause) {
-		super(cause);
+	public AppPropertiesException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

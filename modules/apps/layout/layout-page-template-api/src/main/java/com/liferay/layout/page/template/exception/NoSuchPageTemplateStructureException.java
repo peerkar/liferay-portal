@@ -28,12 +28,14 @@ public class NoSuchPageTemplateStructureException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchPageTemplateStructureException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchPageTemplateStructureException(
+		String msg, Throwable throwable) {
+
+		super(msg, throwable);
 	}
 
-	public NoSuchPageTemplateStructureException(Throwable cause) {
-		super(cause);
+	public NoSuchPageTemplateStructureException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -28,12 +28,12 @@ public class NoSuchKBArticleSelectorException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchKBArticleSelectorException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchKBArticleSelectorException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchKBArticleSelectorException(Throwable cause) {
-		super(cause);
+	public NoSuchKBArticleSelectorException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

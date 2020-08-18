@@ -29,12 +29,12 @@ public class MailServerException extends NestableException {
 		super(msg);
 	}
 
-	public MailServerException(String msg, Throwable cause) {
-		super(msg, cause);
+	public MailServerException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public MailServerException(Throwable cause) {
-		super(cause);
+	public MailServerException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

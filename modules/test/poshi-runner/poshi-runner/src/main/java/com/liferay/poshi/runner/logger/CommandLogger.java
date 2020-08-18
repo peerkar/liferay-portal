@@ -57,8 +57,9 @@ public final class CommandLogger {
 
 			_failLineGroupLoggerElement(lineGroupLoggerElement);
 		}
-		catch (Throwable t) {
-			throw new PoshiRunnerLoggerException(t.getMessage(), t);
+		catch (Throwable throwable) {
+			throw new PoshiRunnerLoggerException(
+				throwable.getMessage(), throwable);
 		}
 	}
 
@@ -100,8 +101,9 @@ public final class CommandLogger {
 			_commandLogLoggerElement.addChildLoggerElement(
 				lineGroupLoggerElement);
 		}
-		catch (Throwable t) {
-			throw new PoshiRunnerLoggerException(t.getMessage(), t);
+		catch (Throwable throwable) {
+			throw new PoshiRunnerLoggerException(
+				throwable.getMessage(), throwable);
 		}
 	}
 
@@ -148,8 +150,9 @@ public final class CommandLogger {
 			_commandLogLoggerElement.addChildLoggerElement(
 				lineGroupLoggerElement);
 		}
-		catch (Throwable t) {
-			throw new PoshiRunnerLoggerException(t.getMessage(), t);
+		catch (Throwable throwable) {
+			throw new PoshiRunnerLoggerException(
+				throwable.getMessage(), throwable);
 		}
 	}
 
@@ -171,8 +174,9 @@ public final class CommandLogger {
 
 			_screenshotLineGroupLoggerElement(lineGroupLoggerElement);
 		}
-		catch (Throwable t) {
-			throw new PoshiRunnerLoggerException(t.getMessage(), t);
+		catch (Throwable throwable) {
+			throw new PoshiRunnerLoggerException(
+				throwable.getMessage(), throwable);
 		}
 	}
 
@@ -188,8 +192,9 @@ public final class CommandLogger {
 
 			_warningLineGroupLoggerElement(lineGroupLoggerElement);
 		}
-		catch (Throwable t) {
-			throw new PoshiRunnerLoggerException(t.getMessage(), t);
+		catch (Throwable throwable) {
+			throw new PoshiRunnerLoggerException(
+				throwable.getMessage(), throwable);
 		}
 	}
 

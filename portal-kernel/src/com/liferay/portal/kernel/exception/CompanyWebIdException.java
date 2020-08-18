@@ -26,12 +26,12 @@ public class CompanyWebIdException extends PortalException {
 		super(msg);
 	}
 
-	public CompanyWebIdException(String msg, Throwable cause) {
-		super(msg, cause);
+	public CompanyWebIdException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public CompanyWebIdException(Throwable cause) {
-		super(cause);
+	public CompanyWebIdException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

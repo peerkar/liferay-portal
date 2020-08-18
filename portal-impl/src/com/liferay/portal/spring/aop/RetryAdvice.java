@@ -93,7 +93,7 @@ public class RetryAdvice extends ChainableMethodAdvice {
 		}
 
 		Object returnValue = null;
-		Throwable throwable = null;
+		Throwable throwable1 = null;
 
 		while ((retries < 0) || (retries-- > 0)) {
 			try {
@@ -116,11 +116,11 @@ public class RetryAdvice extends ChainableMethodAdvice {
 							" more times due to result ", returnValue));
 				}
 			}
-			catch (Throwable t) {
-				throwable = t;
+			catch (Throwable throwable2) {
+				throwable1 = throwable2;
 
-				if (!retryAcceptor.acceptException(t, properties)) {
-					throw t;
+				if (!retryAcceptor.acceptException(throwable2, properties)) {
+					throw throwable2;
 				}
 
 				if (_log.isWarnEnabled() && (retries != 0)) {
@@ -133,24 +133,24 @@ public class RetryAdvice extends ChainableMethodAdvice {
 					_log.warn(
 						StringBundler.concat(
 							"Retry on ", aopMethodInvocation, " for ", number,
-							" more times due to exception ", throwable),
-						throwable);
+							" more times due to exception ", throwable1),
+						throwable1);
 				}
 			}
 		}
 
-		if (throwable != null) {
+		if (throwable1 != null) {
 			if (_log.isWarnEnabled()) {
 				_log.warn(
 					StringBundler.concat(
 						"Give up retrying on ", aopMethodInvocation, " after ",
 						totalRetries,
 						" retries and rethrow last retry's exception ",
-						throwable),
-					throwable);
+						throwable1),
+					throwable1);
 			}
 
-			throw throwable;
+			throw throwable1;
 		}
 
 		if (_log.isWarnEnabled()) {

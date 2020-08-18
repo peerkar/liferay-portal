@@ -28,12 +28,12 @@ public class StructureLayoutException extends PortalException {
 		super(msg);
 	}
 
-	public StructureLayoutException(String msg, Throwable cause) {
-		super(msg, cause);
+	public StructureLayoutException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public StructureLayoutException(Throwable cause) {
-		super(cause);
+	public StructureLayoutException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

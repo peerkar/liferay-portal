@@ -54,7 +54,8 @@ public class JavaAnnotationMemberValuePair
 		StringBundler sb = new StringBundler();
 
 		if (_valueJavaExpression instanceof JavaArray) {
-			sb.append(_name.toString(indent, prefix, " = ", -1));
+			sb.append(
+				_name.toString(indent, prefix, " = ", NO_MAX_LINE_LENGTH));
 
 			JavaArray javaArray = (JavaArray)_valueJavaExpression;
 
@@ -68,8 +69,9 @@ public class JavaAnnotationMemberValuePair
 			return sb.toString();
 		}
 
-		sb.append(_name.toString(indent, prefix, " = ", -1));
-		sb.append(_valueJavaExpression.toString("", "", suffix, -1));
+		sb.append(_name.toString(indent, prefix, " = ", NO_MAX_LINE_LENGTH));
+		sb.append(
+			_valueJavaExpression.toString("", "", suffix, NO_MAX_LINE_LENGTH));
 
 		return sb.toString();
 	}

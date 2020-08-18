@@ -28,12 +28,12 @@ public class FileSizeException extends PortalException {
 		super(msg);
 	}
 
-	public FileSizeException(String msg, Throwable cause) {
-		super(msg, cause);
+	public FileSizeException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public FileSizeException(Throwable cause) {
-		super(cause);
+	public FileSizeException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -28,12 +28,12 @@ public class FileExtensionException extends PortalException {
 		super(msg);
 	}
 
-	public FileExtensionException(String msg, Throwable cause) {
-		super(msg, cause);
+	public FileExtensionException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public FileExtensionException(Throwable cause) {
-		super(cause);
+	public FileExtensionException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

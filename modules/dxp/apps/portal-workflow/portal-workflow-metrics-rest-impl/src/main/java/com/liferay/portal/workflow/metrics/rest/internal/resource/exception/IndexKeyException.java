@@ -28,12 +28,12 @@ public class IndexKeyException extends PortalException {
 		super(msg);
 	}
 
-	public IndexKeyException(String msg, Throwable cause) {
-		super(msg, cause);
+	public IndexKeyException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public IndexKeyException(Throwable cause) {
-		super(cause);
+	public IndexKeyException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

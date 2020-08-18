@@ -28,12 +28,12 @@ public class PortletContainerException extends PortalException {
 		super(msg);
 	}
 
-	public PortletContainerException(String msg, Throwable cause) {
-		super(msg, cause);
+	public PortletContainerException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public PortletContainerException(Throwable cause) {
-		super(cause);
+	public PortletContainerException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

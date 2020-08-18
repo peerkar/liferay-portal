@@ -28,12 +28,12 @@ public class NoSuchColumnException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchColumnException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchColumnException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchColumnException(Throwable cause) {
-		super(cause);
+	public NoSuchColumnException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

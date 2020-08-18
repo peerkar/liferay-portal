@@ -29,6 +29,7 @@ import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.ProjectionList;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.Type;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Sort;
@@ -45,13 +46,13 @@ import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.resource.EntityModelResource;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.SearchUtil;
 import com.liferay.portlet.asset.model.impl.AssetTagImpl;
 
 import java.sql.Timestamp;
 
 import java.util.Date;
-import java.util.Map;
 
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -75,6 +76,16 @@ public class KeywordResourceImpl
 	}
 
 	@Override
+	public Page<Keyword> getAssetLibraryKeywordsPage(
+			Long assetLibraryId, String search, Filter filter,
+			Pagination pagination, Sort[] sorts)
+		throws Exception {
+
+		return getSiteKeywordsPage(
+			assetLibraryId, search, filter, pagination, sorts);
+	}
+
+	@Override
 	public EntityModel getEntityModel(MultivaluedMap multivaluedMap) {
 		return _entityModel;
 	}
@@ -86,8 +97,7 @@ public class KeywordResourceImpl
 
 	@Override
 	public Page<Keyword> getKeywordsRankedPage(
-			Long siteId, String search, Pagination pagination)
-		throws Exception {
+		Long siteId, String search, Pagination pagination) {
 
 		DynamicQuery dynamicQuery = _assetTagLocalService.dynamicQuery();
 
@@ -126,7 +136,7 @@ public class KeywordResourceImpl
 		throws Exception {
 
 		return SearchUtil.search(
-			HashMapBuilder.<String, Map<String, String>>put(
+			HashMapBuilder.put(
 				"create",
 				addAction(
 					"MANAGE_TAG", "postSiteKeyword", "com.liferay.asset.tags",
@@ -150,6 +160,13 @@ public class KeywordResourceImpl
 			document -> _toKeyword(
 				_assetTagService.getTag(
 					GetterUtil.getLong(document.get(Field.ENTRY_CLASS_PK)))));
+	}
+
+	@Override
+	public Keyword postAssetLibraryKeyword(Long assetLibraryId, Keyword keyword)
+		throws Exception {
+
+		return postSiteKeyword(assetLibraryId, keyword);
 	}
 
 	@Override
@@ -233,9 +250,11 @@ public class KeywordResourceImpl
 	}
 
 	private Keyword _toKeyword(AssetTag assetTag) {
+		Group group = groupLocalService.fetchGroup(assetTag.getGroupId());
+
 		return new Keyword() {
 			{
-				actions = HashMapBuilder.<String, Map<String, String>>put(
+				actions = HashMapBuilder.put(
 					"delete",
 					addAction(
 						"MANAGE_TAG", assetTag.getTagId(), "deleteKeyword",
@@ -254,11 +273,12 @@ public class KeywordResourceImpl
 						assetTag.getUserId(), "com.liferay.asset.tags",
 						assetTag.getGroupId())
 				).build();
+				assetLibraryKey = GroupUtil.getAssetLibraryKey(group);
 				dateCreated = assetTag.getCreateDate();
 				dateModified = assetTag.getModifiedDate();
 				id = assetTag.getTagId();
 				name = assetTag.getName();
-				siteId = assetTag.getGroupId();
+				siteId = GroupUtil.getSiteId(group);
 
 				setCreator(
 					() -> {

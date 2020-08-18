@@ -28,12 +28,12 @@ public class ArticleFriendlyURLException extends PortalException {
 		super(msg);
 	}
 
-	public ArticleFriendlyURLException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ArticleFriendlyURLException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ArticleFriendlyURLException(Throwable cause) {
-		super(cause);
+	public ArticleFriendlyURLException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

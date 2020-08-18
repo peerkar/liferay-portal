@@ -75,9 +75,9 @@ public class FIFOUtil {
 
 			fifoSupport = true;
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			if (_log.isWarnEnabled()) {
-				_log.warn("Unable to detect FIFO support", t);
+				_log.warn("Unable to detect FIFO support", throwable);
 			}
 		}
 

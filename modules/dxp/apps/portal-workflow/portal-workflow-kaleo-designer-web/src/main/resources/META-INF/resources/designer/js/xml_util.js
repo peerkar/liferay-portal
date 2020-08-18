@@ -30,11 +30,15 @@ AUI.add(
 
 		var STR_CDATA_OPEN = '<![CDATA[';
 
+		var STR_CHAR_CR_LF_CRLF = /\r\n|\r|\n/;
+
 		var STR_CHAR_CRLF = '\r\n';
 
 		var STR_CHAR_TAB = '\t';
 
 		var STR_DASH = '-';
+
+		var STR_METADATA = '<metadata';
 
 		var STR_SPACE = ' ';
 
@@ -62,12 +66,24 @@ AUI.add(
 					STR_DASH
 				).toLowerCase();
 
+				if (attrs !== undefined && attrs.xmlns) {
+					attrBuffer = [STR_CHAR_CRLF];
+				}
+
 				A.each(attrs, (item, index) => {
 					if (item !== undefined) {
 						BUFFER_ATTR[0] = index;
 						BUFFER_ATTR[2] = item;
 
-						attrBuffer.push(BUFFER_ATTR.join(STR_BLANK));
+						if (attrs.xmlns) {
+							attrBuffer.push(STR_CHAR_TAB);
+						}
+
+						attrBuffer.push(BUFFER_ATTR.join(STR_BLANK).trim());
+
+						if (attrs.xmlns) {
+							attrBuffer.push(STR_CHAR_CRLF);
+						}
 					}
 				});
 
@@ -77,6 +93,13 @@ AUI.add(
 
 				BUFFER_OPEN_NODE[1] = normalizedName;
 				BUFFER_OPEN_NODE[2] = attributes;
+
+				if (attrs !== undefined && attrs.xmlns) {
+					BUFFER_OPEN_NODE[3] = STR_CHAR_CRLF + '>';
+				}
+				else {
+					BUFFER_OPEN_NODE[3] = '>';
+				}
 
 				return {
 					close: BUFFER_CLOSE_NODE.join(STR_BLANK),
@@ -110,6 +133,44 @@ AUI.add(
 						formatted += LString.repeat(STR_CHAR_TAB, pad);
 					}
 
+					if (item.indexOf(STR_METADATA) > -1) {
+						var metadata = item.split(STR_CHAR_CR_LF_CRLF);
+						item = '';
+						for (var i = 0; i < metadata.length; i++) {
+							if (i == 0 || i == 2) {
+								pad += 1;
+							}
+
+							if (
+								i == metadata.length - 2 ||
+								i == metadata.length - 1
+							) {
+								pad -= 1;
+							}
+
+							item +=
+								LString.repeat(STR_CHAR_TAB, pad) +
+								metadata[i] +
+								STR_CHAR_CRLF;
+						}
+					}
+					else if (item.indexOf(STR_CDATA_OPEN) > -1) {
+						var cdata = item.split(STR_CDATA_OPEN);
+
+						item = LString.repeat(STR_CHAR_TAB, pad) + cdata[0];
+
+						cdata = cdata[1].split(STR_CDATA_CLOSE);
+
+						item +=
+							LString.repeat(STR_CHAR_TAB, pad + 1) +
+							STR_CDATA_OPEN +
+							cdata[0] +
+							STR_CDATA_CLOSE +
+							STR_CHAR_CRLF +
+							LString.repeat(STR_CHAR_TAB, pad) +
+							cdata[1].trim();
+					}
+
 					formatted += item.trim() + STR_CHAR_CRLF;
 
 					if (item.indexOf(STR_CDATA_CLOSE) > -1) {
@@ -122,7 +183,7 @@ AUI.add(
 					pad += indent;
 				});
 
-				return formatted;
+				return formatted.trim();
 			},
 
 			validateDefinition(definition) {

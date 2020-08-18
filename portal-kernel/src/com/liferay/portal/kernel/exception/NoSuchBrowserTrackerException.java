@@ -26,12 +26,12 @@ public class NoSuchBrowserTrackerException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchBrowserTrackerException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchBrowserTrackerException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchBrowserTrackerException(Throwable cause) {
-		super(cause);
+	public NoSuchBrowserTrackerException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

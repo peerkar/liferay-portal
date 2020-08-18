@@ -64,6 +64,10 @@ body.open .app-builder-upper-toolbar {
 	margin-top: 9px;
 	max-width: 260px;
 	min-width: 260px;
+
+	.dropdown-item-indicator-start {
+		position: static;
+	}
 }
 
 .dropdown-fixed-height {

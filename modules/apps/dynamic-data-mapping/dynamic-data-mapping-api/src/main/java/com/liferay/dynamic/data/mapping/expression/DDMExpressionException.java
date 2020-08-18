@@ -31,12 +31,12 @@ public class DDMExpressionException extends PortalException {
 		super(msg);
 	}
 
-	public DDMExpressionException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DDMExpressionException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DDMExpressionException(Throwable cause) {
-		super(cause);
+	public DDMExpressionException(Throwable throwable) {
+		super(throwable);
 	}
 
 	public static class FunctionNotDefined extends DDMExpressionException {
@@ -69,8 +69,8 @@ public class DDMExpressionException extends PortalException {
 
 	public static class InvalidSyntax extends DDMExpressionException {
 
-		public InvalidSyntax(Throwable cause) {
-			super("The expression syntax is invalid", cause);
+		public InvalidSyntax(Throwable throwable) {
+			super("The expression syntax is invalid", throwable);
 		}
 
 	}

@@ -28,12 +28,12 @@ public class EntryDisplayDateException extends PortalException {
 		super(msg);
 	}
 
-	public EntryDisplayDateException(String msg, Throwable cause) {
-		super(msg, cause);
+	public EntryDisplayDateException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public EntryDisplayDateException(Throwable cause) {
-		super(cause);
+	public EntryDisplayDateException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

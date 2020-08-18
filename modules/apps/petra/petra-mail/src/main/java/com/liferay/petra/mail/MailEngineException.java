@@ -29,12 +29,12 @@ public class MailEngineException extends NestableException {
 		super(msg);
 	}
 
-	public MailEngineException(String msg, Throwable cause) {
-		super(msg, cause);
+	public MailEngineException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public MailEngineException(Throwable cause) {
-		super(cause);
+	public MailEngineException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

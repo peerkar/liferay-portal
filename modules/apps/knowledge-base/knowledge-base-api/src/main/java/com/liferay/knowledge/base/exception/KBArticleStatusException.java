@@ -28,12 +28,12 @@ public class KBArticleStatusException extends PortalException {
 		super(msg);
 	}
 
-	public KBArticleStatusException(String msg, Throwable cause) {
-		super(msg, cause);
+	public KBArticleStatusException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public KBArticleStatusException(Throwable cause) {
-		super(cause);
+	public KBArticleStatusException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

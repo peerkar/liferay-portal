@@ -28,12 +28,12 @@ public class ClusterException extends PortalException {
 		super(msg);
 	}
 
-	public ClusterException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ClusterException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ClusterException(Throwable cause) {
-		super(cause);
+	public ClusterException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -16,7 +16,7 @@
 
 <%
 if (Validator.isNotNull(id)) {
-	id = (PortalUtil.getLiferayPortletResponse(portletResponse)).getNamespace() + id;
+	id = liferayPortletResponse.getNamespace() + id;
 }
 
 StringBundler sb = new StringBundler();

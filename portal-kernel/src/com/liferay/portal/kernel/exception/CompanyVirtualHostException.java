@@ -26,12 +26,12 @@ public class CompanyVirtualHostException extends PortalException {
 		super(msg);
 	}
 
-	public CompanyVirtualHostException(String msg, Throwable cause) {
-		super(msg, cause);
+	public CompanyVirtualHostException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public CompanyVirtualHostException(Throwable cause) {
-		super(cause);
+	public CompanyVirtualHostException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

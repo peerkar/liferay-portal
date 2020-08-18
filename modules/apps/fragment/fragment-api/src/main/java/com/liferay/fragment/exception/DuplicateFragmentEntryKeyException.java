@@ -28,12 +28,12 @@ public class DuplicateFragmentEntryKeyException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateFragmentEntryKeyException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateFragmentEntryKeyException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateFragmentEntryKeyException(Throwable cause) {
-		super(cause);
+	public DuplicateFragmentEntryKeyException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

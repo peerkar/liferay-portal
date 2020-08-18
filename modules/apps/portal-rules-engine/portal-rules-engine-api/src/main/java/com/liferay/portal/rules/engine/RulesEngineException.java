@@ -25,12 +25,12 @@ public class RulesEngineException extends PortalException {
 		super(msg);
 	}
 
-	public RulesEngineException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RulesEngineException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public RulesEngineException(Throwable cause) {
-		super(cause);
+	public RulesEngineException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -28,12 +28,12 @@ public class InvalidDDMStructureException extends PortalException {
 		super(msg);
 	}
 
-	public InvalidDDMStructureException(String msg, Throwable cause) {
-		super(msg, cause);
+	public InvalidDDMStructureException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public InvalidDDMStructureException(Throwable cause) {
-		super(cause);
+	public InvalidDDMStructureException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

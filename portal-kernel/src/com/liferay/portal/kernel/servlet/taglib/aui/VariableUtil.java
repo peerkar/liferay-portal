@@ -96,9 +96,9 @@ public class VariableUtil {
 			module = StringPool.UNDERLINE + module;
 		}
 
-		int i = 1;
-
 		if (usedVariables != null) {
+			int i = 1;
+
 			while (!usedVariables.add(module)) {
 				module = safeName.concat(String.valueOf(i++));
 			}

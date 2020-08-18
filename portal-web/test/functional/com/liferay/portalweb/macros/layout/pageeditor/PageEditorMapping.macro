@@ -12,33 +12,24 @@ definition {
 			fragmentName = "${fragmentName}",
 			id = "${id}");
 
-		PageEditor.gotoTab(tabName = "Page Structure");
+		PageEditor.gotoTab(tabName = "Selection");
 
-		var key_navItem = "Mapping";
-
-		if (IsElementNotPresent(locator1 = "PageEditor#ACTIVE_NAV_ITEM_BUTTON")) {
-			AssertClick(
-				locator1 = "PageEditor#NAV_ITEM_BUTTON",
-				value1 = "Mapping");
-		}
+		AssertClick(
+			key_navItem = "Mapping",
+			locator1 = "PageEditor#NAV_ITEM_BUTTON",
+			value1 = "Mapping");
 	}
 
 	macro mapEditableFieldToAsset {
 		Click(locator1 = "PageEditor#EDITABLE_FIELD_TOOLBAR_MAP_ASSET_SELECT_POPUP_BUTTON");
 
-		if (IsElementPresent(key_option = "Select Content",locator1 = "Dropdown#RESULT")) {
+		if (IsElementPresent(key_menuItem = "Select Content",locator1 = "MenuItem#ANY_MENU_ITEM")) {
 
 			if (isSet(contentItem)) {
-				AssertClick(
-					key_option = "${contentItem}",
-					locator1 = "Dropdown#RESULT",
-					value1 = "${contentItem}");
+				DropdownMenuItem.click(menuItem = "${contentItem}");
 			}
 			else {
-				AssertClick(
-					key_option = "Select Content",
-					locator1 = "Dropdown#RESULT",
-					value1 = "Select Content...");
+				DropdownMenuItem.click(menuItem = "Select Content");
 			}
 		}
 
@@ -50,7 +41,7 @@ definition {
 
 		Click(
 			key_card = "${entryTitle}",
-			locator1 = "LexiconCard#CARD_TITLE");
+			locator1 = "Card#CARD_TITLE");
 	}
 
 	macro mapEditableFieldToCollectionItems {
@@ -72,15 +63,12 @@ definition {
 			key_rowPosition = "1",
 			locator1 = "PageEditor#COLLECTION_CELL_NESTED_ELEMENT");
 
-		PageEditor.gotoTab(tabName = "Page Structure");
+		PageEditor.gotoTab(tabName = "Selection");
 
-		var key_navItem = "Mapping";
-
-		if (IsElementNotPresent(locator1 = "PageEditor#ACTIVE_NAV_ITEM_BUTTON")) {
-			AssertClick(
-				locator1 = "PageEditor#NAV_ITEM_BUTTON",
-				value1 = "Mapping");
-		}
+		AssertClick(
+			key_navItem = "Mapping",
+			locator1 = "PageEditor#NAV_ITEM_BUTTON",
+			value1 = "Mapping");
 
 		Pause(locator1 = "3000");
 

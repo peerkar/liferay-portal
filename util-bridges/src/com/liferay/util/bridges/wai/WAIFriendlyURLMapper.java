@@ -89,12 +89,12 @@ public class WAIFriendlyURLMapper implements FriendlyURLMapper {
 
 		int x = friendlyURLPath.indexOf(_MAPPING);
 
-		int y = friendlyURLPath.indexOf(
-			CharPool.SLASH, x + _MAPPING.length() + 1);
-
 		if (x == -1) {
 			return;
 		}
+
+		int y = friendlyURLPath.indexOf(
+			CharPool.SLASH, x + _MAPPING.length() + 1);
 
 		String prefix = friendlyURLPath.substring(x + _MAPPING.length() + 1, y);
 

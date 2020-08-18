@@ -28,12 +28,12 @@ public class WikiFormatException extends PortalException {
 		super(msg);
 	}
 
-	public WikiFormatException(String msg, Throwable cause) {
-		super(msg, cause);
+	public WikiFormatException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public WikiFormatException(Throwable cause) {
-		super(cause);
+	public WikiFormatException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -211,10 +211,10 @@ public class PanelAppMyAccountPermissions {
 
 				return panelApp;
 			}
-			catch (Throwable t) {
+			catch (Throwable throwable) {
 				_bundleContext.ungetService(reference);
 
-				throw t;
+				throw throwable;
 			}
 		}
 

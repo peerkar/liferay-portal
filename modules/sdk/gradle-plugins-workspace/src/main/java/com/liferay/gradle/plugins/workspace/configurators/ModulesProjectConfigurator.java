@@ -408,11 +408,11 @@ public class ModulesProjectConfigurator extends BaseProjectConfigurator {
 	private void _configureTaskSetUpTestableTomcat(
 		Task setUpTestableTomcatTask, WorkspaceExtension workspaceExtension) {
 
-		Project project = setUpTestableTomcatTask.getProject();
-
 		File homeDir = workspaceExtension.getHomeDir();
 
 		if (!homeDir.exists()) {
+			Project project = setUpTestableTomcatTask.getProject();
+
 			Task initBundleTask = GradleUtil.getTask(
 				project.getRootProject(),
 				RootProjectConfigurator.INIT_BUNDLE_TASK_NAME);
@@ -508,13 +508,12 @@ public class ModulesProjectConfigurator extends BaseProjectConfigurator {
 		Map<String, Object> packageJsonMap = _getPackageJsonMap(
 			packageJsonPath.toFile());
 
-		Map<String, Object> portlet = (Map<String, Object>)packageJsonMap.get(
-			"portlet");
-
+		Map<String, Object> liferayTheme =
+			(Map<String, Object>)packageJsonMap.get("liferayTheme");
 		Map<String, Object> scripts = (Map<String, Object>)packageJsonMap.get(
 			"scripts");
 
-		if ((portlet != null) && (scripts != null) &&
+		if ((liferayTheme == null) && (scripts != null) &&
 			(scripts.get("build") != null)) {
 
 			return true;

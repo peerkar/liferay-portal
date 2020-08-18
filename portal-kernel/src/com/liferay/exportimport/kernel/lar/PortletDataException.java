@@ -81,8 +81,8 @@ public class PortletDataException extends PortalException {
 		_type = type;
 	}
 
-	public PortletDataException(int type, Throwable cause) {
-		super(cause);
+	public PortletDataException(int type, Throwable throwable) {
+		super(throwable);
 
 		_type = type;
 	}
@@ -91,12 +91,12 @@ public class PortletDataException extends PortalException {
 		super(msg);
 	}
 
-	public PortletDataException(String msg, Throwable cause) {
-		super(msg, cause);
+	public PortletDataException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public PortletDataException(Throwable cause) {
-		super(cause);
+	public PortletDataException(Throwable throwable) {
+		super(throwable);
 	}
 
 	public long getCompanyId() {

@@ -876,6 +876,13 @@ public abstract class BaseCheck extends AbstractCheck {
 		TokenTypes.STAR
 	};
 
+	protected static final int[] ASSIGNMENT_OPERATOR_TOKEN_TYPES = {
+		TokenTypes.ASSIGN, TokenTypes.BAND_ASSIGN, TokenTypes.BOR_ASSIGN,
+		TokenTypes.BSR_ASSIGN, TokenTypes.BXOR_ASSIGN, TokenTypes.DIV_ASSIGN,
+		TokenTypes.MINUS_ASSIGN, TokenTypes.MOD_ASSIGN, TokenTypes.PLUS_ASSIGN,
+		TokenTypes.SL_ASSIGN, TokenTypes.SR_ASSIGN, TokenTypes.STAR_ASSIGN
+	};
+
 	protected static final int[] CONDITIONAL_OPERATOR_TOKEN_TYPES = {
 		TokenTypes.BAND, TokenTypes.BOR, TokenTypes.BXOR, TokenTypes.LAND,
 		TokenTypes.LOR

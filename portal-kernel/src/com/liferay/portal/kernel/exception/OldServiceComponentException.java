@@ -26,12 +26,12 @@ public class OldServiceComponentException extends PortalException {
 		super(msg);
 	}
 
-	public OldServiceComponentException(String msg, Throwable cause) {
-		super(msg, cause);
+	public OldServiceComponentException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public OldServiceComponentException(Throwable cause) {
-		super(cause);
+	public OldServiceComponentException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -21,8 +21,8 @@ import com.liferay.portal.kernel.exception.PortalException;
  */
 public class InfoItemPermissionException extends PortalException {
 
-	public InfoItemPermissionException(long classPK, Throwable cause) {
-		super("Unable to check permission for " + classPK, cause);
+	public InfoItemPermissionException(long classPK, Throwable throwable) {
+		super("Unable to check permission for " + classPK, throwable);
 
 		_classPK = classPK;
 	}

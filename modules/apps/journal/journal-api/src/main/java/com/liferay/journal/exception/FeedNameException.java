@@ -28,12 +28,12 @@ public class FeedNameException extends PortalException {
 		super(msg);
 	}
 
-	public FeedNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public FeedNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public FeedNameException(Throwable cause) {
-		super(cause);
+	public FeedNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -28,12 +28,12 @@ public class DiscussionMaxCommentsException extends PortalException {
 		super(msg);
 	}
 
-	public DiscussionMaxCommentsException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DiscussionMaxCommentsException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DiscussionMaxCommentsException(Throwable cause) {
-		super(cause);
+	public DiscussionMaxCommentsException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

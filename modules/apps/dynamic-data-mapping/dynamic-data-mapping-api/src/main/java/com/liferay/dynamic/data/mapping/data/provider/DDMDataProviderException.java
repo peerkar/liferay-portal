@@ -28,12 +28,12 @@ public class DDMDataProviderException extends PortalException {
 		super(msg);
 	}
 
-	public DDMDataProviderException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DDMDataProviderException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DDMDataProviderException(Throwable cause) {
-		super(cause);
+	public DDMDataProviderException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

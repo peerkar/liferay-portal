@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.dao.search.EmptyOnClickRowChecker;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
+import com.liferay.portal.kernel.portlet.PortletURLUtil;
 import com.liferay.portal.kernel.search.BaseModelSearchResult;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
@@ -48,7 +49,19 @@ public class AccountEntryDisplaySearchContainerFactory {
 			new LinkedHashMap<>(), true);
 	}
 
-	public static SearchContainer<AccountEntryDisplay> create(
+	public static SearchContainer<AccountEntryDisplay> createWithAccountGroupId(
+		long accountGroupId, LiferayPortletRequest liferayPortletRequest,
+		LiferayPortletResponse liferayPortletResponse) {
+
+		return _create(
+			liferayPortletRequest, liferayPortletResponse,
+			LinkedHashMapBuilder.<String, Object>put(
+				"accountGroupIds", new long[] {accountGroupId}
+			).build(),
+			false);
+	}
+
+	public static SearchContainer<AccountEntryDisplay> createWithUserId(
 		long userId, LiferayPortletRequest liferayPortletRequest,
 		LiferayPortletResponse liferayPortletResponse) {
 
@@ -68,7 +81,9 @@ public class AccountEntryDisplaySearchContainerFactory {
 
 		SearchContainer<AccountEntryDisplay>
 			accountEntryDisplaySearchContainer = new SearchContainer(
-				liferayPortletRequest, liferayPortletResponse.createRenderURL(),
+				liferayPortletRequest,
+				PortletURLUtil.getCurrent(
+					liferayPortletRequest, liferayPortletResponse),
 				null, "no-accounts-were-found");
 
 		accountEntryDisplaySearchContainer.setId("accountEntries");

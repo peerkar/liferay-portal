@@ -26,12 +26,12 @@ public class PoshiRunnerLoggerException extends Exception {
 		super(msg);
 	}
 
-	public PoshiRunnerLoggerException(String msg, Throwable cause) {
-		super(msg, cause);
+	public PoshiRunnerLoggerException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public PoshiRunnerLoggerException(Throwable cause) {
-		super(cause);
+	public PoshiRunnerLoggerException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

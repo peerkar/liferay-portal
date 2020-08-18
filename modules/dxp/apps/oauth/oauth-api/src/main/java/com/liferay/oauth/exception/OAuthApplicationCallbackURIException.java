@@ -28,12 +28,14 @@ public class OAuthApplicationCallbackURIException extends PortalException {
 		super(msg);
 	}
 
-	public OAuthApplicationCallbackURIException(String msg, Throwable cause) {
-		super(msg, cause);
+	public OAuthApplicationCallbackURIException(
+		String msg, Throwable throwable) {
+
+		super(msg, throwable);
 	}
 
-	public OAuthApplicationCallbackURIException(Throwable cause) {
-		super(cause);
+	public OAuthApplicationCallbackURIException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

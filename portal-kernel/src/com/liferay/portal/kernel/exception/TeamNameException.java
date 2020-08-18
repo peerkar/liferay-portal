@@ -26,12 +26,12 @@ public class TeamNameException extends PortalException {
 		super(msg);
 	}
 
-	public TeamNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public TeamNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public TeamNameException(Throwable cause) {
-		super(cause);
+	public TeamNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

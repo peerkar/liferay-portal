@@ -28,12 +28,12 @@ public class NoSuchEntryRoleException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchEntryRoleException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchEntryRoleException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchEntryRoleException(Throwable cause) {
-		super(cause);
+	public NoSuchEntryRoleException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

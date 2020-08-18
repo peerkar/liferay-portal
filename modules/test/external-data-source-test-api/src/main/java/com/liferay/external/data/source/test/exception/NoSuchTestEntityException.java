@@ -28,12 +28,12 @@ public class NoSuchTestEntityException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchTestEntityException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchTestEntityException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchTestEntityException(Throwable cause) {
-		super(cause);
+	public NoSuchTestEntityException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

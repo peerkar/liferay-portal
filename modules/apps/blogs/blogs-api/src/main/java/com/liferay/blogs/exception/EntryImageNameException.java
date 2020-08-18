@@ -28,12 +28,12 @@ public class EntryImageNameException extends PortalException {
 		super(msg);
 	}
 
-	public EntryImageNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public EntryImageNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public EntryImageNameException(Throwable cause) {
-		super(cause);
+	public EntryImageNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

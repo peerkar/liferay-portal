@@ -29,12 +29,12 @@ public class SearchSizeLimitException extends SystemException {
 		super(msg);
 	}
 
-	public SearchSizeLimitException(String msg, Throwable cause) {
-		super(msg, cause);
+	public SearchSizeLimitException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public SearchSizeLimitException(Throwable cause) {
-		super(cause);
+	public SearchSizeLimitException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -24,6 +24,8 @@ import com.liferay.frontend.taglib.clay.internal.jaxrs.context.provider.Paginati
 import com.liferay.frontend.taglib.clay.internal.jaxrs.context.provider.SortContextProvider;
 import com.liferay.frontend.taglib.clay.internal.jaxrs.context.provider.ThemeDisplayContextProvider;
 import com.liferay.frontend.taglib.clay.internal.servlet.ServletContextUtil;
+import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortalPreferences;
@@ -70,10 +72,10 @@ import org.osgi.service.jaxrs.whiteboard.JaxrsWhiteboardConstants;
 public class FrontendClayApplication extends Application {
 
 	@GET
-	@Path("/data-set/{tableName}/{dataProvider}")
+	@Path("/data-set/{tableName}/{clayDataProviderKey}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getClayDataSetData(
-		@PathParam("dataProvider") String dataProvider,
+		@PathParam("clayDataProviderKey") String clayDataProviderKey,
 		@PathParam("tableName") String tableName,
 		@QueryParam("groupId") long groupId, @QueryParam("plid") long plid,
 		@QueryParam("portletId") String portletId,
@@ -83,17 +85,18 @@ public class FrontendClayApplication extends Application {
 		@Context ThemeDisplay themeDisplay, @Context UriInfo uriInfo) {
 
 		ClayDataSetDataProvider clayDataSetDataProvider =
-			_clayDataProviderRegistry.getClayDataSetProvider(dataProvider);
+			_clayDataProviderRegistry.getClayDataSetProvider(
+				clayDataProviderKey);
 
 		if ((clayDataSetDataProvider == null) && _log.isDebugEnabled()) {
 			_log.debug(
-				"No Clay data set data provider registered with key " +
-					dataProvider);
+				"No Clay data set data provider is associated with " +
+					clayDataProviderKey);
 		}
 
 		try {
 			FilterFactory filterFactory =
-				_filterFactoryRegistry.getFilterFactory(dataProvider);
+				_filterFactoryRegistry.getFilterFactory(clayDataProviderKey);
 
 			return Response.ok(
 				_clayDataSetDataJSONFactory.create(
@@ -144,10 +147,27 @@ public class FrontendClayApplication extends Application {
 				PortletPreferencesFactoryUtil.getPortalPreferences(
 					httpServletRequest);
 
+			String currentActiveViewSettingsJSON = portalPreferences.getValue(
+				ServletContextUtil.getClayDataSetDisplaySettingsNamespace(
+					httpServletRequest, id),
+				"activeViewSettingsJSON", "{}");
+
+			JSONObject currentActiveViewSettingsJSONObject =
+				_jsonFactory.createJSONObject(currentActiveViewSettingsJSON);
+
+			JSONObject activeViewSettingsJSONObject =
+				_jsonFactory.createJSONObject(activeViewSettingsJSON);
+
+			for (String key : activeViewSettingsJSONObject.keySet()) {
+				currentActiveViewSettingsJSONObject.put(
+					key, activeViewSettingsJSONObject.get(key));
+			}
+
 			portalPreferences.setValue(
 				ServletContextUtil.getClayDataSetDisplaySettingsNamespace(
 					httpServletRequest, id),
-				"activeViewSettingsJSON", activeViewSettingsJSON);
+				"activeViewSettingsJSON",
+				currentActiveViewSettingsJSONObject.toJSONString());
 
 			return Response.ok(
 			).build();
@@ -172,6 +192,9 @@ public class FrontendClayApplication extends Application {
 
 	@Reference
 	private FilterFactoryRegistry _filterFactoryRegistry;
+
+	@Reference
+	private JSONFactory _jsonFactory;
 
 	@Reference
 	private LayoutLocalService _layoutLocalService;

@@ -28,6 +28,7 @@ import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.model.DLFileEntryConstants;
 import com.liferay.document.library.kernel.model.DLFileEntryMetadata;
 import com.liferay.document.library.kernel.model.DLFileEntryType;
+import com.liferay.document.library.kernel.model.DLFileEntryTypeConstants;
 import com.liferay.document.library.kernel.model.DLFileVersion;
 import com.liferay.document.library.kernel.model.DLFolder;
 import com.liferay.document.library.kernel.model.DLFolderConstants;
@@ -40,6 +41,7 @@ import com.liferay.document.library.kernel.util.comparator.RepositoryModelModifi
 import com.liferay.document.library.kernel.versioning.VersioningStrategy;
 import com.liferay.dynamic.data.mapping.kernel.DDMFormValues;
 import com.liferay.dynamic.data.mapping.kernel.DDMStructure;
+import com.liferay.dynamic.data.mapping.kernel.DDMStructureLinkManagerUtil;
 import com.liferay.dynamic.data.mapping.kernel.DDMStructureManagerUtil;
 import com.liferay.dynamic.data.mapping.kernel.StorageEngineManagerUtil;
 import com.liferay.expando.kernel.model.ExpandoBridge;
@@ -1645,6 +1647,26 @@ public class DLFileEntryLocalServiceImpl
 			PortalUtil.getCurrentAndAncestorSiteGroupIds(
 				dlFileEntry.getGroupId()),
 			dlFileEntry.getFolderId(), fileEntryTypeId);
+
+		if ((fileEntryTypeId != dlFileEntry.getFileEntryTypeId()) &&
+			(dlFileEntry.getFileEntryTypeId() !=
+				DLFileEntryTypeConstants.FILE_ENTRY_TYPE_ID_BASIC_DOCUMENT)) {
+
+			DLFileEntryMetadata dlFileEntryMetadata =
+				dlFileEntryMetadataPersistence.fetchByFileEntryId_Last(
+					fileEntryId, null);
+
+			long classNameId = classNameLocalService.getClassNameId(
+				DLFileEntryMetadata.class);
+
+			DDMStructure ddmStructure = DDMStructureManagerUtil.fetchStructure(
+				dlFileEntry.getGroupId(), classNameId,
+				DLUtil.getDDMStructureKey(dlFileEntry.getDLFileEntryType()));
+
+			DDMStructureLinkManagerUtil.deleteStructureLink(
+				classNameId, dlFileEntryMetadata.getFileEntryMetadataId(),
+				ddmStructure.getStructureId());
+		}
 
 		return updateFileEntry(
 			userId, fileEntryId, sourceFileName, extension, mimeType, title,

@@ -28,12 +28,12 @@ public class NoSuchTimerInstanceTokenException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchTimerInstanceTokenException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchTimerInstanceTokenException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchTimerInstanceTokenException(Throwable cause) {
-		super(cause);
+	public NoSuchTimerInstanceTokenException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

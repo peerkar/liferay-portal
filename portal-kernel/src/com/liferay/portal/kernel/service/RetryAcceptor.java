@@ -22,7 +22,7 @@ import java.util.Map;
 public interface RetryAcceptor {
 
 	public boolean acceptException(
-		Throwable t, Map<String, String> propertyMap);
+		Throwable throwable, Map<String, String> propertyMap);
 
 	public boolean acceptResult(
 		Object returnValue, Map<String, String> propertyMap);

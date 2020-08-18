@@ -54,6 +54,8 @@ import com.liferay.headless.delivery.resource.v1_0.WikiPageResource;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.graphql.annotation.GraphQLField;
 import com.liferay.portal.vulcan.graphql.annotation.GraphQLName;
@@ -619,6 +621,39 @@ public class Mutation {
 					structuredContentId, callbackURL, object));
 	}
 
+	@GraphQLField
+	@GraphQLName(
+		value = "postAssetLibraryDocumentAssetLibraryIdMultipartBody",
+		description = "null"
+	)
+	public Document createAssetLibraryDocument(
+			@GraphQLName("assetLibraryId") @NotEmpty String assetLibraryId,
+			@GraphQLName("multipartBody") MultipartBody multipartBody)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_documentResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			documentResource -> documentResource.postAssetLibraryDocument(
+				Long.valueOf(assetLibraryId), multipartBody));
+	}
+
+	@GraphQLField
+	public Response createAssetLibraryDocumentBatch(
+			@GraphQLName("assetLibraryId") @NotEmpty String assetLibraryId,
+			@GraphQLName("multipartBody") MultipartBody multipartBody,
+			@GraphQLName("callbackURL") String callbackURL,
+			@GraphQLName("object") Object object)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_documentResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			documentResource -> documentResource.postAssetLibraryDocumentBatch(
+				Long.valueOf(assetLibraryId), multipartBody, callbackURL,
+				object));
+	}
+
 	@GraphQLField(
 		description = "Creates a new document inside the folder identified by `documentFolderId`. The request body must be `multipart/form-data` with two parts, the file's bytes (`file`), and an optional JSON string (`document`) with the metadata."
 	)
@@ -811,6 +846,35 @@ public class Mutation {
 			this::_populateResourceContext,
 			documentResource -> documentResource.postSiteDocumentBatch(
 				Long.valueOf(siteKey), multipartBody, callbackURL, object));
+	}
+
+	@GraphQLField
+	public DocumentFolder createAssetLibraryDocumentFolder(
+			@GraphQLName("assetLibraryId") @NotEmpty String assetLibraryId,
+			@GraphQLName("documentFolder") DocumentFolder documentFolder)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_documentFolderResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			documentFolderResource ->
+				documentFolderResource.postAssetLibraryDocumentFolder(
+					Long.valueOf(assetLibraryId), documentFolder));
+	}
+
+	@GraphQLField
+	public Response createAssetLibraryDocumentFolderBatch(
+			@GraphQLName("assetLibraryId") @NotEmpty String assetLibraryId,
+			@GraphQLName("callbackURL") String callbackURL,
+			@GraphQLName("object") Object object)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_documentFolderResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			documentFolderResource ->
+				documentFolderResource.postAssetLibraryDocumentFolderBatch(
+					Long.valueOf(assetLibraryId), callbackURL, object));
 	}
 
 	@GraphQLField(
@@ -2227,6 +2291,37 @@ public class Mutation {
 					Long.valueOf(siteKey), callbackURL, object));
 	}
 
+	@GraphQLField
+	public StructuredContent createAssetLibraryStructuredContent(
+			@GraphQLName("assetLibraryId") @NotEmpty String assetLibraryId,
+			@GraphQLName("structuredContent") StructuredContent
+				structuredContent)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_structuredContentResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			structuredContentResource ->
+				structuredContentResource.postAssetLibraryStructuredContent(
+					Long.valueOf(assetLibraryId), structuredContent));
+	}
+
+	@GraphQLField
+	public Response createAssetLibraryStructuredContentBatch(
+			@GraphQLName("assetLibraryId") @NotEmpty String assetLibraryId,
+			@GraphQLName("callbackURL") String callbackURL,
+			@GraphQLName("object") Object object)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_structuredContentResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			structuredContentResource ->
+				structuredContentResource.
+					postAssetLibraryStructuredContentBatch(
+						Long.valueOf(assetLibraryId), callbackURL, object));
+	}
+
 	@GraphQLField(description = "Creates a new structured content.")
 	public StructuredContent createSiteStructuredContent(
 			@GraphQLName("siteKey") @NotEmpty String siteKey,
@@ -2481,6 +2576,38 @@ public class Mutation {
 					structuredContentId));
 
 		return true;
+	}
+
+	@GraphQLField
+	public StructuredContentFolder createAssetLibraryStructuredContentFolder(
+			@GraphQLName("assetLibraryId") @NotEmpty String assetLibraryId,
+			@GraphQLName("structuredContentFolder") StructuredContentFolder
+				structuredContentFolder)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_structuredContentFolderResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			structuredContentFolderResource ->
+				structuredContentFolderResource.
+					postAssetLibraryStructuredContentFolder(
+						Long.valueOf(assetLibraryId), structuredContentFolder));
+	}
+
+	@GraphQLField
+	public Response createAssetLibraryStructuredContentFolderBatch(
+			@GraphQLName("assetLibraryId") @NotEmpty String assetLibraryId,
+			@GraphQLName("callbackURL") String callbackURL,
+			@GraphQLName("object") Object object)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_structuredContentFolderResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			structuredContentFolderResource ->
+				structuredContentFolderResource.
+					postAssetLibraryStructuredContentFolderBatch(
+						Long.valueOf(assetLibraryId), callbackURL, object));
 	}
 
 	@GraphQLField(description = "Creates a new structured content folder.")
@@ -3001,6 +3128,8 @@ public class Mutation {
 		blogPostingResource.setContextHttpServletResponse(_httpServletResponse);
 		blogPostingResource.setContextUriInfo(_uriInfo);
 		blogPostingResource.setContextUser(_user);
+		blogPostingResource.setGroupLocalService(_groupLocalService);
+		blogPostingResource.setRoleLocalService(_roleLocalService);
 	}
 
 	private void _populateResourceContext(
@@ -3015,6 +3144,8 @@ public class Mutation {
 			_httpServletResponse);
 		blogPostingImageResource.setContextUriInfo(_uriInfo);
 		blogPostingImageResource.setContextUser(_user);
+		blogPostingImageResource.setGroupLocalService(_groupLocalService);
+		blogPostingImageResource.setRoleLocalService(_roleLocalService);
 	}
 
 	private void _populateResourceContext(CommentResource commentResource)
@@ -3026,6 +3157,8 @@ public class Mutation {
 		commentResource.setContextHttpServletResponse(_httpServletResponse);
 		commentResource.setContextUriInfo(_uriInfo);
 		commentResource.setContextUser(_user);
+		commentResource.setGroupLocalService(_groupLocalService);
+		commentResource.setRoleLocalService(_roleLocalService);
 	}
 
 	private void _populateResourceContext(DocumentResource documentResource)
@@ -3037,6 +3170,8 @@ public class Mutation {
 		documentResource.setContextHttpServletResponse(_httpServletResponse);
 		documentResource.setContextUriInfo(_uriInfo);
 		documentResource.setContextUser(_user);
+		documentResource.setGroupLocalService(_groupLocalService);
+		documentResource.setRoleLocalService(_roleLocalService);
 	}
 
 	private void _populateResourceContext(
@@ -3051,6 +3186,8 @@ public class Mutation {
 			_httpServletResponse);
 		documentFolderResource.setContextUriInfo(_uriInfo);
 		documentFolderResource.setContextUser(_user);
+		documentFolderResource.setGroupLocalService(_groupLocalService);
+		documentFolderResource.setRoleLocalService(_roleLocalService);
 	}
 
 	private void _populateResourceContext(
@@ -3065,6 +3202,8 @@ public class Mutation {
 			_httpServletResponse);
 		knowledgeBaseArticleResource.setContextUriInfo(_uriInfo);
 		knowledgeBaseArticleResource.setContextUser(_user);
+		knowledgeBaseArticleResource.setGroupLocalService(_groupLocalService);
+		knowledgeBaseArticleResource.setRoleLocalService(_roleLocalService);
 	}
 
 	private void _populateResourceContext(
@@ -3080,6 +3219,9 @@ public class Mutation {
 			_httpServletResponse);
 		knowledgeBaseAttachmentResource.setContextUriInfo(_uriInfo);
 		knowledgeBaseAttachmentResource.setContextUser(_user);
+		knowledgeBaseAttachmentResource.setGroupLocalService(
+			_groupLocalService);
+		knowledgeBaseAttachmentResource.setRoleLocalService(_roleLocalService);
 	}
 
 	private void _populateResourceContext(
@@ -3094,6 +3236,8 @@ public class Mutation {
 			_httpServletResponse);
 		knowledgeBaseFolderResource.setContextUriInfo(_uriInfo);
 		knowledgeBaseFolderResource.setContextUser(_user);
+		knowledgeBaseFolderResource.setGroupLocalService(_groupLocalService);
+		knowledgeBaseFolderResource.setRoleLocalService(_roleLocalService);
 	}
 
 	private void _populateResourceContext(
@@ -3109,6 +3253,8 @@ public class Mutation {
 			_httpServletResponse);
 		messageBoardAttachmentResource.setContextUriInfo(_uriInfo);
 		messageBoardAttachmentResource.setContextUser(_user);
+		messageBoardAttachmentResource.setGroupLocalService(_groupLocalService);
+		messageBoardAttachmentResource.setRoleLocalService(_roleLocalService);
 	}
 
 	private void _populateResourceContext(
@@ -3123,6 +3269,8 @@ public class Mutation {
 			_httpServletResponse);
 		messageBoardMessageResource.setContextUriInfo(_uriInfo);
 		messageBoardMessageResource.setContextUser(_user);
+		messageBoardMessageResource.setGroupLocalService(_groupLocalService);
+		messageBoardMessageResource.setRoleLocalService(_roleLocalService);
 	}
 
 	private void _populateResourceContext(
@@ -3137,6 +3285,8 @@ public class Mutation {
 			_httpServletResponse);
 		messageBoardSectionResource.setContextUriInfo(_uriInfo);
 		messageBoardSectionResource.setContextUser(_user);
+		messageBoardSectionResource.setGroupLocalService(_groupLocalService);
+		messageBoardSectionResource.setRoleLocalService(_roleLocalService);
 	}
 
 	private void _populateResourceContext(
@@ -3151,6 +3301,8 @@ public class Mutation {
 			_httpServletResponse);
 		messageBoardThreadResource.setContextUriInfo(_uriInfo);
 		messageBoardThreadResource.setContextUser(_user);
+		messageBoardThreadResource.setGroupLocalService(_groupLocalService);
+		messageBoardThreadResource.setRoleLocalService(_roleLocalService);
 	}
 
 	private void _populateResourceContext(
@@ -3165,6 +3317,8 @@ public class Mutation {
 			_httpServletResponse);
 		navigationMenuResource.setContextUriInfo(_uriInfo);
 		navigationMenuResource.setContextUser(_user);
+		navigationMenuResource.setGroupLocalService(_groupLocalService);
+		navigationMenuResource.setRoleLocalService(_roleLocalService);
 	}
 
 	private void _populateResourceContext(
@@ -3179,6 +3333,8 @@ public class Mutation {
 			_httpServletResponse);
 		structuredContentResource.setContextUriInfo(_uriInfo);
 		structuredContentResource.setContextUser(_user);
+		structuredContentResource.setGroupLocalService(_groupLocalService);
+		structuredContentResource.setRoleLocalService(_roleLocalService);
 	}
 
 	private void _populateResourceContext(
@@ -3194,6 +3350,9 @@ public class Mutation {
 			_httpServletResponse);
 		structuredContentFolderResource.setContextUriInfo(_uriInfo);
 		structuredContentFolderResource.setContextUser(_user);
+		structuredContentFolderResource.setGroupLocalService(
+			_groupLocalService);
+		structuredContentFolderResource.setRoleLocalService(_roleLocalService);
 	}
 
 	private void _populateResourceContext(WikiNodeResource wikiNodeResource)
@@ -3205,6 +3364,8 @@ public class Mutation {
 		wikiNodeResource.setContextHttpServletResponse(_httpServletResponse);
 		wikiNodeResource.setContextUriInfo(_uriInfo);
 		wikiNodeResource.setContextUser(_user);
+		wikiNodeResource.setGroupLocalService(_groupLocalService);
+		wikiNodeResource.setRoleLocalService(_roleLocalService);
 	}
 
 	private void _populateResourceContext(WikiPageResource wikiPageResource)
@@ -3216,6 +3377,8 @@ public class Mutation {
 		wikiPageResource.setContextHttpServletResponse(_httpServletResponse);
 		wikiPageResource.setContextUriInfo(_uriInfo);
 		wikiPageResource.setContextUser(_user);
+		wikiPageResource.setGroupLocalService(_groupLocalService);
+		wikiPageResource.setRoleLocalService(_roleLocalService);
 	}
 
 	private void _populateResourceContext(
@@ -3230,6 +3393,8 @@ public class Mutation {
 			_httpServletResponse);
 		wikiPageAttachmentResource.setContextUriInfo(_uriInfo);
 		wikiPageAttachmentResource.setContextUser(_user);
+		wikiPageAttachmentResource.setGroupLocalService(_groupLocalService);
+		wikiPageAttachmentResource.setRoleLocalService(_roleLocalService);
 	}
 
 	private static ComponentServiceObjects<BlogPostingResource>
@@ -3271,10 +3436,12 @@ public class Mutation {
 
 	private AcceptLanguage _acceptLanguage;
 	private com.liferay.portal.kernel.model.Company _company;
-	private BiFunction<Object, String, Sort[]> _sortsBiFunction;
-	private com.liferay.portal.kernel.model.User _user;
+	private GroupLocalService _groupLocalService;
 	private HttpServletRequest _httpServletRequest;
 	private HttpServletResponse _httpServletResponse;
+	private RoleLocalService _roleLocalService;
+	private BiFunction<Object, String, Sort[]> _sortsBiFunction;
 	private UriInfo _uriInfo;
+	private com.liferay.portal.kernel.model.User _user;
 
 }

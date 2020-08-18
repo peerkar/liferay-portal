@@ -24,7 +24,18 @@ export function useDDMFormsSubmit(ddmForms, onSubmitCallback) {
 			const visitor = new PagesVisitor(reactForm.get('pages'));
 
 			visitor.mapFields(
-				({fieldName, localizable, repeatable, value, visible}) => {
+				({
+					fieldName,
+					localizable,
+					repeatable,
+					type,
+					value,
+					visible,
+				}) => {
+					if (type === 'fieldset') {
+						return;
+					}
+
 					if (!visible) {
 						value = '';
 					}
@@ -50,7 +61,9 @@ export function useDDMFormsSubmit(ddmForms, onSubmitCallback) {
 					else {
 						dataRecord.dataRecordValues[fieldName] = value;
 					}
-				}
+				},
+				true,
+				true
 			);
 		});
 

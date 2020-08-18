@@ -14,10 +14,27 @@
 
 package com.liferay.translation.service.impl;
 
+import com.liferay.info.item.InfoItemFieldValues;
+import com.liferay.info.item.InfoItemReference;
 import com.liferay.portal.aop.AopService;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.language.Language;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.xml.DocumentException;
+import com.liferay.portal.kernel.xml.SAXReader;
+import com.liferay.translation.constants.TranslationActionKeys;
+import com.liferay.translation.constants.TranslationConstants;
+import com.liferay.translation.exception.XLIFFFileException;
+import com.liferay.translation.internal.util.XLIFFLocaleIdUtil;
+import com.liferay.translation.model.TranslationEntry;
 import com.liferay.translation.service.base.TranslationEntryServiceBaseImpl;
 
+import net.sf.okapi.common.LocaleId;
+
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * The implementation of the translation entry remote service.
@@ -44,10 +61,70 @@ import org.osgi.service.component.annotations.Component;
 public class TranslationEntryServiceImpl
 	extends TranslationEntryServiceBaseImpl {
 
-	/**
-	 * NOTE FOR DEVELOPERS:
-	 *
-	 * Never reference this class directly. Always use <code>com.liferay.translation.service.TranslationEntryServiceUtil</code> to access the translation entry remote service.
-	 */
+	@Override
+	public TranslationEntry addOrUpdateTranslationEntry(
+			long groupId, InfoItemReference infoItemReference, String content,
+			String contentType, ServiceContext serviceContext)
+		throws PortalException {
+
+		try {
+			PermissionChecker permissionChecker = getPermissionChecker();
+
+			LocaleId targetLocaleId = XLIFFLocaleIdUtil.getTargetLocaleId(
+				_saxReader.read(content));
+
+			String languageId = _language.getLanguageId(
+				targetLocaleId.toJavaLocale());
+
+			String name = TranslationConstants.RESOURCE_NAME + "." + languageId;
+
+			if (!permissionChecker.hasPermission(
+					groupId, name, name, TranslationActionKeys.TRANSLATE)) {
+
+				throw new PrincipalException.MustHavePermission(
+					permissionChecker, name, name,
+					TranslationActionKeys.TRANSLATE);
+			}
+
+			return translationEntryLocalService.addOrUpdateTranslationEntry(
+				groupId, infoItemReference.getClassName(),
+				infoItemReference.getClassPK(), content, contentType,
+				languageId, serviceContext);
+		}
+		catch (DocumentException documentException) {
+			throw new XLIFFFileException.MustHaveCorrectEncoding(
+				documentException);
+		}
+	}
+
+	@Override
+	public TranslationEntry addOrUpdateTranslationEntry(
+			long groupId, String languageId,
+			InfoItemReference infoItemReference,
+			InfoItemFieldValues infoItemFieldValues,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		PermissionChecker permissionChecker = getPermissionChecker();
+
+		String name = TranslationConstants.RESOURCE_NAME + "." + languageId;
+
+		if (!permissionChecker.hasPermission(
+				groupId, name, name, TranslationActionKeys.TRANSLATE)) {
+
+			throw new PrincipalException.MustHavePermission(
+				permissionChecker, name, name, TranslationActionKeys.TRANSLATE);
+		}
+
+		return translationEntryLocalService.addOrUpdateTranslationEntry(
+			groupId, languageId, infoItemReference, infoItemFieldValues,
+			serviceContext);
+	}
+
+	@Reference
+	private Language _language;
+
+	@Reference
+	private SAXReader _saxReader;
 
 }

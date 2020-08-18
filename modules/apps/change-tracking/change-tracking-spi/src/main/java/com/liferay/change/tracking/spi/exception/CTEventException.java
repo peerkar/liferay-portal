@@ -28,12 +28,12 @@ public class CTEventException extends PortalException {
 		super(msg);
 	}
 
-	public CTEventException(String msg, Throwable cause) {
-		super(msg, cause);
+	public CTEventException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public CTEventException(Throwable cause) {
-		super(cause);
+	public CTEventException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

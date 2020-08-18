@@ -28,12 +28,12 @@ public class KBArticleSourceURLException extends PortalException {
 		super(msg);
 	}
 
-	public KBArticleSourceURLException(String msg, Throwable cause) {
-		super(msg, cause);
+	public KBArticleSourceURLException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public KBArticleSourceURLException(Throwable cause) {
-		super(cause);
+	public KBArticleSourceURLException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

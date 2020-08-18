@@ -174,10 +174,10 @@ public abstract class BaseGenericSpellCheckIndexWriter
 					});
 			}
 			catch (RuntimeException runtimeException) {
-				Throwable t = runtimeException.getCause();
+				Throwable throwable = runtimeException.getCause();
 
-				if (t instanceof SearchException) {
-					throw (SearchException)t;
+				if (throwable instanceof SearchException) {
+					throw (SearchException)throwable;
 				}
 
 				throw runtimeException;

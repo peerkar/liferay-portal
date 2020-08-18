@@ -29,12 +29,14 @@ public class NoSuchFriendlyURLEntryMappingException
 		super(msg);
 	}
 
-	public NoSuchFriendlyURLEntryMappingException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchFriendlyURLEntryMappingException(
+		String msg, Throwable throwable) {
+
+		super(msg, throwable);
 	}
 
-	public NoSuchFriendlyURLEntryMappingException(Throwable cause) {
-		super(cause);
+	public NoSuchFriendlyURLEntryMappingException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

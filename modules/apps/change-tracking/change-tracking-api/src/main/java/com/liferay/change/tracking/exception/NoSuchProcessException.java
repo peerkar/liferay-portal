@@ -28,12 +28,12 @@ public class NoSuchProcessException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchProcessException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchProcessException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchProcessException(Throwable cause) {
-		super(cause);
+	public NoSuchProcessException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

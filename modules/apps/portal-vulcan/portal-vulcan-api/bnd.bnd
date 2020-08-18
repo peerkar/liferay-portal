@@ -1,6 +1,6 @@
 Bundle-Name: Liferay Portal Vulcan API
 Bundle-SymbolicName: com.liferay.portal.vulcan.api
-Bundle-Version: 7.8.0
+Bundle-Version: 7.10.0
 Export-Package:\
 	com.liferay.portal.vulcan.accept.language,\
 	com.liferay.portal.vulcan.aggregation,\
@@ -12,6 +12,7 @@ Export-Package:\
 	com.liferay.portal.vulcan.graphql.contributor,\
 	com.liferay.portal.vulcan.graphql.servlet,\
 	com.liferay.portal.vulcan.graphql.util,\
+	com.liferay.portal.vulcan.jaxrs.context,\
 	com.liferay.portal.vulcan.jaxrs.exception.mapper,\
 	com.liferay.portal.vulcan.multipart,\
 	com.liferay.portal.vulcan.pagination,\

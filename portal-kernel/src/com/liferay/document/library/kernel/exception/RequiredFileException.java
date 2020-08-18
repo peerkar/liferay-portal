@@ -28,12 +28,12 @@ public class RequiredFileException extends PortalException {
 		super(msg);
 	}
 
-	public RequiredFileException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RequiredFileException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public RequiredFileException(Throwable cause) {
-		super(cause);
+	public RequiredFileException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

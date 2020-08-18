@@ -28,12 +28,12 @@ public class SamlException extends PortalException {
 		super(msg);
 	}
 
-	public SamlException(String msg, Throwable cause) {
-		super(msg, cause);
+	public SamlException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public SamlException(Throwable cause) {
-		super(cause);
+	public SamlException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

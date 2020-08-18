@@ -28,12 +28,12 @@ public class NoSuchClassedModelUsageException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchClassedModelUsageException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchClassedModelUsageException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchClassedModelUsageException(Throwable cause) {
-		super(cause);
+	public NoSuchClassedModelUsageException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

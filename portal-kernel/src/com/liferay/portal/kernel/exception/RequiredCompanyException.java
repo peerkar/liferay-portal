@@ -26,12 +26,12 @@ public class RequiredCompanyException extends PortalException {
 		super(msg);
 	}
 
-	public RequiredCompanyException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RequiredCompanyException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public RequiredCompanyException(Throwable cause) {
-		super(cause);
+	public RequiredCompanyException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

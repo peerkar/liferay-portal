@@ -26,12 +26,12 @@ public class NoSuchPortletPreferencesException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchPortletPreferencesException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchPortletPreferencesException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchPortletPreferencesException(Throwable cause) {
-		super(cause);
+	public NoSuchPortletPreferencesException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

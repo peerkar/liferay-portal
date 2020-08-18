@@ -28,12 +28,12 @@ public class DuplicateTagException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateTagException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateTagException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateTagException(Throwable cause) {
-		super(cause);
+	public DuplicateTagException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -28,12 +28,12 @@ public class LDAPFilterException extends PortalException {
 		super(msg);
 	}
 
-	public LDAPFilterException(String msg, Throwable cause) {
-		super(msg, cause);
+	public LDAPFilterException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public LDAPFilterException(Throwable cause) {
-		super(cause);
+	public LDAPFilterException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

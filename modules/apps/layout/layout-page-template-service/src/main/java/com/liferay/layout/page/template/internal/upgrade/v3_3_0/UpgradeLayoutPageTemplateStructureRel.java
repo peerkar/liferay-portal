@@ -18,7 +18,7 @@ import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.service.FragmentEntryLinkLocalService;
 import com.liferay.layout.page.template.internal.upgrade.v3_3_0.util.EditableValuesTransformerUtil;
 import com.liferay.layout.page.template.util.LayoutDataConverter;
-import com.liferay.layout.util.structure.FragmentLayoutStructureItem;
+import com.liferay.layout.util.structure.FragmentStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.petra.string.StringPool;
@@ -141,16 +141,19 @@ public class UpgradeLayoutPageTemplateStructureRel extends UpgradeProcess {
 		for (LayoutStructureItem layoutStructureItem :
 				layoutStructure.getLayoutStructureItems()) {
 
-			if (!(layoutStructureItem instanceof FragmentLayoutStructureItem)) {
+			if (!(layoutStructureItem instanceof
+					FragmentStyledLayoutStructureItem)) {
+
 				continue;
 			}
 
-			FragmentLayoutStructureItem fragmentLayoutStructureItem =
-				(FragmentLayoutStructureItem)layoutStructureItem;
+			FragmentStyledLayoutStructureItem
+				fragmentStyledLayoutStructureItem =
+					(FragmentStyledLayoutStructureItem)layoutStructureItem;
 
 			FragmentEntryLink fragmentEntryLink =
 				_fragmentEntryLinkLocalService.fetchFragmentEntryLink(
-					fragmentLayoutStructureItem.getFragmentEntryLinkId());
+					fragmentStyledLayoutStructureItem.getFragmentEntryLinkId());
 
 			if (fragmentEntryLink == null) {
 				continue;
@@ -160,7 +163,7 @@ public class UpgradeLayoutPageTemplateStructureRel extends UpgradeProcess {
 					SegmentsExperienceConstants.ID_DEFAULT) {
 
 				_fragmentEntryLinkLocalService.updateFragmentEntryLink(
-					fragmentLayoutStructureItem.getFragmentEntryLinkId(),
+					fragmentStyledLayoutStructureItem.getFragmentEntryLinkId(),
 					EditableValuesTransformerUtil.getEditableValues(
 						fragmentEntryLink.getEditableValues(),
 						segmentsExperienceId),
@@ -210,7 +213,7 @@ public class UpgradeLayoutPageTemplateStructureRel extends UpgradeProcess {
 					newNamespace, fragmentEntryLink.getPosition(),
 					fragmentEntryLink.getRendererKey(), new ServiceContext());
 
-			fragmentLayoutStructureItem.setFragmentEntryLinkId(
+			fragmentStyledLayoutStructureItem.setFragmentEntryLinkId(
 				newFragmentEntryLink.getFragmentEntryLinkId());
 		}
 

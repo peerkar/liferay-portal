@@ -111,8 +111,32 @@ const ClassicEditor = ({
 					CKEDITOR.dtd.$removeEmpty.i = 0;
 					CKEDITOR.dtd.$removeEmpty.span = 0;
 
+					CKEDITOR.getNextZIndex = function () {
+						return CKEDITOR.dialog._.currentZIndex
+							? CKEDITOR.dialog._.currentZIndex + 10
+							: Liferay.zIndex.WINDOW + 10;
+					};
+
 					CKEDITOR.on('instanceCreated', ({editor}) => {
 						editor.name = name;
+
+						editor.on('drop', (event) => {
+							var data = event.data.dataTransfer.getData(
+								'text/html'
+							);
+
+							if (data) {
+								var fragment = CKEDITOR.htmlParser.fragment.fromHtml(
+									data
+								);
+
+								var name = fragment.children[0].name;
+
+								if (name) {
+									return editor.pasteFilter.check(name);
+								}
+							}
+						});
 
 						editor.on('instanceReady', () => {
 							editor.setData(contents);

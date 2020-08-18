@@ -135,8 +135,9 @@ public abstract class SyntaxLogger {
 
 			_syntaxLogLoggerElement.addChildLoggerElement(headerLoggerElement);
 		}
-		catch (Throwable t) {
-			throw new PoshiRunnerLoggerException(t.getMessage(), t);
+		catch (Throwable throwable) {
+			throw new PoshiRunnerLoggerException(
+				throwable.getMessage(), throwable);
 		}
 	}
 

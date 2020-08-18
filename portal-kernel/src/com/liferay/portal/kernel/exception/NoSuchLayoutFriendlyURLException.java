@@ -26,12 +26,12 @@ public class NoSuchLayoutFriendlyURLException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchLayoutFriendlyURLException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchLayoutFriendlyURLException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchLayoutFriendlyURLException(Throwable cause) {
-		super(cause);
+	public NoSuchLayoutFriendlyURLException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

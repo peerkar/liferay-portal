@@ -136,9 +136,9 @@ public class UpgradeStagingConfigurationClassNames extends UpgradeProcess {
 
 		for (Map.Entry<String, String> entry : portletNamesMap.entrySet()) {
 			String stagedKey = "staged-portlet_" + entry.getKey();
-			String adminStagedKey = "staged-portlet_" + entry.getValue();
 
 			if (typeSettingsUnicodeProperties.containsKey(stagedKey)) {
+				String adminStagedKey = "staged-portlet_" + entry.getValue();
 				String value = typeSettingsUnicodeProperties.getProperty(
 					stagedKey);
 

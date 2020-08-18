@@ -5,7 +5,7 @@ $appBuilderTableViewTransitionTime: 0.5s;
 	margin-top: 64px;
 
 	&__content {
-		margin: 1rem $appBuilderTableViewSidebarWidth 0 0;
+		margin: 1.5rem $appBuilderTableViewSidebarWidth 0 0;
 		transition: margin ease $appBuilderTableViewTransitionTime;
 
 		&--sidebar-closed {

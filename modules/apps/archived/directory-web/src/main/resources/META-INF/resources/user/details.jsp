@@ -23,12 +23,15 @@ List<Organization> organizations = (List<Organization>)request.getAttribute("use
 
 String organizationsHTML = StringPool.BLANK;
 
-if (!organizations.isEmpty()) {
-	organizationsHTML = organizations.get(0).getName();
-}
+for (int i = 0; i < organizations.size(); i++) {
+	Organization organization = organizations.get(i);
 
-for (int i = 1; i < organizations.size(); i++) {
-	organizationsHTML += ", " + organizations.get(i).getName();
+	if (i == 0) {
+		organizationsHTML = organization.getName();
+	}
+	else {
+		organizationsHTML += ", " + organization.getName();
+	}
 }
 %>
 

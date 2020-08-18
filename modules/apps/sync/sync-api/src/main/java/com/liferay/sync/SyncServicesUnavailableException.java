@@ -28,12 +28,12 @@ public class SyncServicesUnavailableException extends PortalException {
 		super(msg);
 	}
 
-	public SyncServicesUnavailableException(String msg, Throwable cause) {
-		super(msg, cause);
+	public SyncServicesUnavailableException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public SyncServicesUnavailableException(Throwable cause) {
-		super(cause);
+	public SyncServicesUnavailableException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

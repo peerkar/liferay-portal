@@ -322,6 +322,10 @@ public abstract class SettingsConfigurationAction
 		boolean emailEnabled = GetterUtil.getBoolean(
 			getParameter(actionRequest, emailParam + "Enabled"));
 
+		if (!emailEnabled) {
+			return;
+		}
+
 		String languageId = LocaleUtil.toLanguageId(
 			LocaleUtil.getSiteDefault());
 
@@ -330,13 +334,11 @@ public abstract class SettingsConfigurationAction
 		String emailBody = getLocalizedParameter(
 			actionRequest, emailParam + "Body", languageId);
 
-		if (emailEnabled) {
-			if (Validator.isNull(emailSubject)) {
-				SessionErrors.add(actionRequest, emailParam + "Subject");
-			}
-			else if (Validator.isNull(emailBody)) {
-				SessionErrors.add(actionRequest, emailParam + "Body");
-			}
+		if (Validator.isNull(emailSubject)) {
+			SessionErrors.add(actionRequest, emailParam + "Subject");
+		}
+		else if (Validator.isNull(emailBody)) {
+			SessionErrors.add(actionRequest, emailParam + "Body");
 		}
 	}
 

@@ -28,12 +28,12 @@ public class BannedUserException extends PortalException {
 		super(msg);
 	}
 
-	public BannedUserException(String msg, Throwable cause) {
-		super(msg, cause);
+	public BannedUserException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public BannedUserException(Throwable cause) {
-		super(cause);
+	public BannedUserException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

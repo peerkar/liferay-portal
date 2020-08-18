@@ -103,10 +103,10 @@ public abstract class UpgradeProcess
 
 			doUpgrade();
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			message = "Failed upgrade process ";
 
-			throw new UpgradeException(t);
+			throw new UpgradeException(throwable);
 		}
 		finally {
 			connection = null;

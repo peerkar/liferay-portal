@@ -28,12 +28,12 @@ public class KaleoDefinitionValidationException extends WorkflowException {
 		super(msg);
 	}
 
-	public KaleoDefinitionValidationException(String msg, Throwable cause) {
-		super(msg, cause);
+	public KaleoDefinitionValidationException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public KaleoDefinitionValidationException(Throwable cause) {
-		super(cause);
+	public KaleoDefinitionValidationException(Throwable throwable) {
+		super(throwable);
 	}
 
 	public static class DuplicateNode

@@ -34,4 +34,7 @@ public interface ClusterRequestExecutor {
 	public StatsClusterResponse executeClusterRequest(
 		StatsClusterRequest statsClusterRequest);
 
+	public UpdateSettingsClusterResponse executeClusterRequest(
+		UpdateSettingsClusterRequest updateSettingsClusterRequest);
+
 }

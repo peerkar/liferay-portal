@@ -26,12 +26,12 @@ public class NoSuchOrgLaborException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchOrgLaborException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchOrgLaborException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchOrgLaborException(Throwable cause) {
-		super(cause);
+	public NoSuchOrgLaborException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

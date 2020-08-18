@@ -73,8 +73,9 @@ public class RPCRequest<T extends Serializable> extends RPCSerializable {
 
 				});
 		}
-		catch (Throwable t) {
-			sendRPCResponse(channel, new RPCResponse<T>(id, false, null, t));
+		catch (Throwable throwable) {
+			sendRPCResponse(
+				channel, new RPCResponse<T>(id, false, null, throwable));
 		}
 		finally {
 			ChannelThreadLocal.removeChannel();

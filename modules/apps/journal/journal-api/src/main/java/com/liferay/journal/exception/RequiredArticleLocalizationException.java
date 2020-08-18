@@ -28,12 +28,14 @@ public class RequiredArticleLocalizationException extends PortalException {
 		super(msg);
 	}
 
-	public RequiredArticleLocalizationException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RequiredArticleLocalizationException(
+		String msg, Throwable throwable) {
+
+		super(msg, throwable);
 	}
 
-	public RequiredArticleLocalizationException(Throwable cause) {
-		super(cause);
+	public RequiredArticleLocalizationException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

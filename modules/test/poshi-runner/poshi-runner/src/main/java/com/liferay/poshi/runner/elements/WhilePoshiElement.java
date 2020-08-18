@@ -50,6 +50,7 @@ public class WhilePoshiElement extends IfPoshiElement {
 	}
 
 	protected WhilePoshiElement() {
+		super(_ELEMENT_NAME);
 	}
 
 	protected WhilePoshiElement(Element element) {
@@ -77,7 +78,7 @@ public class WhilePoshiElement extends IfPoshiElement {
 		sb.append(getPoshiScriptKeyword());
 		sb.append(" (");
 
-		List<EqualsPoshiElement> equalsPoshiElement = elements("equals");
+		List<Element> equalsPoshiElement = elements("equals");
 
 		if (equalsPoshiElement.size() == 1) {
 			parentheticalContent = "(" + parentheticalContent + ")";

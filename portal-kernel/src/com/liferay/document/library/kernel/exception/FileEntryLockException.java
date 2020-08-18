@@ -28,12 +28,12 @@ public class FileEntryLockException extends PortalException {
 		super(msg);
 	}
 
-	public FileEntryLockException(String msg, Throwable cause) {
-		super(msg, cause);
+	public FileEntryLockException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public FileEntryLockException(Throwable cause) {
-		super(cause);
+	public FileEntryLockException(Throwable throwable) {
+		super(throwable);
 	}
 
 	public static class MustBeUnlocked extends FileEntryLockException {

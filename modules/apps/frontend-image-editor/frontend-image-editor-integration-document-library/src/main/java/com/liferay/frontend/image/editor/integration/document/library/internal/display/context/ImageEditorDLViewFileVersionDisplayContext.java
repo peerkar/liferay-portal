@@ -23,7 +23,6 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.servlet.taglib.ui.BaseUIItem;
 import com.liferay.portal.kernel.servlet.taglib.ui.Menu;
-import com.liferay.portal.kernel.servlet.taglib.ui.MenuItem;
 import com.liferay.portal.kernel.servlet.taglib.ui.ToolbarItem;
 
 import java.util.List;
@@ -60,14 +59,12 @@ public class ImageEditorDLViewFileVersionDisplayContext
 	public Menu getMenu() throws PortalException {
 		Menu menu = super.getMenu();
 
-		List<MenuItem> menuItems = menu.getMenuItems();
-
 		if (!_imageEditorDLDisplayContextHelper.isShowImageEditorAction()) {
 			return menu;
 		}
 
 		_addEditWithImageEditorUIItem(
-			menuItems,
+			menu.getMenuItems(),
 			_imageEditorDLDisplayContextHelper.
 				getJavacriptEditWithImageEditorMenuItem(_resourceBundle));
 

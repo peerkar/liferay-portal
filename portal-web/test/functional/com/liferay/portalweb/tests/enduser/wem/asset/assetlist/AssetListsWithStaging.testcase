@@ -40,7 +40,7 @@ definition {
 		task ("Navigate to asset list administration in the staging site.") {
 			ProductMenuHelper.openProductMenu();
 
-			ProductMenuHelper.expandCategory(category = "Content &amp; Data");
+			ProductMenuHelper.expandCategory(category = "Site Builder");
 
 			AssertVisible(
 				key_portlet = "Collections",
@@ -52,7 +52,7 @@ definition {
 
 			ProductMenuHelper.openProductMenu();
 
-			ProductMenuHelper.expandCategory(category = "Content &amp; Data");
+			ProductMenuHelper.expandCategory(category = "Site Builder");
 
 			AssertElementNotPresent(
 				key_portlet = "Collections",

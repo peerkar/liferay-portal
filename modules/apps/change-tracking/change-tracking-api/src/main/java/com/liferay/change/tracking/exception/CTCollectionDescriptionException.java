@@ -28,12 +28,12 @@ public class CTCollectionDescriptionException extends PortalException {
 		super(msg);
 	}
 
-	public CTCollectionDescriptionException(String msg, Throwable cause) {
-		super(msg, cause);
+	public CTCollectionDescriptionException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public CTCollectionDescriptionException(Throwable cause) {
-		super(cause);
+	public CTCollectionDescriptionException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

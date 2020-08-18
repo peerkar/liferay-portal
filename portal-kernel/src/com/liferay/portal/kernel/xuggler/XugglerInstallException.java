@@ -33,8 +33,8 @@ public class XugglerInstallException extends PortalException {
 
 	public static class MustInstallJar extends XugglerInstallException {
 
-		public MustInstallJar(String name, Throwable cause) {
-			super("Unable to install jar " + name, cause);
+		public MustInstallJar(String name, Throwable throwable) {
+			super("Unable to install jar " + name, throwable);
 		}
 
 	}
@@ -43,8 +43,8 @@ public class XugglerInstallException extends PortalException {
 		super(message);
 	}
 
-	private XugglerInstallException(String message, Throwable cause) {
-		super(message, cause);
+	private XugglerInstallException(String message, Throwable throwable) {
+		super(message, throwable);
 	}
 
 }

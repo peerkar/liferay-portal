@@ -28,12 +28,12 @@ public class NoSuchActivityException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchActivityException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchActivityException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchActivityException(Throwable cause) {
-		super(cause);
+	public NoSuchActivityException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

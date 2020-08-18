@@ -28,12 +28,12 @@ public class DuplicateOAuth2ScopeGrantException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateOAuth2ScopeGrantException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateOAuth2ScopeGrantException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateOAuth2ScopeGrantException(Throwable cause) {
-		super(cause);
+	public DuplicateOAuth2ScopeGrantException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

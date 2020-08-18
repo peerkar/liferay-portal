@@ -28,12 +28,12 @@ public class NoSuchFormInstanceReportException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchFormInstanceReportException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchFormInstanceReportException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchFormInstanceReportException(Throwable cause) {
-		super(cause);
+	public NoSuchFormInstanceReportException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

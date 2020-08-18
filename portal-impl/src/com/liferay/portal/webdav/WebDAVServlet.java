@@ -124,14 +124,14 @@ public class WebDAVServlet extends HttpServlet {
 			catch (WebDAVException webDAVException) {
 				boolean logError = false;
 
-				Throwable cause = webDAVException;
+				Throwable throwable = webDAVException;
 
-				while (cause != null) {
-					if (cause instanceof PrincipalException) {
+				while (throwable != null) {
+					if (throwable instanceof PrincipalException) {
 						logError = true;
 					}
 
-					cause = cause.getCause();
+					throwable = throwable.getCause();
 				}
 
 				if (logError) {

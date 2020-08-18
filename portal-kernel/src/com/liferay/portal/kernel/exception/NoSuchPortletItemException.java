@@ -26,12 +26,12 @@ public class NoSuchPortletItemException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchPortletItemException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchPortletItemException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchPortletItemException(Throwable cause) {
-		super(cause);
+	public NoSuchPortletItemException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -56,14 +56,13 @@ for (String portletId : PortletCategoryUtil.getFirstChildPortletIds(portletCateg
 portlets = ListUtil.sort(portlets, new PortletTitleComparator(application, locale));
 
 if (!portletCategories.isEmpty() || !portlets.isEmpty()) {
-	String title = Validator.isNotNull(externalPortletCategory) ? externalPortletCategory : LanguageUtil.get(request, portletCategory.getName());
 %>
 
 	<liferay-ui:panel
 		collapsible="<%= true %>"
 		cssClass="lfr-content-category list-unstyled panel-page-category"
 		extended="<%= true %>"
-		title="<%= title %>"
+		title="<%= Validator.isNotNull(externalPortletCategory) ? externalPortletCategory : LanguageUtil.get(request, portletCategory.getName()) %>"
 	>
 		<aui:nav cssClass="list-group">
 

@@ -249,10 +249,10 @@ public class AdminPortlet extends BaseKBPortlet {
 		String resourceID = GetterUtil.getString(
 			resourceRequest.getResourceID());
 
-		HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(
-			resourceRequest);
-
 		if (resourceID.equals("infoPanel")) {
+			HttpServletRequest httpServletRequest =
+				_portal.getHttpServletRequest(resourceRequest);
+
 			try {
 				resourceRequest.setAttribute(
 					KBWebKeys.KNOWLEDGE_BASE_KB_ARTICLES,
@@ -576,12 +576,12 @@ public class AdminPortlet extends BaseKBPortlet {
 	}
 
 	@Override
-	protected boolean isSessionErrorException(Throwable cause) {
-		if (cause instanceof KBArticleImportException ||
-			cause instanceof KBTemplateContentException ||
-			cause instanceof KBTemplateTitleException ||
-			cause instanceof NoSuchTemplateException ||
-			super.isSessionErrorException(cause)) {
+	protected boolean isSessionErrorException(Throwable throwable) {
+		if (throwable instanceof KBArticleImportException ||
+			throwable instanceof KBTemplateContentException ||
+			throwable instanceof KBTemplateTitleException ||
+			throwable instanceof NoSuchTemplateException ||
+			super.isSessionErrorException(throwable)) {
 
 			return true;
 		}

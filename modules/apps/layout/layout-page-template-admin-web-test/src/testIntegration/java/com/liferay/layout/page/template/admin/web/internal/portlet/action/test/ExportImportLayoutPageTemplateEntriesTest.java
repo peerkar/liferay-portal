@@ -32,11 +32,11 @@ import com.liferay.layout.page.template.service.LayoutPageTemplateCollectionLoca
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
 import com.liferay.layout.util.structure.ColumnLayoutStructureItem;
-import com.liferay.layout.util.structure.ContainerLayoutStructureItem;
-import com.liferay.layout.util.structure.FragmentLayoutStructureItem;
+import com.liferay.layout.util.structure.ContainerStyledLayoutStructureItem;
+import com.liferay.layout.util.structure.FragmentStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
-import com.liferay.layout.util.structure.RowLayoutStructureItem;
+import com.liferay.layout.util.structure.RowStyledLayoutStructureItem;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -233,33 +233,36 @@ public class ExportImportLayoutPageTemplateEntriesTest {
 		LayoutStructure layoutStructure2 = LayoutStructure.of(
 			layoutPageTemplateStructure2.getData(0));
 
-		ContainerLayoutStructureItem containerLayoutStructureItem1 =
+		ContainerStyledLayoutStructureItem containerStyledLayoutStructureItem1 =
 			_getContainerLayoutStructureItem(layoutStructure1);
-		ContainerLayoutStructureItem containerLayoutStructureItem2 =
+		ContainerStyledLayoutStructureItem containerStyledLayoutStructureItem2 =
 			_getContainerLayoutStructureItem(layoutStructure2);
 
 		_validateContainerLayoutStructureItem(
-			containerLayoutStructureItem1, containerLayoutStructureItem2);
+			containerStyledLayoutStructureItem1,
+			containerStyledLayoutStructureItem2);
 
 		List<String> containerLayoutStructureItemChildrenItemIds1 =
-			containerLayoutStructureItem1.getChildrenItemIds();
+			containerStyledLayoutStructureItem1.getChildrenItemIds();
 		List<String> containerLayoutStructureItemChildrenItemIds2 =
-			containerLayoutStructureItem2.getChildrenItemIds();
+			containerStyledLayoutStructureItem2.getChildrenItemIds();
 
-		RowLayoutStructureItem rowLayoutStructureItem1 =
-			(RowLayoutStructureItem)layoutStructure1.getLayoutStructureItem(
-				containerLayoutStructureItemChildrenItemIds1.get(0));
-		RowLayoutStructureItem rowLayoutStructureItem2 =
-			(RowLayoutStructureItem)layoutStructure2.getLayoutStructureItem(
-				containerLayoutStructureItemChildrenItemIds2.get(0));
+		RowStyledLayoutStructureItem rowStyledLayoutStructureItem1 =
+			(RowStyledLayoutStructureItem)
+				layoutStructure1.getLayoutStructureItem(
+					containerLayoutStructureItemChildrenItemIds1.get(0));
+		RowStyledLayoutStructureItem rowStyledLayoutStructureItem2 =
+			(RowStyledLayoutStructureItem)
+				layoutStructure2.getLayoutStructureItem(
+					containerLayoutStructureItemChildrenItemIds2.get(0));
 
 		_validateRowLayoutStructureItem(
-			rowLayoutStructureItem1, rowLayoutStructureItem2);
+			rowStyledLayoutStructureItem1, rowStyledLayoutStructureItem2);
 
 		List<String> rowLayoutStructureItemChildrenItemIds1 =
-			rowLayoutStructureItem1.getChildrenItemIds();
+			rowStyledLayoutStructureItem1.getChildrenItemIds();
 		List<String> rowLayoutStructureItemChildrenItemIds2 =
-			rowLayoutStructureItem2.getChildrenItemIds();
+			rowStyledLayoutStructureItem2.getChildrenItemIds();
 
 		ColumnLayoutStructureItem columnLayoutStructureItem1 =
 			(ColumnLayoutStructureItem)layoutStructure1.getLayoutStructureItem(
@@ -276,17 +279,18 @@ public class ExportImportLayoutPageTemplateEntriesTest {
 		List<String> columnLayoutStructureItemChildrenItemIds2 =
 			columnLayoutStructureItem2.getChildrenItemIds();
 
-		FragmentLayoutStructureItem fragmentLayoutStructureItem1 =
-			(FragmentLayoutStructureItem)
+		FragmentStyledLayoutStructureItem fragmentStyledLayoutStructureItem1 =
+			(FragmentStyledLayoutStructureItem)
 				layoutStructure1.getLayoutStructureItem(
 					columnLayoutStructureItemChildrenItemIds1.get(0));
-		FragmentLayoutStructureItem fragmentLayoutStructureItem2 =
-			(FragmentLayoutStructureItem)
+		FragmentStyledLayoutStructureItem fragmentStyledLayoutStructureItem2 =
+			(FragmentStyledLayoutStructureItem)
 				layoutStructure2.getLayoutStructureItem(
 					columnLayoutStructureItemChildrenItemIds2.get(0));
 
 		_validateFragmentLayoutStructureItem(
-			fragmentLayoutStructureItem1, fragmentLayoutStructureItem2);
+			fragmentStyledLayoutStructureItem1,
+			fragmentStyledLayoutStructureItem2);
 	}
 
 	private FragmentEntry _addFragmentEntry(
@@ -309,16 +313,16 @@ public class ExportImportLayoutPageTemplateEntriesTest {
 			serviceContext);
 	}
 
-	private ContainerLayoutStructureItem _getContainerLayoutStructureItem(
+	private ContainerStyledLayoutStructureItem _getContainerLayoutStructureItem(
 		LayoutStructure layoutStructure) {
 
 		LayoutStructureItem layoutStructureItem =
 			_getMainChildLayoutStructureItem(layoutStructure);
 
 		Assert.assertTrue(
-			layoutStructureItem instanceof ContainerLayoutStructureItem);
+			layoutStructureItem instanceof ContainerStyledLayoutStructureItem);
 
-		return (ContainerLayoutStructureItem)layoutStructureItem;
+		return (ContainerStyledLayoutStructureItem)layoutStructureItem;
 	}
 
 	private LayoutStructureItem _getMainChildLayoutStructureItem(
@@ -353,51 +357,59 @@ public class ExportImportLayoutPageTemplateEntriesTest {
 	}
 
 	private void _validateContainerLayoutStructureItem(
-		ContainerLayoutStructureItem expectedContainerLayoutStructureItem,
-		ContainerLayoutStructureItem actualContainerLayoutStructureItem) {
+		ContainerStyledLayoutStructureItem
+			expectedContainerStyledLayoutStructureItem,
+		ContainerStyledLayoutStructureItem
+			actualContainerStyledLayoutStructureItem) {
 
 		Assert.assertEquals(
-			expectedContainerLayoutStructureItem.getBackgroundColorCssClass(),
-			actualContainerLayoutStructureItem.getBackgroundColorCssClass());
+			expectedContainerStyledLayoutStructureItem.
+				getBackgroundColorCssClass(),
+			actualContainerStyledLayoutStructureItem.
+				getBackgroundColorCssClass());
 
 		JSONObject expectedBackgroundImageJSONObject =
-			expectedContainerLayoutStructureItem.getBackgroundImageJSONObject();
+			expectedContainerStyledLayoutStructureItem.
+				getBackgroundImageJSONObject();
 		JSONObject actualBackgroundImageJSONObject =
-			actualContainerLayoutStructureItem.getBackgroundImageJSONObject();
+			actualContainerStyledLayoutStructureItem.
+				getBackgroundImageJSONObject();
 
 		Assert.assertEquals(
 			expectedBackgroundImageJSONObject.toJSONString(),
 			actualBackgroundImageJSONObject.toJSONString());
 
 		Assert.assertEquals(
-			expectedContainerLayoutStructureItem.getContainerType(),
-			actualContainerLayoutStructureItem.getContainerType());
+			expectedContainerStyledLayoutStructureItem.getContainerType(),
+			actualContainerStyledLayoutStructureItem.getContainerType());
 		Assert.assertEquals(
-			expectedContainerLayoutStructureItem.getPaddingBottom(),
-			actualContainerLayoutStructureItem.getPaddingBottom());
+			expectedContainerStyledLayoutStructureItem.getPaddingBottom(),
+			actualContainerStyledLayoutStructureItem.getPaddingBottom());
 		Assert.assertEquals(
-			expectedContainerLayoutStructureItem.getPaddingLeft(),
-			actualContainerLayoutStructureItem.getPaddingLeft());
+			expectedContainerStyledLayoutStructureItem.getPaddingLeft(),
+			actualContainerStyledLayoutStructureItem.getPaddingLeft());
 		Assert.assertEquals(
-			expectedContainerLayoutStructureItem.getPaddingRight(),
-			actualContainerLayoutStructureItem.getPaddingRight());
+			expectedContainerStyledLayoutStructureItem.getPaddingRight(),
+			actualContainerStyledLayoutStructureItem.getPaddingRight());
 		Assert.assertEquals(
-			expectedContainerLayoutStructureItem.getPaddingTop(),
-			actualContainerLayoutStructureItem.getPaddingTop());
+			expectedContainerStyledLayoutStructureItem.getPaddingTop(),
+			actualContainerStyledLayoutStructureItem.getPaddingTop());
 		Assert.assertEquals(
-			expectedContainerLayoutStructureItem.getWidthType(),
-			actualContainerLayoutStructureItem.getWidthType());
+			expectedContainerStyledLayoutStructureItem.getWidthType(),
+			actualContainerStyledLayoutStructureItem.getWidthType());
 	}
 
 	private void _validateFragmentLayoutStructureItem(
-			FragmentLayoutStructureItem expectedFragmentLayoutStructureItem,
-			FragmentLayoutStructureItem actualFragmentLayoutStructureItem)
+			FragmentStyledLayoutStructureItem
+				expectedFragmentStyledLayoutStructureItem,
+			FragmentStyledLayoutStructureItem
+				actualFragmentStyledLayoutStructureItem)
 		throws Exception {
 
 		long expectedFragmentEntryLinkId =
-			expectedFragmentLayoutStructureItem.getFragmentEntryLinkId();
+			expectedFragmentStyledLayoutStructureItem.getFragmentEntryLinkId();
 		long actualFragmentEntryLinkId =
-			actualFragmentLayoutStructureItem.getFragmentEntryLinkId();
+			actualFragmentStyledLayoutStructureItem.getFragmentEntryLinkId();
 
 		FragmentEntryLink expectedFragmentEntryLink =
 			_fragmentEntryLinkLocalService.getFragmentEntryLink(
@@ -483,15 +495,15 @@ public class ExportImportLayoutPageTemplateEntriesTest {
 	}
 
 	private void _validateRowLayoutStructureItem(
-		RowLayoutStructureItem expectedRowLayoutStructureItem,
-		RowLayoutStructureItem actualRowLayoutStructureItem) {
+		RowStyledLayoutStructureItem expectedRowStyledLayoutStructureItem,
+		RowStyledLayoutStructureItem actualRowStyledLayoutStructureItem) {
 
 		Assert.assertEquals(
-			expectedRowLayoutStructureItem.isGutters(),
-			actualRowLayoutStructureItem.isGutters());
+			expectedRowStyledLayoutStructureItem.isGutters(),
+			actualRowStyledLayoutStructureItem.isGutters());
 		Assert.assertEquals(
-			expectedRowLayoutStructureItem.getNumberOfColumns(),
-			actualRowLayoutStructureItem.getNumberOfColumns());
+			expectedRowStyledLayoutStructureItem.getNumberOfColumns(),
+			actualRowStyledLayoutStructureItem.getNumberOfColumns());
 	}
 
 	@Inject

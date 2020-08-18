@@ -223,10 +223,10 @@ public class ChangeTrackingIndicatorDynamicInclude extends BaseDynamicInclude {
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
 		if (ctPreferences != null) {
-			long previousCtCollectionId =
-				ctPreferences.getPreviousCtCollectionId();
-
 			if (ctCollectionId == CTConstants.CT_COLLECTION_ID_PRODUCTION) {
+				long previousCtCollectionId =
+					ctPreferences.getPreviousCtCollectionId();
+
 				CTCollection previousCtCollection =
 					_ctCollectionLocalService.fetchCTCollection(
 						previousCtCollectionId);

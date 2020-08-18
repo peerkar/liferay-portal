@@ -40,8 +40,8 @@ public abstract class FutureConverter<T, V> implements Future<T> {
 		try {
 			return convert(v);
 		}
-		catch (Throwable t) {
-			throw new ExecutionException(t);
+		catch (Throwable throwable) {
+			throw new ExecutionException(throwable);
 		}
 	}
 
@@ -54,8 +54,8 @@ public abstract class FutureConverter<T, V> implements Future<T> {
 		try {
 			return convert(v);
 		}
-		catch (Throwable t) {
-			throw new ExecutionException(t);
+		catch (Throwable throwable) {
+			throw new ExecutionException(throwable);
 		}
 	}
 

@@ -28,12 +28,12 @@ public class NoSuchImportTaskException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchImportTaskException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchImportTaskException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchImportTaskException(Throwable cause) {
-		super(cause);
+	public NoSuchImportTaskException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -28,12 +28,12 @@ public class DataLayoutValidationException extends RuntimeException {
 		super(msg);
 	}
 
-	public DataLayoutValidationException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DataLayoutValidationException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DataLayoutValidationException(Throwable cause) {
-		super(cause);
+	public DataLayoutValidationException(Throwable throwable) {
+		super(throwable);
 	}
 
 	public static class InvalidColumnSize

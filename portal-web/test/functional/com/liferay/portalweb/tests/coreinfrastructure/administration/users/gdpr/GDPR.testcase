@@ -265,8 +265,6 @@ definition {
 
 		GDPR.deleteEntryCP();
 
-		GDPR.viewNoEntryInApplicationCP(applications = "All Applications");
-
 		Navigator.gotoPage(pageName = "Announcements Page");
 
 		AnnouncementsEntry.viewNoPG(entryTitle = "Announcement Entry Title");
@@ -331,7 +329,7 @@ definition {
 			applications = "All Applications",
 			itemsCount = "4");
 
-		GDPR.deleteEntryCP();
+		GDPR.deleteEntryCP(anonymizeData = "true");
 
 		GDPR.viewNoEntryInApplicationCP(applications = "All Applications");
 	}
@@ -371,8 +369,6 @@ definition {
 			itemsCount = "1");
 
 		GDPR.deleteEntryCP();
-
-		GDPR.viewNoEntryInApplicationCP(applications = "All Applications");
 
 		BlogsNavigator.openBlogsAdmin(siteURLKey = "site-name");
 

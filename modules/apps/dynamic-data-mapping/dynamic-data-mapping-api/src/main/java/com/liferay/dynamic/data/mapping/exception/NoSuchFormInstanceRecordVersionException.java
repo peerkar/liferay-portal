@@ -30,13 +30,13 @@ public class NoSuchFormInstanceRecordVersionException
 	}
 
 	public NoSuchFormInstanceRecordVersionException(
-		String msg, Throwable cause) {
+		String msg, Throwable throwable) {
 
-		super(msg, cause);
+		super(msg, throwable);
 	}
 
-	public NoSuchFormInstanceRecordVersionException(Throwable cause) {
-		super(cause);
+	public NoSuchFormInstanceRecordVersionException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

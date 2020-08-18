@@ -1,0 +1,766 @@
+@component-name = "portal-change-list"
+definition {
+
+	property portal.release = "false";
+	property portal.upstream = "true";
+	property testray.main.component.name = "Change List";
+
+	setUp {
+		TestCase.setUpPortalInstance();
+
+		User.firstLoginPG();
+
+		ApplicationsMenu.gotoPortlet(
+			category = "Publications",
+			panel = "Applications",
+			portlet = "Settings");
+
+		ChangeList.enableChangeList();
+	}
+
+	tearDown {
+		var testPortalInstance = PropsUtil.get("test.portal.instance");
+
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			ApplicationsMenu.gotoPortlet(
+				category = "Publications",
+				panel = "Applications",
+				portlet = "Settings");
+
+			ChangeList.disableChangeList();
+		}
+	}
+
+	@priority = "5"
+	test ConflictingChangesAutomaticallyResolved {
+		property test.name.skip.portal.instance = "ChangeList#ConflictingChangesAutomaticallyResolved";
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Web Content");
+
+		WebContentNavigator.gotoAddCP();
+
+		WebContent.addCP(
+			webContentContent = "WC WebContent Content",
+			webContentTitle = "WC WebContent Title");
+
+		PortletEntry.publish();
+
+		ChangeList.createNewPublication(publicationName = "Publication Name");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Web Content");
+
+		WebContentNavigator.gotoEditCP(webContentTitle = "WC WebContent Title");
+
+		WebContent.editCP(
+			webContentContentEdit = "WC WebContent Content 1 Edit",
+			webContentTitle = "WC WebContent Title",
+			webContentTitleEdit = "WC WebContent Title");
+
+		ChangeList.createNewPublication(publicationName = "Publication 2 Name");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Web Content");
+
+		WebContentNavigator.gotoEditCP(webContentTitle = "WC WebContent Title");
+
+		WebContent.editCP(
+			webContentContentEdit = "WC WebContent Content 2 Edit",
+			webContentTitle = "WC WebContent Title",
+			webContentTitleEdit = "WC WebContent Title");
+
+		ChangeList.prepareToPublish(publicationName = "Publication 2 Name");
+
+		ChangeList.publishPublication(publicationName = "Publication 2 Name");
+
+		ChangeList.selectPublication(publicationName = "Publication Name");
+
+		ChangeList.prepareToPublish(
+			gotoManagePublications = "true",
+			publicationName = "Publication Name");
+
+		ChangeList.viewAutomaticallyResolved(
+			entryTitle = "Test Test added a Web Content Article",
+			successMessage = "The article version was updated to latest.");
+
+		ChangeList.viewAutomaticallyResolved(
+			entryTitle = "Test Test modified a Asset",
+			successMessage = "The conflict was automatically resolved.");
+
+		AssertElementNotPresent(locator1 = "ChangeList#NEEDS_MANUAL_RESOLUTION_TABLE");
+
+		AssertElementNotPresent(
+			key_warningMessage = "The conflict cannot be automatically resolved.",
+			locator1 = "Message#WARNING_SPECIFIC");
+
+		ChangeList.publishPublication(publicationName = "Publication Name");
+	}
+
+	@priority = "4"
+	test ConflictingChangesNeedManualResolution {
+		property test.name.skip.portal.instance = "ChangeList#ConflictingChangesNeedManualResolution";
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Web Content");
+
+		WebContentNavigator.gotoAddCP();
+
+		WebContent.addCP(
+			webContentContent = "WC WebContent Content",
+			webContentTitle = "WC WebContent Title");
+
+		PortletEntry.publish();
+
+		ChangeList.createNewPublication(publicationName = "Publication Name");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Web Content");
+
+		WebContent.deleteCP(
+			siteURLKey = "Guest",
+			webContentContent = "WC WebContent Content",
+			webContentTitle = "WC WebContent Title");
+
+		ChangeList.createNewPublication(publicationName = "Publication 2 Name");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Web Content");
+
+		WebContentNavigator.gotoEditCP(webContentTitle = "WC WebContent Title");
+
+		WebContent.editCP(
+			webContentContentEdit = "WC WebContent Content 2 Edit",
+			webContentTitle = "WC WebContent Title",
+			webContentTitleEdit = "WC WebContent Title 2 Edit");
+
+		ChangeList.selectPublication(publicationName = "Publication Name");
+
+		ChangeList.prepareToPublish(publicationName = "Publication Name");
+
+		ChangeList.publishPublication(publicationName = "Publication Name");
+
+		ChangeList.selectPublication(publicationName = "Publication 2 Name");
+
+		ChangeList.prepareToPublish(publicationName = "Publication 2 Name");
+
+		ChangeList.viewNeedsManualResolution(
+			entryTitle = "Test Test modified a Asset",
+			warningMessage = "Modification conflicts with a deletion.");
+
+		ChangeList.GotoViewDiffInConflictingChanges(entryTitle = "Test Test modified a Asset");
+
+		ChangeList.viewChangesDiff(
+			columnName = "title",
+			columnValueInPublication = "WC WebContent Title 2 Edit",
+			entryTitle = "Test Test modified a Asset",
+			publicationName = "Publication 2 Name");
+
+		ChangeList.viewChangesDiff(
+			columnName = "ctCollectionId",
+			columnValueInPublication = "2",
+			entryTitle = "Test Test modified a Asset",
+			publicationName = "Publication 2 Name");
+	}
+
+	@priority = "5"
+	test PublishAndRevertPublication {
+		property test.name.skip.portal.instance = "ChangeList#PublishAndRevertPublication";
+
+		ChangeList.createNewPublication(publicationName = "Publication Name");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Web Content");
+
+		WebContentNavigator.gotoAddCP();
+
+		WebContent.addCP(
+			webContentContent = "WC WebContent Content",
+			webContentTitle = "Web Content Title");
+
+		PortletEntry.publish();
+
+		ChangeList.prepareToPublish(publicationName = "Publication Name");
+
+		ChangeList.publishPublication(publicationName = "Publication Name");
+
+		ChangeList.viewPublishedPublicationDetails(
+			publicationName = "Publication Name",
+			publicationPublishedBy = "Test Test");
+
+		AssertTextPresent(
+			key_publicationName = "Production",
+			locator1 = "ChangeList#CHANGE_LIST_INDICATOR_TITLE",
+			value1 = "Production");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Web Content");
+
+		AssertElementPresent(
+			key_webContentTitle = "Web Content Title",
+			locator1 = "WC#ENTRY_LIST_TITLE");
+
+		ApplicationsMenu.gotoPortlet(
+			category = "Publications",
+			panel = "Applications",
+			portlet = "Manage Publications");
+
+		Navigator.gotoNavTab(navTab = "History");
+
+		ChangeList.revertPublication(publicationName = "Publication Name");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Web Content");
+
+		AssertTextEquals(
+			locator1 = "Message#EMPTY_INFO",
+			value1 = "No web content was found.");
+	}
+
+	@priority = "4"
+	test PublishDeletedPageWithTag {
+		property test.name.skip.portal.instance = "ChangeList#PublishDeletedPageWithTag";
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Site Builder",
+			portlet = "Pages");
+
+		SitePages.addPublicPage(pageName = "Test Page");
+
+		ChangeList.createNewPublication(publicationName = "Publication Name");
+
+		SitePages.openPagesAdmin(siteURLKey = "guest");
+
+		// Workaround LPS-119022
+
+		/*SitePages.gotoPageMenuItem(
+			menuItem = "Configure",
+			pageName = "Test Page");
+
+		AssetCategorization.addTag(tagName = "tag name");
+
+		PortletEntry.save();
+
+		ProductMenu.gotoPortlet(
+			category = "Site Builder",
+			portlet = "Pages");*/
+
+		SitePages.deletePage(pageName = "Test Page");
+
+		Navigator.openURL();
+
+		Page.viewNoPG(pageName = "Test Page");
+
+		ChangeList.prepareToPublish(publicationName = "Publication Name");
+
+		ChangeList.publishPublication(publicationName = "Publication Name");
+
+		Navigator.openURL();
+
+		Page.viewNoPG(pageName = "Test Page");
+	}
+
+	@priority = "4"
+	test PublishExpiredWebContentViaWCD {
+		property test.name.skip.portal.instance = "ChangeList#PublishExpiredWebContentViaWCD";
+
+		ChangeList.createNewPublication(publicationName = "Publication Name");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Site Builder",
+			portlet = "Pages");
+
+		SitePages.addPublicPage(pageName = "Test Page");
+
+		Navigator.gotoPage(pageName = "Test Page");
+
+		Portlet.addPG(portletName = "Web Content Display");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Web Content");
+
+		WebContentNavigator.gotoAddCP();
+
+		WebContent.addCP(
+			webContentContent = "WC WebContent Content",
+			webContentTitle = "WC WebContent Title");
+
+		PortletEntry.publish();
+
+		Navigator.gotoPage(pageName = "Test Page");
+
+		WebContentDisplayPortlet.selectWebContent(webContentTitle = "WC WebContent Title");
+
+		IFrame.closeFrame();
+
+		WebContent.viewPGViaWCD(webContentContent = "WC WebContent Content");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Web Content");
+
+		WebContent.expireSpecificVersionCP(webContentTitle = "WC WebContent Title");
+
+		Navigator.gotoPage(pageName = "Test Page");
+
+		WebContent.viewPGViaWCD(
+			expiredContent = "true",
+			webContentTitle = "WC WebContent Title");
+
+		ChangeList.prepareToPublish(publicationName = "Publication Name");
+
+		ChangeList.publishPublication(publicationName = "Publication Name");
+
+		Navigator.gotoPage(pageName = "Test Page");
+
+		WebContent.viewPGViaWCD(
+			expiredContent = "true",
+			webContentTitle = "WC WebContent Title");
+	}
+
+	@priority = "5"
+	test PublishParallelPublications {
+		property test.name.skip.portal.instance = "ChangeList#PublishParallelPublications";
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Web Content");
+
+		WebContentFolder.addCP(
+			folderDescription = "WC Folder Description",
+			folderName = "WC Folder Name");
+
+		ChangeList.createNewPublication(publicationName = "Publication Name");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Web Content");
+
+		WebContentFolder.gotoCP(
+			folderName = "WC Folder Name",
+			webContentTitle = "WC Folder Name");
+
+		WebContentNavigator.gotoAddCP();
+
+		WebContent.addCP(
+			webContentContent = "WC WebContent 1 Content",
+			webContentTitle = "WC WebContent 1 Title");
+
+		PortletEntry.publish();
+
+		ChangeList.createNewPublication(publicationName = "Publication 2 Name");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Web Content");
+
+		WebContentFolder.gotoCP(
+			folderName = "WC Folder Name",
+			webContentTitle = "WC Folder Name");
+
+		WebContentNavigator.gotoAddCP();
+
+		WebContent.addCP(
+			webContentContent = "WC WebContent 2 Content",
+			webContentTitle = "WC WebContent 2 Title");
+
+		PortletEntry.publish();
+
+		ChangeList.prepareToPublish(publicationName = "Publication 2 Name");
+
+		ChangeList.publishPublication(publicationName = "Publication 2 Name");
+
+		ChangeList.selectPublication(publicationName = "Publication Name");
+
+		ChangeList.prepareToPublish(publicationName = "Publication Name");
+
+		ChangeList.publishPublication(publicationName = "Publication Name");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Web Content");
+
+		WebContentFolder.gotoCP(
+			folderName = "WC Folder Name",
+			webContentTitle = "WC Folder Name");
+
+		AssertElementPresent(
+			key_webContentTitle = "WC WebContent 1 Title",
+			locator1 = "WC#ENTRY_LIST_TITLE");
+
+		AssertElementPresent(
+			key_webContentTitle = "WC WebContent 2 Title",
+			locator1 = "WC#ENTRY_LIST_TITLE");
+	}
+
+	@priority = "4"
+	test PublishWebContentWithCategory {
+		property test.name.skip.portal.instance = "ChangeList#PublishWebContentWithCategory";
+
+		ChangeList.createNewPublication(publicationName = "Publication Name");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Categorization",
+			portlet = "Categories");
+
+		Vocabulary.addCP(vocabularyName = "Vocabulary Name");
+
+		Category.addCP(
+			categoryName = "Category Name",
+			vocabularyName = "Vocabulary Name");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Web Content");
+
+		WebContentNavigator.gotoAddCP();
+
+		WebContent.addWithCategoryCP(
+			categoryName = "Category Name",
+			vocabularyName = "Vocabulary Name",
+			webContentContent = "WC WebContent Content",
+			webContentTitle = "WC WebContent Title");
+
+		Navigator.openURL();
+
+		SearchPortlets.searchEmbedded(searchTerm = "Category Name");
+
+		SearchResultPortlet.viewSearchResults(
+			searchAssetTitle = "WC WebContent Title",
+			searchAssetType = "Web Content");
+
+		ChangeList.prepareToPublish(publicationName = "Publication Name");
+
+		ChangeList.publishPublication(publicationName = "Publication Name");
+
+		Navigator.openURL();
+
+		SearchPortlets.searchEmbedded(searchTerm = "Category Name");
+
+		SearchResultPortlet.viewSearchResults(
+			searchAssetTitle = "WC WebContent Title",
+			searchAssetType = "Web Content");
+	}
+
+	@priority = "4"
+	test PublishWebContentWithFriendlyURL {
+		property test.name.skip.portal.instance = "ChangeList#PublishWebContentWithFriendlyURL";
+
+		ChangeList.createNewPublication(publicationName = "Publication Name");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Site Builder",
+			portlet = "Pages");
+
+		SitePages.addPublicPage(pageName = "Test Page");
+
+		Navigator.gotoPage(pageName = "Test Page");
+
+		Portlet.addPG(portletName = "Asset Publisher");
+
+		AssetPublisherPortlet.configureDisplaySettings(displaySettings = "Set as the Default Asset Publisher for This Page");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Web Content");
+
+		WebContentNavigator.gotoAddCP();
+
+		WebContent.addWithFriendlyURL(
+			friendlyUrl = "friendlyUrl",
+			webContentContent = "WC WebContent Content",
+			webContentTitle = "WC WebContent Title");
+
+		WebContentNavigator.gotoEditCP(webContentTitle = "WC WebContent Title");
+
+		WebContent.editDisplayPage(
+			pageName = "Test Page",
+			pageType = "Public Pages");
+
+		PortletEntry.publish();
+
+		var portalURL = PropsUtil.get("portal.url");
+
+		Navigator.openSpecificURL(url = "${portalURL}/web/guest/-/friendlyUrl");
+
+		AssertTextEquals.assertPartialText(
+			locator1 = "APAsset#ASSET_TITLE_HEADER",
+			value1 = "WC WebContent Title");
+
+		ChangeList.prepareToPublish(publicationName = "Publication Name");
+
+		ChangeList.publishPublication(publicationName = "Publication Name");
+
+		Navigator.openSpecificURL(url = "${portalURL}/web/guest/-/friendlyUrl");
+
+		AssertTextEquals.assertPartialText(
+			locator1 = "APAsset#ASSET_TITLE_HEADER",
+			value1 = "WC WebContent Title");
+	}
+
+	@priority = "4"
+	test PublishWebContentWithNewStructure {
+		property test.name.skip.portal.instance = "ChangeList#PublishWebContentWithNewStructure";
+
+		ChangeList.createNewPublication(publicationName = "Publication Name");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Web Content");
+
+		NavItem.gotoStructures();
+
+		WebContentStructures.addCP(
+			structureDescription = "WC Structure Description",
+			structureName = "WC Structure Name");
+
+		DynamicDataMapping.addField(
+			field = "Text",
+			fieldFieldLabel = "Text",
+			fieldName = "Text");
+
+		WebContentStructures.saveCP(structureName = "WC Structure Name");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Web Content");
+
+		NavItem.gotoTemplates();
+
+		WebContentTemplates.addCP(
+			structureName = "WC Structure Name",
+			templateDescription = "WC Template Description",
+			templateFieldNames = "Text",
+			templateName = "WC Template Name");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Web Content");
+
+		WebContentNavigator.gotoAddWithStructureCP(structureName = "WC Structure Name");
+
+		WebContent.addWithStructureCP(
+			structureName = "WC Structure Name",
+			templateName = "WC Template Name",
+			webContentText = "WC WebContent Text",
+			webContentTitle = "WC WebContent Title");
+
+		PortletEntry.publish();
+
+		AssertElementPresent(
+			key_webContentTitle = "WC WebContent Title",
+			locator1 = "WC#ENTRY_LIST_TITLE");
+
+		ChangeList.prepareToPublish(publicationName = "Publication Name");
+
+		ChangeList.publishPublication(publicationName = "Publication Name");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Web Content");
+
+		AssertElementPresent(
+			key_webContentTitle = "WC WebContent Title",
+			locator1 = "WC#ENTRY_LIST_TITLE");
+	}
+
+	@priority = "5"
+	test SearchPublishedPublications {
+		property test.name.skip.portal.instance = "ChangeList#SearchPublishedPublications";
+
+		ChangeList.createNewPublication(publicationName = "Apple");
+
+		ChangeList.createNewPublication(publicationName = "Banana");
+
+		ChangeList.createNewPublication(publicationName = "Cherry");
+
+		ApplicationsMenu.gotoPortlet(
+			category = "Publications",
+			panel = "Applications",
+			portlet = "Manage Publications");
+
+		Navigator.gotoNavTab(navTab = "Ongoing");
+
+		for (var publicationName : list "Apple,Banana,Cherry") {
+			ChangeList.search(publicationName = "${publicationName}");
+		}
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Site Builder",
+			portlet = "Pages");
+
+		SitePages.addPublicPage(pageName = "Cherry");
+
+		ChangeList.prepareToPublish(publicationName = "Cherry");
+
+		ChangeList.publishPublication(publicationName = "Cherry");
+
+		ChangeList.selectPublication(publicationName = "Banana");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Site Builder",
+			portlet = "Pages");
+
+		SitePages.addPublicPage(pageName = "Banana");
+
+		ChangeList.prepareToPublish(publicationName = "Banana");
+
+		ChangeList.publishPublication(publicationName = "Banana");
+
+		ChangeList.selectPublication(publicationName = "Apple");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Site Builder",
+			portlet = "Pages");
+
+		SitePages.addPublicPage(pageName = "Apple");
+
+		ChangeList.prepareToPublish(publicationName = "Apple");
+
+		ChangeList.publishPublication(publicationName = "Apple");
+
+		Navigator.gotoNavTab(navTab = "History");
+
+		for (var publicationName : list "Apple,Banana,Cherry") {
+			ChangeList.search(publicationName = "${publicationName}");
+		}
+	}
+
+	@priority = "5"
+	test ViewPageFriendlyURLAfterRevertingPublication {
+		property test.name.skip.portal.instance = "ChangeList#ViewPageFriendlyURLAfterRevertingPublication";
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Site Builder",
+			portlet = "Pages");
+
+		SitePages.addPublicPage(pageName = "Test Page");
+
+		ChangeList.createNewPublication(publicationName = "Publication Name");
+
+		SitePages.openPagesAdmin(siteURLKey = "guest");
+
+		SitePages.gotoPageMenuItem(
+			menuItem = "Configure",
+			pageName = "Test Page");
+
+		Page.editFriendlyURL(friendlyURLEdit = "/test-page-edited");
+
+		AssertVisible(
+			key_friendlyURL = "/test-page-edited",
+			locator1 = "SitePages#FRIENDLY_URL");
+
+		ChangeList.workOnProduction();
+
+		AssertVisible(
+			key_friendlyURL = "/test-page",
+			locator1 = "SitePages#FRIENDLY_URL");
+
+		ChangeList.selectPublication(publicationName = "Publication Name");
+
+		ChangeList.prepareToPublish(publicationName = "Publication Name");
+
+		ChangeList.publishPublication(publicationName = "Publication Name");
+
+		SitePages.openPagesAdmin(siteURLKey = "guest");
+
+		SitePages.gotoPageMenuItem(
+			menuItem = "Configure",
+			pageName = "Test Page");
+
+		AssertVisible(
+			key_friendlyURL = "/test-page-edited",
+			locator1 = "SitePages#FRIENDLY_URL");
+
+		ApplicationsMenu.gotoPortlet(
+			category = "Publications",
+			panel = "Applications",
+			portlet = "Manage Publications");
+
+		Navigator.gotoNavTab(navTab = "History");
+
+		ChangeList.revertPublication(publicationName = "Publication Name");
+
+		SitePages.openPagesAdmin(siteURLKey = "guest");
+
+		SitePages.gotoPageMenuItem(
+			menuItem = "Configure",
+			pageName = "Test Page");
+
+		AssertVisible(
+			key_friendlyURL = "/test-page",
+			locator1 = "SitePages#FRIENDLY_URL");
+	}
+
+}

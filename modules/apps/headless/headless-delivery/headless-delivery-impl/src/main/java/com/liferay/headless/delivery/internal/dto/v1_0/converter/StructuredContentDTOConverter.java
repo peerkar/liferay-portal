@@ -44,6 +44,7 @@ import com.liferay.journal.util.JournalContent;
 import com.liferay.journal.util.JournalConverter;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.comment.CommentManager;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
@@ -53,6 +54,7 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.JaxRsLinkUtil;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 import com.liferay.portal.vulcan.util.TransformUtil;
@@ -98,6 +100,9 @@ public class StructuredContentDTOConverter
 
 		DDMStructure ddmStructure = journalArticle.getDDMStructure();
 
+		Group group = _groupLocalService.fetchGroup(
+			journalArticle.getGroupId());
+
 		return new StructuredContent() {
 			{
 				actions = dtoConverterContext.getActions();
@@ -105,6 +110,7 @@ public class StructuredContentDTOConverter
 					_ratingsStatsLocalService.fetchStats(
 						JournalArticle.class.getName(),
 						journalArticle.getResourcePrimKey()));
+				assetLibraryKey = GroupUtil.getAssetLibraryKey(group);
 				availableLanguages = LocaleUtil.toW3cLanguageIds(
 					journalArticle.getAvailableLanguageIds());
 				contentFields = _toContentFields(
@@ -114,7 +120,7 @@ public class StructuredContentDTOConverter
 					_layoutLocalService);
 				contentStructureId = ddmStructure.getStructureId();
 				creator = CreatorUtil.toCreator(
-					_portal,
+					_portal, dtoConverterContext.getUriInfoOptional(),
 					_userLocalService.fetchUser(journalArticle.getUserId()));
 				customFields = CustomFieldsUtil.toCustomFields(
 					dtoConverterContext.isAcceptAllLanguages(),
@@ -155,7 +161,7 @@ public class StructuredContentDTOConverter
 					dtoConverterContext.getHttpServletRequest(), journalArticle,
 					dtoConverterContext.getLocale(),
 					dtoConverterContext.getUriInfoOptional());
-				siteId = journalArticle.getGroupId();
+				siteId = GroupUtil.getSiteId(group);
 				subscribed = _subscriptionLocalService.isSubscribed(
 					journalArticle.getCompanyId(),
 					dtoConverterContext.getUserId(),
@@ -248,8 +254,7 @@ public class StructuredContentDTOConverter
 
 					setRenderedContentValue(
 						() -> {
-							boolean hasRenderedContentValueField =
-								uriInfoOptional.map(
+							if (!uriInfoOptional.map(
 									UriInfo::getQueryParameters
 								).map(
 									parameters -> parameters.getFirst(
@@ -259,9 +264,8 @@ public class StructuredContentDTOConverter
 										"renderedContentValue")
 								).orElse(
 									false
-								);
+								)) {
 
-							if (!hasRenderedContentValueField) {
 								return null;
 							}
 

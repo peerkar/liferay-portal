@@ -28,12 +28,12 @@ public class FragmentEntryContentException extends PortalException {
 		super(msg);
 	}
 
-	public FragmentEntryContentException(String msg, Throwable cause) {
-		super(msg, cause);
+	public FragmentEntryContentException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public FragmentEntryContentException(Throwable cause) {
-		super(cause);
+	public FragmentEntryContentException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

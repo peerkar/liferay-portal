@@ -26,19 +26,21 @@ public class DBProviderNotAvailableException extends RuntimeException {
 		super(message);
 	}
 
-	public DBProviderNotAvailableException(String message, Throwable cause) {
-		super(message, cause);
+	public DBProviderNotAvailableException(
+		String message, Throwable throwable) {
+
+		super(message, throwable);
 	}
 
 	public DBProviderNotAvailableException(
-		String message, Throwable cause, boolean enableSuppression,
+		String message, Throwable throwable, boolean enableSuppression,
 		boolean writableStackTrace) {
 
-		super(message, cause, enableSuppression, writableStackTrace);
+		super(message, throwable, enableSuppression, writableStackTrace);
 	}
 
-	public DBProviderNotAvailableException(Throwable cause) {
-		super(cause);
+	public DBProviderNotAvailableException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

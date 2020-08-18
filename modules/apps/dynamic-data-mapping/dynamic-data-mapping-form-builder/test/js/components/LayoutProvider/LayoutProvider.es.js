@@ -465,6 +465,50 @@ describe('LayoutProvider', () => {
 			});
 		});
 
+		describe('fieldEdited', () => {
+			it('listens the fieldEdited event and edit the field label keeping the same fieldName', () => {
+				component = new Parent();
+
+				const {child, provider} = component.refs;
+				let mockEvent = {
+					data: {
+						parentFieldName: undefined,
+					},
+					fieldType: mockFieldType,
+					indexes: {
+						columnIndex: 0,
+						pageIndex: 0,
+						rowIndex: 0,
+					},
+				};
+
+				const {dispatch} = child.context;
+
+				dispatch('fieldAdded', mockEvent);
+
+				jest.runAllTimers();
+
+				const expectedFieldName =
+					provider.state.pages[0].rows[0].columns[0].fields[0]
+						.fieldName;
+
+				mockEvent = {
+					fieldName: expectedFieldName,
+					propertyName: 'label',
+					propertyValue: 'newLabel',
+				};
+
+				dispatch('fieldEdited', mockEvent);
+
+				jest.runAllTimers();
+
+				expect(
+					provider.state.pages[0].rows[0].columns[0].fields[0]
+						.fieldName
+				).toEqual(expectedFieldName);
+			});
+		});
+
 		describe('fieldDuplicated', () => {
 			it('listens the duplicate field event and add this field in the pages', () => {
 				component = new Parent();

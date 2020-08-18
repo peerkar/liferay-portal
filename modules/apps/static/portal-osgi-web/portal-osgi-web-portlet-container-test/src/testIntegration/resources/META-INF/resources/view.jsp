@@ -24,27 +24,21 @@ page import="com.liferay.portal.kernel.util.GetterUtil" %><%@
 page import="com.liferay.portal.kernel.util.HashMapBuilder" %><%@
 page import="com.liferay.portal.osgi.web.portlet.container.test.TestPortlet" %>
 
-<%@ page import="java.util.Collections" %><%@
-page import="java.util.Map" %>
+<%@ page import="java.util.Collections" %>
 
 <liferay-theme:defineObjects />
 
 <portlet:defineObjects />
 
-<%
-Map<String, Object> contextObjects = HashMapBuilder.<String, Object>put(
-	"testRuntimePortletId", "testRuntimePortletId"
-).build();
-
-String displayStyle = GetterUtil.getString(portletPreferences.getValue("displayStyle", StringPool.BLANK));
-long displayStyleGroupId = GetterUtil.getLong(portletPreferences.getValue("displayStyleGroupId", null), scopeGroupId);
-%>
-
 <liferay-ddm:template-renderer
 	className="<%= TestPortlet.class.getName() %>"
-	contextObjects="<%= contextObjects %>"
-	displayStyle="<%= displayStyle %>"
-	displayStyleGroupId="<%= displayStyleGroupId %>"
+	contextObjects='<%=
+		HashMapBuilder.<String, Object>put(
+			"testRuntimePortletId", "testRuntimePortletId"
+		).build()
+	%>'
+	displayStyle='<%= GetterUtil.getString(portletPreferences.getValue("displayStyle", StringPool.BLANK)) %>'
+	displayStyleGroupId='<%= GetterUtil.getLong(portletPreferences.getValue("displayStyleGroupId", null), scopeGroupId) %>'
 	entries="<%= Collections.emptyList() %>"
 >
 	This is the default content in case of failure.

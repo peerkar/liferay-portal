@@ -19,11 +19,14 @@ import com.liferay.document.library.kernel.service.DLAppService;
 import com.liferay.headless.delivery.dto.v1_0.DocumentFolder;
 import com.liferay.headless.delivery.internal.dto.v1_0.util.CreatorUtil;
 import com.liferay.headless.delivery.internal.dto.v1_0.util.CustomFieldsUtil;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.repository.model.Folder;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.subscription.service.SubscriptionLocalService;
 
 import org.osgi.service.component.annotations.Component;
@@ -51,11 +54,15 @@ public class DocumentFolderDTOConverter
 		Folder folder = _dlAppService.getFolder(
 			(Long)dtoConverterContext.getId());
 
+		Group group = _groupLocalService.fetchGroup(folder.getGroupId());
+
 		return new DocumentFolder() {
 			{
 				actions = dtoConverterContext.getActions();
+				assetLibraryKey = GroupUtil.getAssetLibraryKey(group);
 				creator = CreatorUtil.toCreator(
-					_portal, _userLocalService.fetchUser(folder.getUserId()));
+					_portal, dtoConverterContext.getUriInfoOptional(),
+					_userLocalService.fetchUser(folder.getUserId()));
 				customFields = CustomFieldsUtil.toCustomFields(
 					dtoConverterContext.isAcceptAllLanguages(),
 					DLFolder.class.getName(), folder.getFolderId(),
@@ -69,7 +76,7 @@ public class DocumentFolderDTOConverter
 					folder.getRepositoryId(), folder.getFolderId());
 				numberOfDocuments = _dlAppService.getFileEntriesCount(
 					folder.getRepositoryId(), folder.getFolderId());
-				siteId = folder.getGroupId();
+				siteId = GroupUtil.getSiteId(group);
 				subscribed = _subscriptionLocalService.isSubscribed(
 					folder.getCompanyId(), dtoConverterContext.getUserId(),
 					DLFolder.class.getName(), folder.getFolderId());
@@ -88,6 +95,9 @@ public class DocumentFolderDTOConverter
 
 	@Reference
 	private DLAppService _dlAppService;
+
+	@Reference
+	private GroupLocalService _groupLocalService;
 
 	@Reference
 	private Portal _portal;

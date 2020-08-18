@@ -27,12 +27,12 @@ public class ExecutionException extends ScriptingException {
 		super(msg);
 	}
 
-	public ExecutionException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ExecutionException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ExecutionException(Throwable cause) {
-		super(cause);
+	public ExecutionException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

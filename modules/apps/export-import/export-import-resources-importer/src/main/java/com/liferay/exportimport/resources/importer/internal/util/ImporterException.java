@@ -28,12 +28,12 @@ public class ImporterException extends PortalException {
 		super(msg);
 	}
 
-	public ImporterException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ImporterException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ImporterException(Throwable cause) {
-		super(cause);
+	public ImporterException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

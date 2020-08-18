@@ -259,10 +259,6 @@ public class AssetPublisherHelperImpl implements AssetPublisherHelper {
 					getAssetRendererFactoryByClassName(
 						assetEntry.getClassName());
 
-			AssetRenderer<?> assetRenderer =
-				assetRendererFactory.getAssetRenderer(
-					assetEntry.getClassPK(), type);
-
 			if (!assetRendererFactory.isActive(
 					permissionChecker.getCompanyId())) {
 
@@ -274,6 +270,10 @@ public class AssetPublisherHelperImpl implements AssetPublisherHelper {
 			}
 
 			if (checkPermission) {
+				AssetRenderer<?> assetRenderer =
+					assetRendererFactory.getAssetRenderer(
+						assetEntry.getClassPK(), type);
+
 				if (!assetRenderer.isDisplayable() &&
 					!includeNonvisibleAssets) {
 

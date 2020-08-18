@@ -26,12 +26,12 @@ public class UserReminderQueryException extends PortalException {
 		super(msg);
 	}
 
-	public UserReminderQueryException(String msg, Throwable cause) {
-		super(msg, cause);
+	public UserReminderQueryException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public UserReminderQueryException(Throwable cause) {
-		super(cause);
+	public UserReminderQueryException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

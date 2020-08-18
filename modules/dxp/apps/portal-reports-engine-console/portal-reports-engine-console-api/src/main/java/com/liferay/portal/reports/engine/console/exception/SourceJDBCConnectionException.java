@@ -28,12 +28,12 @@ public class SourceJDBCConnectionException extends PortalException {
 		super(msg);
 	}
 
-	public SourceJDBCConnectionException(String msg, Throwable cause) {
-		super(msg, cause);
+	public SourceJDBCConnectionException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public SourceJDBCConnectionException(Throwable cause) {
-		super(cause);
+	public SourceJDBCConnectionException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

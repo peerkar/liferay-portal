@@ -160,8 +160,9 @@ public final class SummaryLogger {
 			_majorStepsLoggerElement = _getMajorStepsLoggerElement();
 			_summaryLogLoggerElement = _getSummaryLogLoggerElement();
 		}
-		catch (Throwable t) {
-			throw new PoshiRunnerLoggerException(t.getMessage(), t);
+		catch (Throwable throwable) {
+			throw new PoshiRunnerLoggerException(
+				throwable.getMessage(), throwable);
 		}
 	}
 
@@ -213,8 +214,9 @@ public final class SummaryLogger {
 					_minorStepLoggerElement);
 			}
 		}
-		catch (Throwable t) {
-			throw new PoshiRunnerLoggerException(t.getMessage(), t);
+		catch (Throwable throwable) {
+			throw new PoshiRunnerLoggerException(
+				throwable.getMessage(), throwable);
 		}
 	}
 

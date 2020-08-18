@@ -28,12 +28,12 @@ public class CometException extends PortalException {
 		super(msg);
 	}
 
-	public CometException(String msg, Throwable cause) {
-		super(msg, cause);
+	public CometException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public CometException(Throwable cause) {
-		super(cause);
+	public CometException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

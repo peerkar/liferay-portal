@@ -47,8 +47,7 @@ definition {
 
 	@priority = "4"
 	test AddSiteTemplateApplySiteTemplateChangesToSite {
-		property portal.acceptance = "quarantine";
-		property portal.release = "quarantine";
+		property portal.acceptance = "true";
 
 		SiteTemplates.addCP(siteTemplateName = "Site Template Name");
 
@@ -94,7 +93,7 @@ definition {
 
 	@priority = "4"
 	test AddSiteTemplateDisablePageModification {
-		property portal.acceptance = "quarantine";
+		property portal.acceptance = "true";
 
 		SiteTemplates.addCP(
 			disableChanges = "true",
@@ -115,6 +114,57 @@ definition {
 		Page.viewPageLockCheck();
 
 		AssertElementNotPresent(locator1 = "ControlMenu#ADD");
+	}
+
+	@description = "This is a use case for LPS-118486."
+	@priority = "3"
+	test AssertNoChildPageOptionForPageDerivedFromSiteTemplate {
+		SiteTemplates.addCP(siteTemplateName = "Site Template Name");
+
+		ApplicationsMenu.gotoPortlet(
+			category = "Sites",
+			panel = "Control Panel",
+			portlet = "Sites");
+
+		Site.addSiteTemplateCP(
+			siteName = "Site Name",
+			siteTemplateName = "Site Template Name");
+
+		Navigator.openSiteURL(siteName = "Site Name");
+
+		ProductMenu.gotoPortlet(
+			category = "Site Builder",
+			portlet = "Pages");
+
+		SitePages.addPublicPage(pageName = "Test Page");
+
+		ProductMenu.gotoPortlet(
+			category = "Site Builder",
+			portlet = "Pages");
+
+		MouseOver(
+			key_itemName = "Home",
+			locator1 = "SitePages#LIST_GROUP_ITEM");
+
+		AssertElementNotPresent(
+			key_pageName = "Home",
+			locator1 = "SitePages#LIST_GROUP_ITEM_PLUS_ICON");
+
+		Click(
+			key_itemName = "Home",
+			locator1 = "SitePages#LIST_GROUP_ITEM");
+
+		AssertElementNotPresent(locator1 = "Button#NEW");
+
+		Click(
+			key_itemName = "Test Page",
+			locator1 = "SitePages#LIST_GROUP_ITEM");
+
+		Click(locator1 = "Button#NEW");
+
+		AssertElementPresent(
+			key_menuItem = "Add Child Page of Test Page",
+			locator1 = "MenuItem#ANY_MENU_ITEM");
 	}
 
 	@description = "This is a use case for LPS-84497."
@@ -220,8 +270,7 @@ definition {
 
 	@priority = "4"
 	test DeleteSiteTemplateAssociatedWithASite {
-		property portal.acceptance = "quarantine";
-		property portal.upstream = "quarantine";
+		property portal.acceptance = "true";
 
 		SiteTemplates.addCP(
 			siteTemplateActive = "Yes",
@@ -289,8 +338,6 @@ definition {
 		SiteTemplatesNavigator.openSiteTemplatesAdmin(baseURL = "http://www.able.com:8080");
 
 		LAR.importPortlet(larFileName = "site-template-name.lar");
-
-		Refresh();
 
 		SiteTemplates.viewCP(siteTemplateName = "Site Template Name");
 
@@ -422,7 +469,7 @@ definition {
 
 	@priority = "4"
 	test OnlySiteAdminCanModifyPageAssociatedWithSiteTemplate {
-		property portal.acceptance = "quarantine";
+		property portal.acceptance = "true";
 
 		SiteTemplates.addCP(siteTemplateName = "Site Template Name");
 

@@ -17,7 +17,7 @@ package com.liferay.headless.delivery.internal.resource.v1_0;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
 import com.liferay.expando.kernel.service.ExpandoTableLocalService;
 import com.liferay.headless.common.spi.resource.SPIRatingResource;
-import com.liferay.headless.common.spi.service.context.ServiceContextUtil;
+import com.liferay.headless.common.spi.service.context.ServiceContextRequestUtil;
 import com.liferay.headless.delivery.dto.v1_0.MessageBoardThread;
 import com.liferay.headless.delivery.dto.v1_0.Rating;
 import com.liferay.headless.delivery.internal.dto.v1_0.converter.MessageBoardThreadDTOConverter;
@@ -33,6 +33,7 @@ import com.liferay.message.boards.model.MBCategory;
 import com.liferay.message.boards.model.MBMessage;
 import com.liferay.message.boards.model.MBThread;
 import com.liferay.message.boards.service.MBCategoryService;
+import com.liferay.message.boards.service.MBMessageLocalService;
 import com.liferay.message.boards.service.MBMessageService;
 import com.liferay.message.boards.service.MBThreadFlagLocalService;
 import com.liferay.message.boards.service.MBThreadLocalService;
@@ -191,7 +192,7 @@ public class MessageBoardThreadResourceImpl
 					new TermFilter("parentMessageId", "0"),
 					BooleanClauseOccur.MUST);
 			},
-			mbCategory.getGroupId(), search, aggregation, filter, pagination,
+			mbCategory.getGroupId(), aggregation, filter, search, pagination,
 			sorts);
 	}
 
@@ -228,7 +229,7 @@ public class MessageBoardThreadResourceImpl
 	@Override
 	public Page<MessageBoardThread> getMessageBoardThreadsRankedPage(
 		Date dateCreated, Date dateModified, Long messageBoardSectionId,
-		Aggregation aggregation, Pagination pagination, Sort[] sorts) {
+		Pagination pagination, Sort[] sorts) {
 
 		DynamicQuery dynamicQuery = _getDynamicQuery(
 			dateCreated, dateModified, messageBoardSectionId);
@@ -327,7 +328,7 @@ public class MessageBoardThreadResourceImpl
 					new TermFilter("parentMessageId", "0"),
 					BooleanClauseOccur.MUST);
 			},
-			siteId, search, aggregation, filter, pagination, sorts);
+			siteId, aggregation, filter, search, pagination, sorts);
 	}
 
 	@Override
@@ -507,15 +508,17 @@ public class MessageBoardThreadResourceImpl
 	private ServiceContext _getServiceContext(
 		MessageBoardThread messageBoardThread, long siteId) {
 
-		ServiceContext serviceContext = ServiceContextUtil.createServiceContext(
-			messageBoardThread.getTaxonomyCategoryIds(),
-			Optional.ofNullable(
-				messageBoardThread.getKeywords()
-			).orElse(
-				new String[0]
-			),
-			_getExpandoBridgeAttributes(messageBoardThread), siteId,
-			messageBoardThread.getViewableByAsString());
+		ServiceContext serviceContext =
+			ServiceContextRequestUtil.createServiceContext(
+				messageBoardThread.getTaxonomyCategoryIds(),
+				Optional.ofNullable(
+					messageBoardThread.getKeywords()
+				).orElse(
+					new String[0]
+				),
+				_getExpandoBridgeAttributes(messageBoardThread), siteId,
+				contextHttpServletRequest,
+				messageBoardThread.getViewableByAsString());
 
 		String link = contextHttpServletRequest.getHeader("Link");
 
@@ -544,8 +547,8 @@ public class MessageBoardThreadResourceImpl
 	private Page<MessageBoardThread> _getSiteMessageBoardThreadsPage(
 			Map<String, Map<String, String>> actions,
 			UnsafeConsumer<BooleanQuery, Exception> booleanQueryUnsafeConsumer,
-			Long siteId, String keywords, Aggregation aggregation,
-			Filter filter, Pagination pagination, Sort[] sorts)
+			Long siteId, Aggregation aggregation, Filter filter,
+			String keywords, Pagination pagination, Sort[] sorts)
 		throws Exception {
 
 		return SearchUtil.search(
@@ -606,7 +609,7 @@ public class MessageBoardThreadResourceImpl
 	private MessageBoardThread _toMessageBoardThread(MBThread mbThread)
 		throws Exception {
 
-		MBMessage mbMessage = _mbMessageService.getMessage(
+		MBMessage mbMessage = _mbMessageLocalService.getMessage(
 			mbThread.getRootMessageId());
 
 		return _messageBoardThreadDTOConverter.toDTO(
@@ -717,6 +720,9 @@ public class MessageBoardThreadResourceImpl
 
 	@Reference
 	private MBCategoryService _mbCategoryService;
+
+	@Reference
+	private MBMessageLocalService _mbMessageLocalService;
 
 	@Reference
 	private MBMessageService _mbMessageService;

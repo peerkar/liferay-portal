@@ -55,9 +55,9 @@ public class PluginPackageHotDeployListener extends BaseHotDeployListener {
 		try {
 			doInvokeDeploy(hotDeployEvent);
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			throwHotDeployException(
-				hotDeployEvent, "Error registering plugins for ", t);
+				hotDeployEvent, "Error registering plugins for ", throwable);
 		}
 	}
 
@@ -68,9 +68,9 @@ public class PluginPackageHotDeployListener extends BaseHotDeployListener {
 		try {
 			doInvokeUndeploy(hotDeployEvent);
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			throwHotDeployException(
-				hotDeployEvent, "Error unregistering plugins for ", t);
+				hotDeployEvent, "Error unregistering plugins for ", throwable);
 		}
 	}
 

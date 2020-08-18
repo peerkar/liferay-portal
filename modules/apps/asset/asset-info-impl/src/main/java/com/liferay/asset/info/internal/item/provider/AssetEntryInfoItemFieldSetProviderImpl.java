@@ -37,10 +37,12 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.SortedArrayList;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -203,7 +205,8 @@ public class AssetEntryInfoItemFieldSetProviderImpl
 	}
 
 	private List<Category> _getCategories(List<AssetCategory> assetCategories) {
-		List<Category> categories = new ArrayList<>(assetCategories.size());
+		List<Category> categories = new SortedArrayList<>(
+			Comparator.comparing(Category::getKey));
 
 		for (AssetCategory assetCategory : assetCategories) {
 			categories.add(_getCategory(assetCategory));
@@ -224,6 +227,8 @@ public class AssetEntryInfoItemFieldSetProviderImpl
 
 		return InfoFieldSet.builder(
 		).infoFieldSetEntry(
+			_categoriesInfoField
+		).infoFieldSetEntry(
 			consumer -> assetVocabularies.forEach(
 				assetVocabulary -> consumer.accept(
 					InfoField.builder(
@@ -237,8 +242,6 @@ public class AssetEntryInfoItemFieldSetProviderImpl
 							assetVocabulary.getTitleMap()
 						).build()
 					).build()))
-		).infoFieldSetEntry(
-			_categoriesInfoField
 		).infoFieldSetEntry(
 			_tagsInfoField
 		).infoFieldSetEntry(

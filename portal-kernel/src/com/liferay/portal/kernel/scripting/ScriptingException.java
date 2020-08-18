@@ -29,12 +29,12 @@ public class ScriptingException extends PortalException {
 		super(msg);
 	}
 
-	public ScriptingException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ScriptingException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ScriptingException(Throwable cause) {
-		super(cause);
+	public ScriptingException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

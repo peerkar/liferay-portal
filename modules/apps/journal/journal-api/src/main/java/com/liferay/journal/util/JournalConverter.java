@@ -22,13 +22,25 @@ import com.liferay.portal.kernel.xml.Document;
 
 import java.util.Locale;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
  * @author Marcellus Tavares
  * @author Bruno Basto
  */
+@ProviderType
 public interface JournalConverter {
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), replaced by {@link
+	 *             #getContent(DDMStructure, Fields, long)}
+	 */
+	@Deprecated
 	public String getContent(DDMStructure ddmStructure, Fields ddmFields)
+		throws Exception;
+
+	public String getContent(
+			DDMStructure ddmStructure, Fields ddmFields, long groupId)
 		throws Exception;
 
 	public Fields getDDMFields(DDMStructure ddmStructure, Document document)

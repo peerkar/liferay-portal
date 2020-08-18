@@ -81,7 +81,9 @@ OAuth2Application oAuth2Application = oAuth2AdminPortletDisplayContext.getOAuth2
 						Set<String> cssClasses = new HashSet<>();
 
 						for (ClientProfile clientProfile : ClientProfile.values()) {
-							if (clientProfile.grantTypes().contains(grantType)) {
+							Set<GrantType> grantTypes = clientProfile.grantTypes();
+
+							if (grantTypes.contains(grantType)) {
 								cssClasses.add("client-profile-" + clientProfile.id());
 							}
 						}

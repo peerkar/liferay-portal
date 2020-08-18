@@ -28,12 +28,12 @@ public class StructureDuplicateElementException extends PortalException {
 		super(msg);
 	}
 
-	public StructureDuplicateElementException(String msg, Throwable cause) {
-		super(msg, cause);
+	public StructureDuplicateElementException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public StructureDuplicateElementException(Throwable cause) {
-		super(cause);
+	public StructureDuplicateElementException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

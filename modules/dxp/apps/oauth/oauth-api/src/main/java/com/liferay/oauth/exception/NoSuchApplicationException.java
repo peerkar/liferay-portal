@@ -28,12 +28,12 @@ public class NoSuchApplicationException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchApplicationException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchApplicationException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchApplicationException(Throwable cause) {
-		super(cause);
+	public NoSuchApplicationException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

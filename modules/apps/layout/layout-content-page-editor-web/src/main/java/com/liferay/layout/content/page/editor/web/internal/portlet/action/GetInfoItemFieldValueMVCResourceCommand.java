@@ -17,7 +17,8 @@ package com.liferay.layout.content.page.editor.web.internal.portlet.action;
 import com.liferay.asset.info.display.contributor.util.ContentAccessor;
 import com.liferay.fragment.entry.processor.helper.FragmentEntryProcessorHelper;
 import com.liferay.info.field.InfoFieldValue;
-import com.liferay.info.item.InfoItemReference;
+import com.liferay.info.item.ClassPKInfoItemIdentifier;
+import com.liferay.info.item.InfoItemIdentifier;
 import com.liferay.info.item.InfoItemServiceTracker;
 import com.liferay.info.item.provider.InfoItemFieldValuesProvider;
 import com.liferay.info.item.provider.InfoItemObjectProvider;
@@ -95,9 +96,10 @@ public class GetInfoItemFieldValueMVCResourceCommand
 
 		long classPK = ParamUtil.getLong(resourceRequest, "classPK");
 
-		InfoItemReference infoItemReference = new InfoItemReference(classPK);
+		InfoItemIdentifier infoItemIdentifier = new ClassPKInfoItemIdentifier(
+			classPK);
 
-		Object object = infoItemObjectProvider.getInfoItem(infoItemReference);
+		Object object = infoItemObjectProvider.getInfoItem(infoItemIdentifier);
 
 		if (object == null) {
 			JSONPortletResponseUtil.writeJSON(
@@ -120,15 +122,15 @@ public class GetInfoItemFieldValueMVCResourceCommand
 			"fieldId", fieldId
 		);
 
-		String languageId = ParamUtil.getString(
-			resourceRequest, "languageId", themeDisplay.getLanguageId());
-
 		InfoFieldValue<Object> infoFieldValue =
 			infoItemFieldValuesProvider.getInfoItemFieldValue(object, fieldId);
 
 		Object value = StringPool.BLANK;
 
 		if (infoFieldValue != null) {
+			String languageId = ParamUtil.getString(
+				resourceRequest, "languageId", themeDisplay.getLanguageId());
+
 			value = infoFieldValue.getValue(
 				LocaleUtil.fromLanguageId(languageId));
 		}

@@ -24,14 +24,17 @@ import java.util.List;
  * This class is used by SOAP remote services, specifically {@link com.liferay.fragment.service.http.FragmentCollectionServiceSoap}.
  *
  * @author Brian Wing Shun Chan
+ * @deprecated As of Athanasius (7.3.x), with no direct replacement
  * @generated
  */
+@Deprecated
 public class FragmentCollectionSoap implements Serializable {
 
 	public static FragmentCollectionSoap toSoapModel(FragmentCollection model) {
 		FragmentCollectionSoap soapModel = new FragmentCollectionSoap();
 
 		soapModel.setMvccVersion(model.getMvccVersion());
+		soapModel.setCtCollectionId(model.getCtCollectionId());
 		soapModel.setUuid(model.getUuid());
 		soapModel.setFragmentCollectionId(model.getFragmentCollectionId());
 		soapModel.setGroupId(model.getGroupId());
@@ -112,6 +115,14 @@ public class FragmentCollectionSoap implements Serializable {
 
 	public void setMvccVersion(long mvccVersion) {
 		_mvccVersion = mvccVersion;
+	}
+
+	public long getCtCollectionId() {
+		return _ctCollectionId;
+	}
+
+	public void setCtCollectionId(long ctCollectionId) {
+		_ctCollectionId = ctCollectionId;
 	}
 
 	public String getUuid() {
@@ -211,6 +222,7 @@ public class FragmentCollectionSoap implements Serializable {
 	}
 
 	private long _mvccVersion;
+	private long _ctCollectionId;
 	private String _uuid;
 	private long _fragmentCollectionId;
 	private long _groupId;

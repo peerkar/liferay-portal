@@ -753,8 +753,9 @@ public abstract class BaseSourceProcessor implements SourceProcessor {
 
 			DebugUtil.finishTask();
 		}
-		catch (Throwable t) {
-			throw new RuntimeException("Unable to format " + fileName, t);
+		catch (Throwable throwable) {
+			throw new RuntimeException(
+				"Unable to format " + fileName, throwable);
 		}
 	}
 

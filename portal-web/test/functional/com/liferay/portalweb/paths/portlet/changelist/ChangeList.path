@@ -9,6 +9,11 @@
 </thead>
 <tbody>
 <tr>
+	<td>AUTOMATICALLY_RESOLVED_TABLE</td>
+	<td>//table[contains(@class,'change-lists-conflicts-table')]//td[contains(.,'Automatically Resolved')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>CHANGE_LIST_INDICATOR_BUTTON</td>
 	<td>//button[contains(@class,'dropdown-toggle change-tracking-indicator-button')]</td>
 	<td></td>
@@ -16,6 +21,37 @@
 <tr>
 	<td>CHANGE_LIST_INDICATOR_TITLE</td>
 	<td>//button[contains(@class,'change-tracking-indicator-title')] and contains(.,'${key_publicationName}')</td>
+	<td></td>
+</tr>
+<tr>
+	<td>COLUMN_VALUE_IN_PRODUCTION</td>
+	<td>//td[contains(@class,'change-lists-diff-td')][1]//td[contains(.,'${key_columnName}')]//following-sibling::td[contains(.,'${key_columnValueInProduction}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>COLUMN_VALUE_IN_PUBLICATION</td>
+	<td>//td[contains(@class,'change-lists-diff-td')][2]//td[contains(.,'${key_columnName}')]//following-sibling::td[contains(.,'${key_columnValueInPublication}')]</td>
+	<td></td>
+</tr>
+
+<tr>
+	<td>CONFICTING_CHANGES_SUCCESS_CONTENT</td>
+	<td>//div[contains(.,'${key_entryTitle}')]//following-sibling::div[contains(.,'${key_successMessage}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CONFICTING_CHANGES_VIEW_BUTTON</td>
+	<td>//div[contains(@class,'autofit-col-expand') and contains(.,'${key_entryTitle}')]//following-sibling::div//a[contains(.,'View')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CONFICTING_CHANGES_WARNING_CONTENT</td>
+	<td>//div[contains(.,'${key_entryTitle}')]//following-sibling::div[contains(.,'${key_warningMessage}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>DISABLED_PUBLISH_BUTTON</td>
+	<td>//*[contains(@class,'btn')][normalize-space(text())='Publish']</td>
 	<td></td>
 </tr>
 <tr>
@@ -39,13 +75,33 @@
 	<td></td>
 </tr>
 <tr>
+	<td>NEEDS_MANUAL_RESOLUTION_TABLE</td>
+	<td>//table[contains(@class,'change-lists-conflicts-table')]//td[contains(.,'Needs Manual Resolution')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>PUBLICATION_NAME</td>
 	<td>//input[contains(@name,'name')]</td>
 	<td></td>
 </tr>
 <tr>
+	<td>LIST_PUBLICATION_ELLIPSIS</td>
+	<td>//li[@data-qa-id='row'][contains(.,'${key_publicationName}')]//a[contains(@class,'dropdown-toggle')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PRODUCTION_CARD_TITLE</td>
+	<td>//span[contains(@class,'work-on-production')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>PUBLICATION_DESCRIPTION</td>
 	<td>//textarea[contains(@name,'description')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PUBLICATION_NAME_IN_DIFF</td>
+	<td>//td[contains(@class,'change-lists-diff-td') and contains(.,'${key_publicationName}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -64,13 +120,13 @@
 	<td></td>
 </tr>
 <tr>
-	<td>SELECT_PUBLICATION_NAME</td>
-	<td>//a[contains(.,'${key_publicationName}')]</td>
+	<td>REVERT_BUTTON</td>
+	<td>//td[contains(.,'${key_publicationName}')]//following-sibling::td[contains(.,'Revert')]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>PRODUCTION_CARD_TITLE</td>
-	<td>//span[contains(@class,'work-on-production')]</td>
+	<td>SELECT_PUBLICATION_NAME</td>
+	<td>//a[contains(.,'${key_publicationName}')]</td>
 	<td></td>
 </tr>
 </tbody>

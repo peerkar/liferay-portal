@@ -73,16 +73,16 @@ SegmentsEntry segmentsEntry = (SegmentsEntry)row.getObject();
 		roleItemSelectorCriterion.setExcludedRoleNames(excludedRoleNames);
 
 		PortletURL itemSelectorURL = itemSelector.getItemSelectorURL(RequestBackedPortletURLFactoryUtil.create(renderRequest), eventName, roleItemSelectorCriterion);
-
-		Map<String, Object> data = HashMapBuilder.<String, Object>put(
-			"itemSelectorURL", itemSelectorURL.toString()
-		).put(
-			"segmentsEntryId", segmentsEntry.getSegmentsEntryId()
-		).build();
 		%>
 
 		<liferay-ui:icon
-			data="<%= data %>"
+			data='<%=
+				HashMapBuilder.<String, Object>put(
+					"itemSelectorURL", itemSelectorURL.toString()
+				).put(
+					"segmentsEntryId", segmentsEntry.getSegmentsEntryId()
+				).build()
+			%>'
 			linkCssClass="assign-site-roles-link"
 			message="assign-site-roles"
 			url="javascript:;"

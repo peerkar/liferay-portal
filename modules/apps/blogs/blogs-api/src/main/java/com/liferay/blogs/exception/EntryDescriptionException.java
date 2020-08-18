@@ -28,12 +28,12 @@ public class EntryDescriptionException extends PortalException {
 		super(msg);
 	}
 
-	public EntryDescriptionException(String msg, Throwable cause) {
-		super(msg, cause);
+	public EntryDescriptionException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public EntryDescriptionException(Throwable cause) {
-		super(cause);
+	public EntryDescriptionException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

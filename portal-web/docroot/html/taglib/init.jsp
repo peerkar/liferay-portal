@@ -26,6 +26,8 @@ page import="com.liferay.taglib.util.TagResourceBundleUtil" %>
 
 <%@ page import="java.io.IOException" %>
 
+<portlet:defineObjects />
+
 <%
 PortletRequest portletRequest = (PortletRequest)request.getAttribute(JavaConstants.JAVAX_PORTLET_REQUEST);
 

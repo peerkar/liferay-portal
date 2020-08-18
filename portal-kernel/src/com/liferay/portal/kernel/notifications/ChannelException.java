@@ -29,12 +29,12 @@ public class ChannelException extends PortalException {
 		super(msg);
 	}
 
-	public ChannelException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ChannelException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ChannelException(Throwable cause) {
-		super(cause);
+	public ChannelException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

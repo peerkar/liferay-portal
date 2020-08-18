@@ -63,8 +63,8 @@ public class SuspendedSessionConnectionTest {
 							TransactionInvokerUtil.invoke(
 								_innerTransactionConfig, () -> null);
 						}
-						catch (Throwable t) {
-							throw new RuntimeException(t);
+						catch (Throwable throwable) {
+							throw new RuntimeException(throwable);
 						}
 
 						Assert.assertFalse(connection.isClosed());

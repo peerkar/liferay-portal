@@ -28,12 +28,12 @@ public class InvalidFileEntryTypeException extends PortalException {
 		super(msg);
 	}
 
-	public InvalidFileEntryTypeException(String msg, Throwable cause) {
-		super(msg, cause);
+	public InvalidFileEntryTypeException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public InvalidFileEntryTypeException(Throwable cause) {
-		super(cause);
+	public InvalidFileEntryTypeException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

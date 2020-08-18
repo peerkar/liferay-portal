@@ -1772,17 +1772,17 @@ public class CMISRepository extends BaseCmisRepository {
 			}
 			catch (Exception exception) {
 				if (_log.isDebugEnabled()) {
-					Throwable cause = exception.getCause();
+					Throwable throwable = exception.getCause();
 
-					if (cause != null) {
-						cause = cause.getCause();
+					if (throwable != null) {
+						throwable = throwable.getCause();
 					}
 
-					if (cause instanceof CmisObjectNotFoundException) {
+					if (throwable instanceof CmisObjectNotFoundException) {
 						_log.debug(
 							"Search result ignored for CMIS document which " +
 								"has a version with an invalid object ID " +
-									cause.getMessage());
+									throwable.getMessage());
 					}
 					else {
 						_log.debug(

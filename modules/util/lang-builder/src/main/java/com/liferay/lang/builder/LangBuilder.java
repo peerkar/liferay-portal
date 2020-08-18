@@ -715,15 +715,15 @@ public class LangBuilder {
 			return null;
 		}
 
-		Language fromLanguage = Language.fromString(
-			_getMicrosoftLanguageId(fromLanguageId));
-
 		Language toLanguage = Language.fromString(
 			_getMicrosoftLanguageId(toLanguageId));
 
 		if (toLanguage == null) {
 			return null;
 		}
+
+		Language fromLanguage = Language.fromString(
+			_getMicrosoftLanguageId(fromLanguageId));
 
 		String toText = null;
 

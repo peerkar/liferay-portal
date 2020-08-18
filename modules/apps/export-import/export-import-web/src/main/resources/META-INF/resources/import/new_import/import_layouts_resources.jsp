@@ -159,7 +159,7 @@ ManifestSummary manifestSummary = ExportImportHelperUtil.getManifestSummary(user
 			</aui:fieldset>
 
 			<c:choose>
-				<c:when test="<%= !group.isLayoutPrototype() && !group.isLayoutSetPrototype() && !group.isCompany() %>">
+				<c:when test="<%= (group.getType() != GroupConstants.TYPE_DEPOT) && !group.isCompany() && !group.isLayoutPrototype() && !group.isLayoutSetPrototype() %>">
 					<aui:fieldset collapsible="<%= true %>" cssClass="options-group" label="pages">
 						<aui:input id="publicPages" label="public-pages" name="privateLayout" type="radio" value="<%= false %>" />
 
@@ -314,15 +314,20 @@ ManifestSummary manifestSummary = ExportImportHelperUtil.getManifestSummary(user
 															<li>
 																<span class="selected-labels" id="<portlet:namespace />selectedContent_<%= portlet.getRootPortletId() %>"></span>
 
-																<%
-																Map<String, Object> data = HashMapBuilder.<String, Object>put(
-																	"portletid", portlet.getRootPortletId()
-																).put(
-																	"portlettitle", portletTitle
-																).build();
-																%>
-
-																<aui:a cssClass="content-link modify-link" data="<%= data %>" href="javascript:;" id='<%= "contentLink_" + portlet.getRootPortletId() %>' label="change" method="get" />
+																<aui:a
+																	cssClass="content-link modify-link"
+																	data='<%=
+																		HashMapBuilder.<String, Object>put(
+																			"portletid", portlet.getRootPortletId()
+																		).put(
+																			"portlettitle", portletTitle
+																		).build()
+																	%>'
+																	href="javascript:;"
+																	id='<%= "contentLink_" + portlet.getRootPortletId() %>'
+																	label="change"
+																	method="get"
+																/>
 															</li>
 														</ul>
 

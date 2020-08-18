@@ -28,12 +28,12 @@ public class SignatureException extends PortalException {
 		super(msg);
 	}
 
-	public SignatureException(String msg, Throwable cause) {
-		super(msg, cause);
+	public SignatureException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public SignatureException(Throwable cause) {
-		super(cause);
+	public SignatureException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

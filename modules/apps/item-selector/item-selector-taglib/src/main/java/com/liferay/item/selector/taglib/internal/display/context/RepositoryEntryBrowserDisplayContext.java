@@ -38,11 +38,7 @@ public class RepositoryEntryBrowserDisplayContext {
 	public String getGroupCssIcon(long groupId) throws PortalException {
 		Group group = GroupServiceUtil.getGroup(groupId);
 
-		if (group.isSite()) {
-			return "sites";
-		}
-
-		return "books";
+		return group.getIconCssClass();
 	}
 
 	public String getGroupLabel(long groupId, Locale locale)
@@ -50,7 +46,7 @@ public class RepositoryEntryBrowserDisplayContext {
 
 		Group group = GroupServiceUtil.getGroup(groupId);
 
-		return group.getName(locale);
+		return group.getDescriptiveName(locale);
 	}
 
 	public boolean isSearchEverywhere() {

@@ -185,7 +185,7 @@ if (ListUtil.isEmpty(folders) && ListUtil.isEmpty(articles)) {
 			<p class="h5"><liferay-ui:message key="original-author" /></p>
 
 			<p>
-				<%= HtmlUtil.escape(journalDisplayContext.getOriginalAuthorUser(article)) %>
+				<%= HtmlUtil.escape(journalDisplayContext.getOriginalAuthorUserName(article)) %>
 			</p>
 
 			<p class="h5"><liferay-ui:message key="priority" /></p>

@@ -26,12 +26,12 @@ public class NoSuchOrganizationException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchOrganizationException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchOrganizationException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchOrganizationException(Throwable cause) {
-		super(cause);
+	public NoSuchOrganizationException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

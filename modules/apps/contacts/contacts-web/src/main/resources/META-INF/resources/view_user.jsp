@@ -319,7 +319,7 @@ request.setAttribute("view_user.jsp-user", user2);
 													String searchPortletId = PortletProviderUtil.getPortletId(PortalSearchApplicationType.Search.CLASS_NAME, PortletProvider.Action.VIEW);
 
 													for (AssetTag assetTag : assetTags) {
-														PortletURL searchURL = ((LiferayPortletResponse)renderResponse).createRenderURL(searchPortletId);
+														PortletURL searchURL = liferayPortletResponse.createRenderURL(searchPortletId);
 
 														searchURL.setParameter("mvcPath", "/search.jsp");
 														searchURL.setParameter("groupId", "0");

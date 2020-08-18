@@ -28,12 +28,12 @@ public class CalendarResourceCodeException extends PortalException {
 		super(msg);
 	}
 
-	public CalendarResourceCodeException(String msg, Throwable cause) {
-		super(msg, cause);
+	public CalendarResourceCodeException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public CalendarResourceCodeException(Throwable cause) {
-		super(cause);
+	public CalendarResourceCodeException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -28,12 +28,14 @@ public class DLPreviewGenerationInProcessException extends PortalException {
 		super(msg);
 	}
 
-	public DLPreviewGenerationInProcessException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DLPreviewGenerationInProcessException(
+		String msg, Throwable throwable) {
+
+		super(msg, throwable);
 	}
 
-	public DLPreviewGenerationInProcessException(Throwable cause) {
-		super(cause);
+	public DLPreviewGenerationInProcessException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

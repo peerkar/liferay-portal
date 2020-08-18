@@ -54,6 +54,7 @@ export function ViewDataLayoutPageValues({
 	dataRecordValues,
 }) {
 	const {dataLayoutRows} = dataLayoutPage;
+	const {defaultLanguageId} = dataDefinition;
 	const sections = getSections(dataDefinition);
 
 	return dataLayoutRows
@@ -84,6 +85,7 @@ export function ViewDataLayoutPageValues({
 										fieldGroup.nestedDataDefinitionFields,
 								}}
 								dataRecordValues={dataRecordValues}
+								defaultLanguageId={defaultLanguageId}
 								fieldName={field}
 								key={field}
 							/>
@@ -96,6 +98,7 @@ export function ViewDataLayoutPageValues({
 				<FieldPreview
 					dataDefinition={dataDefinition}
 					dataRecordValues={dataRecordValues}
+					defaultLanguageId={defaultLanguageId}
 					fieldName={fieldName}
 					key={fieldName}
 				/>
@@ -109,7 +112,9 @@ export default function ViewEntry({
 		params: {entryIndex},
 	},
 }) {
-	const {dataDefinitionId, dataLayoutId} = useContext(AppContext);
+	const {dataDefinitionId, dataLayoutId, dataListViewId} = useContext(
+		AppContext
+	);
 	const {
 		dataDefinition,
 		dataLayout: {dataLayoutPages},
@@ -141,7 +146,7 @@ export default function ViewEntry({
 		) {
 			getItem(
 				`/o/data-engine/v2.0/data-definitions/${dataDefinitionId}/data-records`,
-				{...query, page: entryIndex, pageSize: 1}
+				{...query, dataListViewId, page: entryIndex, pageSize: 1}
 			)
 				.then(({items = [], ...response}) => {
 					if (items.length > 0) {

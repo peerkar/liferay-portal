@@ -28,12 +28,12 @@ public class OAuth2ApplicationNameException extends PortalException {
 		super(msg);
 	}
 
-	public OAuth2ApplicationNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public OAuth2ApplicationNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public OAuth2ApplicationNameException(Throwable cause) {
-		super(cause);
+	public OAuth2ApplicationNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

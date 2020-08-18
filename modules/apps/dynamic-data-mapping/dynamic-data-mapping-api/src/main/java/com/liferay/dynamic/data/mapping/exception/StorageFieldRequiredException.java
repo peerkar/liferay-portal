@@ -26,12 +26,12 @@ public class StorageFieldRequiredException extends StorageException {
 		super(msg);
 	}
 
-	public StorageFieldRequiredException(String msg, Throwable cause) {
-		super(msg, cause);
+	public StorageFieldRequiredException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public StorageFieldRequiredException(Throwable cause) {
-		super(cause);
+	public StorageFieldRequiredException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

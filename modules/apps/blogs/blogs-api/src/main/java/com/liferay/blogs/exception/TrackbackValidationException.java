@@ -28,12 +28,12 @@ public class TrackbackValidationException extends PortalException {
 		super(msg);
 	}
 
-	public TrackbackValidationException(String msg, Throwable cause) {
-		super(msg, cause);
+	public TrackbackValidationException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public TrackbackValidationException(Throwable cause) {
-		super(cause);
+	public TrackbackValidationException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

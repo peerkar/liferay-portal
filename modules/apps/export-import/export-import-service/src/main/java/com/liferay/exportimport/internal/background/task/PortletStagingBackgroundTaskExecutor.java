@@ -108,7 +108,7 @@ public class PortletStagingBackgroundTaskExecutor
 					exportImportConfiguration.getExportImportConfigurationId()),
 				exportImportConfiguration);
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			ExportImportThreadLocal.setPortletStagingInProcess(false);
 
 			ExportImportLifecycleManagerUtil.fireExportImportLifecycleEvent(
@@ -122,7 +122,7 @@ public class PortletStagingBackgroundTaskExecutor
 
 			deleteTempLarOnFailure(file);
 
-			throw new SystemException(t);
+			throw new SystemException(throwable);
 		}
 
 		deleteTempLarOnSuccess(file);

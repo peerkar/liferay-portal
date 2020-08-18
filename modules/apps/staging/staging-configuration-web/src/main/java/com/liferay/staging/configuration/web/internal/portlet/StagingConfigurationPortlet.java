@@ -269,12 +269,12 @@ public class StagingConfigurationPortlet extends MVCPortlet {
 	}
 
 	@Override
-	protected boolean isSessionErrorException(Throwable cause) {
-		if (cause instanceof LocaleException) {
+	protected boolean isSessionErrorException(Throwable throwable) {
+		if (throwable instanceof LocaleException) {
 			return true;
 		}
 
-		return super.isSessionErrorException(cause);
+		return super.isSessionErrorException(throwable);
 	}
 
 	@Reference

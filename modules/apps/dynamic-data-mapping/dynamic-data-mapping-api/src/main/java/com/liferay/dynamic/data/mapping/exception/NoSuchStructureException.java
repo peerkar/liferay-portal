@@ -28,12 +28,12 @@ public class NoSuchStructureException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchStructureException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchStructureException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchStructureException(Throwable cause) {
-		super(cause);
+	public NoSuchStructureException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

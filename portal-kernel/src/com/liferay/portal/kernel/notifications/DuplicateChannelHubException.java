@@ -27,12 +27,12 @@ public class DuplicateChannelHubException extends ChannelException {
 		super(msg);
 	}
 
-	public DuplicateChannelHubException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateChannelHubException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateChannelHubException(Throwable cause) {
-		super(cause);
+	public DuplicateChannelHubException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

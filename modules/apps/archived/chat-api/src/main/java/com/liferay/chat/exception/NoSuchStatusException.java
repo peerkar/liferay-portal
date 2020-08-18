@@ -28,12 +28,12 @@ public class NoSuchStatusException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchStatusException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchStatusException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchStatusException(Throwable cause) {
-		super(cause);
+	public NoSuchStatusException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

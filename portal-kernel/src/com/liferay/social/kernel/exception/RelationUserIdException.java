@@ -28,12 +28,12 @@ public class RelationUserIdException extends PortalException {
 		super(msg);
 	}
 
-	public RelationUserIdException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RelationUserIdException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public RelationUserIdException(Throwable cause) {
-		super(cause);
+	public RelationUserIdException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

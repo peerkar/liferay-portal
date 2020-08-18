@@ -28,12 +28,12 @@ public class PollerException extends PortalException {
 		super(msg);
 	}
 
-	public PollerException(String msg, Throwable cause) {
-		super(msg, cause);
+	public PollerException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public PollerException(Throwable cause) {
-		super(cause);
+	public PollerException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

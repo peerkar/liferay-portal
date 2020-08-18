@@ -85,15 +85,15 @@ public abstract class BaseCumulativeSumPipelineAggregationTestCase
 		Assert.assertEquals(expectedKey, bucket.getKey());
 		Assert.assertEquals(expectedCount, bucket.getDocCount());
 
-		Map<String, AggregationResult> childrenAggregationResults =
-			bucket.getChildrenAggregationResults();
-
-		CumulativeSumPipelineAggregationResult
-			cumulativeSumPipelineAggregationResult =
-				(CumulativeSumPipelineAggregationResult)
-					childrenAggregationResults.get("cumulative_sum");
-
 		if (cumulativeSum != null) {
+			Map<String, AggregationResult> childrenAggregationResults =
+				bucket.getChildrenAggregationResults();
+
+			CumulativeSumPipelineAggregationResult
+				cumulativeSumPipelineAggregationResult =
+					(CumulativeSumPipelineAggregationResult)
+						childrenAggregationResults.get("cumulative_sum");
+
 			Assert.assertNotNull(cumulativeSumPipelineAggregationResult);
 
 			Assert.assertEquals(

@@ -26,12 +26,12 @@ public class GroupNameException extends PortalException {
 		super(msg);
 	}
 
-	public GroupNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public GroupNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public GroupNameException(Throwable cause) {
-		super(cause);
+	public GroupNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

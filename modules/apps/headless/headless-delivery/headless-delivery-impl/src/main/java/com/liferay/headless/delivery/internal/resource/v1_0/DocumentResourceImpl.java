@@ -29,7 +29,7 @@ import com.liferay.dynamic.data.mapping.util.DDMBeanTranslator;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
 import com.liferay.expando.kernel.service.ExpandoTableLocalService;
 import com.liferay.headless.common.spi.resource.SPIRatingResource;
-import com.liferay.headless.common.spi.service.context.ServiceContextUtil;
+import com.liferay.headless.common.spi.service.context.ServiceContextRequestUtil;
 import com.liferay.headless.delivery.dto.v1_0.ContentField;
 import com.liferay.headless.delivery.dto.v1_0.CustomField;
 import com.liferay.headless.delivery.dto.v1_0.Document;
@@ -109,6 +109,18 @@ public class DocumentResourceImpl
 		SPIRatingResource<Rating> spiRatingResource = _getSPIRatingResource();
 
 		spiRatingResource.deleteRating(documentId);
+	}
+
+	@Override
+	public Page<Document> getAssetLibraryDocumentsPage(
+			Long assetLibraryId, Boolean flatten, String search,
+			Aggregation aggregation, Filter filter, Pagination pagination,
+			Sort[] sorts)
+		throws Exception {
+
+		return getSiteDocumentsPage(
+			assetLibraryId, flatten, search, aggregation, filter, pagination,
+			sorts);
 	}
 
 	@Override
@@ -260,6 +272,14 @@ public class DocumentResourceImpl
 						DLFileEntry.class.getName(), documentId),
 					existingFileEntry.getFolderId(), documentOptional,
 					existingFileEntry.getGroupId())));
+	}
+
+	@Override
+	public Document postAssetLibraryDocument(
+			Long assetLibraryId, MultipartBody multipartBody)
+		throws Exception {
+
+		return postSiteDocument(assetLibraryId, multipartBody);
 	}
 
 	@Override
@@ -471,23 +491,25 @@ public class DocumentResourceImpl
 			Optional<Document> documentOptional, Long groupId)
 		throws Exception {
 
-		ServiceContext serviceContext = ServiceContextUtil.createServiceContext(
-			documentOptional.map(
-				Document::getTaxonomyCategoryIds
-			).orElseGet(
-				defaultCategoriesSupplier
-			),
-			documentOptional.map(
-				Document::getKeywords
-			).orElseGet(
-				defaultKeywordsSupplier
-			),
-			_getExpandoBridgeAttributes1(documentOptional), groupId,
-			documentOptional.map(
-				Document::getViewableByAsString
-			).orElse(
-				Document.ViewableBy.OWNER.getValue()
-			));
+		ServiceContext serviceContext =
+			ServiceContextRequestUtil.createServiceContext(
+				documentOptional.map(
+					Document::getTaxonomyCategoryIds
+				).orElseGet(
+					defaultCategoriesSupplier
+				),
+				documentOptional.map(
+					Document::getKeywords
+				).orElseGet(
+					defaultKeywordsSupplier
+				),
+				_getExpandoBridgeAttributes1(documentOptional), groupId,
+				contextHttpServletRequest,
+				documentOptional.map(
+					Document::getViewableByAsString
+				).orElse(
+					Document.ViewableBy.OWNER.getValue()
+				));
 
 		serviceContext.setUserId(contextUser.getUserId());
 

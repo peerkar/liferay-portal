@@ -101,8 +101,8 @@ public class JournalContentImpl
 					ClusterInvokeAcceptor.class, this, _clearArticleCacheMethod,
 					new Object[] {groupId, articleId, ddmTemplateKey});
 			}
-			catch (Throwable t) {
-				ReflectionUtil.throwException(t);
+			catch (Throwable throwable) {
+				ReflectionUtil.throwException(throwable);
 			}
 		}
 	}
@@ -117,8 +117,8 @@ public class JournalContentImpl
 					ClusterInvokeAcceptor.class, this,
 					_clearTemplateCacheMethod, new Object[] {ddmTemplateKey});
 			}
-			catch (Throwable t) {
-				ReflectionUtil.throwException(t);
+			catch (Throwable throwable) {
+				ReflectionUtil.throwException(throwable);
 			}
 		}
 	}

@@ -20,34 +20,34 @@
 
 	<%
 	AppBuilderApp appBuilderApp = (AppBuilderApp)request.getAttribute(AppBuilderWebKeys.APP);
-
-	Map<String, Object> props = HashMapBuilder.<String, Object>put(
-		"appDeploymentType", request.getAttribute(AppBuilderWebKeys.APP_DEPLOYMENT_TYPE)
-	).put(
-		"appId", appBuilderApp.getAppBuilderAppId()
-	).put(
-		"appTab", request.getAttribute(AppBuilderWebKeys.APP_TAB)
-	).put(
-		"basePortletURL", String.valueOf(renderResponse.createRenderURL())
-	).put(
-		"dataDefinitionId", appBuilderApp.getDdmStructureId()
-	).put(
-		"dataLayoutId", appBuilderApp.getDdmStructureLayoutId()
-	).put(
-		"dataListViewId", appBuilderApp.getDeDataListViewId()
-	).put(
-		"defaultDelta", PropsValues.SEARCH_CONTAINER_PAGE_DEFAULT_DELTA
-	).put(
-		"deltaValues", PropsValues.SEARCH_CONTAINER_PAGE_DELTA_VALUES
-	).put(
-		"showFormView", request.getAttribute(AppBuilderWebKeys.SHOW_FORM_VIEW)
-	).put(
-		"showTableView", request.getAttribute(AppBuilderWebKeys.SHOW_TABLE_VIEW)
-	).build();
 	%>
 
 	<react:component
 		module="js/pages/entry/ViewEntriesApp.es"
-		props="<%= props %>"
+		props='<%=
+			HashMapBuilder.<String, Object>put(
+				"appDeploymentType", request.getAttribute(AppBuilderWebKeys.APP_DEPLOYMENT_TYPE)
+			).put(
+				"appId", appBuilderApp.getAppBuilderAppId()
+			).put(
+				"appTab", request.getAttribute(AppBuilderWebKeys.APP_TAB)
+			).put(
+				"basePortletURL", String.valueOf(renderResponse.createRenderURL())
+			).put(
+				"dataDefinitionId", appBuilderApp.getDdmStructureId()
+			).put(
+				"dataLayoutId", appBuilderApp.getDdmStructureLayoutId()
+			).put(
+				"dataListViewId", appBuilderApp.getDeDataListViewId()
+			).put(
+				"defaultDelta", PropsValues.SEARCH_CONTAINER_PAGE_DEFAULT_DELTA
+			).put(
+				"deltaValues", PropsValues.SEARCH_CONTAINER_PAGE_DELTA_VALUES
+			).put(
+				"showFormView", request.getAttribute(AppBuilderWebKeys.SHOW_FORM_VIEW)
+			).put(
+				"showTableView", request.getAttribute(AppBuilderWebKeys.SHOW_TABLE_VIEW)
+			).build()
+		%>'
 	/>
 </div>

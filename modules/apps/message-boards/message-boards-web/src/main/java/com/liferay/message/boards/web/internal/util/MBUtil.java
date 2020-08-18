@@ -264,11 +264,12 @@ public class MBUtil {
 				continue;
 			}
 
-			String priorityName = priorityArray[0];
-			String priorityImage = priorityArray[1];
 			double priorityValue = GetterUtil.getDouble(priorityArray[2]);
 
 			if (value == priorityValue) {
+				String priorityName = priorityArray[0];
+				String priorityImage = priorityArray[1];
+
 				return new String[] {priorityName, priorityImage};
 			}
 		}

@@ -28,12 +28,12 @@ public class RequiredTemplateException extends PortalException {
 		super(msg);
 	}
 
-	public RequiredTemplateException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RequiredTemplateException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public RequiredTemplateException(Throwable cause) {
-		super(cause);
+	public RequiredTemplateException(Throwable throwable) {
+		super(throwable);
 	}
 
 	public static class MustNotDeleteTemplateReferencedByTemplateLinks

@@ -57,8 +57,6 @@ public class MBUserRankUtil {
 		for (String curRank : ranks) {
 			String[] kvp = StringUtil.split(curRank, CharPool.EQUAL);
 
-			String kvpName = kvp[0];
-
 			String kvpPosts = kvp[1];
 
 			String[] curRankValueKvp = StringUtil.split(
@@ -70,7 +68,7 @@ public class MBUserRankUtil {
 				if ((posts <= statsUser.getMessageCount()) &&
 					(posts >= maxPosts)) {
 
-					rank[0] = kvpName;
+					rank[0] = kvp[0];
 					maxPosts = posts;
 				}
 			}

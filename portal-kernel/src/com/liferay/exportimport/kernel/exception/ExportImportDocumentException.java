@@ -32,8 +32,8 @@ public class ExportImportDocumentException extends PortalException {
 	public ExportImportDocumentException() {
 	}
 
-	public ExportImportDocumentException(Throwable cause) {
-		super(cause);
+	public ExportImportDocumentException(Throwable throwable) {
+		super(throwable);
 	}
 
 	public String getPortletId() {

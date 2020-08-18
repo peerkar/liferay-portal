@@ -28,12 +28,12 @@ public class InvalidParentStructureException extends PortalException {
 		super(msg);
 	}
 
-	public InvalidParentStructureException(String msg, Throwable cause) {
-		super(msg, cause);
+	public InvalidParentStructureException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public InvalidParentStructureException(Throwable cause) {
-		super(cause);
+	public InvalidParentStructureException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

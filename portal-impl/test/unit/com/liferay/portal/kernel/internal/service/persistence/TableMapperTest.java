@@ -174,14 +174,14 @@ public class TableMapperTest {
 			Assert.fail();
 		}
 		catch (SystemException systemException) {
-			Throwable cause = systemException.getCause();
+			Throwable throwable = systemException.getCause();
 
-			Assert.assertSame(RuntimeException.class, cause.getClass());
+			Assert.assertSame(RuntimeException.class, throwable.getClass());
 			Assert.assertEquals(
 				StringBundler.concat(
 					"Unique key violation for left primary key ",
 					leftPrimaryKey, " and right primary key ", rightPrimaryKey),
-				cause.getMessage());
+				throwable.getMessage());
 		}
 
 		// Auto recover after error
@@ -244,14 +244,14 @@ public class TableMapperTest {
 			Assert.fail();
 		}
 		catch (SystemException systemException) {
-			Throwable cause = systemException.getCause();
+			Throwable throwable = systemException.getCause();
 
-			Assert.assertSame(RuntimeException.class, cause.getClass());
+			Assert.assertSame(RuntimeException.class, throwable.getClass());
 			Assert.assertEquals(
 				StringBundler.concat(
 					"Unique key violation for left primary key ",
 					leftPrimaryKey, " and right primary key ", rightPrimaryKey),
-				cause.getMessage());
+				throwable.getMessage());
 		}
 
 		ModelListenerRegistrationUtil.unregister(leftModelListener);
@@ -365,11 +365,11 @@ public class TableMapperTest {
 			Assert.fail();
 		}
 		catch (SystemException systemException) {
-			Throwable cause = systemException.getCause();
+			Throwable throwable = systemException.getCause();
 
-			Assert.assertSame(RuntimeException.class, cause.getClass());
+			Assert.assertSame(RuntimeException.class, throwable.getClass());
 
-			Assert.assertEquals("Database error", cause.getMessage());
+			Assert.assertEquals("Database error", throwable.getMessage());
 		}
 		finally {
 			mockContainsTableMappingSQLQuery.setDatabaseError(false);
@@ -609,11 +609,11 @@ public class TableMapperTest {
 			Assert.fail();
 		}
 		catch (SystemException systemException) {
-			Throwable cause = systemException.getCause();
+			Throwable throwable = systemException.getCause();
 
-			Assert.assertSame(RuntimeException.class, cause.getClass());
+			Assert.assertSame(RuntimeException.class, throwable.getClass());
 
-			Assert.assertEquals("Database error", cause.getMessage());
+			Assert.assertEquals("Database error", throwable.getMessage());
 		}
 		finally {
 			mockDeleteLeftPrimaryKeyTableMappingsSqlUpdate.setDatabaseError(
@@ -782,11 +782,11 @@ public class TableMapperTest {
 			Assert.fail();
 		}
 		catch (SystemException systemException) {
-			Throwable cause = systemException.getCause();
+			Throwable throwable = systemException.getCause();
 
-			Assert.assertSame(RuntimeException.class, cause.getClass());
+			Assert.assertSame(RuntimeException.class, throwable.getClass());
 
-			Assert.assertEquals("Database error", cause.getMessage());
+			Assert.assertEquals("Database error", throwable.getMessage());
 		}
 		finally {
 			mockDeleteRightPrimaryKeyTableMappingsSqlUpdate.setDatabaseError(
@@ -890,11 +890,11 @@ public class TableMapperTest {
 			Assert.fail();
 		}
 		catch (SystemException systemException) {
-			Throwable cause = systemException.getCause();
+			Throwable throwable = systemException.getCause();
 
-			Assert.assertSame(RuntimeException.class, cause.getClass());
+			Assert.assertSame(RuntimeException.class, throwable.getClass());
 
-			Assert.assertEquals("Database error", cause.getMessage());
+			Assert.assertEquals("Database error", throwable.getMessage());
 		}
 		finally {
 			mockDeleteSqlUpdate.setDatabaseError(false);
@@ -1168,12 +1168,12 @@ public class TableMapperTest {
 				rightPrimaryKey, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 		}
 		catch (SystemException systemException) {
-			Throwable cause = systemException.getCause();
+			Throwable throwable = systemException.getCause();
 
-			Assert.assertSame(NoSuchModelException.class, cause.getClass());
+			Assert.assertSame(NoSuchModelException.class, throwable.getClass());
 
 			Assert.assertEquals(
-				String.valueOf(leftPrimaryKey1), cause.getMessage());
+				String.valueOf(leftPrimaryKey1), throwable.getMessage());
 		}
 		finally {
 			_leftBasePersistence.setNoSuchModelException(false);
@@ -1233,11 +1233,11 @@ public class TableMapperTest {
 			_tableMapperImpl.getLeftPrimaryKeys(rightPrimaryKey);
 		}
 		catch (SystemException systemException) {
-			Throwable cause = systemException.getCause();
+			Throwable throwable = systemException.getCause();
 
-			Assert.assertSame(RuntimeException.class, cause.getClass());
+			Assert.assertSame(RuntimeException.class, throwable.getClass());
 
-			Assert.assertEquals("Database error", cause.getMessage());
+			Assert.assertEquals("Database error", throwable.getMessage());
 		}
 		finally {
 			mockGetLeftPrimaryKeysByRightPrimaryKeyMappingSqlQuery.
@@ -1356,12 +1356,12 @@ public class TableMapperTest {
 				leftPrimaryKey, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 		}
 		catch (SystemException systemException) {
-			Throwable cause = systemException.getCause();
+			Throwable throwable = systemException.getCause();
 
-			Assert.assertSame(NoSuchModelException.class, cause.getClass());
+			Assert.assertSame(NoSuchModelException.class, throwable.getClass());
 
 			Assert.assertEquals(
-				String.valueOf(rightPrimaryKey1), cause.getMessage());
+				String.valueOf(rightPrimaryKey1), throwable.getMessage());
 		}
 		finally {
 			_rightBasePersistence.setNoSuchModelException(false);
@@ -1421,11 +1421,11 @@ public class TableMapperTest {
 			_tableMapperImpl.getRightPrimaryKeys(leftPrimaryKey);
 		}
 		catch (SystemException systemException) {
-			Throwable cause = systemException.getCause();
+			Throwable throwable = systemException.getCause();
 
-			Assert.assertSame(RuntimeException.class, cause.getClass());
+			Assert.assertSame(RuntimeException.class, throwable.getClass());
 
-			Assert.assertEquals("Database error", cause.getMessage());
+			Assert.assertEquals("Database error", throwable.getMessage());
 		}
 		finally {
 			mockGetRightPrimaryKeysByLeftPrimaryKeyMappingSqlQuery.

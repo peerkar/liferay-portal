@@ -14,12 +14,17 @@
 
 package com.liferay.style.book.web.internal.display.context;
 
+import com.liferay.exportimport.kernel.staging.StagingUtil;
 import com.liferay.frontend.token.definition.FrontendTokenDefinition;
 import com.liferay.frontend.token.definition.FrontendTokenDefinitionRegistry;
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.model.LayoutSet;
+import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.service.LayoutSetLocalServiceUtil;
 import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -27,9 +32,9 @@ import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.site.util.GroupURLProvider;
 import com.liferay.style.book.model.StyleBookEntry;
 import com.liferay.style.book.service.StyleBookEntryLocalServiceUtil;
 
@@ -39,6 +44,7 @@ import javax.portlet.ActionRequest;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+import javax.portlet.ResourceURL;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -48,9 +54,8 @@ import javax.servlet.http.HttpServletRequest;
 public class EditStyleBookEntryDisplayContext {
 
 	public EditStyleBookEntryDisplayContext(
-			HttpServletRequest httpServletRequest, RenderRequest renderRequest,
-			RenderResponse renderResponse)
-		throws Exception {
+		HttpServletRequest httpServletRequest, RenderRequest renderRequest,
+		RenderResponse renderResponse) {
 
 		_httpServletRequest = httpServletRequest;
 		_renderRequest = renderRequest;
@@ -59,8 +64,6 @@ public class EditStyleBookEntryDisplayContext {
 		_frontendTokenDefinitionRegistry =
 			(FrontendTokenDefinitionRegistry)_renderRequest.getAttribute(
 				FrontendTokenDefinitionRegistry.class.getName());
-		_groupURLProvider = (GroupURLProvider)_renderRequest.getAttribute(
-			GroupURLProvider.class.getName());
 		_themeDisplay = (ThemeDisplay)_httpServletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
@@ -79,9 +82,18 @@ public class EditStyleBookEntryDisplayContext {
 					styleBookEntry.getFrontendTokensValues());
 			}
 		).put(
-			"namespace", _renderResponse.getNamespace()
+			"initialPreviewLayout", _getInitialPreviewLayoutJSONObject()
 		).put(
-			"previewURL", _getPreviewURL()
+			"layoutsTreeURL",
+			() -> {
+				ResourceURL resourceURL = _renderResponse.createResourceURL();
+
+				resourceURL.setResourceID("/style_book/layouts_tree");
+
+				return resourceURL.toString();
+			}
+		).put(
+			"namespace", _renderResponse.getNamespace()
 		).put(
 			"publishURL", _getActionURL("/style_book/publish_style_book_entry")
 		).put(
@@ -116,20 +128,33 @@ public class EditStyleBookEntryDisplayContext {
 			frontendTokenDefinition.getJSON(_themeDisplay.getLocale()));
 	}
 
-	private String _getPreviewURL() {
-		String layoutURL = _groupURLProvider.getGroupLayoutsURL(
-			_themeDisplay.getScopeGroup(), false, _renderRequest);
+	private JSONObject _getInitialPreviewLayoutJSONObject() throws Exception {
+		Group group = StagingUtil.getStagingGroup(
+			_themeDisplay.getScopeGroupId());
 
-		if (Validator.isNull(layoutURL)) {
-			layoutURL = _groupURLProvider.getGroupLayoutsURL(
-				_themeDisplay.getScopeGroup(), true, _renderRequest);
+		Layout layout = LayoutLocalServiceUtil.fetchFirstLayout(
+			group.getGroupId(), false,
+			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID);
 
-			if (Validator.isNull(layoutURL)) {
-				return StringPool.BLANK;
+		if (layout == null) {
+			layout = LayoutLocalServiceUtil.fetchFirstLayout(
+				group.getGroupId(), true,
+				LayoutConstants.DEFAULT_PARENT_LAYOUT_ID);
+
+			if (layout == null) {
+				return null;
 			}
 		}
 
-		return HttpUtil.addParameter(layoutURL, "p_l_mode", Constants.PREVIEW);
+		String layoutURL = HttpUtil.addParameter(
+			PortalUtil.getLayoutFullURL(layout, _themeDisplay), "p_l_mode",
+			Constants.PREVIEW);
+
+		return JSONUtil.put(
+			"layoutName", layout.getName(_themeDisplay.getLocale())
+		).put(
+			"layoutURL", layoutURL
+		);
 	}
 
 	private String _getRedirect() {
@@ -183,7 +208,7 @@ public class EditStyleBookEntryDisplayContext {
 		return styleBookEntry.getName();
 	}
 
-	private void _setViewAttributes() throws Exception {
+	private void _setViewAttributes() {
 		PortletDisplay portletDisplay = _themeDisplay.getPortletDisplay();
 
 		portletDisplay.setShowBackIcon(true);
@@ -194,7 +219,6 @@ public class EditStyleBookEntryDisplayContext {
 
 	private final FrontendTokenDefinitionRegistry
 		_frontendTokenDefinitionRegistry;
-	private final GroupURLProvider _groupURLProvider;
 	private final HttpServletRequest _httpServletRequest;
 	private final RenderRequest _renderRequest;
 	private final RenderResponse _renderResponse;

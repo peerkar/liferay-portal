@@ -28,12 +28,14 @@ public class MailingListOutEmailAddressException extends PortalException {
 		super(msg);
 	}
 
-	public MailingListOutEmailAddressException(String msg, Throwable cause) {
-		super(msg, cause);
+	public MailingListOutEmailAddressException(
+		String msg, Throwable throwable) {
+
+		super(msg, throwable);
 	}
 
-	public MailingListOutEmailAddressException(Throwable cause) {
-		super(cause);
+	public MailingListOutEmailAddressException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

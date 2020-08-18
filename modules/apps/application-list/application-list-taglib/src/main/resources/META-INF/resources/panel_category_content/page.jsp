@@ -16,12 +16,7 @@
 
 <%@ include file="/panel_category_content/init.jsp" %>
 
-<%
-PanelCategory panelCategory = (PanelCategory)request.getAttribute("liferay-application-list:panel-category-content:panelCategory");
-boolean showOpen = GetterUtil.getBoolean(request.getAttribute("liferay-application-list:panel-category-content:showOpen"));
-%>
-
 <liferay-application-list:panel-category
-	panelCategory="<%= panelCategory %>"
-	showOpen="<%= showOpen %>"
+	panelCategory='<%= (PanelCategory)request.getAttribute("liferay-application-list:panel-category-content:panelCategory") %>'
+	showOpen='<%= GetterUtil.getBoolean(request.getAttribute("liferay-application-list:panel-category-content:showOpen")) %>'
 />

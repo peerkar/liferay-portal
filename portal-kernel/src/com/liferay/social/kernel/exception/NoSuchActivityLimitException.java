@@ -28,12 +28,12 @@ public class NoSuchActivityLimitException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchActivityLimitException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchActivityLimitException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchActivityLimitException(Throwable cause) {
-		super(cause);
+	public NoSuchActivityLimitException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

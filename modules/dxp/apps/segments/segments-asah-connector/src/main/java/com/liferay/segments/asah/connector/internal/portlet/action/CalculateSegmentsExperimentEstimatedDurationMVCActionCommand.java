@@ -94,8 +94,8 @@ public class CalculateSegmentsExperimentEstimatedDurationMVCActionCommand
 				_calculateSegmentsExperimentEstimatedDaysDurationJSONObject(
 					actionRequest);
 		}
-		catch (Throwable t) {
-			_log.error(t, t);
+		catch (Throwable throwable) {
+			_log.error(throwable, throwable);
 
 			HttpServletResponse httpServletResponse =
 				_portal.getHttpServletResponse(actionResponse);

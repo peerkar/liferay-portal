@@ -1281,16 +1281,16 @@ public class PortalImpl implements Portal {
 			return (BaseModel<?>)method.invoke(null, primKey);
 		}
 		catch (Exception exception) {
-			Throwable cause = exception.getCause();
+			Throwable throwable = exception.getCause();
 
-			if (cause instanceof PortalException) {
-				throw (PortalException)cause;
+			if (throwable instanceof PortalException) {
+				throw (PortalException)throwable;
 			}
-			else if (cause instanceof SystemException) {
-				throw (SystemException)cause;
+			else if (throwable instanceof SystemException) {
+				throw (SystemException)throwable;
 			}
 			else {
-				throw new SystemException(cause);
+				throw new SystemException(throwable);
 			}
 		}
 	}
@@ -1374,6 +1374,7 @@ public class PortalImpl implements Portal {
 		throws PortalException {
 
 		String groupFriendlyURL = StringPool.BLANK;
+		boolean hasFriendlyURLSeparator = false;
 		boolean includeParametersURL = false;
 		String parametersURL = StringPool.BLANK;
 
@@ -1388,6 +1389,7 @@ public class PortalImpl implements Portal {
 				pos = completeURL.indexOf(urlSeparator);
 
 				if (pos != -1) {
+					hasFriendlyURLSeparator = true;
 					includeParametersURL = true;
 
 					break;
@@ -1425,12 +1427,9 @@ public class PortalImpl implements Portal {
 				getSiteDefaultLocale(layout.getGroupId()));
 		}
 
-		if (forceLayoutFriendlyURL ||
-			((!layout.isFirstParent() || Validator.isNotNull(parametersURL)) &&
-			 (groupFriendlyURL.contains(
-				 themeDisplay.getLayoutFriendlyURL(layout)) ||
-			  groupFriendlyURL.endsWith(
-				  StringPool.SLASH + layout.getLayoutId())))) {
+		if (!hasFriendlyURLSeparator &&
+			(forceLayoutFriendlyURL || !layout.isFirstParent() ||
+			 Validator.isNotNull(parametersURL))) {
 
 			canonicalLayoutFriendlyURL = defaultLayoutFriendlyURL;
 		}
@@ -8221,9 +8220,10 @@ public class PortalImpl implements Portal {
 				else {
 					alternateURLs.put(
 						locale,
-						canonicalURL.concat(
-							_buildI18NPath(
-								locale, themeDisplay.getSiteGroup())));
+						StringBundler.concat(
+							canonicalURL,
+							_buildI18NPath(locale, themeDisplay.getSiteGroup()),
+							StringPool.SLASH));
 				}
 			}
 

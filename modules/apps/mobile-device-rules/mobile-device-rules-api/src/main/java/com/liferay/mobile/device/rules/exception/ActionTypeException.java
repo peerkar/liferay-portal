@@ -28,12 +28,12 @@ public class ActionTypeException extends PortalException {
 		super(msg);
 	}
 
-	public ActionTypeException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ActionTypeException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ActionTypeException(Throwable cause) {
-		super(cause);
+	public ActionTypeException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

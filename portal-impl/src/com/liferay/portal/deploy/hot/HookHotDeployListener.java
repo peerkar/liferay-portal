@@ -264,9 +264,9 @@ public class HookHotDeployListener
 		try {
 			doInvokeDeploy(hotDeployEvent);
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			throwHotDeployException(
-				hotDeployEvent, "Error registering hook for ", t);
+				hotDeployEvent, "Error registering hook for ", throwable);
 		}
 	}
 
@@ -277,9 +277,9 @@ public class HookHotDeployListener
 		try {
 			doInvokeUndeploy(hotDeployEvent);
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			throwHotDeployException(
-				hotDeployEvent, "Error unregistering hook for ", t);
+				hotDeployEvent, "Error unregistering hook for ", throwable);
 		}
 	}
 

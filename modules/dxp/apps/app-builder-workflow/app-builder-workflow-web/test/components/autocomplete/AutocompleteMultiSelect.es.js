@@ -12,7 +12,7 @@
 import {cleanup, fireEvent, render} from '@testing-library/react';
 import React, {cloneElement, useState} from 'react';
 
-import {AutocompleteMultiSelect} from '../../../src/main/resources/META-INF/resources/js/components/autocomplete/AutocompleteMultiSelect.es';
+import AutocompleteMultiSelect from '../../../src/main/resources/META-INF/resources/js/components/autocomplete/AutocompleteMultiSelect.es';
 
 import '@testing-library/jest-dom/extend-expect';
 
@@ -29,18 +29,17 @@ const ContainerMock = ({children}) => {
 
 describe('AutocompleteMultiSelect', () => {
 	let getByPlaceholderText;
-	let getByTestId;
 	let getByText;
 
 	afterEach(cleanup);
 
 	beforeEach(() => {
-		const autocomplete = render(<AutocompleteMultiSelect items={items} />, {
-			wrapper: ContainerMock,
-		});
+		const autocomplete = render(
+			<AutocompleteMultiSelect id="Test" items={items} />,
+			{wrapper: ContainerMock}
+		);
 
 		getByPlaceholderText = autocomplete.getByPlaceholderText;
-		getByTestId = autocomplete.getByTestId;
 		getByText = autocomplete.getByText;
 	});
 
@@ -48,7 +47,7 @@ describe('AutocompleteMultiSelect', () => {
 		const multiSelectInput = getByPlaceholderText(
 			'select-or-type-an-option'
 		);
-		const dropDownList = getByTestId('dropDownList');
+		const dropDownList = document.getElementById('dropDownListTest');
 		const dropDown = dropDownList.parentNode;
 
 		expect(dropDown).not.toHaveClass('show');

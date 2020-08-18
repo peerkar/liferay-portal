@@ -28,12 +28,12 @@ public class ContentNameException extends PortalException {
 		super(msg);
 	}
 
-	public ContentNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ContentNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ContentNameException(Throwable cause) {
-		super(cause);
+	public ContentNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

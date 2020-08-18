@@ -28,12 +28,12 @@ public class NoSuchSyncException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchSyncException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchSyncException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchSyncException(Throwable cause) {
-		super(cause);
+	public NoSuchSyncException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

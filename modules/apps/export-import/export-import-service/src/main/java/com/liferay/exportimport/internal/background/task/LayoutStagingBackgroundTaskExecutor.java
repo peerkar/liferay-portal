@@ -166,7 +166,7 @@ public class LayoutStagingBackgroundTaskExecutor
 			ExportImportHelperUtil.processBackgroundTaskManifestSummary(
 				userId, sourceGroupId, backgroundTask, file);
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			ExportImportThreadLocal.setInitialLayoutStagingInProcess(false);
 			ExportImportThreadLocal.setLayoutStagingInProcess(false);
 
@@ -177,7 +177,7 @@ public class LayoutStagingBackgroundTaskExecutor
 					PROCESS_FLAG_LAYOUT_STAGING_IN_PROCESS,
 				String.valueOf(
 					exportImportConfiguration.getExportImportConfigurationId()),
-				exportImportConfiguration, t);
+				exportImportConfiguration, throwable);
 
 			Group sourceGroup = GroupLocalServiceUtil.getGroup(sourceGroupId);
 
@@ -207,7 +207,7 @@ public class LayoutStagingBackgroundTaskExecutor
 
 			deleteTempLarOnFailure(file);
 
-			throw new SystemException(t);
+			throw new SystemException(throwable);
 		}
 
 		deleteTempLarOnSuccess(file);

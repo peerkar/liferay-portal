@@ -16,11 +16,9 @@ import ClayAlert from '@clayui/alert';
 import ClayBreadcrumb from '@clayui/breadcrumb';
 import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
 import {Align, ClayDropDownWithItems} from '@clayui/drop-down';
-import {ClayRadio, ClayRadioGroup} from '@clayui/form';
+import {ClayRadio, ClayRadioGroup, ClayToggle} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
-import ClayLink from '@clayui/link';
 import ClayManagementToolbar from '@clayui/management-toolbar';
-import ClayNavigationBar from '@clayui/navigation-bar';
 import {ClayPaginationBarWithBasicItems} from '@clayui/pagination-bar';
 import ClayTable from '@clayui/table';
 import {fetch} from 'frontend-js-web';
@@ -33,6 +31,7 @@ class ChangeTrackingChangesView extends React.Component {
 		const {
 			changes,
 			contextView,
+			discardURL,
 			models,
 			renderCTEntryURL,
 			renderDiffURL,
@@ -44,6 +43,7 @@ class ChangeTrackingChangesView extends React.Component {
 
 		this.changes = changes;
 		this.contextView = contextView;
+		this.discardURL = discardURL;
 		this.models = models;
 		this.renderCTEntryURL = renderCTEntryURL;
 		this.renderDiffURL = renderDiffURL;
@@ -64,24 +64,47 @@ class ChangeTrackingChangesView extends React.Component {
 			}
 		}
 
-		const node = this._getNode('everything', 'changes', 0);
+		for (let i = 0; i < this.rootDisplayClasses.length; i++) {
+			const rootDisplayClassInfo = this.contextView[
+				this.rootDisplayClasses[i]
+			];
+
+			let hideable = true;
+
+			for (let i = 0; i < rootDisplayClassInfo.children.length; i++) {
+				const model = this.models[
+					rootDisplayClassInfo.children[i].modelKey.toString()
+				];
+
+				if (!model.hideable) {
+					hideable = false;
+				}
+			}
+
+			rootDisplayClassInfo.hideable = hideable;
+		}
+
+		const node = this._getNode('everything', 0, 'changes');
 
 		this.state = {
 			ascending: true,
 			breadcrumbItems: this._getBreadcrumbItems(
 				node,
 				'everything',
-				'changes',
-				0
+				0,
+				'changes'
 			),
+			children: this._filterHideableNodes(node.children, false),
 			column: 'title',
 			delta: 20,
+			dropdown: '',
 			filterClass: 'everything',
-			navigation: 'changes',
 			node,
 			page: 1,
 			renderInnerHTML: null,
+			showHideable: false,
 			sortDirectionClass: 'order-arrow-down-active',
+			viewType: 'changes',
 		};
 	}
 
@@ -199,8 +222,26 @@ class ChangeTrackingChangesView extends React.Component {
 		return nodes;
 	}
 
-	_getBreadcrumbItems(node, filterClass, navigation, nodeId) {
-		if (navigation === 'changes') {
+	_filterHideableNodes(nodes, showHideable) {
+		if (!nodes || showHideable) {
+			return nodes;
+		}
+
+		const filterNodes = [];
+
+		for (let i = 0; i < nodes.length; i++) {
+			const node = nodes[i];
+
+			if (!node.hideable) {
+				filterNodes.push(node);
+			}
+		}
+
+		return filterNodes;
+	}
+
+	_getBreadcrumbItems(node, filterClass, nodeId, viewType) {
+		if (viewType === 'changes') {
 			if (nodeId === 0) {
 				return [
 					{
@@ -312,11 +353,20 @@ class ChangeTrackingChangesView extends React.Component {
 	}
 
 	_getColumn() {
-		if (this.state.navigation === 'contextView') {
+		if (this.state.viewType === 'context') {
 			return 'title';
 		}
 
 		return this.state.column;
+	}
+
+	_getDiscardURL(node) {
+		const portletURL = Liferay.PortletURL.createURL(this.discardURL);
+
+		portletURL.setParameter('modelClassNameId', node.modelClassNameId);
+		portletURL.setParameter('modelClassPK', node.modelClassPK);
+
+		return portletURL.toString();
 	}
 
 	_getModels(nodes) {
@@ -347,8 +397,8 @@ class ChangeTrackingChangesView extends React.Component {
 		return models;
 	}
 
-	_getNode(filterClass, navigation, nodeId) {
-		if (navigation === 'changes') {
+	_getNode(filterClass, nodeId, viewType) {
+		if (viewType === 'changes') {
 			if (nodeId === 0) {
 				return {children: this._getModels(this.changes)};
 			}
@@ -356,7 +406,11 @@ class ChangeTrackingChangesView extends React.Component {
 			return this._clone(this.models[nodeId.toString()]);
 		}
 		else if (filterClass !== 'everything' && nodeId === 0) {
-			return {children: this._getModels(this.contextView[filterClass])};
+			return {
+				children: this._getModels(
+					this.contextView[filterClass].children
+				),
+			};
 		}
 
 		const rootNode = this.contextView.everything;
@@ -450,6 +504,13 @@ class ChangeTrackingChangesView extends React.Component {
 		for (let i = 0; i < this.rootDisplayClasses.length; i++) {
 			const className = this.rootDisplayClasses[i];
 
+			if (
+				!this.state.showHideable &&
+				this.contextView[className].hideable
+			) {
+				continue;
+			}
+
 			let label = className;
 
 			if (label.includes('.')) {
@@ -468,7 +529,7 @@ class ChangeTrackingChangesView extends React.Component {
 	}
 
 	_getTableHead() {
-		if (this.state.navigation === 'contextView') {
+		if (this.state.viewType === 'context') {
 			return '';
 		}
 
@@ -509,9 +570,7 @@ class ChangeTrackingChangesView extends React.Component {
 				rows.push(
 					<ClayTable.Row divider>
 						<ClayTable.Cell
-							colSpan={
-								this.state.navigation === 'changes' ? 3 : 1
-							}
+							colSpan={this.state.viewType === 'changes' ? 3 : 1}
 						>
 							{node.typeName}
 						</ClayTable.Cell>
@@ -521,7 +580,7 @@ class ChangeTrackingChangesView extends React.Component {
 
 			const cells = [];
 
-			if (this.state.navigation === 'changes') {
+			if (this.state.viewType === 'changes') {
 				const portraitURL = this._getPortraitURL(node);
 
 				if (portraitURL) {
@@ -598,7 +657,7 @@ class ChangeTrackingChangesView extends React.Component {
 				</ClayTable.Cell>
 			);
 
-			if (this.state.navigation === 'changes') {
+			if (this.state.viewType === 'changes') {
 				cells.push(
 					<ClayTable.Cell>{node.timeDescription}</ClayTable.Cell>
 				);
@@ -612,6 +671,61 @@ class ChangeTrackingChangesView extends React.Component {
 
 	_getUserName(node) {
 		return this.userInfo[node.userId.toString()].userName;
+	}
+
+	_getViewTypes() {
+		if (!this.contextView) {
+			return '';
+		}
+
+		const items = [
+			{
+				active: this.state.viewType === 'changes',
+				label: Liferay.Language.get('changes'),
+				onClick: () =>
+					this._handleNavigationUpdate({
+						filterClass: 'everything',
+						nodeId: 0,
+						viewType: 'changes',
+					}),
+				symbolLeft: 'list',
+			},
+			{
+				active: this.state.viewType === 'context',
+				label: Liferay.Language.get('context'),
+				onClick: () =>
+					this._handleNavigationUpdate({
+						nodeId: 0,
+						viewType: 'context',
+					}),
+				symbolLeft: 'pages-tree',
+			},
+		];
+
+		return (
+			<ClayManagementToolbar.Item expand>
+				<ClayDropDownWithItems
+					alignmentPosition={Align.BottomLeft}
+					items={items}
+					spritemap={this.spritemap}
+					trigger={
+						<ClayButton
+							className="nav-link nav-link-monospaced"
+							displayType="unstyled"
+						>
+							<ClayIcon
+								spritemap={this.spritemap}
+								symbol={
+									this.state.viewType === 'changes'
+										? 'list'
+										: 'pages-tree'
+								}
+							/>
+						</ClayButton>
+					}
+				/>
+			</ClayManagementToolbar.Item>
+		);
 	}
 
 	_handleDeltaChange(delta) {
@@ -628,37 +742,50 @@ class ChangeTrackingChangesView extends React.Component {
 			filterClass = this.state.filterClass;
 		}
 
-		let navigation = json.navigation;
+		const nodeId = json.nodeId;
 
-		if (!navigation) {
-			navigation = this.state.navigation;
+		let showHideable = this.state.showHideable;
+
+		if (Object.prototype.hasOwnProperty.call(json, 'showHideable')) {
+			showHideable = json.showHideable;
 		}
 
-		if (navigation === 'contextView' && this.contextView.errorMessage) {
+		let viewType = json.viewType;
+
+		if (!viewType) {
+			viewType = this.state.viewType;
+		}
+
+		if (viewType === 'context' && this.contextView.errorMessage) {
 			this.setState({
-				navigation,
 				renderInnerHTML: null,
+				viewType,
 			});
 
 			return;
 		}
 
-		const nodeId = json.nodeId;
-
-		const node = this._getNode(filterClass, navigation, nodeId);
+		const node = this._getNode(filterClass, nodeId, viewType);
 
 		this.setState({
 			breadcrumbItems: this._getBreadcrumbItems(
 				node,
 				filterClass,
-				navigation,
-				nodeId
+				nodeId,
+				viewType
 			),
+			children: this._filterHideableNodes(node.children, showHideable),
+			dropdown: '',
 			filterClass,
-			navigation,
 			node,
 			page: 1,
 			renderInnerHTML: null,
+			showHideable,
+			viewType,
+		});
+
+		AUI().use('liferay-portlet-url', () => {
+			this._setDropdown(node);
 		});
 
 		if (nodeId > 0) {
@@ -677,6 +804,39 @@ class ChangeTrackingChangesView extends React.Component {
 	_handlePageChange(page) {
 		this.setState({
 			page,
+		});
+	}
+
+	_handleShowHideableToggle(showHideable) {
+		if (!showHideable) {
+			if (
+				this.state.viewType === 'context' &&
+				this.contextView[this.state.filterClass].hideable
+			) {
+				this._handleNavigationUpdate({
+					filterClass: 'everything',
+					nodeId: 0,
+					showHideable,
+				});
+
+				return;
+			}
+			else if (this.state.node.hideable) {
+				this._handleNavigationUpdate({
+					nodeId: 0,
+					showHideable,
+				});
+
+				return;
+			}
+		}
+
+		this.setState({
+			children: this._filterHideableNodes(
+				this.state.node.children,
+				showHideable
+			),
+			showHideable,
 		});
 	}
 
@@ -702,33 +862,6 @@ class ChangeTrackingChangesView extends React.Component {
 		});
 	}
 
-	_renderDropdown() {
-		if (
-			!this.state.node.dropdownItems ||
-			this.state.node.dropdownItems.length === 0
-		) {
-			return '';
-		}
-
-		return (
-			<div className="autofit-col">
-				<ClayDropDownWithItems
-					alignmentPosition={Align.BottomLeft}
-					items={this.state.node.dropdownItems}
-					spritemap={this.spritemap}
-					trigger={
-						<ClayButtonWithIcon
-							displayType="unstyled"
-							small
-							spritemap={this.spritemap}
-							symbol="ellipsis-v"
-						/>
-					}
-				/>
-			</div>
-		);
-	}
-
 	_renderEntry() {
 		if (this.state.renderInnerHTML === null) {
 			return '';
@@ -745,7 +878,7 @@ class ChangeTrackingChangesView extends React.Component {
 						</span>
 					</div>
 
-					{this._renderDropdown()}
+					{this.state.dropdown}
 				</h2>
 
 				<div
@@ -753,48 +886,6 @@ class ChangeTrackingChangesView extends React.Component {
 					dangerouslySetInnerHTML={this.state.renderInnerHTML}
 				/>
 			</div>
-		);
-	}
-
-	_renderMainContent() {
-		if (
-			this.state.navigation === 'contextView' &&
-			this.contextView.errorMessage
-		) {
-			return (
-				<ClayAlert displayType="danger">
-					{this.contextView.errorMessage}
-				</ClayAlert>
-			);
-		}
-
-		return (
-			<>
-				{this._renderManagementToolbar()}
-
-				<div className="container-fluid container-fluid-max-xl">
-					<ClayBreadcrumb
-						ellipsisBuffer={1}
-						items={this.state.breadcrumbItems}
-						spritemap={this.spritemap}
-					/>
-
-					<div className="change-lists-changes-content row">
-						{this._renderPanel()}
-
-						<div
-							className={
-								this.state.navigation === 'changes'
-									? 'col-md-12'
-									: 'col-md-9'
-							}
-						>
-							{this._renderEntry()}
-							{this._renderTable()}
-						</div>
-					</div>
-				</div>
-			</>
 		);
 	}
 
@@ -807,7 +898,7 @@ class ChangeTrackingChangesView extends React.Component {
 			},
 		];
 
-		if (this.state.navigation === 'changes') {
+		if (this.state.viewType === 'changes') {
 			items.push({
 				active: this._getColumn() === 'modifiedDate',
 				label: Liferay.Language.get('modified-date'),
@@ -871,13 +962,27 @@ class ChangeTrackingChangesView extends React.Component {
 							/>
 						</ClayButton>
 					</ClayManagementToolbar.Item>
+
+					<ClayManagementToolbar.Item className="nav-item-expand" />
+
+					<ClayManagementToolbar.Item className="simple-toggle-switch-reverse">
+						<ClayToggle
+							label={Liferay.Language.get('show-all-items')}
+							onToggle={(showHideable) =>
+								this._handleShowHideableToggle(showHideable)
+							}
+							toggled={this.state.showHideable}
+						/>
+					</ClayManagementToolbar.Item>
+
+					{this._getViewTypes()}
 				</ClayManagementToolbar.ItemList>
 			</ClayManagementToolbar>
 		);
 	}
 
 	_renderPagination() {
-		if (this.state.node.children.length <= 5) {
+		if (this.state.children.length <= 5) {
 			return '';
 		}
 
@@ -891,13 +996,13 @@ class ChangeTrackingChangesView extends React.Component {
 				ellipsisBuffer={3}
 				onDeltaChange={(delta) => this._handleDeltaChange(delta)}
 				onPageChange={(page) => this._handlePageChange(page)}
-				totalItems={this.state.node.children.length}
+				totalItems={this.state.children.length}
 			/>
 		);
 	}
 
 	_renderPanel() {
-		if (this.state.navigation === 'changes') {
+		if (this.state.viewType === 'changes') {
 			return '';
 		}
 
@@ -923,10 +1028,24 @@ class ChangeTrackingChangesView extends React.Component {
 	}
 
 	_renderTable() {
-		if (
-			!this.state.node.children ||
-			this.state.node.children.length === 0
-		) {
+		if (!this.state.children || this.state.children.length === 0) {
+			if (
+				this.state.node.children &&
+				this.state.node.children.length > 0 &&
+				this.state.viewType === 'changes'
+			) {
+				return (
+					<div className="sheet taglib-empty-result-message">
+						<div className="taglib-empty-result-message-header" />
+						<div className="sheet-text text-center">
+							{Liferay.Language.get(
+								'there-are-no-changes-to-display-in-this-view'
+							)}
+						</div>
+					</div>
+				);
+			}
+
 			return '';
 		}
 
@@ -937,7 +1056,7 @@ class ChangeTrackingChangesView extends React.Component {
 
 					<ClayTable.Body>
 						{this._getTableRows(
-							this._filterDisplayNodes(this.state.node.children)
+							this._filterDisplayNodes(this.state.children)
 						)}
 					</ClayTable.Body>
 				</ClayTable>
@@ -947,54 +1066,86 @@ class ChangeTrackingChangesView extends React.Component {
 		);
 	}
 
+	_setDropdown(node) {
+		let dropdownItems = node.dropdownItems;
+
+		if (!dropdownItems) {
+			dropdownItems = [];
+		}
+		else {
+			dropdownItems = dropdownItems.slice(0);
+		}
+
+		dropdownItems.push({
+			href: this._getDiscardURL(node),
+			label: Liferay.Language.get('discard'),
+		});
+
+		this.setState({
+			dropdown: (
+				<div className="autofit-col">
+					<ClayDropDownWithItems
+						alignmentPosition={Align.BottomLeft}
+						items={dropdownItems}
+						spritemap={this.spritemap}
+						trigger={
+							<ClayButtonWithIcon
+								displayType="unstyled"
+								small
+								spritemap={this.spritemap}
+								symbol="ellipsis-v"
+							/>
+						}
+					/>
+				</div>
+			),
+		});
+	}
+
 	render() {
-		const items = [];
+		let content;
 
-		items.push(
-			<ClayNavigationBar.Item
-				active={this.state.navigation === 'changes'}
-				onClick={() =>
-					this._handleNavigationUpdate({
-						filterClass: 'everything',
-						navigation: 'changes',
-						nodeId: 0,
-					})
-				}
-			>
-				<ClayLink className="nav-link" displayType="unstyled">
-					{Liferay.Language.get('changes')}
-				</ClayLink>
-			</ClayNavigationBar.Item>
-		);
+		if (
+			this.state.viewType === 'context' &&
+			this.contextView.errorMessage
+		) {
+			content = (
+				<ClayAlert displayType="danger">
+					{this.contextView.errorMessage}
+				</ClayAlert>
+			);
+		}
+		else {
+			content = (
+				<div className="container-fluid container-fluid-max-xl">
+					<ClayBreadcrumb
+						ellipsisBuffer={1}
+						items={this.state.breadcrumbItems}
+						spritemap={this.spritemap}
+					/>
 
-		if (this.contextView) {
-			items.push(
-				<ClayNavigationBar.Item
-					active={this.state.navigation === 'contextView'}
-					onClick={() =>
-						this._handleNavigationUpdate({
-							navigation: 'contextView',
-							nodeId: 0,
-						})
-					}
-				>
-					<ClayLink className="nav-link" displayType="unstyled">
-						{Liferay.Language.get('context-view')}
-					</ClayLink>
-				</ClayNavigationBar.Item>
+					<div className="change-lists-changes-content row">
+						{this._renderPanel()}
+
+						<div
+							className={
+								this.state.viewType === 'changes'
+									? 'col-md-12'
+									: 'col-md-9'
+							}
+						>
+							{this._renderEntry()}
+							{this._renderTable()}
+						</div>
+					</div>
+				</div>
 			);
 		}
 
 		return (
 			<>
-				<ClayNavigationBar
-					className="navigation-bar"
-					triggerLabel={Liferay.Language.get(this.state.navigation)}
-				>
-					{items}
-				</ClayNavigationBar>
-
-				{this._renderMainContent()}
+				{this._renderManagementToolbar()}
+				{content}
 			</>
 		);
 	}

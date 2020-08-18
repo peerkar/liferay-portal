@@ -23,11 +23,11 @@
  * distribution rights of the Software.
  */
 
-import numeral from 'numeral';
-
 import ellipsize from './ellipsize.es';
 
-const _MAX_NUMBER_LENGTH = 10;
+const _MAX_DELIMITED_NUMBER_LENGTH = 10;
+
+const _THOUSANDS_DELIMITER_REGEX = /\B(?=(\d{3})+(?!\d))/g;
 
 function getDelimiter(key, defaultValue) {
 	const delimiter = Liferay.Language.get(key);
@@ -39,19 +39,6 @@ function getDelimiter(key, defaultValue) {
 	return delimiter;
 }
 
-function setupLocale(locale) {
-	numeral.register('locale', locale, {
-		delimiters: {
-			decimal: getDelimiter('decimal-delimiter', '.'),
-			thousands: getDelimiter('thousands-delimiter', ','),
-		},
-	});
-
-	numeral.locale(locale);
-}
-
-setupLocale(Liferay.ThemeDisplay.getLanguageId());
-
 export function formatNumber(number, delimit) {
 	let formattedNumber = number.toString();
 
@@ -59,18 +46,22 @@ export function formatNumber(number, delimit) {
 
 	const formattedDecimal = formattedNumberParts[1];
 
-	const formattedInteger = numeral(
-		parseInt(formattedNumberParts[0], 10)
-	).format('0[,]0');
+	const formattedInteger = formattedNumberParts[0].replace(
+		_THOUSANDS_DELIMITER_REGEX,
+		getDelimiter('thousands-delimiter', ',')
+	);
 
 	formattedNumber =
 		formattedInteger +
-		(formattedDecimal
+		(formattedDecimal && formattedDecimal != '0'
 			? getDelimiter('decimal-delimiter', '.') + formattedDecimal
 			: '');
 
-	if (delimit && formattedNumber.length > _MAX_NUMBER_LENGTH) {
-		formattedNumber = ellipsize(formattedNumber, _MAX_NUMBER_LENGTH);
+	if (delimit && formattedNumber.length > _MAX_DELIMITED_NUMBER_LENGTH) {
+		formattedNumber = ellipsize(
+			formattedNumber,
+			_MAX_DELIMITED_NUMBER_LENGTH
+		);
 	}
 
 	return formattedNumber;

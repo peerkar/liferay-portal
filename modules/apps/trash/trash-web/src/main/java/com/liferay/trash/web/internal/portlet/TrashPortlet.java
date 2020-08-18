@@ -322,11 +322,11 @@ public class TrashPortlet extends MVCPortlet {
 	}
 
 	@Override
-	protected boolean isSessionErrorException(Throwable cause) {
-		if (cause instanceof
+	protected boolean isSessionErrorException(Throwable throwable) {
+		if (throwable instanceof
 				com.liferay.trash.exception.RestoreEntryException ||
-			cause instanceof RestoreEntryException ||
-			cause instanceof TrashPermissionException) {
+			throwable instanceof RestoreEntryException ||
+			throwable instanceof TrashPermissionException) {
 
 			return true;
 		}

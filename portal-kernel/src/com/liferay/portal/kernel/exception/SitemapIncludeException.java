@@ -26,12 +26,12 @@ public class SitemapIncludeException extends PortalException {
 		super(msg);
 	}
 
-	public SitemapIncludeException(String msg, Throwable cause) {
-		super(msg, cause);
+	public SitemapIncludeException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public SitemapIncludeException(Throwable cause) {
-		super(cause);
+	public SitemapIncludeException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

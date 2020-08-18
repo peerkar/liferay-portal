@@ -28,12 +28,12 @@ public class UnknownRuleHandlerException extends PortalException {
 		super(msg);
 	}
 
-	public UnknownRuleHandlerException(String msg, Throwable cause) {
-		super(msg, cause);
+	public UnknownRuleHandlerException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public UnknownRuleHandlerException(Throwable cause) {
-		super(cause);
+	public UnknownRuleHandlerException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

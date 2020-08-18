@@ -26,7 +26,7 @@ import com.liferay.layout.content.page.editor.web.internal.security.permission.r
 import com.liferay.layout.content.page.editor.web.internal.util.layout.structure.LayoutStructureUtil;
 import com.liferay.layout.model.LayoutClassedModelUsage;
 import com.liferay.layout.service.LayoutClassedModelUsageLocalServiceUtil;
-import com.liferay.layout.util.structure.ContainerLayoutStructureItem;
+import com.liferay.layout.util.structure.ContainerStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.petra.string.StringBundler;
@@ -394,16 +394,18 @@ public class ContentUtil {
 				layoutStructure.getLayoutStructureItems()) {
 
 			if (!(layoutStructureItem instanceof
-					ContainerLayoutStructureItem)) {
+					ContainerStyledLayoutStructureItem)) {
 
 				continue;
 			}
 
-			ContainerLayoutStructureItem containerLayoutStructureItem =
-				(ContainerLayoutStructureItem)layoutStructureItem;
+			ContainerStyledLayoutStructureItem
+				containerStyledLayoutStructureItem =
+					(ContainerStyledLayoutStructureItem)layoutStructureItem;
 
 			JSONObject backgroundImageJSONObject =
-				containerLayoutStructureItem.getBackgroundImageJSONObject();
+				containerStyledLayoutStructureItem.
+					getBackgroundImageJSONObject();
 
 			if (backgroundImageJSONObject != null) {
 				InfoDisplayObjectProvider<?> infoDisplayObjectProvider =
@@ -416,7 +418,7 @@ public class ContentUtil {
 			}
 
 			JSONObject linkJSONObject =
-				containerLayoutStructureItem.getLinkJSONObject();
+				containerStyledLayoutStructureItem.getLinkJSONObject();
 
 			if (linkJSONObject != null) {
 				InfoDisplayObjectProvider<?> infoDisplayObjectProvider =

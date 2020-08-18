@@ -28,12 +28,12 @@ public class NoSuchTaskLinkException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchTaskLinkException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchTaskLinkException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchTaskLinkException(Throwable cause) {
-		super(cause);
+	public NoSuchTaskLinkException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

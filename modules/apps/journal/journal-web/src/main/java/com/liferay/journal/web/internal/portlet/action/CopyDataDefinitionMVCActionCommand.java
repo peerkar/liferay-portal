@@ -103,15 +103,15 @@ public class CopyDataDefinitionMVCActionCommand
 			dataDefinitionResource.postSiteDataDefinitionByContentType(
 				themeDisplay.getScopeGroupId(), "journal", dataDefinition);
 
-		DDMStructure ddmStructure = _ddmStructureService.getStructure(
-			themeDisplay.getScopeGroupId(),
-			_portal.getClassNameId(JournalArticle.class),
-			dataDefinition.getDataDefinitionKey());
-
 		boolean copyTemplates = ParamUtil.getBoolean(
 			actionRequest, "copyTemplates");
 
 		if (copyTemplates) {
+			DDMStructure ddmStructure = _ddmStructureService.getStructure(
+				themeDisplay.getScopeGroupId(),
+				_portal.getClassNameId(JournalArticle.class),
+				dataDefinition.getDataDefinitionKey());
+
 			ServiceContext serviceContext = ServiceContextFactory.getInstance(
 				DDMStructure.class.getName(), actionRequest);
 

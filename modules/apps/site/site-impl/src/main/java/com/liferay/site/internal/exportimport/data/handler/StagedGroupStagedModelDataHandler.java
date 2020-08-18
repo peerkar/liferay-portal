@@ -396,15 +396,15 @@ public class StagedGroupStagedModelDataHandler
 				_portletDataContextFactory.clonePortletDataContext(
 					portletDataContext));
 		}
-		catch (Throwable t) {
+		catch (Throwable throwable) {
 			_exportImportLifecycleManager.fireExportImportLifecycleEvent(
 				ExportImportLifecycleConstants.EVENT_PORTLET_EXPORT_FAILED,
 				getProcessFlag(), portletDataContext.getExportImportProcessId(),
 				_portletDataContextFactory.clonePortletDataContext(
 					portletDataContext),
-				t);
+				throwable);
 
-			throw t;
+			throw throwable;
 		}
 	}
 
@@ -608,16 +608,16 @@ public class StagedGroupStagedModelDataHandler
 					_portletDataContextFactory.clonePortletDataContext(
 						portletDataContext));
 			}
-			catch (Throwable t) {
+			catch (Throwable throwable) {
 				_exportImportLifecycleManager.fireExportImportLifecycleEvent(
 					ExportImportLifecycleConstants.EVENT_PORTLET_IMPORT_FAILED,
 					getProcessFlag(),
 					portletDataContext.getExportImportProcessId(),
 					_portletDataContextFactory.clonePortletDataContext(
 						portletDataContext),
-					t);
+					throwable);
 
-				throw t;
+				throw throwable;
 			}
 			finally {
 				_portletImportController.resetPortletScope(

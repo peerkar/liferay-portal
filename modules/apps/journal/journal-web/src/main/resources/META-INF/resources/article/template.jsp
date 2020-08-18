@@ -127,7 +127,7 @@ DDMTemplate ddmTemplate = journalEditArticleDisplayContext.getDDMTemplate();
 
 				Liferay.Util.openModal({
 					onSelect: function (selectedItem) {
-						changeDDMTemplate(selectedItem.ddmtemplateid);
+						changeDDMTemplate(selectedItem);
 					},
 					selectEventName: '<portlet:namespace />preview',
 					title: '<liferay-ui:message key="preview" />',
@@ -137,7 +137,7 @@ DDMTemplate ddmTemplate = journalEditArticleDisplayContext.getDDMTemplate();
 		}
 	</c:if>
 
-	function changeDDMTemplate(newDDMTemplateId) {
+	function changeDDMTemplate(newDDMTemplate) {
 		var oldDDMTemplateId =
 			'<%= (ddmTemplate != null) ? ddmTemplate.getTemplateId() : 0 %>';
 
@@ -150,7 +150,7 @@ DDMTemplate ddmTemplate = journalEditArticleDisplayContext.getDDMTemplate();
 					.value;
 		}
 
-		if (oldDDMTemplateId != newDDMTemplateId) {
+		if (!newDDMTemplate || oldDDMTemplateId != newDDMTemplate.ddmtemplateid) {
 			if (
 				confirm(
 					'<%= UnicodeLanguageUtil.get(request, "editing-the-current-template-deletes-all-unsaved-content") %>'
@@ -158,12 +158,21 @@ DDMTemplate ddmTemplate = journalEditArticleDisplayContext.getDDMTemplate();
 			) {
 				var uri = '<%= themeDisplay.getURLCurrent() %>';
 
+				var ddmTemplateId =
+					(newDDMTemplate && newDDMTemplate.ddmtemplateid) || -1;
+
 				uri = Liferay.Util.addParams(
-					'<portlet:namespace />ddmTemplateId=' + newDDMTemplateId,
+					'<portlet:namespace />ddmTemplateId=' + ddmTemplateId,
 					uri
 				);
 
-				document.<portlet:namespace />fm1.<portlet:namespace />ddmTemplateId.value = newDDMTemplateId;
+				document.<portlet:namespace />fm1.<portlet:namespace />ddmTemplateId.value = ddmTemplateId;
+
+				document.<portlet:namespace />fm1.<portlet:namespace />ddmTemplateKey.value =
+					(newDDMTemplate && newDDMTemplate.ddmtemplatekey) || '';
+
+				document.<portlet:namespace />fm1.<portlet:namespace />ddmTemplateName.value =
+					(newDDMTemplate && newDDMTemplate.name) || '';
 
 				submitForm(document.<portlet:namespace />fm1, uri, false, false);
 			}
@@ -176,7 +185,7 @@ DDMTemplate ddmTemplate = journalEditArticleDisplayContext.getDDMTemplate();
 
 	if (clearDDMTemplateButton) {
 		clearDDMTemplateButton.addEventListener('click', function (event) {
-			changeDDMTemplate(-1);
+			changeDDMTemplate();
 		});
 	}
 
@@ -188,7 +197,7 @@ DDMTemplate ddmTemplate = journalEditArticleDisplayContext.getDDMTemplate();
 		selectDDMTemplateButton.addEventListener('click', function (event) {
 			Liferay.Util.openModal({
 				onSelect: function (selectedItem) {
-					changeDDMTemplate(selectedItem.ddmtemplateid);
+					changeDDMTemplate(selectedItem);
 				},
 				selectEventName: '<portlet:namespace />selectDDMTemplate',
 				title: '<%= UnicodeLanguageUtil.get(request, "templates") %>',

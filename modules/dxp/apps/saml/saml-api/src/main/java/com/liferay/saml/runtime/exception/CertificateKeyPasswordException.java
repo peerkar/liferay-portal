@@ -28,12 +28,12 @@ public class CertificateKeyPasswordException extends PortalException {
 		super(msg);
 	}
 
-	public CertificateKeyPasswordException(String msg, Throwable cause) {
-		super(msg, cause);
+	public CertificateKeyPasswordException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public CertificateKeyPasswordException(Throwable cause) {
-		super(cause);
+	public CertificateKeyPasswordException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

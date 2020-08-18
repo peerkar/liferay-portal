@@ -28,12 +28,12 @@ public class QuestionChoiceException extends PortalException {
 		super(msg);
 	}
 
-	public QuestionChoiceException(String msg, Throwable cause) {
-		super(msg, cause);
+	public QuestionChoiceException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public QuestionChoiceException(Throwable cause) {
-		super(cause);
+	public QuestionChoiceException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

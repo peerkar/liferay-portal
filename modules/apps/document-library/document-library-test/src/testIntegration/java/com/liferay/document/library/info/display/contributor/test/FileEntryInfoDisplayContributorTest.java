@@ -67,6 +67,7 @@ import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 
 import java.text.Format;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -104,16 +105,19 @@ public class FileEntryInfoDisplayContributorTest {
 			fileEntry -> {
 				_addAssetDisplayPageEntry(fileEntry);
 
+				Locale locale = LocaleUtil.getDefault();
+
+				String expectedURL = StringBundler.concat(
+					"/", locale.getLanguage(), "/web/",
+					StringUtil.lowerCase(_group.getGroupKey()), "/d/",
+					fileEntry.getFileEntryId());
+
 				ThemeDisplay themeDisplay = new ThemeDisplay();
 
-				themeDisplay.setLocale(LocaleUtil.getDefault());
+				themeDisplay.setLocale(locale);
 				themeDisplay.setScopeGroupId(_group.getGroupId());
 				themeDisplay.setServerName("localhost");
 				themeDisplay.setSiteGroupId(_group.getGroupId());
-
-				String expectedURL = StringBundler.concat(
-					"/web/", StringUtil.lowerCase(_group.getGroupKey()), "/d/",
-					fileEntry.getFileEntryId());
 
 				Assert.assertEquals(
 					expectedURL,

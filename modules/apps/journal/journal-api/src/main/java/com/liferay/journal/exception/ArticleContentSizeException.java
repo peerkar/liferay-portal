@@ -29,12 +29,12 @@ public class ArticleContentSizeException extends PortalException {
 		super(msg);
 	}
 
-	public ArticleContentSizeException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ArticleContentSizeException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ArticleContentSizeException(Throwable cause) {
-		super(cause);
+	public ArticleContentSizeException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

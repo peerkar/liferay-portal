@@ -26,12 +26,12 @@ public class RequiredLayoutPrototypeException extends PortalException {
 		super(msg);
 	}
 
-	public RequiredLayoutPrototypeException(String msg, Throwable cause) {
-		super(msg, cause);
+	public RequiredLayoutPrototypeException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public RequiredLayoutPrototypeException(Throwable cause) {
-		super(cause);
+	public RequiredLayoutPrototypeException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

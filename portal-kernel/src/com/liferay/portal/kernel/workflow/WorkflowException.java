@@ -29,12 +29,12 @@ public class WorkflowException extends PortalException {
 		super(msg);
 	}
 
-	public WorkflowException(String msg, Throwable cause) {
-		super(msg, cause);
+	public WorkflowException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public WorkflowException(Throwable cause) {
-		super(cause);
+	public WorkflowException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

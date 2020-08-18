@@ -28,12 +28,12 @@ public class FileSystemStoreRootDirException extends ConvertException {
 		super(msg);
 	}
 
-	public FileSystemStoreRootDirException(String msg, Throwable cause) {
-		super(msg, cause);
+	public FileSystemStoreRootDirException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public FileSystemStoreRootDirException(Throwable cause) {
-		super(cause);
+	public FileSystemStoreRootDirException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

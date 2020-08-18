@@ -614,8 +614,7 @@ public class SocialActivityLocalServiceImpl
 	 * @param      classNameId the target asset's class name ID
 	 * @return     the number of matching activities
 	 * @deprecated As of Athanasius (7.3.x), replaced by {@link
-	 *             #getActivitiesCount(long, String)}  Returns the number of
-	 *             activities done on assets identified by the class name ID.
+	 *             #getActivitiesCount(long, String)}
 	 */
 	@Deprecated
 	@Override
@@ -711,8 +710,7 @@ public class SocialActivityLocalServiceImpl
 	 * @param      className the target asset's class name
 	 * @return     the number of matching activities
 	 * @deprecated As of Athanasius (7.3.x), replaced by {@link
-	 *             #getActivitiesCount(long, String)}  Returns the number of
-	 *             activities done on assets identified by class name.
+	 *             #getActivitiesCount(long, String)}
 	 */
 	@Deprecated
 	@Override

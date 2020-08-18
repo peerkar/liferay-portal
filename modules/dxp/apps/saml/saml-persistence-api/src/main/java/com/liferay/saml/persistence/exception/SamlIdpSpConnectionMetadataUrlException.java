@@ -29,13 +29,13 @@ public class SamlIdpSpConnectionMetadataUrlException extends PortalException {
 	}
 
 	public SamlIdpSpConnectionMetadataUrlException(
-		String msg, Throwable cause) {
+		String msg, Throwable throwable) {
 
-		super(msg, cause);
+		super(msg, throwable);
 	}
 
-	public SamlIdpSpConnectionMetadataUrlException(Throwable cause) {
-		super(cause);
+	public SamlIdpSpConnectionMetadataUrlException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

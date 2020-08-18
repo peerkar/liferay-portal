@@ -115,8 +115,8 @@ public class EditSessionMVCActionCommand extends BaseMVCActionCommand {
 
 					_clusterExecutor.execute(clusterRequest);
 				}
-				catch (Throwable t) {
-					_log.error("Unable to notify cluster ", t);
+				catch (Throwable throwable) {
+					_log.error("Unable to notify cluster ", throwable);
 				}
 			}
 		}

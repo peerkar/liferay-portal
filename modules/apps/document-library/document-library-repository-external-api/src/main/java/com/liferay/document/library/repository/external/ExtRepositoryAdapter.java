@@ -887,10 +887,11 @@ public class ExtRepositoryAdapter extends BaseRepositoryImpl {
 				extRepositoryFileEntryKey,
 				extRepositoryFileVersion.getMimeType(), inputStream);
 
-			String changeLog = LanguageUtil.format(
-				serviceContext.getLocale(), "reverted-to-x", version, false);
-
 			if (needsCheckIn) {
+				String changeLog = LanguageUtil.format(
+					serviceContext.getLocale(), "reverted-to-x", version,
+					false);
+
 				try {
 					_extRepository.checkInExtRepositoryFileEntry(
 						extRepositoryFileEntryKey, true, changeLog);

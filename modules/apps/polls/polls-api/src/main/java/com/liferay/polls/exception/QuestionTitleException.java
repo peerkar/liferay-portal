@@ -28,12 +28,12 @@ public class QuestionTitleException extends PortalException {
 		super(msg);
 	}
 
-	public QuestionTitleException(String msg, Throwable cause) {
-		super(msg, cause);
+	public QuestionTitleException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public QuestionTitleException(Throwable cause) {
-		super(cause);
+	public QuestionTitleException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

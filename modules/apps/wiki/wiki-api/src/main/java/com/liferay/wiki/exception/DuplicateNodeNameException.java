@@ -28,12 +28,12 @@ public class DuplicateNodeNameException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateNodeNameException(String msg, Throwable cause) {
-		super(msg, cause);
+	public DuplicateNodeNameException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public DuplicateNodeNameException(Throwable cause) {
-		super(cause);
+	public DuplicateNodeNameException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

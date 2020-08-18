@@ -17,3 +17,8 @@ e4bd3cb2feac593e32521c60c407c96222c98e3c^..fb125b446ad28d217e260c76d1ef39fc2527e
 # Bundle Version 4.1.0
 #
 fb125b446ad28d217e260c76d1ef39fc2527e1c0^..2f0ecccab81950d645de95c3cee7fdcadcc5eb45=LPS-105380 LPS-112984
+
+#
+# Bundle Version 4.1.2
+#
+2f0ecccab81950d645de95c3cee7fdcadcc5eb45^..736145a0e70d2080ac7cb2b55eede713a24dd269=LPS-105380 LRDOCS-8120

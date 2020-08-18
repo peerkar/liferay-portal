@@ -28,12 +28,12 @@ public class MicrosoftTranslatorException extends PortalException {
 		super(msg);
 	}
 
-	public MicrosoftTranslatorException(String msg, Throwable cause) {
-		super(msg, cause);
+	public MicrosoftTranslatorException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public MicrosoftTranslatorException(Throwable cause) {
-		super(cause);
+	public MicrosoftTranslatorException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

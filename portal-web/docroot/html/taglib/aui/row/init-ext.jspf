@@ -16,6 +16,6 @@
 
 <%
 if ((portletResponse != null) && Validator.isNotNull(id)) {
-	id = (PortalUtil.getLiferayPortletResponse(portletResponse)).getNamespace() + id;
+	id = liferayPortletResponse.getNamespace() + id;
 }
 %>

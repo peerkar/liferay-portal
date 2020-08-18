@@ -26,12 +26,12 @@ public class PwdEncryptorException extends PortalException {
 		super(msg);
 	}
 
-	public PwdEncryptorException(String msg, Throwable cause) {
-		super(msg, cause);
+	public PwdEncryptorException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public PwdEncryptorException(Throwable cause) {
-		super(cause);
+	public PwdEncryptorException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

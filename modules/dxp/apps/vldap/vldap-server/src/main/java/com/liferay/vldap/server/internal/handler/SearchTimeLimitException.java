@@ -29,12 +29,12 @@ public class SearchTimeLimitException extends SystemException {
 		super(msg);
 	}
 
-	public SearchTimeLimitException(String msg, Throwable cause) {
-		super(msg, cause);
+	public SearchTimeLimitException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public SearchTimeLimitException(Throwable cause) {
-		super(cause);
+	public SearchTimeLimitException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

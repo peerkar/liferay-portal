@@ -433,8 +433,8 @@ public abstract class BaseIntraband implements Intraband {
 								channelContext.getRegistrationReference(),
 								datagram);
 						}
-						catch (Throwable t) {
-							_log.error("Unable to dispatch", t);
+						catch (Throwable throwable) {
+							_log.error("Unable to dispatch", throwable);
 						}
 					}
 				}

@@ -28,12 +28,12 @@ public class IssuerException extends PortalException {
 		super(msg);
 	}
 
-	public IssuerException(String msg, Throwable cause) {
-		super(msg, cause);
+	public IssuerException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public IssuerException(Throwable cause) {
-		super(cause);
+	public IssuerException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

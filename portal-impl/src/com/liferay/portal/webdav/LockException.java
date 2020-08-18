@@ -28,12 +28,12 @@ public class LockException extends PortalException {
 		super(msg);
 	}
 
-	public LockException(String msg, Throwable cause) {
-		super(msg, cause);
+	public LockException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public LockException(Throwable cause) {
-		super(cause);
+	public LockException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

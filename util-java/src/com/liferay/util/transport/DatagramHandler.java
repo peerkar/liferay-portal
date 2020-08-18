@@ -21,7 +21,7 @@ import java.net.DatagramPacket;
  */
 public interface DatagramHandler {
 
-	public void errorReceived(Throwable t);
+	public void errorReceived(Throwable throwable);
 
 	public void process(DatagramPacket packet);
 

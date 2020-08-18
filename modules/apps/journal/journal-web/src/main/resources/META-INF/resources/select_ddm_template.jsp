@@ -53,22 +53,23 @@ JournalSelectDDMTemplateDisplayContext journalSelectDDMTemplateDisplayContext = 
 					>
 						<c:choose>
 							<c:when test="<%= ddmTemplate.getTemplateId() != journalSelectDDMTemplateDisplayContext.getDDMTemplateId() %>">
-
-								<%
-								Map<String, Object> data = HashMapBuilder.<String, Object>put(
-									"ddmtemplateid", ddmTemplate.getTemplateId()
-								).put(
-									"ddmtemplatekey", ddmTemplate.getTemplateKey()
-								).put(
-									"description", ddmTemplate.getDescription(locale)
-								).put(
-									"imageurl", ddmTemplate.getTemplateImageURL(themeDisplay)
-								).put(
-									"name", ddmTemplate.getName(locale)
-								).build();
-								%>
-
-								<aui:a cssClass="selector-button" data="<%= data %>" href="javascript:;">
+								<aui:a
+									cssClass="selector-button"
+									data='<%=
+										HashMapBuilder.<String, Object>put(
+											"ddmtemplateid", ddmTemplate.getTemplateId()
+										).put(
+											"ddmtemplatekey", ddmTemplate.getTemplateKey()
+										).put(
+											"description", ddmTemplate.getDescription(locale)
+										).put(
+											"imageurl", ddmTemplate.getTemplateImageURL(themeDisplay)
+										).put(
+											"name", ddmTemplate.getName(locale)
+										).build()
+									%>'
+									href="javascript:;"
+								>
 									<%= HtmlUtil.escape(ddmTemplate.getName(locale)) %>
 								</aui:a>
 							</c:when>

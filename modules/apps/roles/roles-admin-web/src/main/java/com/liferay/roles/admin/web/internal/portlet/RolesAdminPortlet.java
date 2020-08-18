@@ -584,14 +584,14 @@ public class RolesAdminPortlet extends MVCPortlet {
 	}
 
 	@Override
-	protected boolean isSessionErrorException(Throwable cause) {
-		if (cause instanceof DuplicateRoleException ||
-			cause instanceof NoSuchRoleException ||
-			cause instanceof PrincipalException ||
-			cause instanceof RequiredRoleException ||
-			cause instanceof RoleAssignmentException ||
-			cause instanceof RoleNameException ||
-			cause instanceof RolePermissionsException) {
+	protected boolean isSessionErrorException(Throwable throwable) {
+		if (throwable instanceof DuplicateRoleException ||
+			throwable instanceof NoSuchRoleException ||
+			throwable instanceof PrincipalException ||
+			throwable instanceof RequiredRoleException ||
+			throwable instanceof RoleAssignmentException ||
+			throwable instanceof RoleNameException ||
+			throwable instanceof RolePermissionsException) {
 
 			return true;
 		}

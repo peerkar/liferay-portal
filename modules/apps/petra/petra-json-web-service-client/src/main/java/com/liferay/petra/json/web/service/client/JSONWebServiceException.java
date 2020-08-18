@@ -30,19 +30,19 @@ public class JSONWebServiceException extends Exception {
 	}
 
 	public JSONWebServiceException(
-		String message, int status, Throwable cause) {
+		String message, int status, Throwable throwable) {
 
-		super(message, cause);
+		super(message, throwable);
 
 		_status = status;
 	}
 
-	public JSONWebServiceException(String message, Throwable cause) {
-		super(message, cause);
+	public JSONWebServiceException(String message, Throwable throwable) {
+		super(message, throwable);
 	}
 
-	public JSONWebServiceException(Throwable cause) {
-		super(cause);
+	public JSONWebServiceException(Throwable throwable) {
+		super(throwable);
 	}
 
 	public int getStatus() {

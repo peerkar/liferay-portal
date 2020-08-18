@@ -56,9 +56,10 @@ public class SharepointConnectionTestUtil {
 
 		if (httpURLConnection.getResponseCode() >= 400) {
 			throw new SystemException(
-				"Got status code " + httpURLConnection.getResponseCode() +
-					" while releasing Sharepoint VM: " +
-						httpURLConnection.getResponseMessage());
+				StringBundler.concat(
+					"Got status code ", httpURLConnection.getResponseCode(),
+					" while releasing Sharepoint VM: ",
+					httpURLConnection.getResponseMessage()));
 		}
 	}
 
@@ -144,9 +145,9 @@ public class SharepointConnectionTestUtil {
 
 	private static final String _LOCAL_SERVER_HOSTNAME = "liferay-abb20d6";
 
-	private static final String _VM_ALLOCATION_URL =
-		"http://it.liferay.com/osb-ici-controller-web/vm/allocation/borrow?" +
-			"leaseTime=" + _LEASE_TIME + "&resourceType=qa.sharepoint2010";
+	private static final String _VM_ALLOCATION_URL = StringBundler.concat(
+		"http://it.liferay.com/osb-ici-controller-web/vm/allocation/borrow?",
+		"leaseTime=", _LEASE_TIME, "&resourceType=qa.sharepoint2010");
 
 	private static final String _VM_RELEASE_URL =
 		"http://it.liferay.com/osb-ici-controller-web/vm/allocation/release?" +

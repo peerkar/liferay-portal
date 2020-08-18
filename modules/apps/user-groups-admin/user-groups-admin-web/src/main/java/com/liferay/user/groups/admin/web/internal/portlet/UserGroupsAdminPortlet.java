@@ -192,13 +192,13 @@ public class UserGroupsAdminPortlet extends MVCPortlet {
 	}
 
 	@Override
-	protected boolean isSessionErrorException(Throwable cause) {
-		if (cause instanceof DuplicateUserGroupException ||
-			cause instanceof MembershipPolicyException ||
-			cause instanceof NoSuchUserGroupException ||
-			cause instanceof PrincipalException ||
-			cause instanceof RequiredUserGroupException ||
-			cause instanceof UserGroupNameException) {
+	protected boolean isSessionErrorException(Throwable throwable) {
+		if (throwable instanceof DuplicateUserGroupException ||
+			throwable instanceof MembershipPolicyException ||
+			throwable instanceof NoSuchUserGroupException ||
+			throwable instanceof PrincipalException ||
+			throwable instanceof RequiredUserGroupException ||
+			throwable instanceof UserGroupNameException) {
 
 			return true;
 		}

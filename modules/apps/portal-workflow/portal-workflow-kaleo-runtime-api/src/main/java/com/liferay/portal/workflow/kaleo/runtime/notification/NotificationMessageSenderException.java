@@ -28,12 +28,12 @@ public class NotificationMessageSenderException extends WorkflowException {
 		super(msg);
 	}
 
-	public NotificationMessageSenderException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NotificationMessageSenderException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NotificationMessageSenderException(Throwable cause) {
-		super(cause);
+	public NotificationMessageSenderException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

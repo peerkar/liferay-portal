@@ -28,12 +28,12 @@ public class CredentialException extends PortalException {
 		super(msg);
 	}
 
-	public CredentialException(String msg, Throwable cause) {
-		super(msg, cause);
+	public CredentialException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public CredentialException(Throwable cause) {
-		super(cause);
+	public CredentialException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -26,12 +26,12 @@ public class ORMException extends RuntimeException {
 		super(msg);
 	}
 
-	public ORMException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ORMException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ORMException(Throwable cause) {
-		super(cause);
+	public ORMException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

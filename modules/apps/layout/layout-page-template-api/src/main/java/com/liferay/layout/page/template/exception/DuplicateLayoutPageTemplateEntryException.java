@@ -29,13 +29,13 @@ public class DuplicateLayoutPageTemplateEntryException extends PortalException {
 	}
 
 	public DuplicateLayoutPageTemplateEntryException(
-		String msg, Throwable cause) {
+		String msg, Throwable throwable) {
 
-		super(msg, cause);
+		super(msg, throwable);
 	}
 
-	public DuplicateLayoutPageTemplateEntryException(Throwable cause) {
-		super(cause);
+	public DuplicateLayoutPageTemplateEntryException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

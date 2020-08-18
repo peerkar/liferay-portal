@@ -54,6 +54,42 @@ definition {
 		}
 	}
 
+	macro configureMFAOnSystemLevel {
+		if ("${disabledMFA}" == "true") {
+			ApplicationsMenu.gotoPortlet(
+				category = "Configuration",
+				panel = "Control Panel",
+				portlet = "System Settings");
+
+			SystemSettings.gotoConfiguration(
+				configurationCategory = "Multi-Factor Authentication",
+				configurationName = "Multi-Factor Authentication System Configuration",
+				configurationScope = "System Scope");
+
+			FormFields.enableCheckbox(fieldName = "Disable Multi-Factor Authentication");
+		}
+		else if ("${disabledMFA}" == "false") {
+			ApplicationsMenu.gotoPortlet(
+				category = "Configuration",
+				panel = "Control Panel",
+				portlet = "System Settings");
+
+			SystemSettings.gotoConfiguration(
+				configurationCategory = "Multi-Factor Authentication",
+				configurationName = "Multi-Factor Authentication System Configuration",
+				configurationScope = "System Scope");
+
+			FormFields.disableCheckbox(fieldName = "Disable Multi-Factor Authentication");
+		}
+
+		if (IsElementPresent(locator1 = "Button#UPDATE")) {
+			PortletEntry.update();
+		}
+		else if (IsElementPresent(locator1 = "Button#SAVE")) {
+			PortletEntry.save();
+		}
+	}
+
 	macro configureOTP {
 		if ("${enableOTP}" == "true") {
 			FormFields.enableCheckbox(fieldName = "enabled");

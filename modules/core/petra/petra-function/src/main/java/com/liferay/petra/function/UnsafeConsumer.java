@@ -35,36 +35,36 @@ public interface UnsafeConsumer<E, T extends Throwable> {
 			Class<? extends T> throwableClass)
 		throws T {
 
-		T throwable = null;
+		T throwable1 = null;
 
 		for (E e : collection) {
 			try {
 				unsafeConsumer.accept(e);
 			}
-			catch (Throwable t) {
-				if (!throwableClass.isInstance(t)) {
+			catch (Throwable throwable2) {
+				if (!throwableClass.isInstance(throwable2)) {
 
 					// Unexpected exception stops the loop and suppresses
 					// previous expected exceptions
 
-					if (throwable != null) {
-						t.addSuppressed(throwable);
+					if (throwable1 != null) {
+						throwable2.addSuppressed(throwable1);
 					}
 
-					throw t;
+					throw throwable2;
 				}
 
-				if (throwable == null) {
-					throwable = throwableClass.cast(t);
+				if (throwable1 == null) {
+					throwable1 = throwableClass.cast(throwable2);
 				}
 				else {
-					throwable.addSuppressed(t);
+					throwable1.addSuppressed(throwable2);
 				}
 			}
 		}
 
-		if (throwable != null) {
-			throw throwable;
+		if (throwable1 != null) {
+			throw throwable1;
 		}
 	}
 

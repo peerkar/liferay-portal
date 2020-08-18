@@ -78,8 +78,8 @@ public class AddSegmentsExperimentMVCActionCommand
 			jsonObject = TransactionInvokerUtil.invoke(
 				_transactionConfig, callable);
 		}
-		catch (Throwable t) {
-			_log.error(t, t);
+		catch (Throwable throwable) {
+			_log.error(throwable, throwable);
 
 			HttpServletResponse httpServletResponse =
 				_portal.getHttpServletResponse(actionResponse);

@@ -28,12 +28,12 @@ public class StructureDefinitionException extends PortalException {
 		super(msg);
 	}
 
-	public StructureDefinitionException(String msg, Throwable cause) {
-		super(msg, cause);
+	public StructureDefinitionException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public StructureDefinitionException(Throwable cause) {
-		super(cause);
+	public StructureDefinitionException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

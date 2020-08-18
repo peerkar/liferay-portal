@@ -1,14 +1,15 @@
 {
 	"dependencies": {
-		"@clayui/alert": "3.4.0",
+		"@clayui/alert": "3.4.1",
 		"@clayui/button": "3.4.0",
-		"@clayui/drop-down": "3.5.0",
+		"@clayui/drop-down": "3.6.0",
 		"@clayui/form": "3.10.0",
 		"@clayui/icon": "3.0.5",
-		"@clayui/layout": "3.1.1",
+		"@clayui/layout": "3.2.0",
 		"@clayui/link": "3.2.0",
-		"@clayui/modal": "3.6.4",
+		"@clayui/modal": "3.6.5",
 		"@clayui/tabs": "3.2.3",
+		"@clayui/tooltip": "3.3.3",
 		"classnames": "2.2.6",
 		"frontend-js-react-web": "*",
 		"frontend-js-web": "*",
@@ -31,5 +32,5 @@
 		"format": "liferay-npm-scripts fix",
 		"test": "liferay-npm-scripts test"
 	},
-	"version": "2.0.14"
+	"version": "2.0.17"
 }

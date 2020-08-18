@@ -82,6 +82,8 @@ public class DepotSettingsPortlet extends MVCPortlet {
 
 			renderRequest.setAttribute(
 				DepotAdminWebKeys.ITEM_SELECTOR, _itemSelector);
+			renderRequest.setAttribute(
+				DepotAdminWebKeys.SHOW_BREADCRUMB, Boolean.TRUE);
 
 			super.doView(
 				new DynamicRenderRequest(

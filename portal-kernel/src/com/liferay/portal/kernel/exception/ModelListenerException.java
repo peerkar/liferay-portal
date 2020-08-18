@@ -26,12 +26,12 @@ public class ModelListenerException extends SystemException {
 		super(msg);
 	}
 
-	public ModelListenerException(String msg, Throwable cause) {
-		super(msg, cause);
+	public ModelListenerException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public ModelListenerException(Throwable cause) {
-		super(cause);
+	public ModelListenerException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

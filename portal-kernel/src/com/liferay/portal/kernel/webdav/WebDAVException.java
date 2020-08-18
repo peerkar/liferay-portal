@@ -28,12 +28,12 @@ public class WebDAVException extends PortalException {
 		super(msg);
 	}
 
-	public WebDAVException(String msg, Throwable cause) {
-		super(msg, cause);
+	public WebDAVException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public WebDAVException(Throwable cause) {
-		super(cause);
+	public WebDAVException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -119,6 +119,7 @@ describe('SidebarPanelInfoView', () => {
 					subType={mockSubType}
 					tags={mockTags}
 					title={mockTitle}
+					userId={'20126'}
 					userName={mockUserName}
 					userPortraitURL={''}
 					versions={mockVersions}
@@ -143,6 +144,7 @@ describe('SidebarPanelInfoView', () => {
 					subType={mockSubType}
 					tags={mockTags}
 					title={mockTitle}
+					userId={'20126'}
 					userName={mockUserName}
 					userPortraitURL={''}
 					versions={mockVersions}
@@ -159,8 +161,6 @@ describe('SidebarPanelInfoView', () => {
 		expect(getByText('Approved')).toBeInTheDocument();
 		expect(getByText('version 1.7')).toBeInTheDocument();
 		expect(getByText('Draft')).toBeInTheDocument();
-
-		expect(getByText('details')).toBeInTheDocument();
 
 		expect(getByText('Kate Williams')).toBeInTheDocument();
 

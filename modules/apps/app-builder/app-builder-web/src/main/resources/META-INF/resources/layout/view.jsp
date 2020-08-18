@@ -17,8 +17,6 @@
 <%@ include file="/layout/init.jsp" %>
 
 <%
-String appName = ParamUtil.getString(request, "appName");
-
 String portletName = ParamUtil.getString(request, "portletName");
 
 String editEntryCssClass = "";
@@ -41,13 +39,15 @@ if (mvcPath.startsWith("/edit_entry.jsp")) {
 				<clay:content-col
 					expand="<%= true %>"
 				>
-					<a class="company-link" href="<%= PortalUtil.addPreservedParameters(themeDisplay, themeDisplay.getURLPortal(), false, true) %>">
-						<span class="company-details text-truncate">
-							<img alt="" class="company-logo" src="<%= themeDisplay.getPathImage() + "/company_logo?img_id=" + company.getLogoId() + "&t=" + WebServerServletTokenUtil.getToken(company.getLogoId()) %>" />
+					<div>
+						<a class="company-link" href="<%= PortalUtil.addPreservedParameters(themeDisplay, themeDisplay.getURLPortal(), false, true) %>">
+							<span class="company-details text-truncate">
+								<img alt="" class="company-logo" src="<%= themeDisplay.getPathImage() + "/company_logo?img_id=" + company.getLogoId() + "&t=" + WebServerServletTokenUtil.getToken(company.getLogoId()) %>" />
 
-							<span class="company-name"><%= HtmlUtil.escape(company.getName()) %></span>
-						</span>
-					</a>
+								<span class="company-name"><%= HtmlUtil.escape(company.getName()) %></span>
+							</span>
+						</a>
+					</div>
 				</clay:content-col>
 
 				<div style="display: none;">
@@ -57,7 +57,13 @@ if (mvcPath.startsWith("/edit_entry.jsp")) {
 				</div>
 
 				<clay:content-col
-					cssClass="text-right"
+					cssClass="align-items-center flex-row mr-4"
+				>
+					<div class="app-builder-standalone-translation-manager" id="appTranslationManager"></div>
+				</clay:content-col>
+
+				<clay:content-col
+					cssClass="align-items-center flex-row"
 				>
 					<liferay-portlet:runtime
 						portletProviderAction="<%= PortletProvider.Action.VIEW %>"
@@ -66,7 +72,7 @@ if (mvcPath.startsWith("/edit_entry.jsp")) {
 				</clay:content-col>
 			</clay:content-row>
 
-			<h1 class="app-builder-standalone-name <%= editEntryCssClass %>"><%= HtmlUtil.escape(appName) %></h1>
+			<h1 class="app-builder-standalone-name <%= editEntryCssClass %>" id="appStandaloneName"></h1>
 		</clay:container-fluid>
 	</header>
 

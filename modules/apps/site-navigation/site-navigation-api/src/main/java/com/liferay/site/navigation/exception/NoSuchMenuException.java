@@ -28,12 +28,12 @@ public class NoSuchMenuException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchMenuException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchMenuException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchMenuException(Throwable cause) {
-		super(cause);
+	public NoSuchMenuException(Throwable throwable) {
+		super(throwable);
 	}
 
 }
