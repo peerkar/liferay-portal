@@ -51,12 +51,6 @@ public interface InfoItemFormProvider<T> {
 		return getInfoForm();
 	}
 
-	public default InfoForm getInfoForm(String formVariationKey, long groupId)
-		throws NoSuchFormVariationException {
-
-		return getInfoForm(formVariationKey);
-	}
-
 	public default InfoForm getInfoForm(T t) {
 		return getInfoForm();
 	}

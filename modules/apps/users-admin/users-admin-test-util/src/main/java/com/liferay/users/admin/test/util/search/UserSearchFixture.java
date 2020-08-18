@@ -520,6 +520,7 @@ public class UserSearchFixture {
 				userBlueprint.isAutoPassword(), userBlueprint.getPassword1(),
 				userBlueprint.getPassword2(), userBlueprint.isAutoScreenName(),
 				userBlueprint.getScreenName(), userBlueprint.getEmailAddress(),
+				userBlueprint.getFacebookId(), userBlueprint.getOpenId(),
 				userBlueprint.getLocale(), userBlueprint.getFirstName(),
 				userBlueprint.getMiddleName(), userBlueprint.getLastName(),
 				userBlueprint.getPrefixId(), userBlueprint.getSuffixId(),

@@ -177,6 +177,8 @@ public class UpgradeDDMFormFieldValidation extends UpgradeProcess {
 		for (int i = 0; i < fieldsJSONArray.length(); i++) {
 			JSONObject jsonObject = fieldsJSONArray.getJSONObject(i);
 
+			String name = jsonObject.getString("name");
+
 			JSONObject validationJSONObject = jsonObject.getJSONObject(
 				"validation");
 
@@ -186,8 +188,7 @@ public class UpgradeDDMFormFieldValidation extends UpgradeProcess {
 
 				String value = expressionJSONObject.getString("value");
 
-				String upgradedValue = _upgradeExpression(
-					value, jsonObject.getString("name"));
+				String upgradedValue = _upgradeExpression(value, name);
 
 				expressionJSONObject.put("value", upgradedValue);
 

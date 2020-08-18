@@ -12,7 +12,9 @@
  * details.
  */
 
+import ClayIcon from '@clayui/icon';
 import ClayLayout from '@clayui/layout';
+import ClayLink from '@clayui/link';
 import React, {useContext, useState} from 'react';
 import {withRouter} from 'react-router-dom';
 
@@ -25,8 +27,6 @@ import EditAppContext from './EditAppContext.es';
 export default withRouter(
 	({
 		currentStep,
-		defaultLanguageId,
-		editingLanguageId,
 		history,
 		match: {
 			params: {dataDefinitionId},
@@ -46,50 +46,37 @@ export default withRouter(
 			dataLayoutId,
 			dataListViewId,
 			id: appId,
-			name,
+			name: {en_US: appName},
 		} = app;
-
-		const appName = name[editingLanguageId];
 
 		const getStandaloneLink = (appId) => {
 			const isStandalone = appDeployments.some(
 				(deployment) => deployment.type === 'standalone'
 			);
 
-			return isStandalone
-				? `<a href="${getStandaloneURL(
-						appId
-				  )}" target="_blank">${Liferay.Language.get(
-						'open-standalone-app'
-				  )}. ${Liferay.Util.getLexiconIconTpl('shortcut')}</a>`
-				: '';
+			if (!isStandalone) {
+				return <></>;
+			}
+
+			const url = getStandaloneURL(appId);
+
+			return (
+				<ClayLink href={url} target="_blank">
+					{`${Liferay.Language.get('open-standalone-app')}.`}{' '}
+					<ClayIcon symbol="shortcut" />
+				</ClayLink>
+			);
 		};
 
 		const onSuccess = (appId) => {
 			successToast(
-				`${Liferay.Language.get(
-					'the-app-was-deployed-successfully'
-				)} ${getStandaloneLink(appId)}`
+				<>
+					{Liferay.Language.get('the-app-was-deployed-successfully')}{' '}
+					{getStandaloneLink(appId)}
+				</>
 			);
 
 			setDeploying(false);
-		};
-
-		const normalizeAppName = (names) => {
-			const name = {};
-
-			if (!names[defaultLanguageId]) {
-				names[defaultLanguageId] = names[editingLanguageId];
-			}
-
-			Object.keys(names).forEach((key) => {
-				const value = names[key];
-				if (value) {
-					name[key] = value;
-				}
-			});
-
-			return name;
 		};
 
 		const onError = (error) => {
@@ -105,13 +92,8 @@ export default withRouter(
 		const onDeploy = () => {
 			setDeploying(true);
 
-			const data = {
-				...app,
-				name: normalizeAppName(app.name),
-			};
-
 			if (appId) {
-				updateItem(`/o/app-builder/v1.0/apps/${appId}`, data)
+				updateItem(`/o/app-builder/v1.0/apps/${appId}`, app)
 					.then(() => onSuccess(appId))
 					.then(onCancel)
 					.catch(onError);
@@ -119,7 +101,7 @@ export default withRouter(
 			else {
 				addItem(
 					`/o/app-builder/v1.0/data-definitions/${dataDefinitionId}/apps`,
-					data
+					app
 				)
 					.then((app) => onSuccess(app.id))
 					.then(onCancel)

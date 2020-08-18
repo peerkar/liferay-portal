@@ -104,15 +104,6 @@ definition {
 
 		Navigator.gotoNavTab(navTab = "${tabName}");
 
-		if (isSet(menuItem)) {
-			AssetListsAdmin.addSelection(
-				collectionName = "${collectionName}",
-				menuItem = "${menuItem}",
-				selectedAsset = "${selectedAsset}");
-
-			Click(locator1 = "Icon#BACK");
-		}
-
 		LexiconCard.clickCardTitle(card = "${collectionName}");
 
 		if (isSet(masterLayoutName)) {

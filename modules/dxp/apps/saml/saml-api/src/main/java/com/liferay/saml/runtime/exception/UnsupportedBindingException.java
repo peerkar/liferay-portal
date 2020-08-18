@@ -28,12 +28,12 @@ public class UnsupportedBindingException extends PortalException {
 		super(msg);
 	}
 
-	public UnsupportedBindingException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public UnsupportedBindingException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public UnsupportedBindingException(Throwable throwable) {
-		super(throwable);
+	public UnsupportedBindingException(Throwable cause) {
+		super(cause);
 	}
 
 }

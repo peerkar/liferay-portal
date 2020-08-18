@@ -68,19 +68,19 @@ public class GeneralTabDefaultViewDisplayContext {
 			}
 		}
 		catch (Exception exception) {
-			Throwable throwable = _getCause(exception, KeyStoreException.class);
+			Throwable cause = _getCause(exception, KeyStoreException.class);
 			X509CertificateStatus.Status status;
 
-			if (throwable != null) {
-				Throwable unrecoverableKeyThrowable = _getCause(
-					throwable, UnrecoverableKeyException.class);
+			if (cause != null) {
+				Throwable unrecoverableKeyException = _getCause(
+					cause, UnrecoverableKeyException.class);
 
-				if (unrecoverableKeyThrowable != null) {
+				if (unrecoverableKeyException != null) {
 					if (_log.isDebugEnabled()) {
 						_log.debug(
 							"Unable to get local entity certificate because " +
 								"of incorrect keystore password",
-							throwable);
+							cause);
 					}
 
 					status =
@@ -92,7 +92,7 @@ public class GeneralTabDefaultViewDisplayContext {
 						_log.debug(
 							"Unable to get local entity certificate because " +
 								"of keystore loading issue",
-							throwable);
+							cause);
 					}
 
 					status =
@@ -100,15 +100,14 @@ public class GeneralTabDefaultViewDisplayContext {
 				}
 			}
 			else {
-				throwable = _getCause(
-					exception, UnrecoverableKeyException.class);
+				cause = _getCause(exception, UnrecoverableKeyException.class);
 
-				if (throwable != null) {
+				if (cause != null) {
 					if (_log.isDebugEnabled()) {
 						_log.debug(
 							"Unable to get local entity certificate because " +
 								"of incorrect key credential password",
-							throwable);
+							cause);
 					}
 
 					status =
@@ -172,19 +171,19 @@ public class GeneralTabDefaultViewDisplayContext {
 
 	}
 
-	private Throwable _getCause(Throwable throwable, Class<?> exceptionType) {
-		if (throwable == null) {
+	private Throwable _getCause(Throwable e, Class<?> exceptionType) {
+		if (e == null) {
 			return null;
 		}
 
-		Throwable causeThrowable = throwable.getCause();
+		Throwable cause = e.getCause();
 
-		while (causeThrowable != null) {
-			if (exceptionType.isInstance(causeThrowable)) {
-				return causeThrowable;
+		while (cause != null) {
+			if (exceptionType.isInstance(cause)) {
+				return cause;
 			}
 
-			causeThrowable = causeThrowable.getCause();
+			cause = cause.getCause();
 		}
 
 		return null;

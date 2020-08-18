@@ -61,7 +61,7 @@ public class ExpandoInfoDisplayFieldProviderTest {
 
 	@ClassRule
 	@Rule
-	public static final LiferayIntegrationTestRule liferayIntegrationTestRule =
+	public static final LiferayIntegrationTestRule testRule =
 		new LiferayIntegrationTestRule();
 
 	@Before

@@ -132,11 +132,11 @@ public class WorkflowTaskDemoDataCreatorImpl
 	public void updateCreateDate(long workflowTaskId, Date createDate)
 		throws PortalException {
 
-		if (createDate != null) {
-			KaleoTaskInstanceToken kaleoTaskInstanceToken =
-				_kaleoTaskInstanceTokenLocalService.getKaleoTaskInstanceToken(
-					workflowTaskId);
+		KaleoTaskInstanceToken kaleoTaskInstanceToken =
+			_kaleoTaskInstanceTokenLocalService.getKaleoTaskInstanceToken(
+				workflowTaskId);
 
+		if (createDate != null) {
 			kaleoTaskInstanceToken.setCreateDate(createDate);
 
 			_kaleoTaskInstanceTokenLocalService.updateKaleoTaskInstanceToken(

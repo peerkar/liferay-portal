@@ -26,12 +26,12 @@ public class CountryIddException extends PortalException {
 		super(msg);
 	}
 
-	public CountryIddException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public CountryIddException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public CountryIddException(Throwable throwable) {
-		super(throwable);
+	public CountryIddException(Throwable cause) {
+		super(cause);
 	}
 
 }

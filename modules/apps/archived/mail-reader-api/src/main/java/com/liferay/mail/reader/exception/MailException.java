@@ -68,12 +68,12 @@ public class MailException extends PortalException {
 		_value = value;
 	}
 
-	public MailException(int type, Throwable throwable) {
-		this(type, throwable, null);
+	public MailException(int type, Throwable cause) {
+		this(type, cause, null);
 	}
 
-	public MailException(int type, Throwable throwable, String value) {
-		super(throwable);
+	public MailException(int type, Throwable cause, String value) {
+		super(cause);
 
 		_type = type;
 		_value = value;
@@ -86,15 +86,15 @@ public class MailException extends PortalException {
 		_value = null;
 	}
 
-	public MailException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public MailException(String msg, Throwable cause) {
+		super(msg, cause);
 
 		_type = 0;
 		_value = null;
 	}
 
-	public MailException(Throwable throwable) {
-		super(throwable);
+	public MailException(Throwable cause) {
+		super(cause);
 
 		_type = 0;
 		_value = null;

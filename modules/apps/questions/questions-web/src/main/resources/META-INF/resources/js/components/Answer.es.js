@@ -84,10 +84,9 @@ export default withRouter(
 					className={classnames('questions-answer c-p-3', {
 						'questions-answer-success': showAsAnswer,
 					})}
-					data-testid="mark-as-answer-style"
 				>
-					<div className="d-flex row">
-						<div className="c-ml-auto c-ml-md-1 c-ml-sm-auto order-1 order-md-0 text-md-center text-right">
+					<div className="align-items-center align-items-md-start row">
+						<div className="col-6 col-md-1 order-1 order-md-0 text-md-center text-right">
 							<Rating
 								aggregateRating={answer.aggregateRating}
 								entityId={answer.id}
@@ -99,12 +98,9 @@ export default withRouter(
 							/>
 						</div>
 
-						<div className="c-mb-4 c-mb-md-0 c-ml-3 col-lg-8 col-md-6 col-sm-12 col-xl-9">
+						<div className="c-mb-4 c-mb-md-0 col-lg-9 col-md-8">
 							{showAsAnswer && (
-								<p
-									className="c-mb-0 font-weight-bold text-success"
-									data-testid="mark-as-answer-check"
-								>
+								<p className="c-mb-0 font-weight-bold text-success">
 									<ClayIcon symbol="check-circle-full" />
 
 									<span className="c-ml-3">
@@ -151,7 +147,6 @@ export default withRouter(
 								{canMarkAsAnswer && (
 									<ClayButton
 										className="text-reset"
-										data-testid="mark-as-answer-button"
 										displayType="unstyled"
 										onClick={() => {
 											markAsAnswerMessageBoardMessage({
@@ -188,7 +183,7 @@ export default withRouter(
 							</ClayButton.Group>
 						</div>
 
-						<div className="c-ml-md-auto c-ml-sm-2 c-mr-lg-2 c-mr-md-4 c-mr-xl-2">
+						<div className="col-6 col-lg-2 col-md-3">
 							<UserRow
 								creator={answer.creator}
 								statistics={answer.creatorStatistics}

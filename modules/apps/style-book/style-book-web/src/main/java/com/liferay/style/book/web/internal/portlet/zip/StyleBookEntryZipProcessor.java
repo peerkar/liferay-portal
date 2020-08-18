@@ -221,6 +221,38 @@ public class StyleBookEntryZipProcessor {
 		return path;
 	}
 
+	private String _getFragmentEntryContent(
+			ZipFile zipFile, String fileName, String contentPath)
+		throws Exception {
+
+		InputStream inputStream = _getFragmentEntryInputStream(
+			zipFile, fileName, contentPath);
+
+		if (inputStream == null) {
+			return StringPool.BLANK;
+		}
+
+		return StringUtil.read(inputStream);
+	}
+
+	private InputStream _getFragmentEntryInputStream(
+			ZipFile zipFile, String fileName, String contentPath)
+		throws Exception {
+
+		if (contentPath.startsWith(StringPool.SLASH)) {
+			return _getInputStream(zipFile, contentPath.substring(1));
+		}
+
+		if (contentPath.startsWith("./")) {
+			contentPath = contentPath.substring(2);
+		}
+
+		String path = fileName.substring(
+			0, fileName.lastIndexOf(StringPool.SLASH));
+
+		return _getInputStream(zipFile, path + StringPool.SLASH + contentPath);
+	}
+
 	private InputStream _getInputStream(ZipFile zipFile, String fileName)
 		throws Exception {
 
@@ -265,7 +297,7 @@ public class StyleBookEntryZipProcessor {
 			long classPK, String fileName, String contentPath)
 		throws Exception {
 
-		InputStream inputStream = _getStyleBookEntryInputStream(
+		InputStream inputStream = _getFragmentEntryInputStream(
 			zipFile, fileName, contentPath);
 
 		if (inputStream == null) {
@@ -306,38 +338,6 @@ public class StyleBookEntryZipProcessor {
 		return fileEntry.getFileEntryId();
 	}
 
-	private String _getStyleBookEntryContent(
-			ZipFile zipFile, String fileName, String contentPath)
-		throws Exception {
-
-		InputStream inputStream = _getStyleBookEntryInputStream(
-			zipFile, fileName, contentPath);
-
-		if (inputStream == null) {
-			return StringPool.BLANK;
-		}
-
-		return StringUtil.read(inputStream);
-	}
-
-	private InputStream _getStyleBookEntryInputStream(
-			ZipFile zipFile, String fileName, String contentPath)
-		throws Exception {
-
-		if (contentPath.startsWith(StringPool.SLASH)) {
-			return _getInputStream(zipFile, contentPath.substring(1));
-		}
-
-		if (contentPath.startsWith("./")) {
-			contentPath = contentPath.substring(2);
-		}
-
-		String path = fileName.substring(
-			0, fileName.lastIndexOf(StringPool.SLASH));
-
-		return _getInputStream(zipFile, path + StringPool.SLASH + contentPath);
-	}
-
 	private void _importStyleBookEntries(
 			long userId, long groupId, ZipFile zipFile, String fileName,
 			boolean overwrite)
@@ -356,7 +356,7 @@ public class StyleBookEntryZipProcessor {
 				JSONFactoryUtil.createJSONObject(styleBookEntryContent);
 
 			name = styleBookEntryJSONObject.getString("name");
-			frontendTokensValues = _getStyleBookEntryContent(
+			frontendTokensValues = _getFragmentEntryContent(
 				zipFile, fileName,
 				styleBookEntryJSONObject.getString("frontendTokensValuesPath"));
 		}

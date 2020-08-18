@@ -816,10 +816,10 @@ public class DefaultExportImportContentProcessorTest {
 			catch (ExportImportContentValidationException
 						exportImportContentValidationException) {
 
-				Throwable throwable =
+				Throwable cause =
 					exportImportContentValidationException.getCause();
 
-				if ((throwable instanceof NoSuchLayoutException) ||
+				if ((cause instanceof NoSuchLayoutException) ||
 					(exportImportContentValidationException.getType() ==
 						ExportImportContentValidationException.
 							LAYOUT_GROUP_NOT_FOUND)) {

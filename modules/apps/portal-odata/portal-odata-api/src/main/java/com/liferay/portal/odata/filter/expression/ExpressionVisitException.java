@@ -38,11 +38,11 @@ public class ExpressionVisitException extends Exception {
 	 * cause of the exception.
 	 *
 	 * @param  msg the exception's message
-	 * @param  throwable the exception's cause
+	 * @param  cause the exception's cause
 	 * @review
 	 */
-	public ExpressionVisitException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public ExpressionVisitException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
 }

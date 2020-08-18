@@ -18,11 +18,13 @@
 
 <%
 String displayStyle = (String)request.getAttribute("edit_role_assignments.jsp-displayStyle");
+
+SearchContainer<?> searchContainer = (SearchContainer)request.getAttribute("edit_role_assignments.jsp-searchContainer");
 %>
 
 <liferay-ui:search-container
 	id="assigneesSearch"
-	searchContainer='<%= (SearchContainer)request.getAttribute("edit_role_assignments.jsp-searchContainer") %>'
+	searchContainer="<%= searchContainer %>"
 	var="groupSearchContainer"
 >
 	<liferay-ui:search-container-row

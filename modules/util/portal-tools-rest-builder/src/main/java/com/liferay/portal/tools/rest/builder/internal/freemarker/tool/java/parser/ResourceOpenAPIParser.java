@@ -827,10 +827,7 @@ public class ResourceOpenAPIParser {
 
 		String basePath = path.substring(0, path.lastIndexOf("/"));
 
-		if (basePath.equals("/asset-libraries/{assetLibraryId}")) {
-			return "AssetLibrary";
-		}
-		else if (basePath.equals("/sites/{siteId}")) {
+		if (basePath.equals("/sites/{siteId}")) {
 			return "Site";
 		}
 

@@ -352,7 +352,6 @@ public class KaleoInstanceTokenLocalServiceImpl
 			"kaleoInstanceTokenQuery", kaleoInstanceTokenQuery);
 		searchContext.setCompanyId(kaleoInstanceTokenQuery.getCompanyId());
 		searchContext.setEnd(end);
-		searchContext.setGroupIds(new long[] {-1L});
 		searchContext.setStart(start);
 
 		if (sorts != null) {

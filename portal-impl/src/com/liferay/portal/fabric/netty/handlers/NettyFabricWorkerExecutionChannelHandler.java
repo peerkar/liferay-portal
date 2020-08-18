@@ -242,12 +242,12 @@ public class NettyFabricWorkerExecutionChannelHandler
 
 	protected void sendResult(
 		Channel channel, long fabricWorkerId, Serializable result,
-		Throwable throwable) {
+		Throwable t) {
 
 		final FabricWorkerResultProcessCallable
 			fabricWorkerResultProcessCallable =
 				new FabricWorkerResultProcessCallable(
-					fabricWorkerId, result, throwable);
+					fabricWorkerId, result, t);
 
 		NoticeableFuture<Serializable> noticeableFuture = RPCUtil.execute(
 			channel,
@@ -518,14 +518,12 @@ public class NettyFabricWorkerExecutionChannelHandler
 					_channel, _nettyFabricWorkerConfig.getId(), future.get(),
 					null);
 			}
-			catch (Throwable throwable) {
-				if (throwable instanceof ExecutionException) {
-					throwable = throwable.getCause();
+			catch (Throwable t) {
+				if (t instanceof ExecutionException) {
+					t = t.getCause();
 				}
 
-				sendResult(
-					_channel, _nettyFabricWorkerConfig.getId(), null,
-					throwable);
+				sendResult(_channel, _nettyFabricWorkerConfig.getId(), null, t);
 			}
 		}
 

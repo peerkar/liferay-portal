@@ -28,14 +28,12 @@ public class DuplicateStyleBookEntryKeyException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateStyleBookEntryKeyException(
-		String msg, Throwable throwable) {
-
-		super(msg, throwable);
+	public DuplicateStyleBookEntryKeyException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public DuplicateStyleBookEntryKeyException(Throwable throwable) {
-		super(throwable);
+	public DuplicateStyleBookEntryKeyException(Throwable cause) {
+		super(cause);
 	}
 
 }

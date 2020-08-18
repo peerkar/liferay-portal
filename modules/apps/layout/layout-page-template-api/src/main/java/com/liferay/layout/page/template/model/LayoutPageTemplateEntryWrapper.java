@@ -21,8 +21,6 @@ import com.liferay.portal.kernel.model.wrapper.BaseModelWrapper;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 /**
  * <p>
@@ -48,7 +46,6 @@ public class LayoutPageTemplateEntryWrapper
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
 		attributes.put("mvccVersion", getMvccVersion());
-		attributes.put("ctCollectionId", getCtCollectionId());
 		attributes.put("uuid", getUuid());
 		attributes.put(
 			"layoutPageTemplateEntryId", getLayoutPageTemplateEntryId());
@@ -86,12 +83,6 @@ public class LayoutPageTemplateEntryWrapper
 
 		if (mvccVersion != null) {
 			setMvccVersion(mvccVersion);
-		}
-
-		Long ctCollectionId = (Long)attributes.get("ctCollectionId");
-
-		if (ctCollectionId != null) {
-			setCtCollectionId(ctCollectionId);
 		}
 
 		String uuid = (String)attributes.get("uuid");
@@ -295,16 +286,6 @@ public class LayoutPageTemplateEntryWrapper
 	@Override
 	public Date getCreateDate() {
 		return model.getCreateDate();
-	}
-
-	/**
-	 * Returns the ct collection ID of this layout page template entry.
-	 *
-	 * @return the ct collection ID of this layout page template entry
-	 */
-	@Override
-	public long getCtCollectionId() {
-		return model.getCtCollectionId();
 	}
 
 	/**
@@ -685,16 +666,6 @@ public class LayoutPageTemplateEntryWrapper
 	}
 
 	/**
-	 * Sets the ct collection ID of this layout page template entry.
-	 *
-	 * @param ctCollectionId the ct collection ID of this layout page template entry
-	 */
-	@Override
-	public void setCtCollectionId(long ctCollectionId) {
-		model.setCtCollectionId(ctCollectionId);
-	}
-
-	/**
 	 * Sets whether this layout page template entry is default template.
 	 *
 	 * @param defaultTemplate the default template of this layout page template entry
@@ -926,20 +897,6 @@ public class LayoutPageTemplateEntryWrapper
 	@Override
 	public void setUuid(String uuid) {
 		model.setUuid(uuid);
-	}
-
-	@Override
-	public Map<String, Function<LayoutPageTemplateEntry, Object>>
-		getAttributeGetterFunctions() {
-
-		return model.getAttributeGetterFunctions();
-	}
-
-	@Override
-	public Map<String, BiConsumer<LayoutPageTemplateEntry, Object>>
-		getAttributeSetterBiConsumers() {
-
-		return model.getAttributeSetterBiConsumers();
 	}
 
 	@Override

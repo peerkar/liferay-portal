@@ -26,12 +26,12 @@ public class NoSuchClassNameException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchClassNameException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public NoSuchClassNameException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NoSuchClassNameException(Throwable throwable) {
-		super(throwable);
+	public NoSuchClassNameException(Throwable cause) {
+		super(cause);
 	}
 
 }

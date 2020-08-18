@@ -19,8 +19,8 @@ import com.liferay.document.library.kernel.model.DLFileEntryConstants;
 import com.liferay.fragment.entry.processor.helper.FragmentEntryProcessorHelper;
 import com.liferay.info.field.InfoField;
 import com.liferay.info.field.InfoFieldValue;
+import com.liferay.info.item.InfoItemClassPKReference;
 import com.liferay.info.item.InfoItemFieldValues;
-import com.liferay.info.item.InfoItemReference;
 import com.liferay.info.item.InfoItemServiceTracker;
 import com.liferay.info.item.provider.InfoItemFieldValuesProvider;
 import com.liferay.info.list.renderer.DefaultInfoListRendererContext;
@@ -271,14 +271,14 @@ public class GetCollectionFieldMVCResourceCommand
 			displayObjectJSONObject.put(infoField.getName(), value);
 		}
 
-		InfoItemReference infoItemReference =
-			infoItemFieldValues.getInfoItemReference();
+		InfoItemClassPKReference infoItemClassPKReference =
+			infoItemFieldValues.getInfoItemClassPKReference();
 
-		if (infoItemReference != null) {
+		if (infoItemClassPKReference != null) {
 			displayObjectJSONObject.put(
-				"className", infoItemReference.getClassName()
+				"className", infoItemClassPKReference.getClassName()
 			).put(
-				"classPK", infoItemReference.getClassPK()
+				"classPK", infoItemClassPKReference.getClassPK()
 			);
 		}
 

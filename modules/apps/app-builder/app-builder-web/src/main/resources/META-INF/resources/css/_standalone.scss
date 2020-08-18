@@ -1,5 +1,3 @@
-$background-header-color: #393a4a;
-
 .app-builder-standalone {
 	background-color: #f1f2f5;
 	min-height: 100vh;
@@ -46,7 +44,7 @@ $background-header-color: #393a4a;
 	}
 
 	.app-builder-standalone-header {
-		background-color: $background-header-color;
+		background-color: #393a4a;
 		min-height: 320px;
 		padding-top: 1rem;
 		width: 100%;
@@ -65,7 +63,6 @@ $background-header-color: #393a4a;
 
 		.company-link {
 			color: #fff;
-			display: inline-block;
 
 			.company-details {
 				display: flex;
@@ -80,27 +77,6 @@ $background-header-color: #393a4a;
 					font-weight: bold;
 					line-height: 52px;
 					margin-left: 1rem;
-				}
-			}
-		}
-	}
-
-	.app-builder-standalone-translation-manager {
-		align-items: center;
-		flex-direction: row;
-
-		.btn.btn-secondary.dropdown-toggle {
-			background-color: $background-header-color;
-			border-color: #6b6c7e;
-			color: #a7a9bc;
-
-			&:hover {
-				background-color: rgba(107, 108, 126, 0.2);
-				border-color: #6b6c7e;
-				color: #fff;
-
-				.localizable-dropdown-label {
-					color: #fff;
 				}
 			}
 		}

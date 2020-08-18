@@ -30,13 +30,13 @@ public class InvalidSiteNavigationMenuItemTypeException
 	}
 
 	public InvalidSiteNavigationMenuItemTypeException(
-		String msg, Throwable throwable) {
+		String msg, Throwable cause) {
 
-		super(msg, throwable);
+		super(msg, cause);
 	}
 
-	public InvalidSiteNavigationMenuItemTypeException(Throwable throwable) {
-		super(throwable);
+	public InvalidSiteNavigationMenuItemTypeException(Throwable cause) {
+		super(cause);
 	}
 
 }

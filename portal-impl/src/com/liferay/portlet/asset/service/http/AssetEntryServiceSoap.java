@@ -57,10 +57,8 @@ import java.rmi.RemoteException;
  *
  * @author Brian Wing Shun Chan
  * @see AssetEntryServiceHttp
- * @deprecated As of Athanasius (7.3.x), with no direct replacement
  * @generated
  */
-@Deprecated
 public class AssetEntryServiceSoap {
 
 	public static com.liferay.asset.kernel.model.AssetEntrySoap fetchEntry(

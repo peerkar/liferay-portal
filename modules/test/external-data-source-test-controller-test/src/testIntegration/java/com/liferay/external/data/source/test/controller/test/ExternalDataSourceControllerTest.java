@@ -261,18 +261,18 @@ public class ExternalDataSourceControllerTest {
 
 	private static class TestRunListener extends RunListener {
 
-		public void rethrow(Throwable throwable) throws Throwable {
-			if (throwable == null) {
+		public void rethrow(Throwable t) throws Throwable {
+			if (t == null) {
 				if (_failures.isEmpty()) {
 					return;
 				}
 
-				throwable = new AssertionError(
+				t = new AssertionError(
 					"Inner test bundle junit execution errors:");
 			}
 
 			for (Failure failure : _failures) {
-				throwable.addSuppressed(failure.getException());
+				t.addSuppressed(failure.getException());
 			}
 
 			try (UnsyncStringWriter unsyncStringWriter =
@@ -280,7 +280,7 @@ public class ExternalDataSourceControllerTest {
 				UnsyncPrintWriter unsycPrintWriter = new UnsyncPrintWriter(
 					unsyncStringWriter)) {
 
-				throwable.printStackTrace(unsycPrintWriter);
+				t.printStackTrace(unsycPrintWriter);
 
 				throw new ArquillianThrowable(unsyncStringWriter.toString());
 			}

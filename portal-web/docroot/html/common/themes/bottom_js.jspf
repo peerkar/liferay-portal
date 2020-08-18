@@ -60,9 +60,10 @@
 </aui:script>
 
 <aui:script>
-	if (window.svg4everybody && Liferay.Data.ICONS_INLINE_SVG) {
+	if (Liferay.Data.ICONS_INLINE_SVG) {
 		svg4everybody(
 			{
+				attributeName: 'data-href',
 				polyfill: true,
 				validate: function (src, svg, use) {
 					return !src || !src.startsWith('#');

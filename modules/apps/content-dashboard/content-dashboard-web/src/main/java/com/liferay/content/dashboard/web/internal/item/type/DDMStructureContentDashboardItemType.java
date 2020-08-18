@@ -15,7 +15,6 @@
 package com.liferay.content.dashboard.web.internal.item.type;
 
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
-import com.liferay.info.item.InfoItemReference;
 import com.liferay.petra.lang.HashUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -39,8 +38,6 @@ public class DDMStructureContentDashboardItemType
 
 		_ddmStructure = ddmStructure;
 		_group = group;
-		_infoItemReference = new InfoItemReference(
-			DDMStructure.class.getName(), _ddmStructure.getStructureId());
 	}
 
 	@Override
@@ -56,20 +53,25 @@ public class DDMStructureContentDashboardItemType
 		ContentDashboardItemType contentDashboardItemType =
 			(ContentDashboardItemType)object;
 
-		InfoItemReference infoItemReference =
-			contentDashboardItemType.getInfoItemReference();
-
 		if (Objects.equals(
-				_infoItemReference.getClassName(),
-				infoItemReference.getClassName()) &&
+				getClassName(), contentDashboardItemType.getClassName()) &&
 			Objects.equals(
-				_infoItemReference.getClassPK(),
-				infoItemReference.getClassPK())) {
+				getClassPK(), contentDashboardItemType.getClassPK())) {
 
 			return true;
 		}
 
 		return false;
+	}
+
+	@Override
+	public String getClassName() {
+		return DDMStructure.class.getName();
+	}
+
+	@Override
+	public long getClassPK() {
+		return _ddmStructure.getStructureId();
 	}
 
 	@Override
@@ -90,11 +92,6 @@ public class DDMStructureContentDashboardItemType
 	}
 
 	@Override
-	public InfoItemReference getInfoItemReference() {
-		return _infoItemReference;
-	}
-
-	@Override
 	public String getLabel(Locale locale) {
 		return _ddmStructure.getName(locale);
 	}
@@ -111,17 +108,17 @@ public class DDMStructureContentDashboardItemType
 
 	@Override
 	public int hashCode() {
-		int hash = HashUtil.hash(0, _infoItemReference.getClassPK());
+		int hash = HashUtil.hash(0, getClassPK());
 
-		return HashUtil.hash(hash, _infoItemReference.getClassName());
+		return HashUtil.hash(hash, getClassName());
 	}
 
 	@Override
 	public String toJSONString(Locale locale) {
 		return JSONUtil.put(
-			"className", _infoItemReference.getClassName()
+			"className", getClassName()
 		).put(
-			"classPK", _infoItemReference.getClassPK()
+			"classPK", getClassPK()
 		).put(
 			"title", getFullLabel(locale)
 		).toJSONString();
@@ -132,6 +129,5 @@ public class DDMStructureContentDashboardItemType
 
 	private final DDMStructure _ddmStructure;
 	private final Group _group;
-	private final InfoItemReference _infoItemReference;
 
 }

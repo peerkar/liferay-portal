@@ -341,8 +341,8 @@ public abstract class BaseDataDefinitionFieldLinkResourceTestCase {
 		}
 	}
 
-	protected void assertValid(DataDefinitionFieldLink dataDefinitionFieldLink)
-		throws Exception {
+	protected void assertValid(
+		DataDefinitionFieldLink dataDefinitionFieldLink) {
 
 		boolean valid = true;
 

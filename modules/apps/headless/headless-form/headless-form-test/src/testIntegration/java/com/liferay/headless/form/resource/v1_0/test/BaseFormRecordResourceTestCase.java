@@ -507,7 +507,7 @@ public abstract class BaseFormRecordResourceTestCase {
 		}
 	}
 
-	protected void assertValid(FormRecord formRecord) throws Exception {
+	protected void assertValid(FormRecord formRecord) {
 		boolean valid = true;
 
 		if (formRecord.getDateCreated() == null) {

@@ -65,11 +65,13 @@ public class CreateIndexRequestExecutorImpl
 				new org.elasticsearch.action.admin.indices.create.
 					CreateIndexRequest(createIndexRequest.getIndexName());
 
+		Class<? extends CreateIndexRequestExecutorImpl> clazz = getClass();
+
 		if (createIndexRequest.getSource() != null) {
 			ClassLoaderUtil.getWithContextClassLoader(
 				() -> elasticsearchCreateIndexRequest.source(
 					createIndexRequest.getSource(), XContentType.JSON),
-				getClass());
+				clazz);
 		}
 
 		return elasticsearchCreateIndexRequest;

@@ -258,9 +258,7 @@ public abstract class BaseTaxonomyVocabularyResourceTestCase {
 		}
 	}
 
-	protected void assertValid(TaxonomyVocabulary taxonomyVocabulary)
-		throws Exception {
-
+	protected void assertValid(TaxonomyVocabulary taxonomyVocabulary) {
 		boolean valid = true;
 
 		for (String additionalAssertFieldName :

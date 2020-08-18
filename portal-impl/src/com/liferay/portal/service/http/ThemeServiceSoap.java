@@ -46,10 +46,8 @@ import java.rmi.RemoteException;
  *
  * @author Brian Wing Shun Chan
  * @see ThemeServiceHttp
- * @deprecated As of Athanasius (7.3.x), with no direct replacement
  * @generated
  */
-@Deprecated
 public class ThemeServiceSoap {
 
 	public static String getWARThemes() throws RemoteException {

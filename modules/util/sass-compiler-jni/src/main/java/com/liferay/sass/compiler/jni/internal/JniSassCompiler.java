@@ -193,8 +193,8 @@ public class JniSassCompiler implements SassCompiler {
 						sassFileContextPointer);
 				}
 			}
-			catch (Throwable throwable) {
-				throw new JniSassCompilerException(throwable);
+			catch (Throwable t) {
+				throw new JniSassCompilerException(t);
 			}
 		}
 	}
@@ -277,8 +277,8 @@ public class JniSassCompiler implements SassCompiler {
 
 			return output;
 		}
-		catch (Throwable throwable) {
-			throw new JniSassCompilerException(throwable);
+		catch (Throwable t) {
+			throw new JniSassCompilerException(t);
 		}
 	}
 

@@ -369,10 +369,8 @@ definition {
 	}
 
 	@description = "This is a test case for LPS-101255. The composition of fragments can be saved in an existing collection."
-	@priority = "5"
+	@priority = "4"
 	test ExportImportFragmentCompositionWithCustomConfigurations {
-		property portal.acceptance = "true";
-
 		task ("Add a content page") {
 			JSONLayout.addPublicLayout(
 				groupName = "Test Site Name",
@@ -430,8 +428,8 @@ definition {
 		PageEditor.gotoStyle(fragmentName = "Heading");
 
 		PageEditor.configureFragment(
-			alignment = "Center",
 			marginBottom = "1",
+			textAlign = "Center",
 			textColor = "danger");
 
 		PageEditor.gotoConfiguration(fragmentName = "Heading");
@@ -484,10 +482,10 @@ definition {
 
 		task ("View the Heading fragment style") {
 			PageEditor.viewFragmentStyle(
-				alignment = "Center",
 				fragmentName = "heading",
 				headingLevel = "H2",
 				marginBottom = "1",
+				textAlign = "Center",
 				textColor = "danger");
 		}
 	}
@@ -1115,7 +1113,9 @@ definition {
 
 			SelectFrameTop();
 
-			Button.clickImport();
+			Click.mouseDownMouseUp(
+				key_text = "Import",
+				locator1 = "Modal#ANY_BUTTON");
 		}
 
 		task ("Assert the zip imported properly") {
@@ -1182,7 +1182,9 @@ definition {
 
 			SelectFrameTop();
 
-			Button.clickImport();
+			Click.mouseDownMouseUp(
+				key_text = "Import",
+				locator1 = "Modal#ANY_BUTTON");
 		}
 
 		task ("Assert the zip imported properly") {
@@ -1228,7 +1230,9 @@ definition {
 
 			SelectFrameTop();
 
-			Button.clickImport();
+			Click.mouseDownMouseUp(
+				key_text = "Import",
+				locator1 = "Modal#ANY_BUTTON");
 		}
 
 		task ("Assert the zip imported properly") {

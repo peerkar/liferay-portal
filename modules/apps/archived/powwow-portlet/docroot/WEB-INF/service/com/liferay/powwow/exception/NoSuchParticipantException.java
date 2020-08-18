@@ -28,12 +28,12 @@ public class NoSuchParticipantException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchParticipantException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public NoSuchParticipantException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NoSuchParticipantException(Throwable throwable) {
-		super(throwable);
+	public NoSuchParticipantException(Throwable cause) {
+		super(cause);
 	}
 
 }

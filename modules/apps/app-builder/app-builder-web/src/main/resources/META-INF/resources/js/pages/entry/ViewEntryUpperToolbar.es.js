@@ -33,12 +33,9 @@ function ViewEntryUpperToolbar({
 	showButtons,
 	totalCount,
 }) {
-	const {
-		appDeploymentType,
-		basePortletURL,
-		showFormView,
-		userLanguageId,
-	} = useContext(AppContext);
+	const {appDeploymentType, basePortletURL, showFormView} = useContext(
+		AppContext
+	);
 	const permissions = usePermissions();
 
 	const changeEntryIndex = (entryIndex) => {
@@ -60,7 +57,6 @@ function ViewEntryUpperToolbar({
 	const onEdit = () => {
 		navigateToEditPage(basePortletURL, {
 			dataRecordId,
-			languageId: userLanguageId,
 			redirect: location.href,
 		});
 	};

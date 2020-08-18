@@ -46,8 +46,8 @@ public abstract class ObjectDecodeChannelInboundHandler<T>
 			try {
 				return channelRead0(channelHandlerContext, (T)object, byteBuf);
 			}
-			catch (Throwable throwable) {
-				exceptionCaught(channelHandlerContext, throwable);
+			catch (Throwable t) {
+				exceptionCaught(channelHandlerContext, t);
 			}
 		}
 
@@ -94,8 +94,8 @@ public abstract class ObjectDecodeChannelInboundHandler<T>
 			_ADDED_FIELD = ReflectionUtil.getDeclaredField(
 				ChannelHandlerAdapter.class, "added");
 		}
-		catch (Throwable throwable) {
-			throw new ExceptionInInitializerError(throwable);
+		catch (Throwable t) {
+			throw new ExceptionInInitializerError(t);
 		}
 	}
 

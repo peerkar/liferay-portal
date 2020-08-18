@@ -42,9 +42,11 @@ if (Validator.isNotNull(jspPath) || Validator.isNotNull(message)) {
 	<aui:script>
 		Liferay.Util.openToast({
 			message: '<%= HtmlUtil.escapeJS(alertMessage) %>',
+			messageType: 'html',
 			renderData: {
 				portletId: <%= portletId %>
 			},
+			title: null,
 			toastProps: {
 				autoClose: <%= timeout %>,
 				className: '<%= cssClass %>',

@@ -29,22 +29,13 @@ export default (callback) => {
 	const [{onClose}, dispatchModal] = useContext(ClayModalContext);
 
 	return (event) => {
-		const {
-			customProperties: {ddmStructureId},
-			fieldType,
-			label,
-		} = DataDefinitionUtils.getDataDefinitionField(
+		const {fieldType, label} = DataDefinitionUtils.getDataDefinitionField(
 			dataDefinition,
 			event.fieldName
 		);
-
-		let {label: fieldTypeLabel} = fieldTypes.find(({name}) => {
+		const {label: fieldTypeLabel} = fieldTypes.find(({name}) => {
 			return name === fieldType;
 		});
-
-		if (fieldType === 'fieldset' && ddmStructureId) {
-			fieldTypeLabel = Liferay.Language.get('fieldset');
-		}
 
 		return getItem(
 			`/o/data-engine/v2.0/data-definitions/${dataDefinitionId}/data-definition-field-links?fieldName=${event.fieldName}`

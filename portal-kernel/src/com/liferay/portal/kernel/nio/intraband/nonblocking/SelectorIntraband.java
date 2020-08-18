@@ -422,12 +422,11 @@ public class SelectorIntraband extends BaseIntraband {
 							" exiting gracefully on selector closure");
 				}
 			}
-			catch (Throwable throwable) {
+			catch (Throwable t) {
 				Thread currentThread = Thread.currentThread();
 
 				_log.error(
-					currentThread.getName() + " exiting exceptionally",
-					throwable);
+					currentThread.getName() + " exiting exceptionally", t);
 			}
 
 			// Flush out pending register requests to unblock their invokers,

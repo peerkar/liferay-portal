@@ -28,12 +28,12 @@ public class NoSuchEntryVersionException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchEntryVersionException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public NoSuchEntryVersionException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NoSuchEntryVersionException(Throwable throwable) {
-		super(throwable);
+	public NoSuchEntryVersionException(Throwable cause) {
+		super(cause);
 	}
 
 }

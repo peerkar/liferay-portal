@@ -62,7 +62,6 @@ public class ElseIfPoshiElement extends IfPoshiElement {
 	}
 
 	protected ElseIfPoshiElement() {
-		super(_ELEMENT_NAME);
 	}
 
 	protected ElseIfPoshiElement(Element element) {

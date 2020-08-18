@@ -26,6 +26,7 @@ import com.liferay.change.tracking.web.internal.display.BasePersistenceRegistry;
 import com.liferay.change.tracking.web.internal.display.CTClosureUtil;
 import com.liferay.change.tracking.web.internal.display.CTDisplayRendererRegistry;
 import com.liferay.petra.lang.HashUtil;
+import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.change.tracking.sql.CTSQLModeThreadLocal;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -37,7 +38,8 @@ import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.BaseModel;
-import com.liferay.portal.kernel.portlet.PortletURLUtil;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.UserTable;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -63,7 +65,6 @@ import java.util.Set;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
-import javax.portlet.RenderURL;
 import javax.portlet.ResourceURL;
 
 import javax.servlet.http.HttpServletRequest;
@@ -237,25 +238,6 @@ public class ViewChangesDisplayContext {
 				ctClosure, modelInfoMap, rootClassNameIds,
 				contextViewJSONObject)
 		).put(
-			"discardURL",
-			() -> {
-				RenderURL discardURL = _renderResponse.createRenderURL();
-
-				discardURL.setParameter(
-					"mvcRenderCommandName", "/change_lists/view_discard");
-
-				PortletURL redirect = PortletURLUtil.getCurrent(
-					_renderRequest, _renderResponse);
-
-				discardURL.setParameter("redirect", redirect.toString());
-
-				discardURL.setParameter(
-					"ctCollectionId",
-					String.valueOf(_ctCollection.getCtCollectionId()));
-
-				return discardURL.toString();
-			}
-		).put(
 			"models",
 			() -> {
 				JSONObject modelsJSONObject =
@@ -313,15 +295,22 @@ public class ViewChangesDisplayContext {
 			_themeDisplay.getPathThemeImages() + "/lexicon/icons.svg"
 		).put(
 			"typeNames",
-			DisplayContextUtil.getTypeNamesJSONObject(
-				classNameIdClassPKsMap.keySet(), _ctDisplayRendererRegistry,
-				_themeDisplay)
+			() -> {
+				JSONObject typeNamesJSONObject =
+					JSONFactoryUtil.createJSONObject();
+
+				for (long classNameId : classNameIdClassPKsMap.keySet()) {
+					String typeName = _ctDisplayRendererRegistry.getTypeName(
+						_themeDisplay.getLocale(), classNameId);
+
+					typeNamesJSONObject.put(
+						String.valueOf(classNameId), typeName);
+				}
+
+				return typeNamesJSONObject;
+			}
 		).put(
-			"userInfo",
-			DisplayContextUtil.getUserInfoJSONObject(
-				CTEntryTable.INSTANCE.ctCollectionId.eq(
-					_ctCollection.getCtCollectionId()),
-				_themeDisplay, _userLocalService)
+			"userInfo", _getUserInfoJSONObject()
 		).build();
 	}
 
@@ -426,8 +415,7 @@ public class ViewChangesDisplayContext {
 			String typeName = _ctDisplayRendererRegistry.getTypeName(
 				_themeDisplay.getLocale(), entry.getKey());
 
-			contextViewJSONObject.put(
-				typeName, JSONUtil.put("children", entry.getValue()));
+			contextViewJSONObject.put(typeName, entry.getValue());
 		}
 
 		return contextViewJSONObject;
@@ -458,6 +446,43 @@ public class ViewChangesDisplayContext {
 		return rootClassNameIds;
 	}
 
+	private JSONObject _getUserInfoJSONObject() {
+		JSONObject userInfoJSONObject = JSONFactoryUtil.createJSONObject();
+
+		List<User> users = _userLocalService.dslQuery(
+			DSLQueryFactoryUtil.select(
+				UserTable.INSTANCE
+			).from(
+				UserTable.INSTANCE
+			).innerJoinON(
+				CTEntryTable.INSTANCE,
+				CTEntryTable.INSTANCE.userId.eq(UserTable.INSTANCE.userId)
+			).where(
+				CTEntryTable.INSTANCE.ctCollectionId.eq(
+					_ctCollection.getCtCollectionId())
+			));
+
+		for (User user : users) {
+			JSONObject userJSONObject = JSONUtil.put(
+				"userName", user.getFullName());
+
+			if (user.getPortraitId() != 0) {
+				try {
+					userJSONObject.put(
+						"portraitURL", user.getPortraitURL(_themeDisplay));
+				}
+				catch (PortalException portalException) {
+					_log.error(portalException, portalException);
+				}
+			}
+
+			userInfoJSONObject.put(
+				String.valueOf(user.getUserId()), userJSONObject);
+		}
+
+		return userInfoJSONObject;
+	}
+
 	private <T extends BaseModel<T>> void _populateEntryValues(
 			Map<ModelInfoKey, ModelInfo> modelInfoMap, long modelClassNameId,
 			Set<Long> classPKs)
@@ -486,13 +511,7 @@ public class ViewChangesDisplayContext {
 						modelClassNameId, classPKs);
 				}
 
-				T model = baseModelMap.get(classPK);
-
 				modelInfo._jsonObject = JSONUtil.put(
-					"hideable",
-					_ctDisplayRendererRegistry.isHideable(
-						model, modelClassNameId)
-				).put(
 					"modelClassNameId", modelClassNameId
 				).put(
 					"modelClassPK", classPK
@@ -503,21 +522,11 @@ public class ViewChangesDisplayContext {
 					_ctDisplayRendererRegistry.getTitle(
 						CTConstants.CT_COLLECTION_ID_PRODUCTION,
 						CTSQLModeThreadLocal.CTSQLMode.DEFAULT,
-						_themeDisplay.getLocale(), model, modelClassNameId)
+						_themeDisplay.getLocale(), baseModelMap.get(classPK),
+						modelClassNameId)
 				);
 			}
 			else {
-				long ctCollectionId =
-					_ctDisplayRendererRegistry.getCtCollectionId(
-						_ctCollection, ctEntry);
-
-				CTSQLModeThreadLocal.CTSQLMode ctSQLMode =
-					_ctDisplayRendererRegistry.getCTSQLMode(
-						ctCollectionId, ctEntry);
-
-				T model = _ctDisplayRendererRegistry.fetchCTModel(
-					ctCollectionId, ctSQLMode, modelClassNameId, classPK);
-
 				Date modifiedDate = ctEntry.getModifiedDate();
 
 				modelInfo._ctEntry = true;
@@ -528,10 +537,6 @@ public class ViewChangesDisplayContext {
 					"description",
 					_ctDisplayRendererRegistry.getEntryDescription(
 						_httpServletRequest, ctEntry)
-				).put(
-					"hideable",
-					_ctDisplayRendererRegistry.isHideable(
-						model, modelClassNameId)
 				).put(
 					"modelClassNameId", ctEntry.getModelClassNameId()
 				).put(
@@ -555,8 +560,7 @@ public class ViewChangesDisplayContext {
 				).put(
 					"title",
 					_ctDisplayRendererRegistry.getTitle(
-						ctCollectionId, ctSQLMode, _themeDisplay.getLocale(),
-						model, modelClassNameId)
+						_ctCollection, ctEntry, _themeDisplay.getLocale())
 				).put(
 					"userId", ctEntry.getUserId()
 				);
@@ -571,7 +575,7 @@ public class ViewChangesDisplayContext {
 							CTConstants.CT_CHANGE_TYPE_DELETION) {
 
 						String editURL = _ctDisplayRendererRegistry.getEditURL(
-							_httpServletRequest, model, modelClassNameId);
+							_httpServletRequest, ctEntry);
 
 						if (Validator.isNotNull(editURL)) {
 							dropdownItemsJSONArray.put(

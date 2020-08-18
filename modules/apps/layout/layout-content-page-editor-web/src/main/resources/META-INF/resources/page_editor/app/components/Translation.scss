@@ -6,10 +6,6 @@
 	&__label {
 		text-transform: uppercase;
 
-		&-wrapper {
-			width: auto;
-		}
-
 		&.default {
 			border-color: $info;
 			color: $info;

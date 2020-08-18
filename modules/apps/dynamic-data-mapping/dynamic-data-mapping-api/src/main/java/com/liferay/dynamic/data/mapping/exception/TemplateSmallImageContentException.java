@@ -28,12 +28,12 @@ public class TemplateSmallImageContentException extends PortalException {
 		super(msg);
 	}
 
-	public TemplateSmallImageContentException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public TemplateSmallImageContentException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public TemplateSmallImageContentException(Throwable throwable) {
-		super(throwable);
+	public TemplateSmallImageContentException(Throwable cause) {
+		super(cause);
 	}
 
 }

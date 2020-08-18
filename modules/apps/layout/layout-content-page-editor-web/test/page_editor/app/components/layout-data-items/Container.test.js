@@ -27,7 +27,7 @@ const renderContainer = (config) => {
 				data={{}}
 				item={{
 					children: [],
-					config: {...config, styles: {}},
+					config: {...config},
 					itemId: 'containerId',
 					type: LAYOUT_DATA_ITEM_TYPES.container,
 				}}

@@ -12,7 +12,6 @@
 import ClayIcon from '@clayui/icon';
 import ClayLayout from '@clayui/layout';
 import ClaySticker from '@clayui/sticker';
-import {ClayTooltipProvider} from '@clayui/tooltip';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -62,55 +61,39 @@ function BasicInformation({
 	}).format(publishDate);
 
 	return (
-		<div className="sidebar-section">
-			<ClayLayout.ContentRow>
-				<ClayLayout.ContentCol expand>
-					<ClayTooltipProvider>
-						<span
-							className="component-title text-truncate-inline"
-							data-tooltip-align="top"
-							title={title}
-						>
-							<span className="text-truncate">{title}</span>
-						</span>
-					</ClayTooltipProvider>
-				</ClayLayout.ContentCol>
-			</ClayLayout.ContentRow>
+		<ClayLayout.ContentRow className="sidebar-section">
+			<ClayLayout.ContentCol expand>
+				<div className="component-title text-truncate-inline">
+					<span className="text-truncate">{title}</span>
+				</div>
 
-			<ClayLayout.ContentRow>
-				<ClayLayout.ContentCol expand>
-					<p className="text-secondary">
-						{Liferay.Util.sub(
-							Liferay.Language.get('published-on-x'),
-							formattedPublishDate
-						)}
-					</p>
-				</ClayLayout.ContentCol>
-			</ClayLayout.ContentRow>
+				<p className="text-secondary">
+					{Liferay.Util.sub(
+						Liferay.Language.get('published-on-x'),
+						formattedPublishDate
+					)}
+				</p>
 
-			<ClayLayout.ContentRow>
-				<ClayLayout.ContentCol expand>
-					<Author
-						authorName={authorName}
-						authorPortraitURL={authorPortraitURL}
-						authorUserId={authorUserId}
-					/>
-				</ClayLayout.ContentCol>
-			</ClayLayout.ContentRow>
-		</div>
+				<Author
+					authorName={authorName}
+					authorPortraitURL={authorPortraitURL}
+					authorUserId={authorUserId}
+				/>
+			</ClayLayout.ContentCol>
+		</ClayLayout.ContentRow>
 	);
 }
 
 Author.propTypes = {
 	authorName: PropTypes.string.isRequired,
 	authorPortraitURL: PropTypes.string.isRequired,
-	authorUserId: PropTypes.string.isRequired,
+	authorUserId: PropTypes.number.isRequired,
 };
 
 BasicInformation.propTypes = {
 	authorName: PropTypes.string.isRequired,
 	authorPortraitURL: PropTypes.string.isRequired,
-	authorUserId: PropTypes.string.isRequired,
+	authorUserId: PropTypes.number.isRequired,
 	publishDate: PropTypes.number.isRequired,
 	title: PropTypes.string.isRequired,
 };

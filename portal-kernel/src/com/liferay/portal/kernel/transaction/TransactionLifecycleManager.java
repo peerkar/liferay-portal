@@ -34,8 +34,8 @@ public class TransactionLifecycleManager {
 				transactionLifecycleListener.committed(
 					transactionAttribute, transactionStatus);
 			}
-			catch (Throwable throwable) {
-				transactionStatus.suppressLifecycleListenerThrowable(throwable);
+			catch (Throwable t) {
+				transactionStatus.suppressLifecycleListenerThrowable(t);
 			}
 		}
 	}
@@ -51,26 +51,25 @@ public class TransactionLifecycleManager {
 				transactionLifecycleListener.created(
 					transactionAttribute, transactionStatus);
 			}
-			catch (Throwable throwable) {
-				transactionStatus.suppressLifecycleListenerThrowable(throwable);
+			catch (Throwable t) {
+				transactionStatus.suppressLifecycleListenerThrowable(t);
 			}
 		}
 	}
 
 	public static void fireTransactionRollbackedEvent(
 		TransactionAttribute transactionAttribute,
-		TransactionStatus transactionStatus, Throwable throwable1) {
+		TransactionStatus transactionStatus, Throwable throwable) {
 
 		for (TransactionLifecycleListener transactionLifecycleListener :
 				_transactionLifecycleListenersReference.get()) {
 
 			try {
 				transactionLifecycleListener.rollbacked(
-					transactionAttribute, transactionStatus, throwable1);
+					transactionAttribute, transactionStatus, throwable);
 			}
-			catch (Throwable throwable2) {
-				transactionStatus.suppressLifecycleListenerThrowable(
-					throwable2);
+			catch (Throwable t) {
+				transactionStatus.suppressLifecycleListenerThrowable(t);
 			}
 		}
 	}

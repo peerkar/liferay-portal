@@ -93,17 +93,6 @@ public class CreationMenu extends HashMap<String, Object> {
 		return this;
 	}
 
-	@Override
-	public boolean isEmpty() {
-		if (_favoriteDropdownItems.isEmpty() &&
-			_primaryDropdownItems.isEmpty() && _restDropdownItems.isEmpty()) {
-
-			return true;
-		}
-
-		return super.isEmpty();
-	}
-
 	public void setCaption(String caption) {
 		put("caption", caption);
 	}

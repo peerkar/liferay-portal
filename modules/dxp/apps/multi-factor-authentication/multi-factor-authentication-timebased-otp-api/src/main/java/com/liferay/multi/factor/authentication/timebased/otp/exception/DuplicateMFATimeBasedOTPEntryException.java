@@ -28,14 +28,12 @@ public class DuplicateMFATimeBasedOTPEntryException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateMFATimeBasedOTPEntryException(
-		String msg, Throwable throwable) {
-
-		super(msg, throwable);
+	public DuplicateMFATimeBasedOTPEntryException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public DuplicateMFATimeBasedOTPEntryException(Throwable throwable) {
-		super(throwable);
+	public DuplicateMFATimeBasedOTPEntryException(Throwable cause) {
+		super(cause);
 	}
 
 }

@@ -81,8 +81,8 @@ public class LiferayLoggerAdapter
 	}
 
 	@Override
-	public void debug(String message, Throwable throwable) {
-		_log.debug(message, throwable);
+	public void debug(String message, Throwable t) {
+		_log.debug(message, t);
 	}
 
 	@Override
@@ -124,8 +124,8 @@ public class LiferayLoggerAdapter
 	}
 
 	@Override
-	public void error(String message, Throwable throwable) {
-		_log.error(message, throwable);
+	public void error(String message, Throwable t) {
+		_log.error(message, t);
 	}
 
 	@Override
@@ -167,8 +167,8 @@ public class LiferayLoggerAdapter
 	}
 
 	@Override
-	public void info(String message, Throwable throwable) {
-		_log.info(message, throwable);
+	public void info(String message, Throwable t) {
+		_log.info(message, t);
 	}
 
 	@Override
@@ -199,25 +199,25 @@ public class LiferayLoggerAdapter
 	@Override
 	public void log(
 		Marker marker, String fqcn, int level, String message,
-		Object[] arguments, Throwable throwable) {
+		Object[] arguments, Throwable t) {
 
 		FormattingTuple formattingTuple = MessageFormatter.arrayFormat(
 			message, arguments);
 
 		if (level == LocationAwareLogger.DEBUG_INT) {
-			_log.debug(formattingTuple.getMessage(), throwable);
+			_log.debug(formattingTuple.getMessage(), t);
 		}
 		else if (level == LocationAwareLogger.ERROR_INT) {
-			_log.error(formattingTuple.getMessage(), throwable);
+			_log.error(formattingTuple.getMessage(), t);
 		}
 		else if (level == LocationAwareLogger.TRACE_INT) {
-			_log.trace(formattingTuple.getMessage(), throwable);
+			_log.trace(formattingTuple.getMessage(), t);
 		}
 		else if (level == LocationAwareLogger.WARN_INT) {
-			_log.warn(formattingTuple.getMessage(), throwable);
+			_log.warn(formattingTuple.getMessage(), t);
 		}
 		else {
-			_log.info(formattingTuple.getMessage(), throwable);
+			_log.info(formattingTuple.getMessage(), t);
 		}
 	}
 
@@ -260,8 +260,8 @@ public class LiferayLoggerAdapter
 	}
 
 	@Override
-	public void trace(String message, Throwable throwable) {
-		_log.trace(message, throwable);
+	public void trace(String message, Throwable t) {
+		_log.trace(message, t);
 	}
 
 	@Override
@@ -303,8 +303,8 @@ public class LiferayLoggerAdapter
 	}
 
 	@Override
-	public void warn(String message, Throwable throwable) {
-		_log.warn(message, throwable);
+	public void warn(String message, Throwable t) {
+		_log.warn(message, t);
 	}
 
 	private final transient Log _log;

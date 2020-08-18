@@ -21,7 +21,6 @@ import com.liferay.asset.test.util.AssetTestUtil;
 import com.liferay.headless.admin.taxonomy.client.dto.v1_0.Keyword;
 import com.liferay.portal.kernel.util.StringUtil;
 
-import org.junit.Before;
 import org.junit.runner.RunWith;
 
 /**
@@ -29,13 +28,6 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Arquillian.class)
 public class KeywordResourceTest extends BaseKeywordResourceTestCase {
-
-	@Before
-	public void setUp() throws Exception {
-		super.setUp();
-
-		testGroup = testDepotEntry.getGroup();
-	}
 
 	@Override
 	protected String[] getAdditionalAssertFieldNames() {

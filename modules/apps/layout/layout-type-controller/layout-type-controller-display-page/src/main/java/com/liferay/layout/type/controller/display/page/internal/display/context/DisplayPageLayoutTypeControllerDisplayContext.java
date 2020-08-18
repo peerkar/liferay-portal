@@ -38,23 +38,20 @@ import javax.servlet.http.HttpServletRequest;
 public class DisplayPageLayoutTypeControllerDisplayContext {
 
 	public DisplayPageLayoutTypeControllerDisplayContext(
-		HttpServletRequest httpServletRequest,
-		InfoItemServiceTracker infoItemServiceTracker) {
+		HttpServletRequest httpServletRequest) {
 
 		_httpServletRequest = httpServletRequest;
-		_infoItemServiceTracker = infoItemServiceTracker;
 
 		_infoItem = httpServletRequest.getAttribute(
 			InfoDisplayWebKeys.INFO_ITEM);
 		_infoItemDetails = (InfoItemDetails)httpServletRequest.getAttribute(
 			InfoDisplayWebKeys.INFO_ITEM_DETAILS);
+		_infoItemServiceTracker =
+			(InfoItemServiceTracker)httpServletRequest.getAttribute(
+				InfoDisplayWebKeys.INFO_ITEM_SERVICE_TRACKER);
 	}
 
 	public AssetRendererFactory<?> getAssetRendererFactory() {
-		if (_infoItemDetails == null) {
-			return null;
-		}
-
 		return AssetRendererFactoryRegistryUtil.
 			getAssetRendererFactoryByClassNameId(
 				PortalUtil.getClassNameId(_infoItemDetails.getClassName()));
@@ -85,10 +82,6 @@ public class DisplayPageLayoutTypeControllerDisplayContext {
 	public boolean hasPermission(
 			PermissionChecker permissionChecker, String actionId)
 		throws Exception {
-
-		if (_infoItemDetails == null) {
-			return false;
-		}
 
 		InfoItemPermissionProvider infoItemPermissionProvider =
 			_infoItemServiceTracker.getFirstInfoItemService(

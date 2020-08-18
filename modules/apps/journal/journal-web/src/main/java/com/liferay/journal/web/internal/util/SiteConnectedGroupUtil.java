@@ -34,7 +34,7 @@ public class SiteConnectedGroupUtil {
 			PortalUtil.getCurrentAndAncestorSiteGroupIds(groupId),
 			ListUtil.toLongArray(
 				DepotEntryServiceUtil.getGroupConnectedDepotEntries(
-					groupId, QueryUtil.ALL_POS, QueryUtil.ALL_POS),
+					groupId, true, QueryUtil.ALL_POS, QueryUtil.ALL_POS),
 				DepotEntry::getGroupId));
 	}
 

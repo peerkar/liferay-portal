@@ -28,12 +28,12 @@ public class InvalidRequestException extends PortalException {
 		super(msg);
 	}
 
-	public InvalidRequestException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public InvalidRequestException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public InvalidRequestException(Throwable throwable) {
-		super(throwable);
+	public InvalidRequestException(Throwable cause) {
+		super(cause);
 	}
 
 }

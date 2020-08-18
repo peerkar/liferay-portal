@@ -42,11 +42,24 @@ for (String analyticsType : analyticsTypes) {
 
 	<c:choose>
 		<c:when test='<%= StringUtil.equalsIgnoreCase(analyticsType, "google") %>'>
-			<aui:input helpMessage="set-the-google-analytics-id-that-is-used-for-this-set-of-pages" label="google-analytics-id" name="googleAnalyticsId" type="text" value='<%= PropertiesParamUtil.getString(groupTypeSettings, request, "googleAnalyticsId") %>' />
 
-			<aui:input helpMessage="set-the-google-analytics-create-custom-options-that-are-used-for-this-set-of-pages" label="google-analytics-create-custom-configuration" name="googleAnalyticsCreateCustomConfiguration" type="textarea" value='<%= PropertiesParamUtil.getString(groupTypeSettings, request, "googleAnalyticsCreateCustomConfiguration") %>' />
+			<%
+			String googleAnalyticsId = PropertiesParamUtil.getString(groupTypeSettings, request, "googleAnalyticsId");
+			%>
 
-			<aui:input helpMessage="set-the-google-analytics-custom-options-that-are-used-for-this-set-of-pages" label="google-analytics-custom-configuration" name="googleAnalyticsCustomConfiguration" type="textarea" value='<%= PropertiesParamUtil.getString(groupTypeSettings, request, "googleAnalyticsCustomConfiguration") %>' />
+			<aui:input helpMessage="set-the-google-analytics-id-that-is-used-for-this-set-of-pages" label="google-analytics-id" name="googleAnalyticsId" type="text" value="<%= googleAnalyticsId %>" />
+
+			<%
+			String googleAnalyticsCreateCustomConfiguration = PropertiesParamUtil.getString(groupTypeSettings, request, "googleAnalyticsCreateCustomConfiguration");
+			%>
+
+			<aui:input helpMessage="set-the-google-analytics-create-custom-options-that-are-used-for-this-set-of-pages" label="google-analytics-create-custom-configuration" name="googleAnalyticsCreateCustomConfiguration" type="textarea" value="<%= googleAnalyticsCreateCustomConfiguration %>" />
+
+			<%
+			String googleAnalyticsCustomConfiguration = PropertiesParamUtil.getString(groupTypeSettings, request, "googleAnalyticsCustomConfiguration");
+			%>
+
+			<aui:input helpMessage="set-the-google-analytics-custom-options-that-are-used-for-this-set-of-pages" label="google-analytics-custom-configuration" name="googleAnalyticsCustomConfiguration" type="textarea" value="<%= googleAnalyticsCustomConfiguration %>" />
 		</c:when>
 		<c:otherwise>
 

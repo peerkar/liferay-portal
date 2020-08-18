@@ -43,20 +43,20 @@ public class CounterTransactionExecutor extends BaseTransactionExecutor {
 
 	@Override
 	public void rollback(
-			Throwable throwable1,
+			Throwable throwable,
 			TransactionAttributeAdapter transactionAttributeAdapter,
 			TransactionStatusAdapter transactionStatusAdapter)
 		throws Throwable {
 
-		if (transactionAttributeAdapter.rollbackOn(throwable1)) {
+		if (transactionAttributeAdapter.rollbackOn(throwable)) {
 			try {
 				_platformTransactionManager.rollback(
 					transactionStatusAdapter.getTransactionStatus());
 			}
-			catch (Throwable throwable2) {
-				throwable2.addSuppressed(throwable1);
+			catch (Throwable t) {
+				t.addSuppressed(throwable);
 
-				throw throwable2;
+				throw t;
 			}
 		}
 		else {
@@ -64,14 +64,14 @@ public class CounterTransactionExecutor extends BaseTransactionExecutor {
 				_platformTransactionManager.commit(
 					transactionStatusAdapter.getTransactionStatus());
 			}
-			catch (Throwable throwable2) {
-				throwable2.addSuppressed(throwable1);
+			catch (Throwable t) {
+				t.addSuppressed(throwable);
 
-				throw throwable2;
+				throw t;
 			}
 		}
 
-		throw throwable1;
+		throw throwable;
 	}
 
 	@Override

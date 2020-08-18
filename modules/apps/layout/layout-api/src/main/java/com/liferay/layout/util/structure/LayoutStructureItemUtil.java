@@ -29,7 +29,7 @@ public class LayoutStructureItemUtil {
 		if (Objects.equals(
 				itemType, LayoutDataItemTypeConstants.TYPE_COLLECTION)) {
 
-			return new CollectionStyledLayoutStructureItem(parentItemId);
+			return new CollectionLayoutStructureItem(parentItemId);
 		}
 
 		if (Objects.equals(
@@ -45,7 +45,7 @@ public class LayoutStructureItemUtil {
 		if (Objects.equals(
 				itemType, LayoutDataItemTypeConstants.TYPE_CONTAINER)) {
 
-			return new ContainerStyledLayoutStructureItem(parentItemId);
+			return new ContainerLayoutStructureItem(parentItemId);
 		}
 
 		if (Objects.equals(
@@ -57,7 +57,7 @@ public class LayoutStructureItemUtil {
 		if (Objects.equals(
 				itemType, LayoutDataItemTypeConstants.TYPE_FRAGMENT)) {
 
-			return new FragmentStyledLayoutStructureItem(parentItemId);
+			return new FragmentLayoutStructureItem(parentItemId);
 		}
 
 		if (Objects.equals(
@@ -72,7 +72,7 @@ public class LayoutStructureItemUtil {
 		}
 
 		if (Objects.equals(itemType, LayoutDataItemTypeConstants.TYPE_ROW)) {
-			return new RowStyledLayoutStructureItem(parentItemId);
+			return new RowLayoutStructureItem(parentItemId);
 		}
 
 		return null;

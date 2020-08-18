@@ -59,7 +59,7 @@ export default ({currentSection, items, question, showSectionLabel}) => (
 					/>
 				</li>
 
-				<li data-testid="has-valid-answer-badge">
+				<li>
 					<QuestionBadge
 						className={
 							question.hasValidAnswer

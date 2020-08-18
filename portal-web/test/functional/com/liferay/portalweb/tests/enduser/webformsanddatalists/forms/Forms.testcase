@@ -2719,6 +2719,18 @@ definition {
 
 		Form.closeSidebar();
 
+		FormsAdminNavigator.gotoEditField(fieldName = "Select");
+
+		Form.editFieldLabelMetal(fieldValue = "New Select");
+
+		FormFields.editOptionsRow(optionValue = "New Select 1");
+
+		FormFields.editOptionsRow(
+			optionValue = "New Select 2",
+			rowNumber = "2");
+
+		Form.closeSidebar();
+
 		FormsAdminNavigator.gotoEditField(fieldName = "Radio");
 
 		Form.editFieldLabelMetal(fieldValue = "New Radio");
@@ -2734,18 +2746,6 @@ definition {
 		FormsAdminNavigator.gotoEditField(fieldName = "Date");
 
 		Form.editFieldLabelMetal(fieldValue = "New Date");
-
-		Form.closeSidebar();
-
-		FormsAdminNavigator.gotoEditField(fieldName = "Select");
-
-		Form.editFieldLabelMetal(fieldValue = "New Select");
-
-		FormFields.editOptionsRow(optionValue = "New Select 1");
-
-		FormFields.editOptionsRow(
-			optionValue = "New Select 2",
-			rowNumber = "2");
 
 		Form.closeSidebar();
 

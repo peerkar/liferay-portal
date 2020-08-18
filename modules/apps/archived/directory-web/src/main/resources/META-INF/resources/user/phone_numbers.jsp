@@ -29,9 +29,9 @@ if (classPK > 0) {
 	personalPhones = PhoneServiceUtil.getPhones(className, classPK);
 }
 
-for (Organization organization : organizations) {
+for (int i = 0; i < organizations.size(); i++) {
 	try {
-		organizationPhones.addAll(PhoneServiceUtil.getPhones(Organization.class.getName(), organization.getOrganizationId()));
+		organizationPhones.addAll(PhoneServiceUtil.getPhones(Organization.class.getName(), organizations.get(i).getOrganizationId()));
 	}
 	catch (Exception e) {
 	}

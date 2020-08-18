@@ -98,10 +98,6 @@ public class DDMFormField implements Serializable {
 		return (LocalizedValue)_properties.get("predefinedValue");
 	}
 
-	public Map<String, Object> getProperties() {
-		return _properties;
-	}
-
 	public Object getProperty(String name) {
 		return _properties.get(name);
 	}

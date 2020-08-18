@@ -28,14 +28,12 @@ public class SegmentsExperiencePriorityException extends PortalException {
 		super(msg);
 	}
 
-	public SegmentsExperiencePriorityException(
-		String msg, Throwable throwable) {
-
-		super(msg, throwable);
+	public SegmentsExperiencePriorityException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public SegmentsExperiencePriorityException(Throwable throwable) {
-		super(throwable);
+	public SegmentsExperiencePriorityException(Throwable cause) {
+		super(cause);
 	}
 
 }

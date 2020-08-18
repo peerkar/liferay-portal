@@ -105,12 +105,11 @@ const Main = ({
 	label,
 	name,
 	onChange,
-	predefinedValue = true,
 	required,
 	showAsSwitcher = true,
 	showLabel = true,
 	spritemap,
-	value,
+	value = true,
 	...otherProps
 }) => {
 	const Toggle = showAsSwitcher ? Switcher : Checkbox;
@@ -125,7 +124,7 @@ const Main = ({
 			{...otherProps}
 		>
 			<Toggle
-				checked={value !== undefined ? value : predefinedValue}
+				checked={value}
 				disabled={disabled}
 				label={label}
 				name={name}

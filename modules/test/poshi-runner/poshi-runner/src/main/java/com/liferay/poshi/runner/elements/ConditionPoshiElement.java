@@ -50,7 +50,6 @@ public class ConditionPoshiElement extends ExecutePoshiElement {
 	}
 
 	protected ConditionPoshiElement() {
-		super(_ELEMENT_NAME);
 	}
 
 	protected ConditionPoshiElement(Element element) {

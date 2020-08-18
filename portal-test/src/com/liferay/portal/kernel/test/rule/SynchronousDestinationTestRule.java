@@ -427,8 +427,8 @@ public class SynchronousDestinationTestRule
 
 					});
 			}
-			catch (Throwable throwable) {
-				throw new RuntimeException(throwable);
+			catch (Throwable t) {
+				throw new RuntimeException(t);
 			}
 		}
 

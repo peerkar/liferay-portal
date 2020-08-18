@@ -68,10 +68,11 @@ public class LiferayQueryExplainer {
 	}
 
 	private void _explain(StringBundler sb, QueryTerm queryTerm) {
-		_print(
-			sb,
-			StringBundler.concat(
-				queryTerm.getField(), " == \"", queryTerm.getValue(), "\""));
+		String field = queryTerm.getField();
+
+		String value = queryTerm.getValue();
+
+		_print(sb, field + " == \"" + value + "\"");
 	}
 
 	private void _explain(StringBundler sb, TermQuery termQuery) {
@@ -89,9 +90,8 @@ public class LiferayQueryExplainer {
 
 		_print(
 			sb,
-			StringBundler.concat(
-				termRangeQuery.getField(), " ∈ ", openInterval, "\"", lowerTerm,
-				"\", \"", upperTerm, "\"", closeInterval));
+			termRangeQuery.getField() + " ∈ " + openInterval + "\"" +
+				lowerTerm + "\", \"" + upperTerm + "\"" + closeInterval);
 	}
 
 	private void _explain(StringBundler sb, WildcardQuery wildcardQuery) {

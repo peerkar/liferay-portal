@@ -16,7 +16,6 @@ package com.liferay.portal.vulcan.internal.graphql.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.NoSuchModelException;
 import com.liferay.portal.kernel.language.Language;
@@ -366,7 +365,7 @@ public class GraphQLServletExtender {
 
 					@Override
 					public Object invoke(
-							Object proxy, Method method, Object[] arguments)
+							Object proxy, Method method, Object[] args)
 						throws Throwable {
 
 						String methodName = method.getName();
@@ -383,10 +382,8 @@ public class GraphQLServletExtender {
 							return hashCode();
 						}
 
-						if (methodName.equals("init") &&
-							(arguments.length > 0)) {
-
-							_servletConfig = (ServletConfig)arguments[0];
+						if (methodName.equals("init") && (args.length > 0)) {
+							_servletConfig = (ServletConfig)args[0];
 
 							return null;
 						}
@@ -396,7 +393,7 @@ public class GraphQLServletExtender {
 						servlet.init(_servletConfig);
 
 						try {
-							return method.invoke(servlet, arguments);
+							return method.invoke(servlet, args);
 						}
 						catch (InvocationTargetException
 									invocationTargetException) {
@@ -564,32 +561,27 @@ public class GraphQLServletExtender {
 	private GraphQLFieldDefinition _createNodeGraphQLFieldDefinition(
 		GraphQLOutputType graphQLOutputType) {
 
-		GraphQLFieldDefinition.Builder graphQLFieldDefinitionbuilder =
+		GraphQLFieldDefinition.Builder builder =
 			GraphQLFieldDefinition.newFieldDefinition();
 
-		GraphQLArgument.Builder graphQLArgumentBuilder =
-			GraphQLArgument.newArgument();
-
-		graphQLFieldDefinitionbuilder.argument(
-			graphQLArgumentBuilder.name(
+		builder.argument(
+			GraphQLArgument.newArgument(
+			).name(
 				"dataType"
 			).type(
 				Scalars.GraphQLString
 			).build());
-
-		graphQLArgumentBuilder = GraphQLArgument.newArgument();
-
-		graphQLFieldDefinitionbuilder.argument(
-			graphQLArgumentBuilder.name(
+		builder.argument(
+			GraphQLArgument.newArgument(
+			).name(
 				"id"
 			).type(
 				Scalars.GraphQLLong
 			).build());
+		builder.name("graphQLNode");
+		builder.type(graphQLOutputType);
 
-		graphQLFieldDefinitionbuilder.name("graphQLNode");
-		graphQLFieldDefinitionbuilder.type(graphQLOutputType);
-
-		return graphQLFieldDefinitionbuilder.build();
+		return builder.build();
 	}
 
 	private GraphQLInterfaceType _createNodeGraphQLInterfaceType() {
@@ -614,13 +606,6 @@ public class GraphQLServletExtender {
 	private Object _createObject(
 			DataFetchingEnvironment dataFetchingEnvironment, Method method)
 		throws Exception {
-
-		Map<String, Object> argumentsMap =
-			dataFetchingEnvironment.getArguments();
-
-		Parameter[] parameters = method.getParameters();
-
-		Object[] arguments = new Object[parameters.length];
 
 		Object instance = null;
 
@@ -649,9 +634,11 @@ public class GraphQLServletExtender {
 				dataFetchingEnvironment.getSource());
 		}
 
-		SiteParamConverterProvider siteParamConverterProvider =
-			new SiteParamConverterProvider(
-				_depotEntryLocalService, _groupLocalService);
+		Parameter[] parameters = method.getParameters();
+
+		Map<String, Object> arguments = dataFetchingEnvironment.getArguments();
+
+		Object[] args = new Object[parameters.length];
 
 		for (int i = 0; i < parameters.length; i++) {
 			Parameter parameter = parameters[i];
@@ -667,7 +654,7 @@ public class GraphQLServletExtender {
 				parameterName = NamingKit.toGraphqlName(graphQLName);
 			}
 
-			Object argument = argumentsMap.get(parameterName);
+			Object argument = arguments.get(parameterName);
 
 			if (argument == null) {
 				if (parameter.isAnnotationPresent(NotNull.class)) {
@@ -681,23 +668,11 @@ public class GraphQLServletExtender {
 				}
 			}
 
-			if (parameterName.equals("assetLibraryId") && (argument != null)) {
-				try {
-					argument = String.valueOf(
-						siteParamConverterProvider.getDepotGroupId(
-							(String)argument,
-							CompanyThreadLocal.getCompanyId()));
-				}
-				catch (Exception exception) {
-					throw new Exception(
-						"Unable to convert asset library \"" + argument +
-							"\" to group ID",
-						exception);
-				}
-			}
-
 			if (parameterName.equals("siteKey") && (argument != null)) {
 				try {
+					SiteParamConverterProvider siteParamConverterProvider =
+						new SiteParamConverterProvider(_groupLocalService);
+
 					argument = String.valueOf(
 						siteParamConverterProvider.getGroupId(
 							CompanyThreadLocal.getCompanyId(),
@@ -712,20 +687,19 @@ public class GraphQLServletExtender {
 			}
 
 			if (_isMultipartBody(parameter)) {
+				Map<String, BinaryFile> binaryFiles = new HashMap<>();
+
 				List<Part> parts = (List<Part>)argument;
 
 				if ((parts != null) && !parts.isEmpty()) {
-					Map<String, BinaryFile> binaryFiles = HashMapBuilder.put(
-						"file",
-						() -> {
-							Part part = parts.get(0);
+					Part part = parts.get(0);
 
-							return new BinaryFile(
-								part.getContentType(),
-								MultipartUtil.getFileName(part),
-								part.getInputStream(), part.getSize());
-						}
-					).build();
+					binaryFiles.put(
+						"file",
+						new BinaryFile(
+							part.getContentType(),
+							MultipartUtil.getFileName(part),
+							part.getInputStream(), part.getSize()));
 
 					Map<String, String> values = new HashMap<>();
 
@@ -760,12 +734,12 @@ public class GraphQLServletExtender {
 				ValidationUtil.validate(argument);
 			}
 
-			arguments[i] = argument;
+			args[i] = argument;
 		}
 
-		ValidationUtil.validateArguments(instance, method, arguments);
+		ValidationUtil.validateArguments(instance, method, args);
 
-		return method.invoke(instance, arguments);
+		return method.invoke(instance, args);
 	}
 
 	private Object _createQueryInstance(
@@ -1531,9 +1505,6 @@ public class GraphQLServletExtender {
 
 	private DefaultTypeFunction _defaultTypeFunction;
 
-	@Reference
-	private DepotEntryLocalService _depotEntryLocalService;
-
 	@Reference(
 		target = "(result.class.name=com.liferay.portal.kernel.search.filter.Filter)"
 	)
@@ -1895,10 +1866,10 @@ public class GraphQLServletExtender {
 			ExceptionWhileDataFetching exceptionWhileDataFetching =
 				(ExceptionWhileDataFetching)graphQLError;
 
-			Throwable throwable = exceptionWhileDataFetching.getException();
+			Throwable exception = exceptionWhileDataFetching.getException();
 
-			if ((throwable != null) &&
-				(throwable.getCause() instanceof NoSuchModelException)) {
+			if ((exception != null) &&
+				(exception.getCause() instanceof NoSuchModelException)) {
 
 				return true;
 			}

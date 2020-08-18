@@ -12,14 +12,15 @@
 import {AppContext} from 'app-builder-web/js/AppContext.es';
 import ControlMenu from 'app-builder-web/js/components/control-menu/ControlMenu.es';
 import {Loading} from 'app-builder-web/js/components/loading/Loading.es';
-import useDataDefinition from 'app-builder-web/js/hooks/useDataDefinition.es';
 import useQuery from 'app-builder-web/js/hooks/useQuery.es';
 import {ViewDataLayoutPageValues} from 'app-builder-web/js/pages/entry/ViewEntry.es';
 import ViewEntryUpperToolbar from 'app-builder-web/js/pages/entry/ViewEntryUpperToolbar.es';
 import {addItem, getItem} from 'app-builder-web/js/utils/client.es';
-import {getLocalizedValue} from 'app-builder-web/js/utils/lang.es';
 import {errorToast} from 'app-builder-web/js/utils/toast.es';
-import {isEqualObjects} from 'app-builder-web/js/utils/utils.es';
+import {
+	getTranslatedValue,
+	isEqualObjects,
+} from 'app-builder-web/js/utils/utils.es';
 import {usePrevious} from 'frontend-js-react-web';
 import React, {useContext, useEffect, useState} from 'react';
 
@@ -32,21 +33,10 @@ export default function ViewEntry({
 		params: {entryIndex},
 	},
 }) {
-	const {appId, dataDefinitionId, dataLayoutId, dataListViewId} = useContext(
-		AppContext
-	);
+	const {appId, dataDefinitionId, dataLayoutId} = useContext(AppContext);
 	const [dataLayoutIds, setDataLayoutIds] = useState([]);
 
-	const getDataLayoutIds = ({completed, taskNames = [], tasks}) => {
-		const initialIds = [];
-
-		if (!completed) {
-			tasks = tasks.filter(({name}) => taskNames.includes(name));
-		}
-		else {
-			initialIds.push(Number(dataLayoutId));
-		}
-
+	const getDataLayoutIds = (tasks) => {
 		return tasks.reduce(
 			(dataLayoutIds, {appWorkflowDataLayoutLinks}) => [
 				...dataLayoutIds,
@@ -58,12 +48,14 @@ export default function ViewEntry({
 					[]
 				),
 			],
-			initialIds
+			[Number(dataLayoutId)]
 		);
 	};
 
-	const dataDefinition = useDataDefinition(dataDefinitionId);
-	const dataLayouts = useDataLayouts(dataLayoutIds);
+	const {dataDefinition, dataLayouts, isLoading} = useDataLayouts(
+		dataDefinitionId,
+		dataLayoutIds
+	);
 
 	const [
 		{dataRecord, isFetching, page, totalCount, workflowInfo},
@@ -90,7 +82,7 @@ export default function ViewEntry({
 	const doFetch = () => {
 		getItem(
 			`/o/data-engine/v2.0/data-definitions/${dataDefinitionId}/data-records`,
-			{...query, dataListViewId, page: entryIndex, pageSize: 1}
+			{...query, page: entryIndex, pageSize: 1}
 		)
 			.then(({items = [], ...response}) => {
 				if (items.length > 0) {
@@ -117,20 +109,18 @@ export default function ViewEntry({
 									},
 								} = items.pop();
 
+								setDataLayoutIds(getDataLayoutIds(tasks));
+
 								return getItem(
 									`/o/portal-workflow-metrics/v1.0/processes/${appWorkflowDefinitionId}/instances`,
 									{classPKs: dataRecordIds}
-								).then(({items}) => {
-									if (items.length > 0) {
+								).then((workflowResponse) => {
+									if (workflowResponse.totalCount > 0) {
 										state.workflowInfo = {
-											...items.pop(),
+											...workflowResponse.items.pop(),
 											appVersion,
 											tasks,
 										};
-
-										setDataLayoutIds(
-											getDataLayoutIds(state.workflowInfo)
-										);
 									}
 
 									setState((prevState) => ({
@@ -138,14 +128,6 @@ export default function ViewEntry({
 										...state,
 									}));
 								});
-							}
-							else {
-								setDataLayoutIds([Number(dataLayoutId)]);
-
-								setState((prevState) => ({
-									...prevState,
-									...state,
-								}));
 							}
 						})
 						.catch(() => {
@@ -193,18 +175,18 @@ export default function ViewEntry({
 				{workflowInfo && <WorkflowInfoBar {...workflowInfo} />}
 			</ViewEntryUpperToolbar>
 
-			<Loading isLoading={isFetching}>
+			<Loading isLoading={isLoading || isFetching}>
 				<div className="container">
 					<div className="justify-content-center row">
 						<div className="col-lg-8">
 							{dataRecordValues &&
 								dataLayouts.map(
 									({dataLayoutPages = [], ...dataLayout}) => (
-										<div key={dataLayout.id}>
+										<>
 											<h3>
-												{getLocalizedValue(
-													dataDefinition.defaultLanguageId,
-													dataLayout.name
+												{getTranslatedValue(
+													dataLayout,
+													'name'
 												)}
 											</h3>
 
@@ -229,7 +211,7 @@ export default function ViewEntry({
 													</div>
 												)
 											)}
-										</div>
+										</>
 									)
 								)}
 						</div>

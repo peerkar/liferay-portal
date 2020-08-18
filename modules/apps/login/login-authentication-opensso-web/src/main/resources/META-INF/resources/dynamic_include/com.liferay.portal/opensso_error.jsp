@@ -43,6 +43,7 @@ String openSSOSubjectScreenName = (String)request.getAttribute(OpenSSOWebKeys.OP
 <aui:script>
 	Liferay.Util.openToast({
 		message: '<%= HtmlUtil.escapeJS(msg) %>',
+		title: '<liferay-ui:message key="warning" />',
 		type: 'warning',
 	});
 </aui:script>

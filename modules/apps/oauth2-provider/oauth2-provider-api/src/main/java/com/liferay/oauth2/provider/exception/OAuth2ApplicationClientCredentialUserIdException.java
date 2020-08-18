@@ -58,19 +58,17 @@ public class OAuth2ApplicationClientCredentialUserIdException
 	 */
 	@Deprecated
 	public OAuth2ApplicationClientCredentialUserIdException(
-		String msg, Throwable throwable) {
+		String msg, Throwable cause) {
 
-		super(msg, throwable);
+		super(msg, cause);
 	}
 
 	/**
 	 * @deprecated As of Mueller (7.2.x)
 	 */
 	@Deprecated
-	public OAuth2ApplicationClientCredentialUserIdException(
-		Throwable throwable) {
-
-		super(throwable);
+	public OAuth2ApplicationClientCredentialUserIdException(Throwable cause) {
+		super(cause);
 	}
 
 	public long getClientCredentialUserId() {

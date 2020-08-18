@@ -26,12 +26,12 @@ public class NoSuchRepositoryEntryException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchRepositoryEntryException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public NoSuchRepositoryEntryException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NoSuchRepositoryEntryException(Throwable throwable) {
-		super(throwable);
+	public NoSuchRepositoryEntryException(Throwable cause) {
+		super(cause);
 	}
 
 }

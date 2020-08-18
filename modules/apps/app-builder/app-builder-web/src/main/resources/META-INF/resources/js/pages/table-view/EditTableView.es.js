@@ -43,7 +43,6 @@ const EditTableView = withRouter(({history}) => {
 	const [{dataDefinition, dataListView}, dispatch] = useContext(
 		EditTableViewContext
 	);
-	const [isLoading, setLoading] = useState(false);
 	const [isSidebarClosed, setSidebarClosed] = useState(false);
 	const [defaultLanguageId, setDefaultLanguageId] = useState('');
 	const [editingLanguageId, setEditingLanguageId] = useState('');
@@ -68,7 +67,7 @@ const EditTableView = withRouter(({history}) => {
 		[dispatch]
 	);
 
-	const onError = ({title}) => {
+	const onError = ({title = ''}) => {
 		errorToast(title);
 	};
 
@@ -86,14 +85,9 @@ const EditTableView = withRouter(({history}) => {
 				dataListView.name[editingLanguageId];
 		}
 
-		setLoading(true);
-
 		saveTableView(dataDefinition, dataListView)
 			.then(onSuccess)
-			.catch((error) => {
-				onError(error);
-				setLoading(false);
-			});
+			.catch((error) => onError(error));
 	};
 
 	const onAddFieldName = (fieldName, index = 0) => {
@@ -145,10 +139,11 @@ const EditTableView = withRouter(({history}) => {
 							<UpperToolbar.Group>
 								<TranslationManager
 									availableLanguageIds={dataDefinition.availableLanguageIds.reduce(
-										(languages, languageId) => ({
-											...languages,
-											[languageId]: languageId,
-										}),
+										(acc, cur) => {
+											acc[cur] = cur;
+
+											return acc;
+										},
 										{}
 									)}
 									defaultLanguageId={defaultLanguageId}
@@ -178,10 +173,7 @@ const EditTableView = withRouter(({history}) => {
 							</UpperToolbar.Button>
 
 							<UpperToolbar.Button
-								disabled={
-									isLoading ||
-									!dataListView.name[editingLanguageId]
-								}
+								disabled={!dataListView.name[editingLanguageId]}
 								onClick={onSave}
 							>
 								{Liferay.Language.get('save')}

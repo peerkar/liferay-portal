@@ -467,18 +467,18 @@ public class SourceFormatter {
 	private static CheckstyleException _getNestedCheckstyleException(
 		Exception exception) {
 
-		Throwable throwable = exception;
+		Throwable cause = exception;
 
 		while (true) {
-			if (throwable == null) {
+			if (cause == null) {
 				return null;
 			}
 
-			if (throwable instanceof CheckstyleException) {
-				return (CheckstyleException)throwable;
+			if (cause instanceof CheckstyleException) {
+				return (CheckstyleException)cause;
 			}
 
-			throwable = throwable.getCause();
+			cause = cause.getCause();
 		}
 	}
 

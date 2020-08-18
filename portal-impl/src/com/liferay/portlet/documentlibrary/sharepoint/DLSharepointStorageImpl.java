@@ -429,15 +429,17 @@ public class DLSharepointStorageImpl extends BaseSharepointStorageImpl {
 			}
 		}
 
+		Tree documentTree = new Tree();
+
 		Tree removedDocsTree = new Tree();
 		Tree failedDocsTree = new Tree();
+
+		Tree folderTree = new Tree();
 
 		Tree removedDirsTree = new Tree();
 		Tree failedDirsTree = new Tree();
 
 		if (fileEntry != null) {
-			Tree documentTree = new Tree();
-
 			try {
 				documentTree = getFileEntryTree(fileEntry, parentFolderPath);
 
@@ -454,8 +456,6 @@ public class DLSharepointStorageImpl extends BaseSharepointStorageImpl {
 			}
 		}
 		else if (folder != null) {
-			Tree folderTree = new Tree();
-
 			try {
 				folderTree = getFolderTree(folder, parentFolderPath);
 

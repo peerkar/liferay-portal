@@ -41,10 +41,10 @@ public class RepositoryReport implements Serializable {
 		}
 
 		if (pluginPackageException.getCause() != null) {
-			Throwable throwable = pluginPackageException.getCause();
+			Throwable cause = pluginPackageException.getCause();
 
-			if (Validator.isNotNull(throwable.getMessage())) {
-				sb.append(throwable.getMessage());
+			if (Validator.isNotNull(cause.getMessage())) {
+				sb.append(cause.getMessage());
 			}
 		}
 

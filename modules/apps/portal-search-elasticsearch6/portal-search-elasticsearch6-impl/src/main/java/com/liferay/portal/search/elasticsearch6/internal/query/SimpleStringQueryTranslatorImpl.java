@@ -20,9 +20,7 @@ import com.liferay.portal.search.query.Operator;
 import com.liferay.portal.search.query.SimpleStringQuery;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.elasticsearch.index.query.AbstractQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -33,6 +31,7 @@ import org.osgi.service.component.annotations.Component;
 
 /**
  * @author Michael C. Han
+ * @author Petteri Karttunen
  */
 @Component(service = SimpleStringQueryTranslator.class)
 public class SimpleStringQueryTranslatorImpl
@@ -57,20 +56,24 @@ public class SimpleStringQueryTranslatorImpl
 				simpleStringQuery.getAutoGenerateSynonymsPhraseQuery());
 		}
 
+		if (simpleStringQuery.getBoost() != null) {
+			simpleQueryStringBuilder.boost(
+				simpleStringQuery.getBoost());
+		}
+		
 		Map<String, Float> fieldBoostMap = simpleStringQuery.getFieldBoostMap();
 
 		if (MapUtil.isNotEmpty(fieldBoostMap)) {
-			Set<Map.Entry<String, Float>> entrySet = fieldBoostMap.entrySet();
-
-			Stream<Map.Entry<String, Float>> stream = entrySet.stream();
-
 			simpleQueryStringBuilder.fields(
-				stream.collect(
+				fieldBoostMap.entrySet(
+				).stream(
+				).collect(
 					Collectors.toMap(
 						Map.Entry::getKey,
 						entry -> GetterUtil.getFloat(
 							entry.getValue(),
-							AbstractQueryBuilder.DEFAULT_BOOST))));
+							AbstractQueryBuilder.DEFAULT_BOOST))
+				));
 		}
 
 		if (simpleStringQuery.getDefaultOperator() != null) {

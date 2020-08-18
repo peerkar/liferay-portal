@@ -14,6 +14,7 @@
 
 package com.liferay.gradle.plugins.node;
 
+import com.liferay.gradle.plugins.node.internal.util.FileUtil;
 import com.liferay.gradle.plugins.node.internal.util.GradleUtil;
 import com.liferay.gradle.plugins.node.internal.util.NodePluginUtil;
 import com.liferay.gradle.util.OSDetector;
@@ -169,6 +170,19 @@ public class NodeExtension {
 				return new File(
 					NodePluginUtil.getYarnDir(nodeDir),
 					"yarn-" + getYarnVersion() + ".js");
+			}
+
+		};
+
+		_useNpm = new Callable<Boolean>() {
+
+			@Override
+			public Boolean call() throws Exception {
+				if (FileUtil.exists(project, "package-lock.json")) {
+					return true;
+				}
+
+				return false;
 			}
 
 		};
@@ -341,7 +355,7 @@ public class NodeExtension {
 	private Object _npmVersion;
 	private final Project _project;
 	private Object _scriptFile;
-	private Object _useNpm = true;
+	private Object _useNpm;
 	private Object _yarnUrl;
 	private Object _yarnVersion = "1.13.0";
 

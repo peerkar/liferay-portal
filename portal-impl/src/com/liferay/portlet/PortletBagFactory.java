@@ -284,8 +284,8 @@ public class PortletBagFactory {
 		try {
 			portletClass = _classLoader.loadClass(portlet.getPortletClass());
 		}
-		catch (Throwable throwable) {
-			_log.error(throwable, throwable);
+		catch (Throwable t) {
+			_log.error(t, t);
 
 			PortletLocalServiceUtil.destroyPortlet(portlet);
 

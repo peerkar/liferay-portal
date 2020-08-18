@@ -26,12 +26,12 @@ public class SitemapChangeFrequencyException extends PortalException {
 		super(msg);
 	}
 
-	public SitemapChangeFrequencyException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public SitemapChangeFrequencyException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public SitemapChangeFrequencyException(Throwable throwable) {
-		super(throwable);
+	public SitemapChangeFrequencyException(Throwable cause) {
+		super(cause);
 	}
 
 }

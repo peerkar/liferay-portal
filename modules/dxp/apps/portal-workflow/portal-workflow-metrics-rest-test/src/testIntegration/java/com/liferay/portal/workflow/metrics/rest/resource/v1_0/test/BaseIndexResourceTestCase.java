@@ -252,7 +252,7 @@ public abstract class BaseIndexResourceTestCase {
 		}
 	}
 
-	protected void assertValid(Index index) throws Exception {
+	protected void assertValid(Index index) {
 		boolean valid = true;
 
 		for (String additionalAssertFieldName :

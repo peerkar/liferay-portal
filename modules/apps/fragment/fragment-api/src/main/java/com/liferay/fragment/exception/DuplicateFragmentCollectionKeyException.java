@@ -29,13 +29,13 @@ public class DuplicateFragmentCollectionKeyException extends PortalException {
 	}
 
 	public DuplicateFragmentCollectionKeyException(
-		String msg, Throwable throwable) {
+		String msg, Throwable cause) {
 
-		super(msg, throwable);
+		super(msg, cause);
 	}
 
-	public DuplicateFragmentCollectionKeyException(Throwable throwable) {
-		super(throwable);
+	public DuplicateFragmentCollectionKeyException(Throwable cause) {
+		super(cause);
 	}
 
 }

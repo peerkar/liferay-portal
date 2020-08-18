@@ -43,7 +43,7 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class AsahInterestTermProvider {
 
-	public String[] getInterestTerms(long companyId, String userId) {
+	public String[] getInterestTerms(String userId) {
 		String[] cachedInterestTerms = _asahInterestTermCache.getInterestTerms(
 			userId);
 
@@ -54,7 +54,7 @@ public class AsahInterestTermProvider {
 						userId);
 			}
 
-			_sendMessage(companyId, userId);
+			_sendMessage(userId);
 
 			return new String[0];
 		}
@@ -83,11 +83,10 @@ public class AsahInterestTermProvider {
 		_destinationServiceRegistration.unregister();
 	}
 
-	private void _sendMessage(long companyId, String userId) {
+	private void _sendMessage(String userId) {
 		Message message = new Message();
 
-		message.put("companyId", companyId);
-		message.put("userId", userId);
+		message.setPayload(userId);
 
 		_messageBus.sendMessage(
 			SegmentsAsahDestinationNames.INTEREST_TERMS, message);

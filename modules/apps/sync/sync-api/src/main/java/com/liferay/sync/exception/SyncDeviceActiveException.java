@@ -28,12 +28,12 @@ public class SyncDeviceActiveException extends PortalException {
 		super(msg);
 	}
 
-	public SyncDeviceActiveException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public SyncDeviceActiveException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public SyncDeviceActiveException(Throwable throwable) {
-		super(throwable);
+	public SyncDeviceActiveException(Throwable cause) {
+		super(cause);
 	}
 
 }

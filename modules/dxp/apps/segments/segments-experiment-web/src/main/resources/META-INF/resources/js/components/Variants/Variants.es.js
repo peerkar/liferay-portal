@@ -61,8 +61,7 @@ function Variants({onVariantPublish, selectedSegmentsExperienceId}) {
 			<h4 className="mb-3 mt-4 sheet-subtitle">
 				{Liferay.Language.get('variants')}
 				<ClayIcon
-					className="lexicon-icon-sm ml-1 reference-mark text-warning"
-					style={{verticalAlign: 'super'}}
+					className="ml-1 reference-mark text-warning"
 					symbol="asterisk"
 				/>
 			</h4>

@@ -297,7 +297,6 @@ public class VarPoshiElement extends PoshiElement {
 	}
 
 	protected VarPoshiElement() {
-		this(_ELEMENT_NAME);
 	}
 
 	protected VarPoshiElement(Element element) {
@@ -313,10 +312,6 @@ public class VarPoshiElement extends PoshiElement {
 		throws PoshiScriptParserException {
 
 		this(_ELEMENT_NAME, parentPoshiElement, poshiScript);
-	}
-
-	protected VarPoshiElement(String name) {
-		super(name);
 	}
 
 	protected VarPoshiElement(String name, Element element) {

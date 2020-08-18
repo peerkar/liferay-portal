@@ -120,8 +120,8 @@ public class XMLSecurityTest extends BaseSamlTestCase {
 				lol += "&lol" + (i - 1) + ";";
 			}
 
-			authnRequestXML = StringBundler.concat(
-				authnRequestXML, " <!ENTITY lol", i, " \"", lol, "\">\n");
+			authnRequestXML =
+				authnRequestXML + " <!ENTITY lol" + i + " \"" + lol + "\">\n";
 		}
 
 		authnRequestXML += "]>" + samlMessageXML;

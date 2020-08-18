@@ -143,25 +143,6 @@ public class PortalImplCanonicalURLTest {
 		_layout2 = LayoutTestUtil.addLayout(
 			_group.getGroupId(), false, nameMap, friendlyURLMap);
 
-		nameMap = HashMapBuilder.put(
-			LocaleUtil.GERMANY, _group.getName(LocaleUtil.GERMANY)
-		).put(
-			LocaleUtil.SPAIN, _group.getName(LocaleUtil.SPAIN)
-		).put(
-			LocaleUtil.US, _group.getName(LocaleUtil.US)
-		).build();
-
-		friendlyURLMap = HashMapBuilder.put(
-			LocaleUtil.GERMANY, _group.getFriendlyURL()
-		).put(
-			LocaleUtil.SPAIN, _group.getFriendlyURL()
-		).put(
-			LocaleUtil.US, _group.getFriendlyURL()
-		).build();
-
-		_layout3 = LayoutTestUtil.addLayout(
-			_group.getGroupId(), false, nameMap, friendlyURLMap);
-
 		String groupKey = PropsValues.VIRTUAL_HOSTS_DEFAULT_SITE_NAME;
 
 		if (Validator.isNull(groupKey)) {
@@ -206,13 +187,6 @@ public class PortalImplCanonicalURLTest {
 						completeURL, "_ga",
 						"2.237928582.786466685.1515402734-1365236376"),
 					themeDisplay, _layout1, false, false));
-			Assert.assertEquals(
-				completeURL,
-				_portal.getCanonicalURL(
-					_http.addParameter(
-						completeURL, "_ga",
-						"2.237928582.786466685.1515402734-1365236376"),
-					themeDisplay, _layout3, false, false));
 		}
 	}
 
@@ -639,7 +613,6 @@ public class PortalImplCanonicalURLTest {
 
 	private Layout _layout1;
 	private Layout _layout2;
-	private Layout _layout3;
 
 	@Inject
 	private LayoutLocalService _layoutLocalService;

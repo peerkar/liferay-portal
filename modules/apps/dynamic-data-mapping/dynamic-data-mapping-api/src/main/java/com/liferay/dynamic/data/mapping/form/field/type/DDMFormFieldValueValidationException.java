@@ -28,14 +28,12 @@ public class DDMFormFieldValueValidationException extends PortalException {
 		super(msg);
 	}
 
-	public DDMFormFieldValueValidationException(
-		String msg, Throwable throwable) {
-
-		super(msg, throwable);
+	public DDMFormFieldValueValidationException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public DDMFormFieldValueValidationException(Throwable throwable) {
-		super(throwable);
+	public DDMFormFieldValueValidationException(Throwable cause) {
+		super(cause);
 	}
 
 }

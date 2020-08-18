@@ -105,8 +105,8 @@ public class LayoutImportBackgroundTaskExecutor
 
 				throw exportImportIOException;
 			}
-			catch (Throwable throwable) {
-				throw new SystemException(throwable);
+			catch (Throwable t) {
+				throw new SystemException(t);
 			}
 			finally {
 				FileUtil.delete(file);

@@ -1,0 +1,40 @@
+.page-toolbar-root {
+	&.navbar {
+		border-color: $mainLighten74;
+		border-style: solid;
+		border-width: 0 0 1px;
+		font-size: 1.125rem;
+		height: 4rem;
+		left: 0;
+		position: fixed;
+		transition: left ease 0.5s, width ease 0.5s;
+		width: 100%;
+		z-index: 971;
+	}
+
+	.localized-title {
+		width: 100%;
+
+		.form-group {
+			margin-bottom: 0;
+			width: 100%;
+
+			.form-text {
+				display: none;
+			}
+		}
+
+		.input-group {
+			flex-direction: row-reverse;
+		}
+	}
+
+	.nav-item {
+		padding-left: 0.5rem;
+		padding-right: 0.5rem;
+
+		.link-outline-secondary {
+			margin-left: 0.5rem;
+		}
+	}
+}

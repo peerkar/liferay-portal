@@ -119,7 +119,7 @@ public class OrganizationResourceImpl
 		throws Exception {
 
 		return _getOrganizationsPage(
-			HashMapBuilder.put(
+			HashMapBuilder.<String, Map<String, String>>put(
 				"get",
 				addAction(
 					"VIEW", "getOrganizationOrganizationsPage",
@@ -137,7 +137,7 @@ public class OrganizationResourceImpl
 		throws Exception {
 
 		return _getOrganizationsPage(
-			HashMapBuilder.put(
+			HashMapBuilder.<String, Map<String, String>>put(
 				"create",
 				addAction(
 					"ADD_ORGANIZATION", "postOrganization",
@@ -293,7 +293,7 @@ public class OrganizationResourceImpl
 
 		return new DefaultDTOConverterContext(
 			contextAcceptLanguage.isAcceptAllLanguages(),
-			HashMapBuilder.put(
+			HashMapBuilder.<String, Map<String, String>>put(
 				"delete",
 				addAction(
 					"DELETE", "deleteOrganization",

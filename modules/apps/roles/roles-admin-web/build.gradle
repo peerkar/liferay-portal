@@ -1,3 +1,5 @@
+apply plugin: "com.liferay.lang.merger"
+
 buildCSS {
 	imports = [
 		new File(npmInstall.nodeModulesDir, "@clayui/css/src/scss")
@@ -36,4 +38,15 @@ dependencies {
 	compileOnly project(":core:petra:petra-reflect")
 	compileOnly project(":core:petra:petra-sql-dsl-api")
 	compileOnly project(":core:petra:petra-string")
+}
+
+mergeLang {
+	setting("../../segments/segments-lang/src/main/resources/content") {
+		transformKey "no-users-have-been-assigned-to-this-segment", "no-users-have-been-assigned-to-this-segment"
+	}
+
+	sourceDirs = [
+		"../../segments/segments-lang/src/main/resources/content",
+		"src/main/resources/content"
+	]
 }

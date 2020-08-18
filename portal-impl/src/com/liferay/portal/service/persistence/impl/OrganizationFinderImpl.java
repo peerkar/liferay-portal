@@ -980,10 +980,10 @@ public class OrganizationFinderImpl
 				List<Organization> organizationsTree =
 					(List<Organization>)value;
 
-				if (!organizationsTree.isEmpty()) {
-					PermissionChecker permissionChecker =
-						PermissionThreadLocal.getPermissionChecker();
+				PermissionChecker permissionChecker =
+					PermissionThreadLocal.getPermissionChecker();
 
+				if (!organizationsTree.isEmpty()) {
 					for (Organization organization : organizationsTree) {
 						StringBundler sb = new StringBundler(5);
 

@@ -30,15 +30,13 @@ public class WorkflowMetricsSLADefinitionStopNodeKeysException
 	}
 
 	public WorkflowMetricsSLADefinitionStopNodeKeysException(
-		String msg, Throwable throwable) {
+		String msg, Throwable cause) {
 
-		super(msg, throwable);
+		super(msg, cause);
 	}
 
-	public WorkflowMetricsSLADefinitionStopNodeKeysException(
-		Throwable throwable) {
-
-		super(throwable);
+	public WorkflowMetricsSLADefinitionStopNodeKeysException(Throwable cause) {
+		super(cause);
 	}
 
 }

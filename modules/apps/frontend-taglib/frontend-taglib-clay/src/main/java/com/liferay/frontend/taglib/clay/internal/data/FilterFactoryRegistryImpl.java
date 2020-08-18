@@ -56,14 +56,13 @@ public class FilterFactoryRegistryImpl implements FilterFactoryRegistry {
 	}
 
 	@Override
-	public FilterFactory getFilterFactory(String clayDataProviderKey) {
+	public FilterFactory getFilterFactory(String key) {
 		ServiceWrapper<FilterFactory> filterFactoryServiceWrapper =
-			_serviceTrackerMap.getService(clayDataProviderKey);
+			_serviceTrackerMap.getService(key);
 
 		if (filterFactoryServiceWrapper == null) {
 			if (_log.isDebugEnabled()) {
-				_log.debug(
-					"No filter factory registered for " + clayDataProviderKey);
+				_log.debug("No filter factory registered with key " + key);
 			}
 
 			return new DefaultFilterFactoryImpl();

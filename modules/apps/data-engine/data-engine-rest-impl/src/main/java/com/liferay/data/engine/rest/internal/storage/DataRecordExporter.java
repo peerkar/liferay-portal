@@ -22,7 +22,6 @@ import com.liferay.data.engine.rest.internal.dto.v2_0.util.DataRecordValuesUtil;
 import com.liferay.dynamic.data.lists.model.DDLRecordSet;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalService;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
-import com.liferay.dynamic.data.mapping.service.DDMStructureLayoutLocalService;
 import com.liferay.dynamic.data.mapping.spi.converter.SPIDDMFormRuleConverter;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -41,13 +40,11 @@ public class DataRecordExporter {
 		DataDefinitionContentTypeTracker dataDefinitionContentTypeTracker,
 		DDLRecordSetLocalService ddlRecordSetLocalService,
 		DDMFormFieldTypeServicesTracker ddmFormFieldTypeServicesTracker,
-		DDMStructureLayoutLocalService ddmStructureLayoutLocalService,
 		SPIDDMFormRuleConverter spiDDMFormRuleConverter) {
 
 		_dataDefinitionContentTypeTracker = dataDefinitionContentTypeTracker;
 		_ddlRecordSetLocalService = ddlRecordSetLocalService;
 		_ddmFormFieldTypeServicesTracker = ddmFormFieldTypeServicesTracker;
-		_ddmStructureLayoutLocalService = ddmStructureLayoutLocalService;
 		_spiDDMFormRuleConverter = spiDDMFormRuleConverter;
 	}
 
@@ -63,8 +60,7 @@ public class DataRecordExporter {
 
 		DataDefinition dataDefinition = DataDefinitionUtil.toDataDefinition(
 			_dataDefinitionContentTypeTracker, _ddmFormFieldTypeServicesTracker,
-			ddlRecordSet.getDDMStructure(), _ddmStructureLayoutLocalService,
-			_spiDDMFormRuleConverter);
+			ddlRecordSet.getDDMStructure(), _spiDDMFormRuleConverter);
 
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
@@ -96,8 +92,6 @@ public class DataRecordExporter {
 	private final DDLRecordSetLocalService _ddlRecordSetLocalService;
 	private final DDMFormFieldTypeServicesTracker
 		_ddmFormFieldTypeServicesTracker;
-	private final DDMStructureLayoutLocalService
-		_ddmStructureLayoutLocalService;
 	private final SPIDDMFormRuleConverter _spiDDMFormRuleConverter;
 
 }

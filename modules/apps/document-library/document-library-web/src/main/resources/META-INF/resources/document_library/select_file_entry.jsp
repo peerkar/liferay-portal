@@ -101,17 +101,16 @@ dlSearchContainer.setResults(foldersAndFileEntriesAndFileShortcuts);
 							<liferay-ui:search-container-column-text
 								name="name"
 							>
-								<aui:a
-									cssClass="selector-button"
-									data='<%=
-										HashMapBuilder.<String, Object>put(
-											"entryid", fileEntry.getFileEntryId()
-										).put(
-											"entryname", HtmlUtil.unescape(fileEntry.getTitle())
-										).build()
-									%>'
-									href="javascript:;"
-								>
+
+								<%
+								Map<String, Object> data = HashMapBuilder.<String, Object>put(
+									"entryid", fileEntry.getFileEntryId()
+								).put(
+									"entryname", HtmlUtil.unescape(fileEntry.getTitle())
+								).build();
+								%>
+
+								<aui:a cssClass="selector-button" data="<%= data %>" href="javascript:;">
 									<%= fileEntry.getTitle() %>
 								</aui:a>
 

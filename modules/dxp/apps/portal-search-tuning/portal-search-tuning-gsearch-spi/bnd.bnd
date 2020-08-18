@@ -1,0 +1,13 @@
+Bundle-Name: Liferay Portal Search Tuning GSearch SPI
+Bundle-SymbolicName: com.liferay.portal.search.tuning.gsearch.spi
+Bundle-Version: 1.0.0
+Export-Package:\
+	com.liferay.portal.search.tuning.gsearch.spi.aggregation,\
+	com.liferay.portal.search.tuning.gsearch.spi.aggregation.facet,\
+	com.liferay.portal.search.tuning.gsearch.spi.clause,\
+	com.liferay.portal.search.tuning.gsearch.spi.dataprovider,\
+	com.liferay.portal.search.tuning.gsearch.spi.parameter,\
+	com.liferay.portal.search.tuning.gsearch.spi.query,\
+	com.liferay.portal.search.tuning.gsearch.spi.query.postprocessor,\
+	com.liferay.portal.search.tuning.gsearch.spi.results.item,\
+	com.liferay.portal.search.tuning.gsearch.spi.suggester

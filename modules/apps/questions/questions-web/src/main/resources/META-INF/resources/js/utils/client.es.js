@@ -104,38 +104,6 @@ export const createQuestionQuery = gql`
 	}
 `;
 
-export const createSubTopicQuery = gql`
-	mutation createMessageBoardSectionMessageBoardSection(
-		$description: String
-		$parentMessageBoardSectionId: Long!
-		$title: String!
-	) {
-		createMessageBoardSectionMessageBoardSection(
-			parentMessageBoardSectionId: $parentMessageBoardSectionId
-			messageBoardSection: {description: $description, title: $title}
-		) {
-			id
-			title
-		}
-	}
-`;
-
-export const createTopicQuery = gql`
-	mutation createSiteMessageBoardSection(
-		$description: String
-		$siteKey: String!
-		$title: String!
-	) {
-		createSiteMessageBoardSection(
-			siteKey: $siteKey
-			messageBoardSection: {description: $description, title: $title}
-		) {
-			id
-			title
-		}
-	}
-`;
-
 export const createVoteMessageQuery = gql`
 	mutation createMessageBoardMessageMyRating(
 		$messageBoardMessageId: Long!
@@ -505,9 +473,6 @@ export const getThreads = (
 	) {
 		return client
 			.query({
-				context: {
-					uri: '/o/graphql?restrictFields=actions',
-				},
 				query: getSectionThreadsQuery,
 				variables: {
 					messageBoardSectionId: section.id,
@@ -546,9 +511,6 @@ export const getThreads = (
 
 	return client
 		.query({
-			context: {
-				uri: '/o/graphql?restrictFields=actions',
-			},
 			query: getThreadsQuery,
 			variables: {
 				filter,
@@ -852,7 +814,6 @@ export const getSectionsByIdQuery = gql`
 export const getSectionsQuery = gql`
 	query messageBoardSections($siteKey: String!) {
 		messageBoardSections(siteKey: $siteKey, sort: "title:desc") {
-			actions
 			items {
 				description
 				id

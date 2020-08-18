@@ -30,12 +30,12 @@ public class NoSuchRecordVersionException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchRecordVersionException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public NoSuchRecordVersionException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NoSuchRecordVersionException(Throwable throwable) {
-		super(throwable);
+	public NoSuchRecordVersionException(Throwable cause) {
+		super(cause);
 	}
 
 }

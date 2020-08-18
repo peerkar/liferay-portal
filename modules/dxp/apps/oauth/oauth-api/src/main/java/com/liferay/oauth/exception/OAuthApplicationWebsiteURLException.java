@@ -28,14 +28,12 @@ public class OAuthApplicationWebsiteURLException extends PortalException {
 		super(msg);
 	}
 
-	public OAuthApplicationWebsiteURLException(
-		String msg, Throwable throwable) {
-
-		super(msg, throwable);
+	public OAuthApplicationWebsiteURLException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public OAuthApplicationWebsiteURLException(Throwable throwable) {
-		super(throwable);
+	public OAuthApplicationWebsiteURLException(Throwable cause) {
+		super(cause);
 	}
 
 }

@@ -61,7 +61,6 @@ public class ArgPoshiElement extends PoshiElement {
 	}
 
 	protected ArgPoshiElement() {
-		super(_ELEMENT_NAME);
 	}
 
 	protected ArgPoshiElement(Element element) {

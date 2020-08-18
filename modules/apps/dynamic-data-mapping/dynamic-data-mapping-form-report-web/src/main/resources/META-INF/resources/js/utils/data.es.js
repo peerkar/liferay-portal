@@ -12,13 +12,6 @@
  * details.
  */
 
-const getColumnLabel = (column, field) => {
-	return field.columns[column] ? field.columns[column].value : undefined;
-};
-
-const removeEmptyValues = (values) =>
-	Array.isArray(values) && values.filter((value) => value);
-
 const roundPercentage = (value) => `${Math.trunc(value * 1000) / 10}%`;
 
 const sumTotalEntries = (values) =>
@@ -28,17 +21,8 @@ const toArray = (values) => values.map(({value}) => value);
 
 const toDataArray = (options, values) =>
 	Object.entries(values)
-		.map(([name, count]) => ({
-			count,
-			label: options[name] ? options[name].value : name,
-		}))
+		.map(([name, count]) => ({count, label: options[name] || name}))
 		.sort((a, b) => (a.count > b.count ? -1 : b.count > a.count ? 1 : 0));
 
 export default toDataArray;
-export {
-	getColumnLabel,
-	removeEmptyValues,
-	roundPercentage,
-	sumTotalEntries,
-	toArray,
-};
+export {roundPercentage, sumTotalEntries, toArray};

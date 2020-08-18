@@ -67,7 +67,7 @@ export default function UndoHistory() {
 				trigger={
 					<ClayButtonWithIcon
 						aria-label={Liferay.Language.get('history')}
-						aria-pressed={active}
+						className="btn-monospaced"
 						disabled={!undoHistory.length && !redoHistory.length}
 						displayType="secondary"
 						small

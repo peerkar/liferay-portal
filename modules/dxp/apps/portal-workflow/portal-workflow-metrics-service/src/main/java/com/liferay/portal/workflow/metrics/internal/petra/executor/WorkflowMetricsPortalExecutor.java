@@ -49,8 +49,8 @@ public class WorkflowMetricsPortalExecutor {
 			try {
 				unsafeRunnable.run();
 			}
-			catch (Throwable throwable) {
-				_log.error(throwable, throwable);
+			catch (Throwable t) {
+				_log.error(t, t);
 			}
 		}
 		else {
@@ -59,8 +59,8 @@ public class WorkflowMetricsPortalExecutor {
 					try {
 						unsafeRunnable.run();
 					}
-					catch (Throwable throwable) {
-						_log.error(throwable, throwable);
+					catch (Throwable t) {
+						_log.error(t, t);
 					}
 				});
 		}

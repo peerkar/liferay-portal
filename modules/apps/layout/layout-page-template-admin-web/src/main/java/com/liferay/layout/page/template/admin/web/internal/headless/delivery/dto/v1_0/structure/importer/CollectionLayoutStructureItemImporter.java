@@ -22,7 +22,7 @@ import com.liferay.info.list.provider.InfoListProvider;
 import com.liferay.info.list.provider.InfoListProviderTracker;
 import com.liferay.info.list.provider.item.selector.criterion.InfoListProviderItemSelectorReturnType;
 import com.liferay.item.selector.criteria.InfoListItemSelectorReturnType;
-import com.liferay.layout.util.structure.CollectionStyledLayoutStructureItem;
+import com.liferay.layout.util.structure.CollectionLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.petra.reflect.GenericUtil;
@@ -58,11 +58,10 @@ public class CollectionLayoutStructureItemImporter
 			Set<String> warningMessages)
 		throws Exception {
 
-		CollectionStyledLayoutStructureItem
-			collectionStyledLayoutStructureItem =
-				(CollectionStyledLayoutStructureItem)
-					layoutStructure.addCollectionLayoutStructureItem(
-						parentItemId, position);
+		CollectionLayoutStructureItem collectionLayoutStructureItem =
+			(CollectionLayoutStructureItem)
+				layoutStructure.addCollectionLayoutStructureItem(
+					parentItemId, position);
 
 		Map<String, Object> definitionMap = getDefinitionMap(
 			pageElement.getDefinition());
@@ -72,23 +71,23 @@ public class CollectionLayoutStructureItemImporter
 				(Map<String, Object>)definitionMap.get("collectionConfig");
 
 			if (collectionConfig != null) {
-				collectionStyledLayoutStructureItem.setCollectionJSONObject(
+				collectionLayoutStructureItem.setCollectionJSONObject(
 					_getCollectionConfigAsJSONObject(collectionConfig));
 			}
 
-			collectionStyledLayoutStructureItem.setListItemStyle(
+			collectionLayoutStructureItem.setListItemStyle(
 				(String)definitionMap.get("listItemStyle"));
-			collectionStyledLayoutStructureItem.setListStyle(
+			collectionLayoutStructureItem.setListStyle(
 				(String)definitionMap.get("listStyle"));
-			collectionStyledLayoutStructureItem.setNumberOfColumns(
+			collectionLayoutStructureItem.setNumberOfColumns(
 				(Integer)definitionMap.get("numberOfColumns"));
-			collectionStyledLayoutStructureItem.setNumberOfItems(
+			collectionLayoutStructureItem.setNumberOfItems(
 				(Integer)definitionMap.get("numberOfItems"));
-			collectionStyledLayoutStructureItem.setTemplateKey(
+			collectionLayoutStructureItem.setTemplateKey(
 				(String)definitionMap.get("templateKey"));
 		}
 
-		return collectionStyledLayoutStructureItem;
+		return collectionLayoutStructureItem;
 	}
 
 	@Override

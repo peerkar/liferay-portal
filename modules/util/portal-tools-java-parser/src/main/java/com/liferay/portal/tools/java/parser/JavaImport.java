@@ -33,14 +33,10 @@ public class JavaImport extends BaseJavaTerm {
 		StringBundler sb = new StringBundler();
 
 		if (_isStatic) {
-			append(
-				sb, _name, indent, prefix + "import static ", suffix,
-				NO_MAX_LINE_LENGTH);
+			append(sb, _name, indent, prefix + "import static ", suffix, -1);
 		}
 		else {
-			append(
-				sb, _name, indent, prefix + "import ", suffix,
-				NO_MAX_LINE_LENGTH);
+			append(sb, _name, indent, prefix + "import ", suffix, -1);
 		}
 
 		return sb.toString();

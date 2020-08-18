@@ -178,10 +178,9 @@ public class ClearThreadLocalUtil {
 
 			initialized = true;
 		}
-		catch (Throwable throwable) {
+		catch (Throwable t) {
 			if (_log.isWarnEnabled()) {
-				_log.warn(
-					"Failed to initialize ClearThreadLocalUtil", throwable);
+				_log.warn("Failed to initialize ClearThreadLocalUtil", t);
 			}
 		}
 

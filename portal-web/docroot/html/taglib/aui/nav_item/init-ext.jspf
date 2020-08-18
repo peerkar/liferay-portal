@@ -21,7 +21,7 @@ if (Validator.isNull(id)) {
 	id = randomNamespace;
 }
 else if (portletResponse != null) {
-	id = liferayPortletResponse.getNamespace() + id;
+	id = (PortalUtil.getLiferayPortletResponse(portletResponse)).getNamespace() + id;
 }
 
 if (useDialog && Validator.isNull(anchorId)) {
@@ -29,7 +29,7 @@ if (useDialog && Validator.isNull(anchorId)) {
 }
 
 if ((portletResponse != null) && Validator.isNotNull(anchorId)) {
-	anchorId = liferayPortletResponse.getNamespace() + anchorId;
+	anchorId = (PortalUtil.getLiferayPortletResponse(portletResponse)).getNamespace() + anchorId;
 }
 
 if (dropdown) {

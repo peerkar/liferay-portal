@@ -213,8 +213,8 @@ public class JSassCompiler implements SassCompiler {
 
 			return output;
 		}
-		catch (Throwable throwable) {
-			throw new JSassCompilerException(throwable);
+		catch (Throwable t) {
+			throw new JSassCompilerException(t);
 		}
 	}
 

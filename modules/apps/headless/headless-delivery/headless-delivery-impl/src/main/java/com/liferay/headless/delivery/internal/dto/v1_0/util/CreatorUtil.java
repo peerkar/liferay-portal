@@ -21,18 +21,12 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Portal;
 
-import java.util.Optional;
-
-import javax.ws.rs.core.UriInfo;
-
 /**
  * @author Cristina González
  */
 public class CreatorUtil {
 
-	public static Creator toCreator(
-		Portal portal, Optional<UriInfo> uriInfoOptional, User user) {
-
+	public static Creator toCreator(Portal portal, User user) {
 		if ((user == null) || user.isDefaultUser()) {
 			return null;
 		}
@@ -62,30 +56,16 @@ public class CreatorUtil {
 					});
 				setProfileURL(
 					() -> {
-						if (uriInfoOptional.map(
-								UriInfo::getQueryParameters
-							).map(
-								parameters -> parameters.getFirst(
-									"nestedFields")
-							).map(
-								fields -> fields.contains("profileURL")
-							).orElse(
-								false
-							)) {
+						Group group = user.getGroup();
 
-							Group group = user.getGroup();
+						ThemeDisplay themeDisplay = new ThemeDisplay() {
+							{
+								setPortalURL(StringPool.BLANK);
+								setSiteGroupId(group.getGroupId());
+							}
+						};
 
-							ThemeDisplay themeDisplay = new ThemeDisplay() {
-								{
-									setPortalURL(StringPool.BLANK);
-									setSiteGroupId(group.getGroupId());
-								}
-							};
-
-							return group.getDisplayURL(themeDisplay);
-						}
-
-						return null;
+						return group.getDisplayURL(themeDisplay);
 					});
 			}
 		};

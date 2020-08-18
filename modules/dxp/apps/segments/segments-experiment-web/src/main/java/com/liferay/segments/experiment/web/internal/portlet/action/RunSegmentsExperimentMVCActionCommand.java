@@ -75,8 +75,8 @@ public class RunSegmentsExperimentMVCActionCommand
 		try {
 			jsonObject = _runSegmentsExperiment(actionRequest);
 		}
-		catch (Throwable throwable) {
-			_log.error(throwable, throwable);
+		catch (Throwable t) {
+			_log.error(t, t);
 
 			HttpServletResponse httpServletResponse =
 				_portal.getHttpServletResponse(actionResponse);

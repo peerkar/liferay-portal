@@ -41,17 +41,16 @@ SelectUsersDisplayContext selectUsersDisplayContext = new SelectUsersDisplayCont
 				name="screen-name"
 				orderable="<%= true %>"
 			>
-				<aui:a
-					cssClass="selector-button"
-					data='<%=
-						HashMapBuilder.<String, Object>put(
-							"screenname", userRow.getScreenName()
-						).put(
-							"userid", userRow.getUserId()
-						).build()
-					%>'
-					href="javascript:;"
-				>
+
+				<%
+				Map<String, Object> data = HashMapBuilder.<String, Object>put(
+					"screenname", userRow.getScreenName()
+				).put(
+					"userid", userRow.getUserId()
+				).build();
+				%>
+
+				<aui:a cssClass="selector-button" data="<%= data %>" href="javascript:;">
 					<%= userRow.getScreenName() %>
 				</aui:a>
 			</liferay-ui:search-container-column-text>

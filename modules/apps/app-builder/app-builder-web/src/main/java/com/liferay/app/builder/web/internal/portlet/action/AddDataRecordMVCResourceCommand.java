@@ -23,25 +23,27 @@ import com.liferay.data.engine.rest.dto.v2_0.DataRecord;
 import com.liferay.data.engine.rest.resource.v2_0.DataRecordResource;
 import com.liferay.dynamic.data.lists.model.DDLRecord;
 import com.liferay.dynamic.data.lists.service.DDLRecordLocalService;
-import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
+import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
+import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCResourceCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.transaction.Propagation;
+import com.liferay.portal.kernel.transaction.TransactionConfig;
+import com.liferay.portal.kernel.transaction.TransactionInvokerUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
 
-import java.io.Serializable;
-
-import java.util.Optional;
-
-import javax.portlet.PortletURL;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -57,12 +59,37 @@ import org.osgi.service.component.annotations.Reference;
 	},
 	service = MVCResourceCommand.class
 )
-public class AddDataRecordMVCResourceCommand
-	extends BaseAppBuilderMVCResourceCommand<DataRecord> {
+public class AddDataRecordMVCResourceCommand extends BaseMVCResourceCommand {
 
 	@Override
-	protected Optional<DataRecord> doTransactionalCommand(
+	protected void doServeResource(
 			ResourceRequest resourceRequest, ResourceResponse resourceResponse)
+		throws Exception {
+
+		try {
+			TransactionInvokerUtil.invoke(
+				_transactionConfig,
+				() -> {
+					DataRecord dataRecord = _addDataRecord(resourceRequest);
+
+					JSONPortletResponseUtil.writeJSON(
+						resourceRequest, resourceResponse,
+						JSONUtil.put("dataRecord", dataRecord.toString()));
+
+					return null;
+				});
+		}
+		catch (Throwable throwable) {
+			_log.error(throwable, throwable);
+
+			HttpServletResponse httpServletResponse =
+				_portal.getHttpServletResponse(resourceResponse);
+
+			httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+		}
+	}
+
+	private DataRecord _addDataRecord(ResourceRequest resourceRequest)
 		throws Exception {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)resourceRequest.getAttribute(
@@ -88,16 +115,6 @@ public class AddDataRecordMVCResourceCommand
 			appBuilderAppVersion.getAppBuilderAppVersionId(),
 			dataRecord.getId());
 
-		LiferayPortletResponse liferayPortletResponse =
-			_portal.getLiferayPortletResponse(resourceResponse);
-
-		PortletURL portletURL = liferayPortletResponse.createRenderURL(
-			_portal.getPortletId(resourceRequest));
-
-		portletURL.setParameter("mvcPath", "/edit_entry.jsp");
-		portletURL.setParameter(
-			"dataRecordId", String.valueOf(dataRecord.getId()));
-
 		WorkflowHandlerRegistryUtil.startWorkflowInstance(
 			themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId(),
 			themeDisplay.getUserId(),
@@ -105,12 +122,23 @@ public class AddDataRecordMVCResourceCommand
 				AppBuilderApp.class.getName(), DDLRecord.class.getName()),
 			dataRecord.getId(),
 			_ddlRecordLocalService.getDDLRecord(dataRecord.getId()),
-			new ServiceContext(),
-			HashMapBuilder.<String, Serializable>put(
-				WorkflowConstants.CONTEXT_URL, portletURL.toString()
-			).build());
+			new ServiceContext());
 
-		return Optional.of(dataRecord);
+		return dataRecord;
+	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		AddDataRecordMVCResourceCommand.class);
+
+	private static final TransactionConfig _transactionConfig;
+
+	static {
+		TransactionConfig.Builder builder = new TransactionConfig.Builder();
+
+		builder.setPropagation(Propagation.REQUIRES_NEW);
+		builder.setRollbackForClasses(Exception.class);
+
+		_transactionConfig = builder.build();
 	}
 
 	@Reference

@@ -14,7 +14,6 @@
 
 package com.liferay.portal.search.tuning.rankings.web.internal.index.importer;
 
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
@@ -28,6 +27,7 @@ import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
 import com.liferay.portal.search.engine.adapter.search.SearchSearchResponse;
 import com.liferay.portal.search.hits.SearchHit;
 import com.liferay.portal.search.hits.SearchHits;
+import com.liferay.portal.search.index.IndexNameBuilder;
 import com.liferay.portal.search.query.Queries;
 import com.liferay.portal.search.tuning.rankings.web.internal.index.RankingIndexCreator;
 import com.liferay.portal.search.tuning.rankings.web.internal.index.RankingIndexReader;
@@ -80,13 +80,16 @@ public class SingleIndexToMultipleIndexImporterImpl
 	protected boolean addDocuments(String indexName, List<Document> documents) {
 		boolean successed = true;
 
+		RankingIndexName rankingIndexName =
+			_rankingIndexNameBuilder.getRankingIndexName(indexName);
+
 		BulkDocumentRequest bulkDocumentRequest = new BulkDocumentRequest();
 
 		documents.forEach(
 			document -> {
 				IndexDocumentRequest indexDocumentRequest =
 					new IndexDocumentRequest(
-						getRankingIndexName(indexName), document);
+						rankingIndexName.getIndexName(), document);
 
 				bulkDocumentRequest.addBulkableDocumentRequest(
 					indexDocumentRequest);
@@ -109,6 +112,8 @@ public class SingleIndexToMultipleIndexImporterImpl
 
 		stream.map(
 			Company::getCompanyId
+		).map(
+			_indexNameBuilder::getIndexName
 		).map(
 			_rankingIndexNameBuilder::getRankingIndexName
 		).filter(
@@ -141,10 +146,6 @@ public class SingleIndexToMultipleIndexImporterImpl
 		);
 	}
 
-	protected String getRankingIndexName(String indexName) {
-		return indexName + StringPool.DASH + RANKINGS_INDEX_NAME_SUFFIX;
-	}
-
 	protected void importDocuments() {
 		if (!_rankingIndexReader.isExists(SINGLE_INDEX_NAME)) {
 			return;
@@ -164,27 +165,35 @@ public class SingleIndexToMultipleIndexImporterImpl
 
 		Stream<Map.Entry<String, List<Document>>> stream = entrySet.stream();
 
-		if (stream.map(
-				entry -> addDocuments(entry.getKey(), entry.getValue())
-			).reduce(
-				true, Boolean::logicalAnd
-			)) {
+		boolean success = stream.map(
+			entry -> addDocuments(entry.getKey(), entry.getValue())
+		).reduce(
+			true, Boolean::logicalAnd
+		);
 
+		if (success) {
 			_rankingIndexCreator.delete(SINGLE_INDEX_NAME);
 		}
 	}
 
-	protected static final String RANKINGS_INDEX_NAME_SUFFIX =
-		"search-tuning-rankings";
-
 	protected static final RankingIndexName SINGLE_INDEX_NAME =
-		() -> "liferay-search-tuning-rankings";
+		new RankingIndexName() {
+
+			@Override
+			public String getIndexName() {
+				return "liferay-search-tuning-rankings";
+			}
+
+		};
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		SingleIndexToMultipleIndexImporterImpl.class);
 
 	@Reference
 	private CompanyService _companyService;
+
+	@Reference
+	private IndexNameBuilder _indexNameBuilder;
 
 	@Reference
 	private Queries _queries;

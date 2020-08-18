@@ -23,6 +23,7 @@ import {
 	UPDATE_CONFIG,
 	UPDATE_EDITING_DATA_DEFINITION_ID,
 } from '../../actions.es';
+import {getAllDataDefinitionFieldsFromAllFieldSets} from '../../utils/dataDefinition.es';
 import {
 	containsField,
 	isDataLayoutEmpty,
@@ -39,7 +40,13 @@ const ModalContent = ({
 	fieldSet,
 	onClose,
 }) => {
-	const [{appProps}] = useContext(AppContext);
+	const [
+		{
+			appProps,
+			dataDefinition: {dataDefinitionFields},
+			fieldSets,
+		},
+	] = useContext(AppContext);
 	const [childrenContext, setChildrenContext] = useState({
 		dataLayoutBuilder: null,
 		dispatch: () => {},
@@ -50,14 +57,37 @@ const ModalContent = ({
 	const {
 		dataLayoutBuilder,
 		dispatch,
-		state: {config, dataLayout},
+		state: {
+			config,
+			dataLayout,
+			dataDefinition: {
+				dataDefinitionFields: childrenDataDefinitionFields = [],
+			} = {},
+			editingLanguageId = defaultLanguageId,
+		},
 	} = childrenContext;
 
 	const {contentType} = appProps;
 
 	const availableLanguageIds = [
-		...new Set([...Object.keys(name), defaultLanguageId]),
+		...new Set([...Object.keys(name), editingLanguageId]),
 	];
+
+	const normalizeDataDefinitionFields = (dataDefinitionFields) => {
+		const fields = [];
+
+		dataDefinitionFields.forEach(
+			({fieldType, name, nestedDataDefinitionFields}) => {
+				if (fieldType === 'fieldset') {
+					return fields.push(...nestedDataDefinitionFields);
+				}
+
+				return fields.push({name});
+			}
+		);
+
+		return fields;
+	};
 
 	const changeZIndex = (zIndex) => {
 		document
@@ -94,6 +124,24 @@ const ModalContent = ({
 			setDataLayoutIsEmpty(isDataLayoutEmpty(dataLayoutPages));
 		}
 	}, [dataLayout]);
+
+	const mergedAllDataDefinitionFields = normalizeDataDefinitionFields([
+		...dataDefinitionFields,
+		...childrenDataDefinitionFields,
+		...getAllDataDefinitionFieldsFromAllFieldSets(fieldSets),
+	]);
+
+	useEffect(() => {
+		if (dataLayoutBuilder) {
+			dataLayoutBuilder.fieldNameGenerator(mergedAllDataDefinitionFields);
+		}
+	}, [dataLayoutBuilder, mergedAllDataDefinitionFields]);
+
+	useEffect(() => {
+		if (dataLayoutBuilder) {
+			dataLayoutBuilder.onEditingLanguageIdChange({editingLanguageId});
+		}
+	}, [dataLayoutBuilder, editingLanguageId]);
 
 	useEffect(() => {
 		if (dataLayoutBuilder) {
@@ -185,13 +233,13 @@ const ModalContent = ({
 							autoFocus
 							className="form-control-inline"
 							onChange={({target: {value}}) =>
-								setName({...name, [defaultLanguageId]: value})
+								setName({...name, [editingLanguageId]: value})
 							}
 							placeholder={Liferay.Language.get(
 								'untitled-fieldset'
 							)}
 							type="text"
-							value={name[defaultLanguageId]}
+							value={name[editingLanguageId]}
 						/>
 					</ClayInput.GroupItem>
 				</ClayInput.Group>
@@ -227,9 +275,9 @@ const ModalContent = ({
 	);
 };
 
-const FieldSetModal = ({isVisible, onClose: onCloseFn, ...props}) => {
-	const {observer, onClose} = useModal({
-		onClose: onCloseFn,
+const FieldSetModal = ({isVisible, onClose, ...props}) => {
+	const {observer} = useModal({
+		onClose,
 	});
 
 	if (!isVisible) {

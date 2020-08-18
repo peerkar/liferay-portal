@@ -28,12 +28,12 @@ public class DDMFormEvaluationException extends PortalException {
 		super(msg);
 	}
 
-	public DDMFormEvaluationException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public DDMFormEvaluationException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public DDMFormEvaluationException(Throwable throwable) {
-		super(throwable);
+	public DDMFormEvaluationException(Throwable cause) {
+		super(cause);
 	}
 
 	private static final long serialVersionUID = 1L;

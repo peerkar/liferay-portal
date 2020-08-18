@@ -15,13 +15,9 @@
 package com.liferay.layout.content.page.editor.web.internal.portlet.action;
 
 import com.liferay.info.field.InfoField;
-import com.liferay.info.field.InfoFieldSet;
-import com.liferay.info.field.InfoFieldSetEntry;
 import com.liferay.info.field.type.ImageInfoFieldType;
-import com.liferay.info.field.type.InfoFieldType;
 import com.liferay.info.form.InfoForm;
-import com.liferay.info.item.ClassPKInfoItemIdentifier;
-import com.liferay.info.item.InfoItemIdentifier;
+import com.liferay.info.item.InfoItemReference;
 import com.liferay.info.item.InfoItemServiceTracker;
 import com.liferay.info.item.provider.InfoItemFormProvider;
 import com.liferay.info.item.provider.InfoItemObjectProvider;
@@ -42,6 +38,7 @@ import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
@@ -106,11 +103,10 @@ public class GetInfoItemMappingFieldsMVCResourceCommand
 
 		long classPK = ParamUtil.getLong(resourceRequest, "classPK");
 
-		InfoItemIdentifier infoItemIdentifier = new ClassPKInfoItemIdentifier(
-			classPK);
+		InfoItemReference infoItemReference = new InfoItemReference(classPK);
 
 		Object infoItemObject = infoItemObjectProvider.getInfoItem(
-			infoItemIdentifier);
+			infoItemReference);
 
 		if (infoItemObject == null) {
 			JSONPortletResponseUtil.writeJSON(
@@ -123,87 +119,45 @@ public class GetInfoItemMappingFieldsMVCResourceCommand
 		ThemeDisplay themeDisplay = (ThemeDisplay)resourceRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		String fieldType = ParamUtil.getString(resourceRequest, "fieldType");
-
-		JSONArray defaultFieldSetFieldsJSONArray =
-			JSONFactoryUtil.createJSONArray();
-
-		JSONArray fieldSetsJSONArray = JSONUtil.put(
-			JSONUtil.put("fields", defaultFieldSetFieldsJSONArray));
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
 		InfoForm infoForm = infoItemFormProvider.getInfoForm(infoItemObject);
 
-		for (InfoFieldSetEntry infoFieldSetEntry :
-				infoForm.getInfoFieldSetEntries()) {
+		String fieldType = ParamUtil.getString(resourceRequest, "fieldType");
 
-			if (infoFieldSetEntry instanceof InfoField) {
-				InfoField infoField = (InfoField)infoFieldSetEntry;
+		List<InfoField> infoFields = ListUtil.filter(
+			infoForm.getAllInfoFields(), _infoFieldTypePredicate(fieldType));
 
-				InfoFieldType infoFieldType = infoField.getInfoFieldType();
-
-				if (_isFieldMappable(infoField, fieldType)) {
-					defaultFieldSetFieldsJSONArray.put(
-						JSONUtil.put(
-							"key", infoField.getName()
-						).put(
-							"label",
-							infoField.getLabel(themeDisplay.getLocale())
-						).put(
-							"type", infoFieldType.getName()
-						));
-				}
-			}
-			else if (infoFieldSetEntry instanceof InfoFieldSet) {
-				JSONArray fieldSetFieldsJSONArray =
-					JSONFactoryUtil.createJSONArray();
-
-				InfoFieldSet infoFieldSet = (InfoFieldSet)infoFieldSetEntry;
-
-				List<InfoField> infoFields = ListUtil.filter(
-					infoFieldSet.getAllInfoFields(),
-					infoField -> _isFieldMappable(infoField, fieldType));
-
-				for (InfoField infoField : infoFields) {
-					InfoFieldType infoFieldType = infoField.getInfoFieldType();
-
-					fieldSetFieldsJSONArray.put(
-						JSONUtil.put(
-							"key", infoField.getName()
-						).put(
-							"label",
-							infoField.getLabel(themeDisplay.getLocale())
-						).put(
-							"type", infoFieldType.getName()
-						));
-				}
-
-				if (fieldSetFieldsJSONArray.length() > 0) {
-					fieldSetsJSONArray.put(
-						JSONUtil.put(
-							"fields", fieldSetFieldsJSONArray
-						).put(
-							"label",
-							infoFieldSet.getLabel(themeDisplay.getLocale())
-						));
-				}
-			}
+		for (InfoField infoField : infoFields) {
+			jsonArray.put(
+				JSONUtil.put(
+					"key", infoField.getName()
+				).put(
+					"label", infoField.getLabel(themeDisplay.getLocale())
+				).put(
+					"type",
+					infoField.getInfoFieldType(
+					).getName()
+				));
 		}
 
 		JSONPortletResponseUtil.writeJSON(
-			resourceRequest, resourceResponse, fieldSetsJSONArray);
+			resourceRequest, resourceResponse, jsonArray);
 	}
 
-	private boolean _isFieldMappable(InfoField infoField, String fieldType) {
-		boolean imageInfoFieldType =
-			infoField.getInfoFieldType() instanceof ImageInfoFieldType;
+	private Predicate<InfoField> _infoFieldTypePredicate(String fieldType) {
+		return infoField -> {
+			boolean imageInfoFieldType =
+				infoField.getInfoFieldType() instanceof ImageInfoFieldType;
 
-		if (Objects.equals(fieldType, "background-image") ||
-			Objects.equals(fieldType, "image")) {
+			if (Objects.equals(fieldType, "background-image") ||
+				Objects.equals(fieldType, "image")) {
 
-			return imageInfoFieldType;
-		}
+				return imageInfoFieldType;
+			}
 
-		return !imageInfoFieldType;
+			return !imageInfoFieldType;
+		};
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

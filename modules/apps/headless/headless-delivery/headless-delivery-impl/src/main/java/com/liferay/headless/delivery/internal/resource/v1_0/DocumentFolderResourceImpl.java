@@ -19,7 +19,7 @@ import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.kernel.service.DLAppService;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
 import com.liferay.expando.kernel.service.ExpandoTableLocalService;
-import com.liferay.headless.common.spi.service.context.ServiceContextRequestUtil;
+import com.liferay.headless.common.spi.service.context.ServiceContextUtil;
 import com.liferay.headless.delivery.dto.v1_0.CustomField;
 import com.liferay.headless.delivery.dto.v1_0.DocumentFolder;
 import com.liferay.headless.delivery.internal.dto.v1_0.converter.DocumentFolderDTOConverter;
@@ -71,18 +71,6 @@ public class DocumentFolderResourceImpl
 	}
 
 	@Override
-	public Page<DocumentFolder> getAssetLibraryDocumentFoldersPage(
-			Long assetLibraryId, Boolean flatten, String search,
-			Aggregation aggregation, Filter filter, Pagination pagination,
-			Sort[] sorts)
-		throws Exception {
-
-		return getSiteDocumentFoldersPage(
-			assetLibraryId, flatten, search, aggregation, filter, pagination,
-			sorts);
-	}
-
-	@Override
 	public DocumentFolder getDocumentFolder(Long documentFolderId)
 		throws Exception {
 
@@ -98,6 +86,8 @@ public class DocumentFolderResourceImpl
 
 		Folder folder = _dlAppService.getFolder(parentDocumentFolderId);
 
+		DocumentFolder parentDocumentFolder = _toDocumentFolder(folder);
+
 		return _getDocumentFoldersPage(
 			HashMapBuilder.put(
 				"create",
@@ -112,8 +102,8 @@ public class DocumentFolderResourceImpl
 					"getDocumentFolderDocumentFoldersPage", folder.getUserId(),
 					"com.liferay.document.library", folder.getGroupId())
 			).build(),
-			folder.getFolderId(), folder.getGroupId(), flatten, search,
-			aggregation, filter, pagination, sorts);
+			parentDocumentFolder.getId(), parentDocumentFolder.getSiteId(),
+			flatten, search, aggregation, filter, pagination, sorts);
 	}
 
 	@Override
@@ -176,22 +166,16 @@ public class DocumentFolderResourceImpl
 	}
 
 	@Override
-	public DocumentFolder postAssetLibraryDocumentFolder(
-			Long assetLibraryId, DocumentFolder documentFolder)
-		throws Exception {
-
-		return postSiteDocumentFolder(assetLibraryId, documentFolder);
-	}
-
-	@Override
 	public DocumentFolder postDocumentFolderDocumentFolder(
 			Long parentDocumentFolderId, DocumentFolder documentFolder)
 		throws Exception {
 
-		Folder folder = _dlAppService.getFolder(parentDocumentFolderId);
+		DocumentFolder parentDocumentFolder = _toDocumentFolder(
+			_dlAppService.getFolder(parentDocumentFolderId));
 
 		return _addFolder(
-			folder.getGroupId(), folder.getFolderId(), documentFolder);
+			parentDocumentFolder.getSiteId(), parentDocumentFolder.getId(),
+			documentFolder);
 	}
 
 	@Override
@@ -241,18 +225,17 @@ public class DocumentFolderResourceImpl
 			_dlAppService.addFolder(
 				siteId, parentDocumentFolderId, documentFolder.getName(),
 				documentFolder.getDescription(),
-				ServiceContextRequestUtil.createServiceContext(
+				ServiceContextUtil.createServiceContext(
 					CustomFieldsUtil.toMap(
 						DLFolder.class.getName(), contextCompany.getCompanyId(),
 						documentFolder.getCustomFields(),
 						contextAcceptLanguage.getPreferredLocale()),
-					siteId, contextHttpServletRequest,
-					documentFolder.getViewableByAsString())));
+					siteId, documentFolder.getViewableByAsString())));
 	}
 
 	private Page<DocumentFolder> _getDocumentFoldersPage(
 			Map<String, Map<String, String>> actions,
-			Long parentDocumentFolderId, Long groupId, Boolean flatten,
+			Long parentDocumentFolderId, Long siteId, Boolean flatten,
 			String keywords, Aggregation aggregation, Filter filter,
 			Pagination pagination, Sort[] sorts)
 		throws Exception {
@@ -286,7 +269,7 @@ public class DocumentFolderResourceImpl
 			searchContext -> {
 				searchContext.addVulcanAggregation(aggregation);
 				searchContext.setCompanyId(contextCompany.getCompanyId());
-				searchContext.setGroupIds(new long[] {groupId});
+				searchContext.setGroupIds(new long[] {siteId});
 			},
 			sorts,
 			document -> _toDocumentFolder(
@@ -354,12 +337,12 @@ public class DocumentFolderResourceImpl
 		return _toDocumentFolder(
 			_dlAppService.updateFolder(
 				documentFolderId, name, description,
-				ServiceContextRequestUtil.createServiceContext(
+				ServiceContextUtil.createServiceContext(
 					CustomFieldsUtil.toMap(
 						DLFolder.class.getName(), contextCompany.getCompanyId(),
 						customFields,
 						contextAcceptLanguage.getPreferredLocale()),
-					0, contextHttpServletRequest, null)));
+					0, null)));
 	}
 
 	@Reference

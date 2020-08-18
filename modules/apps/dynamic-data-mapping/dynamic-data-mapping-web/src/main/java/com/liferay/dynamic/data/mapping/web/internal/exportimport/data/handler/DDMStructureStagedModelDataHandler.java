@@ -414,16 +414,8 @@ public class DDMStructureStagedModelDataHandler
 					userId, groupId, parentStructureId,
 					structure.getClassNameId(), structureKey,
 					structure.getNameMap(), structure.getDescriptionMap(),
-					ddmForm, null, structure.getStorageType(),
-					DDMStructureConstants.TYPE_DEFAULT, serviceContext);
-
-				DDMStructureVersion structureVersion =
-					importedStructure.getLatestStructureVersion();
-
-				_ddmStructureLayoutLocalService.addStructureLayout(
-					userId, groupId, structure.getClassNameId(), structureKey,
-					structureVersion.getStructureVersionId(), ddmFormLayout,
-					serviceContext);
+					ddmForm, ddmFormLayout, structure.getStorageType(),
+					structure.getType(), serviceContext);
 			}
 			else if (isModifiedStructure(existingStructure, structure)) {
 				importedStructure = _ddmStructureLocalService.updateStructure(

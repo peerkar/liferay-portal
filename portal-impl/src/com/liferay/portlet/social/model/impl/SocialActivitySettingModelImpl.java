@@ -144,9 +144,7 @@ public class SocialActivitySettingModelImpl
 	 *
 	 * @param soapModel the soap model instance to convert
 	 * @return the normal model instance
-	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
 	 */
-	@Deprecated
 	public static SocialActivitySetting toModel(
 		SocialActivitySettingSoap soapModel) {
 
@@ -174,9 +172,7 @@ public class SocialActivitySettingModelImpl
 	 *
 	 * @param soapModels the soap model instances to convert
 	 * @return the normal model instances
-	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
 	 */
-	@Deprecated
 	public static List<SocialActivitySetting> toModels(
 		SocialActivitySettingSoap[] soapModels) {
 

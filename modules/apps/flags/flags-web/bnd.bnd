@@ -1,4 +1,4 @@
 Bundle-Name: Liferay Flags Web
 Bundle-SymbolicName: com.liferay.flags.web
-Bundle-Version: 5.0.11
+Bundle-Version: 5.0.10
 Web-ContextPath: /flags-web

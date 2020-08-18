@@ -122,6 +122,8 @@ public class MembershipPolicyTestUtil {
 		String screenName = StringPool.BLANK;
 		String emailAddress =
 			"UserServiceTest." + RandomTestUtil.nextLong() + "@liferay.com";
+		long facebookId = 0;
+		String openId = StringPool.BLANK;
 		Locale locale = LocaleUtil.getDefault();
 		String firstName = "UserServiceTest";
 		String middleName = StringPool.BLANK;
@@ -139,10 +141,10 @@ public class MembershipPolicyTestUtil {
 
 		return UserServiceUtil.addUser(
 			TestPropsValues.getCompanyId(), autoPassword, password1, password2,
-			autoScreenName, screenName, emailAddress, locale, firstName,
-			middleName, lastName, prefixId, suffixId, male, birthdayMonth,
-			birthdayDay, birthdayYear, jobTitle, siteIds, organizationIds,
-			roleIds, userGroupIds, sendMail, serviceContext);
+			autoScreenName, screenName, emailAddress, facebookId, openId,
+			locale, firstName, middleName, lastName, prefixId, suffixId, male,
+			birthdayMonth, birthdayDay, birthdayYear, jobTitle, siteIds,
+			organizationIds, roleIds, userGroupIds, sendMail, serviceContext);
 	}
 
 	public static UserGroup addUserGroup() throws Exception {
@@ -173,6 +175,8 @@ public class MembershipPolicyTestUtil {
 			NumericStringRandomizerBumper.INSTANCE);
 		String emailAddress =
 			"UserServiceTest." + RandomTestUtil.nextLong() + "@liferay.com";
+		long facebookId = 0;
+		String openId = StringPool.BLANK;
 		String languageId = LocaleUtil.toLanguageId(LocaleUtil.getDefault());
 		String timeZoneId = RandomTestUtil.randomString();
 		String greeting = RandomTestUtil.randomString();
@@ -205,12 +209,13 @@ public class MembershipPolicyTestUtil {
 		UserServiceUtil.updateUser(
 			userId, oldPassword, newPassword1, newPassword2, passwordReset,
 			reminderQueryQuestion, reminderQueryAnswer, screenName,
-			emailAddress, false, null, languageId, timeZoneId, greeting,
-			comments, firstName, middleName, lastName, prefixId, suffixId, male,
-			birthdayMonth, birthdayDay, birthdayYear, smsSn, facebookSn,
-			jabberSn, skypeSn, twitterSn, jobTitle, siteIds, organizationIds,
-			roleIds, userGroupRoles, userGroupIds, addresses, emailAddresses,
-			phones, websites, announcementsDelivers, serviceContext);
+			emailAddress, facebookId, openId, false, null, languageId,
+			timeZoneId, greeting, comments, firstName, middleName, lastName,
+			prefixId, suffixId, male, birthdayMonth, birthdayDay, birthdayYear,
+			smsSn, facebookSn, jabberSn, skypeSn, twitterSn, jobTitle, siteIds,
+			organizationIds, roleIds, userGroupRoles, userGroupIds, addresses,
+			emailAddresses, phones, websites, announcementsDelivers,
+			serviceContext);
 	}
 
 	protected static Map<String, Serializable> addExpandoMap(Class<?> clazz)

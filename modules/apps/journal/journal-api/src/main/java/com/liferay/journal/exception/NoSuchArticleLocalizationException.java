@@ -28,12 +28,12 @@ public class NoSuchArticleLocalizationException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchArticleLocalizationException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public NoSuchArticleLocalizationException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NoSuchArticleLocalizationException(Throwable throwable) {
-		super(throwable);
+	public NoSuchArticleLocalizationException(Throwable cause) {
+		super(cause);
 	}
 
 }

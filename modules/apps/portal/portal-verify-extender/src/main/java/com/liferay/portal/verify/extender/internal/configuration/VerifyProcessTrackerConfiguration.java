@@ -32,10 +32,6 @@ public interface VerifyProcessTrackerConfiguration {
 	@Meta.AD(deflt = "true", name = "auto-verify", required = false)
 	public boolean autoVerify();
 
-	/**
-	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
-	 */
-	@Deprecated
 	@Meta.AD(deflt = "true", name = "index-read-only", required = false)
 	public boolean indexReadOnly();
 

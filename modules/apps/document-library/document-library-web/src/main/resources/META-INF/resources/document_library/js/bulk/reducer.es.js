@@ -22,6 +22,7 @@ const STATES = {
 const TOASTS = {
 	ERROR: {
 		message: Liferay.Language.get('an-unexpected-error-occurred'),
+		title: Liferay.Language.get('error'),
 		type: 'danger',
 	},
 	SUCCESS: {

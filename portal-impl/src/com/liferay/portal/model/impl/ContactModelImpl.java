@@ -176,9 +176,7 @@ public class ContactModelImpl
 	 *
 	 * @param soapModel the soap model instance to convert
 	 * @return the normal model instance
-	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
 	 */
-	@Deprecated
 	public static Contact toModel(ContactSoap soapModel) {
 		if (soapModel == null) {
 			return null;
@@ -224,9 +222,7 @@ public class ContactModelImpl
 	 *
 	 * @param soapModels the soap model instances to convert
 	 * @return the normal model instances
-	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
 	 */
-	@Deprecated
 	public static List<Contact> toModels(ContactSoap[] soapModels) {
 		if (soapModels == null) {
 			return null;

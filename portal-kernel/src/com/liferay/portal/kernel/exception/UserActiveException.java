@@ -26,12 +26,12 @@ public class UserActiveException extends PortalException {
 		super(msg);
 	}
 
-	public UserActiveException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public UserActiveException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public UserActiveException(Throwable throwable) {
-		super(throwable);
+	public UserActiveException(Throwable cause) {
+		super(cause);
 	}
 
 }

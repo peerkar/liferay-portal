@@ -197,13 +197,7 @@ if (organizationId > 0) {
 					<aui:option label="100" />
 				</aui:select>
 
-				<aui:input name="preferences--showTags--" type="checkbox" value="<%= showTags %>" />
-
 				<c:if test="<%= PortalUtil.isRSSFeedsEnabled() %>">
-					<div class="sheet-subtitle">
-						<liferay-ui:message key="rss-settings" />
-					</div>
-
 					<liferay-rss:rss-settings
 						delta="<%= rssDelta %>"
 						displayStyle="<%= rssDisplayStyle %>"
@@ -211,6 +205,8 @@ if (organizationId > 0) {
 						feedType="<%= rssFeedType %>"
 					/>
 				</c:if>
+
+				<aui:input name="preferences--showTags--" type="checkbox" value="<%= showTags %>" />
 			</liferay-frontend:fieldset>
 		</liferay-frontend:fieldset-group>
 	</liferay-frontend:edit-form-body>

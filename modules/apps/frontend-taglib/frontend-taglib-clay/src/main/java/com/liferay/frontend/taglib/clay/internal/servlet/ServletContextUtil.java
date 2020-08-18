@@ -15,8 +15,7 @@
 package com.liferay.frontend.taglib.clay.internal.servlet;
 
 import com.liferay.frontend.taglib.clay.data.set.ClayDataSetDisplayViewSerializer;
-import com.liferay.frontend.taglib.clay.data.set.filter.ClayDataSetFilterSerializer;
-import com.liferay.frontend.taglib.clay.servlet.taglib.DataSetDisplayTag;
+import com.liferay.frontend.taglib.clay.servlet.taglib.DatasetDisplayTag;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.theme.PortletDisplay;
@@ -27,7 +26,9 @@ import com.liferay.portal.kernel.util.WebKeys;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -39,9 +40,60 @@ public class ServletContextUtil {
 	public static final String getClayDataSetDisplaySettingsNamespace(
 		HttpServletRequest httpServletRequest, String id) {
 
+		return _servletContextUtil._getClayDataSetDisplaySettingsNamespace(
+			httpServletRequest, id);
+	}
+
+	public static final ClayDataSetDisplayViewSerializer
+		getClayDataSetDisplayViewSerializer() {
+
+		return _servletContextUtil._getClayDataSetDisplayViewSerializer();
+	}
+
+	public static final String getContextPath() {
+		return _servletContext.getContextPath();
+	}
+
+	public static final ServletContext getServletContext() {
+		return _servletContext;
+	}
+
+	@Activate
+	protected void activate() {
+		_servletContextUtil = this;
+	}
+
+	@Deactivate
+	protected void deactivate() {
+		_servletContextUtil = null;
+	}
+
+	@Reference(unbind = "-")
+	protected void setClayDataSetDisplayViewSerializer(
+		ClayDataSetDisplayViewSerializer clayDataSetDisplayViewSerializer) {
+
+		_clayDataSetDisplayViewSerializer = clayDataSetDisplayViewSerializer;
+	}
+
+	@Reference(unbind = "-")
+	protected void setPortal(Portal portal) {
+		_portal = portal;
+	}
+
+	@Reference(
+		target = "(osgi.web.symbolicname=com.liferay.frontend.taglib.clay)",
+		unbind = "-"
+	)
+	protected void setServletContext(ServletContext servletContext) {
+		_servletContext = servletContext;
+	}
+
+	private String _getClayDataSetDisplaySettingsNamespace(
+		HttpServletRequest httpServletRequest, String id) {
+
 		StringBundler sb = new StringBundler(7);
 
-		sb.append(DataSetDisplayTag.class.getName());
+		sb.append(DatasetDisplayTag.class.getName());
 		sb.append(StringPool.POUND);
 
 		ThemeDisplay themeDisplay =
@@ -63,57 +115,16 @@ public class ServletContextUtil {
 		return sb.toString();
 	}
 
-	public static final ClayDataSetDisplayViewSerializer
-		getClayDataSetDisplayViewSerializer() {
+	private ClayDataSetDisplayViewSerializer
+		_getClayDataSetDisplayViewSerializer() {
 
 		return _clayDataSetDisplayViewSerializer;
 	}
 
-	public static final ClayDataSetFilterSerializer
-		getClayDataSetFilterSerializer() {
-
-		return _clayDataSetFilterSerializer;
-	}
-
-	public static final String getContextPath() {
-		return _servletContext.getContextPath();
-	}
-
-	public static final ServletContext getServletContext() {
-		return _servletContext;
-	}
-
-	@Reference(unbind = "-")
-	protected void setClayDataSetDisplayViewSerializer(
-		ClayDataSetDisplayViewSerializer clayDataSetDisplayViewSerializer) {
-
-		_clayDataSetDisplayViewSerializer = clayDataSetDisplayViewSerializer;
-	}
-
-	@Reference(unbind = "-")
-	protected void setClayDataSetFilterSerializer(
-		ClayDataSetFilterSerializer clayDataSetFilterSerializer) {
-
-		_clayDataSetFilterSerializer = clayDataSetFilterSerializer;
-	}
-
-	@Reference(unbind = "-")
-	protected void setPortal(Portal portal) {
-		_portal = portal;
-	}
-
-	@Reference(
-		target = "(osgi.web.symbolicname=com.liferay.frontend.taglib.clay)",
-		unbind = "-"
-	)
-	protected void setServletContext(ServletContext servletContext) {
-		_servletContext = servletContext;
-	}
-
-	private static ClayDataSetDisplayViewSerializer
-		_clayDataSetDisplayViewSerializer;
-	private static ClayDataSetFilterSerializer _clayDataSetFilterSerializer;
-	private static Portal _portal;
 	private static ServletContext _servletContext;
+	private static ServletContextUtil _servletContextUtil;
+
+	private ClayDataSetDisplayViewSerializer _clayDataSetDisplayViewSerializer;
+	private Portal _portal;
 
 }

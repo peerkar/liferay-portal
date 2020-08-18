@@ -28,12 +28,12 @@ public class NoSuchNestedSetsTreeEntryException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchNestedSetsTreeEntryException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public NoSuchNestedSetsTreeEntryException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NoSuchNestedSetsTreeEntryException(Throwable throwable) {
-		super(throwable);
+	public NoSuchNestedSetsTreeEntryException(Throwable cause) {
+		super(cause);
 	}
 
 }

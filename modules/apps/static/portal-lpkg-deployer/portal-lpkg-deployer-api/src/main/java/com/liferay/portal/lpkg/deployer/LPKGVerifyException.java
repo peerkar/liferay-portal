@@ -23,12 +23,12 @@ public class LPKGVerifyException extends RuntimeException {
 		super(message);
 	}
 
-	public LPKGVerifyException(String message, Throwable throwable) {
-		super(message, throwable);
+	public LPKGVerifyException(String message, Throwable cause) {
+		super(message, cause);
 	}
 
-	public LPKGVerifyException(Throwable throwable) {
-		super(throwable);
+	public LPKGVerifyException(Throwable cause) {
+		super(cause);
 	}
 
 }

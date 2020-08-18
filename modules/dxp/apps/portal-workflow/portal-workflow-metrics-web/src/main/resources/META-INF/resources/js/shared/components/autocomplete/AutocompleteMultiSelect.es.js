@@ -22,12 +22,12 @@ import {
 import {Autocomplete} from './Autocomplete.es';
 
 const AutocompleteMultiSelect = ({
+	items,
 	fieldId = 'id',
 	fieldName = 'name',
 	id = '',
-	items,
-	onChange,
 	placeholder = Liferay.Language.get('select-or-type-an-option'),
+	onChange,
 	selectedItems = [],
 }) => {
 	const [active, setActive] = useState(false);
@@ -44,8 +44,8 @@ const AutocompleteMultiSelect = ({
 
 	const handleBlur = () => {
 		setActive(false);
-		setCurrentIndex(-1);
 		setHighlighted(false);
+		setCurrentIndex(-1);
 		setSearch('');
 	};
 
@@ -59,8 +59,8 @@ const AutocompleteMultiSelect = ({
 	);
 
 	const handleFocus = () => {
-		setActive(true);
 		setHighlighted(true);
+		setActive(true);
 	};
 
 	const handleKeyDown = useCallback(
@@ -72,20 +72,23 @@ const AutocompleteMultiSelect = ({
 
 			const item = filteredItems[currentIndex];
 
+			if (keyCode === keyTab) {
+				handleBlur();
+			}
+
+			if (keyCode === keyEnter && item) {
+				handleSelect(item);
+			}
+
+			if (keyCode === keyArrowUp && currentIndex > 0) {
+				setCurrentIndex(currentIndex - 1);
+			}
+
 			if (
 				keyCode === keyArrowDown &&
 				currentIndex < filteredItems.length - 1
 			) {
 				setCurrentIndex(currentIndex + 1);
-			}
-			else if (keyCode === keyArrowUp && currentIndex > 0) {
-				setCurrentIndex(currentIndex - 1);
-			}
-			else if (keyCode === keyEnter && item) {
-				handleSelect(item);
-			}
-			else if (keyCode === keyTab) {
-				handleBlur();
 			}
 		},
 		[currentIndex, filteredItems, handleSelect]

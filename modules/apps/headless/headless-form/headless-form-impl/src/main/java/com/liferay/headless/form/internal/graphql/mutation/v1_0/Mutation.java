@@ -23,8 +23,6 @@ import com.liferay.headless.form.resource.v1_0.FormResource;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.portal.kernel.search.Sort;
-import com.liferay.portal.kernel.service.GroupLocalService;
-import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.graphql.annotation.GraphQLField;
 import com.liferay.portal.vulcan.graphql.annotation.GraphQLName;
@@ -230,8 +228,6 @@ public class Mutation {
 		formResource.setContextHttpServletResponse(_httpServletResponse);
 		formResource.setContextUriInfo(_uriInfo);
 		formResource.setContextUser(_user);
-		formResource.setGroupLocalService(_groupLocalService);
-		formResource.setRoleLocalService(_roleLocalService);
 	}
 
 	private void _populateResourceContext(
@@ -245,8 +241,6 @@ public class Mutation {
 			_httpServletResponse);
 		formDocumentResource.setContextUriInfo(_uriInfo);
 		formDocumentResource.setContextUser(_user);
-		formDocumentResource.setGroupLocalService(_groupLocalService);
-		formDocumentResource.setRoleLocalService(_roleLocalService);
 	}
 
 	private void _populateResourceContext(FormRecordResource formRecordResource)
@@ -258,8 +252,6 @@ public class Mutation {
 		formRecordResource.setContextHttpServletResponse(_httpServletResponse);
 		formRecordResource.setContextUriInfo(_uriInfo);
 		formRecordResource.setContextUser(_user);
-		formRecordResource.setGroupLocalService(_groupLocalService);
-		formRecordResource.setRoleLocalService(_roleLocalService);
 	}
 
 	private static ComponentServiceObjects<FormResource>
@@ -271,12 +263,10 @@ public class Mutation {
 
 	private AcceptLanguage _acceptLanguage;
 	private com.liferay.portal.kernel.model.Company _company;
-	private GroupLocalService _groupLocalService;
+	private BiFunction<Object, String, Sort[]> _sortsBiFunction;
+	private com.liferay.portal.kernel.model.User _user;
 	private HttpServletRequest _httpServletRequest;
 	private HttpServletResponse _httpServletResponse;
-	private RoleLocalService _roleLocalService;
-	private BiFunction<Object, String, Sort[]> _sortsBiFunction;
 	private UriInfo _uriInfo;
-	private com.liferay.portal.kernel.model.User _user;
 
 }

@@ -15,33 +15,12 @@
 				"ROOT-CONTAINER0-ROW0"
 			],
 			"config": {
-				"styles": {
-					"backgroundImage": {
-					},
-					"borderRadius": "rounded-0",
-					"borderWidth": 0,
-					"fontFamily": "sans-serif",
-					"fontSize": "medium",
-					"fontWeight": "font-weight-normal",
-					"height": "h-auto",
-					"marginBottom": "0",
-					"marginLeft": "0",
-					"marginRight": "0",
-					"marginTop": "0",
-					"maxHeight": "none",
-					"maxWidth": "none",
-					"minHeight": "auto",
-					"minWidth": "auto",
-					"opacity": 1,
-					"overflow": "visible",
-					"paddingBottom": "0",
-					"paddingLeft": "0",
-					"paddingRight": "0",
-					"paddingTop": "0",
-					"shadow": "shadow-none",
-					"textAlign": "none",
-					"width": "w-auto"
+				"backgroundImage": {
 				},
+				"paddingBottom": 0,
+				"paddingLeft": 0,
+				"paddingRight": 0,
+				"paddingTop": 0,
 				"widthType": "fluid"
 			},
 			"itemId": "ROOT-CONTAINER0",
@@ -69,33 +48,6 @@
 					"verticalAlignment": "top"
 				},
 				"reverseOrder": false,
-				"styles": {
-					"backgroundImage": {
-					},
-					"borderRadius": "rounded-0",
-					"borderWidth": 0,
-					"fontFamily": "sans-serif",
-					"fontSize": "medium",
-					"fontWeight": "font-weight-normal",
-					"height": "h-auto",
-					"marginBottom": "0",
-					"marginLeft": "0",
-					"marginRight": "0",
-					"marginTop": "0",
-					"maxHeight": "none",
-					"maxWidth": "none",
-					"minHeight": "auto",
-					"minWidth": "auto",
-					"opacity": 1,
-					"overflow": "visible",
-					"paddingBottom": "0",
-					"paddingLeft": "0",
-					"paddingRight": "0",
-					"paddingTop": "0",
-					"shadow": "shadow-none",
-					"textAlign": "none",
-					"width": "w-auto"
-				},
 				"tablet": {
 					"modulesPerRow": 3,
 					"reverseOrder": false,
@@ -122,34 +74,7 @@
 			"children": [
 			],
 			"config": {
-				"fragmentEntryLinkId": "column-1:${TEST_PORTLET_NAME_1}",
-				"styles": {
-					"backgroundImage": {
-					},
-					"borderRadius": "rounded-0",
-					"borderWidth": 0,
-					"fontFamily": "sans-serif",
-					"fontSize": "medium",
-					"fontWeight": "font-weight-normal",
-					"height": "h-auto",
-					"marginBottom": "0",
-					"marginLeft": "0",
-					"marginRight": "0",
-					"marginTop": "0",
-					"maxHeight": "none",
-					"maxWidth": "none",
-					"minHeight": "auto",
-					"minWidth": "auto",
-					"opacity": 1,
-					"overflow": "visible",
-					"paddingBottom": "0",
-					"paddingLeft": "0",
-					"paddingRight": "0",
-					"paddingTop": "0",
-					"shadow": "shadow-none",
-					"textAlign": "none",
-					"width": "w-auto"
-				}
+				"fragmentEntryLinkId": "column-1:${TEST_PORTLET_NAME_1}"
 			},
 			"itemId": "ROOT-CONTAINER0-ROW0-COLUMN0-FRAGMENT0",
 			"parentId": "ROOT-CONTAINER0-ROW0-COLUMN0",
@@ -170,34 +95,7 @@
 			"children": [
 			],
 			"config": {
-				"fragmentEntryLinkId": "column-2:${TEST_PORTLET_NAME_2}",
-				"styles": {
-					"backgroundImage": {
-					},
-					"borderRadius": "rounded-0",
-					"borderWidth": 0,
-					"fontFamily": "sans-serif",
-					"fontSize": "medium",
-					"fontWeight": "font-weight-normal",
-					"height": "h-auto",
-					"marginBottom": "0",
-					"marginLeft": "0",
-					"marginRight": "0",
-					"marginTop": "0",
-					"maxHeight": "none",
-					"maxWidth": "none",
-					"minHeight": "auto",
-					"minWidth": "auto",
-					"opacity": 1,
-					"overflow": "visible",
-					"paddingBottom": "0",
-					"paddingLeft": "0",
-					"paddingRight": "0",
-					"paddingTop": "0",
-					"shadow": "shadow-none",
-					"textAlign": "none",
-					"width": "w-auto"
-				}
+				"fragmentEntryLinkId": "column-2:${TEST_PORTLET_NAME_2}"
 			},
 			"itemId": "ROOT-CONTAINER0-ROW0-COLUMN1-FRAGMENT0",
 			"parentId": "ROOT-CONTAINER0-ROW0-COLUMN1",
@@ -218,34 +116,7 @@
 			"children": [
 			],
 			"config": {
-				"fragmentEntryLinkId": "column-3:${TEST_PORTLET_NAME_3}",
-				"styles": {
-					"backgroundImage": {
-					},
-					"borderRadius": "rounded-0",
-					"borderWidth": 0,
-					"fontFamily": "sans-serif",
-					"fontSize": "medium",
-					"fontWeight": "font-weight-normal",
-					"height": "h-auto",
-					"marginBottom": "0",
-					"marginLeft": "0",
-					"marginRight": "0",
-					"marginTop": "0",
-					"maxHeight": "none",
-					"maxWidth": "none",
-					"minHeight": "auto",
-					"minWidth": "auto",
-					"opacity": 1,
-					"overflow": "visible",
-					"paddingBottom": "0",
-					"paddingLeft": "0",
-					"paddingRight": "0",
-					"paddingTop": "0",
-					"shadow": "shadow-none",
-					"textAlign": "none",
-					"width": "w-auto"
-				}
+				"fragmentEntryLinkId": "column-3:${TEST_PORTLET_NAME_3}"
 			},
 			"itemId": "ROOT-CONTAINER0-ROW0-COLUMN2-FRAGMENT0",
 			"parentId": "ROOT-CONTAINER0-ROW0-COLUMN2",

@@ -57,7 +57,7 @@ public class Parser {
 			return null;
 		}
 
-		List<Clause> completeClauses = new ArrayList<>();
+		List<Clause> completeList = new ArrayList<>();
 
 		for (String clause : clauses) {
 			String[] tokens = _parseDelimitedString(
@@ -148,11 +148,11 @@ public class Parser {
 				packages[packageIndex] = new Clause(
 					tokens[packageIndex], dirsFinal, attrsFinal);
 
-				completeClauses.add(packages[packageIndex]);
+				completeList.add(packages[packageIndex]);
 			}
 		}
 
-		return completeClauses.toArray(new Clause[0]);
+		return completeList.toArray(new Clause[0]);
 	}
 
 	private static String[] _parseDelimitedString(
@@ -162,7 +162,7 @@ public class Parser {
 			value = "";
 		}
 
-		List<String> strings = new ArrayList<>();
+		List<String> list = new ArrayList<>();
 
 		StringBuffer sb = new StringBuffer();
 
@@ -176,7 +176,7 @@ public class Parser {
 
 				String string = sb.toString();
 
-				strings.add(string.trim());
+				list.add(string.trim());
 
 				sb.delete(0, sb.length());
 
@@ -204,10 +204,10 @@ public class Parser {
 		string = string.trim();
 
 		if (string.length() > 0) {
-			strings.add(string);
+			list.add(string);
 		}
 
-		return (String[])strings.toArray(new String[0]);
+		return (String[])list.toArray(new String[0]);
 	}
 
 	private static final int _CHAR = 1;

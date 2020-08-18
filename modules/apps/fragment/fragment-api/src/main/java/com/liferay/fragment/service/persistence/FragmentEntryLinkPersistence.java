@@ -17,7 +17,6 @@ package com.liferay.fragment.service.persistence;
 import com.liferay.fragment.exception.NoSuchEntryLinkException;
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.portal.kernel.service.persistence.BasePersistence;
-import com.liferay.portal.kernel.service.persistence.change.tracking.CTPersistence;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -34,8 +33,7 @@ import org.osgi.annotation.versioning.ProviderType;
  */
 @ProviderType
 public interface FragmentEntryLinkPersistence
-	extends BasePersistence<FragmentEntryLink>,
-			CTPersistence<FragmentEntryLink> {
+	extends BasePersistence<FragmentEntryLink> {
 
 	/*
 	 * NOTE FOR DEVELOPERS:

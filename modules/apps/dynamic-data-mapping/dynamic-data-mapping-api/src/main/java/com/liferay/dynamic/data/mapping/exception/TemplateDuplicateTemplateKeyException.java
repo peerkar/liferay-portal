@@ -28,14 +28,12 @@ public class TemplateDuplicateTemplateKeyException extends PortalException {
 		super(msg);
 	}
 
-	public TemplateDuplicateTemplateKeyException(
-		String msg, Throwable throwable) {
-
-		super(msg, throwable);
+	public TemplateDuplicateTemplateKeyException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public TemplateDuplicateTemplateKeyException(Throwable throwable) {
-		super(throwable);
+	public TemplateDuplicateTemplateKeyException(Throwable cause) {
+		super(cause);
 	}
 
 }

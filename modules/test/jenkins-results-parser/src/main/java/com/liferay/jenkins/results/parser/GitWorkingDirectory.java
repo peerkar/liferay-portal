@@ -1177,10 +1177,10 @@ public class GitWorkingDirectory {
 
 			System.out.println(sb);
 		}
-		catch (Throwable throwable) {
+		catch (Throwable t) {
 			System.out.println("Unable to parse git remotes\n" + standardOut);
 
-			throw throwable;
+			throw t;
 		}
 
 		return _gitRemotes;

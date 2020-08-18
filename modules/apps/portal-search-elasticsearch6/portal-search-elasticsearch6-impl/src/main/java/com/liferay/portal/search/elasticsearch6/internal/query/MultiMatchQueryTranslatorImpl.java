@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.query.MultiMatchQuery;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
@@ -30,6 +31,7 @@ import org.osgi.service.component.annotations.Component;
 
 /**
  * @author Michael C. Han
+ * @author Petteri Karttunen
  */
 @Component(service = MultiMatchQueryTranslator.class)
 public class MultiMatchQueryTranslatorImpl
@@ -37,11 +39,18 @@ public class MultiMatchQueryTranslatorImpl
 
 	@Override
 	public QueryBuilder translate(MultiMatchQuery multiMatchQuery) {
+		Set<String> fields = multiMatchQuery.getFields();
+
 		MultiMatchQueryBuilder multiMatchQueryBuilder =
-			QueryBuilders.multiMatchQuery(multiMatchQuery.getValue());
+			QueryBuilders.multiMatchQuery(
+				multiMatchQuery.getValue(), fields.toArray(new String[0]));
 
 		if (Validator.isNotNull(multiMatchQuery.getAnalyzer())) {
 			multiMatchQueryBuilder.analyzer(multiMatchQuery.getAnalyzer());
+		}
+
+		if (multiMatchQuery.getBoost() !=  null) {
+			multiMatchQueryBuilder.boost(multiMatchQuery.getBoost());
 		}
 
 		if (multiMatchQuery.getCutOffFrequency() != null) {
@@ -51,17 +60,7 @@ public class MultiMatchQueryTranslatorImpl
 
 		Map<String, Float> fieldsBoosts = multiMatchQuery.getFieldsBoosts();
 
-		for (Map.Entry<String, Float> entry : fieldsBoosts.entrySet()) {
-			Float boost = entry.getValue();
-			String field = entry.getKey();
-
-			if (boost == null) {
-				multiMatchQueryBuilder.field(field);
-			}
-			else {
-				multiMatchQueryBuilder.field(field, boost);
-			}
-		}
+		fieldsBoosts.forEach(multiMatchQueryBuilder::field);
 
 		if (multiMatchQuery.getFuzziness() != null) {
 			multiMatchQueryBuilder.fuzziness(

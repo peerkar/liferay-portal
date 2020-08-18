@@ -28,12 +28,12 @@ public class NoSuchRelationException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchRelationException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public NoSuchRelationException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NoSuchRelationException(Throwable throwable) {
-		super(throwable);
+	public NoSuchRelationException(Throwable cause) {
+		super(cause);
 	}
 
 }

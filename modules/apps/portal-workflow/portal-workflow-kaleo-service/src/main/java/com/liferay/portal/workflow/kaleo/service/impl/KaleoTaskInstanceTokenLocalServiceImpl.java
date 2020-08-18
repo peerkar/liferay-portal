@@ -923,7 +923,6 @@ public class KaleoTaskInstanceTokenLocalServiceImpl
 		searchContext.setAttributes(searchAttributes);
 		searchContext.setCompanyId(serviceContext.getCompanyId());
 		searchContext.setEnd(end);
-		searchContext.setGroupIds(new long[] {-1L});
 		searchContext.setStart(start);
 
 		if (orderByComparator != null) {

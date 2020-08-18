@@ -571,10 +571,9 @@ public class LocalProcessExecutorTest {
 			Assert.fail();
 		}
 		catch (ExecutionException executionException) {
-			Throwable throwable = executionException.getCause();
+			Throwable cause = executionException.getCause();
 
-			Assert.assertSame(
-				ClassNotFoundException.class, throwable.getClass());
+			Assert.assertSame(ClassNotFoundException.class, cause.getClass());
 		}
 
 		Assert.assertEquals(processLogs.toString(), 1, processLogs.size());
@@ -612,17 +611,16 @@ public class LocalProcessExecutorTest {
 			Assert.fail();
 		}
 		catch (ExecutionException executionException) {
-			Throwable throwable = executionException.getCause();
+			Throwable cause = executionException.getCause();
 
-			Assert.assertTrue(throwable instanceof ProcessException);
+			Assert.assertTrue(cause instanceof ProcessException);
 
 			Assert.assertEquals(
-				"Corrupted object input stream", throwable.getMessage());
+				"Corrupted object input stream", cause.getMessage());
 
-			throwable = throwable.getCause();
+			cause = cause.getCause();
 
-			Assert.assertSame(
-				StreamCorruptedException.class, throwable.getClass());
+			Assert.assertSame(StreamCorruptedException.class, cause.getClass());
 		}
 
 		Assert.assertFalse(future.isCancelled());
@@ -1060,14 +1058,13 @@ public class LocalProcessExecutorTest {
 			Assert.fail();
 		}
 		catch (ExecutionException executionException) {
-			Throwable throwable = executionException.getCause();
+			Throwable cause = executionException.getCause();
 
-			Assert.assertSame(ProcessException.class, throwable.getClass());
+			Assert.assertSame(ProcessException.class, cause.getClass());
 
-			throwable = throwable.getCause();
+			cause = cause.getCause();
 
-			Assert.assertSame(
-				NotSerializableException.class, throwable.getClass());
+			Assert.assertSame(NotSerializableException.class, cause.getClass());
 
 			Assert.assertEquals(processLogs.toString(), 1, processLogs.size());
 
@@ -1076,15 +1073,13 @@ public class LocalProcessExecutorTest {
 			Assert.assertEquals(
 				"Caught a write aborted exception", processLog.getMessage());
 
-			throwable = processLog.getThrowable();
+			cause = processLog.getThrowable();
 
-			Assert.assertSame(
-				WriteAbortedException.class, throwable.getClass());
+			Assert.assertSame(WriteAbortedException.class, cause.getClass());
 
-			throwable = throwable.getCause();
+			cause = cause.getCause();
 
-			Assert.assertSame(
-				NotSerializableException.class, throwable.getClass());
+			Assert.assertSame(NotSerializableException.class, cause.getClass());
 		}
 	}
 

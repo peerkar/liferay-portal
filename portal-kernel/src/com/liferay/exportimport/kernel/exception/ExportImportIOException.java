@@ -60,14 +60,14 @@ public class ExportImportIOException extends PortalException {
 		_className = className;
 	}
 
-	public ExportImportIOException(String className, Throwable throwable) {
-		super(throwable);
+	public ExportImportIOException(String className, Throwable cause) {
+		super(cause);
 
 		_className = className;
 	}
 
-	public ExportImportIOException(Throwable throwable) {
-		super(throwable);
+	public ExportImportIOException(Throwable cause) {
+		super(cause);
 	}
 
 	public String getChecksum() {

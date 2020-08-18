@@ -573,21 +573,21 @@ public abstract class BaseKBPortlet extends MVCPortlet {
 				WebKeys.UPLOAD_EXCEPTION);
 
 		if (uploadException != null) {
-			Throwable throwable = uploadException.getCause();
+			Throwable cause = uploadException.getCause();
 
 			if (uploadException.isExceededFileSizeLimit()) {
-				throw new FileSizeException(throwable);
+				throw new FileSizeException(cause);
 			}
 
 			if (uploadException.isExceededLiferayFileItemSizeLimit()) {
-				throw new LiferayFileItemException(throwable);
+				throw new LiferayFileItemException(cause);
 			}
 
 			if (uploadException.isExceededUploadRequestSizeLimit()) {
-				throw new UploadRequestSizeException(throwable);
+				throw new UploadRequestSizeException(cause);
 			}
 
-			throw new PortalException(throwable);
+			throw new PortalException(cause);
 		}
 	}
 
@@ -646,20 +646,20 @@ public abstract class BaseKBPortlet extends MVCPortlet {
 	}
 
 	@Override
-	protected boolean isSessionErrorException(Throwable throwable) {
-		if (throwable instanceof AssetCategoryException ||
-			throwable instanceof AssetTagException ||
-			throwable instanceof FileNameException ||
-			throwable instanceof FileSizeException ||
-			throwable instanceof KBArticleContentException ||
-			throwable instanceof KBArticlePriorityException ||
-			throwable instanceof KBArticleTitleException ||
-			throwable instanceof KBCommentContentException ||
-			throwable instanceof NoSuchArticleException ||
-			throwable instanceof NoSuchCommentException ||
-			throwable instanceof NoSuchFileException ||
-			throwable instanceof PrincipalException ||
-			super.isSessionErrorException(throwable)) {
+	protected boolean isSessionErrorException(Throwable cause) {
+		if (cause instanceof AssetCategoryException ||
+			cause instanceof AssetTagException ||
+			cause instanceof FileNameException ||
+			cause instanceof FileSizeException ||
+			cause instanceof KBArticleContentException ||
+			cause instanceof KBArticlePriorityException ||
+			cause instanceof KBArticleTitleException ||
+			cause instanceof KBCommentContentException ||
+			cause instanceof NoSuchArticleException ||
+			cause instanceof NoSuchCommentException ||
+			cause instanceof NoSuchFileException ||
+			cause instanceof PrincipalException ||
+			super.isSessionErrorException(cause)) {
 
 			return true;
 		}

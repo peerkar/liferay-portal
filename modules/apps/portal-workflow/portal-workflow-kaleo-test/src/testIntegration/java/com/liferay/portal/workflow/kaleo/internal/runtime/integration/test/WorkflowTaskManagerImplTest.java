@@ -74,7 +74,6 @@ import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
-import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.OrganizationLocalService;
 import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -117,7 +116,6 @@ import com.liferay.portal.test.log.CaptureAppender;
 import com.liferay.portal.test.log.Log4JLoggerTestUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.test.rule.SynchronousMailTestRule;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -153,8 +151,7 @@ public class WorkflowTaskManagerImplTest {
 	@ClassRule
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
-		new AggregateTestRule(
-			new LiferayIntegrationTestRule(), SynchronousMailTestRule.INSTANCE);
+		new LiferayIntegrationTestRule();
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -832,7 +829,7 @@ public class WorkflowTaskManagerImplTest {
 			_workflowTaskManager.getWorkflowTaskCountByUser(
 				user.getCompanyId(), user.getUserId(), false));
 
-		_userLocalService.deleteUser(user);
+		_deleteUser(user);
 
 		Assert.assertEquals(
 			0,
@@ -1039,25 +1036,6 @@ public class WorkflowTaskManagerImplTest {
 	}
 
 	@Test
-	public void testSearchWorkflowTaskByUserRolesWhenGroupIsInactive()
-		throws Exception {
-
-		_activateSingleApproverWorkflow(BlogsEntry.class.getName(), 0, 0);
-
-		_addBlogsEntry();
-
-		_group.setActive(false);
-
-		_groupLocalService.updateGroup(_group);
-
-		int total = _searchCountByUserRoles(_siteContentReviewerUser);
-
-		Assert.assertEquals(1, total);
-
-		_deactivateWorkflow(BlogsEntry.class.getName(), 0, 0);
-	}
-
-	@Test
 	public void testUpdateDueDate() throws Exception {
 		_activateSingleApproverWorkflow(BlogsEntry.class.getName(), 0, 0);
 
@@ -1123,9 +1101,14 @@ public class WorkflowTaskManagerImplTest {
 	}
 
 	private BlogsEntry _addBlogsEntry(User user) throws Exception {
-		return _blogsEntryLocalService.addEntry(
-			user.getUserId(), StringUtil.randomString(),
-			StringUtil.randomString(), new Date(), _serviceContext);
+		try (CaptureAppender captureAppender =
+				Log4JLoggerTestUtil.configureLog4JLogger(
+					_MAIL_ENGINE_CLASS_NAME, Level.OFF)) {
+
+			return _blogsEntryLocalService.addEntry(
+				user.getUserId(), StringUtil.randomString(),
+				StringUtil.randomString(), new Date(), _serviceContext);
+		}
 	}
 
 	private DLFileEntryType _addFileEntryType() throws Exception {
@@ -1156,18 +1139,24 @@ public class WorkflowTaskManagerImplTest {
 	private FileVersion _addFileVersion(long folderId, long fileEntryTypeId)
 		throws Exception {
 
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
+		try (CaptureAppender captureAppender =
+				Log4JLoggerTestUtil.configureLog4JLogger(
+					_MAIL_ENGINE_CLASS_NAME, Level.OFF)) {
 
-		serviceContext.setAttribute("fileEntryTypeId", fileEntryTypeId);
+			ServiceContext serviceContext =
+				ServiceContextTestUtil.getServiceContext(_group.getGroupId());
 
-		FileEntry fileEntry = _dlAppLocalService.addFileEntry(
-			_adminUser.getUserId(), _group.getGroupId(), folderId,
-			RandomTestUtil.randomString(), ContentTypes.TEXT_PLAIN,
-			RandomTestUtil.randomString(), StringPool.BLANK, StringPool.BLANK,
-			TestDataConstants.TEST_BYTE_ARRAY, serviceContext);
+			serviceContext.setAttribute("fileEntryTypeId", fileEntryTypeId);
 
-		return fileEntry.getLatestFileVersion();
+			FileEntry fileEntry = _dlAppLocalService.addFileEntry(
+				_adminUser.getUserId(), _group.getGroupId(), folderId,
+				RandomTestUtil.randomString(), ContentTypes.TEXT_PLAIN,
+				RandomTestUtil.randomString(), StringPool.BLANK,
+				StringPool.BLANK, TestDataConstants.TEST_BYTE_ARRAY,
+				serviceContext);
+
+			return fileEntry.getLatestFileVersion();
+		}
 	}
 
 	private Folder _addFolder() throws Exception {
@@ -1187,32 +1176,42 @@ public class WorkflowTaskManagerImplTest {
 			long folderId, DDMStructure ddmStructure)
 		throws Exception {
 
-		DDMTemplate ddmTemplate = DDMTemplateTestUtil.addTemplate(
-			_group.getGroupId(), ddmStructure.getStructureId(),
-			_portal.getClassNameId(JournalArticle.class));
+		try (CaptureAppender captureAppender =
+				Log4JLoggerTestUtil.configureLog4JLogger(
+					_MAIL_ENGINE_CLASS_NAME, Level.OFF)) {
 
-		Map<Locale, String> titleMap = HashMapBuilder.put(
-			LocaleUtil.getDefault(), RandomTestUtil.randomString()
-		).build();
+			DDMTemplate ddmTemplate = DDMTemplateTestUtil.addTemplate(
+				_group.getGroupId(), ddmStructure.getStructureId(),
+				_portal.getClassNameId(JournalArticle.class));
 
-		Map<Locale, String> descriptionMap = HashMapBuilder.put(
-			LocaleUtil.getDefault(), RandomTestUtil.randomString()
-		).build();
+			Map<Locale, String> titleMap = HashMapBuilder.put(
+				LocaleUtil.getDefault(), RandomTestUtil.randomString()
+			).build();
 
-		String content = DDMStructureTestUtil.getSampleStructuredContent();
+			Map<Locale, String> descriptionMap = HashMapBuilder.put(
+				LocaleUtil.getDefault(), RandomTestUtil.randomString()
+			).build();
 
-		return _journalArticleLocalService.addArticle(
-			_adminUser.getUserId(), _group.getGroupId(), folderId, titleMap,
-			descriptionMap, content, ddmStructure.getStructureKey(),
-			ddmTemplate.getTemplateKey(), _serviceContext);
+			String content = DDMStructureTestUtil.getSampleStructuredContent();
+
+			return _journalArticleLocalService.addArticle(
+				_adminUser.getUserId(), _group.getGroupId(), folderId, titleMap,
+				descriptionMap, content, ddmStructure.getStructureKey(),
+				ddmTemplate.getTemplateKey(), _serviceContext);
+		}
 	}
 
 	private JournalFolder _addJournalFolder() throws Exception {
-		return _journalFolderLocalService.addFolder(
-			_adminUser.getUserId(), _group.getGroupId(),
-			JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID,
-			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
-			_serviceContext);
+		try (CaptureAppender captureAppender =
+				Log4JLoggerTestUtil.configureLog4JLogger(
+					_MAIL_ENGINE_CLASS_NAME, Level.OFF)) {
+
+			return _journalFolderLocalService.addFolder(
+				_adminUser.getUserId(), _group.getGroupId(),
+				JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID,
+				RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+				_serviceContext);
+		}
 	}
 
 	private JournalFolder _addJournalFolder(
@@ -1231,16 +1230,21 @@ public class WorkflowTaskManagerImplTest {
 	}
 
 	private DDLRecord _addRecord(DDLRecordSet recordSet) throws Exception {
-		DDMForm ddmForm = DDMFormTestUtil.createDDMForm(
-			RandomTestUtil.randomString());
+		try (CaptureAppender captureAppender =
+				Log4JLoggerTestUtil.configureLog4JLogger(
+					_MAIL_ENGINE_CLASS_NAME, Level.OFF)) {
 
-		DDMFormValues ddmFormValues = _createDDMFormValues(ddmForm);
+			DDMForm ddmForm = DDMFormTestUtil.createDDMForm(
+				RandomTestUtil.randomString());
 
-		return _ddlRecordLocalService.addRecord(
-			_adminUser.getUserId(), _group.getGroupId(),
-			recordSet.getRecordSetId(),
-			DDLRecordConstants.DISPLAY_INDEX_DEFAULT, ddmFormValues,
-			_serviceContext);
+			DDMFormValues ddmFormValues = _createDDMFormValues(ddmForm);
+
+			return _ddlRecordLocalService.addRecord(
+				_adminUser.getUserId(), _group.getGroupId(),
+				recordSet.getRecordSetId(),
+				DDLRecordConstants.DISPLAY_INDEX_DEFAULT, ddmFormValues,
+				_serviceContext);
+		}
 	}
 
 	private DDLRecordSet _addRecordSet() throws Exception {
@@ -1282,18 +1286,23 @@ public class WorkflowTaskManagerImplTest {
 			long classPK)
 		throws Exception {
 
-		WorkflowTask workflowTask = _getWorkflowTask(
-			user, taskName, false, className, classPK);
+		try (CaptureAppender captureAppender =
+				Log4JLoggerTestUtil.configureLog4JLogger(
+					_MAIL_ENGINE_CLASS_NAME, Level.OFF)) {
 
-		PermissionChecker userPermissionChecker =
-			PermissionCheckerFactoryUtil.create(user);
+			WorkflowTask workflowTask = _getWorkflowTask(
+				user, taskName, false, className, classPK);
 
-		PermissionThreadLocal.setPermissionChecker(userPermissionChecker);
+			PermissionChecker userPermissionChecker =
+				PermissionCheckerFactoryUtil.create(user);
 
-		_workflowTaskManager.assignWorkflowTaskToUser(
-			_group.getCompanyId(), user.getUserId(),
-			workflowTask.getWorkflowTaskId(), assigneeUser.getUserId(),
-			StringPool.BLANK, null, null);
+			PermissionThreadLocal.setPermissionChecker(userPermissionChecker);
+
+			_workflowTaskManager.assignWorkflowTaskToUser(
+				_group.getCompanyId(), user.getUserId(),
+				workflowTask.getWorkflowTaskId(), assigneeUser.getUserId(),
+				StringPool.BLANK, null, null);
+		}
 	}
 
 	private void _checkUserNotificationEventsByUsers(User... users) {
@@ -1336,18 +1345,23 @@ public class WorkflowTaskManagerImplTest {
 			long classPK)
 		throws Exception {
 
-		WorkflowTask workflowTask = _getWorkflowTask(
-			user, taskName, false, className, classPK);
+		try (CaptureAppender captureAppender =
+				Log4JLoggerTestUtil.configureLog4JLogger(
+					_MAIL_ENGINE_CLASS_NAME, Level.OFF)) {
 
-		PermissionChecker userPermissionChecker =
-			PermissionCheckerFactoryUtil.create(user);
+			WorkflowTask workflowTask = _getWorkflowTask(
+				user, taskName, false, className, classPK);
 
-		PermissionThreadLocal.setPermissionChecker(userPermissionChecker);
+			PermissionChecker userPermissionChecker =
+				PermissionCheckerFactoryUtil.create(user);
 
-		_workflowTaskManager.completeWorkflowTask(
-			_group.getCompanyId(), user.getUserId(),
-			workflowTask.getWorkflowTaskId(), transition, StringPool.BLANK,
-			null);
+			PermissionThreadLocal.setPermissionChecker(userPermissionChecker);
+
+			_workflowTaskManager.completeWorkflowTask(
+				_group.getCompanyId(), user.getUserId(),
+				workflowTask.getWorkflowTaskId(), transition, StringPool.BLANK,
+				null);
+		}
 	}
 
 	private DDMFormValues _createDDMFormValues(DDMForm ddmForm) {
@@ -1444,27 +1458,32 @@ public class WorkflowTaskManagerImplTest {
 			String roleName, Group group, boolean addUserToRole)
 		throws Exception {
 
-		User user = UserTestUtil.addUser(
-			_company.getCompanyId(), _companyAdminUser.getUserId(),
-			RandomTestUtil.randomString(
-				NumericStringRandomizerBumper.INSTANCE,
-				UniqueStringRandomizerBumper.INSTANCE),
-			LocaleUtil.getDefault(), RandomTestUtil.randomString(),
-			RandomTestUtil.randomString(), new long[] {group.getGroupId()},
-			ServiceContextTestUtil.getServiceContext());
+		try (CaptureAppender captureAppender =
+				Log4JLoggerTestUtil.configureLog4JLogger(
+					_MAIL_ENGINE_CLASS_NAME, Level.OFF)) {
 
-		Role role = _roleLocalService.getRole(
-			_company.getCompanyId(), roleName);
+			User user = UserTestUtil.addUser(
+				_company.getCompanyId(), _companyAdminUser.getUserId(),
+				RandomTestUtil.randomString(
+					NumericStringRandomizerBumper.INSTANCE,
+					UniqueStringRandomizerBumper.INSTANCE),
+				LocaleUtil.getDefault(), RandomTestUtil.randomString(),
+				RandomTestUtil.randomString(), new long[] {group.getGroupId()},
+				ServiceContextTestUtil.getServiceContext());
 
-		if (addUserToRole) {
-			_userLocalService.addRoleUser(role.getRoleId(), user);
+			Role role = _roleLocalService.getRole(
+				_company.getCompanyId(), roleName);
+
+			if (addUserToRole) {
+				_userLocalService.addRoleUser(role.getRoleId(), user);
+			}
+
+			_userGroupRoleLocalService.addUserGroupRoles(
+				new long[] {user.getUserId()}, group.getGroupId(),
+				role.getRoleId());
+
+			return user;
 		}
-
-		_userGroupRoleLocalService.addUserGroupRoles(
-			new long[] {user.getUserId()}, group.getGroupId(),
-			role.getRoleId());
-
-		return user;
 	}
 
 	private void _deactivateWorkflow(
@@ -1481,6 +1500,15 @@ public class WorkflowTaskManagerImplTest {
 		throws Exception {
 
 		_deactivateWorkflow(_group.getGroupId(), className, classPK, typePK);
+	}
+
+	private User _deleteUser(User user) throws Exception {
+		try (CaptureAppender captureAppender =
+				Log4JLoggerTestUtil.configureLog4JLogger(
+					_MAIL_ENGINE_CLASS_NAME, Level.OFF)) {
+
+			return _userLocalService.deleteUser(user);
+		}
 	}
 
 	private WorkflowInstanceLink _fetchWorkflowInstanceLink(
@@ -1666,12 +1694,17 @@ public class WorkflowTaskManagerImplTest {
 	}
 
 	private FileVersion _updateFileVersion(long fileEntryId) throws Exception {
-		FileEntry fileEntry = _dlAppService.updateFileEntry(
-			fileEntryId, StringPool.BLANK, ContentTypes.TEXT_PLAIN,
-			RandomTestUtil.randomString(), StringPool.BLANK, null,
-			DLVersionNumberIncrease.AUTOMATIC, null, 0, _serviceContext);
+		try (CaptureAppender captureAppender =
+				Log4JLoggerTestUtil.configureLog4JLogger(
+					_MAIL_ENGINE_CLASS_NAME, Level.OFF)) {
 
-		return fileEntry.getLatestFileVersion();
+			FileEntry fileEntry = _dlAppService.updateFileEntry(
+				fileEntryId, StringPool.BLANK, ContentTypes.TEXT_PLAIN,
+				RandomTestUtil.randomString(), StringPool.BLANK, null,
+				DLVersionNumberIncrease.AUTOMATIC, null, 0, _serviceContext);
+
+			return fileEntry.getLatestFileVersion();
+		}
 	}
 
 	private Folder _updateFolder(Folder folder, int restrictionType)
@@ -1720,6 +1753,9 @@ public class WorkflowTaskManagerImplTest {
 
 	private static final String _JOIN_XOR = "Join Xor";
 
+	private static final String _MAIL_ENGINE_CLASS_NAME =
+		"com.liferay.petra.mail.MailEngine";
+
 	private static final String _ORGANIZATION_CONTENT_REVIEWER =
 		"Organization Content Reviewer";
 
@@ -1766,9 +1802,6 @@ public class WorkflowTaskManagerImplTest {
 	private DLTrashService _dlTrashService;
 
 	private Group _group;
-
-	@Inject
-	private GroupLocalService _groupLocalService;
 
 	@Inject
 	private JournalArticleLocalService _journalArticleLocalService;

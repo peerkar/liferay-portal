@@ -29,12 +29,12 @@ public class MonitoringException extends PortalException {
 		super(msg);
 	}
 
-	public MonitoringException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public MonitoringException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public MonitoringException(Throwable throwable) {
-		super(throwable);
+	public MonitoringException(Throwable cause) {
+		super(cause);
 	}
 
 }

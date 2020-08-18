@@ -26,12 +26,12 @@ public class TermsOfUseException extends PortalException {
 		super(msg);
 	}
 
-	public TermsOfUseException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public TermsOfUseException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public TermsOfUseException(Throwable throwable) {
-		super(throwable);
+	public TermsOfUseException(Throwable cause) {
+		super(cause);
 	}
 
 }

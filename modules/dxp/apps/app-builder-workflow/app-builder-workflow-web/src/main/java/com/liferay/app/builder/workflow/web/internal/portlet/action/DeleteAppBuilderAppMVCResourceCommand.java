@@ -15,6 +15,7 @@
 package com.liferay.app.builder.workflow.web.internal.portlet.action;
 
 import com.liferay.app.builder.constants.AppBuilderPortletKeys;
+import com.liferay.app.builder.rest.dto.v1_0.App;
 import com.liferay.app.builder.rest.resource.v1_0.AppResource;
 import com.liferay.app.builder.workflow.rest.resource.v1_0.AppWorkflowResource;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
@@ -39,10 +40,10 @@ import org.osgi.service.component.annotations.Component;
 	service = MVCResourceCommand.class
 )
 public class DeleteAppBuilderAppMVCResourceCommand
-	extends BaseAppBuilderAppMVCResourceCommand<Void> {
+	extends BaseAppBuilderAppMVCResourceCommand {
 
 	@Override
-	protected Optional<Void> doTransactionalCommand(
+	protected Optional<App> doTransactionalCommand(
 			ResourceRequest resourceRequest)
 		throws Exception {
 

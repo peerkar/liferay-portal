@@ -20,14 +20,6 @@ import TooltipContent from '../../../../src/main/resources/META-INF/resources/js
 describe('Tooltip', () => {
 	afterEach(cleanup);
 
-	const field = {
-		columns: {
-			Col1: {value: 'Col 1'},
-			Col2: {value: 'Col 2'},
-			Col3: {value: 'Col 3'},
-		},
-	};
-
 	it('renders the tooltip with label, number of entries and percentage for SimpleBarChart', () => {
 		const {container} = render(
 			<TooltipContent
@@ -54,23 +46,22 @@ describe('Tooltip', () => {
 		const {container} = render(
 			<TooltipContent
 				active={true}
-				field={field}
 				label="Row 1"
 				payload={[
 					{
-						dataKey: 'Col1',
+						dataKey: 'Col 1',
 						fill: '#4b9bff',
 						name: 'Col 1',
 						value: 1,
 					},
 					{
-						dataKey: 'Col2',
+						dataKey: 'Col 2',
 						fill: '#af78ff',
 						name: 'Col 2',
 						value: 2,
 					},
 					{
-						dataKey: 'Col3',
+						dataKey: 'Col 3',
 						fill: '#50d2a0',
 						name: 'Col 3',
 						value: 3,

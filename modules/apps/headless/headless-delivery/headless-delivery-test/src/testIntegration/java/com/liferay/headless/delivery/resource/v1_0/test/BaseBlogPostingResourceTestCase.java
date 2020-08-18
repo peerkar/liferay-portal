@@ -1032,7 +1032,7 @@ public abstract class BaseBlogPostingResourceTestCase {
 		}
 	}
 
-	protected void assertValid(BlogPosting blogPosting) throws Exception {
+	protected void assertValid(BlogPosting blogPosting) {
 		boolean valid = true;
 
 		if (blogPosting.getDateCreated() == null) {

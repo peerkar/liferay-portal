@@ -28,12 +28,12 @@ public class InvalidKBFolderNameException extends PortalException {
 		super(msg);
 	}
 
-	public InvalidKBFolderNameException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public InvalidKBFolderNameException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public InvalidKBFolderNameException(Throwable throwable) {
-		super(throwable);
+	public InvalidKBFolderNameException(Throwable cause) {
+		super(cause);
 	}
 
 }

@@ -152,8 +152,10 @@ public final class AllowedIPAddressesValidatorFactory {
 				bytesNetmask[i] = (byte)_BYTE[8];
 			}
 
+			int byteOffset = cidr % 8;
+
 			if (netmaskBytes < bytesNetmask.length) {
-				bytesNetmask[netmaskBytes] = (byte)_BYTE[cidr % 8];
+				bytesNetmask[netmaskBytes] = (byte)_BYTE[byteOffset];
 			}
 
 			return bytesNetmask;

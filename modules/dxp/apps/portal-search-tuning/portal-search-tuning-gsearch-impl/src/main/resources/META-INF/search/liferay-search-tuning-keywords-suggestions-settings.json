@@ -1,0 +1,40 @@
+{
+	"analysis": {
+		"analyzer": {
+			"ngram_analyzer": {
+				"filter": [
+					"standard",
+					"ngram_filter"
+				],
+				"tokenizer": "standard",
+				"type": "custom"
+			},
+			"shingle_analyzer": {
+				"filter": [
+					"standard",
+					"shingle_filter"
+				],
+				"tokenizer": "standard",
+				"type": "custom"
+			}
+		},
+		"filter": {
+			"ngram_filter": {
+				"max_gram": 20,
+				"min_gram": 2,
+				"token_chars": [
+					"letter",
+					"digit",
+					"punctuation",
+					"symbol"
+				],
+				"type": "nGram"
+			},
+			"shingle_filter": {
+				"max_shingle_size": 20,
+				"min_shingle_size": 2,
+				"type": "shingle"
+			}
+		}
+	}
+}

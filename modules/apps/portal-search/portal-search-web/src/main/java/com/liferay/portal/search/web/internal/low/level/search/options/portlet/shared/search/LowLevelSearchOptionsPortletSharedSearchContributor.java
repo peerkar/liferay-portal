@@ -22,8 +22,6 @@ import com.liferay.portal.search.web.internal.util.SearchStringUtil;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
 
-import java.util.Optional;
-
 import org.osgi.service.component.annotations.Component;
 
 /**
@@ -47,16 +45,16 @@ public class LowLevelSearchOptionsPortletSharedSearchContributor
 					portletSharedSearchSettings.
 						getPortletPreferencesOptional());
 
-		Optional<String> connectionIdOptional =
-			lowLevelSearchOptionsPortletPreferences.getConnectionIdOptional();
-
 		SearchRequestBuilder searchRequestBuilder =
 			portletSharedSearchSettings.getFederatedSearchRequestBuilder(
 				lowLevelSearchOptionsPortletPreferences.
 					getFederatedSearchKeyOptional());
 
 		searchRequestBuilder.connectionId(
-			connectionIdOptional.orElse(null)
+			lowLevelSearchOptionsPortletPreferences.getConnectionIdOptional(
+			).orElse(
+				null
+			)
 		).excludeContributors(
 			SearchStringUtil.splitAndUnquote(
 				lowLevelSearchOptionsPortletPreferences.

@@ -119,8 +119,8 @@ public class EditImageMVCActionCommand extends BaseMVCActionCommand {
 				throw exception;
 			}
 		}
-		catch (Throwable throwable) {
-			_log.error(throwable, throwable);
+		catch (Throwable t) {
+			_log.error(t, t);
 
 			actionResponse.setRenderParameter("mvcPath", "/blogs/error.jsp");
 		}

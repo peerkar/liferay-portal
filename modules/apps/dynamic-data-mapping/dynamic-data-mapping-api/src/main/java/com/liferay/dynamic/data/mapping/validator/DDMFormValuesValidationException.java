@@ -28,12 +28,12 @@ public class DDMFormValuesValidationException extends StorageException {
 		super(msg);
 	}
 
-	public DDMFormValuesValidationException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public DDMFormValuesValidationException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public DDMFormValuesValidationException(Throwable throwable) {
-		super(throwable);
+	public DDMFormValuesValidationException(Throwable cause) {
+		super(cause);
 	}
 
 	public static class MustNotSetValue
@@ -125,10 +125,10 @@ public class DDMFormValuesValidationException extends StorageException {
 			_fieldName = fieldName;
 		}
 
-		public MustSetValidValue(String fieldName, Throwable throwable) {
+		public MustSetValidValue(String fieldName, Throwable cause) {
 			super(
 				String.format("Invalid value set for field name %s", fieldName),
-				throwable);
+				cause);
 
 			_fieldName = fieldName;
 		}

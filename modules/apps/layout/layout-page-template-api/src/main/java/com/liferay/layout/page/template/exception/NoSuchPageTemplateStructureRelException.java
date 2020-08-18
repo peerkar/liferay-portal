@@ -30,13 +30,13 @@ public class NoSuchPageTemplateStructureRelException
 	}
 
 	public NoSuchPageTemplateStructureRelException(
-		String msg, Throwable throwable) {
+		String msg, Throwable cause) {
 
-		super(msg, throwable);
+		super(msg, cause);
 	}
 
-	public NoSuchPageTemplateStructureRelException(Throwable throwable) {
-		super(throwable);
+	public NoSuchPageTemplateStructureRelException(Throwable cause) {
+		super(cause);
 	}
 
 }

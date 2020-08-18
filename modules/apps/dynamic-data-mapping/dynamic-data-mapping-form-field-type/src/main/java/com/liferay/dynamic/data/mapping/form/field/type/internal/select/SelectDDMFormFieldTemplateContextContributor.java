@@ -151,12 +151,11 @@ public class SelectDDMFormFieldTemplateContextContributor
 			options.add(
 				HashMapBuilder.put(
 					"label",
-					() -> {
-						LocalizedValue localizedValue =
-							ddmFormFieldOptions.getOptionLabels(optionValue);
-
-						return localizedValue.getString(locale);
-					}
+					() -> ddmFormFieldOptions.getOptionLabels(
+						optionValue
+					).getString(
+						locale
+					)
 				).put(
 					"value", optionValue
 				).build());

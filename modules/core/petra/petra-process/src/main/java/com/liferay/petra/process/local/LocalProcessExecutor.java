@@ -262,12 +262,12 @@ public class LocalProcessExecutor implements ProcessExecutor {
 									returnValue),
 								null));
 					}
-					catch (Throwable throwable) {
+					catch (Throwable t) {
 						_processLogConsumer.accept(
 							new LocalProcessLog(
 								ProcessLog.Level.ERROR,
 								"Unable to invoke generic process callable",
-								throwable));
+								t));
 					}
 				}
 			}
@@ -293,13 +293,12 @@ public class LocalProcessExecutor implements ProcessExecutor {
 				throw new ProcessException(
 					"Subprocess piping back ended prematurely", eofException);
 			}
-			catch (Throwable throwable) {
+			catch (Throwable t) {
 				_processLogConsumer.accept(
 					new LocalProcessLog(
-						ProcessLog.Level.ERROR, "Abort subprocess piping",
-						throwable));
+						ProcessLog.Level.ERROR, "Abort subprocess piping", t));
 
-				throw throwable;
+				throw t;
 			}
 			finally {
 				try {

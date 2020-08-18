@@ -16,7 +16,12 @@
 
 <%@ include file="/init.jsp" %>
 
+<%
+String className = ParamUtil.getString(request, "className");
+long classPK = ParamUtil.getLong(request, "classPK");
+%>
+
 <liferay-layout:layout-classed-model-usages-admin
-	className='<%= ParamUtil.getString(request, "className") %>'
-	classPK='<%= ParamUtil.getLong(request, "classPK") %>'
+	className="<%= className %>"
+	classPK="<%= classPK %>"
 />

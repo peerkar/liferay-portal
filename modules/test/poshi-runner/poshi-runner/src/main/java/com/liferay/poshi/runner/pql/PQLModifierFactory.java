@@ -28,12 +28,14 @@ public class PQLModifierFactory {
 				public Object getPQLResult(Object pqlResultObject)
 					throws Exception {
 
+					String modifier = getModifier();
+
 					if ((pqlResultObject == null) ||
 						!(pqlResultObject instanceof Boolean)) {
 
 						throw new Exception(
 							"Modifier must be used with a boolean value: " +
-								getModifier());
+								modifier);
 					}
 
 					Boolean pqlResultBoolean = (Boolean)pqlResultObject;

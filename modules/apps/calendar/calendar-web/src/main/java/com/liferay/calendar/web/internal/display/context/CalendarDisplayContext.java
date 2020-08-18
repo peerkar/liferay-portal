@@ -310,6 +310,9 @@ public class CalendarDisplayContext {
 
 			Group scopeGroup = _themeDisplay.getScopeGroup();
 
+			long scopeGroupId = scopeGroup.getGroupId();
+			long scopeLiveGroupId = scopeGroup.getLiveGroupId();
+
 			Group calendarGroup = _groupLocalService.getGroup(
 				calendar.getGroupId());
 
@@ -317,14 +320,14 @@ public class CalendarDisplayContext {
 				long calendarGroupId = calendarGroup.getGroupId();
 
 				if (calendarGroup.isStagingGroup()) {
-					if (scopeGroup.getGroupId() != calendarGroupId) {
+					if (scopeGroupId != calendarGroupId) {
 						calendar =
 							_calendarLocalService.fetchCalendarByUuidAndGroupId(
 								calendar.getUuid(),
 								calendarGroup.getLiveGroupId());
 					}
 				}
-				else if (scopeGroup.getLiveGroupId() == calendarGroupId) {
+				else if (scopeLiveGroupId == calendarGroupId) {
 					Group stagingGroup = calendarGroup.getStagingGroup();
 
 					calendar =

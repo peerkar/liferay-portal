@@ -51,9 +51,7 @@ package com.liferay.portlet.social.service.http;
  *
  * @author Brian Wing Shun Chan
  * @see SocialRequestServiceHttp
- * @deprecated As of Athanasius (7.3.x), with no direct replacement
  * @generated
  */
-@Deprecated
 public class SocialRequestServiceSoap {
 }

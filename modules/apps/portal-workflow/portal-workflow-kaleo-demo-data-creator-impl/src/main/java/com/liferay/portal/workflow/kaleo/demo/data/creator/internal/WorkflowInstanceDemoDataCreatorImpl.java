@@ -92,10 +92,10 @@ public class WorkflowInstanceDemoDataCreatorImpl
 	public void updateCreateDate(long workflowInstanceId, Date createDate)
 		throws PortalException {
 
-		if (createDate != null) {
-			KaleoInstance kaleoInstance =
-				_kaleoInstanceLocalService.getKaleoInstance(workflowInstanceId);
+		KaleoInstance kaleoInstance =
+			_kaleoInstanceLocalService.getKaleoInstance(workflowInstanceId);
 
+		if (createDate != null) {
 			kaleoInstance.setCreateDate(createDate);
 
 			_kaleoInstanceLocalService.updateKaleoInstance(kaleoInstance);

@@ -28,12 +28,12 @@ public class NoSuchAutoResolutionInfoException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchAutoResolutionInfoException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public NoSuchAutoResolutionInfoException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NoSuchAutoResolutionInfoException(Throwable throwable) {
-		super(throwable);
+	public NoSuchAutoResolutionInfoException(Throwable cause) {
+		super(cause);
 	}
 
 }

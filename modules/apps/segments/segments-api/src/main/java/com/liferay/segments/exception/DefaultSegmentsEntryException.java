@@ -28,12 +28,12 @@ public class DefaultSegmentsEntryException extends PortalException {
 		super(msg);
 	}
 
-	public DefaultSegmentsEntryException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public DefaultSegmentsEntryException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public DefaultSegmentsEntryException(Throwable throwable) {
-		super(throwable);
+	public DefaultSegmentsEntryException(Throwable cause) {
+		super(cause);
 	}
 
 	public static class MustNotDeleteDefaultSegmentsEntry

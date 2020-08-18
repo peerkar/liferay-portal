@@ -23,7 +23,7 @@ import com.liferay.fragment.service.FragmentEntryLocalService;
 import com.liferay.journal.constants.JournalPortletKeys;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
-import com.liferay.layout.util.structure.FragmentStyledLayoutStructureItem;
+import com.liferay.layout.util.structure.FragmentLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.petra.string.StringPool;
@@ -252,18 +252,18 @@ public class AddPortletMVCActionCommandTest {
 
 		Assert.assertNotNull(layoutStructureItem);
 		Assert.assertTrue(
-			layoutStructureItem instanceof FragmentStyledLayoutStructureItem);
+			layoutStructureItem instanceof FragmentLayoutStructureItem);
 
-		FragmentStyledLayoutStructureItem fragmentStyledLayoutStructureItem =
-			(FragmentStyledLayoutStructureItem)layoutStructureItem;
+		FragmentLayoutStructureItem fragmentLayoutStructureItem =
+			(FragmentLayoutStructureItem)layoutStructureItem;
 
 		Assert.assertEquals(
 			fragmentEntryLinkId,
-			fragmentStyledLayoutStructureItem.getFragmentEntryLinkId());
+			fragmentLayoutStructureItem.getFragmentEntryLinkId());
 
 		Assert.assertEquals(
 			_layoutStructure.getMainItemId(),
-			fragmentStyledLayoutStructureItem.getParentItemId());
+			fragmentLayoutStructureItem.getParentItemId());
 
 		LayoutStructureItem rootLayoutStructureItem =
 			layoutStructure.getMainLayoutStructureItem();
@@ -272,8 +272,7 @@ public class AddPortletMVCActionCommandTest {
 			rootLayoutStructureItem.getChildrenItemIds();
 
 		Assert.assertEquals(
-			fragmentStyledLayoutStructureItem.getItemId(),
-			childrenItemIds.get(0));
+			fragmentLayoutStructureItem.getItemId(), childrenItemIds.get(0));
 	}
 
 	private Layout _addLayout() throws Exception {

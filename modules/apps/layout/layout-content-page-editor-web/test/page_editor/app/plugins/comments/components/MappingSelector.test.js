@@ -24,11 +24,10 @@ import {
 } from '@testing-library/react';
 import React from 'react';
 
-import {useCollectionConfig} from '../../../../../../src/main/resources/META-INF/resources/page_editor/app/components/CollectionItemContext';
+import {useCollectionFields} from '../../../../../../src/main/resources/META-INF/resources/page_editor/app/components/CollectionItemContext';
 import {EDITABLE_FRAGMENT_ENTRY_PROCESSOR} from '../../../../../../src/main/resources/META-INF/resources/page_editor/app/config/constants/editableFragmentEntryProcessor';
 import {LAYOUT_TYPES} from '../../../../../../src/main/resources/META-INF/resources/page_editor/app/config/constants/layoutTypes';
 import {config} from '../../../../../../src/main/resources/META-INF/resources/page_editor/app/config/index';
-import CollectionService from '../../../../../../src/main/resources/META-INF/resources/page_editor/app/services/CollectionService';
 import InfoItemService from '../../../../../../src/main/resources/META-INF/resources/page_editor/app/services/InfoItemService';
 import {StoreAPIContextProvider} from '../../../../../../src/main/resources/META-INF/resources/page_editor/app/store/index';
 import MappingSelector from '../../../../../../src/main/resources/META-INF/resources/page_editor/common/components/MappingSelector';
@@ -38,13 +37,6 @@ const infoItem = {
 	classNameId: 'InfoItemClassNameId',
 	classPK: 'infoItemClassPK',
 	title: 'Info Item',
-};
-
-const emptyCollectionConfig = {
-	collection: {
-		itemSubtype: '',
-		itemType: '',
-	},
 };
 
 jest.mock(
@@ -72,39 +64,20 @@ jest.mock(
 );
 
 jest.mock(
-	'../../../../../../src/main/resources/META-INF/resources/page_editor/app/services/CollectionService',
-	() => ({
-		getCollectionMappingFields: jest.fn(),
-	})
-);
-
-jest.mock(
 	'../../../../../../src/main/resources/META-INF/resources/page_editor/app/services/InfoItemService',
 	() => ({
 		getAvailableInfoItemMappingFields: jest.fn(() =>
 			Promise.resolve([
-				{
-					fields: [
-						{key: 'unmapped', label: 'unmapped'},
-						{
-							key: 'text-field-1',
-							label: 'Text Field 1',
-							type: 'text',
-						},
-					],
-				},
+				{key: 'unmapped', label: 'unmapped'},
+				{key: 'text-field-1', label: 'Text Field 1', type: 'text'},
 			])
 		),
 		getAvailableStructureMappingFields: jest.fn(() =>
 			Promise.resolve([
 				{
-					fields: [
-						{
-							key: 'structure-field-1',
-							label: 'Structure Field 1',
-							type: 'text',
-						},
-					],
+					key: 'structure-field-1',
+					label: 'Structure Field 1',
+					type: 'text',
 				},
 			])
 		),
@@ -114,7 +87,7 @@ jest.mock(
 jest.mock(
 	'../../../../../../src/main/resources/META-INF/resources/page_editor/app/components/CollectionItemContext',
 	() => ({
-		useCollectionConfig: jest.fn(),
+		useCollectionFields: jest.fn(),
 	})
 );
 
@@ -292,17 +265,7 @@ describe('MappingSelector', () => {
 			{key: 'field-2', label: 'Field 2', type: 'text'},
 		];
 
-		useCollectionConfig.mockImplementation(() => emptyCollectionConfig);
-
-		CollectionService.getCollectionMappingFields.mockImplementation(() =>
-			Promise.resolve({
-				mappingFields: [
-					{
-						fields: collectionFields,
-					},
-				],
-			})
-		);
+		useCollectionFields.mockImplementation(() => collectionFields);
 
 		await act(async () => {
 			renderMappingSelector({});
@@ -317,9 +280,7 @@ describe('MappingSelector', () => {
 			expect(getByText(document.body, field.label)).toBeInTheDocument()
 		);
 
-		useCollectionConfig.mockReset();
-
-		CollectionService.getCollectionMappingFields.mockReset();
+		useCollectionFields.mockRestore();
 	});
 
 	it('shows a warning and disables the selector if the fields array is empty', async () => {

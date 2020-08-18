@@ -28,14 +28,12 @@ public class OAuth2ApplicationRedirectURIException extends PortalException {
 		super(msg);
 	}
 
-	public OAuth2ApplicationRedirectURIException(
-		String msg, Throwable throwable) {
-
-		super(msg, throwable);
+	public OAuth2ApplicationRedirectURIException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public OAuth2ApplicationRedirectURIException(Throwable throwable) {
-		super(throwable);
+	public OAuth2ApplicationRedirectURIException(Throwable cause) {
+		super(cause);
 	}
 
 }

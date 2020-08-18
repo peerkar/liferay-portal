@@ -18,7 +18,6 @@ import {
 	MARK_PAGE_LOAD_TIME,
 	MARK_VIEW_DURATION,
 } from '../utils/constants';
-import {createMark, getDuration} from '../utils/performance';
 
 const pageApplicationId = 'Page';
 
@@ -32,47 +31,54 @@ function dxp(analytics) {
 	/**
 	 * Sends view duration information on the window unload event
 	 */
-	function sendUnloadEvent() {
-		analytics.send('pageUnloaded', pageApplicationId, {
-			viewDuration: getDuration(
-				MARK_VIEW_DURATION,
-				MARK_NAVIGATION_START
-			),
-		});
+	function beforeNavigate() {
+		window.performance.measure(MARK_VIEW_DURATION, MARK_NAVIGATION_START);
+
+		const {duration} = window.performance
+			.getEntriesByName(MARK_VIEW_DURATION)
+			.pop();
+
+		const props = {
+			viewDuration: ~~duration,
+		};
+
+		analytics.send('pageUnloaded', pageApplicationId, props);
+
+		window.performance.mark(MARK_NAVIGATION_START);
+		window.Liferay.detach('beforeNavigate', beforeNavigate);
 	}
 
 	/**
 	 * Sends page load information on the endNavigate event when SPA is enabled on DXP
 	 */
-	function sendLoadEvent() {
-		analytics.send('pageLoaded', pageApplicationId, {
-			pageLoadTime: getDuration(
-				MARK_PAGE_LOAD_TIME,
-				MARK_LOAD_EVENT_START,
-				MARK_NAVIGATION_START
-			),
-		});
-	}
+	function endNavigate() {
+		window.performance.mark(MARK_LOAD_EVENT_START);
 
-	if (window.Liferay && window.Liferay.SPA) {
-		const loadingStartMarks = window.performance.getEntriesByName(
+		window.performance.measure(
+			MARK_PAGE_LOAD_TIME,
+			MARK_NAVIGATION_START,
 			MARK_LOAD_EVENT_START
 		);
 
-		createMark(MARK_NAVIGATION_START);
+		const {duration} = window.performance
+			.getEntriesByName(MARK_PAGE_LOAD_TIME)
+			.pop();
 
-		if (!loadingStartMarks.length) {
-			const createLoadMark = createMark.bind(null, MARK_LOAD_EVENT_START);
+		const props = {
+			pageLoadTime: ~~duration,
+		};
 
-			createMark(MARK_LOAD_EVENT_START);
-			window.Liferay.on('beforeNavigate', createLoadMark);
-		}
+		analytics.send('pageLoaded', pageApplicationId, props);
 
-		if (document.readyState === 'complete') {
-			sendLoadEvent();
-		}
+		window.Liferay.detach('endNavigate', endNavigate);
+	}
 
-		window.Liferay.once('beforeNavigate', sendUnloadEvent);
+	if (window.Liferay && window.Liferay.SPA) {
+		window.performance.mark(MARK_NAVIGATION_START);
+		window.performance.mark(MARK_LOAD_EVENT_START);
+
+		window.Liferay.on('beforeNavigate', beforeNavigate);
+		window.Liferay.on('endNavigate', endNavigate);
 	}
 }
 

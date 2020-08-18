@@ -17,7 +17,6 @@ package com.liferay.layout.page.template.service.persistence;
 import com.liferay.layout.page.template.exception.NoSuchPageTemplateEntryException;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.portal.kernel.service.persistence.BasePersistence;
-import com.liferay.portal.kernel.service.persistence.change.tracking.CTPersistence;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -34,8 +33,7 @@ import org.osgi.annotation.versioning.ProviderType;
  */
 @ProviderType
 public interface LayoutPageTemplateEntryPersistence
-	extends BasePersistence<LayoutPageTemplateEntry>,
-			CTPersistence<LayoutPageTemplateEntry> {
+	extends BasePersistence<LayoutPageTemplateEntry> {
 
 	/*
 	 * NOTE FOR DEVELOPERS:

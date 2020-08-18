@@ -57,7 +57,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Provides the local service for accessing, adding, deleting, and updating
@@ -503,9 +502,9 @@ public class AssetVocabularyLocalServiceImpl
 		AssetVocabulary vocabulary =
 			assetVocabularyPersistence.findByPrimaryKey(vocabularyId);
 
-		name = _getVocabularyName(name);
+		String vocabularyName = vocabulary.getName();
 
-		if (!Objects.equals(vocabulary.getName(), name)) {
+		if (!vocabularyName.equals(name)) {
 			validate(vocabulary.getGroupId(), name);
 		}
 

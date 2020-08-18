@@ -14,7 +14,6 @@
 
 package com.liferay.fragment.service;
 
-import com.liferay.fragment.model.FragmentComposition;
 import com.liferay.portal.kernel.service.ServiceWrapper;
 
 /**
@@ -35,11 +34,12 @@ public class FragmentCompositionServiceWrapper
 	}
 
 	@Override
-	public FragmentComposition addFragmentComposition(
-			long groupId, long fragmentCollectionId,
-			String fragmentCompositionKey, String name, String description,
-			String data, long previewFileEntryId, int status,
-			com.liferay.portal.kernel.service.ServiceContext serviceContext)
+	public com.liferay.fragment.model.FragmentComposition
+			addFragmentComposition(
+				long groupId, long fragmentCollectionId,
+				String fragmentCompositionKey, String name, String description,
+				String data, long previewFileEntryId, int status,
+				com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _fragmentCompositionService.addFragmentComposition(
@@ -48,8 +48,8 @@ public class FragmentCompositionServiceWrapper
 	}
 
 	@Override
-	public FragmentComposition deleteFragmentComposition(
-			long fragmentCompositionId)
+	public com.liferay.fragment.model.FragmentComposition
+			deleteFragmentComposition(long fragmentCompositionId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _fragmentCompositionService.deleteFragmentComposition(
@@ -57,61 +57,66 @@ public class FragmentCompositionServiceWrapper
 	}
 
 	@Override
-	public FragmentComposition fetchFragmentComposition(
-		long fragmentCompositionId) {
+	public com.liferay.fragment.model.FragmentComposition
+		fetchFragmentComposition(long fragmentCompositionId) {
 
 		return _fragmentCompositionService.fetchFragmentComposition(
 			fragmentCompositionId);
 	}
 
 	@Override
-	public FragmentComposition fetchFragmentComposition(
-		long groupId, String fragmentCompositionKey) {
+	public com.liferay.fragment.model.FragmentComposition
+		fetchFragmentComposition(long groupId, String fragmentCompositionKey) {
 
 		return _fragmentCompositionService.fetchFragmentComposition(
 			groupId, fragmentCompositionKey);
 	}
 
 	@Override
-	public java.util.List<FragmentComposition> getFragmentCompositions(
-		long fragmentCollectionId) {
+	public java.util.List<com.liferay.fragment.model.FragmentComposition>
+		getFragmentCompositions(long fragmentCollectionId) {
 
 		return _fragmentCompositionService.getFragmentCompositions(
 			fragmentCollectionId);
 	}
 
 	@Override
-	public java.util.List<FragmentComposition> getFragmentCompositions(
-		long fragmentCollectionId, int start, int end) {
+	public java.util.List<com.liferay.fragment.model.FragmentComposition>
+		getFragmentCompositions(long fragmentCollectionId, int start, int end) {
 
 		return _fragmentCompositionService.getFragmentCompositions(
 			fragmentCollectionId, start, end);
 	}
 
 	@Override
-	public java.util.List<FragmentComposition> getFragmentCompositions(
-		long groupId, long fragmentCollectionId, int status) {
+	public java.util.List<com.liferay.fragment.model.FragmentComposition>
+		getFragmentCompositions(
+			long groupId, long fragmentCollectionId, int status) {
 
 		return _fragmentCompositionService.getFragmentCompositions(
 			groupId, fragmentCollectionId, status);
 	}
 
 	@Override
-	public java.util.List<FragmentComposition> getFragmentCompositions(
-		long groupId, long fragmentCollectionId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<FragmentComposition>
-			orderByComparator) {
+	public java.util.List<com.liferay.fragment.model.FragmentComposition>
+		getFragmentCompositions(
+			long groupId, long fragmentCollectionId, int start, int end,
+			com.liferay.portal.kernel.util.OrderByComparator
+				<com.liferay.fragment.model.FragmentComposition>
+					orderByComparator) {
 
 		return _fragmentCompositionService.getFragmentCompositions(
 			groupId, fragmentCollectionId, start, end, orderByComparator);
 	}
 
 	@Override
-	public java.util.List<FragmentComposition> getFragmentCompositions(
-		long groupId, long fragmentCollectionId, String name, int start,
-		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<FragmentComposition>
-			orderByComparator) {
+	public java.util.List<com.liferay.fragment.model.FragmentComposition>
+		getFragmentCompositions(
+			long groupId, long fragmentCollectionId, String name, int start,
+			int end,
+			com.liferay.portal.kernel.util.OrderByComparator
+				<com.liferay.fragment.model.FragmentComposition>
+					orderByComparator) {
 
 		return _fragmentCompositionService.getFragmentCompositions(
 			groupId, fragmentCollectionId, name, start, end, orderByComparator);
@@ -134,8 +139,9 @@ public class FragmentCompositionServiceWrapper
 	}
 
 	@Override
-	public FragmentComposition moveFragmentComposition(
-			long fragmentCompositionId, long fragmentCollectionId)
+	public com.liferay.fragment.model.FragmentComposition
+			moveFragmentComposition(
+				long fragmentCompositionId, long fragmentCollectionId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _fragmentCompositionService.moveFragmentComposition(
@@ -143,8 +149,9 @@ public class FragmentCompositionServiceWrapper
 	}
 
 	@Override
-	public FragmentComposition updateFragmentComposition(
-			long fragmentCompositionId, long previewFileEntryId)
+	public com.liferay.fragment.model.FragmentComposition
+			updateFragmentComposition(
+				long fragmentCompositionId, long previewFileEntryId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _fragmentCompositionService.updateFragmentComposition(
@@ -152,8 +159,8 @@ public class FragmentCompositionServiceWrapper
 	}
 
 	@Override
-	public FragmentComposition updateFragmentComposition(
-			long fragmentCompositionId, String name)
+	public com.liferay.fragment.model.FragmentComposition
+			updateFragmentComposition(long fragmentCompositionId, String name)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _fragmentCompositionService.updateFragmentComposition(
@@ -161,9 +168,10 @@ public class FragmentCompositionServiceWrapper
 	}
 
 	@Override
-	public FragmentComposition updateFragmentComposition(
-			long fragmentCompositionId, String name, String description,
-			String data, long previewFileEntryId, int status)
+	public com.liferay.fragment.model.FragmentComposition
+			updateFragmentComposition(
+				long fragmentCompositionId, String name, String description,
+				String data, long previewFileEntryId, int status)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _fragmentCompositionService.updateFragmentComposition(

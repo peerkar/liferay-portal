@@ -21,12 +21,10 @@ import {AppContext} from '../../AppContext.es';
 import Button from '../../components/button/Button.es';
 import ListView from '../../components/list-view/ListView.es';
 import useBackUrl from '../../hooks/useBackUrl.es';
-import useDataDefinition from '../../hooks/useDataDefinition.es';
 import useDeployApp from '../../hooks/useDeployApp.es';
 import {confirmDelete} from '../../utils/client.es';
-import {getLocalizedValue} from '../../utils/lang.es';
 import {fromNow} from '../../utils/time.es';
-import {concatValues} from '../../utils/utils.es';
+import {concatValues, getTranslatedValue} from '../../utils/utils.es';
 import {
 	COLUMNS,
 	DEPLOYMENT_ACTION,
@@ -70,9 +68,8 @@ export default ({
 		params: {dataDefinitionId, objectType},
 	},
 }) => {
-	const {scope} = useContext(AppContext);
 	const withBackUrl = useBackUrl();
-	const {defaultLanguageId} = useDataDefinition(dataDefinitionId);
+
 	const newAppLink = compile(editPath[0])({dataDefinitionId, objectType});
 
 	const ADD_BUTTON = () => (
@@ -96,7 +93,7 @@ export default ({
 		title: Liferay.Language.get('there-are-no-apps-yet'),
 	};
 
-	const ENDPOINT = `/o/app-builder/v1.0/data-definitions/${dataDefinitionId}/apps?scope=${scope}`;
+	const ENDPOINT = `/o/app-builder/v1.0/data-definitions/${dataDefinitionId}/apps`;
 
 	const getEditAppUrl = ({dataDefinitionId, id}) => {
 		return withBackUrl(
@@ -117,29 +114,27 @@ export default ({
 			endpoint={ENDPOINT}
 			{...listViewProps}
 		>
-			{(app) => {
-				const appName = getLocalizedValue(defaultLanguageId, app.name);
-
-				return {
-					...app,
-					appName,
-					dateCreated: fromNow(app.dateCreated),
-					dateModified: fromNow(app.dateModified),
-					name: <Link to={getEditAppUrl(app)}>{appName}</Link>,
-					status: (
-						<ClayLabel
-							displayType={app.active ? 'success' : 'secondary'}
-						>
-							{STATUSES[app.active ? 'active' : 'inactive']}
-						</ClayLabel>
-					),
-					type: concatValues(
-						app.appDeployments.map(
-							({type}) => DEPLOYMENT_TYPES[type]
-						)
-					),
-				};
-			}}
+			{(app) => ({
+				...app,
+				appName: app.name,
+				dateCreated: fromNow(app.dateCreated),
+				dateModified: fromNow(app.dateModified),
+				name: (
+					<Link to={getEditAppUrl(app)}>
+						{getTranslatedValue(app, 'name')}
+					</Link>
+				),
+				status: (
+					<ClayLabel
+						displayType={app.active ? 'success' : 'secondary'}
+					>
+						{STATUSES[app.active ? 'active' : 'inactive']}
+					</ClayLabel>
+				),
+				type: concatValues(
+					app.appDeployments.map(({type}) => DEPLOYMENT_TYPES[type])
+				),
+			})}
 		</ListView>
 	);
 };

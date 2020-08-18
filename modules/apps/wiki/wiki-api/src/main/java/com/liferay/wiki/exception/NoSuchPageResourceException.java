@@ -28,12 +28,12 @@ public class NoSuchPageResourceException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchPageResourceException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public NoSuchPageResourceException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NoSuchPageResourceException(Throwable throwable) {
-		super(throwable);
+	public NoSuchPageResourceException(Throwable cause) {
+		super(cause);
 	}
 
 }

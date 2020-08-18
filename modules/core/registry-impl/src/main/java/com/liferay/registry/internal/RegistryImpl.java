@@ -112,7 +112,7 @@ public class RegistryImpl implements Registry {
 				try {
 					serviceTracker.close();
 				}
-				catch (Throwable throwable) {
+				catch (Throwable t) {
 				}
 			}
 		}

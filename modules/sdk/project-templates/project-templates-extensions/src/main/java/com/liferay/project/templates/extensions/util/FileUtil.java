@@ -185,8 +185,8 @@ public class FileUtil {
 					try {
 						Files.copy(inputStream, destinationPath);
 					}
-					catch (Throwable throwable) {
-						throw new RuntimeException(throwable);
+					catch (Throwable th) {
+						throw new RuntimeException(th);
 					}
 				}
 				else {

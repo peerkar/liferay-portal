@@ -7,7 +7,7 @@ definition {
 	}
 
 	macro clickAdd {
-		Button.click(button = "Add");
+		Click(locator1 = "Button#ADD");
 	}
 
 	macro clickAddRow {
@@ -30,10 +30,6 @@ definition {
 		Click(locator1 = "Button#COMMENT");
 	}
 
-	macro clickConfirm {
-		Click(locator1 = "Button#CONFIRM");
-	}
-
 	macro clickDelete {
 		Button.click(button = "Delete");
 	}
@@ -44,10 +40,6 @@ definition {
 
 	macro clickEdit {
 		Button.click(button = "Edit");
-	}
-
-	macro clickImport {
-		Button.click(button = "Import");
 	}
 
 	macro clickInstall {

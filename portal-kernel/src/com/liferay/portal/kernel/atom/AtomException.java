@@ -27,8 +27,8 @@ public class AtomException extends PortalException {
 		_errorCode = errorCode;
 	}
 
-	public AtomException(int errorCode, Throwable throwable) {
-		super(String.valueOf(errorCode), throwable);
+	public AtomException(int errorCode, Throwable cause) {
+		super(String.valueOf(errorCode), cause);
 
 		_errorCode = errorCode;
 	}

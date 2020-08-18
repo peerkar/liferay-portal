@@ -91,7 +91,7 @@ public class ClearTimerThreadUtil {
 
 			initialized = true;
 		}
-		catch (Throwable throwable) {
+		catch (Throwable t) {
 			if (_log.isWarnEnabled()) {
 				_log.warn("Failed to initialize ClearTimerThreadUtil");
 			}

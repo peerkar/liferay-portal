@@ -104,7 +104,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Wilson Man
  * @author Sergio González
  * @author Mika Koivisto
- * @deprecated As of Athanasius (7.3.x), with no direct replacement
  */
 @Component(
 	immediate = true,
@@ -114,7 +113,6 @@ import org.osgi.service.component.annotations.Reference;
 	},
 	service = StrutsAction.class
 )
-@Deprecated
 public class FacebookConnectStrutsAction implements StrutsAction {
 
 	@Override

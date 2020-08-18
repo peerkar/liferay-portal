@@ -61,10 +61,8 @@ import java.util.Map;
  *
  * @author Brian Wing Shun Chan
  * @see GroupServiceHttp
- * @deprecated As of Athanasius (7.3.x), with no direct replacement
  * @generated
  */
-@Deprecated
 public class GroupServiceSoap {
 
 	public static com.liferay.portal.kernel.model.GroupSoap addGroup(

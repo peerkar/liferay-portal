@@ -28,12 +28,12 @@ public class AudienceException extends PortalException {
 		super(msg);
 	}
 
-	public AudienceException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public AudienceException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public AudienceException(Throwable throwable) {
-		super(throwable);
+	public AudienceException(Throwable cause) {
+		super(cause);
 	}
 
 }

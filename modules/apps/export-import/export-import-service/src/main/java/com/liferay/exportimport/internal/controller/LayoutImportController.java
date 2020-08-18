@@ -231,7 +231,7 @@ public class LayoutImportController implements ImportController {
 					portletDataContext),
 				userId);
 		}
-		catch (Throwable throwable) {
+		catch (Throwable t) {
 			ExportImportThreadLocal.setLayoutImportInProcess(false);
 
 			_exportImportLifecycleManager.fireExportImportLifecycleEvent(
@@ -241,9 +241,9 @@ public class LayoutImportController implements ImportController {
 					exportImportConfiguration.getExportImportConfigurationId()),
 				_portletDataContextFactory.clonePortletDataContext(
 					portletDataContext),
-				throwable);
+				t);
 
-			throw throwable;
+			throw t;
 		}
 	}
 
@@ -899,16 +899,16 @@ public class LayoutImportController implements ImportController {
 					_portletDataContextFactory.clonePortletDataContext(
 						portletDataContext));
 			}
-			catch (Throwable throwable) {
+			catch (Throwable t) {
 				_exportImportLifecycleManager.fireExportImportLifecycleEvent(
 					ExportImportLifecycleConstants.EVENT_PORTLET_IMPORT_FAILED,
 					getProcessFlag(),
 					portletDataContext.getExportImportProcessId(),
 					_portletDataContextFactory.clonePortletDataContext(
 						portletDataContext),
-					throwable);
+					t);
 
-				throw throwable;
+				throw t;
 			}
 			finally {
 				_portletImportController.resetPortletScope(

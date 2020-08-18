@@ -573,7 +573,7 @@ public class DataDefinitionResourceTest
 	public SearchTestRule searchTestRule = new SearchTestRule();
 
 	@Override
-	protected void assertValid(DataDefinition dataDefinition) throws Exception {
+	protected void assertValid(DataDefinition dataDefinition) {
 		super.assertValid(dataDefinition);
 
 		boolean valid = true;

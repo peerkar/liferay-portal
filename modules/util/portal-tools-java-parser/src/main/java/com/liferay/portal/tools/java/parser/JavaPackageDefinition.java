@@ -51,8 +51,7 @@ public class JavaPackageDefinition extends BaseJavaTerm {
 			}
 		}
 
-		appendNewLine(
-			sb, _name, indent, prefix + "package ", suffix, NO_MAX_LINE_LENGTH);
+		appendNewLine(sb, _name, indent, prefix + "package ", suffix, -1);
 
 		return sb.toString();
 	}

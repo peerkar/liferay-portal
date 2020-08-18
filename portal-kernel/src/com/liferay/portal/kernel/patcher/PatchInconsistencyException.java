@@ -28,12 +28,12 @@ public class PatchInconsistencyException extends PortalException {
 		super(msg);
 	}
 
-	public PatchInconsistencyException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public PatchInconsistencyException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public PatchInconsistencyException(Throwable throwable) {
-		super(throwable);
+	public PatchInconsistencyException(Throwable cause) {
+		super(cause);
 	}
 
 }

@@ -36,10 +36,6 @@ public class BuildFactory {
 				return new CucumberAxisBuild(url, (BatchBuild)parentBuild);
 			}
 
-			if ((jobVariant != null) && jobVariant.contains("functional")) {
-				return new PoshiAxisBuild(url, (BatchBuild)parentBuild);
-			}
-
 			return new AxisBuild(url, (BatchBuild)parentBuild);
 		}
 
@@ -97,21 +93,6 @@ public class BuildFactory {
 			}
 
 			return new PullRequestPortalTopLevelBuild(
-				url, (TopLevelBuild)parentBuild);
-		}
-
-		if (jobName.startsWith("test-plugins-acceptance-pullrequest")) {
-			return new PullRequestPluginsTopLevelBuild(
-				url, (TopLevelBuild)parentBuild);
-		}
-
-		if (jobName.equals("test-plugins-extraapps")) {
-			return new ExtraAppsPluginsTopLevelBuild(
-				url, (TopLevelBuild)parentBuild);
-		}
-
-		if (jobName.equals("test-plugins-marketplaceapp")) {
-			return new MarketplaceAppPluginsTopLevelBuild(
 				url, (TopLevelBuild)parentBuild);
 		}
 

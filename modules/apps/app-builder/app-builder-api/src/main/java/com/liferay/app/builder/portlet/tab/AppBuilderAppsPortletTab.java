@@ -14,8 +14,6 @@
 
 package com.liferay.app.builder.portlet.tab;
 
-import com.liferay.portal.kernel.model.User;
-
 import java.util.Locale;
 
 import org.osgi.annotation.versioning.ProviderType;
@@ -25,8 +23,6 @@ import org.osgi.annotation.versioning.ProviderType;
  */
 @ProviderType
 public interface AppBuilderAppsPortletTab {
-
-	public void deleteApp(long appBuilderAppId, User user) throws Exception;
 
 	public String getEditEntryPoint();
 

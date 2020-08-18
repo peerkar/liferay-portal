@@ -14,7 +14,6 @@
 
 package com.liferay.style.book.internal.frontend.css.variables;
 
-import com.liferay.exportimport.kernel.staging.Staging;
 import com.liferay.frontend.css.variables.ScopedCSSVariables;
 import com.liferay.frontend.css.variables.ScopedCSSVariablesProvider;
 import com.liferay.petra.string.StringPool;
@@ -99,7 +98,7 @@ public class StyleBookScopedCSSVariablesProvider
 				}
 
 				public String getScope() {
-					return "#wrapper";
+					return "body";
 				}
 
 			});
@@ -112,7 +111,7 @@ public class StyleBookScopedCSSVariablesProvider
 			(ThemeDisplay)httpServletRequest.getAttribute(
 				WebKeys.THEME_DISPLAY);
 
-		Group group = themeDisplay.getSiteGroup();
+		Group group = themeDisplay.getScopeGroup();
 
 		if (group.isControlPanel()) {
 			return StringPool.BLANK;
@@ -136,9 +135,8 @@ public class StyleBookScopedCSSVariablesProvider
 		}
 
 		if (styleBookEntry == null) {
-			styleBookEntry =
-				_styleBookEntryLocalService.fetchDefaultStyleBookEntry(
-					_staging.getLiveGroupId(layout.getGroupId()));
+			_styleBookEntryLocalService.fetchDefaultStyleBookEntry(
+				layout.getGroupId());
 		}
 
 		if (styleBookEntry == null) {
@@ -153,9 +151,6 @@ public class StyleBookScopedCSSVariablesProvider
 
 	@Reference
 	private LayoutLocalService _layoutLocalService;
-
-	@Reference
-	private Staging _staging;
 
 	@Reference
 	private StyleBookEntryLocalService _styleBookEntryLocalService;

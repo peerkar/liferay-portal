@@ -366,12 +366,9 @@ public class ScopeLocatorImplTest extends PowerMockito {
 		Stream<LiferayOAuth2Scope> stream = liferayOAuth2Scopes.stream();
 
 		return stream.flatMap(
-			liferayOAuth2Scope -> {
-				Set<String> singletonSet = Collections.singleton(
-					liferayOAuth2Scope.getScope());
-
-				return singletonSet.stream();
-			}
+			liferayOAuth2Scope -> Collections.singleton(
+				liferayOAuth2Scope.getScope()
+			).stream()
 		).collect(
 			Collectors.toSet()
 		);

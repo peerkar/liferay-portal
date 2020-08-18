@@ -117,9 +117,7 @@ public class MessageBoardMessageDTOConverter
 							return null;
 						}
 
-						return CreatorUtil.toCreator(
-							_portal, dtoConverterContext.getUriInfoOptional(),
-							user);
+						return CreatorUtil.toCreator(_portal, user);
 					});
 				setCreatorStatistics(
 					() -> {

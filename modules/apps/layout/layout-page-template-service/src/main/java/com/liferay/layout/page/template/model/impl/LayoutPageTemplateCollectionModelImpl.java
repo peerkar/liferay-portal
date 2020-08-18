@@ -75,8 +75,7 @@ public class LayoutPageTemplateCollectionModelImpl
 	public static final String TABLE_NAME = "LayoutPageTemplateCollection";
 
 	public static final Object[][] TABLE_COLUMNS = {
-		{"mvccVersion", Types.BIGINT}, {"ctCollectionId", Types.BIGINT},
-		{"uuid_", Types.VARCHAR},
+		{"mvccVersion", Types.BIGINT}, {"uuid_", Types.VARCHAR},
 		{"layoutPageTemplateCollectionId", Types.BIGINT},
 		{"groupId", Types.BIGINT}, {"companyId", Types.BIGINT},
 		{"userId", Types.BIGINT}, {"userName", Types.VARCHAR},
@@ -90,7 +89,6 @@ public class LayoutPageTemplateCollectionModelImpl
 
 	static {
 		TABLE_COLUMNS_MAP.put("mvccVersion", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("ctCollectionId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("uuid_", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("layoutPageTemplateCollectionId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("groupId", Types.BIGINT);
@@ -106,7 +104,7 @@ public class LayoutPageTemplateCollectionModelImpl
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table LayoutPageTemplateCollection (mvccVersion LONG default 0 not null,ctCollectionId LONG default 0 not null,uuid_ VARCHAR(75) null,layoutPageTemplateCollectionId LONG not null,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,lptCollectionKey VARCHAR(75) null,name VARCHAR(75) null,description STRING null,lastPublishDate DATE null,primary key (layoutPageTemplateCollectionId, ctCollectionId))";
+		"create table LayoutPageTemplateCollection (mvccVersion LONG default 0 not null,uuid_ VARCHAR(75) null,layoutPageTemplateCollectionId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,lptCollectionKey VARCHAR(75) null,name VARCHAR(75) null,description STRING null,lastPublishDate DATE null)";
 
 	public static final String TABLE_SQL_DROP =
 		"drop table LayoutPageTemplateCollection";
@@ -153,9 +151,7 @@ public class LayoutPageTemplateCollectionModelImpl
 	 *
 	 * @param soapModel the soap model instance to convert
 	 * @return the normal model instance
-	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
 	 */
-	@Deprecated
 	public static LayoutPageTemplateCollection toModel(
 		LayoutPageTemplateCollectionSoap soapModel) {
 
@@ -167,7 +163,6 @@ public class LayoutPageTemplateCollectionModelImpl
 			new LayoutPageTemplateCollectionImpl();
 
 		model.setMvccVersion(soapModel.getMvccVersion());
-		model.setCtCollectionId(soapModel.getCtCollectionId());
 		model.setUuid(soapModel.getUuid());
 		model.setLayoutPageTemplateCollectionId(
 			soapModel.getLayoutPageTemplateCollectionId());
@@ -191,9 +186,7 @@ public class LayoutPageTemplateCollectionModelImpl
 	 *
 	 * @param soapModels the soap model instances to convert
 	 * @return the normal model instances
-	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
 	 */
-	@Deprecated
 	public static List<LayoutPageTemplateCollection> toModels(
 		LayoutPageTemplateCollectionSoap[] soapModels) {
 
@@ -350,12 +343,6 @@ public class LayoutPageTemplateCollectionModelImpl
 			(BiConsumer<LayoutPageTemplateCollection, Long>)
 				LayoutPageTemplateCollection::setMvccVersion);
 		attributeGetterFunctions.put(
-			"ctCollectionId", LayoutPageTemplateCollection::getCtCollectionId);
-		attributeSetterBiConsumers.put(
-			"ctCollectionId",
-			(BiConsumer<LayoutPageTemplateCollection, Long>)
-				LayoutPageTemplateCollection::setCtCollectionId);
-		attributeGetterFunctions.put(
 			"uuid", LayoutPageTemplateCollection::getUuid);
 		attributeSetterBiConsumers.put(
 			"uuid",
@@ -448,17 +435,6 @@ public class LayoutPageTemplateCollectionModelImpl
 	@Override
 	public void setMvccVersion(long mvccVersion) {
 		_mvccVersion = mvccVersion;
-	}
-
-	@JSON
-	@Override
-	public long getCtCollectionId() {
-		return _ctCollectionId;
-	}
-
-	@Override
-	public void setCtCollectionId(long ctCollectionId) {
-		_ctCollectionId = ctCollectionId;
 	}
 
 	@JSON
@@ -745,7 +721,6 @@ public class LayoutPageTemplateCollectionModelImpl
 			new LayoutPageTemplateCollectionImpl();
 
 		layoutPageTemplateCollectionImpl.setMvccVersion(getMvccVersion());
-		layoutPageTemplateCollectionImpl.setCtCollectionId(getCtCollectionId());
 		layoutPageTemplateCollectionImpl.setUuid(getUuid());
 		layoutPageTemplateCollectionImpl.setLayoutPageTemplateCollectionId(
 			getLayoutPageTemplateCollectionId());
@@ -866,9 +841,6 @@ public class LayoutPageTemplateCollectionModelImpl
 				new LayoutPageTemplateCollectionCacheModel();
 
 		layoutPageTemplateCollectionCacheModel.mvccVersion = getMvccVersion();
-
-		layoutPageTemplateCollectionCacheModel.ctCollectionId =
-			getCtCollectionId();
 
 		layoutPageTemplateCollectionCacheModel.uuid = getUuid();
 
@@ -1037,7 +1009,6 @@ public class LayoutPageTemplateCollectionModelImpl
 	}
 
 	private long _mvccVersion;
-	private long _ctCollectionId;
 	private String _uuid;
 	private String _originalUuid;
 	private long _layoutPageTemplateCollectionId;

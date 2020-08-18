@@ -20,7 +20,6 @@ import com.liferay.poshi.runner.selenium.LiferaySeleniumUtil;
 import com.liferay.poshi.runner.selenium.SeleniumUtil;
 import com.liferay.poshi.runner.util.FileUtil;
 import com.liferay.poshi.runner.util.PropsValues;
-import com.liferay.poshi.runner.util.ProxyUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -207,10 +206,6 @@ public class PoshiRunner {
 			PoshiRunnerStackTraceUtil.emptyStackTrace();
 		}
 		finally {
-			if (PropsValues.PROXY_SERVER_ENABLED) {
-				ProxyUtil.stopBrowserMobProxy();
-			}
-
 			SummaryLogger.stopRunning();
 
 			_poshiLogger.createPoshiReport();
@@ -348,15 +343,15 @@ public class PoshiRunner {
 
 						return;
 					}
-					catch (Throwable throwable) {
-						_testResultMessages.add(throwable.getMessage());
+					catch (Throwable t) {
+						_testResultMessages.add(t.getMessage());
 
-						if (!_isRetryable(throwable)) {
+						if (!_isRetryable(t)) {
 							_testResults.put(
 								_testNamespacedClassCommandName,
 								_testResultMessages);
 
-							throw throwable;
+							throw t;
 						}
 
 						_jvmRetryCount++;
@@ -383,17 +378,17 @@ public class PoshiRunner {
 				return message;
 			}
 
-			private boolean _isKnownFlakyIssue(Throwable throwable1) {
+			private boolean _isKnownFlakyIssue(Throwable throwable) {
 				List<Throwable> throwables = null;
 
-				if (throwable1 instanceof MultipleFailureException) {
+				if (throwable instanceof MultipleFailureException) {
 					MultipleFailureException multipleFailureException =
-						(MultipleFailureException)throwable1;
+						(MultipleFailureException)throwable;
 
 					throwables = multipleFailureException.getFailures();
 				}
 				else {
-					throwables = Arrays.asList(throwable1);
+					throwables = Arrays.asList(throwable);
 				}
 
 				for (Throwable validRetryThrowable : _validRetryThrowables) {
@@ -402,10 +397,8 @@ public class PoshiRunner {
 					String validRetryThrowableShortMessage = _getShortMessage(
 						validRetryThrowable);
 
-					for (Throwable throwable2 : throwables) {
-						if (validRetryThrowableClass.equals(
-								throwable2.getClass())) {
-
+					for (Throwable t : throwables) {
+						if (validRetryThrowableClass.equals(t.getClass())) {
 							if ((validRetryThrowableShortMessage == null) ||
 								validRetryThrowableShortMessage.isEmpty()) {
 
@@ -413,7 +406,7 @@ public class PoshiRunner {
 							}
 
 							if (validRetryThrowableShortMessage.equals(
-									_getShortMessage(throwable2))) {
+									_getShortMessage(t))) {
 
 								return true;
 							}

@@ -14,11 +14,7 @@
 
 package com.liferay.info.internal.display.contributor;
 
-import com.liferay.asset.info.item.provider.AssetEntryInfoItemFieldSetProvider;
-import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.model.ClassType;
-import com.liferay.asset.kernel.service.AssetEntryLocalService;
-import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.info.display.contributor.InfoDisplayContributor;
 import com.liferay.info.display.contributor.InfoDisplayField;
 import com.liferay.info.display.contributor.InfoDisplayObjectProvider;
@@ -31,13 +27,11 @@ import com.liferay.info.field.type.InfoFieldType;
 import com.liferay.info.field.type.TextInfoFieldType;
 import com.liferay.info.field.type.URLInfoFieldType;
 import com.liferay.info.form.InfoForm;
-import com.liferay.info.item.ClassPKInfoItemIdentifier;
-import com.liferay.info.item.GroupUrlTitleInfoItemIdentifier;
 import com.liferay.info.item.InfoItemClassDetails;
+import com.liferay.info.item.InfoItemClassPKReference;
 import com.liferay.info.item.InfoItemDetails;
 import com.liferay.info.item.InfoItemFieldValues;
 import com.liferay.info.item.InfoItemFormVariation;
-import com.liferay.info.item.InfoItemIdentifier;
 import com.liferay.info.item.InfoItemReference;
 import com.liferay.info.item.capability.InfoItemCapability;
 import com.liferay.info.item.provider.InfoItemCapabilitiesProvider;
@@ -47,10 +41,9 @@ import com.liferay.info.item.provider.InfoItemFormProvider;
 import com.liferay.info.item.provider.InfoItemFormVariationsProvider;
 import com.liferay.info.item.provider.InfoItemObjectProvider;
 import com.liferay.info.localized.InfoLocalizedValue;
+import com.liferay.layout.page.template.info.item.capability.DisplayPageInfoItemCapability;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.repository.model.FileEntry;
-import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.LocaleUtil;
 
@@ -74,16 +67,9 @@ public class InfoDisplayContributorWrapper
 			   InfoItemObjectProvider<Object> {
 
 	public InfoDisplayContributorWrapper(
-		AssetEntryInfoItemFieldSetProvider assetEntryInfoItemFieldSetProvider,
-		AssetEntryLocalService assetEntryLocalService,
-		InfoDisplayContributor<Object> infoDisplayContributor,
-		List<InfoItemCapability> infoItemCapabilities) {
+		InfoDisplayContributor<Object> infoDisplayContributor) {
 
-		_assetEntryInfoItemFieldSetProvider =
-			assetEntryInfoItemFieldSetProvider;
-		_assetEntryLocalService = assetEntryLocalService;
 		_infoDisplayContributor = infoDisplayContributor;
-		_infoItemCapabilities = infoItemCapabilities;
 	}
 
 	@Override
@@ -93,7 +79,7 @@ public class InfoDisplayContributorWrapper
 		try {
 			return _convertToInfoForm(
 				_infoDisplayContributor.getInfoDisplayFields(0, locale),
-				_infoDisplayContributor.getClassName(), null);
+				_infoDisplayContributor.getClassName());
 		}
 		catch (PortalException portalException) {
 			throw new RuntimeException(portalException);
@@ -108,7 +94,7 @@ public class InfoDisplayContributorWrapper
 			return _convertToInfoForm(
 				_infoDisplayContributor.getInfoDisplayFields(
 					itemClassTypeId, locale),
-				_infoDisplayContributor.getClassName(), null);
+				_infoDisplayContributor.getClassName());
 		}
 		catch (PortalException portalException) {
 			throw new RuntimeException(
@@ -126,7 +112,7 @@ public class InfoDisplayContributorWrapper
 			return _convertToInfoForm(
 				_infoDisplayContributor.getInfoDisplayFields(
 					itemObject, locale),
-				_infoDisplayContributor.getClassName(), itemObject);
+				_infoDisplayContributor.getClassName());
 		}
 		catch (PortalException portalException) {
 			throw new RuntimeException(portalException);
@@ -134,39 +120,13 @@ public class InfoDisplayContributorWrapper
 	}
 
 	@Override
-	public Object getInfoItem(InfoItemIdentifier infoItemIdentifier)
+	public Object getInfoItem(InfoItemReference infoItemReference)
 		throws NoSuchInfoItemException {
 
-		if (!(infoItemIdentifier instanceof ClassPKInfoItemIdentifier) &&
-			!(infoItemIdentifier instanceof GroupUrlTitleInfoItemIdentifier)) {
-
-			throw new NoSuchInfoItemException(
-				"Unsupported info item identifier type " + infoItemIdentifier);
-		}
-
-		InfoDisplayObjectProvider<?> infoDisplayObjectProvider = null;
-
 		try {
-			if (infoItemIdentifier instanceof ClassPKInfoItemIdentifier) {
-				ClassPKInfoItemIdentifier classPKInfoItemIdentifier =
-					(ClassPKInfoItemIdentifier)infoItemIdentifier;
-
-				infoDisplayObjectProvider =
-					_infoDisplayContributor.getInfoDisplayObjectProvider(
-						classPKInfoItemIdentifier.getClassPK());
-			}
-			else if (infoItemIdentifier instanceof
-						GroupUrlTitleInfoItemIdentifier) {
-
-				GroupUrlTitleInfoItemIdentifier
-					groupURLTitleInfoItemIdentifier =
-						(GroupUrlTitleInfoItemIdentifier)infoItemIdentifier;
-
-				infoDisplayObjectProvider =
-					_infoDisplayContributor.getInfoDisplayObjectProvider(
-						groupURLTitleInfoItemIdentifier.getGroupId(),
-						groupURLTitleInfoItemIdentifier.getUrlTitle());
-			}
+			InfoDisplayObjectProvider<?> infoDisplayObjectProvider =
+				_infoDisplayContributor.getInfoDisplayObjectProvider(
+					infoItemReference.getClassPK());
 
 			return infoDisplayObjectProvider.getDisplayObject();
 		}
@@ -177,15 +137,14 @@ public class InfoDisplayContributorWrapper
 
 	@Override
 	public Object getInfoItem(long classPK) throws NoSuchInfoItemException {
-		InfoItemIdentifier infoItemIdentifier = new ClassPKInfoItemIdentifier(
-			classPK);
+		InfoItemReference infoItemReference = new InfoItemReference(classPK);
 
-		return getInfoItem(infoItemIdentifier);
+		return getInfoItem(infoItemReference);
 	}
 
 	@Override
 	public List<InfoItemCapability> getInfoItemCapabilities() {
-		return _infoItemCapabilities;
+		return ListUtil.fromArray(DisplayPageInfoItemCapability.INSTANCE);
 	}
 
 	@Override
@@ -201,7 +160,6 @@ public class InfoDisplayContributorWrapper
 		return new InfoItemDetails(
 			getInfoItemClassDetails(),
 			new InfoItemReference(
-				_infoDisplayContributor.getClassName(),
 				_infoDisplayContributor.getInfoDisplayObjectClassPK(
 					itemObject)));
 	}
@@ -214,7 +172,7 @@ public class InfoDisplayContributorWrapper
 			return _convertToInfoItemFieldValues(
 				_infoDisplayContributor.getInfoDisplayFieldsValues(
 					itemObject, locale),
-				new InfoItemReference(
+				new InfoItemClassPKReference(
 					_infoDisplayContributor.getClassName(),
 					_infoDisplayContributor.getInfoDisplayObjectClassPK(
 						itemObject)));
@@ -256,19 +214,9 @@ public class InfoDisplayContributorWrapper
 	}
 
 	private InfoForm _convertToInfoForm(
-		Set<InfoDisplayField> infoDisplayFields, String name, Object object) {
+		Set<InfoDisplayField> infoDisplayFields, String name) {
 
-		Set<Locale> availableLocales = LanguageUtil.getAvailableLocales();
-
-		InfoLocalizedValue.Builder infoLocalizedValueBuilder =
-			InfoLocalizedValue.builder();
-
-		for (Locale locale : availableLocales) {
-			infoLocalizedValueBuilder.value(
-				locale, ResourceActionsUtil.getModelResource(locale, name));
-		}
-
-		InfoForm.Builder infoFormBuilder = InfoForm.builder(
+		return InfoForm.builder(
 		).infoFieldSetEntry(
 			consumer -> {
 				for (InfoDisplayField infoDisplayField : infoDisplayFields) {
@@ -286,80 +234,44 @@ public class InfoDisplayContributorWrapper
 						).build());
 				}
 			}
-		).labelInfoLocalizedValue(
-			infoLocalizedValueBuilder.build()
 		).name(
 			name
-		);
-
-		if (Objects.equals(name, FileEntry.class.getName())) {
-			long classPK = _infoDisplayContributor.getInfoDisplayObjectClassPK(
-				object);
-
-			AssetEntry assetEntry = _assetEntryLocalService.fetchEntry(
-				DLFileEntry.class.getName(), classPK);
-
-			if (assetEntry != null) {
-				infoFormBuilder.infoFieldSetEntry(
-					_assetEntryInfoItemFieldSetProvider.getInfoFieldSet(
-						assetEntry));
-			}
-		}
-
-		return infoFormBuilder.build();
+		).build();
 	}
 
 	private InfoItemFieldValues _convertToInfoItemFieldValues(
 		Map<String, Object> infoDisplayFieldsValues,
-		InfoItemReference infoItemReference) {
+		InfoItemClassPKReference infoItemClassPKReference) {
 
-		InfoItemFieldValues.Builder infoItemFieldValuesBuilder =
-			InfoItemFieldValues.builder(
-			).infoFieldValue(
-				consumer -> {
-					for (Map.Entry<String, Object> entry :
-							infoDisplayFieldsValues.entrySet()) {
+		return InfoItemFieldValues.builder(
+		).infoFieldValue(
+			consumer -> {
+				for (Map.Entry<String, Object> entry :
+						infoDisplayFieldsValues.entrySet()) {
 
-						String fieldName = entry.getKey();
+					String fieldName = entry.getKey();
 
-						InfoLocalizedValue<String> fieldLabelLocalizedValue =
-							InfoLocalizedValue.<String>builder(
-							).value(
-								_getLocale(), fieldName
-							).build();
-
-						InfoField infoField = InfoField.builder(
-						).infoFieldType(
-							TextInfoFieldType.INSTANCE
-						).name(
-							fieldName
-						).labelInfoLocalizedValue(
-							fieldLabelLocalizedValue
+					InfoLocalizedValue<String> fieldLabelLocalizedValue =
+						InfoLocalizedValue.<String>builder(
+						).value(
+							_getLocale(), fieldName
 						).build();
 
-						consumer.accept(
-							new InfoFieldValue<>(infoField, entry.getValue()));
-					}
+					InfoField infoField = InfoField.builder(
+					).infoFieldType(
+						TextInfoFieldType.INSTANCE
+					).name(
+						fieldName
+					).labelInfoLocalizedValue(
+						fieldLabelLocalizedValue
+					).build();
+
+					consumer.accept(
+						new InfoFieldValue<>(infoField, entry.getValue()));
 				}
-			);
-
-		if (Objects.equals(
-				infoItemReference.getClassName(), FileEntry.class.getName())) {
-
-			try {
-				infoItemFieldValuesBuilder.infoFieldValues(
-					_assetEntryInfoItemFieldSetProvider.getInfoFieldValues(
-						DLFileEntry.class.getName(),
-						infoItemReference.getClassPK()));
 			}
-			catch (NoSuchInfoItemException noSuchInfoItemException) {
-				throw new RuntimeException(
-					"Caught unexpected exception", noSuchInfoItemException);
-			}
-		}
-
-		return infoItemFieldValuesBuilder.infoItemReference(
-			infoItemReference
+		).infoItemClassPKReference(
+			infoItemClassPKReference
 		).build();
 	}
 
@@ -391,10 +303,6 @@ public class InfoDisplayContributorWrapper
 		return locale;
 	}
 
-	private final AssetEntryInfoItemFieldSetProvider
-		_assetEntryInfoItemFieldSetProvider;
-	private final AssetEntryLocalService _assetEntryLocalService;
 	private final InfoDisplayContributor<Object> _infoDisplayContributor;
-	private final List<InfoItemCapability> _infoItemCapabilities;
 
 }

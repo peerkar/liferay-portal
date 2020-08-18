@@ -17,8 +17,6 @@ package com.liferay.headless.delivery.resource.v1_0;
 import com.liferay.headless.delivery.dto.v1_0.ContentTemplate;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
-import com.liferay.portal.kernel.service.GroupLocalService;
-import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
@@ -50,12 +48,6 @@ public interface ContentTemplateResource {
 		return FactoryHolder.factory.create();
 	}
 
-	public Page<ContentTemplate> getAssetLibraryContentTemplatesPage(
-			Long assetLibraryId, String search,
-			com.liferay.portal.vulcan.aggregation.Aggregation aggregation,
-			Filter filter, Pagination pagination, Sort[] sorts)
-		throws Exception;
-
 	public Page<ContentTemplate> getSiteContentTemplatesPage(
 			Long siteId, String search,
 			com.liferay.portal.vulcan.aggregation.Aggregation aggregation,
@@ -86,10 +78,6 @@ public interface ContentTemplateResource {
 
 	public void setContextUser(
 		com.liferay.portal.kernel.model.User contextUser);
-
-	public void setGroupLocalService(GroupLocalService groupLocalService);
-
-	public void setRoleLocalService(RoleLocalService roleLocalService);
 
 	public static class FactoryHolder {
 

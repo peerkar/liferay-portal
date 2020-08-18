@@ -550,8 +550,8 @@ public abstract class BaseKnowledgeBaseAttachmentResourceTestCase {
 		}
 	}
 
-	protected void assertValid(KnowledgeBaseAttachment knowledgeBaseAttachment)
-		throws Exception {
+	protected void assertValid(
+		KnowledgeBaseAttachment knowledgeBaseAttachment) {
 
 		boolean valid = true;
 

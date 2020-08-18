@@ -47,10 +47,8 @@ import java.rmi.RemoteException;
  *
  * @author José Manuel Navarro
  * @see ScreensJournalArticleServiceHttp
- * @deprecated As of Athanasius (7.3.x), with no direct replacement
  * @generated
  */
-@Deprecated
 public class ScreensJournalArticleServiceSoap {
 
 	public static String getJournalArticleContent(long classPK, String locale)

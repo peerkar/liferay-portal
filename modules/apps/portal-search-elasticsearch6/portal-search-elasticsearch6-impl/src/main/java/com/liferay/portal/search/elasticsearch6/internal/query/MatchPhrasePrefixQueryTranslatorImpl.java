@@ -24,6 +24,7 @@ import org.osgi.service.component.annotations.Component;
 
 /**
  * @author Michael C. Han
+ * @author Petteri Karttunen
  */
 @Component(service = MatchPhrasePrefixQueryTranslator.class)
 public class MatchPhrasePrefixQueryTranslatorImpl
@@ -42,6 +43,11 @@ public class MatchPhrasePrefixQueryTranslatorImpl
 			matchPhrasePrefixQueryBuilder.analyzer(
 				matchPhrasePrefixQuery.getAnalyzer());
 		}
+		
+		if (matchPhrasePrefixQuery.getBoost() !=  null) {
+			matchPhrasePrefixQueryBuilder.boost(
+				matchPhrasePrefixQuery.getBoost());
+		}		
 
 		if (matchPhrasePrefixQuery.getSlop() != null) {
 			matchPhrasePrefixQueryBuilder.slop(

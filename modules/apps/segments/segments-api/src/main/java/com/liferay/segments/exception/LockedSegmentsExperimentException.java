@@ -32,12 +32,12 @@ public class LockedSegmentsExperimentException extends PortalException {
 		super(msg);
 	}
 
-	public LockedSegmentsExperimentException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public LockedSegmentsExperimentException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public LockedSegmentsExperimentException(Throwable throwable) {
-		super(throwable);
+	public LockedSegmentsExperimentException(Throwable cause) {
+		super(cause);
 	}
 
 }

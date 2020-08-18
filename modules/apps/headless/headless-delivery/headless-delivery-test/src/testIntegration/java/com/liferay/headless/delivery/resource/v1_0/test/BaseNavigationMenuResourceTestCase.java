@@ -704,7 +704,7 @@ public abstract class BaseNavigationMenuResourceTestCase {
 		}
 	}
 
-	protected void assertValid(NavigationMenu navigationMenu) throws Exception {
+	protected void assertValid(NavigationMenu navigationMenu) {
 		boolean valid = true;
 
 		if (navigationMenu.getDateCreated() == null) {

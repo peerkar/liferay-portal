@@ -14,15 +14,9 @@
 
 package com.liferay.translation.service.http;
 
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.translation.service.TranslationEntryServiceUtil;
-
-import java.rmi.RemoteException;
-
 /**
  * Provides the SOAP utility for the
- * <code>TranslationEntryServiceUtil</code> service
+ * <code>com.liferay.translation.service.TranslationEntryServiceUtil</code> service
  * utility. The static methods of this class call the same methods of the
  * service utility. However, the signatures are different because it is
  * difficult for SOAP to support certain types.
@@ -57,61 +51,7 @@ import java.rmi.RemoteException;
  *
  * @author Brian Wing Shun Chan
  * @see TranslationEntryServiceHttp
- * @deprecated As of Athanasius (7.3.x), with no direct replacement
  * @generated
  */
-@Deprecated
 public class TranslationEntryServiceSoap {
-
-	public static com.liferay.translation.model.TranslationEntrySoap
-			addOrUpdateTranslationEntry(
-				long groupId,
-				com.liferay.info.item.InfoItemReference infoItemReference,
-				String content, String contentType,
-				com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws RemoteException {
-
-		try {
-			com.liferay.translation.model.TranslationEntry returnValue =
-				TranslationEntryServiceUtil.addOrUpdateTranslationEntry(
-					groupId, infoItemReference, content, contentType,
-					serviceContext);
-
-			return com.liferay.translation.model.TranslationEntrySoap.
-				toSoapModel(returnValue);
-		}
-		catch (Exception exception) {
-			_log.error(exception, exception);
-
-			throw new RemoteException(exception.getMessage());
-		}
-	}
-
-	public static com.liferay.translation.model.TranslationEntrySoap
-			addOrUpdateTranslationEntry(
-				long groupId, String languageId,
-				com.liferay.info.item.InfoItemReference infoItemReference,
-				com.liferay.info.item.InfoItemFieldValues infoItemFieldValues,
-				com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws RemoteException {
-
-		try {
-			com.liferay.translation.model.TranslationEntry returnValue =
-				TranslationEntryServiceUtil.addOrUpdateTranslationEntry(
-					groupId, languageId, infoItemReference, infoItemFieldValues,
-					serviceContext);
-
-			return com.liferay.translation.model.TranslationEntrySoap.
-				toSoapModel(returnValue);
-		}
-		catch (Exception exception) {
-			_log.error(exception, exception);
-
-			throw new RemoteException(exception.getMessage());
-		}
-	}
-
-	private static Log _log = LogFactoryUtil.getLog(
-		TranslationEntryServiceSoap.class);
-
 }

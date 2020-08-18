@@ -255,35 +255,35 @@ public class LockManagerImpl implements LockManager {
 				new LockImpl(duplicateLockException.getLock()));
 		}
 
-		Throwable throwable = portalException.getCause();
+		Throwable cause = portalException.getCause();
 		String message = portalException.getMessage();
 
 		if (portalException instanceof
 				com.liferay.portal.lock.exception.ExpiredLockException) {
 
-			if (throwable == null) {
+			if (cause == null) {
 				return new ExpiredLockException(message);
 			}
 
-			return new ExpiredLockException(message, throwable);
+			return new ExpiredLockException(message, cause);
 		}
 		else if (portalException instanceof
 					com.liferay.portal.lock.exception.InvalidLockException) {
 
-			if (throwable == null) {
+			if (cause == null) {
 				return new InvalidLockException(message);
 			}
 
-			return new InvalidLockException(message, throwable);
+			return new InvalidLockException(message, cause);
 		}
 		else if (portalException instanceof
 					com.liferay.portal.lock.exception.NoSuchLockException) {
 
-			if (throwable == null) {
+			if (cause == null) {
 				return new NoSuchLockException(message);
 			}
 
-			return new NoSuchLockException(message, throwable);
+			return new NoSuchLockException(message, cause);
 		}
 
 		return portalException;

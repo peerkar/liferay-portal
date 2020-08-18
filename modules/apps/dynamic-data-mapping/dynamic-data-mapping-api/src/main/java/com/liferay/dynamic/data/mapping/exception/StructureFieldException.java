@@ -28,12 +28,12 @@ public class StructureFieldException extends PortalException {
 		super(msg);
 	}
 
-	public StructureFieldException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public StructureFieldException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public StructureFieldException(Throwable throwable) {
-		super(throwable);
+	public StructureFieldException(Throwable cause) {
+		super(cause);
 	}
 
 }

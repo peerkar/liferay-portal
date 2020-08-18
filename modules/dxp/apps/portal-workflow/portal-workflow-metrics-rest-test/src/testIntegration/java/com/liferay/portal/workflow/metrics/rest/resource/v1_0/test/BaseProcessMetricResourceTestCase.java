@@ -455,7 +455,7 @@ public abstract class BaseProcessMetricResourceTestCase {
 		}
 	}
 
-	protected void assertValid(ProcessMetric processMetric) throws Exception {
+	protected void assertValid(ProcessMetric processMetric) {
 		boolean valid = true;
 
 		for (String additionalAssertFieldName :

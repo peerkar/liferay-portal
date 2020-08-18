@@ -11,8 +11,7 @@ definition {
 			locator1 = "AppManager#BREADCRUMB_2_LINK");
 
 		AssertClick(
-			key_text = "Independent Modules",
-			locator1 = "Link#ANY",
+			locator1 = "ListGroupItem#INDEPENDENT_MODULES_LINK",
 			value1 = "Independent Modules");
 
 		Breadcrumb.viewActiveEntry(breadcrumbName = "Independent Modules");

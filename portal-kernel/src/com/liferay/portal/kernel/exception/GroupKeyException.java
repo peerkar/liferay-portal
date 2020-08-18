@@ -26,12 +26,12 @@ public class GroupKeyException extends PortalException {
 		super(msg);
 	}
 
-	public GroupKeyException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public GroupKeyException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public GroupKeyException(Throwable throwable) {
-		super(throwable);
+	public GroupKeyException(Throwable cause) {
+		super(cause);
 	}
 
 }

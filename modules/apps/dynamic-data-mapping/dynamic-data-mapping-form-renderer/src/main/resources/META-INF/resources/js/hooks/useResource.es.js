@@ -13,7 +13,6 @@
  */
 
 import {useResource} from '@clayui/data-provider';
-import {fetch} from 'frontend-js-web';
 
 import {useStorage} from './useStorage.es';
 
@@ -29,7 +28,6 @@ export const useFieldTypesResource = () => {
 	const storage = useStorage();
 
 	return useResource({
-		fetch: (url, options) => fetch(url, options).then((res) => res.json()),
 		fetchOptions: {
 			headers: HEADERS,
 		},

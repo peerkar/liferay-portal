@@ -41,17 +41,17 @@ public class WorkflowMetricsSLADefinitionTimeframeException
 	}
 
 	public WorkflowMetricsSLADefinitionTimeframeException(
-		String msg, Throwable throwable, List<String> fieldNames) {
+		String msg, Throwable cause, List<String> fieldNames) {
 
-		super(msg, throwable);
+		super(msg, cause);
 
 		_fieldNames = fieldNames;
 	}
 
 	public WorkflowMetricsSLADefinitionTimeframeException(
-		Throwable throwable, List<String> fieldNames) {
+		Throwable cause, List<String> fieldNames) {
 
-		super(throwable);
+		super(cause);
 
 		_fieldNames = fieldNames;
 	}

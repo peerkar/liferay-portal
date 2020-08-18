@@ -26,39 +26,36 @@
  * details.
  */
 import qs from 'qs';
+import {useEffect, useRef, useState} from 'react';
 
 const qsOptions = {allowDots: true, arrayFormat: 'bracket'};
 
-export const toQuery = (queryString = '', defaultQuery = {}, scope = false) => {
+export const toQuery = (queryString = '', defaultQuery = {}) => {
 	const query = queryString.length
 		? qs.parse(queryString.substr(1), qsOptions)
 		: {};
 
-	const currentQuery = scope ? query[scope] : query;
-
-	return {...defaultQuery, ...currentQuery};
+	return {...defaultQuery, ...query};
 };
 
 export const toQueryString = (query) => {
 	return query ? `${qs.stringify(query, qsOptions)}` : '';
 };
 
-export default (history, defaultQuery = {}, scope = false) => {
+export default (history, defaultQuery = {}) => {
 	const {location} = history;
 	const {pathname, search} = location;
-	const currentQuery = toQuery(search, defaultQuery, scope);
+	const defaultQueryRef = useRef(defaultQuery);
+	const [query, setQuery] = useState(
+		toQuery(search, defaultQueryRef.current)
+	);
+
+	useEffect(() => {
+		setQuery(toQuery(search, defaultQueryRef.current));
+	}, [defaultQueryRef, search]);
 
 	return [
-		currentQuery,
-		(query) => {
-			const scopedQuery = scope ? {[scope]: query} : query;
-
-			history.push(
-				`${pathname}?${toQueryString({
-					...toQuery(search),
-					...scopedQuery,
-				})}`
-			);
-		},
+		query,
+		(query) => history.push(`${pathname}?${toQueryString(query)}`),
 	];
 };

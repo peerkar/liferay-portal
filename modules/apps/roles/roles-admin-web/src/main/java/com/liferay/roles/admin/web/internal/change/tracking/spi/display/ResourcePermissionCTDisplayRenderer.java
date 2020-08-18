@@ -183,11 +183,6 @@ public class ResourcePermissionCTDisplayRenderer
 	}
 
 	@Override
-	public boolean isHideable(ResourcePermission resourcePermission) {
-		return true;
-	}
-
-	@Override
 	public void render(DisplayContext<ResourcePermission> displayContext)
 		throws Exception {
 

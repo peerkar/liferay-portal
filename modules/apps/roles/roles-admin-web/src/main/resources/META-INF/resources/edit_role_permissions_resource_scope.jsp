@@ -50,17 +50,18 @@ String portletId = (String)objArray[9];
 			groupItemSelectorCriterion.setTarget(target);
 
 			PortletURL itemSelectorURL = itemSelector.getItemSelectorURL(RequestBackedPortletURLFactoryUtil.create(liferayPortletRequest), liferayPortletResponse.getNamespace() + "selectGroup", groupItemSelectorCriterion);
+
+			Map<String, Object> props = HashMapBuilder.<String, Object>put(
+				"itemSelectorURL",
+				itemSelectorURL.toString()
+			).put(
+				"target", target
+			).build();
 		%>
 
 			<react:component
 				module="js/GroupLabels.es"
-				props='<%=
-					HashMapBuilder.<String, Object>put(
-						"itemSelectorURL", itemSelectorURL.toString()
-					).put(
-						"target", target
-					).build()
-				%>'
+				props="<%= props %>"
 			/>
 
 		<%

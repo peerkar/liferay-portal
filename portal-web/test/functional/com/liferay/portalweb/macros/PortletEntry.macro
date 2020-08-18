@@ -218,4 +218,11 @@ definition {
 		AssertElementNotPresent(locator1 = "NavBar#NAV_ITEM_LINK");
 	}
 
+	macro viewWorkflowStatus {
+		AssertTextEquals(
+			key_rowEntry = "${rowEntry}",
+			locator1 = "Card#GENERIC_SMALL_TEXT",
+			value1 = "${workflowStatus}");
+	}
+
 }

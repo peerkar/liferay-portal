@@ -16,16 +16,16 @@ import ClayForm, {ClaySelectWithOption} from '@clayui/form';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import {useId} from '../useId';
+import {config} from '../config';
 
 export default function SelectFrontendToken({
 	frontendToken,
 	onValueSelect,
 	value,
 }) {
-	const {label, validValues} = frontendToken;
+	const {label, name, validValues} = frontendToken;
 
-	const id = useId();
+	const id = `${config.namespace}_frontendTokenId_${name}`;
 
 	return (
 		<ClayForm.Group small>

@@ -77,11 +77,11 @@ public class LayoutPageTemplateEntryModelImpl
 	public static final String TABLE_NAME = "LayoutPageTemplateEntry";
 
 	public static final Object[][] TABLE_COLUMNS = {
-		{"mvccVersion", Types.BIGINT}, {"ctCollectionId", Types.BIGINT},
-		{"uuid_", Types.VARCHAR}, {"layoutPageTemplateEntryId", Types.BIGINT},
-		{"groupId", Types.BIGINT}, {"companyId", Types.BIGINT},
-		{"userId", Types.BIGINT}, {"userName", Types.VARCHAR},
-		{"createDate", Types.TIMESTAMP}, {"modifiedDate", Types.TIMESTAMP},
+		{"mvccVersion", Types.BIGINT}, {"uuid_", Types.VARCHAR},
+		{"layoutPageTemplateEntryId", Types.BIGINT}, {"groupId", Types.BIGINT},
+		{"companyId", Types.BIGINT}, {"userId", Types.BIGINT},
+		{"userName", Types.VARCHAR}, {"createDate", Types.TIMESTAMP},
+		{"modifiedDate", Types.TIMESTAMP},
 		{"layoutPageTemplateCollectionId", Types.BIGINT},
 		{"layoutPageTemplateEntryKey", Types.VARCHAR},
 		{"classNameId", Types.BIGINT}, {"classTypeId", Types.BIGINT},
@@ -98,7 +98,6 @@ public class LayoutPageTemplateEntryModelImpl
 
 	static {
 		TABLE_COLUMNS_MAP.put("mvccVersion", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("ctCollectionId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("uuid_", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("layoutPageTemplateEntryId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("groupId", Types.BIGINT);
@@ -125,7 +124,7 @@ public class LayoutPageTemplateEntryModelImpl
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table LayoutPageTemplateEntry (mvccVersion LONG default 0 not null,ctCollectionId LONG default 0 not null,uuid_ VARCHAR(75) null,layoutPageTemplateEntryId LONG not null,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,layoutPageTemplateCollectionId LONG,layoutPageTemplateEntryKey VARCHAR(75) null,classNameId LONG,classTypeId LONG,name VARCHAR(75) null,type_ INTEGER,previewFileEntryId LONG,defaultTemplate BOOLEAN,layoutPrototypeId LONG,plid LONG,lastPublishDate DATE null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,primary key (layoutPageTemplateEntryId, ctCollectionId))";
+		"create table LayoutPageTemplateEntry (mvccVersion LONG default 0 not null,uuid_ VARCHAR(75) null,layoutPageTemplateEntryId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,layoutPageTemplateCollectionId LONG,layoutPageTemplateEntryKey VARCHAR(75) null,classNameId LONG,classTypeId LONG,name VARCHAR(75) null,type_ INTEGER,previewFileEntryId LONG,defaultTemplate BOOLEAN,layoutPrototypeId LONG,plid LONG,lastPublishDate DATE null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null)";
 
 	public static final String TABLE_SQL_DROP =
 		"drop table LayoutPageTemplateEntry";
@@ -188,9 +187,7 @@ public class LayoutPageTemplateEntryModelImpl
 	 *
 	 * @param soapModel the soap model instance to convert
 	 * @return the normal model instance
-	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
 	 */
-	@Deprecated
 	public static LayoutPageTemplateEntry toModel(
 		LayoutPageTemplateEntrySoap soapModel) {
 
@@ -201,7 +198,6 @@ public class LayoutPageTemplateEntryModelImpl
 		LayoutPageTemplateEntry model = new LayoutPageTemplateEntryImpl();
 
 		model.setMvccVersion(soapModel.getMvccVersion());
-		model.setCtCollectionId(soapModel.getCtCollectionId());
 		model.setUuid(soapModel.getUuid());
 		model.setLayoutPageTemplateEntryId(
 			soapModel.getLayoutPageTemplateEntryId());
@@ -237,9 +233,7 @@ public class LayoutPageTemplateEntryModelImpl
 	 *
 	 * @param soapModels the soap model instances to convert
 	 * @return the normal model instances
-	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
 	 */
-	@Deprecated
 	public static List<LayoutPageTemplateEntry> toModels(
 		LayoutPageTemplateEntrySoap[] soapModels) {
 
@@ -393,12 +387,6 @@ public class LayoutPageTemplateEntryModelImpl
 			"mvccVersion",
 			(BiConsumer<LayoutPageTemplateEntry, Long>)
 				LayoutPageTemplateEntry::setMvccVersion);
-		attributeGetterFunctions.put(
-			"ctCollectionId", LayoutPageTemplateEntry::getCtCollectionId);
-		attributeSetterBiConsumers.put(
-			"ctCollectionId",
-			(BiConsumer<LayoutPageTemplateEntry, Long>)
-				LayoutPageTemplateEntry::setCtCollectionId);
 		attributeGetterFunctions.put("uuid", LayoutPageTemplateEntry::getUuid);
 		attributeSetterBiConsumers.put(
 			"uuid",
@@ -553,17 +541,6 @@ public class LayoutPageTemplateEntryModelImpl
 	@Override
 	public void setMvccVersion(long mvccVersion) {
 		_mvccVersion = mvccVersion;
-	}
-
-	@JSON
-	@Override
-	public long getCtCollectionId() {
-		return _ctCollectionId;
-	}
-
-	@Override
-	public void setCtCollectionId(long ctCollectionId) {
-		_ctCollectionId = ctCollectionId;
 	}
 
 	@JSON
@@ -1189,7 +1166,6 @@ public class LayoutPageTemplateEntryModelImpl
 			new LayoutPageTemplateEntryImpl();
 
 		layoutPageTemplateEntryImpl.setMvccVersion(getMvccVersion());
-		layoutPageTemplateEntryImpl.setCtCollectionId(getCtCollectionId());
 		layoutPageTemplateEntryImpl.setUuid(getUuid());
 		layoutPageTemplateEntryImpl.setLayoutPageTemplateEntryId(
 			getLayoutPageTemplateEntryId());
@@ -1361,8 +1337,6 @@ public class LayoutPageTemplateEntryModelImpl
 			new LayoutPageTemplateEntryCacheModel();
 
 		layoutPageTemplateEntryCacheModel.mvccVersion = getMvccVersion();
-
-		layoutPageTemplateEntryCacheModel.ctCollectionId = getCtCollectionId();
 
 		layoutPageTemplateEntryCacheModel.uuid = getUuid();
 
@@ -1558,7 +1532,6 @@ public class LayoutPageTemplateEntryModelImpl
 	}
 
 	private long _mvccVersion;
-	private long _ctCollectionId;
 	private String _uuid;
 	private String _originalUuid;
 	private long _layoutPageTemplateEntryId;

@@ -64,8 +64,7 @@ public abstract class BaseJavaTerm implements JavaTerm {
 	@Override
 	public String toString() {
 		return toString(
-			StringPool.BLANK, StringPool.BLANK, StringPool.BLANK,
-			_FORCE_SINGLE_LINE);
+			StringPool.BLANK, StringPool.BLANK, StringPool.BLANK, -1);
 	}
 
 	@Override
@@ -399,9 +398,7 @@ public abstract class BaseJavaTerm implements JavaTerm {
 							maxLineLength);
 					}
 					else {
-						appendNewLine(
-							sb, javaTerm, indent, prefix, suffix,
-							_FORCE_SINGLE_LINE);
+						appendNewLine(sb, javaTerm, indent, prefix, suffix, -1);
 					}
 				}
 
@@ -430,7 +427,7 @@ public abstract class BaseJavaTerm implements JavaTerm {
 				else {
 					appendNewLine(
 						sb, javaTerm, indent, prefix,
-						StringUtil.trimTrailing(delimeter), _FORCE_SINGLE_LINE);
+						StringUtil.trimTrailing(delimeter), -1);
 				}
 
 				sb.append("\n");
@@ -548,9 +545,7 @@ public abstract class BaseJavaTerm implements JavaTerm {
 
 			lastLine = StringUtil.trim(lastLine);
 
-			if ((getLineLength(s) > maxLineLength) &&
-				(maxLineLength != NO_MAX_LINE_LENGTH)) {
-
+			if (getLineLength(s) > maxLineLength) {
 				appendNewLine(
 					sb, javaTerm, "\t" + indent, prefix, suffix, maxLineLength);
 			}
@@ -645,14 +640,11 @@ public abstract class BaseJavaTerm implements JavaTerm {
 		}
 	}
 
-	protected static final int NO_MAX_LINE_LENGTH =
-		JavaParserUtil.NO_MAX_LINE_LENGTH;
-
 	private boolean _appendSingleLine(
 		StringBundler sb, String s, String prefix, String suffix,
 		int maxLineLength) {
 
-		if (s.contains("\n") && (maxLineLength != _FORCE_SINGLE_LINE)) {
+		if (s.contains("\n") && (maxLineLength != -1)) {
 			return false;
 		}
 
@@ -662,8 +654,7 @@ public abstract class BaseJavaTerm implements JavaTerm {
 		sb.append(s);
 		sb.append(suffix);
 
-		if ((maxLineLength == _FORCE_SINGLE_LINE) ||
-			(maxLineLength == NO_MAX_LINE_LENGTH) ||
+		if ((maxLineLength == -1) ||
 			(getLineLength(getLastLine(sb)) <= maxLineLength)) {
 
 			return true;
@@ -745,8 +736,6 @@ public abstract class BaseJavaTerm implements JavaTerm {
 			sb.setIndex(sb.index() - 1);
 		}
 	}
-
-	private static final int _FORCE_SINGLE_LINE = -2;
 
 	private Position _endPosition;
 	private Position _startPosition;

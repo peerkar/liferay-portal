@@ -35,16 +35,17 @@ public class ContentValueUtil {
 		String field, UnsafeSupplier<InputStream, Exception> unsafeSupplier,
 		Optional<UriInfo> uriInfoOptional) {
 
-		if (uriInfoOptional.map(
-				UriInfo::getQueryParameters
-			).map(
-				parameters -> parameters.getFirst("nestedFields")
-			).map(
-				fields -> fields.contains(field)
-			).orElse(
-				false
-			)) {
+		boolean hasNestedFieldsField = uriInfoOptional.map(
+			UriInfo::getQueryParameters
+		).map(
+			parameters -> parameters.getFirst("nestedFields")
+		).map(
+			fields -> fields.contains(field)
+		).orElse(
+			false
+		);
 
+		if (hasNestedFieldsField) {
 			try {
 				return Base64.encode(
 					StreamUtil.toByteArray(unsafeSupplier.get()));

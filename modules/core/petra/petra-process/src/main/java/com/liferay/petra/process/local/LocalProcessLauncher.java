@@ -141,16 +141,16 @@ public class LocalProcessLauncher {
 
 			outProcessOutputStream.flush();
 		}
-		catch (Throwable throwable) {
+		catch (Throwable t) {
 			errPrintStream.flush();
 
 			ProcessException processException = null;
 
-			if (throwable instanceof ProcessException) {
-				processException = (ProcessException)throwable;
+			if (t instanceof ProcessException) {
+				processException = (ProcessException)t;
 			}
 			else {
-				processException = new ProcessException(throwable);
+				processException = new ProcessException(t);
 			}
 
 			errProcessOutputStream._writeProcessCallable(
@@ -238,7 +238,7 @@ public class LocalProcessLauncher {
 
 		public static final int UNKNOWN_CODE = 3;
 
-		public boolean shutdown(int shutdownCode, Throwable throwable);
+		public boolean shutdown(int shutdownCode, Throwable shutdownThrowable);
 
 	}
 

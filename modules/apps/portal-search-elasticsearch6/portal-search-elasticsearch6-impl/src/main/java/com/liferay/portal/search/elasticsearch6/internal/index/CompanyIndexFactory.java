@@ -184,12 +184,12 @@ public class CompanyIndexFactory
 		try {
 			indexContributor.onAfterCreate(indexName);
 		}
-		catch (Throwable throwable) {
+		catch (Throwable t) {
 			_log.error(
 				StringBundler.concat(
 					"Unable to apply contributor ", indexContributor,
 					" when creating index ", indexName),
-				throwable);
+				t);
 		}
 	}
 
@@ -199,12 +199,12 @@ public class CompanyIndexFactory
 		try {
 			indexContributor.onBeforeRemove(indexName);
 		}
-		catch (Throwable throwable) {
+		catch (Throwable t) {
 			_log.error(
 				StringBundler.concat(
 					"Unable to apply contributor ", indexContributor,
 					" when removing index ", indexName),
-				throwable);
+				t);
 		}
 	}
 

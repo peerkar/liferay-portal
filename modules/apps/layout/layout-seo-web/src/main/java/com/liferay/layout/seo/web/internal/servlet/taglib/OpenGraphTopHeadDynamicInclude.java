@@ -14,6 +14,7 @@
 
 package com.liferay.layout.seo.web.internal.servlet.taglib;
 
+import com.liferay.asset.display.page.constants.AssetDisplayPageWebKeys;
 import com.liferay.asset.display.page.portlet.AssetDisplayPageFriendlyURLProvider;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.document.library.kernel.service.DLFileEntryMetadataLocalService;
@@ -24,9 +25,8 @@ import com.liferay.dynamic.data.mapping.kernel.StorageEngineManagerUtil;
 import com.liferay.dynamic.data.mapping.kernel.Value;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.storage.StorageEngine;
-import com.liferay.info.constants.InfoDisplayWebKeys;
+import com.liferay.info.display.contributor.InfoDisplayObjectProvider;
 import com.liferay.info.field.InfoFieldValue;
-import com.liferay.info.item.InfoItemDetails;
 import com.liferay.info.item.InfoItemFieldValues;
 import com.liferay.info.item.InfoItemServiceTracker;
 import com.liferay.info.item.provider.InfoItemFieldValuesProvider;
@@ -277,12 +277,14 @@ public class OpenGraphTopHeadDynamicInclude extends BaseDynamicInclude {
 
 	@Activate
 	protected void activate() {
-		_friendlyURLMapperProvider = new FriendlyURLMapperProvider(
-			_assetDisplayPageFriendlyURLProvider, _classNameLocalService);
 		_openGraphImageProvider = new OpenGraphImageProvider(
 			_ddmStructureLocalService, _dlAppLocalService,
 			_dlFileEntryMetadataLocalService, _dlurlHelper,
 			_layoutSEOSiteLocalService, _portal, _storageEngine);
+
+		_friendlyURLMapperProvider = new FriendlyURLMapperProvider(
+			_assetDisplayPageFriendlyURLProvider, _classNameLocalService);
+
 		_titleProvider = new TitleProvider(_layoutSEOLinkManager);
 	}
 
@@ -332,31 +334,27 @@ public class OpenGraphTopHeadDynamicInclude extends BaseDynamicInclude {
 	private InfoItemFieldValues _getInfoItemFieldValues(
 		HttpServletRequest httpServletRequest, Layout layout) {
 
-		if (!layout.isTypeAssetDisplay()) {
-			return null;
+		if (layout.isTypeAssetDisplay()) {
+			InfoDisplayObjectProvider<Object> infoDisplayObjectProvider =
+				(InfoDisplayObjectProvider<Object>)
+					httpServletRequest.getAttribute(
+						AssetDisplayPageWebKeys.INFO_DISPLAY_OBJECT_PROVIDER);
+
+			if (infoDisplayObjectProvider != null) {
+				InfoItemFieldValuesProvider infoItemFormProvider =
+					_infoItemServiceTracker.getFirstInfoItemService(
+						InfoItemFieldValuesProvider.class,
+						_portal.getClassName(
+							infoDisplayObjectProvider.getClassNameId()));
+
+				if (infoItemFormProvider != null) {
+					return infoItemFormProvider.getInfoItemFieldValues(
+						infoDisplayObjectProvider.getDisplayObject());
+				}
+			}
 		}
 
-		InfoItemDetails infoItemDetails =
-			(InfoItemDetails)httpServletRequest.getAttribute(
-				InfoDisplayWebKeys.INFO_ITEM_DETAILS);
-
-		if (infoItemDetails == null) {
-			return null;
-		}
-
-		InfoItemFieldValuesProvider infoItemFormProvider =
-			_infoItemServiceTracker.getFirstInfoItemService(
-				InfoItemFieldValuesProvider.class,
-				infoItemDetails.getClassName());
-
-		if (infoItemFormProvider == null) {
-			return null;
-		}
-
-		Object infoItem = httpServletRequest.getAttribute(
-			InfoDisplayWebKeys.INFO_ITEM);
-
-		return infoItemFormProvider.getInfoItemFieldValues(infoItem);
+		return null;
 	}
 
 	private String _getMappedStringValue(

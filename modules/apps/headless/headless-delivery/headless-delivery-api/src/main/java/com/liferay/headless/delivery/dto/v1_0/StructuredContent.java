@@ -123,34 +123,6 @@ public class StructuredContent {
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	protected AggregateRating aggregateRating;
 
-	@Schema
-	public String getAssetLibraryKey() {
-		return assetLibraryKey;
-	}
-
-	public void setAssetLibraryKey(String assetLibraryKey) {
-		this.assetLibraryKey = assetLibraryKey;
-	}
-
-	@JsonIgnore
-	public void setAssetLibraryKey(
-		UnsafeSupplier<String, Exception> assetLibraryKeyUnsafeSupplier) {
-
-		try {
-			assetLibraryKey = assetLibraryKeyUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@GraphQLField
-	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-	protected String assetLibraryKey;
-
 	@Schema(
 		description = "The list of languages the structured content has a translation for."
 	)
@@ -1008,20 +980,6 @@ public class StructuredContent {
 			sb.append("\"aggregateRating\": ");
 
 			sb.append(String.valueOf(aggregateRating));
-		}
-
-		if (assetLibraryKey != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"assetLibraryKey\": ");
-
-			sb.append("\"");
-
-			sb.append(_escape(assetLibraryKey));
-
-			sb.append("\"");
 		}
 
 		if (availableLanguages != null) {

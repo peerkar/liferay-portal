@@ -28,12 +28,12 @@ public class CTTransactionException extends SystemException {
 		super(msg);
 	}
 
-	public CTTransactionException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public CTTransactionException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public CTTransactionException(Throwable throwable) {
-		super(throwable);
+	public CTTransactionException(Throwable cause) {
+		super(cause);
 	}
 
 }

@@ -479,7 +479,7 @@ public abstract class BaseTransitionResourceTestCase {
 		}
 	}
 
-	protected void assertValid(Transition transition) throws Exception {
+	protected void assertValid(Transition transition) {
 		boolean valid = true;
 
 		for (String additionalAssertFieldName :

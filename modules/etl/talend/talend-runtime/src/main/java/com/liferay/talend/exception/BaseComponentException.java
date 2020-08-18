@@ -26,9 +26,9 @@ public class BaseComponentException extends RuntimeException {
 	}
 
 	public BaseComponentException(
-		String message, int httpStatus, Throwable throwable) {
+		String message, int httpStatus, Throwable cause) {
 
-		super(message, throwable);
+		super(message, cause);
 
 		_httpStatus = httpStatus;
 	}

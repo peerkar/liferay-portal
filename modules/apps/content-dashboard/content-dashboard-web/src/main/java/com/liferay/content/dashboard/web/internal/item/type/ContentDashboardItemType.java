@@ -14,8 +14,6 @@
 
 package com.liferay.content.dashboard.web.internal.item.type;
 
-import com.liferay.info.item.InfoItemReference;
-
 import java.util.Date;
 import java.util.Locale;
 
@@ -24,9 +22,11 @@ import java.util.Locale;
  */
 public interface ContentDashboardItemType<T> {
 
-	public String getFullLabel(Locale locale);
+	public String getClassName();
 
-	public InfoItemReference getInfoItemReference();
+	public long getClassPK();
+
+	public String getFullLabel(Locale locale);
 
 	public String getLabel(Locale locale);
 

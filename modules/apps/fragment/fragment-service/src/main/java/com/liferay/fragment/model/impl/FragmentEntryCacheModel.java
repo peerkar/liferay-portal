@@ -77,12 +77,10 @@ public class FragmentEntryCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(55);
+		StringBundler sb = new StringBundler(53);
 
 		sb.append("{mvccVersion=");
 		sb.append(mvccVersion);
-		sb.append(", ctCollectionId=");
-		sb.append(ctCollectionId);
 		sb.append(", uuid=");
 		sb.append(uuid);
 		sb.append(", headId=");
@@ -143,7 +141,6 @@ public class FragmentEntryCacheModel
 		FragmentEntryImpl fragmentEntryImpl = new FragmentEntryImpl();
 
 		fragmentEntryImpl.setMvccVersion(mvccVersion);
-		fragmentEntryImpl.setCtCollectionId(ctCollectionId);
 
 		if (uuid == null) {
 			fragmentEntryImpl.setUuid("");
@@ -264,8 +261,6 @@ public class FragmentEntryCacheModel
 		throws ClassNotFoundException, IOException {
 
 		mvccVersion = objectInput.readLong();
-
-		ctCollectionId = objectInput.readLong();
 		uuid = objectInput.readUTF();
 
 		headId = objectInput.readLong();
@@ -310,8 +305,6 @@ public class FragmentEntryCacheModel
 	@Override
 	public void writeExternal(ObjectOutput objectOutput) throws IOException {
 		objectOutput.writeLong(mvccVersion);
-
-		objectOutput.writeLong(ctCollectionId);
 
 		if (uuid == null) {
 			objectOutput.writeUTF("");
@@ -410,7 +403,6 @@ public class FragmentEntryCacheModel
 	}
 
 	public long mvccVersion;
-	public long ctCollectionId;
 	public String uuid;
 	public long headId;
 	public boolean head;

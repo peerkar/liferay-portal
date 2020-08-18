@@ -60,10 +60,10 @@ public class WebCachePoolImpl implements WebCachePool {
 		}
 		catch (WebCacheException webCacheException) {
 			if (_log.isWarnEnabled()) {
-				Throwable throwable = webCacheException.getCause();
+				Throwable cause = webCacheException.getCause();
 
-				if (throwable != null) {
-					_log.warn(throwable, throwable);
+				if (cause != null) {
+					_log.warn(cause, cause);
 				}
 				else {
 					_log.warn(webCacheException, webCacheException);

@@ -1,8 +1,32 @@
-.change-lists-conflicts-table {
-	.autofit-col {
-		padding-left: 0;
+.change-lists-table {
+	.change-list-description {
+		color: #6b6c7e;
 	}
 
+	.change-list-name {
+		color: #272833;
+		font-weight: 600;
+	}
+}
+
+.change-lists-tbar {
+	font-size: 14px;
+	height: auto;
+	min-height: 3.5rem;
+
+	.change-list-name {
+		color: #272833;
+		font-size: 18px;
+		font-weight: 600;
+
+		.label {
+			margin-left: 0.5rem;
+			vertical-align: middle;
+		}
+	}
+}
+
+.change-lists-conflicts-table {
 	.entry-title {
 		margin-top: 0.25rem;
 	}
@@ -25,53 +49,16 @@
 	}
 }
 
-.change-lists-discard-container {
-	padding-top: 48px;
+.select-change-list-table {
+	border-collapse: collapse;
 
-	button:hover {
-		cursor: pointer;
+	td:first-child {
+		vertical-align: top;
 	}
 }
 
-.change-lists-table {
-	.change-list-description {
-		color: #6b6c7e;
-	}
-
-	.change-list-name {
-		color: #272833;
-		font-weight: 600;
-	}
-
-	.change-row-button {
-		background-color: inherit;
-		border: none;
-		padding: 0;
-		text-align: left;
-
-		&:active:focus,
-		&:focus {
-			box-shadow: none;
-			outline: none;
-		}
-	}
-}
-
-.change-lists-tbar {
-	font-size: 14px;
-	height: auto;
-	min-height: 3.5rem;
-
-	.change-list-name {
-		color: #272833;
-		font-size: 18px;
-		font-weight: 600;
-
-		.label {
-			margin-left: 0.5rem;
-			vertical-align: middle;
-		}
-	}
+#selectChangeListManagementToolbar nav:last-child {
+	margin-bottom: 0;
 }
 
 .change-lists-view-changes-wrapper {
@@ -85,13 +72,7 @@
 		margin-top: 20px;
 
 		.panel-body {
-			margin-top: 1rem;
-			padding-bottom: 0;
-			padding-top: 0;
-
-			.custom-control:only-child {
-				margin-bottom: 1rem;
-			}
+			margin-top: 16px;
 		}
 
 		.sheet {
@@ -102,23 +83,24 @@
 			button:hover {
 				cursor: pointer;
 			}
-		}
 
-		.taglib-empty-result-message {
-			margin-top: 0;
+			.change-row-button {
+				background-color: inherit;
+				border: none;
+				padding: 0;
+				text-align: left;
+
+				&:active:focus,
+				&:focus {
+					box-shadow: none;
+					outline: none;
+				}
+			}
 		}
 	}
 
 	.management-bar {
 		margin-bottom: 0;
-
-		.navbar-nav {
-			flex-grow: 1;
-
-			.nav-item-expand {
-				flex-grow: 1;
-			}
-		}
 	}
 
 	.navigation-bar {
@@ -140,16 +122,4 @@
 
 .change-lists-view-entry-wrapper {
 	margin-top: 16px;
-}
-
-.select-change-list-table {
-	border-collapse: collapse;
-
-	td:first-child {
-		vertical-align: top;
-	}
-}
-
-#selectChangeListManagementToolbar nav:last-child {
-	margin-bottom: 0;
 }

@@ -4,6 +4,10 @@
 
 <@insertLayout _layoutModel=dataFactory.newLayoutModel(guestGroupModel.groupId, "welcome", "com_liferay_login_web_portlet_LoginPortlet,", "com_liferay_hello_world_web_portlet_HelloWorldPortlet,") />
 
+<@insertGroup _groupModel=dataFactory.commerceCatalogGroupModel />
+
+<@insertGroup _groupModel=dataFactory.commerceChannelGroupModel />
+
 <@insertGroup _groupModel=dataFactory.newGlobalGroupModel() />
 
 <@insertGroup _groupModel=guestGroupModel />

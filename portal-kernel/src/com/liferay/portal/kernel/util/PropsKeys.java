@@ -307,10 +307,6 @@ public interface PropsKeys {
 	public static final String AUTO_LOGIN_IGNORE_PATHS =
 		"auto.login.ignore.paths";
 
-	public static final String AXIS_SERVLET_ENABLED = "axis.servlet.enabled";
-
-	public static final String AXIS_SERVLET_MAPPING = "axis.servlet.mapping";
-
 	public static final String BASIC_AUTH_PASSWORD_REQUIRED =
 		"basic.auth.password.required";
 
@@ -1278,10 +1274,6 @@ public interface PropsKeys {
 	public static final String INDEX_ON_STARTUP_DELAY =
 		"index.on.startup.delay";
 
-	/**
-	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
-	 */
-	@Deprecated
 	public static final String INDEX_ON_UPGRADE = "index.on.upgrade";
 
 	public static final String

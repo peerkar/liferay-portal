@@ -384,7 +384,7 @@ public abstract class BaseFormDocumentResourceTestCase {
 		}
 	}
 
-	protected void assertValid(FormDocument formDocument) throws Exception {
+	protected void assertValid(FormDocument formDocument) {
 		boolean valid = true;
 
 		if (formDocument.getId() == null) {

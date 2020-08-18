@@ -20,15 +20,12 @@ import com.liferay.app.builder.model.AppBuilderApp;
 import com.liferay.app.builder.web.internal.portlet.AppPortlet;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 
 /**
  * @author Gabriel Albuquerque
@@ -46,9 +43,9 @@ public class WidgetAppDeployer extends BaseAppDeployer {
 
 		appBuilderApp.setActive(true);
 
-		_serviceRegistrationsMap.computeIfAbsent(
+		serviceRegistrationsMap.computeIfAbsent(
 			appId,
-			key -> new ServiceRegistration<?>[] {
+			key -> ArrayUtil.append(
 				_deployPortlet(
 					appBuilderApp, _getAppName(appBuilderApp, null),
 					_getPortletName(appId, null), true, true),
@@ -57,25 +54,12 @@ public class WidgetAppDeployer extends BaseAppDeployer {
 					_getPortletName(appId, "form_view"), true, false),
 				_deployPortlet(
 					appBuilderApp, _getAppName(appBuilderApp, "Table View"),
-					_getPortletName(appId, "table_view"), false, true)
-			});
+					_getPortletName(appId, "table_view"), false, true)));
 
 		appBuilderAppLocalService.updateAppBuilderApp(appBuilderApp);
 	}
 
-	@Override
-	public void undeploy(long appId) throws Exception {
-		undeploy(appBuilderAppLocalService, appId, _serviceRegistrationsMap);
-	}
-
-	@Deactivate
-	protected void deactivate() {
-		super.deactivate();
-
-		_serviceRegistrationsMap.clear();
-	}
-
-	private ServiceRegistration<?> _deployPortlet(
+	private ServiceRegistration<?>[] _deployPortlet(
 		AppBuilderApp appBuilderApp, String appName, String portletName,
 		boolean showFormView, boolean showTableView) {
 
@@ -119,8 +103,5 @@ public class WidgetAppDeployer extends BaseAppDeployer {
 
 		return sb.toString();
 	}
-
-	private final Map<Long, ServiceRegistration<?>[]> _serviceRegistrationsMap =
-		new ConcurrentHashMap<>();
 
 }

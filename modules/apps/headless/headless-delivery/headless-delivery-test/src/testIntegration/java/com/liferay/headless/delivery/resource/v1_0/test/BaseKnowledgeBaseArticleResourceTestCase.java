@@ -1986,9 +1986,7 @@ public abstract class BaseKnowledgeBaseArticleResourceTestCase {
 		}
 	}
 
-	protected void assertValid(KnowledgeBaseArticle knowledgeBaseArticle)
-		throws Exception {
-
+	protected void assertValid(KnowledgeBaseArticle knowledgeBaseArticle) {
 		boolean valid = true;
 
 		if (knowledgeBaseArticle.getDateCreated() == null) {

@@ -114,6 +114,8 @@ public class AccountEntryUserRelLocalServiceImpl
 		String password1 = null;
 		String password2 = null;
 		boolean autoScreenName = false;
+		long facebookId = 0;
+		String openId = null;
 		boolean male = true;
 		int birthdayMonth = Month.JANUARY.getValue();
 		int birthdayDay = 1;
@@ -129,10 +131,10 @@ public class AccountEntryUserRelLocalServiceImpl
 
 		User user = userLocalService.addUser(
 			creatorUserId, companyId, autoPassword, password1, password2,
-			autoScreenName, screenName, emailAddress, locale, firstName,
-			middleName, lastName, prefixId, suffixId, male, birthdayMonth,
-			birthdayDay, birthdayYear, jobTitle, groupIds, organizationIds,
-			roleIds, userGroupIds, sendEmail, serviceContext);
+			autoScreenName, screenName, emailAddress, facebookId, openId,
+			locale, firstName, middleName, lastName, prefixId, suffixId, male,
+			birthdayMonth, birthdayDay, birthdayYear, jobTitle, groupIds,
+			organizationIds, roleIds, userGroupIds, sendEmail, serviceContext);
 
 		return accountEntryUserRelLocalService.addAccountEntryUserRel(
 			accountEntryId, user.getUserId());

@@ -85,10 +85,9 @@ public class ConfigurableUtil {
 
 			return snapshotClassConstructor.newInstance(configurable);
 		}
-		catch (Throwable throwable) {
+		catch (Throwable t) {
 			throw new RuntimeException(
-				"Unable to create snapshot class for " + interfaceClass,
-				throwable);
+				"Unable to create snapshot class for " + interfaceClass, t);
 		}
 	}
 
@@ -213,8 +212,8 @@ public class ConfigurableUtil {
 			_findLoadedClassMethod = ReflectionUtil.getDeclaredMethod(
 				ClassLoader.class, "findLoadedClass", String.class);
 		}
-		catch (Throwable throwable) {
-			throw new ExceptionInInitializerError(throwable);
+		catch (Throwable t) {
+			throw new ExceptionInInitializerError(t);
 		}
 	}
 

@@ -74,12 +74,12 @@ public class WorkflowPreprocessorHelper {
 				SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_SUCCESS_MESSAGE);
 	}
 
-	public boolean isSessionErrorException(Throwable throwable) {
+	public boolean isSessionErrorException(Throwable cause) {
 		if (_log.isDebugEnabled()) {
-			_log.debug(throwable, throwable);
+			_log.debug(cause, cause);
 		}
 
-		if (throwable instanceof PortalException) {
+		if (cause instanceof PortalException) {
 			return true;
 		}
 

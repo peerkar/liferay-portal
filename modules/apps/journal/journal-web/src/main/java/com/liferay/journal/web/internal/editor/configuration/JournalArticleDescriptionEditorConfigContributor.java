@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactory;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 
+import java.util.Locale;
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
@@ -47,23 +48,43 @@ public class JournalArticleDescriptionEditorConfigContributor
 		RequestBackedPortletURLFactory requestBackedPortletURLFactory) {
 
 		jsonObject.put(
-			"allowedContent", "p br strong i ol ul li u link pre em a[href]"
+			"allowedContent", "p br strong i ol ul li u link pre em a"
 		).put(
 			"height", "120"
 		).put(
-			"pasteFilter", "p br strong i ol ul li u link pre em a[href]"
+			"pasteFilter", "p br strong i ol ul li u link pre em a"
 		).put(
-			"resize_enabled", false
-		).put(
-			"toolbar", getToolbarJSONArray()
+			"toolbars", getToolbarsJSONObject(themeDisplay.getLocale())
 		);
 	}
 
-	protected JSONArray getToolbarJSONArray() {
-		return JSONUtil.putAll(
-			toJSONArray("['Bold', 'Italic', 'Underline']"),
-			toJSONArray("['NumberedList', 'BulletedList']"),
-			toJSONArray("['Link']"));
+	protected JSONObject getToolbarsJSONObject(Locale locale) {
+		return JSONUtil.put("styles", getToolbarsStylesJSONObject(locale));
+	}
+
+	protected JSONObject getToolbarsStylesJSONObject(Locale locale) {
+		return JSONUtil.put(
+			"selections", getToolbarsStylesSelectionsJSONArray(locale)
+		).put(
+			"tabIndex", 1
+		);
+	}
+
+	protected JSONArray getToolbarsStylesSelectionsJSONArray(Locale locale) {
+		return JSONUtil.put(getToolbarsStylesSelectionsTextJSONObject(locale));
+	}
+
+	protected JSONObject getToolbarsStylesSelectionsTextJSONObject(
+		Locale locale) {
+
+		return JSONUtil.put(
+			"buttons",
+			JSONUtil.putAll("bold", "italic", "underline", "ol", "ul", "link")
+		).put(
+			"name", "text"
+		).put(
+			"test", "AlloyEditor.SelectionTest.text"
+		);
 	}
 
 }

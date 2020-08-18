@@ -29,12 +29,12 @@ public class KBArticleImportException extends PortalException {
 		super(msg);
 	}
 
-	public KBArticleImportException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public KBArticleImportException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public KBArticleImportException(Throwable throwable) {
-		super(throwable);
+	public KBArticleImportException(Throwable cause) {
+		super(cause);
 	}
 
 	public static class MustHaveACategory extends KBArticleImportException {

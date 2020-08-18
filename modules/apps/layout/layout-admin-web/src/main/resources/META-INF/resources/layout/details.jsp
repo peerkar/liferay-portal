@@ -102,22 +102,21 @@ String friendlyURLBase = StringPool.BLANK;
 				</portlet:actionURL>
 
 				<div class="btn-url-history-wrapper">
-
-					<%
-					User defaultUser = company.getDefaultUser();
-					%>
-
 					<react:component
 						module="js/friendly_url_history/FriendlyURLHistory"
 						props='<%=
 							HashMapBuilder.<String, Object>put(
-								"defaultLanguageId", LocaleUtil.toLanguageId(defaultUser.getLocale())
+								"defaultLanguageId",
+								LocaleUtil.toLanguageId(company.getDefaultUser().getLocale())
 							).put(
-								"deleteFriendlyURLEntryLocalizationURL", deleteFriendlyURLEntryLocalizationURL
+								"deleteFriendlyURLEntryLocalizationURL",
+								deleteFriendlyURLEntryLocalizationURL
 							).put(
-								"friendlyURLEntryLocalizationsURL", friendlyURLEntryLocalizationsURL
+								"friendlyURLEntryLocalizationsURL",
+								friendlyURLEntryLocalizationsURL
 							).put(
-								"restoreFriendlyURLEntryLocalizationURL", restoreFriendlyURLEntryLocalizationURL
+								"restoreFriendlyURLEntryLocalizationURL",
+								restoreFriendlyURLEntryLocalizationURL
 							).build()
 						%>'
 					/>
@@ -146,9 +145,10 @@ String friendlyURLBase = StringPool.BLANK;
 			LayoutSetPrototype layoutSetPrototype = LayoutSetPrototypeLocalServiceUtil.getLayoutSetPrototype(group.getClassPK());
 
 			boolean layoutSetPrototypeUpdateable = GetterUtil.getBoolean(layoutSetPrototype.getSettingsProperty("layoutsUpdateable"), true);
+			boolean layoutUpdateable = GetterUtil.getBoolean(selLayoutType.getTypeSettingsProperty("layoutUpdateable"), true);
 			%>
 
-			<aui:input disabled="<%= !layoutSetPrototypeUpdateable %>" helpMessage="allow-site-administrators-to-modify-this-page-for-their-site-help" label="allow-site-administrators-to-modify-this-page-for-their-site" name="TypeSettingsProperties--layoutUpdateable--" type="checkbox" value='<%= GetterUtil.getBoolean(selLayoutType.getTypeSettingsProperty("layoutUpdateable"), true) %>' />
+			<aui:input disabled="<%= !layoutSetPrototypeUpdateable %>" helpMessage="allow-site-administrators-to-modify-this-page-for-their-site-help" label="allow-site-administrators-to-modify-this-page-for-their-site" name="TypeSettingsProperties--layoutUpdateable--" type="checkbox" value="<%= layoutUpdateable %>" />
 		</c:if>
 	</c:when>
 	<c:otherwise>

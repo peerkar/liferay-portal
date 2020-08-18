@@ -20,25 +20,25 @@ const Header = ({filterKeys, routeParams, totalCount}) => {
 	return (
 		<>
 			<ClayManagementToolbar className="mb-0">
-				<ClayManagementToolbar.ItemList>
-					<ClayManagementToolbar.Item>
-						<strong className="ml-0 mr-0 navbar-text">
-							{Liferay.Language.get('filter-by')}
-						</strong>
-					</ClayManagementToolbar.Item>
-				</ClayManagementToolbar.ItemList>
+				<ClayManagementToolbar.Item>
+					<strong className="ml-0 mr-0 navbar-text">
+						{Liferay.Language.get('filter-by')}
+					</strong>
+				</ClayManagementToolbar.Item>
 
-				<SearchField
-					disabled={false}
-					placeholder={Liferay.Language.get('search-for-step-name')}
-				/>
-
-				<ClayManagementToolbar.ItemList>
-					<TimeRangeFilter
-						buttonClassName="btn-flat btn-sm"
-						options={{position: 'right'}}
+				<div className="navbar-form-autofit">
+					<SearchField
+						disabled={false}
+						placeholder={Liferay.Language.get(
+							'search-for-step-name'
+						)}
 					/>
-				</ClayManagementToolbar.ItemList>
+				</div>
+
+				<TimeRangeFilter
+					buttonClassName="btn-flat btn-sm"
+					options={{position: 'right'}}
+				/>
 			</ClayManagementToolbar>
 
 			{routeParams.search && (

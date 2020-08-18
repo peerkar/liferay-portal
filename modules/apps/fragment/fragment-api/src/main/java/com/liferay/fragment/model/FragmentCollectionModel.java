@@ -19,7 +19,6 @@ import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.model.MVCCModel;
 import com.liferay.portal.kernel.model.ShardedModel;
 import com.liferay.portal.kernel.model.StagedGroupedModel;
-import com.liferay.portal.kernel.model.change.tracking.CTModel;
 
 import java.util.Date;
 
@@ -38,8 +37,8 @@ import org.osgi.annotation.versioning.ProviderType;
  */
 @ProviderType
 public interface FragmentCollectionModel
-	extends BaseModel<FragmentCollection>, CTModel<FragmentCollection>,
-			MVCCModel, ShardedModel, StagedGroupedModel {
+	extends BaseModel<FragmentCollection>, MVCCModel, ShardedModel,
+			StagedGroupedModel {
 
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -52,7 +51,6 @@ public interface FragmentCollectionModel
 	 *
 	 * @return the primary key of this fragment collection
 	 */
-	@Override
 	public long getPrimaryKey();
 
 	/**
@@ -60,7 +58,6 @@ public interface FragmentCollectionModel
 	 *
 	 * @param primaryKey the primary key of this fragment collection
 	 */
-	@Override
 	public void setPrimaryKey(long primaryKey);
 
 	/**
@@ -78,22 +75,6 @@ public interface FragmentCollectionModel
 	 */
 	@Override
 	public void setMvccVersion(long mvccVersion);
-
-	/**
-	 * Returns the ct collection ID of this fragment collection.
-	 *
-	 * @return the ct collection ID of this fragment collection
-	 */
-	@Override
-	public long getCtCollectionId();
-
-	/**
-	 * Sets the ct collection ID of this fragment collection.
-	 *
-	 * @param ctCollectionId the ct collection ID of this fragment collection
-	 */
-	@Override
-	public void setCtCollectionId(long ctCollectionId);
 
 	/**
 	 * Returns the uuid of this fragment collection.

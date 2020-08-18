@@ -610,7 +610,7 @@ public abstract class BaseAccountUserResourceTestCase {
 		}
 	}
 
-	protected void assertValid(AccountUser accountUser) throws Exception {
+	protected void assertValid(AccountUser accountUser) {
 		boolean valid = true;
 
 		if (accountUser.getId() == null) {

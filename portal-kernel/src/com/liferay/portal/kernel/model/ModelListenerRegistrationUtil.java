@@ -186,7 +186,7 @@ public class ModelListenerRegistrationUtil {
 					return (Class<?>)types[0];
 				}
 			}
-			catch (Throwable throwable) {
+			catch (Throwable t) {
 			}
 
 			return null;

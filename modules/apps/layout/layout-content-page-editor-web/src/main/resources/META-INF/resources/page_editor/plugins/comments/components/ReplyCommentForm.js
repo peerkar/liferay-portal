@@ -51,6 +51,7 @@ export default function ReplyCommentForm({
 					message: Liferay.Language.get(
 						'the-reply-could-not-be-saved'
 					),
+					title: Liferay.Language.get('error'),
 					type: 'danger',
 				});
 

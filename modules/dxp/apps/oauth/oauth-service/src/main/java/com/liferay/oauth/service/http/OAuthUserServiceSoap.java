@@ -57,10 +57,8 @@ import java.rmi.RemoteException;
  *
  * @author Ivica Cardic
  * @see OAuthUserServiceHttp
- * @deprecated As of Athanasius (7.3.x), with no direct replacement
  * @generated
  */
-@Deprecated
 public class OAuthUserServiceSoap {
 
 	public static com.liferay.oauth.model.OAuthUserSoap addOAuthUser(

@@ -18,11 +18,13 @@
 
 <%
 SearchContainer<?> searchContainer = (SearchContainer<?>)request.getAttribute("liferay-ui:search:searchContainer");
+
+DisplayTerms displayTerms = searchContainer.getDisplayTerms();
 %>
 
 <liferay-ui:search-toggle
 	buttonLabel="search"
-	displayTerms="<%= searchContainer.getDisplayTerms() %>"
+	displayTerms="<%= displayTerms %>"
 	id="toggle_id_audit_event_search"
 >
 	<aui:input label="user-id" name="userId" value="<%= (userId != 0) ? String.valueOf(userId) : StringPool.BLANK %>" />

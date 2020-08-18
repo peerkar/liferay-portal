@@ -148,6 +148,7 @@ renderResponse.setTitle((source != null) ? LanguageUtil.format(request, "edit-x"
 						message: Liferay.Language.get(
 							'an-unexpected-system-error-occurred'
 						),
+						title: Liferay.Language.get('error'),
 						type: 'danger',
 					});
 				});

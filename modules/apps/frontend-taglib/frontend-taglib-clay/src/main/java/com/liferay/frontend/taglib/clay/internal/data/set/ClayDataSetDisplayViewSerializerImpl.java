@@ -42,12 +42,12 @@ public class ClayDataSetDisplayViewSerializerImpl
 	implements ClayDataSetDisplayViewSerializer {
 
 	@Override
-	public JSONArray serialize(String clayDataSetDisplayName, Locale locale) {
+	public JSONArray serialize(String dataSetDisplayViewKey, Locale locale) {
 		JSONArray jsonArray = _jsonFactory.createJSONArray();
 
 		List<ClayDataSetDisplayView> clayDataSetDisplayViews =
 			_clayDataSetDisplayViewRegistry.getClayDataSetDisplayViews(
-				clayDataSetDisplayName);
+				dataSetDisplayViewKey);
 
 		for (ClayDataSetDisplayView clayDataSetDisplayView :
 				clayDataSetDisplayViews) {

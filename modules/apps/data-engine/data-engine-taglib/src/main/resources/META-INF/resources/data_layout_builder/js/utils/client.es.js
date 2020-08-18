@@ -89,16 +89,16 @@ export const updateItem = (endpoint, item, params) => {
 			.then((response) => {
 				isOk = response.ok;
 
-				return response.json();
+				return response.text();
 			})
-			.then((data) => {
+			.then((text) => {
+				const data = text ? JSON.parse(text) : {};
 				if (isOk) {
 					resolve(data);
 				}
 				else {
 					reject(data);
 				}
-			})
-			.catch((error) => reject(error));
+			});
 	});
 };

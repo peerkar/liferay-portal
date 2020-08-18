@@ -279,7 +279,8 @@ public class EditRankingMVCActionCommand extends BaseMVCActionCommand {
 
 		RankingIndexName rankingIndexName =
 			rankingIndexNameBuilder.getRankingIndexName(
-				portal.getCompanyId(actionRequest));
+				indexNameBuilder.getIndexName(
+					portal.getCompanyId(actionRequest)));
 
 		Optional<Ranking> optional = rankingIndexReader.fetchOptional(
 			rankingIndexName, id);
@@ -338,7 +339,8 @@ public class EditRankingMVCActionCommand extends BaseMVCActionCommand {
 	}
 
 	protected RankingIndexName getRankingIndexName() {
-		return rankingIndexNameBuilder.getRankingIndexName(_companyId);
+		return rankingIndexNameBuilder.getRankingIndexName(
+			_getCompanyIndexName());
 	}
 
 	protected String getSaveAndContinueRedirect(

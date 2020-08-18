@@ -906,9 +906,7 @@ public abstract class BaseBlogPostingImageResourceTestCase {
 		}
 	}
 
-	protected void assertValid(BlogPostingImage blogPostingImage)
-		throws Exception {
-
+	protected void assertValid(BlogPostingImage blogPostingImage) {
 		boolean valid = true;
 
 		if (blogPostingImage.getId() == null) {

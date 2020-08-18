@@ -20,4 +20,9 @@
 
 <%@ page import="com.liferay.portal.kernel.util.WebKeys" %>
 
-<liferay-util:include page="<%= (String)request.getAttribute(WebKeys.SERVLET_CONTEXT_INCLUDE_FILTER_PATH) %>" portletId="<%= (String)request.getAttribute(WebKeys.PORTLET_ID) %>" />
+<%
+String path = (String)request.getAttribute(WebKeys.SERVLET_CONTEXT_INCLUDE_FILTER_PATH);
+String portletId = (String)request.getAttribute(WebKeys.PORTLET_ID);
+%>
+
+<liferay-util:include page="<%= path %>" portletId="<%= portletId %>" />

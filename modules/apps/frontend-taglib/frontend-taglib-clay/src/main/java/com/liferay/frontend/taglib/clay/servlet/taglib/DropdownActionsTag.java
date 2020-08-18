@@ -14,9 +14,6 @@
 
 package com.liferay.frontend.taglib.clay.servlet.taglib;
 
-import java.util.Map;
-import java.util.Set;
-
 import javax.servlet.jsp.JspException;
 
 /**
@@ -33,20 +30,6 @@ public class DropdownActionsTag extends DropdownMenuTag {
 		setMonospaced(true);
 
 		return super.doStartTag();
-	}
-
-	@Override
-	protected Map<String, Object> prepareProps(Map<String, Object> props) {
-		props.put("actionsDropdown", true);
-
-		return super.prepareProps(props);
-	}
-
-	@Override
-	protected String processCssClasses(Set<String> cssClasses) {
-		cssClasses.add("component-action");
-
-		return super.processCssClasses(cssClasses);
 	}
 
 	private static final String _ATTRIBUTE_NAMESPACE = "clay:dropdown-actions:";

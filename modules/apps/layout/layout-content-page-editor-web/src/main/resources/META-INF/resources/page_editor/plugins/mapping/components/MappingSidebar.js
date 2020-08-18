@@ -12,7 +12,6 @@
  * details.
  */
 
-import ClayLink from '@clayui/link';
 import React from 'react';
 
 import {config} from '../../../app/config/index';
@@ -51,27 +50,7 @@ export default function MappingSidebar() {
 								:
 							</p>
 							<p className="mb-0 small">
-								{config.selectedMappingTypes.subtype.url ? (
-									<ClayLink
-										href={
-											config.selectedMappingTypes.subtype
-												.url
-										}
-										target="_parent"
-									>
-										{
-											config.selectedMappingTypes.subtype
-												.label
-										}
-									</ClayLink>
-								) : (
-									<>
-										{
-											config.selectedMappingTypes.subtype
-												.label
-										}
-									</>
-								)}
+								{config.selectedMappingTypes.subtype.label}
 							</p>
 						</div>
 					)}

@@ -77,52 +77,51 @@ public class XSLErrorListener implements ErrorListener {
 		return _message + " " + _location;
 	}
 
-	public void setLocation(Throwable throwable) {
+	public void setLocation(Throwable exception) {
 		SourceLocator locator = null;
-		Throwable causeThrowable = throwable;
-		Throwable rootCauseThrowable = null;
+		Throwable cause = exception;
+		Throwable rootCause = null;
 
-		while (causeThrowable != null) {
-			if (causeThrowable instanceof SAXParseException) {
-				locator = new SAXSourceLocator(
-					(SAXParseException)causeThrowable);
-				rootCauseThrowable = causeThrowable;
+		while (cause != null) {
+			if (cause instanceof SAXParseException) {
+				locator = new SAXSourceLocator((SAXParseException)cause);
+				rootCause = cause;
 			}
-			else if (causeThrowable instanceof TransformerException) {
+			else if (cause instanceof TransformerException) {
 				TransformerException transformerException =
-					(TransformerException)causeThrowable;
+					(TransformerException)cause;
 
 				SourceLocator causeLocator = transformerException.getLocator();
 
 				if (causeLocator != null) {
 					locator = causeLocator;
-					rootCauseThrowable = causeThrowable;
+					rootCause = cause;
 				}
 			}
 
-			if (causeThrowable instanceof TransformerException) {
+			if (cause instanceof TransformerException) {
 				TransformerException transformerException =
-					(TransformerException)causeThrowable;
+					(TransformerException)cause;
 
-				causeThrowable = transformerException.getCause();
+				cause = transformerException.getCause();
 			}
-			else if (causeThrowable instanceof WrappedRuntimeException) {
+			else if (cause instanceof WrappedRuntimeException) {
 				WrappedRuntimeException wrappedRuntimeException =
-					(WrappedRuntimeException)causeThrowable;
+					(WrappedRuntimeException)cause;
 
-				causeThrowable = wrappedRuntimeException.getException();
+				cause = wrappedRuntimeException.getException();
 			}
-			else if (causeThrowable instanceof SAXException) {
-				SAXException saxException = (SAXException)causeThrowable;
+			else if (cause instanceof SAXException) {
+				SAXException saxException = (SAXException)cause;
 
-				causeThrowable = saxException.getException();
+				cause = saxException.getException();
 			}
 			else {
-				causeThrowable = null;
+				cause = null;
 			}
 		}
 
-		_message = rootCauseThrowable.getMessage();
+		_message = rootCause.getMessage();
 
 		if (locator != null) {
 			_lineNumber = locator.getLineNumber();

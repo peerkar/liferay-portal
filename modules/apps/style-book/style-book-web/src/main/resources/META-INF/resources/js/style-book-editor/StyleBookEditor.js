@@ -15,7 +15,7 @@
 import {fetch, objectToFormData, openToast} from 'frontend-js-web';
 import React, {useEffect, useState} from 'react';
 
-import LayoutPreview from './LayoutPreview';
+import PagePreview from './PagePreview';
 import Sidebar from './Sidebar';
 import {StyleBookContextProvider} from './StyleBookContext';
 import {config, initializeConfig} from './config';
@@ -24,7 +24,6 @@ import {useCloseProductMenu} from './useCloseProductMenu';
 
 const StyleBookEditor = ({
 	frontendTokensValues: initialFrontendTokensValues,
-	initialPreviewLayout,
 }) => {
 	useCloseProductMenu();
 
@@ -32,7 +31,6 @@ const StyleBookEditor = ({
 		initialFrontendTokensValues
 	);
 	const [draftStatus, setDraftStatus] = useState(DRAFT_STATUS.notSaved);
-	const [previewLayout, setPreviewLayout] = useState(initialPreviewLayout);
 
 	useEffect(() => {
 		if (frontendTokensValues === initialFrontendTokensValues) {
@@ -54,6 +52,7 @@ const StyleBookEditor = ({
 
 				openToast({
 					message: error.message,
+					title: Liferay.Language.get('error'),
 					type: 'danger',
 				});
 			});
@@ -64,13 +63,11 @@ const StyleBookEditor = ({
 			value={{
 				draftStatus,
 				frontendTokensValues,
-				previewLayout,
 				setFrontendTokensValues,
-				setPreviewLayout,
 			}}
 		>
 			<div className="style-book-editor">
-				<LayoutPreview />
+				<PagePreview />
 				<Sidebar />
 			</div>
 		</StyleBookContextProvider>
@@ -79,10 +76,9 @@ const StyleBookEditor = ({
 
 export default function ({
 	frontendTokenDefinition = [],
-	initialPreviewLayout,
 	namespace,
+	previewURL,
 	publishURL,
-	layoutsTreeURL,
 	redirectURL,
 	saveDraftURL,
 	styleBookEntryId,
@@ -90,21 +86,15 @@ export default function ({
 } = {}) {
 	initializeConfig({
 		frontendTokenDefinition,
-		initialPreviewLayout,
-		layoutsTreeURL,
 		namespace,
+		previewURL,
 		publishURL,
 		redirectURL,
 		saveDraftURL,
 		styleBookEntryId,
 	});
 
-	return (
-		<StyleBookEditor
-			frontendTokensValues={frontendTokensValues}
-			initialPreviewLayout={initialPreviewLayout}
-		/>
-	);
+	return <StyleBookEditor frontendTokensValues={frontendTokensValues} />;
 }
 
 function saveDraft(frontendTokensValues, styleBookEntryId) {

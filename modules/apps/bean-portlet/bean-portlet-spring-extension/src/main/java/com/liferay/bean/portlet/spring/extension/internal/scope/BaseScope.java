@@ -26,11 +26,10 @@ public abstract class BaseScope implements Scope {
 	public Object get(String name, ObjectFactory<?> objectFactory) {
 		SpringScopedBean springScopedBean = getSpringScopedBean(name);
 
-		if (springScopedBean == null) {
-			SpringScopedBeanManager springScopedBeanManager =
-				SpringScopedBeanManagerThreadLocal.
-					getCurrentScopedBeanManager();
+		SpringScopedBeanManager springScopedBeanManager =
+			SpringScopedBeanManagerThreadLocal.getCurrentScopedBeanManager();
 
+		if (springScopedBean == null) {
 			springScopedBean = new SpringScopedBean(
 				objectFactory.getObject(),
 				springScopedBeanManager.unsetDestructionCallback(name),

@@ -134,11 +134,11 @@ class ShareFormModal extends Component {
 		const openToastParams = {message};
 
 		if (error) {
-			openToastParams.title = Liferay.Language.get('error');
+			openToastParams.title = Liferay.Language.get('error-colon');
 			openToastParams.type = 'danger';
 		}
 		else {
-			openToastParams.title = Liferay.Language.get('success');
+			openToastParams.title = Liferay.Language.get('success-colon');
 		}
 
 		parentOpenToast(openToastParams);

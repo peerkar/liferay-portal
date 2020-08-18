@@ -244,7 +244,7 @@ public abstract class BaseAssigneeMetricResourceTestCase {
 		}
 	}
 
-	protected void assertValid(AssigneeMetric assigneeMetric) throws Exception {
+	protected void assertValid(AssigneeMetric assigneeMetric) {
 		boolean valid = true;
 
 		for (String additionalAssertFieldName :

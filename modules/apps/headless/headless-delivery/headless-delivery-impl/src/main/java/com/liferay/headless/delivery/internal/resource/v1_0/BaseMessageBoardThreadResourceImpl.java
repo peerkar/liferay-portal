@@ -223,6 +223,8 @@ public abstract class BaseMessageBoardThreadResourceImpl
 				dateModified,
 			@Parameter(hidden = true) @QueryParam("messageBoardSectionId") Long
 				messageBoardSectionId,
+			@Context com.liferay.portal.vulcan.aggregation.Aggregation
+				aggregation,
 			@Context Pagination pagination, @Context Sort[] sorts)
 		throws Exception {
 
@@ -897,14 +899,6 @@ public abstract class BaseMessageBoardThreadResourceImpl
 		com.liferay.portal.kernel.model.User contextUser) {
 
 		this.contextUser = contextUser;
-	}
-
-	public void setGroupLocalService(GroupLocalService groupLocalService) {
-		this.groupLocalService = groupLocalService;
-	}
-
-	public void setRoleLocalService(RoleLocalService roleLocalService) {
-		this.roleLocalService = roleLocalService;
 	}
 
 	protected Map<String, String> addAction(

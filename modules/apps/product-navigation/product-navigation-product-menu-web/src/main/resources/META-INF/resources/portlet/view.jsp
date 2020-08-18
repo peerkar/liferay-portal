@@ -55,9 +55,7 @@ ApplicationsMenuInstanceConfiguration applicationsMenuInstanceConfiguration = Co
 			</c:when>
 			<c:when test='<%= Objects.equals(productMenuState, "open") && Objects.equals(pagesTreeState, "open") %>'>
 				<div class="pages-tree">
-					<liferay-util:include page="/portlet/pages_tree.jsp" servletContext="<%= application %>">
-						<liferay-util:param name="redirect" value="<%= themeDisplay.getURLCurrent() %>" />
-					</liferay-util:include>
+					<liferay-util:include page="/portlet/pages_tree.jsp" servletContext="<%= application %>" />
 				</div>
 			</c:when>
 		</c:choose>

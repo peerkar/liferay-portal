@@ -133,9 +133,7 @@ public class DepotEntryGroupRelModelImpl
 	 *
 	 * @param soapModel the soap model instance to convert
 	 * @return the normal model instance
-	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
 	 */
-	@Deprecated
 	public static DepotEntryGroupRel toModel(DepotEntryGroupRelSoap soapModel) {
 		if (soapModel == null) {
 			return null;
@@ -159,9 +157,7 @@ public class DepotEntryGroupRelModelImpl
 	 *
 	 * @param soapModels the soap model instances to convert
 	 * @return the normal model instances
-	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
 	 */
-	@Deprecated
 	public static List<DepotEntryGroupRel> toModels(
 		DepotEntryGroupRelSoap[] soapModels) {
 

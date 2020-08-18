@@ -26,12 +26,12 @@ public class NoSuchListTypeException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchListTypeException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public NoSuchListTypeException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NoSuchListTypeException(Throwable throwable) {
-		super(throwable);
+	public NoSuchListTypeException(Throwable cause) {
+		super(cause);
 	}
 
 	public String getType() {

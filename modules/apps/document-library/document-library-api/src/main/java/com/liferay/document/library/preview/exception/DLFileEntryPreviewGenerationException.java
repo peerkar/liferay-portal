@@ -28,14 +28,12 @@ public class DLFileEntryPreviewGenerationException extends PortalException {
 		super(msg);
 	}
 
-	public DLFileEntryPreviewGenerationException(
-		String msg, Throwable throwable) {
-
-		super(msg, throwable);
+	public DLFileEntryPreviewGenerationException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public DLFileEntryPreviewGenerationException(Throwable throwable) {
-		super(throwable);
+	public DLFileEntryPreviewGenerationException(Throwable cause) {
+		super(cause);
 	}
 
 }

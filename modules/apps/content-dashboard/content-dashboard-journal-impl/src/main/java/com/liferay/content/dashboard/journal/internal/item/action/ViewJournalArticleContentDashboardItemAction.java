@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.Locale;
@@ -86,18 +87,35 @@ public class ViewJournalArticleContentDashboardItemAction
 		return _getViewURL(locale, themeDisplay);
 	}
 
+	private String _getI18nPath(Locale locale) {
+		Locale defaultLocale = _language.getLocale(locale.getLanguage());
+
+		if (LocaleUtil.equals(defaultLocale, locale)) {
+			return StringPool.SLASH + defaultLocale.getLanguage();
+		}
+
+		return StringPool.SLASH + locale.toLanguageTag();
+	}
+
 	private String _getViewURL(Locale locale, ThemeDisplay themeDisplay) {
 		try {
 			ThemeDisplay clonedThemeDisplay =
 				(ThemeDisplay)themeDisplay.clone();
 
+			clonedThemeDisplay.setI18nPath(_getI18nPath(locale));
+
+			String languageId = _language.getLanguageId(locale);
+
+			clonedThemeDisplay.setI18nLanguageId(languageId);
+			clonedThemeDisplay.setLanguageId(languageId);
+
+			clonedThemeDisplay.setLocale(locale);
 			clonedThemeDisplay.setScopeGroupId(_journalArticle.getGroupId());
 
 			return Optional.ofNullable(
 				_assetDisplayPageFriendlyURLProvider.getFriendlyURL(
 					JournalArticle.class.getName(),
-					_journalArticle.getResourcePrimKey(), locale,
-					clonedThemeDisplay)
+					_journalArticle.getResourcePrimKey(), clonedThemeDisplay)
 			).orElse(
 				StringPool.BLANK
 			);

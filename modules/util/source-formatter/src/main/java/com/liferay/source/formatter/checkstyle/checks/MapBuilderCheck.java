@@ -16,8 +16,6 @@ package com.liferay.source.formatter.checkstyle.checks;
 
 import com.liferay.portal.kernel.util.ListUtil;
 
-import com.puppycrawl.tools.checkstyle.api.DetailAST;
-
 import java.util.List;
 
 /**
@@ -28,11 +26,6 @@ public class MapBuilderCheck extends BaseBuilderCheck {
 	@Override
 	protected boolean allowNullValues() {
 		return false;
-	}
-
-	@Override
-	protected String getAssignClassName(DetailAST assignDetailAST) {
-		return getNewInstanceTypeName(assignDetailAST);
 	}
 
 	@Override
@@ -49,11 +42,6 @@ public class MapBuilderCheck extends BaseBuilderCheck {
 				"LinkedHashMap", "LinkedHashMapBuilder", "put", "putAll"),
 			new BaseBuilderCheck.BuilderInformation(
 				"TreeMap", "TreeMapBuilder", "put", "putAll"));
-	}
-
-	@Override
-	protected List<String> getSupportsFunctionMethodNames() {
-		return ListUtil.fromArray("put");
 	}
 
 	@Override

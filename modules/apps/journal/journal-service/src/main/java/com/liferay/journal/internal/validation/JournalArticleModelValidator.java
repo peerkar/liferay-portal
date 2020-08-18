@@ -206,9 +206,7 @@ public class JournalArticleModelValidator
 		}
 
 		if (!validSmallImageExtension) {
-			throw new ArticleSmallImageNameException(
-				"Invalid image extension " +
-					FileUtil.getExtension(smallImageName));
+			throw new ArticleSmallImageNameException(smallImageName);
 		}
 
 		long smallImageMaxSize =
@@ -360,6 +358,8 @@ public class JournalArticleModelValidator
 
 	@Override
 	public ModelValidationResults validateModel(JournalArticle article) {
+		long groupId = article.getGroupId();
+		String content = article.getContent();
 		String ddmStructureKey = article.getDDMStructureKey();
 		String ddmTemplateKey = article.getDDMTemplateKey();
 		boolean smallImage = article.isSmallImage();
@@ -375,16 +375,11 @@ public class JournalArticleModelValidator
 			if (image != null) {
 				smallImageBytes = image.getTextObj();
 
-				if (smallImageBytes != null) {
-					try {
-						smallImageFile = FileUtil.createTempFile(
-							image.getType());
-
-						FileUtil.write(smallImageFile, smallImageBytes, false);
-					}
-					catch (IOException ioException) {
-						smallImageBytes = null;
-					}
+				try {
+					smallImageFile = FileUtil.createTempFile(smallImageBytes);
+				}
+				catch (IOException ioException) {
+					smallImageBytes = null;
 				}
 			}
 		}
@@ -416,10 +411,9 @@ public class JournalArticleModelValidator
 
 		try {
 			validateReferences(
-				article.getGroupId(), ddmStructureKey, ddmTemplateKey,
+				groupId, ddmStructureKey, ddmTemplateKey,
 				article.getLayoutUuid(), smallImage, smallImageURL,
-				smallImageBytes, article.getSmallImageId(),
-				article.getContent());
+				smallImageBytes, article.getSmallImageId(), content);
 		}
 		catch (ExportImportContentValidationException
 					exportImportContentValidationException) {
@@ -487,9 +481,8 @@ public class JournalArticleModelValidator
 
 			Image image = _imageLocalService.fetchImage(smallImageId);
 
-			if ((image == null) || (smallImageBytes == null)) {
-				throw new NoSuchImageException(
-					"Small image ID " + smallImageId);
+			if (image == null) {
+				throw new NoSuchImageException();
 			}
 		}
 

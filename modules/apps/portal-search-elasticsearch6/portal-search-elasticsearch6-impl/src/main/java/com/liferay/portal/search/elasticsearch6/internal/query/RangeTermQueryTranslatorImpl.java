@@ -24,6 +24,7 @@ import org.osgi.service.component.annotations.Component;
 
 /**
  * @author Michael C. Han
+ * @author Petteri Karttunen
  */
 @Component(service = RangeTermQueryTranslator.class)
 public class RangeTermQueryTranslatorImpl implements RangeTermQueryTranslator {
@@ -33,6 +34,10 @@ public class RangeTermQueryTranslatorImpl implements RangeTermQueryTranslator {
 		RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery(
 			rangeTermQuery.getField());
 
+		if (rangeTermQuery.getBoost() != null) {
+			rangeQueryBuilder.boost(rangeTermQuery.getBoost());
+		}
+		
 		rangeQueryBuilder.from(rangeTermQuery.getLowerBound());
 		rangeQueryBuilder.includeLower(rangeTermQuery.isIncludesLower());
 		rangeQueryBuilder.includeUpper(rangeTermQuery.isIncludesUpper());

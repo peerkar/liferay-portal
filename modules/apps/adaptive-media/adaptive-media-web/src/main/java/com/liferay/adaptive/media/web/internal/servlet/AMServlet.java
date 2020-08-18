@@ -126,9 +126,9 @@ public class AMServlet extends HttpServlet {
 				_log.warn(exception, exception);
 			}
 
-			Throwable throwable = exception.getCause();
+			Throwable cause = exception.getCause();
 
-			if (throwable instanceof PrincipalException) {
+			if (cause instanceof PrincipalException) {
 				httpServletResponse.sendError(
 					HttpServletResponse.SC_FORBIDDEN,
 					httpServletRequest.getRequestURI());

@@ -55,7 +55,7 @@ definition {
 	}
 
 	macro addProvider {
-		Button.clickAdd();
+		Click(locator1 = "Button#ADD");
 
 		FormFields.editTextMultiline(
 			fieldName = "providerName",

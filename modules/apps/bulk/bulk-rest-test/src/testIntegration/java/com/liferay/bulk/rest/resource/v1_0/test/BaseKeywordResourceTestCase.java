@@ -243,7 +243,7 @@ public abstract class BaseKeywordResourceTestCase {
 		}
 	}
 
-	protected void assertValid(Keyword keyword) throws Exception {
+	protected void assertValid(Keyword keyword) {
 		boolean valid = true;
 
 		for (String additionalAssertFieldName :

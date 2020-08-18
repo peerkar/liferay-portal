@@ -41,15 +41,14 @@ JournalPreviewArticleContentTemplateDisplayContext journalPreviewArticleContentT
 			</li>
 			<li class="tbar-item">
 				<div class="journal-article-button-row tbar-section text-right">
-					<aui:button
-						cssClass="btn-sm selector-button"
-						data='<%=
-							HashMapBuilder.<String, Object>put(
-								"ddmtemplateid", journalPreviewArticleContentTemplateDisplayContext.getDDMTemplateId()
-							).build()
-						%>'
-						value="apply"
-					/>
+
+					<%
+					Map<String, Object> data = HashMapBuilder.<String, Object>put(
+						"ddmtemplateid", journalPreviewArticleContentTemplateDisplayContext.getDDMTemplateId()
+					).build();
+					%>
+
+					<aui:button cssClass="btn-sm selector-button" data="<%= data %>" value="apply" />
 				</div>
 			</li>
 		</ul>

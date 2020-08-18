@@ -250,7 +250,7 @@ public abstract class BaseCalendarResourceTestCase {
 		}
 	}
 
-	protected void assertValid(Calendar calendar) throws Exception {
+	protected void assertValid(Calendar calendar) {
 		boolean valid = true;
 
 		for (String additionalAssertFieldName :

@@ -117,19 +117,19 @@ public class UpdateArticleMVCActionCommand extends BaseMVCActionCommand {
 				WebKeys.UPLOAD_EXCEPTION);
 
 		if (uploadException != null) {
-			Throwable throwable = uploadException.getCause();
+			Throwable cause = uploadException.getCause();
 
 			if (uploadException.isExceededLiferayFileItemSizeLimit()) {
-				throw new LiferayFileItemException(throwable);
+				throw new LiferayFileItemException(cause);
 			}
 
 			if (uploadException.isExceededFileSizeLimit() ||
 				uploadException.isExceededUploadRequestSizeLimit()) {
 
-				throw new ArticleContentSizeException(throwable);
+				throw new ArticleContentSizeException(cause);
 			}
 
-			throw new PortalException(throwable);
+			throw new PortalException(cause);
 		}
 
 		UploadPortletRequest uploadPortletRequest =
@@ -182,8 +182,7 @@ public class UpdateArticleMVCActionCommand extends BaseMVCActionCommand {
 				ddmStructure.getStructureId(), serviceContext);
 		}
 
-		String content = _journalConverter.getContent(
-			ddmStructure, fields, groupId);
+		String content = _journalConverter.getContent(ddmStructure, fields);
 
 		Map<Locale, String> descriptionMap =
 			LocalizationUtil.getLocalizationMap(

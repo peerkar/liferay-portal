@@ -63,7 +63,6 @@ definition {
 		AssetListsAdmin.viewAssetTypeList(
 			assetListName = "Depot Manual Asset List",
 			assetType = "Web Content Folder,Basic Document,Basic Web Content,Documents Folder,DM Document Type Name 1,DM Document Type Name 2",
-			itemType = "All Types",
 			manualSelection = "true");
 
 		for (var i : list "1,2") {
@@ -72,9 +71,7 @@ definition {
 			AssetListsAdmin.selectAsset(
 				assetListName = "Depot Manual Asset List",
 				assetName = "DM Document Title ${i}",
-				assetType = "DM Document Type Name 2",
-				itemSubtype = "DM Document Type Name 2",
-				itemType = "Document");
+				assetType = "DM Document Type Name 2");
 		}
 
 		for (var documentName : list "DM Document Title 1,DM Document Title 2") {
@@ -200,9 +197,7 @@ definition {
 			assetListName = "Site Manual Asset List",
 			assetName = "WC WebContent Title",
 			assetType = "Basic Web Content",
-			depotName = "Test Depot Name",
-			itemSubtype = "Basic Web Content",
-			itemType = "Web Content Article");
+			depotName = "Test Depot Name");
 
 		Navigator.gotoSitePage(
 			pageName = "Asset Publisher Page",
@@ -301,7 +296,6 @@ definition {
 		AssetListsAdmin.viewAssetTypeList(
 			assetListName = "Depot Manual Asset List",
 			assetType = "Web Content Folder,Basic Web Content,WC Structure Name",
-			itemType = "All Types",
 			manualSelection = "true");
 
 		AssetListsAdmin.openAssetListsAdmin(siteURLKey = "test-depot-name");
@@ -349,7 +343,6 @@ definition {
 		AssetListsAdmin.viewAssetTypeList(
 			assetListName = "Depot Manual Asset List",
 			assetType = "Basic Document,Documents Folder,DM Document Type Name",
-			itemType = "All Types",
 			manualSelection = "true");
 
 		AssetListsAdmin.openAssetListsAdmin(siteURLKey = "test-depot-name");
@@ -387,9 +380,7 @@ definition {
 		AssetListsAdmin.selectAsset(
 			assetListName = "Depot Manual Asset List",
 			assetName = "Document Title",
-			assetType = "Basic Document",
-			itemSubtype = "Basic Document",
-			itemType = "Document");
+			assetType = "Basic Document");
 
 		JSONGroup.addGroup(groupName = "Site Name");
 
@@ -581,9 +572,7 @@ definition {
 			AssetListsAdmin.selectAsset(
 				assetListName = "Depot Manual Asset List",
 				assetName = "WC WebContent Title ${i}",
-				assetType = "Basic Web Content",
-				itemSubtype = "Basic Web Content",
-				itemType = "Web Content Article");
+				assetType = "Basic Web Content");
 		}
 
 		AssetListsAdmin.deleteManualSelectionAssets(assetsList = "WC WebContent Title 2");
@@ -777,9 +766,7 @@ definition {
 			AssetListsAdmin.selectAsset(
 				assetListName = "Depot Manual Asset List",
 				assetName = "${documentName}",
-				assetType = "Basic Document",
-				itemSubtype = "Basic Document",
-				itemType = "Document");
+				assetType = "Basic Document");
 		}
 
 		for (var documentName : list "Document_1.doc,Document_2.jpg,Document_3.txt") {
@@ -820,9 +807,7 @@ definition {
 			AssetListsAdmin.selectAsset(
 				assetListName = "Depot Manual Asset List",
 				assetName = "WC WebContent Title ${i}",
-				assetType = "Basic Web Content",
-				itemSubtype = "Basic Web Content",
-				itemType = "Web Content Article");
+				assetType = "Basic Web Content");
 		}
 
 		for (var i : list "1,2,3") {
@@ -976,9 +961,7 @@ definition {
 			AssetListsAdmin.selectAsset(
 				assetListName = "Depot Manual Asset List",
 				assetName = "WC WebContent Title ${i}",
-				assetType = "WC Structure Name",
-				itemSubtype = "WC Structure Name",
-				itemType = "Web Content Article");
+				assetType = "WC Structure Name");
 		}
 
 		for (var i : list "1,2") {

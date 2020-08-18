@@ -26,12 +26,12 @@ public class LayoutPermissionException extends PortalException {
 		super(msg);
 	}
 
-	public LayoutPermissionException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public LayoutPermissionException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public LayoutPermissionException(Throwable throwable) {
-		super(throwable);
+	public LayoutPermissionException(Throwable cause) {
+		super(cause);
 	}
 
 }

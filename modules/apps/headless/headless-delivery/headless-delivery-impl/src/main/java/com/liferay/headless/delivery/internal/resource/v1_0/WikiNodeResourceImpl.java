@@ -14,7 +14,7 @@
 
 package com.liferay.headless.delivery.internal.resource.v1_0;
 
-import com.liferay.headless.common.spi.service.context.ServiceContextRequestUtil;
+import com.liferay.headless.common.spi.service.context.ServiceContextUtil;
 import com.liferay.headless.delivery.dto.v1_0.WikiNode;
 import com.liferay.headless.delivery.internal.dto.v1_0.util.CreatorUtil;
 import com.liferay.headless.delivery.internal.odata.entity.v1_0.WikiNodeEntityModel;
@@ -38,8 +38,6 @@ import com.liferay.portal.vulcan.util.SearchUtil;
 import com.liferay.subscription.service.SubscriptionLocalService;
 import com.liferay.wiki.service.WikiNodeService;
 import com.liferay.wiki.service.WikiPageService;
-
-import java.util.Optional;
 
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -112,8 +110,7 @@ public class WikiNodeResourceImpl
 		return _toWikiNode(
 			_wikiNodeService.addNode(
 				wikiNode.getName(), wikiNode.getDescription(),
-				ServiceContextRequestUtil.createServiceContext(
-					siteId, contextHttpServletRequest, null)));
+				ServiceContextUtil.createServiceContext(siteId, null)));
 	}
 
 	@Override
@@ -126,9 +123,8 @@ public class WikiNodeResourceImpl
 		return _toWikiNode(
 			_wikiNodeService.updateNode(
 				wikiNodeId, wikiNode.getName(), wikiNode.getDescription(),
-				ServiceContextRequestUtil.createServiceContext(
+				ServiceContextUtil.createServiceContext(
 					serviceBuilderWikiNode.getGroupId(),
-					contextHttpServletRequest,
 					wikiNode.getViewableByAsString())));
 	}
 
@@ -161,8 +157,7 @@ public class WikiNodeResourceImpl
 					addAction("SUBSCRIBE", wikiNode, "putWikiNodeUnsubscribe")
 				).build();
 				creator = CreatorUtil.toCreator(
-					_portal, Optional.of(contextUriInfo),
-					_userLocalService.fetchUser(wikiNode.getUserId()));
+					_portal, _userLocalService.fetchUser(wikiNode.getUserId()));
 				dateCreated = wikiNode.getCreateDate();
 				dateModified = wikiNode.getModifiedDate();
 				description = wikiNode.getDescription();

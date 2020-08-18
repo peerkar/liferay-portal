@@ -146,21 +146,21 @@ public class EditMessageMVCActionCommand extends BaseMVCActionCommand {
 					WebKeys.UPLOAD_EXCEPTION);
 
 			if (uploadException != null) {
-				Throwable throwable = uploadException.getCause();
+				Throwable cause = uploadException.getCause();
 
 				if (uploadException.isExceededFileSizeLimit()) {
-					throw new FileSizeException(throwable);
+					throw new FileSizeException(cause);
 				}
 
 				if (uploadException.isExceededLiferayFileItemSizeLimit()) {
-					throw new LiferayFileItemException(throwable);
+					throw new LiferayFileItemException(cause);
 				}
 
 				if (uploadException.isExceededUploadRequestSizeLimit()) {
-					throw new UploadRequestSizeException(throwable);
+					throw new UploadRequestSizeException(cause);
 				}
 
-				throw new PortalException(throwable);
+				throw new PortalException(cause);
 			}
 			else if (cmd.equals(Constants.ADD) ||
 					 cmd.equals(Constants.UPDATE)) {
@@ -237,17 +237,17 @@ public class EditMessageMVCActionCommand extends BaseMVCActionCommand {
 			SessionErrors.add(actionRequest, exception.getClass(), exception);
 		}
 		catch (Exception exception) {
-			Throwable throwable = exception.getCause();
+			Throwable cause = exception.getCause();
 
-			if (throwable instanceof SanitizerException) {
+			if (cause instanceof SanitizerException) {
 				SessionErrors.add(actionRequest, SanitizerException.class);
 			}
 			else {
 				throw exception;
 			}
 		}
-		catch (Throwable throwable) {
-			_log.error("Unable to process action", throwable);
+		catch (Throwable t) {
+			_log.error("Unable to process action", t);
 
 			actionResponse.setRenderParameter(
 				"mvcPath", "/message_boards/error.jsp");

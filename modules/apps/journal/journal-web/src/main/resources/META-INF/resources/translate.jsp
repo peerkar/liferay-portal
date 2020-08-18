@@ -152,7 +152,7 @@ renderResponse.setTitle(journalTranslateDisplayContext.getTitle());
 										<%= label %>
 									</label>
 
-									<div class="translate-editor-preview" dir="<%= sourceContentDir %>">
+									<div contenteditable="false" dir="<%= sourceContentDir %>" role="textbox" tabIndex="-1">
 										<%= sourceContent %>
 									</div>
 								</c:when>

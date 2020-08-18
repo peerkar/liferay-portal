@@ -82,7 +82,6 @@ public class EqualsPoshiElement extends PoshiElement {
 	}
 
 	protected EqualsPoshiElement() {
-		super(_ELEMENT_NAME);
 	}
 
 	protected EqualsPoshiElement(Element element) {

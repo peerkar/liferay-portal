@@ -423,7 +423,7 @@ public abstract class BasePhoneResourceTestCase {
 		}
 	}
 
-	protected void assertValid(Phone phone) throws Exception {
+	protected void assertValid(Phone phone) {
 		boolean valid = true;
 
 		if (phone.getId() == null) {

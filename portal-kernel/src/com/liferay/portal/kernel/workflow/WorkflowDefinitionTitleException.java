@@ -26,12 +26,12 @@ public class WorkflowDefinitionTitleException extends WorkflowException {
 		super(msg);
 	}
 
-	public WorkflowDefinitionTitleException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public WorkflowDefinitionTitleException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public WorkflowDefinitionTitleException(Throwable throwable) {
-		super(throwable);
+	public WorkflowDefinitionTitleException(Throwable cause) {
+		super(cause);
 	}
 
 }

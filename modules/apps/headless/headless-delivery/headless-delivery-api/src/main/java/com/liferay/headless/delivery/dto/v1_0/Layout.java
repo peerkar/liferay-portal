@@ -85,7 +85,6 @@ public class Layout {
 		}
 	}
 
-	@Deprecated
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Align align;
@@ -114,7 +113,6 @@ public class Layout {
 		}
 	}
 
-	@Deprecated
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String borderColor;
@@ -153,7 +151,6 @@ public class Layout {
 		}
 	}
 
-	@Deprecated
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected BorderRadius borderRadius;
@@ -182,7 +179,6 @@ public class Layout {
 		}
 	}
 
-	@Deprecated
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Integer borderWidth;
@@ -260,7 +256,6 @@ public class Layout {
 		}
 	}
 
-	@Deprecated
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected ContentDisplay contentDisplay;
@@ -299,7 +294,6 @@ public class Layout {
 		}
 	}
 
-	@Deprecated
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Justify justify;
@@ -328,7 +322,6 @@ public class Layout {
 		}
 	}
 
-	@Deprecated
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Integer marginBottom;
@@ -357,7 +350,6 @@ public class Layout {
 		}
 	}
 
-	@Deprecated
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Integer marginLeft;
@@ -386,7 +378,6 @@ public class Layout {
 		}
 	}
 
-	@Deprecated
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Integer marginRight;
@@ -415,7 +406,6 @@ public class Layout {
 		}
 	}
 
-	@Deprecated
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Integer marginTop;
@@ -444,7 +434,6 @@ public class Layout {
 		}
 	}
 
-	@Deprecated
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Integer opacity;
@@ -473,7 +462,6 @@ public class Layout {
 		}
 	}
 
-	@Deprecated
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Integer paddingBottom;
@@ -502,7 +490,6 @@ public class Layout {
 		}
 	}
 
-	@Deprecated
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Integer paddingHorizontal;
@@ -531,7 +518,6 @@ public class Layout {
 		}
 	}
 
-	@Deprecated
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Integer paddingLeft;
@@ -560,7 +546,6 @@ public class Layout {
 		}
 	}
 
-	@Deprecated
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Integer paddingRight;
@@ -589,7 +574,6 @@ public class Layout {
 		}
 	}
 
-	@Deprecated
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Integer paddingTop;
@@ -628,7 +612,6 @@ public class Layout {
 		}
 	}
 
-	@Deprecated
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Shadow shadow;

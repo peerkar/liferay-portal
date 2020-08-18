@@ -217,6 +217,12 @@ public class ApplicationsMenuMVCResourceCommand extends BaseMVCResourceCommand {
 				_getChildPanelCategoriesJSONArray(
 					httpServletRequest, panelCategory.getKey(), themeDisplay);
 
+			if ((childPanelCategoriesJSONArray == null) ||
+				(childPanelCategoriesJSONArray.length() <= 0)) {
+
+				continue;
+			}
+
 			panelCategoriesJSONArray.put(
 				JSONUtil.put(
 					"childCategories", childPanelCategoriesJSONArray
@@ -279,9 +285,9 @@ public class ApplicationsMenuMVCResourceCommand extends BaseMVCResourceCommand {
 			max -= recentGroups.size();
 		}
 
-		if (max > 0) {
-			List<Group> filteredGroups = new ArrayList<>();
+		List<Group> filteredGroups = new ArrayList<>();
 
+		if (max > 0) {
 			User user = themeDisplay.getUser();
 
 			List<Group> mySiteGroups = user.getMySiteGroups(

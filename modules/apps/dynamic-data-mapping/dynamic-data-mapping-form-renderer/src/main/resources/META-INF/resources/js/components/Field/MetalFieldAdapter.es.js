@@ -21,7 +21,7 @@ import templates from './MetalFieldAdapter.soy';
 class MetalFieldAdapter extends Component {
 	getChildContext() {
 		return {
-			dispatch: this._handleDispatch.bind(this),
+			dispatch: this._handleDispatch,
 			store: {
 				editingLanguageId: this.editingLanguageId,
 			},
@@ -72,8 +72,6 @@ MetalFieldAdapter.STATE = {
 	onBlur: Config.any(),
 	onChange: Config.any(),
 	onFocus: Config.any(),
-	onRemoved: Config.any(),
-	onRepeated: Config.any(),
 	pageIndex: Config.number(),
 	spritemap: Config.string(),
 	type: Config.string(),

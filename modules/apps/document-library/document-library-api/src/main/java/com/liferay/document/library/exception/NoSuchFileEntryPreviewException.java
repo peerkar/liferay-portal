@@ -28,12 +28,12 @@ public class NoSuchFileEntryPreviewException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchFileEntryPreviewException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public NoSuchFileEntryPreviewException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NoSuchFileEntryPreviewException(Throwable throwable) {
-		super(throwable);
+	public NoSuchFileEntryPreviewException(Throwable cause) {
+		super(cause);
 	}
 
 }

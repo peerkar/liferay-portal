@@ -28,14 +28,12 @@ public class GadgetPortletCategoryNamesException extends PortalException {
 		super(msg);
 	}
 
-	public GadgetPortletCategoryNamesException(
-		String msg, Throwable throwable) {
-
-		super(msg, throwable);
+	public GadgetPortletCategoryNamesException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public GadgetPortletCategoryNamesException(Throwable throwable) {
-		super(throwable);
+	public GadgetPortletCategoryNamesException(Throwable cause) {
+		super(cause);
 	}
 
 }

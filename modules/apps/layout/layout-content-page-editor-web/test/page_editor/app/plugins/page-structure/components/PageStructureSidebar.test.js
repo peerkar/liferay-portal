@@ -62,9 +62,6 @@ const renderComponent = ({
 									content: '<div>001</div>',
 								},
 							},
-							editableTypes: {
-								'05-editable': 'text',
-							},
 							editableValues: {
 								[EDITABLE_FRAGMENT_ENTRY_PROCESSOR]: {
 									'05-editable': {
@@ -183,7 +180,7 @@ describe('PageStructureSidebar', () => {
 	it('has a sidebar panel title', () => {
 		const {getByText} = renderComponent();
 
-		expect(getByText('selection')).toBeInTheDocument();
+		expect(getByText('page-structure')).toBeInTheDocument();
 	});
 
 	it('has a warning message when there is no content', () => {
@@ -259,8 +256,8 @@ describe('PageStructureSidebar', () => {
 			rootItemChildren: ['04-fragment'],
 		});
 
-		expect(queryByLabelText('select-x-text')).toBeInTheDocument();
-		expect(queryByLabelText('remove-x-text')).toBe(null);
+		expect(queryByLabelText('select-x-05-editable')).toBeInTheDocument();
+		expect(queryByLabelText('remove-x-05-editable')).toBe(null);
 	});
 
 	it('sets element as active item', () => {

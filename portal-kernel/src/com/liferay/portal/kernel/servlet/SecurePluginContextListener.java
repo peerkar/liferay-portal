@@ -279,7 +279,7 @@ public class SecurePluginContextListener
 					servletContextListener.contextDestroyed(
 						servletContextEvent);
 				}
-				catch (Throwable throwable) {
+				catch (Throwable t) {
 					String className = ClassUtil.getClassName(
 						servletContextListener.getClass());
 
@@ -288,7 +288,7 @@ public class SecurePluginContextListener
 							className, " is unable to process a context ",
 							"destroyed event for ",
 							servletContext.getServletContextName()),
-						throwable);
+						t);
 				}
 			}
 		}

@@ -23,17 +23,17 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class ThrowableCollector {
 
-	public void collect(Throwable throwable1) {
+	public void collect(Throwable t) {
 		while (true) {
-			Throwable throwable2 = _atomicReference.get();
+			Throwable throwable = _atomicReference.get();
 
-			if (throwable2 != null) {
-				throwable2.addSuppressed(throwable1);
+			if (throwable != null) {
+				throwable.addSuppressed(t);
 
 				break;
 			}
 
-			if (_atomicReference.compareAndSet(null, throwable1)) {
+			if (_atomicReference.compareAndSet(null, t)) {
 				break;
 			}
 		}

@@ -368,9 +368,9 @@ public class AssetPublisherPortlet extends MVCPortlet {
 	}
 
 	@Override
-	protected boolean isSessionErrorException(Throwable throwable) {
-		if (throwable instanceof NoSuchGroupException ||
-			throwable instanceof PrincipalException) {
+	protected boolean isSessionErrorException(Throwable cause) {
+		if (cause instanceof NoSuchGroupException ||
+			cause instanceof PrincipalException) {
 
 			return true;
 		}

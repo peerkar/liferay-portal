@@ -164,9 +164,9 @@ public class PQLValueTest extends TestCase {
 
 		Object actualResult = pqlValue.getPQLResult(properties);
 
-		if (actualResult != null) {
-			Object expectedResult = null;
+		Object expectedResult = null;
 
+		if (actualResult != null) {
 			StringBuilder sb = new StringBuilder();
 
 			sb.append("Mismatched PQL result within the following PQL:\n");

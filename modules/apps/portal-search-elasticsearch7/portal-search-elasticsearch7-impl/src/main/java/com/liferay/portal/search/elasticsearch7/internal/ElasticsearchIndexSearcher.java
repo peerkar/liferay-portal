@@ -312,11 +312,10 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		searchSearchRequest.setSize(size);
 
 		searchSearchRequest.setStart(start);
+
 		searchSearchRequest.setSorts(searchContext.getSorts());
 		searchSearchRequest.setSorts(searchRequest.getSorts());
 		searchSearchRequest.setStats(searchContext.getStats());
-		searchSearchRequest.setTrackTotalHits(
-			_elasticsearchConfigurationWrapper.trackTotalHits());
 
 		return searchSearchRequest;
 	}

@@ -12,7 +12,7 @@
 import {cleanup, fireEvent, render} from '@testing-library/react';
 import React from 'react';
 
-import Autocomplete from '../../../src/main/resources/META-INF/resources/js/components/autocomplete/Autocomplete.es';
+import {Autocomplete} from '../../../src/main/resources/META-INF/resources/js/components/autocomplete/Autocomplete.es';
 
 import '@testing-library/jest-dom/extend-expect';
 
@@ -25,6 +25,7 @@ const items = [
 describe('Autocomplete', () => {
 	describe('with items', () => {
 		let getByPlaceholderText;
+		let getByTestId;
 		let getByText;
 
 		const onChange = jest.fn();
@@ -42,6 +43,7 @@ describe('Autocomplete', () => {
 			);
 
 			getByPlaceholderText = autocomplete.getByPlaceholderText;
+			getByTestId = autocomplete.getByTestId;
 			getByText = autocomplete.getByText;
 		});
 
@@ -49,7 +51,7 @@ describe('Autocomplete', () => {
 			const autocompleteInput = getByPlaceholderText(
 				'select-or-type-an-option'
 			);
-			const dropDownList = document.getElementById('dropDownList');
+			const dropDownList = getByTestId('dropDownList');
 			const dropDown = dropDownList.parentNode;
 
 			expect(dropDown).not.toHaveClass('show');

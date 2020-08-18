@@ -189,10 +189,10 @@ public class ExportImportLocalServiceImpl
 			layoutImportController.importFile(exportImportConfiguration, file);
 		}
 		catch (PortalException portalException) {
-			Throwable throwable = portalException.getCause();
+			Throwable cause = portalException.getCause();
 
-			if (throwable instanceof LocaleException) {
-				throw (PortalException)throwable;
+			if (cause instanceof LocaleException) {
+				throw (PortalException)cause;
 			}
 
 			throw portalException;
@@ -263,10 +263,10 @@ public class ExportImportLocalServiceImpl
 				exportImportConfiguration, file);
 		}
 		catch (PortalException portalException) {
-			Throwable throwable = portalException.getCause();
+			Throwable cause = portalException.getCause();
 
-			if (throwable instanceof LocaleException) {
-				throw (PortalException)throwable;
+			if (cause instanceof LocaleException) {
+				throw (PortalException)cause;
 			}
 
 			throw portalException;
@@ -386,10 +386,10 @@ public class ExportImportLocalServiceImpl
 				exportImportConfiguration, file);
 		}
 		catch (PortalException portalException) {
-			Throwable throwable = portalException.getCause();
+			Throwable cause = portalException.getCause();
 
-			if (throwable instanceof LocaleException) {
-				throw (PortalException)throwable;
+			if (cause instanceof LocaleException) {
+				throw (PortalException)cause;
 			}
 
 			throw portalException;
@@ -422,19 +422,19 @@ public class ExportImportLocalServiceImpl
 			portletImportController.importFile(exportImportConfiguration, file);
 		}
 		catch (PortalException portalException) {
-			Throwable throwable = portalException.getCause();
+			Throwable cause = portalException.getCause();
 
 			while (true) {
-				if (throwable == null) {
+				if (cause == null) {
 					break;
 				}
 
-				if (throwable instanceof LocaleException) {
-					throw (PortalException)throwable;
+				if (cause instanceof LocaleException) {
+					throw (PortalException)cause;
 				}
 
-				if (throwable instanceof PortletDataException) {
-					throwable = throwable.getCause();
+				if (cause instanceof PortletDataException) {
+					cause = cause.getCause();
 				}
 				else {
 					break;
@@ -595,10 +595,10 @@ public class ExportImportLocalServiceImpl
 				exportImportConfiguration, file);
 		}
 		catch (PortalException portalException) {
-			Throwable throwable = portalException.getCause();
+			Throwable cause = portalException.getCause();
 
-			if (throwable instanceof LocaleException) {
-				throw (PortalException)throwable;
+			if (cause instanceof LocaleException) {
+				throw (PortalException)cause;
 			}
 
 			throw portalException;
@@ -669,10 +669,10 @@ public class ExportImportLocalServiceImpl
 				exportImportConfiguration, file);
 		}
 		catch (PortalException portalException) {
-			Throwable throwable = portalException.getCause();
+			Throwable cause = portalException.getCause();
 
-			if (throwable instanceof LocaleException) {
-				throw (PortalException)throwable;
+			if (cause instanceof LocaleException) {
+				throw (PortalException)cause;
 			}
 
 			throw portalException;

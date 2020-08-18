@@ -205,40 +205,52 @@ const Options = ({
 				Liferay.Language.get('option').toLowerCase()
 	);
 
-	const getSynchronizedValue = (fields) => {
+	const fieldsFilter = (fields) => {
 		const _fields = [...fields];
 
-		_fields.pop();
+		_fields.splice(_fields.length - 1, 1);
+
+		let _normalizedValue = {...normalizedValue};
 
 		const availableLanguageIds = Object.getOwnPropertyNames(
 			normalizedValue
 		);
 
-		return availableLanguageIds.reduce(
-			(value, languageId) => ({
-				...value,
-				[languageId]: synchronizeValue(_fields, languageId),
-			}),
-			{[editingLanguageId]: [..._fields]}
-		);
+		availableLanguageIds.forEach((languageId) => {
+			_normalizedValue = {
+				..._normalizedValue,
+				[languageId]: synchroniseValue(_fields, languageId),
+			};
+		});
+
+		return _normalizedValue;
 	};
 
-	const synchronizeValue = (fields, languageId) => {
+	const synchroniseValue = (fields, languageId) => {
 		if (editingLanguageId === languageId) {
 			return [...fields];
 		}
 
-		return [...fields].map((field) => {
-			const existingValue = normalizedValue[languageId].find(
-				({value}) => value === field.value
-			);
-			const newValue = {
-				...field,
-				label: field.value,
-			};
+		const _values = [];
 
-			return existingValue || newValue;
+		fields.forEach((localizedValue, index) => {
+			let newLocalizedValue = localizedValue;
+
+			if (normalizedValue[languageId][index]) {
+				newLocalizedValue = {
+					...newLocalizedValue,
+					label: normalizedValue[languageId][index].label,
+				};
+			}
+			_values.push(
+				normalizedValue[languageId].find(
+					(_localizedValue) =>
+						_localizedValue.value == localizedValue.value
+				) || newLocalizedValue
+			);
 		});
+
+		return _values;
 	};
 
 	const clone = (...args) => {
@@ -263,7 +275,7 @@ const Options = ({
 	const set = (fields) => {
 		setFields(fields);
 
-		const synchronizedNormalizedValue = getSynchronizedValue(fields);
+		const synchronizedNormalizedValue = fieldsFilter(fields);
 
 		setNormalizedValue(synchronizedNormalizedValue);
 		onChange(synchronizedNormalizedValue);

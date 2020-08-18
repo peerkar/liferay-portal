@@ -32,10 +32,6 @@ import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator
 public class ValidatorFactory {
 
 	public static Validator getValidator() {
-		if (_validator != null) {
-			return _validator;
-		}
-
 		HibernateValidatorConfiguration hibernateValidatorConfiguration =
 			(HibernateValidatorConfiguration)Validation.byDefaultProvider(
 			).providerResolver(
@@ -51,12 +47,8 @@ public class ValidatorFactory {
 		javax.validation.ValidatorFactory validatorFactory =
 			hibernateValidatorConfiguration.buildValidatorFactory();
 
-		_validator = validatorFactory.getValidator();
-
-		return _validator;
+		return validatorFactory.getValidator();
 	}
-
-	private static Validator _validator;
 
 	private static class OSGiServiceDiscoverer
 		implements ValidationProviderResolver {

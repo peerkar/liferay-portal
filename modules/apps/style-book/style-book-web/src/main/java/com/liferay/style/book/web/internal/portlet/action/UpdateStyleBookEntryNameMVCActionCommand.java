@@ -51,8 +51,13 @@ public class UpdateStyleBookEntryNameMVCActionCommand
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
+		long styleBookEntryId = ParamUtil.getLong(
+			actionRequest, "styleBookEntryId");
+
+		String name = ParamUtil.getString(actionRequest, "name");
+
 		try {
-			_updateStyleBookEntry(actionRequest);
+			_styleBookEntryService.updateName(styleBookEntryId, name);
 
 			if (SessionErrors.contains(
 					actionRequest, "styleBookEntryNameInvalid")) {
@@ -75,17 +80,6 @@ public class UpdateStyleBookEntryNameMVCActionCommand
 			_styleBookEntryExceptionRequestHandler.handlePortalException(
 				actionRequest, actionResponse, portalException);
 		}
-	}
-
-	private void _updateStyleBookEntry(ActionRequest actionRequest)
-		throws PortalException {
-
-		long styleBookEntryId = ParamUtil.getLong(
-			actionRequest, "styleBookEntryId");
-
-		String name = ParamUtil.getString(actionRequest, "name");
-
-		_styleBookEntryService.updateName(styleBookEntryId, name);
 	}
 
 	@Reference

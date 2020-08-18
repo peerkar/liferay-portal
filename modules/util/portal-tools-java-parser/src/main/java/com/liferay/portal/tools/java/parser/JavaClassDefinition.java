@@ -77,26 +77,22 @@ public class JavaClassDefinition extends BaseJavaTerm {
 		int index = sb.index();
 
 		if (!_modifiers.isEmpty()) {
-			append(
-				sb, _modifiers, " ", indent, prefix, " ", NO_MAX_LINE_LENGTH);
+			append(sb, _modifiers, " ", indent, prefix, " ", -1);
 
 			prefix = StringPool.BLANK;
 		}
 
 		appendSingleLine(
 			sb, _classJavaType, StringBundler.concat(prefix, _type, " "), "",
-			NO_MAX_LINE_LENGTH);
+			-1);
 
 		if (_extendedClassJavaTypes != null) {
-			appendSingleLine(
-				sb, _extendedClassJavaTypes, " extends ", "",
-				NO_MAX_LINE_LENGTH);
+			appendSingleLine(sb, _extendedClassJavaTypes, " extends ", "", -1);
 		}
 
 		if (_implementedClassJavaTypes != null) {
 			appendSingleLine(
-				sb, _implementedClassJavaTypes, " implements ", "",
-				NO_MAX_LINE_LENGTH);
+				sb, _implementedClassJavaTypes, " implements ", "", -1);
 		}
 
 		sb.append(suffix);

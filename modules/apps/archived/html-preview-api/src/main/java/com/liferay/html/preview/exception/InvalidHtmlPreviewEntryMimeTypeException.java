@@ -29,13 +29,13 @@ public class InvalidHtmlPreviewEntryMimeTypeException extends PortalException {
 	}
 
 	public InvalidHtmlPreviewEntryMimeTypeException(
-		String msg, Throwable throwable) {
+		String msg, Throwable cause) {
 
-		super(msg, throwable);
+		super(msg, cause);
 	}
 
-	public InvalidHtmlPreviewEntryMimeTypeException(Throwable throwable) {
-		super(throwable);
+	public InvalidHtmlPreviewEntryMimeTypeException(Throwable cause) {
+		super(cause);
 	}
 
 }

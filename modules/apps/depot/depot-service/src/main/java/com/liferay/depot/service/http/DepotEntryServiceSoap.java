@@ -61,10 +61,8 @@ import java.util.Map;
  *
  * @author Brian Wing Shun Chan
  * @see DepotEntryServiceHttp
- * @deprecated As of Athanasius (7.3.x), with no direct replacement
  * @generated
  */
-@Deprecated
 public class DepotEntryServiceSoap {
 
 	public static com.liferay.depot.model.DepotEntrySoap addDepotEntry(

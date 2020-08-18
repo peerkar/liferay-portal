@@ -35,8 +35,6 @@ definition {
 	@description = "This is a use case for LPS-109555. Can bulk restore multiple items from recycle bin."
 	@priority = "5"
 	test BulkRestoreMultipleAssetsFromRecycleBin {
-		property portal.acceptance = "true";
-
 		task ("Add a Web Content Article, Blogs Entry and Document") {
 			JSONWebcontent.addWebContent(
 				content = "Web Content Content",
@@ -700,8 +698,8 @@ definition {
 	@description = "This is a use case for LPS-109555. Automatically rename documents when bulk restore them from recycle bin if document names already exist in the destination."
 	@priority = "5"
 	test RenameBulkRestoreDocumentsAutomaticallyWhenDocumentNamesAlreadyExistInTheDestination {
-		property portal.acceptance = "true";
-		property portal.upstream = "true";
+		property portal.acceptance = "quarantine";
+		property portal.upstream = "quarantine";
 
 		task ("Add multiple document entries") {
 			JSONDocument.addFileWithUploadedFile(
@@ -761,8 +759,8 @@ definition {
 
 	@priority = "5"
 	test RestoreDMDocumentFromFolderCP {
-		property portal.acceptance = "true";
-		property portal.upstream = "true";
+		property portal.acceptance = "quarantine";
+		property portal.upstream = "quarantine";
 
 		JSONDocument.addFolder(
 			dmFolderName = "DM Folder Name",

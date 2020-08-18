@@ -35,7 +35,6 @@ import java.util.Arrays;
 import java.util.Map;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -44,13 +43,6 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Arquillian.class)
 public class DocumentResourceTest extends BaseDocumentResourceTestCase {
-
-	@Before
-	public void setUp() throws Exception {
-		super.setUp();
-
-		testGroup = testDepotEntry.getGroup();
-	}
 
 	@Override
 	@Test
@@ -104,7 +96,7 @@ public class DocumentResourceTest extends BaseDocumentResourceTestCase {
 	}
 
 	@Override
-	protected Map<String, File> getMultipartFiles() {
+	protected Map<String, File> getMultipartFiles() throws Exception {
 		return HashMapBuilder.<String, File>put(
 			"file",
 			() -> FileUtil.createTempFile(TestDataConstants.TEST_BYTE_ARRAY)

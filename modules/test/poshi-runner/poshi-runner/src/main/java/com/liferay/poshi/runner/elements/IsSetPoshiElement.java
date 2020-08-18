@@ -64,7 +64,6 @@ public class IsSetPoshiElement extends PoshiElement {
 	}
 
 	protected IsSetPoshiElement() {
-		super(_ELEMENT_NAME);
 	}
 
 	protected IsSetPoshiElement(Element element) {

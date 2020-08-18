@@ -20,7 +20,7 @@ import com.liferay.fragment.processor.PortletRegistry;
 import com.liferay.fragment.service.FragmentEntryLinkLocalServiceUtil;
 import com.liferay.layout.content.page.editor.web.internal.util.layout.structure.LayoutStructureUtil;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalServiceUtil;
-import com.liferay.layout.util.structure.FragmentStyledLayoutStructureItem;
+import com.liferay.layout.util.structure.FragmentLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.portal.kernel.comment.CommentManager;
@@ -217,18 +217,15 @@ public class SegmentsExperienceUtil {
 		for (LayoutStructureItem layoutStructureItem :
 				layoutStructure.getLayoutStructureItems()) {
 
-			if (!(layoutStructureItem instanceof
-					FragmentStyledLayoutStructureItem)) {
-
+			if (!(layoutStructureItem instanceof FragmentLayoutStructureItem)) {
 				continue;
 			}
 
-			FragmentStyledLayoutStructureItem
-				fragmentStyledLayoutStructureItem =
-					(FragmentStyledLayoutStructureItem)layoutStructureItem;
+			FragmentLayoutStructureItem fragmentLayoutStructureItem =
+				(FragmentLayoutStructureItem)layoutStructureItem;
 
 			FragmentEntryLink fragmentEntryLink = fragmentEntryLinkMap.get(
-				fragmentStyledLayoutStructureItem.getFragmentEntryLinkId());
+				fragmentLayoutStructureItem.getFragmentEntryLinkId());
 
 			if (fragmentEntryLink == null) {
 				continue;
@@ -261,7 +258,7 @@ public class SegmentsExperienceUtil {
 				FragmentEntryLinkLocalServiceUtil.addFragmentEntryLink(
 					newFragmentEntryLink);
 
-			fragmentStyledLayoutStructureItem.setFragmentEntryLinkId(
+			fragmentLayoutStructureItem.setFragmentEntryLinkId(
 				newFragmentEntryLink.getFragmentEntryLinkId());
 
 			commentManager.copyDiscussion(

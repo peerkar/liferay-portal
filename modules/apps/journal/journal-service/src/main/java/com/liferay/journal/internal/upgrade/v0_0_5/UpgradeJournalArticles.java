@@ -33,7 +33,6 @@ import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.upgrade.BaseUpgradePortletId;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portlet.PortletPreferencesImpl;
 
 import java.sql.PreparedStatement;
@@ -75,9 +74,7 @@ public class UpgradeJournalArticles extends BaseUpgradePortletId {
 		return 0;
 	}
 
-	protected String getNewPreferences(
-			long plid, String preferences, String oldRootPortletId,
-			String newRootPortletId)
+	protected String getNewPreferences(long plid, String preferences)
 		throws Exception {
 
 		PortletPreferences oldPortletPreferences =
@@ -95,8 +92,6 @@ public class UpgradeJournalArticles extends BaseUpgradePortletId {
 			oldPortletPreferences.getValue("pageDelta", StringPool.BLANK));
 		String pageUrl = oldPortletPreferences.getValue(
 			"pageUrl", StringPool.BLANK);
-		String portletSetupCss = oldPortletPreferences.getValue(
-			"portletSetupCss", StringPool.BLANK);
 		String type = oldPortletPreferences.getValue("type", StringPool.BLANK);
 
 		PortletPreferences newPortletPreferences = new PortletPreferencesImpl();
@@ -136,12 +131,6 @@ public class UpgradeJournalArticles extends BaseUpgradePortletId {
 		newPortletPreferences.setValue("orderByColumn1", orderByCol);
 		newPortletPreferences.setValue("orderByType1", orderByType);
 		newPortletPreferences.setValue("paginationType", "none");
-
-		portletSetupCss = StringUtil.replace(
-			portletSetupCss, "#portlet_" + oldRootPortletId,
-			"#portlet_" + newRootPortletId);
-
-		newPortletPreferences.setValue("portletSetupCss", portletSetupCss);
 
 		long categoryId = getCategoryId(layout.getCompanyId(), type);
 
@@ -230,8 +219,7 @@ public class UpgradeJournalArticles extends BaseUpgradePortletId {
 				long plid = rs.getLong("plid");
 				String portletId = rs.getString("portletId");
 
-				String newPreferences = getNewPreferences(
-					plid, preferences, oldRootPortletId, newRootPortletId);
+				String newPreferences = getNewPreferences(plid, preferences);
 
 				long userId = PortletIdCodec.decodeUserId(portletId);
 				String instanceId = PortletIdCodec.decodeInstanceId(portletId);

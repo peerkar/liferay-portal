@@ -39,14 +39,14 @@ public class EqualsFunctionTest {
 	}
 
 	@Test
-	public void testApplyTrue1() {
+	public void testApplyFalse3() {
 		EqualsFunction equalsFunction = new EqualsFunction();
 
-		Assert.assertTrue(equalsFunction.apply("1", new BigDecimal(1)));
+		Assert.assertFalse(equalsFunction.apply("1", new BigDecimal(1)));
 	}
 
 	@Test
-	public void testApplyTrue2() {
+	public void testApplyTrue() {
 		EqualsFunction equalsFunction = new EqualsFunction();
 
 		Assert.assertTrue(equalsFunction.apply("forms", "forms"));

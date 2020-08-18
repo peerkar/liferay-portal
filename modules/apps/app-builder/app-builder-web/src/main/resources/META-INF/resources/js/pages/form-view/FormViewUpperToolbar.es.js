@@ -28,7 +28,6 @@ import FormViewContext from './FormViewContext.es';
 export default ({newCustomObject, showTranslationManager}) => {
 	const [defaultLanguageId, setDefaultLanguageId] = useState('');
 	const [editingLanguageId, setEditingLanguageId] = useState('');
-	const [isLoading, setLoading] = useState(false);
 
 	const [state, dispatch] = useContext(FormViewContext);
 	const {dataDefinition, dataDefinitionId, dataLayout} = state;
@@ -86,7 +85,7 @@ export default ({newCustomObject, showTranslationManager}) => {
 	};
 
 	const onError = (error) => {
-		const {title} = error;
+		const {title = ''} = error;
 
 		errorToast(title);
 	};
@@ -105,13 +104,10 @@ export default ({newCustomObject, showTranslationManager}) => {
 				dataLayout.name[editingLanguageId];
 		}
 
-		setLoading(true);
-
 		saveDataDefinition(state)
 			.then(onSuccess)
 			.catch((error) => {
 				onError(error);
-				setLoading(false);
 			});
 	};
 
@@ -146,7 +142,6 @@ export default ({newCustomObject, showTranslationManager}) => {
 
 				<UpperToolbar.Button
 					disabled={
-						isLoading ||
 						!dataLayout.name[editingLanguageId] ||
 						DataLayoutVisitor.isDataLayoutEmpty(
 							dataLayout.dataLayoutPages

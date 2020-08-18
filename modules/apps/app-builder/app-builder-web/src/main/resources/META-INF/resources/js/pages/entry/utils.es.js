@@ -18,22 +18,13 @@ import {Link} from 'react-router-dom';
 import {toQuery, toQueryString} from '../../hooks/useQuery.es';
 import {FieldValuePreview} from './FieldPreview.es';
 
-export function buildEntries({
-	dataDefinition,
-	fieldNames = [],
-	permissions,
-	scope,
-}) {
-	const query = toQuery(
-		window.location.search,
-		{
-			keywords: '',
-			page: 1,
-			pageSize: 20,
-			sort: '',
-		},
-		scope
-	);
+export function buildEntries(fieldNames = [], dataDefinition, permissions) {
+	const query = toQuery(window.location.search, {
+		keywords: '',
+		page: 1,
+		pageSize: 20,
+		sort: '',
+	});
 
 	return ({dataRecordValues = {}, ...entry}, index) => {
 		const entryIndex = query.pageSize * (query.page - 1) + index + 1;

@@ -69,20 +69,6 @@ public class KeywordSerDes {
 			sb.append(_toJSON(keyword.getActions()));
 		}
 
-		if (keyword.getAssetLibraryKey() != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"assetLibraryKey\": ");
-
-			sb.append("\"");
-
-			sb.append(_escape(keyword.getAssetLibraryKey()));
-
-			sb.append("\"");
-		}
-
 		if (keyword.getCreator() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -194,15 +180,6 @@ public class KeywordSerDes {
 			map.put("actions", String.valueOf(keyword.getActions()));
 		}
 
-		if (keyword.getAssetLibraryKey() == null) {
-			map.put("assetLibraryKey", null);
-		}
-		else {
-			map.put(
-				"assetLibraryKey",
-				String.valueOf(keyword.getAssetLibraryKey()));
-		}
-
 		if (keyword.getCreator() == null) {
 			map.put("creator", null);
 		}
@@ -282,11 +259,6 @@ public class KeywordSerDes {
 				if (jsonParserFieldValue != null) {
 					keyword.setActions(
 						(Map)KeywordSerDes.toMap((String)jsonParserFieldValue));
-				}
-			}
-			else if (Objects.equals(jsonParserFieldName, "assetLibraryKey")) {
-				if (jsonParserFieldValue != null) {
-					keyword.setAssetLibraryKey((String)jsonParserFieldValue);
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "creator")) {

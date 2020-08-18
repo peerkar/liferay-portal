@@ -135,11 +135,10 @@ public class PortletContextImpl implements LiferayPortletContext {
 		try {
 			requestDispatcher = _servletContext.getNamedDispatcher(name);
 		}
-		catch (Throwable throwable) {
+		catch (Throwable t) {
 			if (_log.isWarnEnabled()) {
 				_log.warn(
-					"Unable to get request dispatcher for name " + name,
-					throwable);
+					"Unable to get request dispatcher for name " + name, t);
 			}
 
 			return null;
@@ -174,11 +173,10 @@ public class PortletContextImpl implements LiferayPortletContext {
 		try {
 			requestDispatcher = _servletContext.getRequestDispatcher(path);
 		}
-		catch (Throwable throwable) {
+		catch (Throwable t) {
 			if (_log.isWarnEnabled()) {
 				_log.warn(
-					"Unable to get request dispatcher for path " + path,
-					throwable);
+					"Unable to get request dispatcher for path " + path, t);
 			}
 
 			return null;

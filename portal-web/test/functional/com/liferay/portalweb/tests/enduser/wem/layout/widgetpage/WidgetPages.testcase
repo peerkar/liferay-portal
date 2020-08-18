@@ -374,7 +374,6 @@ definition {
 
 	@priority = "3"
 	test ViewNoInfoMessageWhenChangingSiteTemplateAsUser {
-		property custom.properties = "jsonws.web.service.paths.excludes=";
 		property testray.component.names = "Site and Page Templates,Site Pages Administration";
 
 		JSONUser.addUser(
@@ -383,10 +382,11 @@ definition {
 			userLastName = "userln",
 			userScreenName = "usersn");
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = "userea@liferay.com");
+		User.openUsersAdmin();
+
+		User.editPasswordCP(
+			userEmailAddress = "userea@liferay.com",
+			userScreenName = "usersn");
 
 		ApplicationsMenu.gotoPortlet(
 			category = "Sites",

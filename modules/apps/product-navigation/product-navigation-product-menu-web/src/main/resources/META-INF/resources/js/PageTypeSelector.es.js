@@ -100,7 +100,9 @@ function PageTypeSelector(props) {
 									'add-collection-page'
 								)}
 							>
-								{Liferay.Language.get('add-collection-page')}
+								{Liferay.Language.get(
+									'add-collection-page'
+								)}
 							</ClayDropDown.Item>
 						)}
 					</ClayDropDown.ItemList>

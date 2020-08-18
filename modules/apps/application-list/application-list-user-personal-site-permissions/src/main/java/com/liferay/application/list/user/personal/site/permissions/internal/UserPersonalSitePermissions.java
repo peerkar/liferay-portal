@@ -255,10 +255,10 @@ public class UserPersonalSitePermissions {
 
 				return panelApp;
 			}
-			catch (Throwable throwable) {
+			catch (Throwable t) {
 				_bundleContext.ungetService(reference);
 
-				throw throwable;
+				throw t;
 			}
 		}
 

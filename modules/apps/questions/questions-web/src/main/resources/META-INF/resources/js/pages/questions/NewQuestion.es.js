@@ -78,16 +78,6 @@ export default withRouter(
 							},
 							...section.parentMessageBoardSection
 								.messageBoardSections.items,
-							...section.messageBoardSections.items,
-						]);
-					}
-					else {
-						setSections([
-							{
-								id: section.id,
-								title: section.title,
-							},
-							...section.messageBoardSections.items,
 						]);
 					}
 				}

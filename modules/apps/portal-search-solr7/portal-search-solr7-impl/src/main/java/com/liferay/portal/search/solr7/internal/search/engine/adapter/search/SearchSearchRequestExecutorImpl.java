@@ -49,10 +49,12 @@ public class SearchSearchRequestExecutorImpl
 
 		_searchSolrQueryAssembler.assemble(solrQuery, searchSearchRequest);
 
+		String requestString = solrQuery.toString();
+
+		String debugRequestString = _getDebugRequestString(requestString);
+
 		if (_log.isDebugEnabled()) {
-			_log.debug(
-				"Search query: " +
-					_getDebugRequestString(solrQuery.toString()));
+			_log.debug("Search query: " + debugRequestString);
 		}
 
 		QueryResponse queryResponse = getQueryResponse(

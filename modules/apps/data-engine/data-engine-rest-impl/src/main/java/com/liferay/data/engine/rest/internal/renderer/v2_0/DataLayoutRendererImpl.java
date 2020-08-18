@@ -26,13 +26,7 @@ import com.liferay.dynamic.data.mapping.model.DDMStructureLayout;
 import com.liferay.dynamic.data.mapping.model.DDMStructureVersion;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLayoutLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMStructureVersionLocalService;
-import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.kernel.util.Validator;
-
-import java.util.Locale;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -73,31 +67,18 @@ public class DataLayoutRendererImpl implements DataLayoutRenderer {
 
 		ddmFormRenderingContext.setContainerId(
 			dataLayoutRendererContext.getContainerId());
-
-		Locale locale = null;
-
-		String languageId = ParamUtil.get(
-			dataLayoutRendererContext.getHttpServletRequest(), "languageId",
-			StringPool.BLANK);
-
-		if (Validator.isNull(languageId)) {
-			locale = _portal.getLocale(
-				dataLayoutRendererContext.getHttpServletRequest());
-		}
-		else {
-			locale = LocaleUtil.fromLanguageId(languageId);
-		}
-
 		ddmFormRenderingContext.setDDMFormValues(
 			DataRecordValuesUtil.toDDMFormValues(
 				dataLayoutRendererContext.getDataRecordValues(), ddmForm,
-				locale));
-
+				_portal.getLocale(
+					dataLayoutRendererContext.getHttpServletRequest())));
 		ddmFormRenderingContext.setHttpServletRequest(
 			dataLayoutRendererContext.getHttpServletRequest());
 		ddmFormRenderingContext.setHttpServletResponse(
 			dataLayoutRendererContext.getHttpServletResponse());
-		ddmFormRenderingContext.setLocale(locale);
+		ddmFormRenderingContext.setLocale(
+			_portal.getLocale(
+				dataLayoutRendererContext.getHttpServletRequest()));
 		ddmFormRenderingContext.setPortletNamespace(
 			dataLayoutRendererContext.getPortletNamespace());
 		ddmFormRenderingContext.setReadOnly(

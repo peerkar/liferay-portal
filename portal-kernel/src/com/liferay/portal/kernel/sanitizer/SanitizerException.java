@@ -29,12 +29,12 @@ public class SanitizerException extends PortalException {
 		super(msg);
 	}
 
-	public SanitizerException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public SanitizerException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public SanitizerException(Throwable throwable) {
-		super(throwable);
+	public SanitizerException(Throwable cause) {
+		super(cause);
 	}
 
 }

@@ -123,13 +123,12 @@ public class DeserializerTest {
 			Assert.fail();
 		}
 		catch (InvocationTargetException invocationTargetException) {
-			Throwable throwable = invocationTargetException.getCause();
+			Throwable cause = invocationTargetException.getCause();
 
 			Assert.assertTrue(
-				throwable.toString(),
-				throwable instanceof IllegalStateException);
+				cause.toString(), cause instanceof IllegalStateException);
 
-			Assert.assertEquals("Buffer underflow", throwable.getMessage());
+			Assert.assertEquals("Buffer underflow", cause.getMessage());
 		}
 	}
 

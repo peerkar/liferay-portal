@@ -24,6 +24,8 @@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
 page import="com.liferay.questions.web.internal.configuration.QuestionsConfiguration" %><%@
 page import="com.liferay.questions.web.internal.constants.QuestionsWebKeys" %>
 
+<%@ page import="java.util.Map" %>
+
 <liferay-frontend:defineObjects />
 
 <liferay-theme:defineObjects />

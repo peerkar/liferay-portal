@@ -26,14 +26,12 @@ public class NoSuchWorkflowInstanceLinkException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchWorkflowInstanceLinkException(
-		String msg, Throwable throwable) {
-
-		super(msg, throwable);
+	public NoSuchWorkflowInstanceLinkException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NoSuchWorkflowInstanceLinkException(Throwable throwable) {
-		super(throwable);
+	public NoSuchWorkflowInstanceLinkException(Throwable cause) {
+		super(cause);
 	}
 
 }

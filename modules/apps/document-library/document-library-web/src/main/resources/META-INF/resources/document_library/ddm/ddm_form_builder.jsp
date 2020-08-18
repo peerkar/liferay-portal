@@ -87,6 +87,7 @@ DLEditFileEntryTypeDisplayContext dlEditFileEntryTypeDisplayContext = (DLEditFil
 	var displayWarning = function (message) {
 		Liferay.Util.openToast({
 			message: message,
+			title: Liferay.Language.get('warning'),
 			type: 'warning',
 		});
 	};

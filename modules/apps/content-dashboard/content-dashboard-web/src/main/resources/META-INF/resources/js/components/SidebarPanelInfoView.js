@@ -17,9 +17,8 @@ import ClayLabel from '@clayui/label';
 import ClayLayout from '@clayui/layout';
 import ClayLink from '@clayui/link';
 import ClaySticker from '@clayui/sticker';
-import {ClayTooltipProvider} from '@clayui/tooltip';
-import classnames from 'classnames';
-import React, {useMemo} from 'react';
+import ClayTabs from '@clayui/tabs';
+import React, {useMemo, useState} from 'react';
 
 import Sidebar from './Sidebar';
 
@@ -48,12 +47,13 @@ const SidebarPanelInfoView = ({
 	subType,
 	tags = [],
 	title,
-	userId,
 	userName,
 	userPortraitURL,
 	versions = [],
 	viewURLs = [],
 }) => {
+	const [activeTabKeyValue, setActiveTabKeyValue] = useState(0);
+
 	const sortedViewURLS = useMemo(
 		() =>
 			viewURLs
@@ -78,29 +78,17 @@ const SidebarPanelInfoView = ({
 		[viewURLs]
 	);
 
-	const stickerColor = parseInt(userId, 10) % 10;
-
 	return (
 		<>
 			<Sidebar.Header title={Liferay.Language.get('content-info')} />
 
 			<Sidebar.Body>
-				<div className="c-mb-4">
+				<div className="c-mb-4 sidebar-dl sidebar-section">
 					<div className="component-title text-truncate-inline">
-						<ClayTooltipProvider>
-							<span
-								className="text-truncate"
-								data-tooltip-align="top"
-								title={title}
-							>
-								{title}
-							</span>
-						</ClayTooltipProvider>
+						<span className="text-truncate">{title}</span>
 					</div>
 
-					<p className="component-subtitle font-weight-normal">
-						{subType}
-					</p>
+					<p className="component-subtitle">{subType}</p>
 
 					{versions.map((version) => (
 						<div key={version.version}>
@@ -116,173 +104,188 @@ const SidebarPanelInfoView = ({
 					))}
 				</div>
 
-				<div className="c-mb-4 sidebar-dl sidebar-section">
-					<ClaySticker
-						className={classnames('sticker-user-icon', {
-							[`user-icon-color-${stickerColor}`]: !userPortraitURL,
-						})}
-						shape="circle"
+				<ClayTabs modern>
+					<ClayTabs.Item
+						active={activeTabKeyValue === 0}
+						innerProps={{
+							'aria-controls': 'tabpanel-0',
+						}}
+						onClick={() => setActiveTabKeyValue(0)}
 					>
-						{userPortraitURL ? (
-							<img
-								alt={`${userName}.`}
-								className="sticker-img"
-								src={userPortraitURL}
-							/>
-						) : (
-							<ClayIcon symbol="user" />
-						)}
-					</ClaySticker>
-					<span className="c-ml-2 h5">{userName}</span>
-				</div>
+						{Liferay.Language.get('details')}
+					</ClayTabs.Item>
+				</ClayTabs>
 
-				{!!sortedViewURLS.length && (
-					<div className="c-mb-4 sidebar-dl sidebar-section">
-						<h5>
-							{Liferay.Language.get('languages-translated-into')}
-						</h5>
-
-						{sortedViewURLS.map((language) => (
-							<ClayLayout.ContentRow
-								key={language.languageId}
-								verticalAlign="center"
-							>
-								<ClayLayout.ContentCol className="inline-item-before">
-									<ClayIcon
-										className="c-mt-1"
-										symbol={language.languageId.toLowerCase()}
+				<ClayTabs.Content activeIndex={activeTabKeyValue} fade>
+					<ClayTabs.TabPane
+						aria-labelledby="tab-1"
+						className="c-mt-3"
+					>
+						<div className="c-mb-4 sidebar-dl sidebar-section">
+							<ClaySticker className="sticker-user-icon">
+								<div className="sticker-overlay">
+									<img
+										className="sticker-img"
+										src={userPortraitURL}
 									/>
-								</ClayLayout.ContentCol>
+								</div>
+							</ClaySticker>
 
-								<ClayLayout.ContentCol
-									expand={!!language.viewURL}
-								>
+							<span className="c-ml-2 h5">{userName}</span>
+						</div>
+
+						{!!sortedViewURLS.length && (
+							<div className="c-mb-4 sidebar-dl sidebar-section">
+								<p className="c-mb-3 h5">
+									{Liferay.Language.get(
+										'languages-translated-into'
+									)}
+								</p>
+
+								{sortedViewURLS.map((language) => (
 									<ClayLayout.ContentRow
+										className="c-mb-1"
 										key={language.languageId}
 										verticalAlign="center"
 									>
-										<ClayLayout.ContentCol className="inline-item-before small">
-											{language.languageId}
+										<ClayLayout.ContentCol className="inline-item-before">
+											<ClayIcon
+												symbol={language.languageId.toLowerCase()}
+											/>
 										</ClayLayout.ContentCol>
 
-										<ClayLayout.ContentCol>
-											{language.default && (
-												<ClayLabel
-													className="d-inline"
-													displayType="info"
-												>
-													{Liferay.Language.get(
-														'default'
-													)}
-												</ClayLabel>
-											)}
-										</ClayLayout.ContentCol>
-									</ClayLayout.ContentRow>
-								</ClayLayout.ContentCol>
-
-								{language.viewURL && (
-									<ClayLayout.ContentCol>
-										<ClayTooltipProvider>
-											<ClayLink
-												borderless
-												data-tooltip-align="top"
-												displayType="secondary"
-												href={language.viewURL}
-												monospaced
-												outline
-												title={Liferay.Language.get(
-													'view'
-												)}
+										<ClayLayout.ContentCol
+											expand={!!language.viewURL}
+										>
+											<ClayLayout.ContentRow
+												key={language.languageId}
+												verticalAlign="center"
 											>
-												<ClayIcon symbol="view" />
-											</ClayLink>
-										</ClayTooltipProvider>
-									</ClayLayout.ContentCol>
-								)}
-							</ClayLayout.ContentRow>
-						))}
-					</div>
-				)}
+												<ClayLayout.ContentCol className="inline-item-before small">
+													{language.languageId}
+												</ClayLayout.ContentCol>
 
-				{!!tags.length && (
-					<div className="c-mb-4 sidebar-dl sidebar-section">
-						<h5>{Liferay.Language.get('tags')}</h5>
+												<ClayLayout.ContentCol>
+													{language.default && (
+														<ClayLabel
+															className="d-inline"
+															displayType="info"
+														>
+															{Liferay.Language.get(
+																'default'
+															)}
+														</ClayLabel>
+													)}
+												</ClayLayout.ContentCol>
+											</ClayLayout.ContentRow>
+										</ClayLayout.ContentCol>
 
-						<p>
-							{tags.map((tag) => (
-								<ClayLabel displayType="secondary" key={tag}>
-									{tag}
-								</ClayLabel>
-							))}
-						</p>
-					</div>
-				)}
-
-				{!!categories.length && (
-					<div className="c-mb-4 sidebar-dl sidebar-section">
-						<h5>{Liferay.Language.get('categories')}</h5>
-
-						<p>
-							{categories.map((category) => (
-								<ClayLabel
-									displayType="secondary"
-									key={category}
-								>
-									{category}
-								</ClayLabel>
-							))}
-						</p>
-					</div>
-				)}
-
-				{[
-					{
-						text: formatDate(
-							data['display-date']?.value,
-							languageTag
-						),
-						title: Liferay.Language.get('display-date'),
-					},
-					{
-						text: formatDate(createDate, languageTag),
-						title: Liferay.Language.get('creation-date'),
-					},
-					{
-						text: formatDate(modifiedDate, languageTag),
-						title: Liferay.Language.get('modified-date'),
-					},
-					{
-						text: formatDate(
-							data['expiration-date']?.value,
-							languageTag
-						),
-						title: Liferay.Language.get('expiration-date'),
-					},
-					{
-						text: formatDate(
-							data['review-date']?.value,
-							languageTag
-						),
-						title: Liferay.Language.get('review-date'),
-					},
-					{
-						text: classPK,
-						title: Liferay.Language.get('id'),
-					},
-				].map(
-					({text, title}) =>
-						text &&
-						title && (
-							<div
-								className="c-mb-4 sidebar-dl sidebar-section"
-								key={title}
-							>
-								<h5>{title}</h5>
-
-								<p>{text}</p>
+										{language.viewURL && (
+											<ClayLayout.ContentCol>
+												<ClayLink
+													borderless
+													displayType="secondary"
+													href={language.viewURL}
+													monospaced
+													outline
+												>
+													<ClayIcon symbol="view" />
+												</ClayLink>
+											</ClayLayout.ContentCol>
+										)}
+									</ClayLayout.ContentRow>
+								))}
 							</div>
-						)
-				)}
+						)}
+
+						{!!tags.length && (
+							<div className="c-mb-4 sidebar-dl sidebar-section">
+								<p className="h5">
+									{Liferay.Language.get('tags')}
+								</p>
+
+								<p>
+									{tags.map((tag) => (
+										<ClayLabel
+											displayType="secondary"
+											key={tag}
+										>
+											{tag}
+										</ClayLabel>
+									))}
+								</p>
+							</div>
+						)}
+
+						{!!categories.length && (
+							<div className="c-mb-4 sidebar-dl sidebar-section">
+								<p className="h5">
+									{Liferay.Language.get('categories')}
+								</p>
+
+								<p>
+									{categories.map((category) => (
+										<ClayLabel
+											displayType="secondary"
+											key={category}
+										>
+											{category}
+										</ClayLabel>
+									))}
+								</p>
+							</div>
+						)}
+
+						{[
+							{
+								text: formatDate(
+									data['display-date']?.value,
+									languageTag
+								),
+								title: Liferay.Language.get('display-date'),
+							},
+							{
+								text: formatDate(createDate, languageTag),
+								title: Liferay.Language.get('creation-date'),
+							},
+							{
+								text: formatDate(modifiedDate, languageTag),
+								title: Liferay.Language.get('modified-date'),
+							},
+							{
+								text: formatDate(
+									data['expiration-date']?.value,
+									languageTag
+								),
+								title: Liferay.Language.get('expiration-date'),
+							},
+							{
+								text: formatDate(
+									data['review-date']?.value,
+									languageTag
+								),
+								title: Liferay.Language.get('review-date'),
+							},
+							{
+								text: classPK,
+								title: Liferay.Language.get('id'),
+							},
+						].map(
+							({text, title}) =>
+								text &&
+								title && (
+									<div
+										className="c-mb-4 sidebar-dl sidebar-section"
+										key={title}
+									>
+										<p className="h5">{title}</p>
+
+										<p>{text}</p>
+									</div>
+								)
+						)}
+					</ClayTabs.TabPane>
+				</ClayTabs.Content>
 			</Sidebar.Body>
 		</>
 	);

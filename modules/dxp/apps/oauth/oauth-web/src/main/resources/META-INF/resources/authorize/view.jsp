@@ -119,7 +119,7 @@
 							<aui:button type="submit" value="grant-access" />
 
 							<%
-							String taglibOnClick = StringBundler.concat("document.location = '", HtmlUtil.escape(oAuthApplication.getWebsiteURL()), "'");
+							String taglibOnClick = "document.location = '".concat(HtmlUtil.escape(oAuthApplication.getWebsiteURL())).concat("'");
 							%>
 
 							<aui:button onClick="<%= taglibOnClick %>" value="deny-access" />

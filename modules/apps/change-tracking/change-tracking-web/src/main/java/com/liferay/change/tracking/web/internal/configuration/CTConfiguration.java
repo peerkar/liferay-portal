@@ -25,7 +25,7 @@ import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClass
 @Meta.OCD(
 	id = "com.liferay.change.tracking.web.internal.configuration.CTConfiguration",
 	localization = "content/Language",
-	name = "publications-portal-configuration-name"
+	name = "change-tracking-portal-configuration-name"
 )
 public interface CTConfiguration {
 

@@ -28,26 +28,27 @@ const SidebarBody = ({children, className}) => {
 	);
 };
 
-const SidebarHeader = ({title}) => {
+const SidebarHeader = ({children, subtitle, title}) => {
 	const {onClose} = useContext(SidebarContext);
 
 	return (
 		<div className="sidebar-header">
-			<ClayLayout.ContentRow
-				className="sidebar-section"
-				verticalAlign="center"
-			>
+			<ClayLayout.ContentRow className="sidebar-section">
 				<ClayLayout.ContentCol expand>
-					<div className="font-weight-bold text-truncate-inline">
+					<div className="component-title text-truncate-inline">
 						<span className="text-truncate">{title}</span>
 					</div>
+
+					<p className="component-subtitle">{subtitle}</p>
+
+					{children}
 				</ClayLayout.ContentCol>
 
 				<ClayLayout.ContentCol>
 					<ClayButtonWithIcon
-						className="component-action"
 						displayType="unstyled"
 						onClick={onClose}
+						small={true}
 						symbol="times-small"
 					/>
 				</ClayLayout.ContentCol>

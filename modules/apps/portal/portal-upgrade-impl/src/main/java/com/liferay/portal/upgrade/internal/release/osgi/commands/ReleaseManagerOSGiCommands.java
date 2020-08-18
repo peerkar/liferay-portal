@@ -138,13 +138,13 @@ public class ReleaseManagerOSGiCommands {
 
 			_upgradeExecutor.execute(bundleSymbolicName, upgradeInfos, null);
 		}
-		catch (Throwable throwable) {
+		catch (Throwable t) {
 			_swappedLogExecutor.execute(
 				bundleSymbolicName,
 				() -> _log.error(
 					"Failed upgrade process for module ".concat(
 						bundleSymbolicName),
-					throwable),
+					t),
 				null);
 		}
 
@@ -312,13 +312,13 @@ public class ReleaseManagerOSGiCommands {
 				_upgradeExecutor.execute(
 					upgradableBundleSymbolicName, upgradeInfos, null);
 			}
-			catch (Throwable throwable) {
+			catch (Throwable t) {
 				_swappedLogExecutor.execute(
 					upgradableBundleSymbolicName,
 					() -> _log.error(
 						"Failed upgrade process for module ".concat(
 							upgradableBundleSymbolicName),
-						throwable),
+						t),
 					null);
 
 				upgradeThrewExceptionBundleSymbolicNames.add(

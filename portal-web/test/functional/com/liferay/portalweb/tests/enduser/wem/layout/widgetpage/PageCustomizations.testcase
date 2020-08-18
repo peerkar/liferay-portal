@@ -34,8 +34,6 @@ definition {
 
 	@priority = "4"
 	test AddPortletAsUserWithCustomizePermission {
-		property custom.properties = "jsonws.web.service.paths.excludes=";
-
 		JSONGroup.addGroup(groupName = "Site Name");
 
 		JSONLayout.addPublicLayout(
@@ -54,10 +52,11 @@ definition {
 			userLastName = "userln",
 			userScreenName = "usersn");
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = "userea@liferay.com");
+		User.openUsersAdmin();
+
+		User.editPasswordCP(
+			userEmailAddress = "userea@liferay.com",
+			userScreenName = "usersn");
 
 		JSONRole.addRegularRole(
 			roleKey = "Roles Regrole Name",
@@ -91,8 +90,6 @@ definition {
 
 	@priority = "4"
 	test PortletConfigurationChangesWithinCustomizableColumnShouldNotAffectAllUsers {
-		property custom.properties = "jsonws.web.service.paths.excludes=";
-
 		JSONGroup.addGroup(groupName = "Site Name");
 
 		JSONLayout.addPublicLayout(
@@ -128,10 +125,11 @@ definition {
 			userLastName = "userln",
 			userScreenName = "usersn");
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = "userea@liferay.com");
+		User.openUsersAdmin();
+
+		User.editPasswordCP(
+			userEmailAddress = "userea@liferay.com",
+			userScreenName = "usersn");
 
 		JSONUser.addUserToSite(
 			groupName = "Site Name",
@@ -168,8 +166,6 @@ definition {
 
 	@priority = "4"
 	test SiteMembershouldAddAndRemovePortletFromHisCustomizableView {
-		property custom.properties = "jsonws.web.service.paths.excludes=";
-
 		JSONGroup.addGroup(groupName = "Site Name");
 
 		JSONLayout.addPublicLayout(
@@ -188,10 +184,11 @@ definition {
 			userLastName = "userln",
 			userScreenName = "usersn");
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = "userea@liferay.com");
+		User.openUsersAdmin();
+
+		User.editPasswordCP(
+			userEmailAddress = "userea@liferay.com",
+			userScreenName = "usersn");
 
 		JSONUser.addUserToSite(
 			groupName = "Site Name",
@@ -244,7 +241,6 @@ definition {
 
 	@priority = "4"
 	test SiteMemberWithCustomizablePagePermissionsWillOnlySeePortletsInCustomizableView {
-		property custom.properties = "jsonws.web.service.paths.excludes=";
 		property test.name.skip.portal.instance = "PageCustomizations#SiteMemberWithCustomizablePagePermissionsWillOnlySeePortletsInCustomizableView";
 
 		var siteName = TestCase.getSiteName(siteName = "${siteName}");
@@ -255,10 +251,11 @@ definition {
 			userLastName = "userln",
 			userScreenName = "usersn");
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = "userea@liferay.com");
+		User.openUsersAdmin();
+
+		User.editPasswordCP(
+			userEmailAddress = "userea@liferay.com",
+			userScreenName = "usersn");
 
 		ApplicationsMenu.gotoPortlet(
 			category = "System",

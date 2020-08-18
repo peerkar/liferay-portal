@@ -17,9 +17,7 @@ package com.liferay.blogs.web.internal.info.item.provider;
 import com.liferay.blogs.model.BlogsEntry;
 import com.liferay.blogs.service.BlogsEntryLocalService;
 import com.liferay.info.exception.NoSuchInfoItemException;
-import com.liferay.info.item.ClassPKInfoItemIdentifier;
-import com.liferay.info.item.GroupUrlTitleInfoItemIdentifier;
-import com.liferay.info.item.InfoItemIdentifier;
+import com.liferay.info.item.InfoItemReference;
 import com.liferay.info.item.provider.InfoItemObjectProvider;
 
 import org.osgi.service.component.annotations.Component;
@@ -28,50 +26,22 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Jorge Ferrer
  */
-@Component(
-	immediate = true, property = "service.ranking:Integer=100",
-	service = InfoItemObjectProvider.class
-)
+@Component(immediate = true, service = InfoItemObjectProvider.class)
 public class BlogsEntryInfoItemObjectProvider
 	implements InfoItemObjectProvider<BlogsEntry> {
 
 	@Override
-	public BlogsEntry getInfoItem(InfoItemIdentifier infoItemIdentifier)
+	public BlogsEntry getInfoItem(InfoItemReference infoItemReference)
 		throws NoSuchInfoItemException {
 
-		if (!(infoItemIdentifier instanceof ClassPKInfoItemIdentifier) &&
-			!(infoItemIdentifier instanceof GroupUrlTitleInfoItemIdentifier)) {
-
-			throw new NoSuchInfoItemException(
-				"Unsupported info item identifier type " + infoItemIdentifier);
-		}
-
-		BlogsEntry blogsEntry = null;
-
-		if (infoItemIdentifier instanceof ClassPKInfoItemIdentifier) {
-			ClassPKInfoItemIdentifier classPKInfoItemIdentifier =
-				(ClassPKInfoItemIdentifier)infoItemIdentifier;
-
-			blogsEntry = _blogsEntryLocalService.fetchBlogsEntry(
-				classPKInfoItemIdentifier.getClassPK());
-		}
-		else if (infoItemIdentifier instanceof
-					GroupUrlTitleInfoItemIdentifier) {
-
-			GroupUrlTitleInfoItemIdentifier groupURLTitleInfoItemIdentifier =
-				(GroupUrlTitleInfoItemIdentifier)infoItemIdentifier;
-
-			blogsEntry = _blogsEntryLocalService.fetchEntry(
-				groupURLTitleInfoItemIdentifier.getGroupId(),
-				groupURLTitleInfoItemIdentifier.getUrlTitle());
-		}
+		BlogsEntry blogsEntry = _blogsEntryLocalService.fetchBlogsEntry(
+			infoItemReference.getClassPK());
 
 		if ((blogsEntry == null) || blogsEntry.isDraft() ||
 			blogsEntry.isInTrash()) {
 
 			throw new NoSuchInfoItemException(
-				"Unable to get blogs entry with info item identifier " +
-					infoItemIdentifier);
+				"Unable to get blogs entry " + infoItemReference.getClassPK());
 		}
 
 		return blogsEntry;
@@ -79,10 +49,9 @@ public class BlogsEntryInfoItemObjectProvider
 
 	@Override
 	public BlogsEntry getInfoItem(long classPK) throws NoSuchInfoItemException {
-		InfoItemIdentifier infoItemIdentifier = new ClassPKInfoItemIdentifier(
-			classPK);
+		InfoItemReference infoItemReference = new InfoItemReference(classPK);
 
-		return getInfoItem(infoItemIdentifier);
+		return getInfoItem(infoItemReference);
 	}
 
 	@Reference

@@ -29,14 +29,12 @@ public class NoSuchPageTemplateCollectionException
 		super(msg);
 	}
 
-	public NoSuchPageTemplateCollectionException(
-		String msg, Throwable throwable) {
-
-		super(msg, throwable);
+	public NoSuchPageTemplateCollectionException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NoSuchPageTemplateCollectionException(Throwable throwable) {
-		super(throwable);
+	public NoSuchPageTemplateCollectionException(Throwable cause) {
+		super(cause);
 	}
 
 }

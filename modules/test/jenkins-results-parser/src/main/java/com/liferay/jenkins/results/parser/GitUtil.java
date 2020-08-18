@@ -378,6 +378,9 @@ public class GitUtil {
 				gitHubDevNodeHostname = gitHubDevNodeHostname.substring(6);
 
 				for (int i = 0; i < modifiedCommands.length; i++) {
+					Matcher matcher = GitRemote.getRemoteURLMatcher(
+						modifiedCommands[i]);
+
 					String modifiedCommand = modifiedCommands[i];
 
 					if (!modifiedCommand.contains(
@@ -385,9 +388,6 @@ public class GitUtil {
 
 						continue;
 					}
-
-					Matcher matcher = GitRemote.getRemoteURLMatcher(
-						modifiedCommands[i]);
 
 					if (matcher != null) {
 						while (matcher.find()) {

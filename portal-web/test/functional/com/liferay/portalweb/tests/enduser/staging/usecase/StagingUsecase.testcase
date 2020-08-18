@@ -705,6 +705,8 @@ definition {
 
 	@priority = "4"
 	test MoveToTheRecycleBinAndRestorePublishTemplate {
+		property portal.upstream = "quarantine";
+
 		Staging.openStagingAdmin(siteURLKey = "site-name-staging");
 
 		Staging.addPublishTemplate(
@@ -831,6 +833,7 @@ definition {
 	@description = "This is a use case for LPS-82757."
 	@priority = "3"
 	test PublishWebContentWithFeeds {
+		property portal.upstream = "quarantine";
 		property test.name.skip.portal.instance = "StagingUsecase#PublishWebContentWithFeeds";
 
 		ApplicationsMenu.gotoPortlet(
@@ -939,12 +942,15 @@ definition {
 		}
 	}
 
-	@description = "This is a use case for LPS-84418 and LPS-117578."
+	@description = "This is a use case for LPS-84418."
 	@priority = "5"
 	test PublishWithImpossibleDateRange {
+		property portal.upstream = "quarantine";
+
 		Navigator.openStagingSiteURL(siteName = "Site Name");
 
 		Staging.addRepeatEvent(
+			endOnDate = "true",
 			failureExpected = "true",
 			frequency = "Monthly",
 			scheduleTitleName = "Event Monthly Name");
@@ -1304,7 +1310,8 @@ definition {
 
 	@priority = "5"
 	test TrashEntryReferencePublishing {
-		property portal.acceptance = "true";
+		property portal.acceptance = "quarantine";
+		property portal.upstream = "quarantine";
 		property test.name.skip.portal.instance = "StagingUsecase#TrashEntryReferencePublishing";
 		property testray.component.names = "Training";
 

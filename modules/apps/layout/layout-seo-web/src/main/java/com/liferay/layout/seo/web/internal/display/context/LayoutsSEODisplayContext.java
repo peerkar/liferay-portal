@@ -444,9 +444,9 @@ public class LayoutsSEODisplayContext {
 			return _privateLayout;
 		}
 
-		if (getSelLayout() != null) {
-			Layout selLayout = getSelLayout();
+		Layout selLayout = getSelLayout();
 
+		if (getSelLayout() != null) {
 			_privateLayout = selLayout.isPrivateLayout();
 
 			return _privateLayout;

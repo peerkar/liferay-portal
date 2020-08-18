@@ -14,9 +14,6 @@
 
 package com.liferay.layout.content.page.editor.web.internal.portlet.action.test;
 
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.fragment.constants.FragmentConstants;
 import com.liferay.fragment.model.FragmentCollection;
@@ -112,12 +109,6 @@ public class AddFragmentCompositionMVCActionCommandTest {
 		_serviceContext.setCompanyId(TestPropsValues.getCompanyId());
 
 		ServiceContextThreadLocal.pushServiceContext(_serviceContext);
-
-		_objectMapper = new ObjectMapper() {
-			{
-				configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
-			}
-		};
 	}
 
 	@Test
@@ -390,10 +381,8 @@ public class AddFragmentCompositionMVCActionCommandTest {
 			fragmentComposition.getDataJSONObject();
 
 		Assert.assertEquals(
-			_objectMapper.readTree(
-				expectedFragmentCompositionDataJSONObject.toJSONString()),
-			_objectMapper.readTree(
-				fragmentCompositionDataJSONObject.toJSONString()));
+			expectedFragmentCompositionDataJSONObject.toJSONString(),
+			fragmentCompositionDataJSONObject.toJSONString());
 	}
 
 	@Test
@@ -545,8 +534,6 @@ public class AddFragmentCompositionMVCActionCommandTest {
 		filter = "mvc.command.name=/content_layout/add_fragment_composition"
 	)
 	private MVCActionCommand _mvcActionCommand;
-
-	private ObjectMapper _objectMapper;
 
 	@Inject
 	private Portal _portal;

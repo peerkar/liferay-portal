@@ -1281,16 +1281,16 @@ public class PortalImpl implements Portal {
 			return (BaseModel<?>)method.invoke(null, primKey);
 		}
 		catch (Exception exception) {
-			Throwable throwable = exception.getCause();
+			Throwable cause = exception.getCause();
 
-			if (throwable instanceof PortalException) {
-				throw (PortalException)throwable;
+			if (cause instanceof PortalException) {
+				throw (PortalException)cause;
 			}
-			else if (throwable instanceof SystemException) {
-				throw (SystemException)throwable;
+			else if (cause instanceof SystemException) {
+				throw (SystemException)cause;
 			}
 			else {
-				throw new SystemException(throwable);
+				throw new SystemException(cause);
 			}
 		}
 	}
@@ -1374,7 +1374,6 @@ public class PortalImpl implements Portal {
 		throws PortalException {
 
 		String groupFriendlyURL = StringPool.BLANK;
-		boolean hasFriendlyURLSeparator = false;
 		boolean includeParametersURL = false;
 		String parametersURL = StringPool.BLANK;
 
@@ -1389,7 +1388,6 @@ public class PortalImpl implements Portal {
 				pos = completeURL.indexOf(urlSeparator);
 
 				if (pos != -1) {
-					hasFriendlyURLSeparator = true;
 					includeParametersURL = true;
 
 					break;
@@ -1427,9 +1425,12 @@ public class PortalImpl implements Portal {
 				getSiteDefaultLocale(layout.getGroupId()));
 		}
 
-		if (!hasFriendlyURLSeparator &&
-			(forceLayoutFriendlyURL || !layout.isFirstParent() ||
-			 Validator.isNotNull(parametersURL))) {
+		if (forceLayoutFriendlyURL ||
+			((!layout.isFirstParent() || Validator.isNotNull(parametersURL)) &&
+			 (groupFriendlyURL.contains(
+				 themeDisplay.getLayoutFriendlyURL(layout)) ||
+			  groupFriendlyURL.endsWith(
+				  StringPool.SLASH + layout.getLayoutId())))) {
 
 			canonicalLayoutFriendlyURL = defaultLayoutFriendlyURL;
 		}
@@ -8220,10 +8221,9 @@ public class PortalImpl implements Portal {
 				else {
 					alternateURLs.put(
 						locale,
-						StringBundler.concat(
-							canonicalURL,
-							_buildI18NPath(locale, themeDisplay.getSiteGroup()),
-							StringPool.SLASH));
+						canonicalURL.concat(
+							_buildI18NPath(
+								locale, themeDisplay.getSiteGroup())));
 				}
 			}
 

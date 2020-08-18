@@ -28,13 +28,13 @@ public class NoSuchUserNotificationDeliveryException
 	}
 
 	public NoSuchUserNotificationDeliveryException(
-		String msg, Throwable throwable) {
+		String msg, Throwable cause) {
 
-		super(msg, throwable);
+		super(msg, cause);
 	}
 
-	public NoSuchUserNotificationDeliveryException(Throwable throwable) {
-		super(throwable);
+	public NoSuchUserNotificationDeliveryException(Throwable cause) {
+		super(cause);
 	}
 
 }

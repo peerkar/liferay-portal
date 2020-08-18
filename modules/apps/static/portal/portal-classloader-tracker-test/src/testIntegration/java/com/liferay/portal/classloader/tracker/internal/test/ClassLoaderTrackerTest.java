@@ -147,8 +147,8 @@ public class ClassLoaderTrackerTest {
 					throw frameworkEvent.getThrowable();
 				}
 			}
-			catch (Throwable throwable) {
-				throw throwable;
+			catch (Throwable t) {
+				throw t;
 			}
 
 			BundleWiring newBundleWiring = bundle.adapt(BundleWiring.class);

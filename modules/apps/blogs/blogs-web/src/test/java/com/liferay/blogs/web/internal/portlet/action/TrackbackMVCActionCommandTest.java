@@ -311,11 +311,13 @@ public class TrackbackMVCActionCommandTest extends PowerMockito {
 		);
 	}
 
-	protected void whenGetEntryThenThrow(Throwable throwable) throws Exception {
+	protected void whenGetEntryThenThrow(Throwable toBeThrown)
+		throws Exception {
+
 		stub(
 			method(ActionUtil.class, "getEntry", PortletRequest.class)
 		).toThrow(
-			throwable
+			toBeThrown
 		);
 	}
 

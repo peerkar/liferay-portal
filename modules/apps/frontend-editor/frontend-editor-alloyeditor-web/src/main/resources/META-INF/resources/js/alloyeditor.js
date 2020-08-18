@@ -216,6 +216,7 @@ AUI.add(
 				_onError(event) {
 					Liferay.Util.openToast({
 						message: event.data,
+						title: Liferay.Language.get('error'),
 						type: 'danger',
 					});
 				},

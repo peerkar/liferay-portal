@@ -390,7 +390,7 @@ public class BatchBuild extends BaseBuild {
 	}
 
 	@Override
-	public synchronized void update() {
+	public void update() {
 		super.update();
 
 		if (badBuildNumbers.size() >= REINVOCATIONS_SIZE_MAX) {
@@ -496,6 +496,7 @@ public class BatchBuild extends BaseBuild {
 
 		int failCount = getDownstreamBuildCountByResult("FAILURE");
 		int successCount = getDownstreamBuildCountByResult("SUCCESS");
+		int upstreamFailCount = 0;
 
 		if (result.equals("UNSTABLE")) {
 			failCount = getTestCountByStatus("FAILURE");
@@ -505,7 +506,7 @@ public class BatchBuild extends BaseBuild {
 				List<TestResult> upstreamJobFailureTestResults =
 					getUpstreamJobFailureTestResults();
 
-				int upstreamFailCount = upstreamJobFailureTestResults.size();
+				upstreamFailCount = upstreamJobFailureTestResults.size();
 
 				if (showCommonFailuresCount) {
 					failCount = upstreamFailCount;

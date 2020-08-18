@@ -84,15 +84,15 @@ public class UpdateLayoutPrototypeMVCActionCommand
 				actionRequest, actionResponse,
 				JSONUtil.put("redirectURL", redirect));
 		}
-		catch (Throwable throwable) {
+		catch (Throwable t) {
 			if (_log.isDebugEnabled()) {
-				_log.debug(throwable, throwable);
+				_log.debug(t, t);
 			}
 
-			if (throwable instanceof LayoutPageTemplateEntryNameException) {
+			if (t instanceof LayoutPageTemplateEntryNameException) {
 				LayoutPageTemplateEntryNameException
 					layoutPageTemplateEntryNameException =
-						(LayoutPageTemplateEntryNameException)throwable;
+						(LayoutPageTemplateEntryNameException)t;
 
 				_layoutPageTemplateEntryExceptionRequestHandler.
 					handlePortalException(

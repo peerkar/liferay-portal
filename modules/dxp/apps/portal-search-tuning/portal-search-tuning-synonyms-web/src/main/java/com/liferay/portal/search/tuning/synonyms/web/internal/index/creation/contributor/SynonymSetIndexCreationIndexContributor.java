@@ -14,11 +14,10 @@
 
 package com.liferay.portal.search.tuning.synonyms.web.internal.index.creation.contributor;
 
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.search.engine.SearchEngineInformation;
 import com.liferay.portal.search.spi.model.index.contributor.IndexContributor;
 import com.liferay.portal.search.tuning.synonyms.web.internal.index.SynonymSetIndexReader;
-import com.liferay.portal.search.tuning.synonyms.web.internal.index.name.SynonymSetIndexName;
+import com.liferay.portal.search.tuning.synonyms.web.internal.index.name.SynonymSetIndexNameBuilder;
 import com.liferay.portal.search.tuning.synonyms.web.internal.synchronizer.IndexToFilterSynchronizer;
 
 import java.util.Objects;
@@ -41,26 +40,24 @@ public class SynonymSetIndexCreationIndexContributor
 			return;
 		}
 
-		SynonymSetIndexName synonymSetIndexName =
-			() ->
-				companyIndexName + StringPool.DASH + SYNONYMS_INDEX_NAME_SUFFIX;
+		if (!_synonymSetIndexReader.isExists(
+				_synonymSetIndexNameBuilder.getSynonymSetIndexName(
+					companyIndexName))) {
 
-		if (!_synonymSetIndexReader.isExists(synonymSetIndexName)) {
 			return;
 		}
 
-		_indexToFilterSynchronizer.copyToFilter(
-			synonymSetIndexName, companyIndexName);
+		_indexToFilterSynchronizer.copyToFilter(companyIndexName);
 	}
-
-	protected static final String SYNONYMS_INDEX_NAME_SUFFIX =
-		"search-tuning-synonyms";
 
 	@Reference
 	private IndexToFilterSynchronizer _indexToFilterSynchronizer;
 
 	@Reference
 	private SearchEngineInformation _searchEngineInformation;
+
+	@Reference
+	private SynonymSetIndexNameBuilder _synonymSetIndexNameBuilder;
 
 	@Reference
 	private SynonymSetIndexReader _synonymSetIndexReader;

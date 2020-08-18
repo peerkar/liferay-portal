@@ -87,14 +87,11 @@ AUI.add(
 				_getEditorStateLexiconIcon() {
 					var instance = this;
 
-					var icon;
-
 					var currentState = MAP_TOGGLE_STATE[instance._isVisible];
 
-					if (currentState.icon) {
-						icon = currentState.icon.cloneNode(true);
-					}
-					else {
+					var icon = currentState.icon;
+
+					if (!icon) {
 						icon = Liferay.Util.getLexiconIcon(
 							currentState.iconCssClass
 						);

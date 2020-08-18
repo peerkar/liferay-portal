@@ -180,6 +180,7 @@ public class MailingListMessageListener extends BaseMessageListener {
 		}
 
 		long companyId = mailingListRequest.getCompanyId();
+		long groupId = mailingListRequest.getGroupId();
 
 		long categoryId = mailingListRequest.getCategoryId();
 
@@ -234,7 +235,6 @@ public class MailingListMessageListener extends BaseMessageListener {
 		serviceContext.setAddGroupPermissions(true);
 		serviceContext.setAddGuestPermissions(true);
 
-		long groupId = mailingListRequest.getGroupId();
 		String portletId = PortletProviderUtil.getPortletId(
 			MBMessage.class.getName(), PortletProvider.Action.VIEW);
 

@@ -33,7 +33,7 @@ import com.liferay.layout.page.template.util.JustifyConverter;
 import com.liferay.layout.page.template.util.MarginConverter;
 import com.liferay.layout.page.template.util.PaddingConverter;
 import com.liferay.layout.page.template.util.ShadowConverter;
-import com.liferay.layout.util.structure.ContainerStyledLayoutStructureItem;
+import com.liferay.layout.util.structure.ContainerLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -45,11 +45,7 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 import java.util.function.Function;
 
 import org.osgi.service.component.annotations.Component;
@@ -64,7 +60,7 @@ public class ContainerLayoutStructureItemExporter
 
 	@Override
 	public String getClassName() {
-		return ContainerStyledLayoutStructureItem.class.getName();
+		return ContainerLayoutStructureItem.class.getName();
 	}
 
 	@Override
@@ -72,38 +68,25 @@ public class ContainerLayoutStructureItemExporter
 		long groupId, LayoutStructureItem layoutStructureItem,
 		boolean saveInlineContent, boolean saveMappingConfiguration) {
 
-		ContainerStyledLayoutStructureItem containerStyledLayoutStructureItem =
-			(ContainerStyledLayoutStructureItem)layoutStructureItem;
+		ContainerLayoutStructureItem containerLayoutStructureItem =
+			(ContainerLayoutStructureItem)layoutStructureItem;
 
 		return new PageElement() {
 			{
 				definition = new PageSectionDefinition() {
 					{
 						backgroundColor = GetterUtil.getString(
-							containerStyledLayoutStructureItem.
+							containerLayoutStructureItem.
 								getBackgroundColorCssClass(),
 							null);
 						backgroundFragmentImage = _toBackgroundFragmentImage(
-							containerStyledLayoutStructureItem.
+							containerLayoutStructureItem.
 								getBackgroundImageJSONObject(),
 							saveMappingConfiguration);
 						fragmentLink = _toFragmentLink(
-							containerStyledLayoutStructureItem.
-								getLinkJSONObject(),
+							containerLayoutStructureItem.getLinkJSONObject(),
 							saveMappingConfiguration);
-						layout = _toLayout(containerStyledLayoutStructureItem);
-
-						setStyles(
-							() -> {
-								JSONObject itemConfigJSONObject =
-									containerStyledLayoutStructureItem.
-										getItemConfigJSONObject();
-
-								return _toStyles(
-									itemConfigJSONObject.getJSONObject(
-										"styles"),
-									saveMappingConfiguration);
-							});
+						layout = _toLayout(containerLayoutStructureItem);
 					}
 				};
 				type = PageElement.Type.SECTION;
@@ -460,46 +443,45 @@ public class ContainerLayoutStructureItemExporter
 	}
 
 	private Layout _toLayout(
-		ContainerStyledLayoutStructureItem containerStyledLayoutStructureItem) {
+		ContainerLayoutStructureItem containerLayoutStructureItem) {
 
 		return new Layout() {
 			{
 				align = Align.create(
 					AlignConverter.convertToExternalValue(
-						containerStyledLayoutStructureItem.getAlign()));
+						containerLayoutStructureItem.getAlign()));
 				borderRadius = BorderRadius.create(
 					BorderRadiusConverter.convertToExternalValue(
-						containerStyledLayoutStructureItem.getBorderRadius()));
-				borderWidth =
-					containerStyledLayoutStructureItem.getBorderWidth();
+						containerLayoutStructureItem.getBorderRadius()));
+				borderWidth = containerLayoutStructureItem.getBorderWidth();
 				justify = Justify.create(
 					JustifyConverter.convertToExternalValue(
-						containerStyledLayoutStructureItem.getJustify()));
+						containerLayoutStructureItem.getJustify()));
 				marginBottom = MarginConverter.convertToExternalValue(
-					containerStyledLayoutStructureItem.getMarginBottom());
+					containerLayoutStructureItem.getMarginBottom());
 				marginLeft = MarginConverter.convertToExternalValue(
-					containerStyledLayoutStructureItem.getMarginLeft());
+					containerLayoutStructureItem.getMarginLeft());
 				marginRight = MarginConverter.convertToExternalValue(
-					containerStyledLayoutStructureItem.getMarginRight());
+					containerLayoutStructureItem.getMarginRight());
 				marginTop = MarginConverter.convertToExternalValue(
-					containerStyledLayoutStructureItem.getMarginTop());
-				opacity = containerStyledLayoutStructureItem.getOpacity();
+					containerLayoutStructureItem.getMarginTop());
+				opacity = containerLayoutStructureItem.getOpacity();
 				paddingBottom = PaddingConverter.convertToExternalValue(
-					containerStyledLayoutStructureItem.getPaddingBottom());
+					containerLayoutStructureItem.getPaddingBottom());
 				paddingLeft = PaddingConverter.convertToExternalValue(
-					containerStyledLayoutStructureItem.getPaddingLeft());
+					containerLayoutStructureItem.getPaddingLeft());
 				paddingRight = PaddingConverter.convertToExternalValue(
-					containerStyledLayoutStructureItem.getPaddingRight());
+					containerLayoutStructureItem.getPaddingRight());
 				paddingTop = PaddingConverter.convertToExternalValue(
-					containerStyledLayoutStructureItem.getPaddingTop());
+					containerLayoutStructureItem.getPaddingTop());
 				shadow = Shadow.create(
 					ShadowConverter.convertToExternalValue(
-						containerStyledLayoutStructureItem.getShadow()));
+						containerLayoutStructureItem.getShadow()));
 
 				setBorderColor(
 					() -> {
 						String borderColor =
-							containerStyledLayoutStructureItem.getBorderColor();
+							containerLayoutStructureItem.getBorderColor();
 
 						if (Validator.isNull(borderColor)) {
 							return null;
@@ -510,8 +492,7 @@ public class ContainerLayoutStructureItemExporter
 				setContentDisplay(
 					() -> {
 						String contentDisplay =
-							containerStyledLayoutStructureItem.
-								getContentDisplay();
+							containerLayoutStructureItem.getContentDisplay();
 
 						if (Validator.isNull(contentDisplay)) {
 							return null;
@@ -523,7 +504,7 @@ public class ContainerLayoutStructureItemExporter
 				setWidthType(
 					() -> {
 						String widthType =
-							containerStyledLayoutStructureItem.getWidthType();
+							containerLayoutStructureItem.getWidthType();
 
 						if (Validator.isNotNull(widthType)) {
 							return WidthType.create(
@@ -531,8 +512,7 @@ public class ContainerLayoutStructureItemExporter
 						}
 
 						String containerType =
-							containerStyledLayoutStructureItem.
-								getContainerType();
+							containerLayoutStructureItem.getContainerType();
 
 						if (Validator.isNotNull(containerType)) {
 							return WidthType.create(
@@ -541,35 +521,6 @@ public class ContainerLayoutStructureItemExporter
 
 						return null;
 					});
-			}
-		};
-	}
-
-	private Map<String, Object> _toStyles(
-		JSONObject jsonObject, boolean saveMappingConfiguration) {
-
-		return new HashMap<String, Object>() {
-			{
-				Set<String> keys = jsonObject.keySet();
-
-				Iterator<String> iterator = keys.iterator();
-
-				while (iterator.hasNext()) {
-					String key = iterator.next();
-
-					Object value = jsonObject.get(key);
-
-					if (Objects.equals(key, "backgroundImage")) {
-						JSONObject backgroundImageJSONObject =
-							(JSONObject)value;
-
-						value = _toBackgroundFragmentImage(
-							backgroundImageJSONObject,
-							saveMappingConfiguration);
-					}
-
-					put(key, value);
-				}
 			}
 		};
 	}

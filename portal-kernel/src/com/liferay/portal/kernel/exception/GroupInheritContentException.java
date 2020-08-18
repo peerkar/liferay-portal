@@ -26,12 +26,12 @@ public class GroupInheritContentException extends PortalException {
 		super(msg);
 	}
 
-	public GroupInheritContentException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public GroupInheritContentException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public GroupInheritContentException(Throwable throwable) {
-		super(throwable);
+	public GroupInheritContentException(Throwable cause) {
+		super(cause);
 	}
 
 }

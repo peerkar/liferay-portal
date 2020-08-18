@@ -110,20 +110,20 @@ public class ImportLayoutsMVCActionCommand extends BaseMVCActionCommand {
 					WebKeys.UPLOAD_EXCEPTION);
 
 			if (uploadException != null) {
-				Throwable throwable = uploadException.getCause();
+				Throwable cause = uploadException.getCause();
 
-				if (throwable instanceof FileUploadBase.IOFileUploadException) {
+				if (cause instanceof FileUploadBase.IOFileUploadException) {
 					if (_log.isInfoEnabled()) {
 						_log.info("Temporary upload was cancelled");
 					}
 				}
 
 				if (uploadException.isExceededFileSizeLimit()) {
-					throw new FileSizeException(throwable);
+					throw new FileSizeException(cause);
 				}
 
 				if (uploadException.isExceededUploadRequestSizeLimit()) {
-					throw new UploadRequestSizeException(throwable);
+					throw new UploadRequestSizeException(cause);
 				}
 			}
 			else {
@@ -140,15 +140,15 @@ public class ImportLayoutsMVCActionCommand extends BaseMVCActionCommand {
 				WebKeys.UPLOAD_EXCEPTION);
 
 		if (uploadException != null) {
-			Throwable throwable = uploadException.getCause();
+			Throwable cause = uploadException.getCause();
 
 			if (uploadException.isExceededFileSizeLimit() ||
 				uploadException.isExceededUploadRequestSizeLimit()) {
 
-				throw new LARFileSizeException(throwable);
+				throw new LARFileSizeException(cause);
 			}
 
-			throw new PortalException(throwable);
+			throw new PortalException(cause);
 		}
 	}
 

@@ -14,10 +14,7 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.sidecar;
 
-import com.liferay.portal.kernel.util.OSDetector;
-
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -69,7 +66,8 @@ public class UncompressUtil {
 						Files.copy(tarArchiveInputStream, path);
 					}
 
-					_setFilePermission(path);
+					Files.setPosixFilePermissions(
+						path, PosixFilePermissions.fromString("rwxrwxrwx"));
 				}
 				else {
 					if (_logger.isWarnEnabled()) {
@@ -103,22 +101,9 @@ public class UncompressUtil {
 					Files.copy(zipInputStream, path);
 				}
 
-				_setFilePermission(path);
+				Files.setPosixFilePermissions(
+					path, PosixFilePermissions.fromString("rwxrwxrwx"));
 			}
-		}
-	}
-
-	private static void _setFilePermission(Path path) throws IOException {
-		if (OSDetector.isWindows()) {
-			File file = path.toFile();
-
-			file.setExecutable(true);
-			file.setReadable(true);
-			file.setWritable(true);
-		}
-		else {
-			Files.setPosixFilePermissions(
-				path, PosixFilePermissions.fromString("rwxrwxrwx"));
 		}
 	}
 

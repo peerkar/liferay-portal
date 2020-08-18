@@ -10,7 +10,7 @@
  */
 
 import getClassName from 'classnames';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 
 const FilterItem = ({
 	active = false,
@@ -33,16 +33,11 @@ const FilterItem = ({
 		dropdown: getClassName(
 			'dropdown-item',
 
-			checked && 'active',
+			active && 'active',
 			description && 'with-description',
 			hideControl && 'control-hidden'
 		),
 	};
-
-	useEffect(() => {
-		setChecked(active);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [active]);
 
 	const onClickFilter = (event) => {
 		onClick(event);

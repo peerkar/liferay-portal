@@ -33,13 +33,10 @@ import org.osgi.service.component.annotations.Deactivate;
 @Component(immediate = true, service = {})
 public class ClayTagDataSourceProvider {
 
-	public static <T> ClayTagDataSource<T> getClayTagDataSource(
-		String clayTagDataSourceKey) {
-
+	public static <T> ClayTagDataSource<T> getClayTagDataSource(String key) {
 		if (_clayTagDataSourceProvider == null) {
 			_log.error(
-				"No Clay tag data source is associated with " +
-					clayTagDataSourceKey);
+				"Unable to get list of Clay tag data sources for key " + key);
 
 			return null;
 		}
@@ -47,8 +44,7 @@ public class ClayTagDataSourceProvider {
 		ServiceTrackerMap<String, ClayTagDataSource<?>> clayTagDataSources =
 			_clayTagDataSourceProvider._clayTagDataSources;
 
-		return (ClayTagDataSource<T>)clayTagDataSources.getService(
-			clayTagDataSourceKey);
+		return (ClayTagDataSource<T>)clayTagDataSources.getService(key);
 	}
 
 	public ClayTagDataSourceProvider() {

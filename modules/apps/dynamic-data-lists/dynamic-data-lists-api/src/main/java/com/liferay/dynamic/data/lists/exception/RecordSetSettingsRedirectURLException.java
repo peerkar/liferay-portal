@@ -28,14 +28,12 @@ public class RecordSetSettingsRedirectURLException extends PortalException {
 		super(msg);
 	}
 
-	public RecordSetSettingsRedirectURLException(
-		String msg, Throwable throwable) {
-
-		super(msg, throwable);
+	public RecordSetSettingsRedirectURLException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public RecordSetSettingsRedirectURLException(Throwable throwable) {
-		super(throwable);
+	public RecordSetSettingsRedirectURLException(Throwable cause) {
+		super(cause);
 	}
 
 }

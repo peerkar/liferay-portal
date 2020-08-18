@@ -160,9 +160,7 @@ public class SiteNavigationMenuItemModelImpl
 	 *
 	 * @param soapModel the soap model instance to convert
 	 * @return the normal model instance
-	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
 	 */
-	@Deprecated
 	public static SiteNavigationMenuItem toModel(
 		SiteNavigationMenuItemSoap soapModel) {
 
@@ -199,9 +197,7 @@ public class SiteNavigationMenuItemModelImpl
 	 *
 	 * @param soapModels the soap model instances to convert
 	 * @return the normal model instances
-	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
 	 */
-	@Deprecated
 	public static List<SiteNavigationMenuItem> toModels(
 		SiteNavigationMenuItemSoap[] soapModels) {
 

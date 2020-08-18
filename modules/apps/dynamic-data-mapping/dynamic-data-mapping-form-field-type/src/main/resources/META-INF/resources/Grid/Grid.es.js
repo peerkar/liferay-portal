@@ -23,14 +23,16 @@ const TableHead = ({columns}) => (
 		<ClayTable.Row>
 			<ClayTable.Cell headingCell />
 			{columns.map((column, colIndex) => {
-				return (
-					<ClayTable.Cell
-						headingCell
-						key={`column-${column.value}-${colIndex}`}
-					>
-						{column.label}
-					</ClayTable.Cell>
-				);
+				if (column.value) {
+					return (
+						<ClayTable.Cell
+							headingCell
+							key={`column-${column.value}-${colIndex}`}
+						>
+							{column.label}
+						</ClayTable.Cell>
+					);
+				}
 			})}
 		</ClayTable.Row>
 	</ClayTable.Head>
@@ -47,21 +49,23 @@ const TableBodyColumns = ({
 	value,
 }) =>
 	columns.map((column, colIndex) => {
-		return (
-			<ClayTable.Cell key={`cell-${column.value}-${colIndex}`}>
-				<ClayRadio
-					aria-label={`grid_${rowIndex}_${colIndex}`}
-					checked={column.value === value[row.value]}
-					className="form-builder-grid-field"
-					disabled={disabled}
-					name={row.value}
-					onBlur={onBlur}
-					onChange={onChange}
-					onFocus={onFocus}
-					value={column.value}
-				/>
-			</ClayTable.Cell>
-		);
+		if (column.value) {
+			return (
+				<ClayTable.Cell key={`cell-${column.value}-${colIndex}`}>
+					<ClayRadio
+						aria-label={`grid_${rowIndex}_${colIndex}`}
+						checked={column.value === value[row.value]}
+						className="form-builder-grid-field"
+						disabled={disabled}
+						name={row.value}
+						onBlur={onBlur}
+						onChange={onChange}
+						onFocus={onFocus}
+						value={column.value}
+					/>
+				</ClayTable.Cell>
+			);
+		}
 	});
 
 const Grid = ({
@@ -98,25 +102,29 @@ const Grid = ({
 
 			<ClayTable.Body>
 				{rows.map((row, rowIndex) => {
-					return (
-						<ClayTable.Row
-							key={`row-${row.value}-${rowIndex}`}
-							name={row.value}
-						>
-							<ClayTable.Cell>{row.label}</ClayTable.Cell>
+					if (row.value) {
+						return (
+							<ClayTable.Row
+								key={`row-${row.value}-${rowIndex}`}
+								name={row.value}
+							>
+								<ClayTable.Cell>{row.label}</ClayTable.Cell>
 
-							<TableBodyColumns
-								columns={columns}
-								disabled={disabled}
-								onBlur={onBlur}
-								onChange={onChange}
-								onFocus={onFocus}
-								row={row}
-								rowIndex={rowIndex}
-								value={value}
-							/>
-						</ClayTable.Row>
-					);
+								<TableBodyColumns
+									columns={columns}
+									disabled={disabled}
+									onBlur={onBlur}
+									onChange={onChange}
+									onFocus={onFocus}
+									row={row}
+									rowIndex={rowIndex}
+									value={value}
+								/>
+							</ClayTable.Row>
+						);
+					}
+
+					return null;
 				})}
 			</ClayTable.Body>
 		</ClayTable>

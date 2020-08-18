@@ -56,7 +56,7 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.test.rule.Inject;
-import com.liferay.portal.test.rule.SynchronousMailTestRule;
+import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
 import java.io.InputStream;
 
@@ -79,8 +79,8 @@ public class StructuredContentResourceTest
 
 	@ClassRule
 	@Rule
-	public static final SynchronousMailTestRule synchronousMailTestRule =
-		SynchronousMailTestRule.INSTANCE;
+	public static final LiferayIntegrationTestRule liferayIntegrationTestRule =
+		new LiferayIntegrationTestRule();
 
 	@Before
 	@Override
@@ -89,12 +89,9 @@ public class StructuredContentResourceTest
 
 		_ddmLocalizedStructure = _addDDMStructure(
 			testGroup, "test-localized-structured-content-structure.json");
+
 		_ddmStructure = _addDDMStructure(
 			testGroup, "test-structured-content-structure.json");
-		_depotDDMStructure = _addDDMStructure(
-			testDepotEntry.getGroup(),
-			"test-structured-content-structure.json");
-
 		_irrelevantDDMStructure = _addDDMStructure(
 			irrelevantGroup, "test-structured-content-structure.json");
 
@@ -384,19 +381,6 @@ public class StructuredContentResourceTest
 
 	@Override
 	protected StructuredContent
-			testGetAssetLibraryStructuredContentsPage_addStructuredContent(
-				Long assetLibraryId, StructuredContent structuredContent)
-		throws Exception {
-
-		structuredContent.setContentStructureId(
-			_depotDDMStructure.getStructureId());
-
-		return structuredContentResource.postAssetLibraryStructuredContent(
-			assetLibraryId, structuredContent);
-	}
-
-	@Override
-	protected StructuredContent
 			testGetContentStructureStructuredContentsPage_addStructuredContent(
 				Long contentStructureId, StructuredContent structuredContent)
 		throws Exception {
@@ -407,7 +391,8 @@ public class StructuredContentResourceTest
 
 	@Override
 	protected Long
-		testGetContentStructureStructuredContentsPage_getContentStructureId() {
+			testGetContentStructureStructuredContentsPage_getContentStructureId()
+		throws Exception {
 
 		return _ddmStructure.getStructureId();
 	}
@@ -433,19 +418,6 @@ public class StructuredContentResourceTest
 
 		return testPostSiteStructuredContent_addStructuredContent(
 			randomStructuredContent());
-	}
-
-	@Override
-	protected StructuredContent
-			testPostAssetLibraryStructuredContent_addStructuredContent(
-				StructuredContent structuredContent)
-		throws Exception {
-
-		structuredContent.setContentStructureId(
-			_depotDDMStructure.getStructureId());
-
-		return super.testPostAssetLibraryStructuredContent_addStructuredContent(
-			structuredContent);
 	}
 
 	private DDMStructure _addDDMStructure(Group group, String fileName)
@@ -537,7 +509,6 @@ public class StructuredContentResourceTest
 	private DDMStructure _ddmLocalizedStructure;
 	private DDMStructure _ddmStructure;
 	private DDMTemplate _ddmTemplate;
-	private DDMStructure _depotDDMStructure;
 	private DDMStructure _irrelevantDDMStructure;
 	private JournalFolder _irrelevantJournalFolder;
 	private JournalFolder _journalFolder;

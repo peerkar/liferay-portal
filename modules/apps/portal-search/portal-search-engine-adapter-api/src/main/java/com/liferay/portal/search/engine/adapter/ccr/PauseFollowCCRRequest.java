@@ -21,9 +21,9 @@ public class PauseFollowCCRRequest
 	extends CrossClusterRequest implements CCRRequest<PauseFollowCCRResponse> {
 
 	public PauseFollowCCRRequest(String indexName) {
-		_indexName = indexName;
-
 		setPreferLocalCluster(true);
+
+		_indexName = indexName;
 	}
 
 	@Override

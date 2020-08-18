@@ -28,12 +28,12 @@ public class NoSuchStatsException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchStatsException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public NoSuchStatsException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NoSuchStatsException(Throwable throwable) {
-		super(throwable);
+	public NoSuchStatsException(Throwable cause) {
+		super(cause);
 	}
 
 }

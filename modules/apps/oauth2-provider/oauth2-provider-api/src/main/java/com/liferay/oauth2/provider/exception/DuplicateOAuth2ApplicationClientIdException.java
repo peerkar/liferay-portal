@@ -30,13 +30,13 @@ public class DuplicateOAuth2ApplicationClientIdException
 	}
 
 	public DuplicateOAuth2ApplicationClientIdException(
-		String msg, Throwable throwable) {
+		String msg, Throwable cause) {
 
-		super(msg, throwable);
+		super(msg, cause);
 	}
 
-	public DuplicateOAuth2ApplicationClientIdException(Throwable throwable) {
-		super(throwable);
+	public DuplicateOAuth2ApplicationClientIdException(Throwable cause) {
+		super(cause);
 	}
 
 }

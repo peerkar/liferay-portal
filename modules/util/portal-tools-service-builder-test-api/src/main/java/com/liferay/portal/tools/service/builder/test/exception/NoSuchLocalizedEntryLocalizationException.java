@@ -30,13 +30,13 @@ public class NoSuchLocalizedEntryLocalizationException
 	}
 
 	public NoSuchLocalizedEntryLocalizationException(
-		String msg, Throwable throwable) {
+		String msg, Throwable cause) {
 
-		super(msg, throwable);
+		super(msg, cause);
 	}
 
-	public NoSuchLocalizedEntryLocalizationException(Throwable throwable) {
-		super(throwable);
+	public NoSuchLocalizedEntryLocalizationException(Throwable cause) {
+		super(cause);
 	}
 
 }
