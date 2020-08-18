@@ -340,9 +340,7 @@ public class AssetListAssetEntryProviderImpl
 
 		assetEntryQuery.setOrderByType2(orderByType2);
 
-		_processAssetEntryQuery(
-			assetListEntry.getCompanyId(), userId, unicodeProperties,
-			assetEntryQuery);
+		_processAssetEntryQuery(userId, unicodeProperties, assetEntryQuery);
 
 		return assetEntryQuery;
 	}
@@ -725,7 +723,7 @@ public class AssetListAssetEntryProviderImpl
 	}
 
 	private void _processAssetEntryQuery(
-		long companyId, String userId, UnicodeProperties unicodeProperties,
+		String userId, UnicodeProperties unicodeProperties,
 		AssetEntryQuery assetEntryQuery) {
 
 		for (AssetListAssetEntryQueryProcessor
@@ -733,7 +731,7 @@ public class AssetListAssetEntryProviderImpl
 					_assetListAssetEntryQueryProcessors) {
 
 			assetListAssetEntryQueryProcessor.processAssetEntryQuery(
-				companyId, userId, unicodeProperties, assetEntryQuery);
+				userId, unicodeProperties, assetEntryQuery);
 		}
 	}
 

@@ -408,6 +408,7 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 		_showError(editor, errorMsg) {
 			Liferay.Util.openToast({
 				message: errorMsg,
+				title: Liferay.Language.get('error'),
 				type: 'danger',
 			});
 

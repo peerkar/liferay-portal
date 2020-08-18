@@ -28,14 +28,12 @@ public class NotificationMessageGenerationException extends WorkflowException {
 		super(msg);
 	}
 
-	public NotificationMessageGenerationException(
-		String msg, Throwable throwable) {
-
-		super(msg, throwable);
+	public NotificationMessageGenerationException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NotificationMessageGenerationException(Throwable throwable) {
-		super(throwable);
+	public NotificationMessageGenerationException(Throwable cause) {
+		super(cause);
 	}
 
 }

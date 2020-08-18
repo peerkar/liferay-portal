@@ -38,21 +38,16 @@ export default withRouter(
 		history,
 		noActionsMessage,
 		queryParams,
-		scope,
 	}) => {
 		const {defaultDelta = 20} = useContext(AppContext);
-		const [query, setQuery] = useQuery(
-			history,
-			{
-				filters: {},
-				keywords: '',
-				page: 1,
-				pageSize: defaultDelta,
-				sort: '',
-				...queryParams,
-			},
-			scope
-		);
+		const [query, setQuery] = useQuery(history, {
+			filters: {},
+			keywords: '',
+			page: 1,
+			pageSize: defaultDelta,
+			sort: '',
+			...queryParams,
+		});
 
 		const dispatch = useCallback(
 			(action) => setQuery(reducer(query, action)),

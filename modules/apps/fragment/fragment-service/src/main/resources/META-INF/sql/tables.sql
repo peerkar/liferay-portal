@@ -1,8 +1,7 @@
 create table FragmentCollection (
 	mvccVersion LONG default 0 not null,
-	ctCollectionId LONG default 0 not null,
 	uuid_ VARCHAR(75) null,
-	fragmentCollectionId LONG not null,
+	fragmentCollectionId LONG not null primary key,
 	groupId LONG,
 	companyId LONG,
 	userId LONG,
@@ -12,15 +11,13 @@ create table FragmentCollection (
 	fragmentCollectionKey VARCHAR(75) null,
 	name VARCHAR(75) null,
 	description STRING null,
-	lastPublishDate DATE null,
-	primary key (fragmentCollectionId, ctCollectionId)
+	lastPublishDate DATE null
 );
 
 create table FragmentComposition (
 	mvccVersion LONG default 0 not null,
-	ctCollectionId LONG default 0 not null,
 	uuid_ VARCHAR(75) null,
-	fragmentCompositionId LONG not null,
+	fragmentCompositionId LONG not null primary key,
 	groupId LONG,
 	companyId LONG,
 	userId LONG,
@@ -37,17 +34,15 @@ create table FragmentComposition (
 	status INTEGER,
 	statusByUserId LONG,
 	statusByUserName VARCHAR(75) null,
-	statusDate DATE null,
-	primary key (fragmentCompositionId, ctCollectionId)
+	statusDate DATE null
 );
 
 create table FragmentEntry (
 	mvccVersion LONG default 0 not null,
-	ctCollectionId LONG default 0 not null,
 	uuid_ VARCHAR(75) null,
 	headId LONG,
 	head BOOLEAN,
-	fragmentEntryId LONG not null,
+	fragmentEntryId LONG not null primary key,
 	groupId LONG,
 	companyId LONG,
 	userId LONG,
@@ -69,15 +64,13 @@ create table FragmentEntry (
 	status INTEGER,
 	statusByUserId LONG,
 	statusByUserName VARCHAR(75) null,
-	statusDate DATE null,
-	primary key (fragmentEntryId, ctCollectionId)
+	statusDate DATE null
 );
 
 create table FragmentEntryLink (
 	mvccVersion LONG default 0 not null,
-	ctCollectionId LONG default 0 not null,
 	uuid_ VARCHAR(75) null,
-	fragmentEntryLinkId LONG not null,
+	fragmentEntryLinkId LONG not null primary key,
 	groupId LONG,
 	companyId LONG,
 	userId LONG,
@@ -99,14 +92,11 @@ create table FragmentEntryLink (
 	position INTEGER,
 	rendererKey VARCHAR(200) null,
 	lastPropagationDate DATE null,
-	lastPublishDate DATE null,
-	primary key (fragmentEntryLinkId, ctCollectionId)
+	lastPublishDate DATE null
 );
 
 create table FragmentEntryVersion (
-	mvccVersion LONG default 0 not null,
-	ctCollectionId LONG default 0 not null,
-	fragmentEntryVersionId LONG not null,
+	fragmentEntryVersionId LONG not null primary key,
 	version INTEGER,
 	uuid_ VARCHAR(75) null,
 	fragmentEntryId LONG,
@@ -131,6 +121,5 @@ create table FragmentEntryVersion (
 	status INTEGER,
 	statusByUserId LONG,
 	statusByUserName VARCHAR(75) null,
-	statusDate DATE null,
-	primary key (fragmentEntryVersionId, ctCollectionId)
+	statusDate DATE null
 );

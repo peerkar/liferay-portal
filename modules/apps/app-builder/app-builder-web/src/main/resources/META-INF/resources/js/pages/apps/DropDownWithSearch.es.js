@@ -21,6 +21,8 @@ import React, {
 	useState,
 } from 'react';
 
+import {getTranslatedValue} from '../../utils/utils.es';
+
 export const DropDownContext = createContext();
 
 const DropDownWithSearch = ({
@@ -125,9 +127,16 @@ const Items = ({
 		.toLowerCase()
 		.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&');
 
-	const itemList = items.filter(({[propertyKey]: name}) =>
-		name.toLowerCase().match(treatedQuery)
-	);
+	const itemList = items
+		.filter((item) =>
+			getTranslatedValue(item, propertyKey)
+				.toLowerCase()
+				.match(treatedQuery)
+		)
+		.map((item) => ({
+			...item,
+			name: getTranslatedValue(item, propertyKey),
+		}));
 
 	const onClick = (event, selectedValue) => {
 		event.stopPropagation();

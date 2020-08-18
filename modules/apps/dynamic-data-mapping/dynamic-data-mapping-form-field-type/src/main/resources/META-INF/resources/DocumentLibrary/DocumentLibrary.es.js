@@ -198,8 +198,6 @@ const DocumentLibrary = ({
 };
 
 const Main = ({
-	displayErrors,
-	errorMessage,
 	fileEntryTitle,
 	fileEntryURL,
 	groupId,
@@ -211,26 +209,11 @@ const Main = ({
 	onFocus,
 	placeholder,
 	readOnly,
-	valid,
 	value = '{}',
 	...otherProps
 }) => {
 	const {portletNamespace} = usePage();
 	const [currentValue, setCurrentValue] = useState(value);
-
-	const getErrorMessages = (errorMessage, isSignedIn) => {
-		const errorMessages = [errorMessage];
-
-		if (!isSignedIn) {
-			errorMessages.push(
-				Liferay.Language.get(
-					'you-need-to-be-signed-in-to-edit-this-field'
-				)
-			);
-		}
-
-		return errorMessages.join(' ');
-	};
 
 	const handleVisibleChange = (event) => {
 		if (event.selectedItem) {
@@ -273,18 +256,8 @@ const Main = ({
 		}
 	};
 
-	const isSignedIn = Liferay.ThemeDisplay.isSignedIn();
-
 	return (
-		<FieldBase
-			{...otherProps}
-			displayErrors={isSignedIn ? displayErrors : true}
-			errorMessage={getErrorMessages(errorMessage, isSignedIn)}
-			id={id}
-			name={name}
-			readOnly={isSignedIn ? readOnly : true}
-			valid={isSignedIn ? valid : false}
-		>
+		<FieldBase {...otherProps} id={id} name={name} readOnly={readOnly}>
 			<DocumentLibrary
 				fileEntryTitle={fileEntryTitle}
 				fileEntryURL={fileEntryURL}
@@ -302,7 +275,7 @@ const Main = ({
 					})
 				}
 				placeholder={placeholder}
-				readOnly={isSignedIn ? readOnly : true}
+				readOnly={readOnly}
 				value={currentValue || ''}
 			/>
 		</FieldBase>

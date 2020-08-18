@@ -79,14 +79,10 @@ public class CMISRepositoryUtil {
 			createSession(Map<String, String> parameters)
 		throws PrincipalException, RepositoryException {
 
-		Thread currentThread = Thread.currentThread();
+		try (ContextClassLoaderSetter contextClassLoaderSetter =
+				new ContextClassLoaderSetter(
+					CMISRepositoryUtil.class.getClassLoader())) {
 
-		ClassLoader contextClassLoader = currentThread.getContextClassLoader();
-
-		currentThread.setContextClassLoader(
-			CMISRepositoryUtil.class.getClassLoader());
-
-		try {
 			Session session = _sessionFactory.createSession(parameters);
 
 			session.setDefaultContext(_operationContext);
@@ -105,9 +101,6 @@ public class CMISRepositoryUtil {
 		}
 		catch (Exception exception) {
 			throw new RepositoryException(exception);
-		}
-		finally {
-			currentThread.setContextClassLoader(contextClassLoader);
 		}
 	}
 
@@ -130,21 +123,14 @@ public class CMISRepositoryUtil {
 	protected static Repository getCMISRepository(
 		Map<String, String> parameters) {
 
-		Thread currentThread = Thread.currentThread();
+		try (ContextClassLoaderSetter contextClassLoaderSetter =
+				new ContextClassLoaderSetter(
+					CMISRepositoryUtil.class.getClassLoader())) {
 
-		ClassLoader contextClassLoader = currentThread.getContextClassLoader();
-
-		currentThread.setContextClassLoader(
-			CMISRepositoryUtil.class.getClassLoader());
-
-		try {
 			List<Repository> repositories = _sessionFactory.getRepositories(
 				parameters);
 
 			return repositories.get(0);
-		}
-		finally {
-			currentThread.setContextClassLoader(contextClassLoader);
 		}
 	}
 

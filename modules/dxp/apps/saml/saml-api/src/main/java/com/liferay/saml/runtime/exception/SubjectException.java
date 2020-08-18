@@ -28,12 +28,12 @@ public class SubjectException extends PortalException {
 		super(msg);
 	}
 
-	public SubjectException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public SubjectException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public SubjectException(Throwable throwable) {
-		super(throwable);
+	public SubjectException(Throwable cause) {
+		super(cause);
 	}
 
 }

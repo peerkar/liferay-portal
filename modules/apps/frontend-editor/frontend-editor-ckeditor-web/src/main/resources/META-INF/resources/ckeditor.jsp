@@ -624,15 +624,10 @@ name = HtmlUtil.escapeJS(name);
 
 		ckEditor.on('drop', function (event) {
 			var data = event.data.dataTransfer.getData('text/html');
-
-			if (data) {
-				var fragment = CKEDITOR.htmlParser.fragment.fromHtml(data);
-
-				var name = fragment.children[0].name;
-
-				if (name) {
-					return this.pasteFilter.check(name);
-				}
+			var fragment = CKEDITOR.htmlParser.fragment.fromHtml(data);
+			var name = fragment.children[0].name;
+			if (name) {
+				return this.pasteFilter.check(name);
 			}
 		});
 

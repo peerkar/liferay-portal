@@ -227,7 +227,6 @@ definition {
 
 	@priority = "3"
 	test SitesPanelLayout {
-		property custom.properties = "jsonws.web.service.paths.excludes=";
 		property testray.component.names = "Site Pages Administration";
 		var portalURL = PropsUtil.get("portal.url");
 
@@ -237,10 +236,11 @@ definition {
 			userLastName = "userln",
 			userScreenName = "usersn");
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = "userea@liferay.com");
+		User.openUsersAdmin();
+
+		User.editPasswordCP(
+			userEmailAddress = "userea@liferay.com",
+			userScreenName = "usersn");
 
 		JSONRole.assignRoleToUser(
 			roleTitle = "Power User",
@@ -267,7 +267,6 @@ definition {
 
 	@priority = "5"
 	test SitesPrivatePagesPermissions {
-		property custom.properties = "jsonws.web.service.paths.excludes=";
 		property portal.acceptance = "true";
 		property test.name.skip.portal.instance = "WidgetPagesUseCase#SitesPrivatePagesPermissions";
 		property testray.component.names = "Permissions,Roles,Site Pages Administration,Training";
@@ -295,10 +294,11 @@ definition {
 			userLastName = "userln",
 			userScreenName = "usersn");
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = "userea@liferay.com");
+		User.openUsersAdmin();
+
+		User.editPasswordCP(
+			userEmailAddress = "userea@liferay.com",
+			userScreenName = "usersn");
 
 		JSONUser.addUserToSite(
 			groupName = "Site Name",
@@ -378,14 +378,22 @@ definition {
 			userEmailAddress = "test@liferay.com");
 	}
 
+	@ignore = "true"
 	@priority = "3"
 	test ViewSecureContentAndPageAsGuest {
-		property custom.properties = "jsonws.web.service.paths.excludes=";
 		property test.name.skip.portal.instance = "WidgetPagesUseCase#ViewSecureContentAndPageAsGuest";
-		property test.smtp.server.enabled = "true";
 		property testray.component.names = "Message Boards,Site Pages Administration";
 
 		var siteName = TestCase.getSiteName(siteName = "${siteName}");
+
+		ApplicationsMenu.gotoPortlet(
+			category = "System",
+			panel = "Control Panel",
+			portlet = "Server Administration");
+
+		ServerAdministration.configureMailServerSettings(
+			userName = PropsUtil.get("email.address.1"),
+			userPassword = PropsUtil.get("email.password.1"));
 
 		ApplicationsMenu.gotoPortlet(
 			category = "Configuration",
@@ -404,10 +412,11 @@ definition {
 			roleTitle = "Administrator",
 			userEmailAddress = PropsUtil.get("email.address.2"));
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = PropsUtil.get("email.address.2"));
+		User.openUsersAdmin();
+
+		User.editPasswordCP(
+			userEmailAddress = PropsUtil.get("email.address.2"),
+			userScreenName = "usersn1");
 
 		JSONLayout.addPrivateLayout(
 			groupName = "Guest",
@@ -457,35 +466,58 @@ definition {
 
 		Navigator.gotoPage(pageName = "Blog and Message Board Page");
 
-		MockMock.viewMail(
-			asset = "Blogs Entry",
-			content = "Blogs Entry Title GMB1",
-			recipient = "userfn1 userln1",
-			sender = "Joe Bloggs",
-			subject = "Test Test Published &quot;Blogs Entry Title GMB1&quot; on ${siteName} Blogs");
+		Pause(locator1 = "30000");
 
-		MockMock.clickBodyLink(
-			asset = "Blogs Entry Title GMB1",
-			bodyLink = "CONTINUE READING");
+		Gmail.login(
+			userEmailAddress = PropsUtil.get("email.address.2"),
+			userPassword = PropsUtil.get("email.password.2"));
+
+		Gmail.gotoHtmlMode();
+
+		Gmail.viewMail(
+			emailFromUserName = "Joe Bloggs",
+			gmailAssetType = "GMB1",
+			gmailMessageBody = "Blogs Entry Title GMB1",
+			gmailMessageTitle = "Test Test Published &quot;Blogs Entry Title GMB1&quot; on ${siteName} Blogs");
+
+		Gmail.openMessageContinueReadingButton(
+			contentTitle = "Blogs Entry Title GMB1",
+			pageName = "Blog and Message Board Page",
+			siteName = "${siteName}");
 
 		var blogEntryURL = selenium.getLocation();
 
-		var messageBoardsThreadURL = MockMock.getBodySpecificText(
-			asset = "MB",
-			content = "MB Thread Message Body",
-			extractFirstText = "<br />",
-			recipient = "userfn1 userln1",
-			sender = "Joe Bloggs",
-			specificText = "${siteName} Message Boards<br />",
-			subject = "Home - ${siteName} New Message: MB Thread Message Subject GMMB2");
+		Close();
 
-		MockMock._backtoInbox();
-
-		Click(
-			key_text = "Delete all",
-			locator1 = "Link#ANY");
+		SelectWindow(locator1 = "null");
 
 		Navigator.gotoPage(pageName = "Blog and Message Board Page");
+
+		Gmail.gotoHtmlMode();
+
+		Gmail.viewMail(
+			emailFromUserName = "Test Test",
+			gmailAssetType = "GMMB2",
+			gmailMessageBody = "MB Thread Message Body",
+			gmailMessageTitle = "Message Boards Home - ${siteName} New Message: MB Thread Message Subject GMMB2");
+
+		Gmail.openMessageLink(
+			contentTitle = "MB Thread Message Subject GMMB2",
+			gmailAssetType = "Message Boards",
+			pageName = "Blog and Message Board Page",
+			siteName = "${siteName}");
+
+		var messageBoardsThreadURL = selenium.getLocation();
+
+		Close();
+
+		SelectWindow(locator1 = "null");
+
+		Navigator.gotoPage(pageName = "Blog and Message Board Page");
+
+		Gmail.gotoHtmlMode();
+
+		Gmail.deleteSpecificMail(gmailMessageTitleList = "Test Test Published &quot;Blogs Entry Title GMB1&quot; on ${siteName} Blogs,Message Boards Home - ${siteName} New Message: MB Thread Message Subject GMMB2,Your New Account,Your New Password,GMB1,GMMB2");
 
 		User.logoutPG();
 
@@ -502,7 +534,7 @@ definition {
 		Alert.viewRequestFailedToComplete();
 
 		AssertTextEquals.assertPartialText(
-			locator1 = "Message#ERROR",
+			locator1 = "Message#ERROR_2",
 			value1 = "You do not have the required permissions.");
 
 		Navigator.openSpecificURL(url = "${messageBoardsThreadURL}");
@@ -510,18 +542,26 @@ definition {
 		Alert.viewRequestFailedToComplete();
 
 		AssertTextEquals.assertPartialText(
-			locator1 = "Message#ERROR",
+			locator1 = "Message#ERROR_2",
 			value1 = "You do not have the required permissions.");
 	}
 
+	@ignore = "true"
 	@priority = "3"
 	test ViewSecureContentAndPageAsSiteMember {
-		property custom.properties = "jsonws.web.service.paths.excludes=";
 		property test.name.skip.portal.instance = "WidgetPagesUseCase#ViewSecureContentAndPageAsSiteMember";
-		property test.smtp.server.enabled = "true";
 		property testray.component.names = "Message Boards,Site Pages Administration";
 
 		var siteName = TestCase.getSiteName(siteName = "${siteName}");
+
+		ApplicationsMenu.gotoPortlet(
+			category = "System",
+			panel = "Control Panel",
+			portlet = "Server Administration");
+
+		ServerAdministration.configureMailServerSettings(
+			userName = PropsUtil.get("email.address.1"),
+			userPassword = PropsUtil.get("email.password.1"));
 
 		JSONUser.addUser(
 			userEmailAddress = PropsUtil.get("email.address.2"),
@@ -543,15 +583,17 @@ definition {
 			groupName = "Guest",
 			userEmailAddress = "userea2@liferay.com");
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = PropsUtil.get("email.address.2"));
+		User.openUsersAdmin();
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = "userea2@liferay.com");
+		User.editPasswordCP(
+			userEmailAddress = PropsUtil.get("email.address.2"),
+			userScreenName = "usersn1");
+
+		User.openUsersAdmin();
+
+		User.editPasswordCP(
+			userEmailAddress = "userea2@liferay.com",
+			userScreenName = "usersn2");
 
 		JSONLayout.addPrivateLayout(
 			groupName = "Guest",
@@ -601,35 +643,58 @@ definition {
 
 		Navigator.gotoPage(pageName = "Blog and Message Board Page");
 
-		MockMock.viewMail(
-			asset = "Blogs Entry",
-			content = "Blogs Entry Title GMB2",
-			recipient = "userfn1 userln1",
-			sender = "Joe Bloggs",
-			subject = "Test Test Published &quot;Blogs Entry Title GMB2&quot; on ${siteName} Blogs");
+		Pause(locator1 = "30000");
 
-		MockMock.clickBodyLink(
-			asset = "Blogs Entry Title GMB2",
-			bodyLink = "CONTINUE READING");
+		Gmail.login(
+			userEmailAddress = PropsUtil.get("email.address.2"),
+			userPassword = PropsUtil.get("email.password.2"));
+
+		Gmail.gotoHtmlMode();
+
+		Gmail.viewMail(
+			emailFromUserName = "Joe Bloggs",
+			gmailAssetType = "GMB2",
+			gmailMessageBody = "Blogs Entry Title GMB2",
+			gmailMessageTitle = "Test Test Published &quot;Blogs Entry Title GMB2&quot; on ${siteName} Blogs");
+
+		Gmail.openMessageContinueReadingButton(
+			contentTitle = "Blogs Entry Title GMB2",
+			pageName = "Blog and Message Board Page",
+			siteName = "${siteName}");
 
 		var blogEntryURL = selenium.getLocation();
 
-		var messageBoardsThreadURL = MockMock.getBodySpecificText(
-			asset = "MB",
-			content = "MB Thread Message Body",
-			extractFirstText = "<br />",
-			recipient = "userfn1 userln1",
-			sender = "Test Test",
-			specificText = "${siteName} Message Boards<br />",
-			subject = "Home - ${siteName} New Message: MB Thread Message Subject GMMB3");
+		Close();
 
-		MockMock._backtoInbox();
-
-		Click(
-			key_text = "Delete all",
-			locator1 = "Link#ANY");
+		SelectWindow(locator1 = "null");
 
 		Navigator.gotoPage(pageName = "Blog and Message Board Page");
+
+		Gmail.gotoHtmlMode();
+
+		Gmail.viewMail(
+			emailFromUserName = "Test Test",
+			gmailAssetType = "GMMB3",
+			gmailMessageBody = "MB Thread Message Body",
+			gmailMessageTitle = "Message Boards Home - ${siteName} New Message: MB Thread Message Subject GMMB3");
+
+		Gmail.openMessageLink(
+			contentTitle = "MB Thread Message Subject GMMB3",
+			gmailAssetType = "Message Boards",
+			pageName = "Blog and Message Board Page",
+			siteName = "${siteName}");
+
+		var messageBoardsThreadURL = selenium.getLocation();
+
+		Close();
+
+		SelectWindow(locator1 = "null");
+
+		Navigator.gotoPage(pageName = "Blog and Message Board Page");
+
+		Gmail.gotoHtmlMode();
+
+		Gmail.deleteSpecificMail(gmailMessageTitleList = "Test Test Published &quot;Blogs Entry Title GMB2&quot; on ${siteName} Blogs,Message Boards Home - ${siteName} New Message: MB Thread Message Subject GMMB3,Your New Account,Your New Password,GMB2,GMMB3");
 
 		User.logoutAndLoginPG(
 			userLoginEmailAddress = "userea2@liferay.com",
@@ -666,14 +731,22 @@ definition {
 			threadSubject = "MB Thread Message Subject GMMB3");
 	}
 
+	@ignore = "true"
 	@priority = "5"
 	test ViewSecureContentAndPageAsUser {
-		property custom.properties = "jsonws.web.service.paths.excludes=";
 		property test.name.skip.portal.instance = "WidgetPagesUseCase#ViewSecureContentAndPageAsUser";
-		property test.smtp.server.enabled = "true";
 		property testray.component.names = "Message Boards,Site Pages Administration,Training";
 
 		var siteName = TestCase.getSiteName(siteName = "${siteName}");
+
+		ApplicationsMenu.gotoPortlet(
+			category = "System",
+			panel = "Control Panel",
+			portlet = "Server Administration");
+
+		ServerAdministration.configureMailServerSettings(
+			userName = PropsUtil.get("email.address.1"),
+			userPassword = PropsUtil.get("email.password.1"));
 
 		JSONUser.addUser(
 			userEmailAddress = PropsUtil.get("email.address.2"),
@@ -691,15 +764,17 @@ definition {
 			roleTitle = "Administrator",
 			userEmailAddress = PropsUtil.get("email.address.2"));
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = PropsUtil.get("email.address.2"));
+		User.openUsersAdmin();
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = "userea2@liferay.com");
+		User.editPasswordCP(
+			userEmailAddress = PropsUtil.get("email.address.2"),
+			userScreenName = "usersn1");
+
+		User.openUsersAdmin();
+
+		User.editPasswordCP(
+			userEmailAddress = "userea2@liferay.com",
+			userScreenName = "usersn2");
 
 		JSONLayout.addPrivateLayout(
 			groupName = "Guest",
@@ -749,35 +824,58 @@ definition {
 
 		Navigator.gotoPage(pageName = "Blog and Message Board Page");
 
-		MockMock.viewMail(
-			asset = "Blogs Entry",
-			content = "Blogs Entry Title GMB3",
-			recipient = "userfn1 userln1",
-			sender = "Joe Bloggs",
-			subject = "Test Test Published &quot;Blogs Entry Title GMB3&quot; on ${siteName} Blogs");
+		Pause(locator1 = "30000");
 
-		MockMock.clickBodyLink(
-			asset = "Blogs Entry Title GMB3",
-			bodyLink = "CONTINUE READING");
+		Gmail.login(
+			userEmailAddress = PropsUtil.get("email.address.2"),
+			userPassword = PropsUtil.get("email.password.2"));
+
+		Gmail.gotoHtmlMode();
+
+		Gmail.viewMail(
+			emailFromUserName = "Joe Bloggs",
+			gmailAssetType = "GMB3",
+			gmailMessageBody = "Blogs Entry Title GMB3",
+			gmailMessageTitle = "Test Test Published &quot;Blogs Entry Title GMB3&quot; on ${siteName} Blogs");
+
+		Gmail.openMessageContinueReadingButton(
+			contentTitle = "Blogs Entry Title GMB3",
+			pageName = "Blog and Message Board Page",
+			siteName = "${siteName}");
 
 		var blogEntryURL = selenium.getLocation();
 
-		var messageBoardsThreadURL = MockMock.getBodySpecificText(
-			asset = "MB",
-			content = "MB Thread Message Body",
-			extractFirstText = "<br />",
-			recipient = "userfn1 userln1",
-			sender = "Test Test",
-			specificText = "${siteName} Message Boards<br />",
-			subject = "Home - ${siteName} New Message: MB Thread Message Subject GMMB4");
+		Close();
 
-		MockMock._backtoInbox();
-
-		Click(
-			key_text = "Delete all",
-			locator1 = "Link#ANY");
+		SelectWindow(locator1 = "null");
 
 		Navigator.gotoPage(pageName = "Blog and Message Board Page");
+
+		Gmail.gotoHtmlMode();
+
+		Gmail.viewMail(
+			emailFromUserName = "Test Test",
+			gmailAssetType = "GMMB4",
+			gmailMessageBody = "MB Thread Message Body",
+			gmailMessageTitle = "Message Boards Home - ${siteName} New Message: MB Thread Message Subject GMMB4");
+
+		Gmail.openMessageLink(
+			contentTitle = "MB Thread Message Subject GMMB4",
+			gmailAssetType = "Message Boards",
+			pageName = "Blog and Message Board Page",
+			siteName = "${siteName}");
+
+		var messageBoardsThreadURL = selenium.getLocation();
+
+		Close();
+
+		SelectWindow(locator1 = "null");
+
+		Navigator.gotoPage(pageName = "Blog and Message Board Page");
+
+		Gmail.gotoHtmlMode();
+
+		Gmail.deleteSpecificMail(gmailMessageTitleList = "Test Test Published &quot;Blogs Entry Title GMB3&quot; on ${siteName} Blogs,Message Boards Home - ${siteName} New Message: MB Thread Message Subject GMMB4,Your New Account,Your New Password,GMB3,GMMB4");
 
 		User.logoutAndLoginPG(
 			userLoginEmailAddress = "userea2@liferay.com",
@@ -794,7 +892,7 @@ definition {
 		Alert.viewRequestFailedToComplete();
 
 		AssertTextEquals.assertPartialText(
-			locator1 = "Message#ERROR",
+			locator1 = "Message#ERROR_2",
 			value1 = "You do not have the required permissions.");
 
 		Navigator.gotoPage(pageName = "Blog and Message Board Page");
@@ -804,7 +902,7 @@ definition {
 		Alert.viewRequestFailedToComplete();
 
 		AssertTextEquals.assertPartialText(
-			locator1 = "Message#ERROR",
+			locator1 = "Message#ERROR_2",
 			value1 = "You do not have the required permissions.");
 	}
 
@@ -867,8 +965,10 @@ definition {
 			userName = "Test Test");
 	}
 
+	@ignore = "true"
 	@priority = "5"
 	test WebContentAdministrationSitesPageTypes {
+		property osgi.app.includes = "directory-web";
 		property portal.release = "false";
 		property testray.component.names = "Site Pages Administration,Training";
 		var portalURL = PropsUtil.get("portal.url");
@@ -911,7 +1011,7 @@ definition {
 		Page.viewPanelPortletListCP(
 			componentName = "Community",
 			pageName = "Panel Page",
-			portletNameList = "Bookmarks,My Sites,Page Comments,Page Flags,Page Ratings");
+			portletNameList = "Bookmarks,Friends Directory,My Sites,My Sites Directory,Page Comments,Page Flags,Page Ratings,Portal Directory,Site Members Directory");
 
 		Navigator.gotoSitePage(
 			pageName = "Embedded Page",
@@ -938,7 +1038,7 @@ definition {
 		Page.viewPanelPortletListPG(
 			componentName = "Community",
 			pageName = "Panel Page",
-			portletNameList = "Bookmarks,My Sites,Page Comments,Page Flags,Page Ratings");
+			portletNameList = "Bookmarks,Friends Directory,My Sites,My Sites Directory,Page Comments,Page Flags,Page Ratings,Portal Directory,Site Members Directory");
 	}
 
 }

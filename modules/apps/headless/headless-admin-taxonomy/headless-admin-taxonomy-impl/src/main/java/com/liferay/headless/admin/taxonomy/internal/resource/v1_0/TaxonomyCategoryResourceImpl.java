@@ -24,7 +24,7 @@ import com.liferay.headless.admin.taxonomy.dto.v1_0.TaxonomyCategory;
 import com.liferay.headless.admin.taxonomy.internal.dto.v1_0.converter.TaxonomyCategoryDTOConverter;
 import com.liferay.headless.admin.taxonomy.internal.odata.entity.v1_0.CategoryEntityModel;
 import com.liferay.headless.admin.taxonomy.resource.v1_0.TaxonomyCategoryResource;
-import com.liferay.headless.common.spi.service.context.ServiceContextRequestUtil;
+import com.liferay.headless.common.spi.service.context.ServiceContextUtil;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
@@ -148,7 +148,7 @@ public class TaxonomyCategoryResourceImpl
 			parentTaxonomyCategoryId);
 
 		return _getCategoriesPage(
-			HashMapBuilder.put(
+			HashMapBuilder.<String, Map<String, String>>put(
 				"add-category",
 				addAction(
 					"ADD_CATEGORY", assetCategory.getCategoryId(),
@@ -186,7 +186,7 @@ public class TaxonomyCategoryResourceImpl
 			taxonomyVocabularyId);
 
 		return _getCategoriesPage(
-			HashMapBuilder.put(
+			HashMapBuilder.<String, Map<String, String>>put(
 				"add-category",
 				addAction(
 					"ADD_CATEGORY", assetVocabulary,
@@ -343,9 +343,8 @@ public class TaxonomyCategoryResourceImpl
 		AssetCategory assetCategory = _assetCategoryService.addCategory(
 			groupId, taxonomyCategoryId, titleMap, descriptionMap,
 			taxonomyVocabularyId, null,
-			ServiceContextRequestUtil.createServiceContext(
-				groupId, contextHttpServletRequest,
-				taxonomyCategory.getViewableByAsString()));
+			ServiceContextUtil.createServiceContext(
+				groupId, taxonomyCategory.getViewableByAsString()));
 
 		if (taxonomyCategory.getExternalReferenceCode() != null) {
 			assetCategory.setExternalReferenceCode(
@@ -474,7 +473,7 @@ public class TaxonomyCategoryResourceImpl
 		return _taxonomyCategoryDTOConverter.toDTO(
 			new DefaultDTOConverterContext(
 				contextAcceptLanguage.isAcceptAllLanguages(),
-				HashMapBuilder.put(
+				HashMapBuilder.<String, Map<String, String>>put(
 					"add-category",
 					addAction(
 						"ADD_CATEGORY", assetCategory,

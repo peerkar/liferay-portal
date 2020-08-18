@@ -8,6 +8,8 @@ definition {
 		Button.clickSave();
 
 		PageEditor.assertFragmentSidebarLoaded();
+
+		Button.click(button = "Publish Master");
 	}
 
 	macro deleteMasters {
@@ -43,7 +45,7 @@ definition {
 			locator1 = "TextInput#FILE",
 			value1 = "${mastersZipFileName}");
 
-		Button.clickImport();
+		Click(locator1 = "Button#IMPORT");
 
 		Alert.viewSuccessMessage();
 
@@ -59,7 +61,7 @@ definition {
 
 		Check.checkNotVisible(
 			key_card = "${masterLayoutName}",
-			locator1 = "Card#CARD_CHECKBOX");
+			locator1 = "LexiconCard#CARD_CHECKBOX");
 	}
 
 	macro viewMastersPresent {

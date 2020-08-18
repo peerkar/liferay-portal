@@ -22,7 +22,6 @@ import com.liferay.layout.page.template.model.impl.LayoutPageTemplateStructureRe
 import com.liferay.layout.page.template.service.persistence.LayoutPageTemplateStructureRelPersistence;
 import com.liferay.layout.page.template.service.persistence.impl.constants.LayoutPersistenceConstants;
 import com.liferay.petra.string.StringBundler;
-import com.liferay.portal.kernel.change.tracking.CTColumnResolutionType;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
@@ -37,7 +36,6 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
-import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ProxyUtil;
@@ -49,13 +47,8 @@ import java.io.Serializable;
 
 import java.lang.reflect.InvocationHandler;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -177,28 +170,25 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 
 		uuid = Objects.toString(uuid, "");
 
-		boolean productionMode = ctPersistenceHelper.isProductionMode(
-			LayoutPageTemplateStructureRel.class);
-
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 			(orderByComparator == null)) {
 
-			if (useFinderCache && productionMode) {
+			if (useFinderCache) {
 				finderPath = _finderPathWithoutPaginationFindByUuid;
 				finderArgs = new Object[] {uuid};
 			}
 		}
-		else if (useFinderCache && productionMode) {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindByUuid;
 			finderArgs = new Object[] {uuid, start, end, orderByComparator};
 		}
 
 		List<LayoutPageTemplateStructureRel> list = null;
 
-		if (useFinderCache && productionMode) {
+		if (useFinderCache) {
 			list = (List<LayoutPageTemplateStructureRel>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -270,7 +260,7 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 
 				cacheResult(list);
 
-				if (useFinderCache && productionMode) {
+				if (useFinderCache) {
 					finderCache.putResult(finderPath, finderArgs, list);
 				}
 			}
@@ -596,21 +586,11 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 	public int countByUuid(String uuid) {
 		uuid = Objects.toString(uuid, "");
 
-		boolean productionMode = ctPersistenceHelper.isProductionMode(
-			LayoutPageTemplateStructureRel.class);
+		FinderPath finderPath = _finderPathCountByUuid;
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
+		Object[] finderArgs = new Object[] {uuid};
 
-		Long count = null;
-
-		if (productionMode) {
-			finderPath = _finderPathCountByUuid;
-
-			finderArgs = new Object[] {uuid};
-
-			count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-		}
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(2);
@@ -645,9 +625,7 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 
 				count = (Long)query.uniqueResult();
 
-				if (productionMode) {
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
+				finderCache.putResult(finderPath, finderArgs, count);
 			}
 			catch (Exception exception) {
 				throw processException(exception);
@@ -736,18 +714,15 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 
 		uuid = Objects.toString(uuid, "");
 
-		boolean productionMode = ctPersistenceHelper.isProductionMode(
-			LayoutPageTemplateStructureRel.class);
-
 		Object[] finderArgs = null;
 
-		if (useFinderCache && productionMode) {
+		if (useFinderCache) {
 			finderArgs = new Object[] {uuid, groupId};
 		}
 
 		Object result = null;
 
-		if (useFinderCache && productionMode) {
+		if (useFinderCache) {
 			result = finderCache.getResult(
 				_finderPathFetchByUUID_G, finderArgs, this);
 		}
@@ -802,7 +777,7 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 				List<LayoutPageTemplateStructureRel> list = query.list();
 
 				if (list.isEmpty()) {
-					if (useFinderCache && productionMode) {
+					if (useFinderCache) {
 						finderCache.putResult(
 							_finderPathFetchByUUID_G, finderArgs, list);
 					}
@@ -861,21 +836,11 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 	public int countByUUID_G(String uuid, long groupId) {
 		uuid = Objects.toString(uuid, "");
 
-		boolean productionMode = ctPersistenceHelper.isProductionMode(
-			LayoutPageTemplateStructureRel.class);
+		FinderPath finderPath = _finderPathCountByUUID_G;
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
+		Object[] finderArgs = new Object[] {uuid, groupId};
 
-		Long count = null;
-
-		if (productionMode) {
-			finderPath = _finderPathCountByUUID_G;
-
-			finderArgs = new Object[] {uuid, groupId};
-
-			count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-		}
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(3);
@@ -914,9 +879,7 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 
 				count = (Long)query.uniqueResult();
 
-				if (productionMode) {
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
+				finderCache.putResult(finderPath, finderArgs, count);
 			}
 			catch (Exception exception) {
 				throw processException(exception);
@@ -1023,21 +986,18 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 
 		uuid = Objects.toString(uuid, "");
 
-		boolean productionMode = ctPersistenceHelper.isProductionMode(
-			LayoutPageTemplateStructureRel.class);
-
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 			(orderByComparator == null)) {
 
-			if (useFinderCache && productionMode) {
+			if (useFinderCache) {
 				finderPath = _finderPathWithoutPaginationFindByUuid_C;
 				finderArgs = new Object[] {uuid, companyId};
 			}
 		}
-		else if (useFinderCache && productionMode) {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindByUuid_C;
 			finderArgs = new Object[] {
 				uuid, companyId, start, end, orderByComparator
@@ -1046,7 +1006,7 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 
 		List<LayoutPageTemplateStructureRel> list = null;
 
-		if (useFinderCache && productionMode) {
+		if (useFinderCache) {
 			list = (List<LayoutPageTemplateStructureRel>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -1124,7 +1084,7 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 
 				cacheResult(list);
 
-				if (useFinderCache && productionMode) {
+				if (useFinderCache) {
 					finderCache.putResult(finderPath, finderArgs, list);
 				}
 			}
@@ -1469,21 +1429,11 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 	public int countByUuid_C(String uuid, long companyId) {
 		uuid = Objects.toString(uuid, "");
 
-		boolean productionMode = ctPersistenceHelper.isProductionMode(
-			LayoutPageTemplateStructureRel.class);
+		FinderPath finderPath = _finderPathCountByUuid_C;
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
+		Object[] finderArgs = new Object[] {uuid, companyId};
 
-		Long count = null;
-
-		if (productionMode) {
-			finderPath = _finderPathCountByUuid_C;
-
-			finderArgs = new Object[] {uuid, companyId};
-
-			count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-		}
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(3);
@@ -1522,9 +1472,7 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 
 				count = (Long)query.uniqueResult();
 
-				if (productionMode) {
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
+				finderCache.putResult(finderPath, finderArgs, count);
 			}
 			catch (Exception exception) {
 				throw processException(exception);
@@ -1634,22 +1582,19 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 			OrderByComparator<LayoutPageTemplateStructureRel> orderByComparator,
 			boolean useFinderCache) {
 
-		boolean productionMode = ctPersistenceHelper.isProductionMode(
-			LayoutPageTemplateStructureRel.class);
-
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 			(orderByComparator == null)) {
 
-			if (useFinderCache && productionMode) {
+			if (useFinderCache) {
 				finderPath =
 					_finderPathWithoutPaginationFindByLayoutPageTemplateStructureId;
 				finderArgs = new Object[] {layoutPageTemplateStructureId};
 			}
 		}
-		else if (useFinderCache && productionMode) {
+		else if (useFinderCache) {
 			finderPath =
 				_finderPathWithPaginationFindByLayoutPageTemplateStructureId;
 			finderArgs = new Object[] {
@@ -1659,7 +1604,7 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 
 		List<LayoutPageTemplateStructureRel> list = null;
 
-		if (useFinderCache && productionMode) {
+		if (useFinderCache) {
 			list = (List<LayoutPageTemplateStructureRel>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -1722,7 +1667,7 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 
 				cacheResult(list);
 
-				if (useFinderCache && productionMode) {
+				if (useFinderCache) {
 					finderCache.putResult(finderPath, finderArgs, list);
 				}
 			}
@@ -2058,21 +2003,11 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 	public int countByLayoutPageTemplateStructureId(
 		long layoutPageTemplateStructureId) {
 
-		boolean productionMode = ctPersistenceHelper.isProductionMode(
-			LayoutPageTemplateStructureRel.class);
+		FinderPath finderPath = _finderPathCountByLayoutPageTemplateStructureId;
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
+		Object[] finderArgs = new Object[] {layoutPageTemplateStructureId};
 
-		Long count = null;
-
-		if (productionMode) {
-			finderPath = _finderPathCountByLayoutPageTemplateStructureId;
-
-			finderArgs = new Object[] {layoutPageTemplateStructureId};
-
-			count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-		}
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(2);
@@ -2097,9 +2032,7 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 
 				count = (Long)query.uniqueResult();
 
-				if (productionMode) {
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
+				finderCache.putResult(finderPath, finderArgs, count);
 			}
 			catch (Exception exception) {
 				throw processException(exception);
@@ -2196,22 +2129,19 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 		OrderByComparator<LayoutPageTemplateStructureRel> orderByComparator,
 		boolean useFinderCache) {
 
-		boolean productionMode = ctPersistenceHelper.isProductionMode(
-			LayoutPageTemplateStructureRel.class);
-
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 			(orderByComparator == null)) {
 
-			if (useFinderCache && productionMode) {
+			if (useFinderCache) {
 				finderPath =
 					_finderPathWithoutPaginationFindBySegmentsExperienceId;
 				finderArgs = new Object[] {segmentsExperienceId};
 			}
 		}
-		else if (useFinderCache && productionMode) {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindBySegmentsExperienceId;
 			finderArgs = new Object[] {
 				segmentsExperienceId, start, end, orderByComparator
@@ -2220,7 +2150,7 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 
 		List<LayoutPageTemplateStructureRel> list = null;
 
-		if (useFinderCache && productionMode) {
+		if (useFinderCache) {
 			list = (List<LayoutPageTemplateStructureRel>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -2283,7 +2213,7 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 
 				cacheResult(list);
 
-				if (useFinderCache && productionMode) {
+				if (useFinderCache) {
 					finderCache.putResult(finderPath, finderArgs, list);
 				}
 			}
@@ -2602,21 +2532,11 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 	 */
 	@Override
 	public int countBySegmentsExperienceId(long segmentsExperienceId) {
-		boolean productionMode = ctPersistenceHelper.isProductionMode(
-			LayoutPageTemplateStructureRel.class);
+		FinderPath finderPath = _finderPathCountBySegmentsExperienceId;
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
+		Object[] finderArgs = new Object[] {segmentsExperienceId};
 
-		Long count = null;
-
-		if (productionMode) {
-			finderPath = _finderPathCountBySegmentsExperienceId;
-
-			finderArgs = new Object[] {segmentsExperienceId};
-
-			count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-		}
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(2);
@@ -2641,9 +2561,7 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 
 				count = (Long)query.uniqueResult();
 
-				if (productionMode) {
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
+				finderCache.putResult(finderPath, finderArgs, count);
 			}
 			catch (Exception exception) {
 				throw processException(exception);
@@ -2730,12 +2648,9 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 		long layoutPageTemplateStructureId, long segmentsExperienceId,
 		boolean useFinderCache) {
 
-		boolean productionMode = ctPersistenceHelper.isProductionMode(
-			LayoutPageTemplateStructureRel.class);
-
 		Object[] finderArgs = null;
 
-		if (useFinderCache && productionMode) {
+		if (useFinderCache) {
 			finderArgs = new Object[] {
 				layoutPageTemplateStructureId, segmentsExperienceId
 			};
@@ -2743,7 +2658,7 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 
 		Object result = null;
 
-		if (useFinderCache && productionMode) {
+		if (useFinderCache) {
 			result = finderCache.getResult(
 				_finderPathFetchByL_S, finderArgs, this);
 		}
@@ -2789,7 +2704,7 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 				List<LayoutPageTemplateStructureRel> list = query.list();
 
 				if (list.isEmpty()) {
-					if (useFinderCache && productionMode) {
+					if (useFinderCache) {
 						finderCache.putResult(
 							_finderPathFetchByL_S, finderArgs, list);
 					}
@@ -2848,23 +2763,13 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 	public int countByL_S(
 		long layoutPageTemplateStructureId, long segmentsExperienceId) {
 
-		boolean productionMode = ctPersistenceHelper.isProductionMode(
-			LayoutPageTemplateStructureRel.class);
+		FinderPath finderPath = _finderPathCountByL_S;
 
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
+		Object[] finderArgs = new Object[] {
+			layoutPageTemplateStructureId, segmentsExperienceId
+		};
 
-		Long count = null;
-
-		if (productionMode) {
-			finderPath = _finderPathCountByL_S;
-
-			finderArgs = new Object[] {
-				layoutPageTemplateStructureId, segmentsExperienceId
-			};
-
-			count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-		}
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(3);
@@ -2892,9 +2797,7 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 
 				count = (Long)query.uniqueResult();
 
-				if (productionMode) {
-					finderCache.putResult(finderPath, finderArgs, count);
-				}
+				finderCache.putResult(finderPath, finderArgs, count);
 			}
 			catch (Exception exception) {
 				throw processException(exception);
@@ -2941,12 +2844,6 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 	public void cacheResult(
 		LayoutPageTemplateStructureRel layoutPageTemplateStructureRel) {
 
-		if (layoutPageTemplateStructureRel.getCtCollectionId() != 0) {
-			layoutPageTemplateStructureRel.resetOriginalValues();
-
-			return;
-		}
-
 		entityCache.putResult(
 			LayoutPageTemplateStructureRelImpl.class,
 			layoutPageTemplateStructureRel.getPrimaryKey(),
@@ -2983,12 +2880,6 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 
 		for (LayoutPageTemplateStructureRel layoutPageTemplateStructureRel :
 				layoutPageTemplateStructureRels) {
-
-			if (layoutPageTemplateStructureRel.getCtCollectionId() != 0) {
-				layoutPageTemplateStructureRel.resetOriginalValues();
-
-				continue;
-			}
 
 			if (entityCache.getResult(
 					LayoutPageTemplateStructureRelImpl.class,
@@ -3245,10 +3136,6 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 	protected LayoutPageTemplateStructureRel removeImpl(
 		LayoutPageTemplateStructureRel layoutPageTemplateStructureRel) {
 
-		if (!ctPersistenceHelper.isRemove(layoutPageTemplateStructureRel)) {
-			return layoutPageTemplateStructureRel;
-		}
-
 		Session session = null;
 
 		try {
@@ -3347,20 +3234,7 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 		try {
 			session = openSession();
 
-			if (ctPersistenceHelper.isInsert(layoutPageTemplateStructureRel)) {
-				if (!isNew) {
-					LayoutPageTemplateStructureRel
-						oldLayoutPageTemplateStructureRel =
-							(LayoutPageTemplateStructureRel)session.get(
-								LayoutPageTemplateStructureRelImpl.class,
-								layoutPageTemplateStructureRel.
-									getPrimaryKeyObj());
-
-					if (oldLayoutPageTemplateStructureRel != null) {
-						session.evict(oldLayoutPageTemplateStructureRel);
-					}
-				}
-
+			if (layoutPageTemplateStructureRel.isNew()) {
 				session.save(layoutPageTemplateStructureRel);
 
 				layoutPageTemplateStructureRel.setNew(false);
@@ -3376,12 +3250,6 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 		}
 		finally {
 			closeSession(session);
-		}
-
-		if (layoutPageTemplateStructureRel.getCtCollectionId() != 0) {
-			layoutPageTemplateStructureRel.resetOriginalValues();
-
-			return layoutPageTemplateStructureRel;
 		}
 
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -3588,47 +3456,6 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 	/**
 	 * Returns the layout page template structure rel with the primary key or returns <code>null</code> if it could not be found.
 	 *
-	 * @param primaryKey the primary key of the layout page template structure rel
-	 * @return the layout page template structure rel, or <code>null</code> if a layout page template structure rel with the primary key could not be found
-	 */
-	@Override
-	public LayoutPageTemplateStructureRel fetchByPrimaryKey(
-		Serializable primaryKey) {
-
-		if (ctPersistenceHelper.isProductionMode(
-				LayoutPageTemplateStructureRel.class)) {
-
-			return super.fetchByPrimaryKey(primaryKey);
-		}
-
-		LayoutPageTemplateStructureRel layoutPageTemplateStructureRel = null;
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			layoutPageTemplateStructureRel =
-				(LayoutPageTemplateStructureRel)session.get(
-					LayoutPageTemplateStructureRelImpl.class, primaryKey);
-
-			if (layoutPageTemplateStructureRel != null) {
-				cacheResult(layoutPageTemplateStructureRel);
-			}
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
-
-		return layoutPageTemplateStructureRel;
-	}
-
-	/**
-	 * Returns the layout page template structure rel with the primary key or returns <code>null</code> if it could not be found.
-	 *
 	 * @param layoutPageTemplateStructureRelId the primary key of the layout page template structure rel
 	 * @return the layout page template structure rel, or <code>null</code> if a layout page template structure rel with the primary key could not be found
 	 */
@@ -3638,84 +3465,6 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 
 		return fetchByPrimaryKey(
 			(Serializable)layoutPageTemplateStructureRelId);
-	}
-
-	@Override
-	public Map<Serializable, LayoutPageTemplateStructureRel> fetchByPrimaryKeys(
-		Set<Serializable> primaryKeys) {
-
-		if (ctPersistenceHelper.isProductionMode(
-				LayoutPageTemplateStructureRel.class)) {
-
-			return super.fetchByPrimaryKeys(primaryKeys);
-		}
-
-		if (primaryKeys.isEmpty()) {
-			return Collections.emptyMap();
-		}
-
-		Map<Serializable, LayoutPageTemplateStructureRel> map =
-			new HashMap<Serializable, LayoutPageTemplateStructureRel>();
-
-		if (primaryKeys.size() == 1) {
-			Iterator<Serializable> iterator = primaryKeys.iterator();
-
-			Serializable primaryKey = iterator.next();
-
-			LayoutPageTemplateStructureRel layoutPageTemplateStructureRel =
-				fetchByPrimaryKey(primaryKey);
-
-			if (layoutPageTemplateStructureRel != null) {
-				map.put(primaryKey, layoutPageTemplateStructureRel);
-			}
-
-			return map;
-		}
-
-		StringBundler sb = new StringBundler(primaryKeys.size() * 2 + 1);
-
-		sb.append(getSelectSQL());
-		sb.append(" WHERE ");
-		sb.append(getPKDBName());
-		sb.append(" IN (");
-
-		for (Serializable primaryKey : primaryKeys) {
-			sb.append((long)primaryKey);
-
-			sb.append(",");
-		}
-
-		sb.setIndex(sb.index() - 1);
-
-		sb.append(")");
-
-		String sql = sb.toString();
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			Query query = session.createQuery(sql);
-
-			for (LayoutPageTemplateStructureRel layoutPageTemplateStructureRel :
-					(List<LayoutPageTemplateStructureRel>)query.list()) {
-
-				map.put(
-					layoutPageTemplateStructureRel.getPrimaryKeyObj(),
-					layoutPageTemplateStructureRel);
-
-				cacheResult(layoutPageTemplateStructureRel);
-			}
-		}
-		catch (Exception exception) {
-			throw processException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
-
-		return map;
 	}
 
 	/**
@@ -3783,28 +3532,25 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 		OrderByComparator<LayoutPageTemplateStructureRel> orderByComparator,
 		boolean useFinderCache) {
 
-		boolean productionMode = ctPersistenceHelper.isProductionMode(
-			LayoutPageTemplateStructureRel.class);
-
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 			(orderByComparator == null)) {
 
-			if (useFinderCache && productionMode) {
+			if (useFinderCache) {
 				finderPath = _finderPathWithoutPaginationFindAll;
 				finderArgs = FINDER_ARGS_EMPTY;
 			}
 		}
-		else if (useFinderCache && productionMode) {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindAll;
 			finderArgs = new Object[] {start, end, orderByComparator};
 		}
 
 		List<LayoutPageTemplateStructureRel> list = null;
 
-		if (useFinderCache && productionMode) {
+		if (useFinderCache) {
 			list = (List<LayoutPageTemplateStructureRel>)finderCache.getResult(
 				finderPath, finderArgs, this);
 		}
@@ -3843,7 +3589,7 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 
 				cacheResult(list);
 
-				if (useFinderCache && productionMode) {
+				if (useFinderCache) {
 					finderCache.putResult(finderPath, finderArgs, list);
 				}
 			}
@@ -3878,15 +3624,8 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 	 */
 	@Override
 	public int countAll() {
-		boolean productionMode = ctPersistenceHelper.isProductionMode(
-			LayoutPageTemplateStructureRel.class);
-
-		Long count = null;
-
-		if (productionMode) {
-			count = (Long)finderCache.getResult(
-				_finderPathCountAll, FINDER_ARGS_EMPTY, this);
-		}
+		Long count = (Long)finderCache.getResult(
+			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
 
 		if (count == null) {
 			Session session = null;
@@ -3899,10 +3638,8 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 
 				count = (Long)query.uniqueResult();
 
-				if (productionMode) {
-					finderCache.putResult(
-						_finderPathCountAll, FINDER_ARGS_EMPTY, count);
-				}
+				finderCache.putResult(
+					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
 			}
 			catch (Exception exception) {
 				throw processException(exception);
@@ -3936,76 +3673,8 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 	}
 
 	@Override
-	public Set<String> getCTColumnNames(
-		CTColumnResolutionType ctColumnResolutionType) {
-
-		return _ctColumnNamesMap.get(ctColumnResolutionType);
-	}
-
-	@Override
-	public List<String> getMappingTableNames() {
-		return _mappingTableNames;
-	}
-
-	@Override
-	public Map<String, Integer> getTableColumnsMap() {
+	protected Map<String, Integer> getTableColumnsMap() {
 		return LayoutPageTemplateStructureRelModelImpl.TABLE_COLUMNS_MAP;
-	}
-
-	@Override
-	public String getTableName() {
-		return "LayoutPageTemplateStructureRel";
-	}
-
-	@Override
-	public List<String[]> getUniqueIndexColumnNames() {
-		return _uniqueIndexColumnNames;
-	}
-
-	private static final Map<CTColumnResolutionType, Set<String>>
-		_ctColumnNamesMap = new EnumMap<CTColumnResolutionType, Set<String>>(
-			CTColumnResolutionType.class);
-	private static final List<String> _mappingTableNames =
-		new ArrayList<String>();
-	private static final List<String[]> _uniqueIndexColumnNames =
-		new ArrayList<String[]>();
-
-	static {
-		Set<String> ctControlColumnNames = new HashSet<String>();
-		Set<String> ctIgnoreColumnNames = new HashSet<String>();
-		Set<String> ctMergeColumnNames = new HashSet<String>();
-		Set<String> ctStrictColumnNames = new HashSet<String>();
-
-		ctControlColumnNames.add("mvccVersion");
-		ctControlColumnNames.add("ctCollectionId");
-		ctStrictColumnNames.add("uuid_");
-		ctStrictColumnNames.add("groupId");
-		ctStrictColumnNames.add("companyId");
-		ctStrictColumnNames.add("userId");
-		ctStrictColumnNames.add("userName");
-		ctStrictColumnNames.add("createDate");
-		ctIgnoreColumnNames.add("modifiedDate");
-		ctStrictColumnNames.add("layoutPageTemplateStructureId");
-		ctStrictColumnNames.add("segmentsExperienceId");
-		ctStrictColumnNames.add("data_");
-
-		_ctColumnNamesMap.put(
-			CTColumnResolutionType.CONTROL, ctControlColumnNames);
-		_ctColumnNamesMap.put(
-			CTColumnResolutionType.IGNORE, ctIgnoreColumnNames);
-		_ctColumnNamesMap.put(CTColumnResolutionType.MERGE, ctMergeColumnNames);
-		_ctColumnNamesMap.put(
-			CTColumnResolutionType.PK,
-			Collections.singleton("lPageTemplateStructureRelId"));
-		_ctColumnNamesMap.put(
-			CTColumnResolutionType.STRICT, ctStrictColumnNames);
-
-		_uniqueIndexColumnNames.add(new String[] {"uuid_", "groupId"});
-
-		_uniqueIndexColumnNames.add(
-			new String[] {
-				"layoutPageTemplateStructureId", "segmentsExperienceId"
-			});
 	}
 
 	/**
@@ -4169,9 +3838,6 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		super.setSessionFactory(sessionFactory);
 	}
-
-	@Reference
-	protected CTPersistenceHelper ctPersistenceHelper;
 
 	@Reference
 	protected EntityCache entityCache;

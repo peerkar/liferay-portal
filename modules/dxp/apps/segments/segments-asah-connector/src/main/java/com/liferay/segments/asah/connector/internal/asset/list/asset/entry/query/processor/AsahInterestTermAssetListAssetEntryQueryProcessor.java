@@ -21,7 +21,6 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
@@ -43,7 +42,7 @@ public class AsahInterestTermAssetListAssetEntryQueryProcessor
 
 	@Override
 	public void processAssetEntryQuery(
-		long companyId, String userId, UnicodeProperties unicodeProperties,
+		String userId, UnicodeProperties unicodeProperties,
 		AssetEntryQuery assetEntryQuery) {
 
 		if (Validator.isNull(userId)) {
@@ -59,31 +58,21 @@ public class AsahInterestTermAssetListAssetEntryQueryProcessor
 			return;
 		}
 
-		String[] interestTerms = _asahInterestTermProvider.getInterestTerms(
-			companyId, userId);
+		String terms = StringUtil.merge(
+			_asahInterestTermProvider.getInterestTerms(userId));
 
-		if (interestTerms.length == 0) {
+		if (Validator.isNull(terms)) {
 			return;
 		}
 
 		if (_log.isDebugEnabled()) {
 			_log.debug(
 				StringBundler.concat(
-					"Adding interest terms \"", StringUtil.merge(interestTerms),
+					"Adding interest terms \"", terms,
 					"\" to asset query for user ID ", userId));
 		}
 
-		assetEntryQuery.setAnyKeywords(interestTerms);
-	}
-
-	@Override
-	public void processAssetEntryQuery(
-		String userId, UnicodeProperties unicodeProperties,
-		AssetEntryQuery assetEntryQuery) {
-
-		processAssetEntryQuery(
-			_portal.getDefaultCompanyId(), userId, unicodeProperties,
-			assetEntryQuery);
+		assetEntryQuery.setKeywords(terms);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
@@ -91,8 +80,5 @@ public class AsahInterestTermAssetListAssetEntryQueryProcessor
 
 	@Reference
 	private AsahInterestTermProvider _asahInterestTermProvider;
-
-	@Reference
-	private Portal _portal;
 
 }

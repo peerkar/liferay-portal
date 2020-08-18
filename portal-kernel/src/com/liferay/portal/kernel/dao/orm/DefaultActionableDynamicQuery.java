@@ -328,16 +328,16 @@ public class DefaultActionableDynamicQuery implements ActionableDynamicQuery {
 
 			return TransactionInvokerUtil.invoke(transactionConfig, callable);
 		}
-		catch (Throwable throwable) {
-			if (throwable instanceof PortalException) {
-				throw (PortalException)throwable;
+		catch (Throwable t) {
+			if (t instanceof PortalException) {
+				throw (PortalException)t;
 			}
 
-			if (throwable instanceof SystemException) {
-				throw (SystemException)throwable;
+			if (t instanceof SystemException) {
+				throw (SystemException)t;
 			}
 
-			throw new SystemException(throwable);
+			throw new SystemException(t);
 		}
 	}
 

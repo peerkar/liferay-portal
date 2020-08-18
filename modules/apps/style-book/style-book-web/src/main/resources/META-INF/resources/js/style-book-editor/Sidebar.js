@@ -76,11 +76,10 @@ function SidebarContent() {
 			)}
 
 			{selectedCategory?.frontendTokenSets.map(
-				({frontendTokens, label, name}) => (
+				({frontendTokens, name}) => (
 					<FrontendTokenSet
 						frontendTokens={frontendTokens}
 						key={name}
-						label={label}
 						name={name}
 					/>
 				)

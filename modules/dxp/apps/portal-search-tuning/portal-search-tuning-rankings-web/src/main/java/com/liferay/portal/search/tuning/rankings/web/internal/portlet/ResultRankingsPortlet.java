@@ -73,9 +73,10 @@ public class ResultRankingsPortlet extends MVCPortlet {
 		RankingPortletDisplayContext rankingPortletDisplayContext =
 			new RankingPortletDisplayBuilder(
 				documentToRankingTranslator,
-				portal.getHttpServletRequest(renderRequest), language, portal,
-				queries, rankingIndexNameBuilder, sorts, renderRequest,
-				renderResponse, searchEngineAdapter, _searchEngineInformation
+				portal.getHttpServletRequest(renderRequest), indexNameBuilder,
+				language, portal, queries, rankingIndexNameBuilder, sorts,
+				renderRequest, renderResponse, searchEngineAdapter,
+				_searchEngineInformation
 			).build();
 
 		renderRequest.setAttribute(

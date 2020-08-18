@@ -12,10 +12,6 @@
  * details.
  */
 
-AUI = () => ({
-	use: (key, callback) => callback(key),
-});
-
 window.themeDisplay = {
 	...window.themeDisplay,
 	getDefaultLanguageId: () => 'en_US',
@@ -48,9 +44,4 @@ window.Liferay = {
 		getDefaultLanguageId: () => 'en_US',
 		getLanguageId: () => 'en_US',
 	},
-	Util: {
-		...window.Liferay.Util,
-		getLexiconIconTpl: (icon) => icon,
-	},
-	component: () => {},
 };

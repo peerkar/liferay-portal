@@ -18,6 +18,8 @@ import com.liferay.change.tracking.spi.reference.TableReferenceDefinition;
 import com.liferay.change.tracking.spi.reference.builder.ChildTableReferenceInfoBuilder;
 import com.liferay.change.tracking.spi.reference.builder.ParentTableReferenceInfoBuilder;
 import com.liferay.journal.model.JournalArticleResourceTable;
+import com.liferay.journal.model.JournalArticleTable;
+import com.liferay.journal.model.JournalFolderTable;
 import com.liferay.journal.service.persistence.JournalArticleResourcePersistence;
 import com.liferay.portal.kernel.service.persistence.BasePersistence;
 
@@ -35,6 +37,19 @@ public class JournalArticleResourceTableReferenceDefinition
 	public void defineChildTableReferences(
 		ChildTableReferenceInfoBuilder<JournalArticleResourceTable>
 			childTableReferenceInfoBuilder) {
+
+		childTableReferenceInfoBuilder.referenceInnerJoin(
+			fromStep -> fromStep.from(
+				JournalArticleTable.INSTANCE
+			).innerJoinON(
+				JournalArticleResourceTable.INSTANCE,
+				JournalArticleResourceTable.INSTANCE.groupId.eq(
+					JournalArticleTable.INSTANCE.groupId
+				).and(
+					JournalArticleTable.INSTANCE.articleId.eq(
+						JournalArticleResourceTable.INSTANCE.articleId)
+				)
+			));
 	}
 
 	@Override
@@ -43,7 +58,20 @@ public class JournalArticleResourceTableReferenceDefinition
 			parentTableReferenceInfoBuilder) {
 
 		parentTableReferenceInfoBuilder.groupedModel(
-			JournalArticleResourceTable.INSTANCE);
+			JournalArticleResourceTable.INSTANCE
+		).referenceInnerJoin(
+			fromStep -> fromStep.from(
+				JournalFolderTable.INSTANCE
+			).innerJoinON(
+				JournalArticleTable.INSTANCE,
+				JournalArticleTable.INSTANCE.folderId.eq(
+					JournalFolderTable.INSTANCE.folderId)
+			).innerJoinON(
+				JournalArticleResourceTable.INSTANCE,
+				JournalArticleResourceTable.INSTANCE.resourcePrimKey.eq(
+					JournalArticleTable.INSTANCE.resourcePrimKey)
+			)
+		);
 	}
 
 	@Override

@@ -228,6 +228,8 @@ public class MirrorsGetTask extends Task {
 		}
 
 		if (!localCacheFile.exists()) {
+			URL sourceURL = null;
+
 			String mirrorsHostname = getMirrorsHostname();
 
 			if (_tryLocalNetwork && !mirrorsHostname.isEmpty()) {
@@ -240,7 +242,7 @@ public class MirrorsGetTask extends Task {
 				sb.append("/");
 				sb.append(_fileName);
 
-				URL sourceURL = new URL(sb.toString());
+				sourceURL = new URL(sb.toString());
 
 				try {
 					downloadFile(sourceURL, localCacheFile, _retries);

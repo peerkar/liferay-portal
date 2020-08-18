@@ -28,12 +28,12 @@ public class OrganizationParentException extends PortalException {
 		super(msg);
 	}
 
-	public OrganizationParentException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public OrganizationParentException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public OrganizationParentException(Throwable throwable) {
-		super(throwable);
+	public OrganizationParentException(Throwable cause) {
+		super(cause);
 	}
 
 	public static class MustBeRootable extends OrganizationParentException {

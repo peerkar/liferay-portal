@@ -142,9 +142,9 @@ public class TestExecutorRunnable implements Runnable {
 
 						statement.evaluate();
 					}
-					catch (Throwable throwable) {
+					catch (Throwable t) {
 						_processThrowable(
-							false, throwable, objectOutputStream, description);
+							false, t, objectOutputStream, description);
 					}
 					finally {
 						objectOutputStream.writeObject(
@@ -180,8 +180,8 @@ public class TestExecutorRunnable implements Runnable {
 
 			statement.evaluate();
 		}
-		catch (Throwable throwable) {
-			_processThrowable(true, throwable, objectOutputStream, description);
+		catch (Throwable t) {
+			_processThrowable(true, t, objectOutputStream, description);
 		}
 	}
 
@@ -192,10 +192,10 @@ public class TestExecutorRunnable implements Runnable {
 			return throwable;
 		}
 
-		Throwable[] suppressionThrowables = throwable.getSuppressed();
+		Throwable[] suppressions = throwable.getSuppressed();
 
-		for (Throwable suppressionThrowable : suppressionThrowables) {
-			return _findAssumptionViolatedException(suppressionThrowable);
+		for (Throwable suppression : suppressions) {
+			return _findAssumptionViolatedException(suppression);
 		}
 
 		return null;
@@ -228,19 +228,19 @@ public class TestExecutorRunnable implements Runnable {
 
 				currentThread.setContextClassLoader(clazz.getClassLoader());
 
-				Throwable throwable1 = null;
+				Throwable throwable = null;
 
 				try {
 					method.invoke(target);
 				}
-				catch (Throwable throwable2) {
-					throwable1 = throwable2;
+				catch (Throwable t) {
+					throwable = t;
 				}
 				finally {
 					currentThread.setContextClassLoader(classLoader);
 				}
 
-				if (throwable1 == null) {
+				if (throwable == null) {
 					Class<?> throwableClass = _getExpectedExceptionClass(
 						method);
 
@@ -250,15 +250,15 @@ public class TestExecutorRunnable implements Runnable {
 					}
 				}
 				else {
-					if (throwable1 instanceof InvocationTargetException) {
-						throwable1 = throwable1.getCause();
+					if (throwable instanceof InvocationTargetException) {
+						throwable = throwable.getCause();
 					}
 
-					if (throwable1 instanceof AssumptionViolatedException) {
-						throw throwable1;
+					if (throwable instanceof AssumptionViolatedException) {
+						throw throwable;
 					}
 
-					_processExpectedException(throwable1, method);
+					_processExpectedException(throwable, method);
 				}
 			}
 
@@ -336,11 +336,8 @@ public class TestExecutorRunnable implements Runnable {
 			MultipleFailureException multipleFailureException =
 				(MultipleFailureException)throwable;
 
-			for (Throwable curThrowable :
-					multipleFailureException.getFailures()) {
-
-				_processThrowable(
-					objectOutputStream, description, curThrowable);
+			for (Throwable t : multipleFailureException.getFailures()) {
+				_processThrowable(objectOutputStream, description, t);
 			}
 		}
 		else {
@@ -352,22 +349,22 @@ public class TestExecutorRunnable implements Runnable {
 
 	private static void _processThrowable(
 			ObjectOutputStream objectOutputStream, Description description,
-			Throwable throwable)
+			Throwable t)
 		throws IOException {
 
 		try {
 			objectOutputStream.writeObject(
-				RunNotifierCommand.testFailure(description, throwable));
+				RunNotifierCommand.testFailure(description, t));
 		}
 		catch (NotSerializableException notSerializableException) {
 			objectOutputStream.reset();
 
-			Class<? extends Throwable> clazz = throwable.getClass();
+			Class<? extends Throwable> clazz = t.getClass();
 
 			Exception exception = new Exception(
-				clazz.getName() + ": " + throwable.getMessage());
+				clazz.getName() + ": " + t.getMessage());
 
-			exception.setStackTrace(throwable.getStackTrace());
+			exception.setStackTrace(t.getStackTrace());
 
 			notSerializableException.initCause(exception);
 

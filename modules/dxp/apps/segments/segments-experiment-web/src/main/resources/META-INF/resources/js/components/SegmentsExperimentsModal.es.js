@@ -85,8 +85,7 @@ function SegmentsExperimentsModal({
 							<label className="w100">
 								{Liferay.Language.get('select-goal')}
 								<ClayIcon
-									className="lexicon-icon-sm ml-1 reference-mark text-warning"
-									style={{verticalAlign: 'super'}}
+									className="ml-1 reference-mark text-warning"
 									symbol="asterisk"
 								/>
 								<ClaySelect

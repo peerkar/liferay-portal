@@ -64,10 +64,10 @@ public class ClassLoaderProxy {
 			throw translateThrowable(
 				invocationTargetException.getCause(), contextClassLoader);
 		}
-		catch (Throwable throwable) {
-			_log.error(throwable, throwable);
+		catch (Throwable t) {
+			_log.error(t, t);
 
-			throw throwable;
+			throw t;
 		}
 		finally {
 			currentThread.setContextClassLoader(contextClassLoader);

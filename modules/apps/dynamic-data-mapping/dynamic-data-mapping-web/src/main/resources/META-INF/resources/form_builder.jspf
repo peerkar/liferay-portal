@@ -117,6 +117,7 @@ for (Locale availableLocale : LanguageUtil.getAvailableLocales(themeDisplay.getS
 	var displayWarning = function (message) {
 		Liferay.Util.openToast({
 			message: message,
+			title: Liferay.Language.get('warning'),
 			type: 'warning',
 		});
 	};

@@ -104,7 +104,7 @@ const TranslationItem = ({
 			) : (
 				<span>{languageLabel}</span>
 			)}
-			<span className="dropdown-item-indicator-end page-editor__translation__label-wrapper">
+			<span className="dropdown-item-indicator-end">
 				<div
 					className={classNames(
 						'page-editor__translation__label label',
@@ -180,7 +180,6 @@ export default function Translation({
 			onActiveChange={setActive}
 			trigger={
 				<ClayButton
-					aria-pressed={active}
 					className="btn-monospaced"
 					displayType="secondary"
 					small

@@ -19,15 +19,13 @@ import java.util.Map;
  * This class is used by SOAP remote services<#if entity.hasRemoteService()>, specifically {@link ${packagePath}.service.http.${entity.name}ServiceSoap}</#if>.
  *
  * @author ${author}
-<#if serviceBuilder.isVersionGTE_7_3_0()>
- * @deprecated As of Athanasius (7.3.x), with no direct replacement
-<#elseif classDeprecated>
+<#if classDeprecated>
  * @deprecated ${classDeprecatedComment}
 </#if>
  * @generated
  */
 
-<#if serviceBuilder.isVersionGTE_7_3_0() || classDeprecated>
+<#if classDeprecated>
 	@Deprecated
 </#if>
 public class ${entity.name}Soap implements Serializable {

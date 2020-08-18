@@ -28,12 +28,12 @@ public class DuplicateCategoryPropertyException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateCategoryPropertyException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public DuplicateCategoryPropertyException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public DuplicateCategoryPropertyException(Throwable throwable) {
-		super(throwable);
+	public DuplicateCategoryPropertyException(Throwable cause) {
+		super(cause);
 	}
 
 }

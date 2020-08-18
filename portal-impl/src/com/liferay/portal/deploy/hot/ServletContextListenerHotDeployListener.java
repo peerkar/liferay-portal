@@ -36,10 +36,10 @@ public class ServletContextListenerHotDeployListener
 		try {
 			doInvokeDeploy(hotDeployEvent);
 		}
-		catch (Throwable throwable) {
+		catch (Throwable t) {
 			throwHotDeployException(
 				hotDeployEvent,
-				"Error registering servlet context listeners for ", throwable);
+				"Error registering servlet context listeners for ", t);
 		}
 	}
 
@@ -50,11 +50,10 @@ public class ServletContextListenerHotDeployListener
 		try {
 			doInvokeUndeploy(hotDeployEvent);
 		}
-		catch (Throwable throwable) {
+		catch (Throwable t) {
 			throwHotDeployException(
 				hotDeployEvent,
-				"Error unregistering servlet context listeners for ",
-				throwable);
+				"Error unregistering servlet context listeners for ", t);
 		}
 	}
 

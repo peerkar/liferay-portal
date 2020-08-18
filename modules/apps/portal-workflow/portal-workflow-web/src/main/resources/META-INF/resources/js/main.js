@@ -163,11 +163,13 @@ AUI.add(
 				for (var index in elementsList) {
 					var element = elementsList[parseInt(index, 10)];
 
-					if (element.classList.contains('d-none')) {
-						element.classList.remove('d-none');
+					var hidden = element.getAttribute('hidden');
+
+					if (hidden) {
+						element.removeAttribute('hidden');
 					}
 					else {
-						element.classList.add('d-none');
+						element.setAttribute('hidden', true);
 					}
 				}
 			},
@@ -241,7 +243,7 @@ AUI.add(
 									cssClass: 'close',
 									discardDefaultButtonCssClasses: true,
 									labelHTML:
-										'<svg class="lexicon-icon" focusable="false"><use href="' +
+										'<svg class="lexicon-icon" focusable="false"><use data-href="' +
 										Liferay.ThemeDisplay.getPathThemeImages() +
 										'/lexicon/icons.svg#times" /><title>' +
 										Liferay.Language.get('close') +
@@ -301,7 +303,7 @@ AUI.add(
 									cssClass: 'close',
 									discardDefaultButtonCssClasses: true,
 									labelHTML:
-										'<svg class="lexicon-icon" focusable="false"><use href="' +
+										'<svg class="lexicon-icon" focusable="false"><use data-href="' +
 										Liferay.ThemeDisplay.getPathThemeImages() +
 										'/lexicon/icons.svg#times" /><title>' +
 										Liferay.Language.get('close') +
@@ -355,7 +357,7 @@ AUI.add(
 									cssClass: 'close',
 									discardDefaultButtonCssClasses: true,
 									labelHTML:
-										'<svg class="lexicon-icon" focusable="false"><use href="' +
+										'<svg class="lexicon-icon" focusable="false"><use data-href="' +
 										Liferay.ThemeDisplay.getPathThemeImages() +
 										'/lexicon/icons.svg#times" /><title>' +
 										Liferay.Language.get('close') +
@@ -392,6 +394,7 @@ AUI.add(
 				Liferay.Util.openToast({
 					container: document.querySelector('.portlet-column'),
 					message: successMessage,
+					title: Liferay.Language.get('success'),
 					type: 'success',
 				});
 			},
@@ -417,6 +420,7 @@ AUI.add(
 				Liferay.Util.openToast({
 					container: document.querySelector('.lfr-alert-container'),
 					message: successMessage,
+					messageType: 'html',
 				});
 			},
 

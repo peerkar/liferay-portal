@@ -312,7 +312,9 @@ public class UserIndexerIndexedFieldsByAssociationTest {
 		Document document = stream.findFirst(
 		).get();
 
-		return indexedFieldsFixture.postProcessDocument(document);
+		indexedFieldsFixture.postProcessDocument(document);
+
+		return document;
 	}
 
 	protected GroupSearchFixture groupSearchFixture;

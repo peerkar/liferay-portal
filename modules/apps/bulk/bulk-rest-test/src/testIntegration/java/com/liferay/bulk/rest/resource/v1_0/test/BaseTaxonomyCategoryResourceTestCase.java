@@ -247,9 +247,7 @@ public abstract class BaseTaxonomyCategoryResourceTestCase {
 		}
 	}
 
-	protected void assertValid(TaxonomyCategory taxonomyCategory)
-		throws Exception {
-
+	protected void assertValid(TaxonomyCategory taxonomyCategory) {
 		boolean valid = true;
 
 		for (String additionalAssertFieldName :

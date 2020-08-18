@@ -28,12 +28,12 @@ public class RequiredMessageException extends PortalException {
 		super(msg);
 	}
 
-	public RequiredMessageException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public RequiredMessageException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public RequiredMessageException(Throwable throwable) {
-		super(throwable);
+	public RequiredMessageException(Throwable cause) {
+		super(cause);
 	}
 
 }

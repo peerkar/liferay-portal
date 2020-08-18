@@ -1,0 +1,74 @@
+<html>
+<head>
+<title>LexiconCard</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">LexiconCard</td></tr>
+</thead>
+<tbody>
+<tr>
+	<td>CARD</td>
+	<td>//div[contains(@class,'card')][contains(.,'${key_card}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CARD_TITLE</td>
+	<td>//div[contains(@class,'card')][contains(.,'${key_card}')]//*[contains(@class,'card-title')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CARD_TITLE_LINK</td>
+	<td>//div[contains(@class,'card')][contains(.,'${key_card}')]//*[contains(@class,'card-title')]//a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CARD_SUBTITLE</td>
+	<td>//div[contains(@class,'card')][contains(.,'${key_card}')]//div[contains(@class,'card-subtitle')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CARD_LABEL</td>
+	<td>//div[contains(@class,'card')][contains(.,'${key_card}')]//span[contains(@class,'label-item')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CARD_CHECKBOX</td>
+	<td>//div[contains(@class,'card')][contains(.,'${key_card}')]//input[@type='checkbox']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CARD_ELLIPSIS</td>
+	<td>//div[contains(@class,'card')][contains(.,'${key_card}')]//button[contains(@class,'dropdown-toggle')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CARD_SELECTED</td>
+	<td>//li[contains(@class,'active')]//div[contains(@class,'card')][contains(.,'${key_card}')] | //div[contains(@class,'card')][contains(@class,'active')][contains(.,'${key_card}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CARD_STICKER</td>
+	<td>//div[contains(@class,'card')][contains(.,'${key_card}')]//span[contains(@class,'sticker')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CARD_THUMBNAIL</td>
+	<td>//div[contains(@class,'card')][contains(.,'${key_card}')]//img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CARD_CUSTOM_LOGO</td>
+	<td>//div[contains(@class,'card')][contains(.,'${key_card}')]//span[contains(@class,'sticker')]/img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CARD_RADIO</td>
+	<td>//div[contains(@class,'card')][contains(.,'${key_card}')]//input[@type='radio']</td>
+	<td></td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

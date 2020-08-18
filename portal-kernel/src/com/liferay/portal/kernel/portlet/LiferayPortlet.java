@@ -15,7 +15,6 @@
 package com.liferay.portal.kernel.portlet;
 
 import com.liferay.petra.string.CharPool;
-import com.liferay.portal.kernel.change.tracking.CTTransactionException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -111,18 +110,10 @@ public class LiferayPortlet extends GenericPortlet {
 			}
 		}
 		catch (PortletException portletException) {
-			Throwable throwable = portletException.getCause();
+			Throwable cause = portletException.getCause();
 
-			if (throwable instanceof CTTransactionException) {
-				_log.error(throwable, throwable);
-
-				SessionErrors.add(
-					PortalUtil.getHttpServletRequest(actionRequest),
-					throwable.getClass(), throwable);
-			}
-			else if (isSessionErrorException(throwable)) {
-				SessionErrors.add(
-					actionRequest, throwable.getClass(), throwable);
+			if (isSessionErrorException(cause)) {
+				SessionErrors.add(actionRequest, cause.getClass(), cause);
 			}
 			else {
 				throw portletException;
@@ -195,10 +186,10 @@ public class LiferayPortlet extends GenericPortlet {
 			}
 		}
 		catch (InvocationTargetException invocationTargetException) {
-			Throwable throwable = invocationTargetException.getCause();
+			Throwable cause = invocationTargetException.getCause();
 
-			if (throwable != null) {
-				throw new PortletException(throwable);
+			if (cause != null) {
+				throw new PortletException(cause);
 			}
 
 			throw new PortletException(invocationTargetException);
@@ -240,10 +231,10 @@ public class LiferayPortlet extends GenericPortlet {
 			}
 		}
 		catch (InvocationTargetException invocationTargetException) {
-			Throwable throwable = invocationTargetException.getCause();
+			Throwable cause = invocationTargetException.getCause();
 
-			if (throwable != null) {
-				throw new PortletException(throwable);
+			if (cause != null) {
+				throw new PortletException(cause);
 			}
 
 			throw new PortletException(invocationTargetException);
@@ -574,12 +565,12 @@ public class LiferayPortlet extends GenericPortlet {
 		return isProcessPortletRequest(resourceRequest);
 	}
 
-	protected boolean isSessionErrorException(Throwable throwable) {
+	protected boolean isSessionErrorException(Throwable cause) {
 		if (_log.isDebugEnabled()) {
-			_log.debug(throwable, throwable);
+			_log.debug(cause, cause);
 		}
 
-		if (throwable instanceof PortalException) {
+		if (cause instanceof PortalException) {
 			return true;
 		}
 

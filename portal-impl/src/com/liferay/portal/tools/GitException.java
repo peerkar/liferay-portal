@@ -28,12 +28,12 @@ public class GitException extends PortalException {
 		super(msg);
 	}
 
-	public GitException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public GitException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public GitException(Throwable throwable) {
-		super(throwable);
+	public GitException(Throwable cause) {
+		super(cause);
 	}
 
 }

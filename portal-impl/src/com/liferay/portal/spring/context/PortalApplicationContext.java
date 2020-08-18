@@ -92,11 +92,11 @@ public class PortalApplicationContext extends XmlWebApplicationContext {
 				xmlBeanDefinitionReader.loadBeanDefinitions(configLocation);
 			}
 			catch (Exception exception) {
-				Throwable throwable = exception.getCause();
+				Throwable cause = exception.getCause();
 
-				if (throwable instanceof FileNotFoundException) {
+				if (cause instanceof FileNotFoundException) {
 					if (_log.isWarnEnabled()) {
-						_log.warn(throwable.getMessage());
+						_log.warn(cause.getMessage());
 					}
 				}
 				else {

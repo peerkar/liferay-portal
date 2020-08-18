@@ -1,0 +1,3 @@
+Bundle-Name: Liferay Portal Search Tuning GSearch IPStack
+Bundle-SymbolicName: com.liferay.portal.search.tuning.gsearch.ipstack
+Bundle-Version: 1.0.0

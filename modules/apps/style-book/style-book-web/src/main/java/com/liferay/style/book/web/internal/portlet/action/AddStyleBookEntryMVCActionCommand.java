@@ -46,7 +46,7 @@ import org.osgi.service.component.annotations.Reference;
 	immediate = true,
 	property = {
 		"javax.portlet.name=" + StyleBookPortletKeys.STYLE_BOOK,
-		"mvc.command.name=/style_book/add_style_book_entry"
+		"mvc.command.name=/style_book/style_book_entry"
 	},
 	service = MVCActionCommand.class
 )
@@ -57,15 +57,21 @@ public class AddStyleBookEntryMVCActionCommand extends BaseMVCActionCommand {
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
+		String name = ParamUtil.getString(actionRequest, "name");
+
 		try {
-			StyleBookEntry styleBookEntry = _addStyleBookEntry(actionRequest);
+			ServiceContext serviceContext = ServiceContextFactory.getInstance(
+				actionRequest);
+
+			StyleBookEntry styleBookEntry =
+				_styleBookEntryService.addStyleBookEntry(
+					serviceContext.getScopeGroupId(), name, StringPool.BLANK,
+					serviceContext);
 
 			JSONObject jsonObject = JSONUtil.put(
 				"redirectURL", getRedirectURL(actionResponse, styleBookEntry));
 
-			if (SessionErrors.contains(
-					actionRequest, "styleBookEntryNameInvalid")) {
-
+			if (SessionErrors.contains(actionRequest, "fragmentNameInvalid")) {
 				addSuccessMessage(actionRequest, actionResponse);
 			}
 
@@ -73,7 +79,7 @@ public class AddStyleBookEntryMVCActionCommand extends BaseMVCActionCommand {
 				actionRequest, actionResponse, jsonObject);
 		}
 		catch (PortalException portalException) {
-			SessionErrors.add(actionRequest, "styleBookEntryNameInvalid");
+			SessionErrors.add(actionRequest, "fragmentNameInvalid");
 
 			hideDefaultErrorMessage(actionRequest);
 
@@ -97,19 +103,6 @@ public class AddStyleBookEntryMVCActionCommand extends BaseMVCActionCommand {
 			String.valueOf(styleBookEntry.getStyleBookEntryId()));
 
 		return portletURL.toString();
-	}
-
-	private StyleBookEntry _addStyleBookEntry(ActionRequest actionRequest)
-		throws PortalException {
-
-		String name = ParamUtil.getString(actionRequest, "name");
-
-		ServiceContext serviceContext = ServiceContextFactory.getInstance(
-			actionRequest);
-
-		return _styleBookEntryService.addStyleBookEntry(
-			serviceContext.getScopeGroupId(), name, StringPool.BLANK,
-			serviceContext);
 	}
 
 	@Reference

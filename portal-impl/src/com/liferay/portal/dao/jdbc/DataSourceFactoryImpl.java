@@ -35,6 +35,7 @@ import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
 import com.liferay.portal.kernel.util.PropertiesUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.ServerDetector;
+import com.liferay.portal.kernel.util.SortedProperties;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
@@ -161,7 +162,10 @@ public class DataSourceFactoryImpl implements DataSourceFactory {
 		if (_log.isDebugEnabled()) {
 			_log.debug("Data source properties:\n");
 
-			_log.debug(PropertiesUtil.toString(properties));
+			SortedProperties sortedProperties = new SortedProperties(
+				properties);
+
+			_log.debug(PropertiesUtil.toString(sortedProperties));
 		}
 
 		DataSource dataSource = null;

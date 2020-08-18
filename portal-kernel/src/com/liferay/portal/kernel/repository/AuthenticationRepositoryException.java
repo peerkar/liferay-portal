@@ -26,12 +26,12 @@ public class AuthenticationRepositoryException extends RepositoryException {
 		super(msg);
 	}
 
-	public AuthenticationRepositoryException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public AuthenticationRepositoryException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public AuthenticationRepositoryException(Throwable throwable) {
-		super(throwable);
+	public AuthenticationRepositoryException(Throwable cause) {
+		super(cause);
 	}
 
 }

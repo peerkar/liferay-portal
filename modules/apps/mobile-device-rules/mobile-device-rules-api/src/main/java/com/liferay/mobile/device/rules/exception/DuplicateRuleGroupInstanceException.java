@@ -28,14 +28,12 @@ public class DuplicateRuleGroupInstanceException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateRuleGroupInstanceException(
-		String msg, Throwable throwable) {
-
-		super(msg, throwable);
+	public DuplicateRuleGroupInstanceException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public DuplicateRuleGroupInstanceException(Throwable throwable) {
-		super(throwable);
+	public DuplicateRuleGroupInstanceException(Throwable cause) {
+		super(cause);
 	}
 
 }

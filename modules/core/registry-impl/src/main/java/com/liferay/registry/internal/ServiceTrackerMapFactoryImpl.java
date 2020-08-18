@@ -65,7 +65,7 @@ public class ServiceTrackerMapFactoryImpl implements ServiceTrackerMapFactory {
 				try {
 					serviceTrackerMap.close();
 				}
-				catch (Throwable throwable) {
+				catch (Throwable t) {
 				}
 			}
 		}

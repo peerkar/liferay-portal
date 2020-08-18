@@ -144,7 +144,7 @@ definition {
 
 	@priority = "5"
 	test SchedulePublishToLiveWithEventAndResource {
-		property portal.acceptance = "quarantine";
+		property portal.acceptance = "true";
 		property testray.component.names = "Training";
 
 		Navigator.openSiteURL(siteName = "Site Name");

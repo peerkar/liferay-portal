@@ -183,7 +183,9 @@ definition {
 			configurationName = "Servers",
 			configurationScope = "Virtual Instance Scope");
 
-		Button.clickAdd();
+		AssertClick(
+			locator1 = "Button#ADD",
+			value1 = "Add");
 
 		SystemSettings.editSecurityCredential(securityCredential = "123456");
 	}

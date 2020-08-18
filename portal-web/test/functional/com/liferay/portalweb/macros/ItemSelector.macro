@@ -35,7 +35,9 @@ definition {
 				key_text = "Add",
 				locator1 = "Button#ANY_ENABLED");
 
-			Button.clickAdd();
+			AssertClick(
+				locator1 = "Button#ADD",
+				value1 = "Add");
 		}
 		else {
 			AssertElementPresent.pauseAssertVisible(locator1 = "ItemSelector#URL_IMAGE_SOURCE");
@@ -44,11 +46,11 @@ definition {
 				Click(locator1 = "ItemSelector#URL_IMAGE_EXAMPLE");
 			}
 
-			MouseOver(
-				key_text = "Add",
-				locator1 = "Button#ANY");
+			MouseOver(locator1 = "Button#ADD");
 
-			Button.clickAdd();
+			AssertClick(
+				locator1 = "Button#ADD",
+				value1 = "Add");
 		}
 
 		SelectFrameTop(value1 = "relative=top");

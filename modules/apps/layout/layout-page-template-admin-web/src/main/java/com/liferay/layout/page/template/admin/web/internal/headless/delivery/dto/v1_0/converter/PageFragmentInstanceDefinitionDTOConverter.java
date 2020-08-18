@@ -40,7 +40,7 @@ import com.liferay.headless.delivery.dto.v1_0.WidgetInstance;
 import com.liferay.info.display.contributor.InfoDisplayContributor;
 import com.liferay.info.display.contributor.InfoDisplayContributorTracker;
 import com.liferay.info.display.contributor.InfoDisplayObjectProvider;
-import com.liferay.layout.util.structure.FragmentStyledLayoutStructureItem;
+import com.liferay.layout.util.structure.FragmentLayoutStructureItem;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -78,18 +78,18 @@ import org.osgi.service.component.annotations.Reference;
 public class PageFragmentInstanceDefinitionDTOConverter {
 
 	public PageFragmentInstanceDefinition toDTO(
-		FragmentStyledLayoutStructureItem fragmentStyledLayoutStructureItem) {
+		FragmentLayoutStructureItem fragmentLayoutStructureItem) {
 
-		return toDTO(fragmentStyledLayoutStructureItem, true, true);
+		return toDTO(fragmentLayoutStructureItem, true, true);
 	}
 
 	public PageFragmentInstanceDefinition toDTO(
-		FragmentStyledLayoutStructureItem fragmentStyledLayoutStructureItem,
+		FragmentLayoutStructureItem fragmentLayoutStructureItem,
 		boolean saveInlineContent, boolean saveMapping) {
 
 		FragmentEntryLink fragmentEntryLink =
 			_fragmentEntryLinkLocalService.fetchFragmentEntryLink(
-				fragmentStyledLayoutStructureItem.getFragmentEntryLinkId());
+				fragmentLayoutStructureItem.getFragmentEntryLinkId());
 
 		if (fragmentEntryLink == null) {
 			return null;

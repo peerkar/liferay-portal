@@ -1253,39 +1253,35 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 	private void _installConfigs(ClassLoader classLoader) throws Exception {
 		BundleContext bundleContext = _framework.getBundleContext();
 
-		Class<?> configurationFileInstallerClass = classLoader.loadClass(
-			"com.liferay.portal.file.install.internal.configuration." +
-				"ConfigurationFileInstaller");
+		Class<?> configInstallerClass = classLoader.loadClass(
+			"com.liferay.portal.file.install.internal.ConfigInstaller");
 
-		Method method = configurationFileInstallerClass.getDeclaredMethod(
+		Method method = configInstallerClass.getDeclaredMethod(
 			"transformURL", File.class);
 
 		Constructor<?> constructor =
-			configurationFileInstallerClass.getDeclaredConstructor(
+			configInstallerClass.getDeclaredConstructor(
+				BundleContext.class,
 				classLoader.loadClass("org.osgi.service.cm.ConfigurationAdmin"),
-				String.class);
+				classLoader.loadClass(
+					"com.liferay.portal.file.install.internal." +
+						"FileInstallImplBundleActivator"));
 
 		constructor.setAccessible(true);
 
-		String encoding = bundleContext.getProperty(
-			"file.install.configEncoding");
-
-		if (encoding == null) {
-			encoding = StringPool.UTF8;
-		}
-
-		Object configurationFileInstaller = constructor.newInstance(
+		Object configInstaller = constructor.newInstance(
+			bundleContext,
 			bundleContext.getService(
 				bundleContext.getServiceReference(
 					"org.osgi.service.cm.ConfigurationAdmin")),
-			encoding);
+			null);
 
 		File dir = new File(PropsValues.MODULE_FRAMEWORK_CONFIGS_DIR);
 
 		dir = dir.getCanonicalFile();
 
 		for (File file : _listConfigs(dir)) {
-			method.invoke(configurationFileInstaller, file);
+			method.invoke(configInstaller, file);
 		}
 	}
 
@@ -1471,8 +1467,8 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 				throw frameworkEvent.getThrowable();
 			}
 		}
-		catch (Throwable throwable) {
-			ReflectionUtil.throwException(throwable);
+		catch (Throwable t) {
+			ReflectionUtil.throwException(t);
 		}
 	}
 

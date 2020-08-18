@@ -50,7 +50,6 @@ public class TearDownPoshiElement extends CommandPoshiElement {
 	}
 
 	protected TearDownPoshiElement() {
-		super(_ELEMENT_NAME);
 	}
 
 	protected TearDownPoshiElement(Element element) {

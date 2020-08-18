@@ -96,10 +96,10 @@ public class ServiceTrackerCustomizerFactory {
 
 					};
 				}
-				catch (Throwable throwable) {
+				catch (Throwable t) {
 					bundleContext.ungetService(serviceReference);
 
-					throw throwable;
+					throw t;
 				}
 			}
 

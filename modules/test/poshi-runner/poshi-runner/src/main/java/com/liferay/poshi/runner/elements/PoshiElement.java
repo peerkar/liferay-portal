@@ -49,8 +49,8 @@ import org.dom4j.tree.DefaultElement;
 public abstract class PoshiElement
 	extends DefaultElement implements PoshiNode<Element, PoshiElement> {
 
-	public PoshiElement(String name) {
-		super(name);
+	public PoshiElement() {
+		super("");
 	}
 
 	@Override
@@ -174,20 +174,6 @@ public abstract class PoshiElement
 	@Override
 	public void setPoshiScript(String poshiScript) {
 		_poshiScript = poshiScript;
-	}
-
-	public List<PoshiElement> toPoshiElements(List<?> list) {
-		if (list == null) {
-			return null;
-		}
-
-		List<PoshiElement> poshiElements = new ArrayList<>(list.size());
-
-		for (Object object : list) {
-			poshiElements.add((PoshiElement)object);
-		}
-
-		return poshiElements;
 	}
 
 	@Override
@@ -1033,6 +1019,20 @@ public abstract class PoshiElement
 		}
 
 		return poshiElementAttributes;
+	}
+
+	protected List<PoshiElement> toPoshiElements(List<?> list) {
+		if (list == null) {
+			return null;
+		}
+
+		List<PoshiElement> poshiElements = new ArrayList<>(list.size());
+
+		for (Object object : list) {
+			poshiElements.add((PoshiElement)object);
+		}
+
+		return poshiElements;
 	}
 
 	protected List<PoshiNode<?, ?>> toPoshiNodes(List<?> list) {

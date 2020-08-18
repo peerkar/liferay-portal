@@ -105,9 +105,9 @@ public class ClusterLinkPortalCacheClusterChannel
 				catch (InterruptedException interruptedException) {
 				}
 			}
-			catch (Throwable throwable) {
+			catch (Throwable t) {
 				if (_log.isWarnEnabled()) {
-					_log.warn("Please fix the unexpected throwable", throwable);
+					_log.warn("Please fix the unexpected throwable", t);
 				}
 			}
 		}

@@ -25,14 +25,12 @@ public class ContentDashboardItemActionException extends PortalException {
 		super(msg);
 	}
 
-	public ContentDashboardItemActionException(
-		String msg, Throwable throwable) {
-
-		super(msg, throwable);
+	public ContentDashboardItemActionException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public ContentDashboardItemActionException(Throwable throwable) {
-		super(throwable);
+	public ContentDashboardItemActionException(Throwable cause) {
+		super(cause);
 	}
 
 }

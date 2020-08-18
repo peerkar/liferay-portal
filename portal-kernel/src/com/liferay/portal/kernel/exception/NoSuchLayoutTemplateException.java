@@ -26,12 +26,12 @@ public class NoSuchLayoutTemplateException extends PortalException {
 		super(msg);
 	}
 
-	public NoSuchLayoutTemplateException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public NoSuchLayoutTemplateException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NoSuchLayoutTemplateException(Throwable throwable) {
-		super(throwable);
+	public NoSuchLayoutTemplateException(Throwable cause) {
+		super(cause);
 	}
 
 }

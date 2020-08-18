@@ -57,10 +57,8 @@ import java.rmi.RemoteException;
  *
  * @author Edward C. Han
  * @see MDRRuleGroupInstanceServiceHttp
- * @deprecated As of Athanasius (7.3.x), with no direct replacement
  * @generated
  */
-@Deprecated
 public class MDRRuleGroupInstanceServiceSoap {
 
 	public static com.liferay.mobile.device.rules.model.MDRRuleGroupInstanceSoap

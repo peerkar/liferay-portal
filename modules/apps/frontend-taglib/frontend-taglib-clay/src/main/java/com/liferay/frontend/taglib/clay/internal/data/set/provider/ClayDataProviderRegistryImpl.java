@@ -41,17 +41,13 @@ public class ClayDataProviderRegistryImpl
 	implements ClayDataSetProviderRegistry {
 
 	@Override
-	public ClayDataSetDataProvider getClayDataSetProvider(
-		String clayDataProviderKey) {
-
+	public ClayDataSetDataProvider getClayDataSetProvider(String key) {
 		ServiceWrapper<ClayDataSetDataProvider> clayDataProviderServiceWrapper =
-			_serviceTrackerMap.getService(clayDataProviderKey);
+			_serviceTrackerMap.getService(key);
 
 		if (clayDataProviderServiceWrapper == null) {
 			if (_log.isDebugEnabled()) {
-				_log.debug(
-					"No Clay data provider is associated with " +
-						clayDataProviderKey);
+				_log.debug("No Clay data provider registered with key " + key);
 			}
 
 			return null;

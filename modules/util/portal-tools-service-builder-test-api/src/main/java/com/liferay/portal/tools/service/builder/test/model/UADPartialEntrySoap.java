@@ -23,10 +23,8 @@ import java.util.List;
  * This class is used by SOAP remote services, specifically {@link com.liferay.portal.tools.service.builder.test.service.http.UADPartialEntryServiceSoap}.
  *
  * @author Brian Wing Shun Chan
- * @deprecated As of Athanasius (7.3.x), with no direct replacement
  * @generated
  */
-@Deprecated
 public class UADPartialEntrySoap implements Serializable {
 
 	public static UADPartialEntrySoap toSoapModel(UADPartialEntry model) {

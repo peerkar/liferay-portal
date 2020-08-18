@@ -28,12 +28,12 @@ public class MemberRequestAlreadyUsedException extends PortalException {
 		super(msg);
 	}
 
-	public MemberRequestAlreadyUsedException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public MemberRequestAlreadyUsedException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public MemberRequestAlreadyUsedException(Throwable throwable) {
-		super(throwable);
+	public MemberRequestAlreadyUsedException(Throwable cause) {
+		super(cause);
 	}
 
 }

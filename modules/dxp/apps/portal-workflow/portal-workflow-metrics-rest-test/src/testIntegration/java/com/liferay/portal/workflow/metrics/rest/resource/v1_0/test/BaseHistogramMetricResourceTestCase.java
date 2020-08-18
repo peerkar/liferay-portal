@@ -256,9 +256,7 @@ public abstract class BaseHistogramMetricResourceTestCase {
 		}
 	}
 
-	protected void assertValid(HistogramMetric histogramMetric)
-		throws Exception {
-
+	protected void assertValid(HistogramMetric histogramMetric) {
 		boolean valid = true;
 
 		for (String additionalAssertFieldName :

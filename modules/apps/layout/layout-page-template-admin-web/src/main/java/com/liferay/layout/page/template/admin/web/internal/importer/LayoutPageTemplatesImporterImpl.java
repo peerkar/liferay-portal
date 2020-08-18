@@ -49,7 +49,7 @@ import com.liferay.layout.page.template.validator.MasterPageValidator;
 import com.liferay.layout.page.template.validator.PageDefinitionValidator;
 import com.liferay.layout.page.template.validator.PageTemplateValidator;
 import com.liferay.layout.util.LayoutCopyHelper;
-import com.liferay.layout.util.structure.FragmentStyledLayoutStructureItem;
+import com.liferay.layout.util.structure.FragmentLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.petra.string.CharPool;
@@ -331,17 +331,13 @@ public class LayoutPageTemplatesImporterImpl
 			LayoutStructureItem layoutStructureItem =
 				layoutStructure.getLayoutStructureItem(childItemId);
 
-			if (layoutStructureItem instanceof
-					FragmentStyledLayoutStructureItem) {
-
-				FragmentStyledLayoutStructureItem
-					fragmentStyledLayoutStructureItem =
-						(FragmentStyledLayoutStructureItem)layoutStructureItem;
+			if (layoutStructureItem instanceof FragmentLayoutStructureItem) {
+				FragmentLayoutStructureItem fragmentLayoutStructureItem =
+					(FragmentLayoutStructureItem)layoutStructureItem;
 
 				fragmentEntryLinks.add(
 					_fragmentEntryLinkLocalService.getFragmentEntryLink(
-						fragmentStyledLayoutStructureItem.
-							getFragmentEntryLinkId()));
+						fragmentLayoutStructureItem.getFragmentEntryLinkId()));
 			}
 
 			List<String> currentChildrenItemIds =
@@ -862,9 +858,9 @@ public class LayoutPageTemplatesImporterImpl
 			try {
 				TransactionInvokerUtil.invoke(_transactionConfig, callable);
 			}
-			catch (Throwable throwable) {
+			catch (Throwable t) {
 				if (_log.isWarnEnabled()) {
-					_log.warn(throwable, throwable);
+					_log.warn(t, t);
 				}
 
 				DisplayPageTemplate displayPageTemplate =
@@ -997,9 +993,9 @@ public class LayoutPageTemplatesImporterImpl
 			try {
 				TransactionInvokerUtil.invoke(_transactionConfig, callable);
 			}
-			catch (Throwable throwable) {
+			catch (Throwable t) {
 				if (_log.isWarnEnabled()) {
-					_log.warn(throwable, throwable);
+					_log.warn(t, t);
 				}
 
 				MasterPage masterPage = masterPageEntry.getMasterPage();
@@ -1135,9 +1131,9 @@ public class LayoutPageTemplatesImporterImpl
 			try {
 				TransactionInvokerUtil.invoke(_transactionConfig, callable);
 			}
-			catch (Throwable throwable) {
+			catch (Throwable t) {
 				if (_log.isWarnEnabled()) {
-					_log.warn(throwable, throwable);
+					_log.warn(t, t);
 				}
 
 				PageTemplate pageTemplate = pageTemplateEntry.getPageTemplate();

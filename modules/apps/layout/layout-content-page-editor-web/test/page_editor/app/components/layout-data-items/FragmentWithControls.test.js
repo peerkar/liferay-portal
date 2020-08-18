@@ -42,7 +42,6 @@ const renderFragment = ({
 		children: [],
 		config: {
 			fragmentEntryLinkId: fragmentEntryLink.fragmentEntryLinkId,
-			styles: {},
 		},
 		itemId: 'fragment',
 		parentId: null,

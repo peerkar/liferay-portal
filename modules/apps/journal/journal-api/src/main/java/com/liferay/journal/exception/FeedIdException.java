@@ -28,12 +28,12 @@ public class FeedIdException extends PortalException {
 		super(msg);
 	}
 
-	public FeedIdException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public FeedIdException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public FeedIdException(Throwable throwable) {
-		super(throwable);
+	public FeedIdException(Throwable cause) {
+		super(cause);
 	}
 
 }

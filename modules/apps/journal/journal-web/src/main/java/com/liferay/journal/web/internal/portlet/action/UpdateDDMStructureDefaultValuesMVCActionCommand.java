@@ -95,19 +95,19 @@ public class UpdateDDMStructureDefaultValuesMVCActionCommand
 				WebKeys.UPLOAD_EXCEPTION);
 
 		if (uploadException != null) {
-			Throwable throwable = uploadException.getCause();
+			Throwable cause = uploadException.getCause();
 
 			if (uploadException.isExceededLiferayFileItemSizeLimit()) {
-				throw new LiferayFileItemException(throwable);
+				throw new LiferayFileItemException(cause);
 			}
 
 			if (uploadException.isExceededFileSizeLimit() ||
 				uploadException.isExceededUploadRequestSizeLimit()) {
 
-				throw new ArticleContentSizeException(throwable);
+				throw new ArticleContentSizeException(cause);
 			}
 
-			throw new PortalException(throwable);
+			throw new PortalException(cause);
 		}
 
 		UploadPortletRequest uploadPortletRequest =

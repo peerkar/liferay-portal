@@ -14,7 +14,6 @@
 
 package com.liferay.info.item;
 
-import com.liferay.info.exception.CapabilityVerificationException;
 import com.liferay.info.item.capability.InfoItemCapability;
 
 import java.util.List;
@@ -39,19 +38,11 @@ public interface InfoItemServiceTracker {
 	public List<InfoItemCapability> getInfoItemCapabilities(
 		String itemClassName);
 
-	public InfoItemCapability getInfoItemCapability(
-		String infoItemCapabilityKey);
-
 	public <P> List<InfoItemClassDetails> getInfoItemClassDetails(
 		Class<P> serviceClass);
 
 	public List<InfoItemClassDetails> getInfoItemClassDetails(
-			InfoItemCapability itemCapability)
-		throws CapabilityVerificationException;
-
-	public List<InfoItemClassDetails> getInfoItemClassDetails(
-			String itemCapabilityKey)
-		throws CapabilityVerificationException;
+		InfoItemCapability itemCapability);
 
 	public <P> List<String> getInfoItemClassNames(Class<P> serviceClass);
 

@@ -509,7 +509,7 @@ public abstract class BaseInstanceResourceTestCase {
 		}
 	}
 
-	protected void assertValid(Instance instance) throws Exception {
+	protected void assertValid(Instance instance) {
 		boolean valid = true;
 
 		if (instance.getDateCreated() == null) {

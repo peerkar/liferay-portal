@@ -49,7 +49,8 @@ page import="com.liferay.portal.kernel.util.Validator" %><%@
 page import="com.liferay.portal.kernel.util.WebKeys" %><%@
 page import="com.liferay.portal.util.PropsValues" %>
 
-<%@ page import="java.util.Collections" %>
+<%@ page import="java.util.Collections" %><%@
+page import="java.util.Map" %>
 
 <liferay-frontend:defineObjects />
 

@@ -44,12 +44,11 @@ public class ClayDataSetContentRendererContextContributorRegistryImpl
 
 	@Override
 	public List<ClayDataSetContentRendererContextContributor>
-		getClayDataSetContentRendererContextContributors(
-			String clayDataSetContentRendererName) {
+		getClayDataSetContentRendererContextContributors(String key) {
 
 		List<ServiceWrapper<ClayDataSetContentRendererContextContributor>>
 			clayDataSetContentRendererContextContributorServiceWrappers =
-				_serviceTrackerMap.getService(clayDataSetContentRendererName);
+				_serviceTrackerMap.getService(key);
 
 		if (clayDataSetContentRendererContextContributorServiceWrappers ==
 				null) {
@@ -57,7 +56,7 @@ public class ClayDataSetContentRendererContextContributorRegistryImpl
 			if (_log.isDebugEnabled()) {
 				_log.debug(
 					"No Clay data set content renderer context contributor " +
-						"is associated with " + clayDataSetContentRendererName);
+						"registered with key " + key);
 			}
 
 			return Collections.emptyList();

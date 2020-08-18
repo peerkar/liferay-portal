@@ -20,7 +20,6 @@ import com.liferay.portal.kernel.model.GroupedModel;
 import com.liferay.portal.kernel.model.MVCCModel;
 import com.liferay.portal.kernel.model.ShardedModel;
 import com.liferay.portal.kernel.model.StagedAuditedModel;
-import com.liferay.portal.kernel.model.change.tracking.CTModel;
 
 import java.util.Date;
 
@@ -39,8 +38,7 @@ import org.osgi.annotation.versioning.ProviderType;
  */
 @ProviderType
 public interface LayoutPageTemplateStructureRelModel
-	extends BaseModel<LayoutPageTemplateStructureRel>,
-			CTModel<LayoutPageTemplateStructureRel>, GroupedModel, MVCCModel,
+	extends BaseModel<LayoutPageTemplateStructureRel>, GroupedModel, MVCCModel,
 			ShardedModel, StagedAuditedModel {
 
 	/*
@@ -54,7 +52,6 @@ public interface LayoutPageTemplateStructureRelModel
 	 *
 	 * @return the primary key of this layout page template structure rel
 	 */
-	@Override
 	public long getPrimaryKey();
 
 	/**
@@ -62,7 +59,6 @@ public interface LayoutPageTemplateStructureRelModel
 	 *
 	 * @param primaryKey the primary key of this layout page template structure rel
 	 */
-	@Override
 	public void setPrimaryKey(long primaryKey);
 
 	/**
@@ -80,22 +76,6 @@ public interface LayoutPageTemplateStructureRelModel
 	 */
 	@Override
 	public void setMvccVersion(long mvccVersion);
-
-	/**
-	 * Returns the ct collection ID of this layout page template structure rel.
-	 *
-	 * @return the ct collection ID of this layout page template structure rel
-	 */
-	@Override
-	public long getCtCollectionId();
-
-	/**
-	 * Sets the ct collection ID of this layout page template structure rel.
-	 *
-	 * @param ctCollectionId the ct collection ID of this layout page template structure rel
-	 */
-	@Override
-	public void setCtCollectionId(long ctCollectionId);
 
 	/**
 	 * Returns the uuid of this layout page template structure rel.

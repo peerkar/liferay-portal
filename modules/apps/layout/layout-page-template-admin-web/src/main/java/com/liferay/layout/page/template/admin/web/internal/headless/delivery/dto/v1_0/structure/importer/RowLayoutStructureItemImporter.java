@@ -18,7 +18,7 @@ import com.liferay.headless.delivery.dto.v1_0.PageElement;
 import com.liferay.layout.util.constants.LayoutDataItemTypeConstants;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
-import com.liferay.layout.util.structure.RowStyledLayoutStructureItem;
+import com.liferay.layout.util.structure.RowLayoutStructureItem;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Layout;
@@ -45,34 +45,32 @@ public class RowLayoutStructureItemImporter
 			Set<String> warningMessages)
 		throws Exception {
 
-		RowStyledLayoutStructureItem rowStyledLayoutStructureItem =
-			(RowStyledLayoutStructureItem)
-				layoutStructure.addLayoutStructureItem(
-					LayoutDataItemTypeConstants.TYPE_ROW, parentItemId,
-					position);
+		RowLayoutStructureItem rowLayoutStructureItem =
+			(RowLayoutStructureItem)layoutStructure.addLayoutStructureItem(
+				LayoutDataItemTypeConstants.TYPE_ROW, parentItemId, position);
 
 		Map<String, Object> definitionMap = getDefinitionMap(
 			pageElement.getDefinition());
 
 		if (definitionMap != null) {
-			rowStyledLayoutStructureItem.setGutters(
+			rowLayoutStructureItem.setGutters(
 				(Boolean)definitionMap.get("gutters"));
 
 			if (definitionMap.containsKey("reverseOrder")) {
-				rowStyledLayoutStructureItem.setModulesPerRow(
+				rowLayoutStructureItem.setModulesPerRow(
 					(Integer)definitionMap.get("modulesPerRow"));
 			}
 
-			rowStyledLayoutStructureItem.setNumberOfColumns(
+			rowLayoutStructureItem.setNumberOfColumns(
 				(Integer)definitionMap.get("numberOfColumns"));
 
 			if (definitionMap.containsKey("reverseOrder")) {
-				rowStyledLayoutStructureItem.setReverseOrder(
+				rowLayoutStructureItem.setReverseOrder(
 					(Boolean)definitionMap.get("reverseOrder"));
 			}
 
 			if (definitionMap.containsKey("verticalAlignment")) {
-				rowStyledLayoutStructureItem.setVerticalAlignment(
+				rowLayoutStructureItem.setVerticalAlignment(
 					(String)definitionMap.get("verticalAlignment"));
 			}
 
@@ -83,7 +81,7 @@ public class RowLayoutStructureItemImporter
 
 				for (Map<String, Object> rowViewport : rowViewports) {
 					_processRowViewportDefinition(
-						rowStyledLayoutStructureItem,
+						rowLayoutStructureItem,
 						(Map<String, Object>)rowViewport.get(
 							"rowViewportDefinition"),
 						(String)rowViewport.get("id"));
@@ -97,13 +95,13 @@ public class RowLayoutStructureItemImporter
 						rowViewportConfigurations.entrySet()) {
 
 					_processRowViewportDefinition(
-						rowStyledLayoutStructureItem,
+						rowLayoutStructureItem,
 						(Map<String, Object>)entry.getValue(), entry.getKey());
 				}
 			}
 		}
 
-		return rowStyledLayoutStructureItem;
+		return rowLayoutStructureItem;
 	}
 
 	@Override
@@ -112,7 +110,7 @@ public class RowLayoutStructureItemImporter
 	}
 
 	private void _processRowViewportDefinition(
-		RowStyledLayoutStructureItem rowStyledLayoutStructureItem,
+		RowLayoutStructureItem rowLayoutStructureItem,
 		Map<String, Object> rowViewportDefinitionMap, String rowViewportId) {
 
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
@@ -138,7 +136,7 @@ public class RowLayoutStructureItemImporter
 					rowViewportDefinitionMap.get("verticalAlignment")));
 		}
 
-		rowStyledLayoutStructureItem.setViewportConfiguration(
+		rowLayoutStructureItem.setViewportConfiguration(
 			rowViewportId, jsonObject);
 	}
 

@@ -28,14 +28,12 @@ public class NoSuchDataProviderInstanceException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchDataProviderInstanceException(
-		String msg, Throwable throwable) {
-
-		super(msg, throwable);
+	public NoSuchDataProviderInstanceException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NoSuchDataProviderInstanceException(Throwable throwable) {
-		super(throwable);
+	public NoSuchDataProviderInstanceException(Throwable cause) {
+		super(cause);
 	}
 
 }

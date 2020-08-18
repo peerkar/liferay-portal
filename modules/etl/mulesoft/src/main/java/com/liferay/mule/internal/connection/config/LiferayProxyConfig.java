@@ -28,9 +28,9 @@ import org.mule.runtime.http.api.client.proxy.ProxyConfigBuilder;
 public class LiferayProxyConfig {
 
 	public ProxyConfig getProxyConfig() {
-		if ((proxyHost != null) && (proxyPort != null)) {
-			ProxyConfigBuilder proxyConfigBuilder = ProxyConfig.builder();
+		ProxyConfigBuilder proxyConfigBuilder = ProxyConfig.builder();
 
+		if ((proxyHost != null) && (proxyPort != null)) {
 			proxyConfigBuilder.host(proxyHost);
 			proxyConfigBuilder.password(proxyPassword);
 			proxyConfigBuilder.port(proxyPort);

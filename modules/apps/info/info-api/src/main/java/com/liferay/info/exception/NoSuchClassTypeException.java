@@ -21,10 +21,10 @@ import com.liferay.portal.kernel.exception.PortalException;
  */
 public class NoSuchClassTypeException extends PortalException {
 
-	public NoSuchClassTypeException(long classTypeId, Throwable throwable) {
+	public NoSuchClassTypeException(long classTypeId, Throwable cause) {
 		super(
 			"Unable to get class type found with class type ID " + classTypeId,
-			throwable);
+			cause);
 
 		_classTypeId = classTypeId;
 	}

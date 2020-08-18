@@ -135,9 +135,6 @@ const AppsPanel = ({
 
 	return (
 		<div className="applications-menu-wrapper">
-			<h1 className="sr-only">
-				{Liferay.Language.get('applications-menu')}
-			</h1>
 			<div className="applications-menu-header">
 				<ClayLayout.ContainerFluid>
 					<ClayLayout.Row>
@@ -201,9 +198,9 @@ const AppsPanel = ({
 													>
 														<ul className="list-unstyled">
 															<li className="c-my-3">
-																<h2 className="applications-menu-nav-header">
+																<h3 className="applications-menu-nav-header">
 																	{label}
-																</h2>
+																</h3>
 															</li>
 
 															{panelApps.map(
@@ -300,21 +297,21 @@ const AppsPanel = ({
 										</ClayLayout.ContentCol>
 
 										<ClayLayout.ContentCol className="c-ml-2">
-											<div className="applications-menu-company c-mb-0">
+											<h1 className="applications-menu-company c-mb-0">
 												{companyName}
-											</div>
+											</h1>
 										</ClayLayout.ContentCol>
 									</ClayLayout.ContentRow>
 								</ClayLayout.ContentCol>
 
 								<ClayLayout.ContentCol expand>
-									<span className="applications-menu-powered c-mb-0">
+									<p className="applications-menu-powered c-mb-0">
 										Powered by
-									</span>
+									</p>
 
-									<span className="applications-menu-copyright c-mb-0 c-mt-n1">
+									<p className="applications-menu-copyright c-mb-0 c-mt-n1">
 										Liferay DXP
-									</span>
+									</p>
 								</ClayLayout.ContentCol>
 							</ClayLayout.ContentRow>
 						</ClayLayout.Col>

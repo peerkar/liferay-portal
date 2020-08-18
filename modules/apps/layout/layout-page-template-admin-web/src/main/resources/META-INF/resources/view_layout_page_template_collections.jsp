@@ -85,14 +85,16 @@ List<LayoutPageTemplateCollection> layoutPageTemplateCollections = layoutPageTem
 													<portlet:param name="redirect" value="<%= redirectURL %>" />
 												</liferay-portlet:actionURL>
 
+												<%
+												Map<String, Object> additionalProps = HashMapBuilder.<String, Object>put(
+													"deleteLayoutPageTemplateCollectionURL", deleteLayoutPageTemplateCollectionURL.toString()
+												).put(
+													"viewLayoutPageTemplateCollectionURL", viewLayoutPageTemplateCollectionURL.toString()
+												).build();
+												%>
+
 												<clay:dropdown-actions
-													additionalProps='<%=
-														HashMapBuilder.<String, Object>put(
-															"deleteLayoutPageTemplateCollectionURL", deleteLayoutPageTemplateCollectionURL.toString()
-														).put(
-															"viewLayoutPageTemplateCollectionURL", viewLayoutPageTemplateCollectionURL.toString()
-														).build()
-													%>'
+													additionalProps="<%= additionalProps %>"
 													dropdownItems="<%= layoutPageTemplateDisplayContext.getCollectionsDropdownItems() %>"
 													propsTransformer="js/ActionsComponentPropsTransformer"
 												/>

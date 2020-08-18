@@ -95,13 +95,13 @@ public class SanitizerLogWrapper extends LogWrapper {
 	}
 
 	@Override
-	public void debug(Object msg, Throwable throwable) {
-		super.debug(sanitize(msg), sanitize(throwable));
+	public void debug(Object msg, Throwable t) {
+		super.debug(sanitize(msg), sanitize(t));
 	}
 
 	@Override
-	public void debug(Throwable throwable) {
-		super.debug(sanitize(throwable));
+	public void debug(Throwable t) {
+		super.debug(sanitize(t));
 	}
 
 	@Override
@@ -110,13 +110,13 @@ public class SanitizerLogWrapper extends LogWrapper {
 	}
 
 	@Override
-	public void error(Object msg, Throwable throwable) {
-		super.error(sanitize(msg), sanitize(throwable));
+	public void error(Object msg, Throwable t) {
+		super.error(sanitize(msg), sanitize(t));
 	}
 
 	@Override
-	public void error(Throwable throwable) {
-		super.error(sanitize(throwable));
+	public void error(Throwable t) {
+		super.error(sanitize(t));
 	}
 
 	@Override
@@ -125,13 +125,13 @@ public class SanitizerLogWrapper extends LogWrapper {
 	}
 
 	@Override
-	public void fatal(Object msg, Throwable throwable) {
-		super.fatal(sanitize(msg), sanitize(throwable));
+	public void fatal(Object msg, Throwable t) {
+		super.fatal(sanitize(msg), sanitize(t));
 	}
 
 	@Override
-	public void fatal(Throwable throwable) {
-		super.fatal(sanitize(throwable));
+	public void fatal(Throwable t) {
+		super.fatal(sanitize(t));
 	}
 
 	@Override
@@ -140,13 +140,13 @@ public class SanitizerLogWrapper extends LogWrapper {
 	}
 
 	@Override
-	public void info(Object msg, Throwable throwable) {
-		super.info(sanitize(msg), sanitize(throwable));
+	public void info(Object msg, Throwable t) {
+		super.info(sanitize(msg), sanitize(t));
 	}
 
 	@Override
-	public void info(Throwable throwable) {
-		super.info(sanitize(throwable));
+	public void info(Throwable t) {
+		super.info(sanitize(t));
 	}
 
 	@Override
@@ -155,13 +155,13 @@ public class SanitizerLogWrapper extends LogWrapper {
 	}
 
 	@Override
-	public void trace(Object msg, Throwable throwable) {
-		super.trace(sanitize(msg), sanitize(throwable));
+	public void trace(Object msg, Throwable t) {
+		super.trace(sanitize(msg), sanitize(t));
 	}
 
 	@Override
-	public void trace(Throwable throwable) {
-		super.trace(sanitize(throwable));
+	public void trace(Throwable t) {
+		super.trace(sanitize(t));
 	}
 
 	@Override
@@ -170,13 +170,13 @@ public class SanitizerLogWrapper extends LogWrapper {
 	}
 
 	@Override
-	public void warn(Object msg, Throwable throwable) {
-		super.warn(sanitize(msg), sanitize(throwable));
+	public void warn(Object msg, Throwable t) {
+		super.warn(sanitize(msg), sanitize(t));
 	}
 
 	@Override
-	public void warn(Throwable throwable) {
-		super.warn(sanitize(throwable));
+	public void warn(Throwable t) {
+		super.warn(sanitize(t));
 	}
 
 	protected String sanitize(Object object) {

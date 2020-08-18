@@ -29,9 +29,9 @@ if (classPK > 0) {
 	personalAddresses = AddressServiceUtil.getAddresses(className, classPK);
 }
 
-for (Organization organization : organizations) {
+for (int i = 0; i < organizations.size(); i++) {
 	try {
-		organizationAddresses.addAll(AddressServiceUtil.getAddresses(Organization.class.getName(), organization.getOrganizationId()));
+		organizationAddresses.addAll(AddressServiceUtil.getAddresses(Organization.class.getName(), organizations.get(i).getOrganizationId()));
 	}
 	catch (Exception e) {
 	}

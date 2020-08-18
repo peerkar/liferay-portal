@@ -16,7 +16,7 @@ package com.liferay.headless.delivery.internal.resource.v1_0;
 
 import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
 import com.liferay.expando.kernel.service.ExpandoTableLocalService;
-import com.liferay.headless.common.spi.service.context.ServiceContextRequestUtil;
+import com.liferay.headless.common.spi.service.context.ServiceContextUtil;
 import com.liferay.headless.delivery.dto.v1_0.MessageBoardSection;
 import com.liferay.headless.delivery.internal.dto.v1_0.converter.MessageBoardSectionDTOConverter;
 import com.liferay.headless.delivery.internal.dto.v1_0.util.CustomFieldsUtil;
@@ -200,9 +200,9 @@ public class MessageBoardSectionResourceImpl
 				messageBoardSection.getDescription(),
 				mbCategory.getDisplayStyle(), "", "", "", 0, false, "", "", 0,
 				"", false, "", 0, false, "", "", false, false, false,
-				ServiceContextRequestUtil.createServiceContext(
+				ServiceContextUtil.createServiceContext(
 					_getExpandoBridgeAttributes(messageBoardSection),
-					mbCategory.getGroupId(), contextHttpServletRequest, null)));
+					mbCategory.getGroupId(), null)));
 	}
 
 	@Override
@@ -237,9 +237,8 @@ public class MessageBoardSectionResourceImpl
 				contextUser.getUserId(), parentMessageBoardSectionId,
 				messageBoardSection.getTitle(),
 				messageBoardSection.getDescription(),
-				ServiceContextRequestUtil.createServiceContext(
+				ServiceContextUtil.createServiceContext(
 					_getExpandoBridgeAttributes(messageBoardSection), siteId,
-					contextHttpServletRequest,
 					messageBoardSection.getViewableByAsString())));
 	}
 

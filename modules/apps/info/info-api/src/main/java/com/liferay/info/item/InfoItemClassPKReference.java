@@ -16,21 +16,23 @@ package com.liferay.info.item;
 
 /**
  * @author Jorge Ferrer
- *
- * @deprecated As of Athanasius (7.3.x)
  */
-@Deprecated
-public class InfoItemClassPKReference extends InfoItemReference {
+public class InfoItemClassPKReference {
 
 	public InfoItemClassPKReference(String className, long classPK) {
-		super(className, classPK);
+		_className = className;
+		_classPK = classPK;
+	}
+
+	public String getClassName() {
+		return _className;
 	}
 
 	public long getClassPK() {
-		ClassPKInfoItemIdentifier infoItemIdentifier =
-			(ClassPKInfoItemIdentifier)getInfoItemIdentifier();
-
-		return infoItemIdentifier.getClassPK();
+		return _classPK;
 	}
+
+	private final String _className;
+	private final long _classPK;
 
 }

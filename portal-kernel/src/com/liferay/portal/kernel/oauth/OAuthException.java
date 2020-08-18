@@ -28,12 +28,12 @@ public class OAuthException extends PortalException {
 		super(msg);
 	}
 
-	public OAuthException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public OAuthException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public OAuthException(Throwable throwable) {
-		super(throwable);
+	public OAuthException(Throwable cause) {
+		super(cause);
 	}
 
 }

@@ -44,12 +44,10 @@ if (!rankingNamesList.isEmpty()) {
 	selectedNamesList.add(SocialActivityCounterConstants.NAME_PARTICIPATION);
 
 	if (socialUserStatisticsPortletInstanceConfiguration.displayAdditionalActivityCounters()) {
-		String[] displayActivityCounterName = socialUserStatisticsPortletInstanceConfiguration.displayActivityCounterName();
-
-		int displayActivityCounterNameCount = displayActivityCounterName.length;
+		int displayActivityCounterNameCount = socialUserStatisticsPortletInstanceConfiguration.displayActivityCounterName().length;
 
 		for (int displayActivityCounterNameIndex = 0; displayActivityCounterNameIndex < displayActivityCounterNameCount; displayActivityCounterNameIndex++) {
-			selectedNamesList.add(displayActivityCounterName[displayActivityCounterNameIndex]);
+			selectedNamesList.add(socialUserStatisticsPortletInstanceConfiguration.displayActivityCounterName()[displayActivityCounterNameIndex]);
 		}
 	}
 

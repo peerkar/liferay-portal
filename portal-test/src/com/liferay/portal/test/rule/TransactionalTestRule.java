@@ -126,9 +126,8 @@ public class TransactionalTestRule implements TestRule {
 									try {
 										statement.evaluate();
 									}
-									catch (Throwable throwable) {
-										ReflectionUtil.throwException(
-											throwable);
+									catch (Throwable t) {
+										ReflectionUtil.throwException(t);
 									}
 
 									return null;
@@ -202,8 +201,8 @@ public class TransactionalTestRule implements TestRule {
 								return TransactionalFrameworkMethod.super.
 									invokeExplosively(target, params);
 							}
-							catch (Throwable throwable) {
-								ReflectionUtil.throwException(throwable);
+							catch (Throwable t) {
+								ReflectionUtil.throwException(t);
 							}
 
 							return null;

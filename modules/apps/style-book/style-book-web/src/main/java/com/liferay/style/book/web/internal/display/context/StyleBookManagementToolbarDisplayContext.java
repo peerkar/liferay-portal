@@ -153,8 +153,7 @@ public class StyleBookManagementToolbarDisplayContext
 					liferayPortletResponse.createActionURL();
 
 				addStyleBookEntryURL.setParameter(
-					ActionRequest.ACTION_NAME,
-					"/style_book/add_style_book_entry");
+					ActionRequest.ACTION_NAME, "/style_book/style_book_entry");
 
 				dropdownItem.putData(
 					"addStyleBookEntryURL", addStyleBookEntryURL.toString());

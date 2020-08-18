@@ -15,17 +15,15 @@ definition {
 
 			AccountUsers.addUserInfos(
 				accountName = "${accountName}",
+				blockedDomainName = "${blockedDomainName}",
 				domainValidation = "${domainValidation}",
-				emailDomainName = "${emailDomainName}",
+				invalidDomainName = "${invalidDomainName}",
 				userEmailAddress = "${userEmailAddress}",
 				userFirstName = "${userFirstName}",
 				userLastName = "${userLastName}",
-				userScreenName = "${userScreenName}",
-				validDomainNames = "${validDomainNames}");
+				userScreenName = "${userScreenName}");
 
-			AssertClick(
-				locator1 = "Button#SAVE",
-				value1 = "Save");
+			Button.clickSave();
 		}
 		else {
 			Search.searchCP(searchTerm = "${assigneeName}");
@@ -92,9 +90,6 @@ definition {
 
 		if (isSet(domainNames)) {
 			Accounts.addDomains(domainNames = "${domainNames}");
-		}
-		else {
-			AssertElementNotPresent(locator1 = "Account#DOMAIN_SECTION");
 		}
 
 		Button.clickSave();

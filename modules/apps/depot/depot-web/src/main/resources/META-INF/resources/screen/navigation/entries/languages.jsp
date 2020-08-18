@@ -57,25 +57,23 @@ boolean inheritLocales = GetterUtil.getBoolean(typeSettingsProperties.getPropert
 <div class="site-languages">
 
 	<%
-	User defaultUser = company.getDefaultUser();
+	HashMap<String, Object> props = HashMapBuilder.<String, Object>put(
+		"availableLocales", DepotLanguageUtil.getAvailableLocalesJSONArray(locale)
+	).put(
+		"defaultLocaleId", LocaleUtil.toLanguageId(company.getDefaultUser().getLocale())
+	).put(
+		"inheritLocales", inheritLocales
+	).put(
+		"siteAvailableLocales", DepotLanguageUtil.getDepotAvailableLocalesJSONArray(group, locale)
+	).put(
+		"siteDefaultLocaleId", LocaleUtil.toLanguageId(PortalUtil.getSiteDefaultLocale(group.getGroupId()))
+	).put(
+		"translatedLanguages", group.getNameMap()
+	).build();
 	%>
 
 	<react:component
 		module="js/Languages.es"
-		props='<%=
-			HashMapBuilder.<String, Object>put(
-				"availableLocales", DepotLanguageUtil.getAvailableLocalesJSONArray(locale)
-			).put(
-				"defaultLocaleId", LocaleUtil.toLanguageId(defaultUser.getLocale())
-			).put(
-				"inheritLocales", inheritLocales
-			).put(
-				"siteAvailableLocales", DepotLanguageUtil.getDepotAvailableLocalesJSONArray(group, locale)
-			).put(
-				"siteDefaultLocaleId", LocaleUtil.toLanguageId(PortalUtil.getSiteDefaultLocale(group.getGroupId()))
-			).put(
-				"translatedLanguages", group.getNameMap()
-			).build()
-		%>'
+		props="<%= props %>"
 	/>
 </div>

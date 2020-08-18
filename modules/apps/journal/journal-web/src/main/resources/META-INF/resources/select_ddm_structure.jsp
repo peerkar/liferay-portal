@@ -46,19 +46,18 @@ SearchContainer<DDMStructure> ddmStructureSearch = journalSelectDDMStructureDisp
 			>
 				<c:choose>
 					<c:when test="<%= ddmStructure.getStructureId() != journalSelectDDMStructureDisplayContext.getClassPK() %>">
-						<aui:a
-							cssClass="selector-button"
-							data='<%=
-								HashMapBuilder.<String, Object>put(
-									"ddmstructureid", ddmStructure.getStructureId()
-								).put(
-									"ddmstructurekey", ddmStructure.getStructureKey()
-								).put(
-									"name", HtmlUtil.escape(ddmStructure.getName(locale))
-								).build()
-							%>'
-							href="javascript:;"
-						>
+
+						<%
+						Map<String, Object> data = HashMapBuilder.<String, Object>put(
+							"ddmstructureid", ddmStructure.getStructureId()
+						).put(
+							"ddmstructurekey", ddmStructure.getStructureKey()
+						).put(
+							"name", HtmlUtil.escape(ddmStructure.getName(locale))
+						).build();
+						%>
+
+						<aui:a cssClass="selector-button" data="<%= data %>" href="javascript:;">
 							<%= HtmlUtil.escape(ddmStructure.getUnambiguousName(ddmStructureSearch.getResults(), themeDisplay.getScopeGroupId(), locale)) %>
 						</aui:a>
 					</c:when>

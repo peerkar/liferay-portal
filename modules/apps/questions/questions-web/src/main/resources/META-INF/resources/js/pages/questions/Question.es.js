@@ -26,7 +26,7 @@ import Answer from '../../components/Answer.es';
 import ArticleBodyRenderer from '../../components/ArticleBodyRenderer.es';
 import Breadcrumb from '../../components/Breadcrumb.es';
 import CreatorRow from '../../components/CreatorRow.es';
-import DeleteQuestion from '../../components/DeleteQuestion.es';
+import DeleteThread from '../../components/DeleteThread.es';
 import Link from '../../components/Link.es';
 import PaginatedList from '../../components/PaginatedList.es';
 import QuestionsEditor from '../../components/QuestionsEditor';
@@ -275,13 +275,10 @@ export default withRouter(
 
 											{question.actions.delete && (
 												<>
-													<DeleteQuestion
-														deleteModalVisibility={
-															showDeleteModalPanel
-														}
+													<DeleteThread
 														question={question}
-														setDeleteModalVisibility={
-															setShowDeleteModalPanel
+														showDeleteModalPanel={
+															showDeleteModalPanel
 														}
 													/>
 													<ClayButton

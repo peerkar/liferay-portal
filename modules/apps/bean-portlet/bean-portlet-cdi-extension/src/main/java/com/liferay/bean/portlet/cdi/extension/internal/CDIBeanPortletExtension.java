@@ -325,14 +325,14 @@ public class CDIBeanPortletExtension implements Extension {
 					catch (ReflectiveOperationException
 								reflectiveOperationException) {
 
-						Throwable throwable =
+						Throwable cause =
 							reflectiveOperationException.getCause();
 
-						if (throwable instanceof PortletException) {
-							throw (PortletException)throwable;
+						if (cause instanceof PortletException) {
+							throw (PortletException)cause;
 						}
 
-						throw new PortletException(throwable);
+						throw new PortletException(cause);
 					}
 				}
 
@@ -614,13 +614,13 @@ public class CDIBeanPortletExtension implements Extension {
 			}
 		}
 		catch (InvocationTargetException invocationTargetException) {
-			Throwable throwable = invocationTargetException.getCause();
+			Throwable cause = invocationTargetException.getCause();
 
-			if (throwable instanceof PortletException) {
-				throw (PortletException)throwable;
+			if (cause instanceof PortletException) {
+				throw (PortletException)cause;
 			}
 
-			throw new PortletException(throwable);
+			throw new PortletException(cause);
 		}
 		catch (PortletException portletException) {
 			throw portletException;

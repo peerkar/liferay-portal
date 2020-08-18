@@ -27,7 +27,6 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -88,8 +87,6 @@ public class ArchiveUtil {
 
 			tmpFile.delete();
 
-			Collections.sort(archiveZipEntries);
-
 			try (ZipOutputStream zipOutputStream = new ZipOutputStream(
 					new FileOutputStream(tmpFile))) {
 
@@ -124,30 +121,12 @@ public class ArchiveUtil {
 		archive(sourceFile, archiveFilePath);
 	}
 
-	private static final class ArchiveZipEntry
-		extends ZipEntry implements Comparable<ArchiveZipEntry> {
+	private static final class ArchiveZipEntry extends ZipEntry {
 
 		public ArchiveZipEntry(String name, Path path) {
 			super(name);
 
 			_path = path;
-		}
-
-		@Override
-		public int compareTo(ArchiveZipEntry archiveZipEntry) {
-			String manifestFileName = "META-INF/MANIFEST.MF";
-
-			if (manifestFileName.equals(archiveZipEntry.getName())) {
-				return 1;
-			}
-
-			String name = getName();
-
-			if (manifestFileName.equals(name)) {
-				return -1;
-			}
-
-			return name.compareTo(archiveZipEntry.getName());
 		}
 
 		public void writeToZipOutputStream(ZipOutputStream zipOutputStream) {

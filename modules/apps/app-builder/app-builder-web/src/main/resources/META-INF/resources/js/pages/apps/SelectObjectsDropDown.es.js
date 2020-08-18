@@ -18,21 +18,8 @@ import ClayLabel from '@clayui/label';
 import React, {useEffect, useState} from 'react';
 
 import {getItem} from '../../utils/client.es';
-import {getLocalizedValue} from '../../utils/lang.es';
+import {getTranslatedValue} from '../../utils/utils.es';
 import DropDownWithSearch from './DropDownWithSearch.es';
-
-export function getDataObjects() {
-	return getItem(
-		'/o/data-engine/v2.0/data-definitions/by-content-type/app-builder',
-		{keywords: '', page: -1, pageSize: -1, sort: ''}
-	).then(({items}) =>
-		items.map((item) => ({
-			...item,
-			name: getLocalizedValue(item.defaultLanguageId, item.name),
-			type: 'custom',
-		}))
-	);
-}
 
 export default ({defaultValue, label, onSelect, selectedValue, visible}) => {
 	const [state, setState] = useState({
@@ -42,26 +29,50 @@ export default ({defaultValue, label, onSelect, selectedValue, visible}) => {
 	const [items, setItems] = useState([]);
 
 	const doFetch = () => {
+		const params = {keywords: '', page: -1, pageSize: -1, sort: ''};
+
 		setState({
 			error: null,
 			isLoading: true,
 		});
 
-		getDataObjects()
-			.then((items) => {
-				setItems(items);
+		return Promise.all([
+			getItem(
+				'/o/data-engine/v2.0/data-definitions/by-content-type/app-builder',
+				params
+			),
+			getItem(
+				'/o/data-engine/v2.0/data-definitions/by-content-type/native-object',
+				params
+			),
+		])
+			.then(([customObjects, nativeObjects]) => {
+				const newItems = [
+					...customObjects.items.map((item) => ({
+						...item,
+						type: 'custom',
+					})),
+					...nativeObjects.items.map((item) => ({
+						...item,
+						type: 'native',
+					})),
+				];
+				setItems(newItems);
 				setState({
 					error: null,
 					isLoading: false,
 				});
 
 				if (defaultValue) {
-					const defaultItem = items.find(
+					const defaultItem = newItems.find(
 						({id}) => id === defaultValue
 					);
 
 					if (defaultItem) {
-						onSelect(defaultItem);
+						onSelect({
+							...defaultItem,
+							name: getTranslatedValue(defaultItem, 'name'),
+						});
 					}
 				}
 			})

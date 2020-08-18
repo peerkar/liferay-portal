@@ -28,12 +28,12 @@ public class NoSuchContentSearchException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchContentSearchException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public NoSuchContentSearchException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NoSuchContentSearchException(Throwable throwable) {
-		super(throwable);
+	public NoSuchContentSearchException(Throwable cause) {
+		super(cause);
 	}
 
 }

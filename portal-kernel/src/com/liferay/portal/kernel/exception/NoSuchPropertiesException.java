@@ -26,12 +26,12 @@ public class NoSuchPropertiesException extends PortalException {
 		super(msg);
 	}
 
-	public NoSuchPropertiesException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public NoSuchPropertiesException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NoSuchPropertiesException(Throwable throwable) {
-		super(throwable);
+	public NoSuchPropertiesException(Throwable cause) {
+		super(cause);
 	}
 
 }

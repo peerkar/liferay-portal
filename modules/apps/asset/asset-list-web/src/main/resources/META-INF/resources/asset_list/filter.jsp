@@ -49,23 +49,26 @@
 		<div id="<portlet:namespace />ConditionForm"></div>
 
 		<div>
+
+			<%
+			Map<String, Object> props = HashMapBuilder.<String, Object>put(
+				"categorySelectorURL", editAssetListDisplayContext.getCategorySelectorURL()
+			).put(
+				"groupIds", ListUtil.toList(editAssetListDisplayContext.getReferencedModelsGroupIds())
+			).put(
+				"namespace", liferayPortletResponse.getNamespace()
+			).put(
+				"rules", editAssetListDisplayContext.getAutoFieldRulesJSONArray()
+			).put(
+				"tagSelectorURL", editAssetListDisplayContext.getTagSelectorURL()
+			).put(
+				"vocabularyIds", editAssetListDisplayContext.getVocabularyIds()
+			).build();
+			%>
+
 			<react:component
 				module="auto_field/index"
-				props='<%=
-					HashMapBuilder.<String, Object>put(
-						"categorySelectorURL", editAssetListDisplayContext.getCategorySelectorURL()
-					).put(
-						"groupIds", ListUtil.toList(editAssetListDisplayContext.getReferencedModelsGroupIds())
-					).put(
-						"namespace", liferayPortletResponse.getNamespace()
-					).put(
-						"rules", editAssetListDisplayContext.getAutoFieldRulesJSONArray()
-					).put(
-						"tagSelectorURL", editAssetListDisplayContext.getTagSelectorURL()
-					).put(
-						"vocabularyIds", editAssetListDisplayContext.getVocabularyIds()
-					).build()
-				%>'
+				props="<%= props %>"
 			/>
 		</div>
 	</liferay-frontend:fieldset>

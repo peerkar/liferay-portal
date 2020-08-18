@@ -360,9 +360,7 @@ public abstract class BaseWorkflowDefinitionResourceTestCase {
 		}
 	}
 
-	protected void assertValid(WorkflowDefinition workflowDefinition)
-		throws Exception {
-
+	protected void assertValid(WorkflowDefinition workflowDefinition) {
 		boolean valid = true;
 
 		if (workflowDefinition.getDateModified() == null) {

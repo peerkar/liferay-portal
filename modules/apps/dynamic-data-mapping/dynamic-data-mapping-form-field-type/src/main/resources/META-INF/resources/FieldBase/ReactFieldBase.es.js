@@ -27,18 +27,6 @@ import {
 } from 'dynamic-data-mapping-form-renderer';
 import React, {useMemo} from 'react';
 
-const convertValueToString = (value) => {
-	if (value && typeof value === 'object') {
-		if (Object.keys(value).length === 0) {
-			return '';
-		}
-
-		return JSON.stringify(value);
-	}
-
-	return value;
-};
-
 const getDefaultRows = (nestedFields) => {
 	return nestedFields.map((nestedField) => {
 		return {
@@ -169,13 +157,15 @@ function FieldBase({
 
 				{children}
 
+				{nestedFields && <Layout rows={getDefaultRows(nestedFields)} />}
+
 				{localizedValueArray.length > 0 &&
 					localizedValueArray.map((language) => (
 						<input
 							key={language.name}
 							name={language.name}
 							type="hidden"
-							value={convertValueToString(language.value)}
+							value={language.value}
 						/>
 					))}
 
@@ -186,8 +176,6 @@ function FieldBase({
 						<div className="form-feedback-item">{errorMessage}</div>
 					</span>
 				)}
-
-				{nestedFields && <Layout rows={getDefaultRows(nestedFields)} />}
 			</div>
 		</ClayTooltipProvider>
 	);

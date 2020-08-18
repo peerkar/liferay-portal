@@ -283,9 +283,9 @@ public class WabBundleProcessor {
 		try {
 			classAnnotations = annotatedClass.getAnnotations();
 		}
-		catch (Throwable throwable) {
+		catch (Throwable t) {
 			if (_log.isDebugEnabled()) {
-				_log.debug(throwable.getMessage());
+				_log.debug(t.getMessage());
 			}
 		}
 
@@ -306,9 +306,9 @@ public class WabBundleProcessor {
 		try {
 			classMethods = annotatedClass.getDeclaredMethods();
 		}
-		catch (Throwable throwable) {
+		catch (Throwable t) {
 			if (_log.isDebugEnabled()) {
-				_log.debug(throwable.getMessage());
+				_log.debug(t.getMessage());
 			}
 		}
 
@@ -318,9 +318,9 @@ public class WabBundleProcessor {
 			try {
 				methodAnnotations = method.getDeclaredAnnotations();
 			}
-			catch (Throwable throwable) {
+			catch (Throwable t) {
 				if (_log.isDebugEnabled()) {
-					_log.debug(throwable.getMessage());
+					_log.debug(t.getMessage());
 				}
 			}
 
@@ -342,9 +342,9 @@ public class WabBundleProcessor {
 		try {
 			declaredFields = annotatedClass.getDeclaredFields();
 		}
-		catch (Throwable throwable) {
+		catch (Throwable t) {
 			if (_log.isDebugEnabled()) {
-				_log.debug(throwable.getMessage());
+				_log.debug(t.getMessage());
 			}
 		}
 
@@ -354,9 +354,9 @@ public class WabBundleProcessor {
 			try {
 				fieldAnnotations = field.getDeclaredAnnotations();
 			}
-			catch (Throwable throwable) {
+			catch (Throwable t) {
 				if (_log.isDebugEnabled()) {
-					_log.debug(throwable.getMessage());
+					_log.debug(t.getMessage());
 				}
 			}
 
@@ -827,8 +827,8 @@ public class WabBundleProcessor {
 			servletContainerInitializer.onStartup(
 				localAnnotatedClasses, servletContext);
 		}
-		catch (Throwable throwable) {
-			_log.error(throwable, throwable);
+		catch (Throwable t) {
+			_log.error(t, t);
 		}
 	}
 

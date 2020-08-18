@@ -26,12 +26,12 @@ public class ResourceActionsException extends PortalException {
 		super(msg);
 	}
 
-	public ResourceActionsException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public ResourceActionsException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public ResourceActionsException(Throwable throwable) {
-		super(throwable);
+	public ResourceActionsException(Throwable cause) {
+		super(cause);
 	}
 
 }

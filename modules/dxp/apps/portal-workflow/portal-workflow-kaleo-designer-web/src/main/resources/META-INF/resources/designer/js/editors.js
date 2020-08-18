@@ -615,20 +615,16 @@ AUI.add(
 
 						return [
 							{
-								label: strings.depot,
-								value: 'depot',
-							},
-							{
-								label: strings.organization,
-								value: 'organization',
+								label: strings.site,
+								value: 'site',
 							},
 							{
 								label: strings.regular,
 								value: 'regular',
 							},
 							{
-								label: strings.site,
-								value: 'site',
+								label: strings.organization,
+								value: 'organization',
 							},
 						];
 					},

@@ -14,42 +14,35 @@
 
 package com.liferay.info.item;
 
+import java.util.Optional;
+
 /**
- * @author Jorge Ferrer
+ * @author Jürgen Kappler
  */
 public class InfoItemReference {
 
-	public InfoItemReference(
-		String className, InfoItemIdentifier infoItemIdentifier) {
+	public static final String VERSION_LATEST = "VERSION_LATEST";
 
-		_className = className;
-		_infoItemIdentifier = infoItemIdentifier;
-	}
+	public static final String VERSION_LATEST_APPROVED =
+		"VERSION_LATEST_APPROVED";
 
-	public InfoItemReference(String className, long classPK) {
-		this(className, new ClassPKInfoItemIdentifier(classPK));
-	}
-
-	public String getClassName() {
-		return _className;
+	public InfoItemReference(long classPK) {
+		_classPK = classPK;
 	}
 
 	public long getClassPK() {
-		if (_infoItemIdentifier instanceof ClassPKInfoItemIdentifier) {
-			ClassPKInfoItemIdentifier classPKInfoItemIdentifier =
-				(ClassPKInfoItemIdentifier)_infoItemIdentifier;
-
-			return classPKInfoItemIdentifier.getClassPK();
-		}
-
-		return 0;
+		return _classPK;
 	}
 
-	public InfoItemIdentifier getInfoItemIdentifier() {
-		return _infoItemIdentifier;
+	public Optional<String> getVersionOptional() {
+		return Optional.ofNullable(_version);
 	}
 
-	private final String _className;
-	private final InfoItemIdentifier _infoItemIdentifier;
+	public void setVersion(String version) {
+		_version = version;
+	}
+
+	private final long _classPK;
+	private String _version;
 
 }

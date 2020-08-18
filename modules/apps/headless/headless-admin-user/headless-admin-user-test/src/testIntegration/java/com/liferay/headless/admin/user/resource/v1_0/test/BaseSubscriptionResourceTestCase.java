@@ -429,7 +429,7 @@ public abstract class BaseSubscriptionResourceTestCase {
 		}
 	}
 
-	protected void assertValid(Subscription subscription) throws Exception {
+	protected void assertValid(Subscription subscription) {
 		boolean valid = true;
 
 		if (subscription.getDateCreated() == null) {

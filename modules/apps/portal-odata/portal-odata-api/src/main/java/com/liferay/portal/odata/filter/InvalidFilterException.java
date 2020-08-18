@@ -35,15 +35,15 @@ public class InvalidFilterException extends BadRequestException {
 	}
 
 	/**
-	 * Creates a new {@code InvalidFilterException} with a message and the throwable
+	 * Creates a new {@code InvalidFilterException} with a message and the cause
 	 * of the exception.
 	 *
 	 * @param  msg the message
-	 * @param  throwable the throwable
+	 * @param  cause the cause
 	 * @review
 	 */
-	public InvalidFilterException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public InvalidFilterException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
 }

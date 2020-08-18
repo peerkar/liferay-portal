@@ -30,6 +30,7 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
 import java.util.Dictionary;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.portlet.Portlet;
 
@@ -43,6 +44,11 @@ import org.osgi.service.component.annotations.Reference;
  * @author Rafael Praxedes
  */
 public abstract class BaseAppDeployer implements AppDeployer {
+
+	@Override
+	public void undeploy(long appId) throws Exception {
+		undeploy(appBuilderAppLocalService, appId, serviceRegistrationsMap);
+	}
 
 	@Activate
 	protected void activate(BundleContext bundleContext) {
@@ -66,6 +72,7 @@ public abstract class BaseAppDeployer implements AppDeployer {
 
 		appBuilderAppPortletTabServiceTrackerMap.close();
 		appPortletMVCResourceCommandServiceTrackerMap.close();
+		serviceRegistrationsMap.clear();
 	}
 
 	protected ServiceRegistration<?> deployLayoutTypeAccessPolicy(
@@ -91,12 +98,14 @@ public abstract class BaseAppDeployer implements AppDeployer {
 			PanelApp.class, panelApp, properties);
 	}
 
-	protected ServiceRegistration<?> deployPortlet(
+	protected ServiceRegistration<?>[] deployPortlet(
 		AppPortlet appPortlet, Map<String, Object> customProperties) {
 
-		return _bundleContext.registerService(
-			Portlet.class, appPortlet,
-			appPortlet.getProperties(customProperties));
+		return new ServiceRegistration<?>[] {
+			_bundleContext.registerService(
+				Portlet.class, appPortlet,
+				appPortlet.getProperties(customProperties))
+		};
 	}
 
 	@Reference
@@ -107,6 +116,8 @@ public abstract class BaseAppDeployer implements AppDeployer {
 	protected ServiceTrackerMap
 		<String, List<ServiceWrapper<MVCResourceCommand>>>
 			appPortletMVCResourceCommandServiceTrackerMap;
+	protected final ConcurrentHashMap<Long, ServiceRegistration<?>[]>
+		serviceRegistrationsMap = new ConcurrentHashMap<>();
 
 	private BundleContext _bundleContext;
 

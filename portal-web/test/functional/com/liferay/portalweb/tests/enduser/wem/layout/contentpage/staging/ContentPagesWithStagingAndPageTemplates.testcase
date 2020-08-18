@@ -195,10 +195,9 @@ definition {
 			key_text = "undo",
 			locator1 = "Icon#ANY");
 
-		AssertCssValue(
-			locator1 = "//div[contains(@class,'page-editor__topper__bar') and contains(.,'Button')]//following-sibling::div[contains(@class,'page-editor__topper__content')]//div[contains(@class,'page-editor__fragment-content')]",
-			locator2 = "text-align",
-			value1 = "start");
+		PageEditor.viewFragmentStyle(
+			alignment = "left",
+			fragmentName = "button");
 
 		Click(
 			key_text = "undo",

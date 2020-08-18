@@ -28,8 +28,4 @@ public class ElasticsearchSortTest extends BaseSortTestCase {
 		return LiferayElasticsearchIndexingFixtureFactory.getInstance();
 	}
 
-	protected String getScoreParameter() {
-		return "_score";
-	}
-
 }

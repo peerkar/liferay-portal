@@ -407,7 +407,7 @@ public abstract class BaseProcessResourceTestCase {
 		}
 	}
 
-	protected void assertValid(Process process) throws Exception {
+	protected void assertValid(Process process) {
 		boolean valid = true;
 
 		if (process.getDateCreated() == null) {

@@ -34,7 +34,7 @@ definition {
 
 	@priority = "5"
 	test AddChildSiteFromImportedSiteTemplate {
-		property portal.acceptance = "true";
+		property portal.acceptance = "quarantine";
 		property test.name.skip.portal.instance = "SitesUsecase#AddChildSiteFromImportedSiteTemplate";
 		property testray.component.names = "Training";
 
@@ -110,7 +110,6 @@ definition {
 
 	@priority = "5"
 	test AddOrganizationSitesAndDeactivate {
-		property custom.properties = "jsonws.web.service.paths.excludes=";
 		property portal.acceptance = "true";
 		property test.name.skip.portal.instance = "SitesUseCase#AddOrganizationSitesAndDeactivate";
 		property testray.component.names = "Site Administration,Training,Users and Organizations";
@@ -178,10 +177,11 @@ definition {
 			userLastName = "userln",
 			userScreenName = "usersn");
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = "userea@liferay.com");
+		User.openUsersAdmin();
+
+		User.editPasswordCP(
+			userEmailAddress = "userea@liferay.com",
+			userScreenName = "usersn");
 
 		User.openUsersAdmin();
 
@@ -270,7 +270,6 @@ definition {
 
 	@priority = "3"
 	test OnlySiteOwnersCanAssignSiteRolesToUserGroups {
-		property custom.properties = "jsonws.web.service.paths.excludes=";
 		property testray.component.names = "Site Administration,User Groups";
 
 		var siteName = TestCase.getSiteName(siteName = "${siteName}");
@@ -314,10 +313,11 @@ definition {
 			userLastName = "userln",
 			userScreenName = "usersn");
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = "userea@liferay.com");
+		User.openUsersAdmin();
+
+		User.editPasswordCP(
+			userEmailAddress = "userea@liferay.com",
+			userScreenName = "usersn");
 
 		User.openUsersAdmin();
 
@@ -352,7 +352,6 @@ definition {
 
 	@priority = "4"
 	test PrivateVirtualHostUrlDoesNotRedirectUserToLoginPage {
-		property custom.properties = "jsonws.web.service.paths.excludes=";
 		property testray.component.names = "Site Administration";
 
 		var siteName = TestCase.getSiteName(siteName = "${siteName}");
@@ -383,10 +382,11 @@ definition {
 			userLastName = "userln",
 			userScreenName = "usersn");
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = "userea@liferay.com");
+		User.openUsersAdmin();
+
+		User.editPasswordCP(
+			userEmailAddress = "userea@liferay.com",
+			userScreenName = "usersn");
 
 		User.openUsersAdmin();
 
@@ -549,7 +549,6 @@ definition {
 
 	@priority = "3"
 	test SiteFriendlyURLLayoutImporter {
-		property custom.properties = "jsonws.web.service.paths.excludes=";
 		property testray.component.names = "Site Administration";
 		var portalURL = PropsUtil.get("portal.url");
 
@@ -573,10 +572,11 @@ definition {
 			userLastName = "userln",
 			userScreenName = "usersn");
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = "userea@liferay.com");
+		User.openUsersAdmin();
+
+		User.editPasswordCP(
+			userEmailAddress = "userea@liferay.com",
+			userScreenName = "usersn");
 
 		UserGroup.openUserGroupsAdmin();
 
@@ -615,7 +615,6 @@ definition {
 
 	@priority = "3"
 	test SitesDeactivated {
-		property custom.properties = "jsonws.web.service.paths.excludes=";
 		property test.name.skip.portal.instance = "SitesUsecase#SitesDeactivated";
 		property testray.component.names = "Site Administration";
 
@@ -652,10 +651,11 @@ definition {
 			userLastName = "userln",
 			userScreenName = "usersn");
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = "userea@liferay.com");
+		User.openUsersAdmin();
+
+		User.editPasswordCP(
+			userEmailAddress = "userea@liferay.com",
+			userScreenName = "usersn");
 
 		User.openUsersAdmin();
 
@@ -699,7 +699,6 @@ definition {
 
 	@priority = "4"
 	test SitesDemoSiteManagement {
-		property custom.properties = "jsonws.web.service.paths.excludes=";
 		property portal.release = "true";
 		property test.name.skip.portal.instance = "SitesUsecase#SitesDemoSiteManagement";
 		property testray.component.names = "Site Administration,Site Pages Administration";
@@ -799,10 +798,11 @@ definition {
 			userLastName = "userln",
 			userScreenName = "usersn");
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = "userea@liferay.com");
+		User.openUsersAdmin();
+
+		User.editPasswordCP(
+			userEmailAddress = "userea@liferay.com",
+			userScreenName = "usersn");
 
 		User.openUsersAdmin();
 
@@ -868,7 +868,6 @@ definition {
 
 	@priority = "4"
 	test SiteTeamsPermissions {
-		property custom.properties = "jsonws.web.service.paths.excludes=";
 		property testray.component.names = "Permissions,Site Administration";
 
 		JSONGroup.addGroup(groupName = "Site Name");
@@ -885,10 +884,11 @@ definition {
 			userLastName = "userln1",
 			userScreenName = "usersn1");
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = "userea1@liferay.com");
+		User.openUsersAdmin();
+
+		User.editPasswordCP(
+			userEmailAddress = "userea1@liferay.com",
+			userScreenName = "usersn1");
 
 		User.openUsersAdmin();
 
@@ -902,10 +902,11 @@ definition {
 			userLastName = "userln2",
 			userScreenName = "usersn2");
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = "userea2@liferay.com");
+		User.openUsersAdmin();
+
+		User.editPasswordCP(
+			userEmailAddress = "userea2@liferay.com",
+			userScreenName = "usersn2");
 
 		ApplicationsMenu.gotoPortlet(
 			category = "Users",

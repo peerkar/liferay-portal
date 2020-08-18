@@ -147,12 +147,12 @@ public class AddLayoutPrototypeMVCActionCommand extends BaseMVCActionCommand {
 				actionRequest, actionResponse,
 				JSONUtil.put("redirectURL", redirectURL));
 		}
-		catch (Throwable throwable) {
+		catch (Throwable t) {
 			if (_log.isDebugEnabled()) {
-				_log.debug(throwable, throwable);
+				_log.debug(t, t);
 			}
 
-			if (throwable instanceof LayoutNameException) {
+			if (t instanceof LayoutNameException) {
 				JSONPortletResponseUtil.writeJSON(
 					actionRequest, actionResponse,
 					JSONUtil.put(
@@ -161,12 +161,10 @@ public class AddLayoutPrototypeMVCActionCommand extends BaseMVCActionCommand {
 							themeDisplay.getRequest(),
 							"please-enter-a-valid-name")));
 			}
-			else if (throwable instanceof
-						LayoutPageTemplateEntryNameException) {
-
+			else if (t instanceof LayoutPageTemplateEntryNameException) {
 				LayoutPageTemplateEntryNameException
 					layoutPageTemplateEntryNameException =
-						(LayoutPageTemplateEntryNameException)throwable;
+						(LayoutPageTemplateEntryNameException)t;
 
 				_layoutPageTemplateEntryExceptionRequestHandler.
 					handlePortalException(

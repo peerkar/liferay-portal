@@ -579,7 +579,7 @@ public abstract class BaseAccountRoleResourceTestCase {
 		}
 	}
 
-	protected void assertValid(AccountRole accountRole) throws Exception {
+	protected void assertValid(AccountRole accountRole) {
 		boolean valid = true;
 
 		if (accountRole.getId() == null) {

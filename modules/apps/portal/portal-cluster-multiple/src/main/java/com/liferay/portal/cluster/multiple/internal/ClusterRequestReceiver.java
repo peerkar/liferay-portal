@@ -100,9 +100,8 @@ public class ClusterRequestReceiver extends BaseClusterReceiver {
 					clusterChannel.sendUnicastMessage(
 						responsePayload, srcAddress);
 				}
-				catch (Throwable throwable) {
-					_log.error(
-						"Unable to send message " + responsePayload, throwable);
+				catch (Throwable t) {
+					_log.error("Unable to send message " + responsePayload, t);
 				}
 			}
 			else if (messagePayload instanceof ClusterNodeResponse) {

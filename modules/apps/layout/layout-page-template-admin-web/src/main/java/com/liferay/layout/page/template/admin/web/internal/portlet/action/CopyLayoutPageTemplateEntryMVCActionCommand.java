@@ -71,9 +71,9 @@ public class CopyLayoutPageTemplateEntryMVCActionCommand
 			TransactionInvokerUtil.invoke(
 				_transactionConfig, copyLayoutPageTemplateEntryCallable);
 		}
-		catch (Throwable throwable) {
+		catch (Throwable t) {
 			if (_log.isDebugEnabled()) {
-				_log.debug(throwable, throwable);
+				_log.debug(t, t);
 			}
 
 			SessionErrors.add(actionRequest, PortalException.class);

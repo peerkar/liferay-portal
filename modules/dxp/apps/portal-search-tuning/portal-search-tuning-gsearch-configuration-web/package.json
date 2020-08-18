@@ -1,0 +1,38 @@
+{
+	"dependencies": {
+		"@clayui/button": "3.3.1",
+		"@clayui/drop-down": "3.4.6",
+		"@clayui/empty-state": "3.2.0",
+		"@clayui/form": "3.9.0",
+		"@clayui/icon": "3.0.5",
+		"@clayui/layout": "3.1.1",
+		"@clayui/link": "3.2.0",
+		"@clayui/loading-indicator": "3.1.0",
+		"@clayui/localized-input": "^3.1.3",
+		"@clayui/management-toolbar": "3.2.2",
+		"classnames": "2.2.6",
+		"codemirror": "^5.52.0",
+		"frontend-js-react-web": "*",
+		"prop-types": "15.7.2",
+		"react": "16.12.0"
+	},
+	"jest": {
+		"setupFilesAfterEnv": [
+			"@testing-library/react/cleanup-after-each"
+		],
+		"testPathIgnorePatterns": [
+			"<rootDir>/test/js/mocks/*"
+		]
+	},
+	"main": "js/index.es.js",
+	"name": "portal-search-tuning-gsearch-configuration-web",
+	"private": true,
+	"scripts": {
+		"build": "liferay-npm-scripts build",
+		"checkFormat": "liferay-npm-scripts check",
+		"format": "liferay-npm-scripts fix",
+		"storybook": "liferay-npm-scripts storybook",
+		"test": "liferay-npm-scripts test"
+	},
+	"version": "1.0.0"
+}

@@ -46,18 +46,17 @@ definition {
 	@description = "This is a test for LPS-103454. Content author having permission to update blog entry could see edit icon in the content page displaying the blog and could edit blog in editmode. "
 	@priority = "4"
 	test EditBlogsEntryWithBlogEntryUpdatePermission {
-		property custom.properties = "jsonws.web.service.paths.excludes=";
-
 		JSONUser.addUser(
 			userEmailAddress = "userea@liferay.com",
 			userFirstName = "Userfn",
 			userLastName = "Userln",
 			userScreenName = "usersn");
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = "userea@liferay.com");
+		User.openUsersAdmin();
+
+		User.editPasswordCP(
+			userEmailAddress = "userea@liferay.com",
+			userScreenName = "usersn");
 
 		JSONUser.addUserToSite(
 			groupName = "Test Site Name",
@@ -123,7 +122,6 @@ definition {
 	@description = "This is a test for LPS-96795. Content author having permissions to create and update web content could see edit icon in the content page displaying the web contents and could edit web content in edit mode."
 	@priority = "5"
 	test EditContentWithCreateAndUpdateWebContentPermissions {
-		property custom.properties = "jsonws.web.service.paths.excludes=";
 		property portal.acceptance = "true";
 
 		JSONUser.addUser(
@@ -132,10 +130,11 @@ definition {
 			userLastName = "Userln",
 			userScreenName = "usersn");
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = "userea@liferay.com");
+		User.openUsersAdmin();
+
+		User.editPasswordCP(
+			userEmailAddress = "userea@liferay.com",
+			userScreenName = "usersn");
 
 		JSONUser.addUserToSite(
 			groupName = "Test Site Name",
@@ -290,7 +289,6 @@ definition {
 	@description = "This is a test for LPS-96795. Content author having permissions to update web content and Update Page Content could see edit icon in the content page displaying the web contents and could edit web content in editmode."
 	@priority = "5"
 	test EditContentWithUpdateWebContentAndUpdatePageContentPermissions {
-		property custom.properties = "jsonws.web.service.paths.excludes=";
 		property portal.acceptance = "true";
 
 		JSONUser.addUser(
@@ -299,10 +297,11 @@ definition {
 			userLastName = "Userln",
 			userScreenName = "usersn");
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = "userea@liferay.com");
+		User.openUsersAdmin();
+
+		User.editPasswordCP(
+			userEmailAddress = "userea@liferay.com",
+			userScreenName = "usersn");
 
 		JSONUser.addUserToSite(
 			groupName = "Test Site Name",
@@ -428,7 +427,6 @@ definition {
 	@description = "This is a test for LPS-103454. Content author having permission to update web content could see edit icon in the content page displaying the web contents and could edit web content in editmode, but could not edit editable field "
 	@priority = "5"
 	test EditContentWithWebContentArticleUpdatePermission {
-		property custom.properties = "jsonws.web.service.paths.excludes=";
 		property portal.acceptance = "true";
 
 		JSONUser.addUser(
@@ -437,10 +435,11 @@ definition {
 			userLastName = "Userln",
 			userScreenName = "usersn");
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = "userea@liferay.com");
+		User.openUsersAdmin();
+
+		User.editPasswordCP(
+			userEmailAddress = "userea@liferay.com",
+			userScreenName = "usersn");
 
 		JSONUser.addUserToSite(
 			groupName = "Test Site Name",
@@ -543,7 +542,6 @@ definition {
 	@description = "This is a test for LPS-105109. Content author having permissions to update page content can introduce new inline content after clicking edit icon in content page."
 	@priority = "5"
 	test EditInlineContentWithUpdatePageContentPermission {
-		property custom.properties = "jsonws.web.service.paths.excludes=";
 		property portal.acceptance = "true";
 
 		ContentPagesNavigator.openEditContentPage(
@@ -562,10 +560,11 @@ definition {
 			userLastName = "Userln",
 			userScreenName = "usersn");
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = "userea@liferay.com");
+		User.openUsersAdmin();
+
+		User.editPasswordCP(
+			userEmailAddress = "userea@liferay.com",
+			userScreenName = "usersn");
 
 		JSONUser.addUserToSite(
 			groupName = "Test Site Name",
@@ -629,7 +628,6 @@ definition {
 	@description = "This is a test for LPS-105109. Content author having permissions to update page content can introduce new inline content after clicking edit icon in content page."
 	@priority = "5"
 	test MapInlineContentWithUpdatePageContentPermission {
-		property custom.properties = "jsonws.web.service.paths.excludes=";
 		property portal.acceptance = "true";
 
 		JSONWebcontent.addWebContent(
@@ -670,10 +668,11 @@ definition {
 			userLastName = "Userln",
 			userScreenName = "usersn");
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = "userea@liferay.com");
+		User.openUsersAdmin();
+
+		User.editPasswordCP(
+			userEmailAddress = "userea@liferay.com",
+			userScreenName = "usersn");
 
 		JSONUser.addUserToSite(
 			groupName = "Test Site Name",
@@ -718,7 +717,7 @@ definition {
 
 		Click(locator1 = "//div[contains(@class,'fragment-rich-text')]/lfr-editable[contains(@id,'rich-text')]");
 
-		PageEditor.gotoTab(tabName = "Selection");
+		PageEditor.gotoTab(tabName = "Page Structure");
 
 		var key_navItem = "Mapping";
 
@@ -745,18 +744,17 @@ definition {
 	@description = "This is a test for LPS-103454. When one WC displayed in multiple fields in a content page, there should be one WC entry in Contents Panel list."
 	@priority = "4"
 	test ViewContentViaContentPanelWithWebContentArticleUpdatePermission {
-		property custom.properties = "jsonws.web.service.paths.excludes=";
-
 		JSONUser.addUser(
 			userEmailAddress = "userea@liferay.com",
 			userFirstName = "Userfn",
 			userLastName = "Userln",
 			userScreenName = "usersn");
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = "userea@liferay.com");
+		User.openUsersAdmin();
+
+		User.editPasswordCP(
+			userEmailAddress = "userea@liferay.com",
+			userScreenName = "usersn");
 
 		JSONUser.addUserToSite(
 			groupName = "Test Site Name",

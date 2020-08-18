@@ -30,13 +30,13 @@ public class RequiredRedirectEntryDestinationURLException
 	}
 
 	public RequiredRedirectEntryDestinationURLException(
-		String msg, Throwable throwable) {
+		String msg, Throwable cause) {
 
-		super(msg, throwable);
+		super(msg, cause);
 	}
 
-	public RequiredRedirectEntryDestinationURLException(Throwable throwable) {
-		super(throwable);
+	public RequiredRedirectEntryDestinationURLException(Throwable cause) {
+		super(cause);
 	}
 
 }

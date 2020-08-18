@@ -30,8 +30,8 @@ public class AntivirusScannerException extends PortalException {
 		_type = type;
 	}
 
-	public AntivirusScannerException(int type, Throwable throwable) {
-		super(throwable);
+	public AntivirusScannerException(int type, Throwable cause) {
+		super(cause);
 
 		_type = type;
 	}
@@ -42,12 +42,12 @@ public class AntivirusScannerException extends PortalException {
 		_type = type;
 	}
 
-	public AntivirusScannerException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public AntivirusScannerException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public AntivirusScannerException(Throwable throwable) {
-		super(throwable);
+	public AntivirusScannerException(Throwable cause) {
+		super(cause);
 	}
 
 	public String getMessageKey() {

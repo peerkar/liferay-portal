@@ -82,13 +82,9 @@ public class AssetInfoEditURLProviderImpl implements AssetInfoEditURLProvider {
 					redirect = themeDisplay.getURLCurrent();
 				}
 				else {
-					String mode = ParamUtil.getString(
-						_portal.getOriginalServletRequest(httpServletRequest),
-						"p_l_mode", Constants.VIEW);
-
 					redirect = _http.setParameter(
 						_portal.getLayoutRelativeURL(layout, themeDisplay),
-						"p_l_mode", mode);
+						"p_l_mode", Constants.EDIT);
 				}
 			}
 

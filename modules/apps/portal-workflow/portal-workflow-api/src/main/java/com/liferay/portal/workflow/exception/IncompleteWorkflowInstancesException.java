@@ -32,14 +32,12 @@ public class IncompleteWorkflowInstancesException extends WorkflowException {
 		super(msg);
 	}
 
-	public IncompleteWorkflowInstancesException(
-		String msg, Throwable throwable) {
-
-		super(msg, throwable);
+	public IncompleteWorkflowInstancesException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public IncompleteWorkflowInstancesException(Throwable throwable) {
-		super(throwable);
+	public IncompleteWorkflowInstancesException(Throwable cause) {
+		super(cause);
 	}
 
 	public int getWorkflowInstancesCount() {

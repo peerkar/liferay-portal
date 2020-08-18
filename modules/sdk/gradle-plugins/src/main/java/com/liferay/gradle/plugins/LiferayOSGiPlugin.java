@@ -554,12 +554,12 @@ public class LiferayOSGiPlugin implements Plugin<Project> {
 		final Configuration compileIncludeConfiguration,
 		Convention convention) {
 
+		ApplicationPluginConvention applicationPluginConvention =
+			convention.getPlugin(ApplicationPluginConvention.class);
+
 		String mainClassName = bundleExtension.getInstruction("Main-Class");
 
 		if (Validator.isNotNull(mainClassName)) {
-			ApplicationPluginConvention applicationPluginConvention =
-				convention.getPlugin(ApplicationPluginConvention.class);
-
 			applicationPluginConvention.setMainClassName(mainClassName);
 		}
 
@@ -824,12 +824,11 @@ public class LiferayOSGiPlugin implements Plugin<Project> {
 										sourceDirectorySet.getOutputDir(),
 										sourceSetOutput.getResourcesDir());
 
-									Set<File> buildDirsFiles =
-										buildDirs.getFiles();
-
 									builder.setClasspath(
-										buildDirsFiles.toArray(new File[0]));
-
+										buildDirs.getFiles(
+										).toArray(
+											new File[0]
+										));
 									builder.setProperty(
 										"project.buildpath",
 										buildDirs.getAsPath());
@@ -857,12 +856,11 @@ public class LiferayOSGiPlugin implements Plugin<Project> {
 									builder.setProperty(
 										"project.sourcepath",
 										sourceDirs.getAsPath());
-
-									Set<File> sourceDirsFiles =
-										sourceDirs.getFiles();
-
 									builder.setSourcepath(
-										sourceDirsFiles.toArray(new File[0]));
+										sourceDirs.getFiles(
+										).toArray(
+											new File[0]
+										));
 
 									if (logger.isDebugEnabled()) {
 										logger.debug(

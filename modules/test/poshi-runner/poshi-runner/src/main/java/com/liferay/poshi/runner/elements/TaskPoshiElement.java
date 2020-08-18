@@ -78,7 +78,6 @@ public class TaskPoshiElement extends PoshiElement {
 	}
 
 	protected TaskPoshiElement() {
-		super(_ELEMENT_NAME);
 	}
 
 	protected TaskPoshiElement(Element element) {

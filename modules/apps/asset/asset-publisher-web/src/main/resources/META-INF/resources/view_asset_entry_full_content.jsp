@@ -244,7 +244,7 @@ Map<String, Object> fragmentsEditorData = HashMapBuilder.<String, Object>put(
 
 		<clay:content-row
 			cssClass="asset-details"
-			floatElements=""
+			floatElements="true"
 			verticalAlign="center"
 		>
 			<c:if test="<%= showContextLink %>">
@@ -372,7 +372,7 @@ Map<String, Object> fragmentsEditorData = HashMapBuilder.<String, Object>put(
 
 		<clay:content-row
 			cssClass="asset-details"
-			floatElements=""
+			floatElements="true"
 			verticalAlign="center"
 		>
 			<c:if test="<%= showLocalization %>">

@@ -18,20 +18,31 @@ import com.liferay.portal.search.query.TermQuery;
 
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-
+import org.elasticsearch.index.query.TermQueryBuilder;
 import org.osgi.service.component.annotations.Component;
 
 /**
  * @author André de Oliveira
  * @author Miguel Angelo Caldas Gallindo
+ * @author Petteri Karttunen
  */
 @Component(service = TermQueryTranslator.class)
 public class TermQueryTranslatorImpl implements TermQueryTranslator {
 
 	@Override
 	public QueryBuilder translate(TermQuery termQuery) {
-		return QueryBuilders.termQuery(
-			termQuery.getField(), termQuery.getValue());
+		
+		String field = termQuery.getField();
+		Object value = termQuery.getValue();
+
+		TermQueryBuilder termQueryBuilder = QueryBuilders.termQuery(
+				field, value);
+
+		if (termQuery.getBoost() !=  null) {
+			termQueryBuilder.boost(termQuery.getBoost());
+		}
+
+		return termQueryBuilder;
 	}
 
 }

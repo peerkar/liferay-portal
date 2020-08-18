@@ -1137,18 +1137,18 @@ public class MainServlet extends HttpServlet {
 				httpServletResponse);
 		}
 		catch (Exception exception) {
-			Throwable throwable = exception.getCause();
+			Throwable cause = exception.getCause();
 
-			if (throwable instanceof NoSuchLayoutException) {
+			if (cause instanceof NoSuchLayoutException) {
 				PortalUtil.sendError(
-					HttpServletResponse.SC_NOT_FOUND, (Exception)throwable,
+					HttpServletResponse.SC_NOT_FOUND, (Exception)cause,
 					httpServletRequest, httpServletResponse);
 
 				return true;
 			}
-			else if (throwable instanceof PrincipalException) {
+			else if (cause instanceof PrincipalException) {
 				_processServicePrePrincipalException(
-					throwable, userId, httpServletRequest, httpServletResponse);
+					cause, userId, httpServletRequest, httpServletResponse);
 
 				return true;
 			}
@@ -1197,8 +1197,7 @@ public class MainServlet extends HttpServlet {
 	}
 
 	private void _processServicePrePrincipalException(
-			Throwable throwable, long userId,
-			HttpServletRequest httpServletRequest,
+			Throwable t, long userId, HttpServletRequest httpServletRequest,
 			HttpServletResponse httpServletResponse)
 		throws IOException, ServletException {
 
@@ -1206,7 +1205,7 @@ public class MainServlet extends HttpServlet {
 			(ParamUtil.getInteger(httpServletRequest, "p_p_lifecycle") == 2)) {
 
 			PortalUtil.sendError(
-				HttpServletResponse.SC_UNAUTHORIZED, (Exception)throwable,
+				HttpServletResponse.SC_UNAUTHORIZED, (Exception)t,
 				httpServletRequest, httpServletResponse);
 
 			return;

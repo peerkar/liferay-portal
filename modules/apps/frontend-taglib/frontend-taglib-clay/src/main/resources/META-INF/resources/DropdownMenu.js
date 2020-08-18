@@ -20,7 +20,6 @@ import classNames from 'classnames';
 import React from 'react';
 
 export default function DropdownMenu({
-	actionsDropdown = false,
 	componentId: _componentId,
 	cssClass,
 	icon,
@@ -34,9 +33,6 @@ export default function DropdownMenu({
 	return (
 		<>
 			<ClayDropDownWithItems
-				className={classNames({
-					'dropdown-action': actionsDropdown,
-				})}
 				items={items.map(({data, ...rest}) => {
 					const dataAttributes = data
 						? Object.entries(data).reduce((acc, [key, value]) => {
@@ -52,15 +48,11 @@ export default function DropdownMenu({
 					};
 				})}
 				trigger={
-					<ClayButton
-						className={classNames(cssClass, {
-							'component-action': actionsDropdown,
-						})}
-						{...otherProps}
-					>
+					<ClayButton className={cssClass} {...otherProps}>
 						{icon && (
 							<span
-								className={classNames('inline-item', {
+								className={classNames({
+									'inline-item': label,
 									'inline-item-before': label,
 								})}
 							>

@@ -30,12 +30,12 @@ public class LocalizedException extends PortalException {
 		super(msg);
 	}
 
-	public LocalizedException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public LocalizedException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public LocalizedException(Throwable throwable) {
-		super(throwable);
+	public LocalizedException(Throwable cause) {
+		super(cause);
 	}
 
 	public void addLocalizedException(Locale locale, Exception exception) {

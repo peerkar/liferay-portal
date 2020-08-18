@@ -24,9 +24,9 @@ public class StateClusterRequest
 	implements ClusterRequest<StateClusterResponse> {
 
 	public StateClusterRequest(String[] indexNames) {
-		_indexNames = indexNames;
-
 		setPreferLocalCluster(true);
+
+		_indexNames = indexNames;
 	}
 
 	@Override

@@ -38,7 +38,6 @@ import com.liferay.segments.field.customizer.SegmentsFieldCustomizerRegistry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -148,10 +147,8 @@ public class EntityModelFieldMapper {
 		EntityModel entityModel, EntityField entityField,
 		PortletRequest portletRequest) {
 
-		Locale locale = _portal.getLocale(portletRequest);
-
 		ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
-			locale, getClass());
+			_portal.getLocale(portletRequest), getClass());
 
 		EntityField.Type entityFieldType = entityField.getType();
 
@@ -161,7 +158,7 @@ public class EntityModelFieldMapper {
 
 			return _getComplexFields(
 				entityModel.getName(), entityField.getName(),
-				complexEntityField.getEntityFieldsMap(), locale, portletRequest,
+				complexEntityField.getEntityFieldsMap(), portletRequest,
 				resourceBundle);
 		}
 
@@ -210,11 +207,11 @@ public class EntityModelFieldMapper {
 
 	private List<Field> _getComplexFields(
 		String entityModelName, String complexEntityFieldName,
-		Map<String, EntityField> entityFieldsMap, Locale locale,
-		PortletRequest portletRequest, ResourceBundle resourceBundle) {
+		Map<String, EntityField> entityFieldsMap, PortletRequest portletRequest,
+		ResourceBundle resourceBundle) {
 
 		if (complexEntityFieldName.equals("customField")) {
-			return _getCustomFields(entityFieldsMap, locale);
+			return _getCustomFields(entityFieldsMap, resourceBundle);
 		}
 
 		List<Field> complexFields = new ArrayList<>();
@@ -244,7 +241,8 @@ public class EntityModelFieldMapper {
 	}
 
 	private List<Field> _getCustomFields(
-		Map<String, EntityField> entityFieldsMap, Locale locale) {
+		Map<String, EntityField> entityFieldsMap,
+		ResourceBundle resourceBundle) {
 
 		List<Field> customFields = new ArrayList<>();
 
@@ -258,7 +256,8 @@ public class EntityModelFieldMapper {
 					return;
 				}
 
-				String label = expandoColumn.getDisplayName(locale);
+				String label = expandoColumn.getDisplayName(
+					resourceBundle.getLocale());
 
 				customFields.add(
 					new Field(
@@ -283,34 +282,9 @@ public class EntityModelFieldMapper {
 			}
 		}
 		else if (expandoColumn.getType() ==
-					ExpandoColumnConstants.FLOAT_ARRAY) {
-
-			for (float value : (float[])expandoColumn.getDefaultValue()) {
-				fieldOptions.add(
-					new Field.Option(
-						String.valueOf(value), String.valueOf(value)));
-			}
-		}
-		else if (expandoColumn.getType() ==
 					ExpandoColumnConstants.INTEGER_ARRAY) {
 
 			for (int value : (int[])expandoColumn.getDefaultValue()) {
-				fieldOptions.add(
-					new Field.Option(
-						String.valueOf(value), String.valueOf(value)));
-			}
-		}
-		else if (expandoColumn.getType() == ExpandoColumnConstants.LONG_ARRAY) {
-			for (long value : (long[])expandoColumn.getDefaultValue()) {
-				fieldOptions.add(
-					new Field.Option(
-						String.valueOf(value), String.valueOf(value)));
-			}
-		}
-		else if (expandoColumn.getType() ==
-					ExpandoColumnConstants.SHORT_ARRAY) {
-
-			for (short value : (short[])expandoColumn.getDefaultValue()) {
 				fieldOptions.add(
 					new Field.Option(
 						String.valueOf(value), String.valueOf(value)));

@@ -13,7 +13,6 @@
  */
 
 import {MARK_NAVIGATION_START, MARK_VIEW_DURATION} from '../utils/constants';
-import {getDuration} from '../utils/performance';
 
 const applicationId = 'Page';
 
@@ -45,10 +44,14 @@ function unload(analytics) {
 		? MARK_NAVIGATION_START
 		: 'navigationStart';
 
-	const duration = getDuration(MARK_VIEW_DURATION, navigationStart);
+	window.performance.measure(MARK_VIEW_DURATION, navigationStart);
+
+	const {duration} = window.performance
+		.getEntriesByName(MARK_VIEW_DURATION)
+		.pop();
 
 	const props = {
-		viewDuration: duration,
+		viewDuration: ~~duration,
 	};
 
 	analytics.send('pageUnloaded', applicationId, props);

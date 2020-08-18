@@ -30,13 +30,13 @@ public class SegmentsExperimentConfidenceLevelException
 	}
 
 	public SegmentsExperimentConfidenceLevelException(
-		String msg, Throwable throwable) {
+		String msg, Throwable cause) {
 
-		super(msg, throwable);
+		super(msg, cause);
 	}
 
-	public SegmentsExperimentConfidenceLevelException(Throwable throwable) {
-		super(throwable);
+	public SegmentsExperimentConfidenceLevelException(Throwable cause) {
+		super(cause);
 	}
 
 }

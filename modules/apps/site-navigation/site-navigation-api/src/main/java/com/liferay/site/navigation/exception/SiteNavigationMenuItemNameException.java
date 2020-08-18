@@ -28,14 +28,12 @@ public class SiteNavigationMenuItemNameException extends PortalException {
 		super(msg);
 	}
 
-	public SiteNavigationMenuItemNameException(
-		String msg, Throwable throwable) {
-
-		super(msg, throwable);
+	public SiteNavigationMenuItemNameException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public SiteNavigationMenuItemNameException(Throwable throwable) {
-		super(throwable);
+	public SiteNavigationMenuItemNameException(Throwable cause) {
+		super(cause);
 	}
 
 }

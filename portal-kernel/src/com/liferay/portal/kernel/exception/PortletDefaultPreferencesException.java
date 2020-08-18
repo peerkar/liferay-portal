@@ -26,12 +26,12 @@ public class PortletDefaultPreferencesException extends PortalException {
 		super(msg);
 	}
 
-	public PortletDefaultPreferencesException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public PortletDefaultPreferencesException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public PortletDefaultPreferencesException(Throwable throwable) {
-		super(throwable);
+	public PortletDefaultPreferencesException(Throwable cause) {
+		super(cause);
 	}
 
 }

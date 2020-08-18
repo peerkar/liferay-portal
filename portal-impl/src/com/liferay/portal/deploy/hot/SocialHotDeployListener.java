@@ -45,9 +45,9 @@ public class SocialHotDeployListener extends BaseHotDeployListener {
 		try {
 			doInvokeDeploy(hotDeployEvent);
 		}
-		catch (Throwable throwable) {
+		catch (Throwable t) {
 			throwHotDeployException(
-				hotDeployEvent, "Error registering social for ", throwable);
+				hotDeployEvent, "Error registering social for ", t);
 		}
 	}
 
@@ -58,9 +58,9 @@ public class SocialHotDeployListener extends BaseHotDeployListener {
 		try {
 			doInvokeUndeploy(hotDeployEvent);
 		}
-		catch (Throwable throwable) {
+		catch (Throwable t) {
 			throwHotDeployException(
-				hotDeployEvent, "Error unregistering social for ", throwable);
+				hotDeployEvent, "Error unregistering social for ", t);
 		}
 	}
 

@@ -804,7 +804,6 @@ definition {
 
 	@priority = "4"
 	test UserEditWebContent {
-		property custom.properties = "jsonws.web.service.paths.excludes=";
 		property testray.component.names = "Permissions,Roles,Users and Organizations,Web Content Administration";
 
 		JSONWebcontent.addWebContent(
@@ -859,10 +858,11 @@ definition {
 			userLastName = "userln",
 			userScreenName = "usersn");
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = "userea@liferay.com");
+		User.openUsersAdmin();
+
+		User.editPasswordCP(
+			userEmailAddress = "userea@liferay.com",
+			userScreenName = "usersn");
 
 		JSONRole.assignRoleToUser(
 			roleTitle = "Web Content Administrator Role",

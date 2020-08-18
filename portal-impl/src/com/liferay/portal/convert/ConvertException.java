@@ -28,12 +28,12 @@ public class ConvertException extends PortalException {
 		super(msg);
 	}
 
-	public ConvertException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public ConvertException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public ConvertException(Throwable throwable) {
-		super(throwable);
+	public ConvertException(Throwable cause) {
+		super(cause);
 	}
 
 }

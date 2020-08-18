@@ -17,9 +17,7 @@
 <div aria-orientation="vertical" class="panel-group" id="<portlet:namespace />globalAccordion" role="tablist">
 
 	<%
-	Map<AssignableScopes, AssignScopesDisplayContext.Relations> globalAssignableScopesRelations = assignScopesDisplayContext.getGlobalAssignableScopesRelations();
-
-	for (Map.Entry<AssignableScopes, AssignScopesDisplayContext.Relations> scopeAliasAssignableScopesEntry : globalAssignableScopesRelations.entrySet()) {
+	for (Map.Entry<AssignableScopes, AssignScopesDisplayContext.Relations> scopeAliasAssignableScopesEntry : assignScopesDisplayContext.getGlobalAssignableScopesRelations().entrySet()) {
 		AssignScopesDisplayContext.Relations relations = scopeAliasAssignableScopesEntry.getValue();
 
 		Set<String> assignedScopeAliases = relations.getAssignedScopeAliases();
@@ -95,10 +93,7 @@
 					if (assignedAssignableScopes != null) {
 						newAssignableScopes = assignableScopes.subtract(assignedAssignableScopes);
 						removedAssignableScopes = assignedAssignableScopes.subtract(assignableScopes);
-
-						AssignableScopes subtractAssignableScopes = assignableScopes.subtract(newAssignableScopes);
-
-						unchangedAssignableScopes = subtractAssignableScopes.subtract(removedAssignableScopes);
+						unchangedAssignableScopes = assignableScopes.subtract(newAssignableScopes).subtract(removedAssignableScopes);
 						assignableScopes = assignableScopes.add(assignedAssignableScopes);
 					}
 

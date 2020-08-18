@@ -18,7 +18,7 @@ definition {
 
 		Click(
 			key_card = "${entryTitle}",
-			locator1 = "Card#CARD_TITLE");
+			locator1 = "LexiconCard#CARD_TITLE");
 	}
 
 	macro _selectField {
@@ -33,12 +33,15 @@ definition {
 			fragmentName = "${fragmentName}",
 			id = "${id}");
 
-		PageEditor.gotoTab(tabName = "Selection");
+		PageEditor.gotoTab(tabName = "Page Structure");
 
-		AssertClick(
-			key_navItem = "Link",
-			locator1 = "PageEditor#NAV_ITEM_BUTTON",
-			value1 = "Link");
+		var key_navItem = "Link";
+
+		if (IsElementNotPresent(locator1 = "PageEditor#ACTIVE_NAV_ITEM_BUTTON")) {
+			AssertClick(
+				locator1 = "PageEditor#NAV_ITEM_BUTTON",
+				value1 = "Link");
+		}
 	}
 
 	macro mapURLToAsset {
@@ -61,7 +64,7 @@ definition {
 			value1 = "${url}");
 
 		Click(
-			key_sidebarButton = "Selection",
+			key_sidebarButton = "Page Structure",
 			locator1 = "PageEditor#FRAGMENT_SIDEBAR_TITLE");
 
 		PageEditor.waitForAutoSave();

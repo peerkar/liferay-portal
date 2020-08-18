@@ -281,26 +281,6 @@ public class ContentPageLayoutEditorDisplayContext
 		return assetEntryTypeLabel;
 	}
 
-	private String _getAssetListEntryItemTypeURL(AssetListEntry assetListEntry)
-		throws Exception {
-
-		PortletURL portletURL = PortletProviderUtil.getPortletURL(
-			portletRequest, AssetListEntry.class.getName(),
-			PortletProvider.Action.EDIT);
-
-		if (portletURL == null) {
-			return StringPool.BLANK;
-		}
-
-		portletURL.setParameter("redirect", themeDisplay.getURLCurrent());
-		portletURL.setParameter("backURL", themeDisplay.getURLCurrent());
-		portletURL.setParameter(
-			"assetListEntryId",
-			String.valueOf(assetListEntry.getAssetListEntryId()));
-
-		return portletURL.toString();
-	}
-
 	private JSONArray _getAssetListEntryLinkedCollectionJSONArray(
 		AssetListEntry assetListEntry) {
 
@@ -622,7 +602,7 @@ public class ContentPageLayoutEditorDisplayContext
 			layoutFullURL, "segmentsExperienceId", segmentsExperienceId);
 	}
 
-	private Map<String, Object> _getSelectedMappingTypes() throws Exception {
+	private Map<String, Object> _getSelectedMappingTypes() {
 		Layout layout = themeDisplay.getLayout();
 
 		if (!Objects.equals(
@@ -645,7 +625,6 @@ public class ContentPageLayoutEditorDisplayContext
 		JSONArray linkedCollectionJSONArray = JSONFactoryUtil.createJSONArray();
 		String subtypeLabel = StringPool.BLANK;
 		String typeLabel = StringPool.BLANK;
-		String subtypeURL = StringPool.BLANK;
 
 		if (Objects.equals(
 				collectionType,
@@ -678,7 +657,6 @@ public class ContentPageLayoutEditorDisplayContext
 				linkedCollectionJSONArray =
 					_getAssetListEntryLinkedCollectionJSONArray(assetListEntry);
 				subtypeLabel = assetListEntry.getTitle();
-				subtypeURL = _getAssetListEntryItemTypeURL(assetListEntry);
 			}
 
 			if (assetListEntry.getType() ==
@@ -722,8 +700,6 @@ public class ContentPageLayoutEditorDisplayContext
 				LanguageUtil.get(httpServletRequest, "name")
 			).put(
 				"label", subtypeLabel
-			).put(
-				"url", subtypeURL
 			).build()
 		).build();
 	}

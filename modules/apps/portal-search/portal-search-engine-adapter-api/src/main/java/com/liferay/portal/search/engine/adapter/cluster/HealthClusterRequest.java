@@ -28,9 +28,9 @@ public class HealthClusterRequest
 	}
 
 	public HealthClusterRequest(String... indexNames) {
-		_indexNames = indexNames;
-
 		setPreferLocalCluster(true);
+
+		_indexNames = indexNames;
 	}
 
 	@Override

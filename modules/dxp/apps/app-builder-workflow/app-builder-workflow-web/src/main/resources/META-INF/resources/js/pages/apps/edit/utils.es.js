@@ -9,9 +9,13 @@
  * distribution rights of the Software.
  */
 
-import {isEqualObjects} from 'app-builder-web/js/utils/utils.es';
+import {
+	getTranslatedValue,
+	isEqualObjects,
+} from 'app-builder-web/js/utils/utils.es';
 
 export function canDeployApp(app, config) {
+	const appName = getTranslatedValue(app, 'name');
 	const isValidSteps = config.steps.every((step) => {
 		const assigneeRoles = step?.appWorkflowRoleAssignments || [{}];
 		const duplicatedFields =
@@ -28,7 +32,7 @@ export function canDeployApp(app, config) {
 		app.dataDefinitionId &&
 		app.dataLayoutId &&
 		app.dataListViewId &&
-		app.appName?.trim().length > 0 &&
+		appName.trim().length > 0 &&
 		isValidSteps
 	);
 }

@@ -24,9 +24,8 @@ import com.liferay.fragment.processor.FragmentEntryProcessorContext;
 import com.liferay.info.field.InfoFieldValue;
 import com.liferay.info.formatter.InfoCollectionTextFormatter;
 import com.liferay.info.formatter.InfoTextFormatter;
-import com.liferay.info.item.ClassPKInfoItemIdentifier;
 import com.liferay.info.item.InfoItemFieldValues;
-import com.liferay.info.item.InfoItemIdentifier;
+import com.liferay.info.item.InfoItemReference;
 import com.liferay.info.item.InfoItemServiceTracker;
 import com.liferay.info.item.provider.InfoItemFieldValuesProvider;
 import com.liferay.info.item.provider.InfoItemObjectProvider;
@@ -251,22 +250,21 @@ public class FragmentEntryProcessorHelperImpl
 			return null;
 		}
 
-		InfoItemIdentifier infoItemIdentifier = new ClassPKInfoItemIdentifier(
-			classPK);
+		InfoItemReference infoItemReference = new InfoItemReference(classPK);
 
 		if (fragmentEntryProcessorContext.getPreviewClassPK() > 0) {
-			infoItemIdentifier = new ClassPKInfoItemIdentifier(
+			infoItemReference = new InfoItemReference(
 				fragmentEntryProcessorContext.getPreviewClassPK());
 
 			if (Validator.isNotNull(
 					fragmentEntryProcessorContext.getPreviewVersion())) {
 
-				infoItemIdentifier.setVersion(
+				infoItemReference.setVersion(
 					fragmentEntryProcessorContext.getPreviewVersion());
 			}
 		}
 
-		Object object = infoItemObjectProvider.getInfoItem(infoItemIdentifier);
+		Object object = infoItemObjectProvider.getInfoItem(infoItemReference);
 
 		if (object == null) {
 			return null;

@@ -127,11 +127,7 @@ public class RESTBuilder {
 		}
 	}
 
-	public RESTBuilder(
-			File copyrightFile, File configDir,
-			Boolean forceClientVersionDescription)
-		throws Exception {
-
+	public RESTBuilder(File copyrightFile, File configDir) throws Exception {
 		_copyrightFile = copyrightFile;
 
 		_configDir = configDir;
@@ -140,11 +136,6 @@ public class RESTBuilder {
 
 		try (InputStream is = new FileInputStream(configFile)) {
 			_configYAML = YAMLUtil.loadConfigYAML(StringUtil.read(is));
-
-			if (forceClientVersionDescription != null) {
-				_configYAML.setForceClientVersionDescription(
-					forceClientVersionDescription);
-			}
 		}
 		catch (Exception exception) {
 			throw new RuntimeException(
@@ -156,8 +147,7 @@ public class RESTBuilder {
 	public RESTBuilder(RESTBuilderArgs restBuilderArgs) throws Exception {
 		this(
 			restBuilderArgs.getCopyrightFile(),
-			restBuilderArgs.getRESTConfigDir(),
-			restBuilderArgs.isForceClientVersionDescription());
+			restBuilderArgs.getRESTConfigDir());
 	}
 
 	public void build() throws Exception {
@@ -426,9 +416,7 @@ public class RESTBuilder {
 			yamlString = _fixOpenAPIContentApplicationXML(yamlString);
 		}
 
-		if (_configYAML.isForceClientVersionDescription()) {
-			yamlString = _addClientVersionDescription(yamlString);
-		}
+		yamlString = _addClientVersionDescription(yamlString);
 
 		if (_configYAML.isWarningsEnabled()) {
 			_validate(yamlString);

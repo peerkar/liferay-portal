@@ -383,17 +383,9 @@ definition {
 				value1 = "${mbThreadAttachment}");
 
 			if (IsElementPresent(locator1 = "Header#H4_TITLE", key_title = "Uploading")) {
-				Click(
-					key_fileName = "${mbThreadAttachment}",
-					locator1 = "Icon#DELETE_ATTACHMENT");
+				Refresh();
 
-				UploadCommonFile.uploadCommonFileHiddenNoMouseOver(
-					locator1 = "TextInput#FILE",
-					value1 = "${mbThreadAttachment}");
-
-				if (IsNotChecked(locator1 = "Checkbox#SELECT_ALL")) {
-					Click(locator1 = "Checkbox#SELECT_ALL");
-				}
+				Click(locator1 = "Checkbox#SELECT_ALL");
 			}
 
 			AssertChecked.assertCheckedNotVisible(

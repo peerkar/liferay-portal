@@ -82,7 +82,6 @@ public class ReturnPoshiElement extends PoshiElement {
 	}
 
 	protected ReturnPoshiElement() {
-		super(_ELEMENT_NAME);
 	}
 
 	protected ReturnPoshiElement(Element element) {

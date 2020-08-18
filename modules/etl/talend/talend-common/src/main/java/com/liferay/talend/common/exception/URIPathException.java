@@ -26,12 +26,12 @@ public class URIPathException extends RuntimeException {
 		super(message);
 	}
 
-	public URIPathException(String message, Throwable throwable) {
-		super(message, throwable);
+	public URIPathException(String message, Throwable cause) {
+		super(message, cause);
 	}
 
-	public URIPathException(Throwable throwable) {
-		super(throwable);
+	public URIPathException(Throwable cause) {
+		super(cause);
 	}
 
 }

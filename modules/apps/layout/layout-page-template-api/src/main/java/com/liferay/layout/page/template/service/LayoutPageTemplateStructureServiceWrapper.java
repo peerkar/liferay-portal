@@ -14,7 +14,6 @@
 
 package com.liferay.layout.page.template.service;
 
-import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
 import com.liferay.portal.kernel.service.ServiceWrapper;
 
 /**
@@ -52,9 +51,10 @@ public class LayoutPageTemplateStructureServiceWrapper
 	 */
 	@Deprecated
 	@Override
-	public LayoutPageTemplateStructure updateLayoutPageTemplateStructure(
-			long groupId, long classNameId, long classPK,
-			long segmentsExperienceId, String data)
+	public com.liferay.layout.page.template.model.LayoutPageTemplateStructure
+			updateLayoutPageTemplateStructure(
+				long groupId, long classNameId, long classPK,
+				long segmentsExperienceId, String data)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _layoutPageTemplateStructureService.
@@ -63,8 +63,9 @@ public class LayoutPageTemplateStructureServiceWrapper
 	}
 
 	@Override
-	public LayoutPageTemplateStructure updateLayoutPageTemplateStructureData(
-			long groupId, long plid, long segmentsExperienceId, String data)
+	public com.liferay.layout.page.template.model.LayoutPageTemplateStructure
+			updateLayoutPageTemplateStructureData(
+				long groupId, long plid, long segmentsExperienceId, String data)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _layoutPageTemplateStructureService.

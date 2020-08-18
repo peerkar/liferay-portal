@@ -29,13 +29,13 @@ public class OAuth2ApplicationClientGrantTypeException extends PortalException {
 	}
 
 	public OAuth2ApplicationClientGrantTypeException(
-		String msg, Throwable throwable) {
+		String msg, Throwable cause) {
 
-		super(msg, throwable);
+		super(msg, cause);
 	}
 
-	public OAuth2ApplicationClientGrantTypeException(Throwable throwable) {
-		super(throwable);
+	public OAuth2ApplicationClientGrantTypeException(Throwable cause) {
+		super(cause);
 	}
 
 }

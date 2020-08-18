@@ -37,14 +37,14 @@ public class LayoutNameException extends PortalException {
 		_type = TOO_SHORT;
 	}
 
-	public LayoutNameException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public LayoutNameException(String msg, Throwable cause) {
+		super(msg, cause);
 
 		_type = TOO_SHORT;
 	}
 
-	public LayoutNameException(Throwable throwable) {
-		super(throwable);
+	public LayoutNameException(Throwable cause) {
+		super(cause);
 
 		_type = TOO_SHORT;
 	}

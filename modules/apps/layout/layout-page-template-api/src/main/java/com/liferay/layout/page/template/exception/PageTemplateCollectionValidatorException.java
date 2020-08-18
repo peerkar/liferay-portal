@@ -22,13 +22,13 @@ import com.liferay.portal.kernel.exception.PortalException;
 public class PageTemplateCollectionValidatorException extends PortalException {
 
 	public PageTemplateCollectionValidatorException(
-		String msg, Throwable throwable) {
+		String msg, Throwable cause) {
 
-		super(msg, throwable);
+		super(msg, cause);
 	}
 
-	public PageTemplateCollectionValidatorException(Throwable throwable) {
-		super(throwable);
+	public PageTemplateCollectionValidatorException(Throwable cause) {
+		super(cause);
 	}
 
 }

@@ -61,10 +61,8 @@ import java.util.Map;
  *
  * @author Brian Wing Shun Chan
  * @see LayoutPrototypeServiceHttp
- * @deprecated As of Athanasius (7.3.x), with no direct replacement
  * @generated
  */
-@Deprecated
 public class LayoutPrototypeServiceSoap {
 
 	public static com.liferay.portal.kernel.model.LayoutPrototypeSoap

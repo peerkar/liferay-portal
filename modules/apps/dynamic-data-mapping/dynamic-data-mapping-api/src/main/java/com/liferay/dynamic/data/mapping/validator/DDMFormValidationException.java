@@ -35,12 +35,12 @@ public class DDMFormValidationException extends PortalException {
 		super(msg);
 	}
 
-	public DDMFormValidationException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public DDMFormValidationException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public DDMFormValidationException(Throwable throwable) {
-		super(throwable);
+	public DDMFormValidationException(Throwable cause) {
+		super(cause);
 	}
 
 	public static class MustNotDuplicateFieldName
@@ -275,13 +275,13 @@ public class DDMFormValidationException extends PortalException {
 		extends DDMFormValidationException {
 
 		public MustSetValidFormRuleExpression(
-			String expressionType, String expression, Throwable throwable) {
+			String expressionType, String expression, Throwable cause) {
 
 			super(
 				String.format(
 					"Invalid form rule %s expression set: \"%s\"",
 					expressionType, expression),
-				throwable);
+				cause);
 
 			_expression = expression;
 		}

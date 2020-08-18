@@ -49,27 +49,21 @@ export const TranslationManagerLabel = ({
 };
 
 export default ({
-	availableLanguageIds,
+	availableLanguageIds = Liferay.Language.available,
 	defaultLanguageId,
 	editingLanguageId,
 	onActiveChange = () => {},
 	onEditingLanguageIdChange,
-	showUserView = false,
 	translatedLanguageIds,
-	className,
 }) => {
 	const [active, setActive] = useState(false);
-	const [_availableLanguageIds, setAvailableLanguageIds] = useState({});
-	const [available, setAvailable] = useState({});
 
-	useEffect(() => {
-		AUI().use('portal-available-languages', () => {
-			setAvailable(Liferay.Language.available);
-			setAvailableLanguageIds(
-				availableLanguageIds || Liferay.Language.available
-			);
-		});
-	}, [availableLanguageIds]);
+	const availableLanguages = [
+		...new Set([
+			defaultLanguageId,
+			...Object.keys(availableLanguageIds).sort(),
+		]),
+	];
 
 	useEffect(() => {
 		onActiveChange(active);
@@ -78,37 +72,26 @@ export default ({
 	return (
 		<ClayDropDown
 			active={active}
-			className={classNames('localizable-dropdown', className)}
+			className="localizable-dropdown"
 			onActiveChange={(newVal) => setActive(newVal)}
 			trigger={
 				<ClayButton
 					displayType="secondary"
-					monospaced={!showUserView}
-					small={showUserView}
+					monospaced
 					symbol={formatLabel(editingLanguageId)}
 				>
 					<span className="inline-item">
 						<ClayIcon symbol={formatIcon(editingLanguageId)} />
 					</span>
 
-					{showUserView ? (
-						<span className="localizable-dropdown-label ml-2">
-							{available[editingLanguageId]}
-						</span>
-					) : (
-						<span className="btn-section">
-							{formatLabel(editingLanguageId)}
-						</span>
-					)}
-
-					{showUserView && (
-						<ClayIcon className="ml-2" symbol="caret-bottom" />
-					)}
+					<span className="btn-section">
+						{formatLabel(editingLanguageId)}
+					</span>
 				</ClayButton>
 			}
 		>
 			<ClayDropDown.ItemList className="localizable-dropdown-ul">
-				{Object.keys(_availableLanguageIds).map((languageId, index) => (
+				{availableLanguages.map((languageId, index) => (
 					<ClayDropDown.Item
 						className={classNames('autofit-row', {
 							['localizable-item-default']:
@@ -126,19 +109,15 @@ export default ({
 									<ClayIcon symbol={formatIcon(languageId)} />
 								</span>
 
-								{showUserView
-									? available[languageId]
-									: formatLabel(languageId)}
+								{formatLabel(languageId)}
 							</span>
 						</span>
 
-						{!showUserView && (
-							<TranslationManagerLabel
-								defaultLanguageId={defaultLanguageId}
-								languageId={languageId}
-								translatedLanguageIds={translatedLanguageIds}
-							/>
-						)}
+						<TranslationManagerLabel
+							defaultLanguageId={defaultLanguageId}
+							languageId={languageId}
+							translatedLanguageIds={translatedLanguageIds}
+						/>
 					</ClayDropDown.Item>
 				))}
 			</ClayDropDown.ItemList>

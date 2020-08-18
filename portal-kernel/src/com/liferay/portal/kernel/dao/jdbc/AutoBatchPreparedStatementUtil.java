@@ -172,28 +172,28 @@ public class AutoBatchPreparedStatementUtil {
 			}
 
 			if (method.equals(_closeMethod)) {
-				Throwable throwable1 = null;
+				Throwable throwable = null;
 
 				for (Future<Void> future : _futures) {
 					try {
 						future.get();
 					}
-					catch (Throwable throwable2) {
-						if (throwable2 instanceof ExecutionException) {
-							throwable2 = throwable2.getCause();
+					catch (Throwable t) {
+						if (t instanceof ExecutionException) {
+							t = t.getCause();
 						}
 
-						if (throwable1 == null) {
-							throwable1 = throwable2;
+						if (throwable == null) {
+							throwable = t;
 						}
 						else {
-							throwable1.addSuppressed(throwable2);
+							throwable.addSuppressed(t);
 						}
 					}
 				}
 
-				if (throwable1 != null) {
-					throw throwable1;
+				if (throwable != null) {
+					throw throwable;
 				}
 			}
 
@@ -240,7 +240,7 @@ public class AutoBatchPreparedStatementUtil {
 
 							_futures.remove(future);
 						}
-						catch (Throwable throwable) {
+						catch (Throwable t) {
 						}
 					}
 
@@ -279,28 +279,28 @@ public class AutoBatchPreparedStatementUtil {
 			}
 
 			if (method.equals(_closeMethod)) {
-				Throwable throwable1 = null;
+				Throwable throwable = null;
 
 				for (Future<Void> future : _futures) {
 					try {
 						future.get();
 					}
-					catch (Throwable throwable2) {
-						if (throwable2 instanceof ExecutionException) {
-							throwable2 = throwable2.getCause();
+					catch (Throwable t) {
+						if (t instanceof ExecutionException) {
+							t = t.getCause();
 						}
 
-						if (throwable1 == null) {
-							throwable1 = throwable2;
+						if (throwable == null) {
+							throwable = t;
 						}
 						else {
-							throwable1.addSuppressed(throwable2);
+							throwable.addSuppressed(t);
 						}
 					}
 				}
 
-				if (throwable1 != null) {
-					throw throwable1;
+				if (throwable != null) {
+					throw throwable;
 				}
 			}
 
@@ -345,7 +345,7 @@ public class AutoBatchPreparedStatementUtil {
 
 							_futures.remove(future);
 						}
-						catch (Throwable throwable) {
+						catch (Throwable t) {
 						}
 					}
 

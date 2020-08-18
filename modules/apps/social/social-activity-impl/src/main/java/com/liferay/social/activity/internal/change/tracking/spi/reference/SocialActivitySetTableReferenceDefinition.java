@@ -14,7 +14,6 @@
 
 package com.liferay.social.activity.internal.change.tracking.spi.reference;
 
-import com.liferay.asset.kernel.model.AssetEntryTable;
 import com.liferay.change.tracking.spi.reference.TableReferenceDefinition;
 import com.liferay.change.tracking.spi.reference.builder.ChildTableReferenceInfoBuilder;
 import com.liferay.change.tracking.spi.reference.builder.ParentTableReferenceInfoBuilder;
@@ -44,20 +43,7 @@ public class SocialActivitySetTableReferenceDefinition
 			parentTableReferenceInfoBuilder) {
 
 		parentTableReferenceInfoBuilder.groupedModel(
-			SocialActivitySetTable.INSTANCE
-		).referenceInnerJoin(
-			fromStep -> fromStep.from(
-				AssetEntryTable.INSTANCE
-			).innerJoinON(
-				SocialActivitySetTable.INSTANCE,
-				SocialActivitySetTable.INSTANCE.classNameId.eq(
-					AssetEntryTable.INSTANCE.classNameId
-				).and(
-					SocialActivitySetTable.INSTANCE.classPK.eq(
-						AssetEntryTable.INSTANCE.classPK)
-				)
-			)
-		);
+			SocialActivitySetTable.INSTANCE);
 	}
 
 	@Override

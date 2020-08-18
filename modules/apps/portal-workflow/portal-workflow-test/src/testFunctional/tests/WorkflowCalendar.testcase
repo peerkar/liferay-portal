@@ -318,7 +318,7 @@ definition {
 			userCalendarName = "Test Test");
 	}
 
-	@priority = "3"
+	@priority = "2"
 	test ViewPendingStatusInEventDetails {
 		CalendarNavigator.gotoView(viewType = "Week");
 

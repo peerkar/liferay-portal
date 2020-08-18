@@ -28,12 +28,12 @@ public class CalendarBookingRecurrenceException extends PortalException {
 		super(msg);
 	}
 
-	public CalendarBookingRecurrenceException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public CalendarBookingRecurrenceException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public CalendarBookingRecurrenceException(Throwable throwable) {
-		super(throwable);
+	public CalendarBookingRecurrenceException(Throwable cause) {
+		super(cause);
 	}
 
 }

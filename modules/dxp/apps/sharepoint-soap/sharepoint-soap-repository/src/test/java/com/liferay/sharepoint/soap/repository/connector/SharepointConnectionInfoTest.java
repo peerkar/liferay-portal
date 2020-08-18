@@ -14,7 +14,6 @@
 
 package com.liferay.sharepoint.soap.repository.connector;
 
-import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 
 import java.net.URL;
@@ -70,9 +69,8 @@ public class SharepointConnectionInfoTest {
 		URL serviceURL = sharepointConnectionInfo.getServiceURL();
 
 		Assert.assertEquals(
-			StringBundler.concat(
-				_SERVER_PROTOCOL, "://", _SERVER_ADDRESS, StringPool.COLON,
-				_SERVER_PORT, sitePath, StringPool.SLASH),
+			_SERVER_PROTOCOL + "://" + _SERVER_ADDRESS + StringPool.COLON +
+				_SERVER_PORT + sitePath + StringPool.SLASH,
 			serviceURL.toString());
 	}
 

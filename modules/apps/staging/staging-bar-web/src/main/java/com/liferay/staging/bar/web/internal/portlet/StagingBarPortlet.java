@@ -279,16 +279,16 @@ public class StagingBarPortlet extends MVCPortlet {
 					SessionErrors.add(renderRequest, AuthException.class);
 				}
 				catch (SystemException systemException) {
-					Throwable throwable = systemException.getCause();
+					Throwable cause = systemException.getCause();
 
-					if (!(throwable instanceof ConnectException)) {
+					if (!(cause instanceof ConnectException)) {
 						throw systemException;
 					}
 
 					if (_log.isWarnEnabled()) {
 						_log.warn(
 							"Unable to connect to remote live: " +
-								throwable.getMessage());
+								cause.getMessage());
 					}
 
 					SessionErrors.add(
@@ -438,10 +438,10 @@ public class StagingBarPortlet extends MVCPortlet {
 	}
 
 	@Override
-	protected boolean isSessionErrorException(Throwable throwable) {
-		if (throwable instanceof LayoutBranchNameException ||
-			throwable instanceof LayoutSetBranchNameException ||
-			super.isSessionErrorException(throwable)) {
+	protected boolean isSessionErrorException(Throwable cause) {
+		if (cause instanceof LayoutBranchNameException ||
+			cause instanceof LayoutSetBranchNameException ||
+			super.isSessionErrorException(cause)) {
 
 			return true;
 		}

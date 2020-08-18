@@ -17,7 +17,6 @@ import React, {useCallback, useContext} from 'react';
 import ContentView from '../../../shared/components/content-view/ContentView.es';
 import FormGroupWithStatus from '../../../shared/components/form/FormGroupWithStatus.es';
 import ReloadButton from '../../../shared/components/list/ReloadButton.es';
-import {parse} from '../../../shared/components/router/queryString.es';
 import {useToaster} from '../../../shared/components/toaster/hooks/useToaster.es';
 import {usePageTitle} from '../../../shared/hooks/usePageTitle.es';
 import {AppContext} from '../../AppContext.es';
@@ -56,8 +55,6 @@ const Body = ({history, id, processId, query}) => {
 		sla,
 	} = useContext(SLAFormContext);
 	const toaster = useToaster();
-
-	const {slaInfoLink} = parse(query);
 
 	usePageTitle(id ? sla.name : Liferay.Language.get('new-sla'));
 
@@ -127,15 +124,10 @@ const Body = ({history, id, processId, query}) => {
 						);
 					}
 					else {
-						if (slaInfoLink) {
-							history.push({
-								pathname: `/sla/${processId}/list/${defaultDelta}/1`,
-								search: query,
-							});
-						}
-						else {
-							history.goBack();
-						}
+						history.push({
+							pathname: `/sla/${processId}/list/${defaultDelta}/1`,
+							search: query,
+						});
 
 						toaster.success(Liferay.Language.get('sla-was-saved'));
 					}

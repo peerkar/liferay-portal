@@ -57,7 +57,6 @@ page import="com.liferay.portal.kernel.exception.LocaleException" %><%@
 page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
 page import="com.liferay.portal.kernel.model.Group" %><%@
 page import="com.liferay.portal.kernel.model.GroupConstants" %><%@
-page import="com.liferay.portal.kernel.model.User" %><%@
 page import="com.liferay.portal.kernel.util.GetterUtil" %><%@
 page import="com.liferay.portal.kernel.util.HashMapBuilder" %><%@
 page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
@@ -78,6 +77,7 @@ page import="com.liferay.sharing.configuration.SharingConfiguration" %>
 
 <%@ page import="java.util.Collection" %><%@
 page import="java.util.Collections" %><%@
+page import="java.util.HashMap" %><%@
 page import="java.util.List" %>
 
 <%@ page import="javax.portlet.ActionRequest" %>

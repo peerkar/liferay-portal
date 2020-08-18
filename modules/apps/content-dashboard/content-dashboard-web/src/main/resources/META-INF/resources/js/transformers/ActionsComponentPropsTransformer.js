@@ -19,42 +19,16 @@ import SidebarPanelInfoView from '../components/SidebarPanelInfoView';
 import SidebarPanelMetricsView from '../components/SidebarPanelMetricsView';
 
 const actions = {
-	showInfo({fetchURL, portletNamespace, rowId}) {
-		selectRow(portletNamespace, rowId);
-		showSidebar({
-			View: SidebarPanelInfoView,
-			fetchURL,
-			portletNamespace,
-		});
+	showInfo(fetchURL, portletNamespace) {
+		showSidebar({View: SidebarPanelInfoView, fetchURL, portletNamespace});
 	},
-	showMetrics({fetchURL, portletNamespace, rowId}) {
-		selectRow(portletNamespace, rowId);
+	showMetrics(fetchURL, portletNamespace) {
 		showSidebar({
 			View: SidebarPanelMetricsView,
 			fetchURL,
 			portletNamespace,
 		});
 	},
-};
-
-const deselectAllRows = (portletNamespace) => {
-	const activeRows = document.querySelectorAll(
-		`[data-searchcontainerid="${portletNamespace}content"] tr.active`
-	);
-
-	activeRows.forEach((row) => row.classList.remove('active'));
-};
-
-const getRow = (portletNamespace, rowId) =>
-	document.querySelector(
-		`[data-searchcontainerid="${portletNamespace}content"] [data-rowid="${rowId}"]`
-	);
-
-const selectRow = (portletNamespace, rowId) => {
-	deselectAllRows(portletNamespace);
-
-	const currentRow = getRow(portletNamespace, rowId);
-	currentRow.classList.add('active');
 };
 
 const showSidebar = ({View, fetchURL, portletNamespace}) => {
@@ -71,11 +45,6 @@ const showSidebar = ({View, fetchURL, portletNamespace}) => {
 			SidebarPanel,
 			{
 				fetchURL,
-				onClose: () => {
-					Liferay.component(id).close();
-
-					deselectAllRows(portletNamespace);
-				},
 				ref: (element) => {
 					Liferay.component(id, element);
 				},
@@ -105,11 +74,7 @@ export default function propsTransformer({
 					if (action) {
 						event.preventDefault();
 
-						actions[action]({
-							fetchURL: item.data.fetchURL,
-							portletNamespace,
-							rowId: item.data.classPK,
-						});
+						actions[action](item.data.fetchURL, portletNamespace);
 					}
 				},
 			};

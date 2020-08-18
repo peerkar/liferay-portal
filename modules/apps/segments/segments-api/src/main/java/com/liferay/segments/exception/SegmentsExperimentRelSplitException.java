@@ -28,14 +28,12 @@ public class SegmentsExperimentRelSplitException extends PortalException {
 		super(msg);
 	}
 
-	public SegmentsExperimentRelSplitException(
-		String msg, Throwable throwable) {
-
-		super(msg, throwable);
+	public SegmentsExperimentRelSplitException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public SegmentsExperimentRelSplitException(Throwable throwable) {
-		super(throwable);
+	public SegmentsExperimentRelSplitException(Throwable cause) {
+		super(cause);
 	}
 
 }

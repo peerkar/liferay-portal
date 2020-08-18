@@ -47,14 +47,14 @@ public class LayoutImportException extends PortalException {
 		_type = type;
 	}
 
-	public LayoutImportException(int type, String msg, Throwable throwable) {
-		this(msg, throwable);
+	public LayoutImportException(int type, String msg, Throwable cause) {
+		this(msg, cause);
 
 		_type = type;
 	}
 
-	public LayoutImportException(int type, Throwable throwable) {
-		this(throwable);
+	public LayoutImportException(int type, Throwable cause) {
+		this(cause);
 
 		_type = type;
 	}
@@ -63,12 +63,12 @@ public class LayoutImportException extends PortalException {
 		super(msg);
 	}
 
-	public LayoutImportException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public LayoutImportException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public LayoutImportException(Throwable throwable) {
-		super(throwable);
+	public LayoutImportException(Throwable cause) {
+		super(cause);
 	}
 
 	public Object[] getArguments() {

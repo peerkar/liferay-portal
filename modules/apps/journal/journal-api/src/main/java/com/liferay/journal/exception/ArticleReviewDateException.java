@@ -28,12 +28,12 @@ public class ArticleReviewDateException extends PortalException {
 		super(msg);
 	}
 
-	public ArticleReviewDateException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public ArticleReviewDateException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public ArticleReviewDateException(Throwable throwable) {
-		super(throwable);
+	public ArticleReviewDateException(Throwable cause) {
+		super(cause);
 	}
 
 }

@@ -1144,7 +1144,6 @@ definition {
 				userScreenName = "${userScreenName}");
 
 			JSONUser.setFirstPassword(
-				agreeToTermsAndAnswerReminderQuery = "true",
 				requireReset = "false",
 				userEmailAddress = "${userEmailAddress}");
 

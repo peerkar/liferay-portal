@@ -28,12 +28,12 @@ public class RequiredFormInstanceException extends PortalException {
 		super(msg);
 	}
 
-	public RequiredFormInstanceException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public RequiredFormInstanceException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public RequiredFormInstanceException(Throwable throwable) {
-		super(throwable);
+	public RequiredFormInstanceException(Throwable cause) {
+		super(cause);
 	}
 
 }

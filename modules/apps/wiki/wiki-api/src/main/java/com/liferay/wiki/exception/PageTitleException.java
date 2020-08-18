@@ -28,12 +28,12 @@ public class PageTitleException extends PortalException {
 		super(msg);
 	}
 
-	public PageTitleException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public PageTitleException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public PageTitleException(Throwable throwable) {
-		super(throwable);
+	public PageTitleException(Throwable cause) {
+		super(cause);
 	}
 
 }

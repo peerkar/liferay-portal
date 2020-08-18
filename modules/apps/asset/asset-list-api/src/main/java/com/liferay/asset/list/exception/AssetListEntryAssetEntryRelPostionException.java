@@ -30,13 +30,13 @@ public class AssetListEntryAssetEntryRelPostionException
 	}
 
 	public AssetListEntryAssetEntryRelPostionException(
-		String msg, Throwable throwable) {
+		String msg, Throwable cause) {
 
-		super(msg, throwable);
+		super(msg, cause);
 	}
 
-	public AssetListEntryAssetEntryRelPostionException(Throwable throwable) {
-		super(throwable);
+	public AssetListEntryAssetEntryRelPostionException(Throwable cause) {
+		super(cause);
 	}
 
 }

@@ -126,8 +126,6 @@ public class FragmentEntryPersistenceTest {
 
 		newFragmentEntry.setMvccVersion(RandomTestUtil.nextLong());
 
-		newFragmentEntry.setCtCollectionId(RandomTestUtil.nextLong());
-
 		newFragmentEntry.setUuid(RandomTestUtil.randomString());
 
 		newFragmentEntry.setHeadId(RandomTestUtil.nextLong());
@@ -184,9 +182,6 @@ public class FragmentEntryPersistenceTest {
 		Assert.assertEquals(
 			existingFragmentEntry.getMvccVersion(),
 			newFragmentEntry.getMvccVersion());
-		Assert.assertEquals(
-			existingFragmentEntry.getCtCollectionId(),
-			newFragmentEntry.getCtCollectionId());
 		Assert.assertEquals(
 			existingFragmentEntry.getUuid(), newFragmentEntry.getUuid());
 		Assert.assertEquals(
@@ -520,11 +515,11 @@ public class FragmentEntryPersistenceTest {
 
 	protected OrderByComparator<FragmentEntry> getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create(
-			"FragmentEntry", "mvccVersion", true, "ctCollectionId", true,
-			"uuid", true, "headId", true, "fragmentEntryId", true, "groupId",
-			true, "companyId", true, "userId", true, "userName", true,
-			"createDate", true, "modifiedDate", true, "fragmentCollectionId",
-			true, "fragmentEntryKey", true, "name", true, "cacheable", true,
+			"FragmentEntry", "mvccVersion", true, "uuid", true, "headId", true,
+			"fragmentEntryId", true, "groupId", true, "companyId", true,
+			"userId", true, "userName", true, "createDate", true,
+			"modifiedDate", true, "fragmentCollectionId", true,
+			"fragmentEntryKey", true, "name", true, "cacheable", true,
 			"previewFileEntryId", true, "readOnly", true, "type", true,
 			"lastPublishDate", true, "status", true, "statusByUserId", true,
 			"statusByUserName", true, "statusDate", true);
@@ -786,8 +781,6 @@ public class FragmentEntryPersistenceTest {
 		FragmentEntry fragmentEntry = _persistence.create(pk);
 
 		fragmentEntry.setMvccVersion(RandomTestUtil.nextLong());
-
-		fragmentEntry.setCtCollectionId(RandomTestUtil.nextLong());
 
 		fragmentEntry.setUuid(RandomTestUtil.randomString());
 

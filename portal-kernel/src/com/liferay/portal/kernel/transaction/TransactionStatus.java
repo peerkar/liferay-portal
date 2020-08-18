@@ -28,6 +28,7 @@ public interface TransactionStatus {
 
 	public boolean isRollbackOnly();
 
-	public void suppressLifecycleListenerThrowable(Throwable throwable);
+	public void suppressLifecycleListenerThrowable(
+		Throwable lifecycleThrowable);
 
 }

@@ -16,6 +16,10 @@
 
 <%@ include file="/panel_category_content/init.jsp" %>
 
+<%
+PanelCategory panelCategory = (PanelCategory)request.getAttribute("liferay-application-list:panel-content:panelCategory");
+%>
+
 <liferay-application-list:panel
-	panelCategory='<%= (PanelCategory)request.getAttribute("liferay-application-list:panel-content:panelCategory") %>'
+	panelCategory="<%= panelCategory %>"
 />

@@ -28,12 +28,12 @@ public class DDMFormValuesQuerySyntaxException extends PortalException {
 		super(msg);
 	}
 
-	public DDMFormValuesQuerySyntaxException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public DDMFormValuesQuerySyntaxException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public DDMFormValuesQuerySyntaxException(Throwable throwable) {
-		super(throwable);
+	public DDMFormValuesQuerySyntaxException(Throwable cause) {
+		super(cause);
 	}
 
 }

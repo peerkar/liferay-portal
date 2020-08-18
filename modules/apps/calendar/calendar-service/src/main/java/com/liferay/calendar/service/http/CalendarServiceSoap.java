@@ -61,10 +61,8 @@ import java.util.Map;
  *
  * @author Eduardo Lundgren
  * @see CalendarServiceHttp
- * @deprecated As of Athanasius (7.3.x), with no direct replacement
  * @generated
  */
-@Deprecated
 public class CalendarServiceSoap {
 
 	public static com.liferay.calendar.model.CalendarSoap addCalendar(

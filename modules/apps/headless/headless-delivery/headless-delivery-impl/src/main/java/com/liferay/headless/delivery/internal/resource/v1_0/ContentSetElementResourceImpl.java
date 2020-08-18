@@ -35,7 +35,6 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 import java.util.Enumeration;
-import java.util.HashMap;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -50,26 +49,6 @@ import org.osgi.service.component.annotations.ServiceScope;
 )
 public class ContentSetElementResourceImpl
 	extends BaseContentSetElementResourceImpl {
-
-	@Override
-	public Page<ContentSetElement>
-			getAssetLibraryContentSetByKeyContentSetElementsPage(
-				Long assetLibraryId, String key, Pagination pagination)
-		throws Exception {
-
-		return getSiteContentSetByKeyContentSetElementsPage(
-			assetLibraryId, key, pagination);
-	}
-
-	@Override
-	public Page<ContentSetElement>
-			getAssetLibraryContentSetByUuidContentSetElementsPage(
-				Long assetLibraryId, String uuid, Pagination pagination)
-		throws Exception {
-
-		return getSiteContentSetByUuidContentSetElementsPage(
-			assetLibraryId, uuid, pagination);
-	}
 
 	@Override
 	public Page<ContentSetElement> getContentSetContentSetElementsPage(
@@ -183,10 +162,7 @@ public class ContentSetElementResourceImpl
 
 						return dtoConverter.toDTO(
 							new DefaultDTOConverterContext(
-								contextAcceptLanguage.isAcceptAllLanguages(),
-								new HashMap<>(), _dtoConverterRegistry,
-								contextHttpServletRequest,
-								assetEntry.getClassPK(),
+								_dtoConverterRegistry, assetEntry.getClassPK(),
 								contextAcceptLanguage.getPreferredLocale(),
 								contextUriInfo, contextUser));
 					});

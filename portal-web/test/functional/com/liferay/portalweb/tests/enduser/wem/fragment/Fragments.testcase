@@ -312,9 +312,9 @@ definition {
 			PageEditor.gotoStyle(fragmentName = "Card");
 
 			PageEditor.configureFragment(
-				alignment = "Center",
 				borderRadius = "None",
 				boxShadow = "Large",
+				contentAlign = "Center",
 				imageSize = "Fit",
 				marginBottom = "5");
 		}
@@ -322,7 +322,7 @@ definition {
 		task ("View the fragment style") {
 			PageEditor.viewFragmentStyle(
 				alignment = "center",
-				borderRadius = "rounded-0",
+				borderRadius = "0",
 				boxShadow = "lg",
 				fragmentName = "card",
 				imageSize = "100",
@@ -374,7 +374,7 @@ definition {
 			PageEditor.gotoStyle(fragmentName = "Heading");
 
 			PageEditor.configureFragment(
-				alignment = "Right",
+				textAlign = "Right",
 				textColor = "secondary");
 
 			PageEditor.gotoConfiguration(fragmentName = "Heading");
@@ -493,7 +493,7 @@ definition {
 			PageEditor.gotoStyle(fragmentName = "Paragraph");
 
 			PageEditor.configureFragment(
-				alignment = "Right",
+				textAlign = "Right",
 				textColor = "warning");
 		}
 
@@ -632,10 +632,7 @@ definition {
 		}
 	}
 
-	// Ignored until LPS-117067 implement
-
 	@description = "This is a test for LPS-106776, LPS-102959 and LPS-111657. Configure the Container and Grid elements."
-	@ignore = "true"
 	@priority = "5"
 	test ConfigureLayoutElements {
 		property portal.acceptance = "true";
@@ -732,15 +729,15 @@ definition {
 				contentDisplay = "flex",
 				dropShadow = "lg",
 				horizontalAlign = "center",
-				marginBottom = "2",
-				marginLeft = "2",
-				marginRight = "2",
-				marginTop = "2",
+				marginBottom = "4",
+				marginLeft = "4",
+				marginRight = "4",
+				marginTop = "4",
 				opacity = "0.5",
-				paddingBottom = "2",
-				paddingLeft = "2",
-				paddingRight = "2",
-				paddingTop = "2",
+				paddingBottom = "4",
+				paddingLeft = "4",
+				paddingRight = "4",
+				paddingTop = "4",
 				position = "1",
 				verticalAlign = "center");
 		}
@@ -763,7 +760,7 @@ definition {
 		task ("Configure the Grid") {
 			PageEditor.editLayoutGrid(
 				columnCount = "2",
-				panel = "General");
+				panel = "Configuration");
 
 			PageEditor.editLayoutGrid(
 				inverseOrder = "true",
@@ -1063,8 +1060,6 @@ definition {
 	@description = "This is a test for LPS-111657. Can save Container and nested elements as a new composition when the Container is inside a column of Row."
 	@priority = "5"
 	test SaveContainerAsCompositionInModuleOfGrid {
-		property portal.acceptance = "true";
-
 		task ("Add a content page") {
 			JSONLayout.addPublicLayout(
 				groupName = "Test Site Name",

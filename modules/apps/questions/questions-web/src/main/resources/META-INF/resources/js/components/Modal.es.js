@@ -33,11 +33,7 @@ export default ({
 	return (
 		<>
 			{visible && (
-				<ClayModal
-					className="d-flex justify-content-center"
-					observer={observer}
-					status={status}
-				>
+				<ClayModal observer={observer} status={status}>
 					<ClayModal.Header>{title}</ClayModal.Header>
 					<ClayModal.Body>{body}</ClayModal.Body>
 					<ClayModal.Footer

@@ -16,7 +16,6 @@ package com.liferay.poshi.runner.selenium;
 
 import com.liferay.poshi.runner.util.OSDetector;
 import com.liferay.poshi.runner.util.PropsValues;
-import com.liferay.poshi.runner.util.ProxyUtil;
 import com.liferay.poshi.runner.util.StringPool;
 import com.liferay.poshi.runner.util.StringUtil;
 import com.liferay.poshi.runner.util.Validator;
@@ -33,7 +32,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -45,11 +43,9 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.ie.InternetExplorerOptions;
-import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
-import org.openqa.selenium.safari.SafariOptions;
 
 /**
  * @author Brian Wing Shun Chan
@@ -120,8 +116,6 @@ public class WebDriverUtil extends PropsValues {
 
 		ChromeOptions chromeOptions = new ChromeOptions();
 
-		_setGenericCapabilities(chromeOptions);
-
 		Map<String, Object> preferences = new HashMap<>();
 
 		String outputDirName = PropsValues.OUTPUT_DIR_NAME;
@@ -165,8 +159,6 @@ public class WebDriverUtil extends PropsValues {
 		InternetExplorerOptions internetExplorerOptions =
 			new InternetExplorerOptions();
 
-		_setGenericCapabilities(internetExplorerOptions);
-
 		internetExplorerOptions.destructivelyEnsureCleanSession();
 		internetExplorerOptions.introduceFlakinessByIgnoringSecurityDomains();
 
@@ -179,8 +171,6 @@ public class WebDriverUtil extends PropsValues {
 
 	private WebDriver _getEdgeRemoteDriver() {
 		EdgeOptions edgeOptions = new EdgeOptions();
-
-		_setGenericCapabilities(edgeOptions);
 
 		edgeOptions.setCapability("platform", "WINDOWS");
 
@@ -203,8 +193,6 @@ public class WebDriverUtil extends PropsValues {
 			SELENIUM_EXECUTABLE_DIR_NAME + SELENIUM_GECKO_DRIVER_EXECUTABLE);
 
 		FirefoxOptions firefoxOptions = new FirefoxOptions();
-
-		_setGenericCapabilities(firefoxOptions);
 
 		String outputDirName = PropsValues.OUTPUT_DIR_NAME;
 
@@ -303,25 +291,11 @@ public class WebDriverUtil extends PropsValues {
 	}
 
 	private WebDriver _getSafariDriver() {
-		SafariOptions safariOptions = new SafariOptions();
-
-		_setGenericCapabilities(safariOptions);
-
 		return new SafariDriver();
 	}
 
 	private WebDriver _getWebDriver() {
 		return _webDriver;
-	}
-
-	private void _setGenericCapabilities(
-		MutableCapabilities mutableCapabilities) {
-
-		for (Map.Entry<String, Object> entry :
-				_genericCapabilities.entrySet()) {
-
-			mutableCapabilities.setCapability(entry.getKey(), entry.getValue());
-		}
 	}
 
 	private void _startWebDriver() {
@@ -387,14 +361,6 @@ public class WebDriverUtil extends PropsValues {
 		_webDriver = null;
 	}
 
-	private static final Map<String, Object> _genericCapabilities =
-		new HashMap<String, Object>() {
-			{
-				if (PropsValues.PROXY_SERVER_ENABLED) {
-					put(CapabilityType.PROXY, ProxyUtil.getSeleniumProxy());
-				}
-			}
-		};
 	private static final WebDriverUtil _webDriverUtil = new WebDriverUtil();
 
 	private WebDriver _webDriver;

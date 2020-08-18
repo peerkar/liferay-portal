@@ -131,7 +131,7 @@ definition {
 	}
 
 	@description = "This is a use case for LPS-55171."
-	@priority = "3"
+	@priority = "2"
 	test ViewInactive {
 		ApplicationsMenu.gotoPortlet(
 			category = "Sites",

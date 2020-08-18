@@ -112,9 +112,9 @@ public class ModelValidationResults {
 		}
 
 		public FailureBuilder exceptionFailure(
-			String message, Throwable throwable) {
+			String message, Throwable cause) {
 
-			modelValidationResults._exceptions.put(message, throwable);
+			modelValidationResults._exceptions.put(message, cause);
 
 			return this;
 		}
@@ -134,9 +134,9 @@ public class ModelValidationResults {
 		}
 
 		public WarningBuilder exceptionWarning(
-			String message, Throwable throwable) {
+			String message, Throwable cause) {
 
-			modelValidationResults._exceptions.put(message, throwable);
+			modelValidationResults._exceptions.put(message, cause);
 
 			return this;
 		}

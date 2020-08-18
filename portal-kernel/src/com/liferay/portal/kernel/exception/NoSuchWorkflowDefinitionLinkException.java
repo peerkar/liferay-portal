@@ -27,14 +27,12 @@ public class NoSuchWorkflowDefinitionLinkException
 		super(msg);
 	}
 
-	public NoSuchWorkflowDefinitionLinkException(
-		String msg, Throwable throwable) {
-
-		super(msg, throwable);
+	public NoSuchWorkflowDefinitionLinkException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NoSuchWorkflowDefinitionLinkException(Throwable throwable) {
-		super(throwable);
+	public NoSuchWorkflowDefinitionLinkException(Throwable cause) {
+		super(cause);
 	}
 
 }

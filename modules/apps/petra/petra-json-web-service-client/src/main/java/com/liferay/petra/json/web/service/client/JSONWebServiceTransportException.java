@@ -27,14 +27,12 @@ public class JSONWebServiceTransportException extends JSONWebServiceException {
 		super(message, status);
 	}
 
-	public JSONWebServiceTransportException(
-		String message, Throwable throwable) {
-
-		super(message, throwable);
+	public JSONWebServiceTransportException(String message, Throwable cause) {
+		super(message, cause);
 	}
 
-	public JSONWebServiceTransportException(Throwable throwable) {
-		super(throwable);
+	public JSONWebServiceTransportException(Throwable cause) {
+		super(cause);
 	}
 
 	public static class AuthenticationFailure
@@ -44,12 +42,12 @@ public class JSONWebServiceTransportException extends JSONWebServiceException {
 			super(message);
 		}
 
-		public AuthenticationFailure(String message, Throwable throwable) {
-			super(message, throwable);
+		public AuthenticationFailure(String message, Throwable cause) {
+			super(message, cause);
 		}
 
-		public AuthenticationFailure(Throwable throwable) {
-			super(throwable);
+		public AuthenticationFailure(Throwable cause) {
+			super(cause);
 		}
 
 	}
@@ -61,12 +59,12 @@ public class JSONWebServiceTransportException extends JSONWebServiceException {
 			super(message, status);
 		}
 
-		public CommunicationFailure(String message, Throwable throwable) {
-			super(message, throwable);
+		public CommunicationFailure(String message, Throwable cause) {
+			super(message, cause);
 		}
 
-		public CommunicationFailure(Throwable throwable) {
-			super(throwable);
+		public CommunicationFailure(Throwable cause) {
+			super(cause);
 		}
 
 	}
@@ -78,12 +76,12 @@ public class JSONWebServiceTransportException extends JSONWebServiceException {
 			super(message, status);
 		}
 
-		public SigningFailure(String message, Throwable throwable) {
-			super(message, throwable);
+		public SigningFailure(String message, Throwable cause) {
+			super(message, cause);
 		}
 
-		public SigningFailure(Throwable throwable) {
-			super(throwable);
+		public SigningFailure(Throwable cause) {
+			super(cause);
 		}
 
 	}

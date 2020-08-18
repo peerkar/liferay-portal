@@ -22,12 +22,7 @@ import {useId} from '../../utils/useId';
 
 export const SelectField = ({disabled, field, onValueSelect, value}) => {
 	const inputId = useId();
-
-	const validValues = field.typeOptions
-		? field.typeOptions.validValues
-		: field.validValues;
-
-	const [firstOption = {}] = validValues;
+	const [firstOption = {}] = field.typeOptions.validValues;
 
 	const [nextValue, setNextValue] = useControlledState(
 		value || field.defaultValue || firstOption.value
@@ -48,7 +43,7 @@ export const SelectField = ({disabled, field, onValueSelect, value}) => {
 					setNextValue(nextValue);
 					onValueSelect(field.name, nextValue);
 				}}
-				options={validValues}
+				options={field.typeOptions.validValues}
 				value={nextValue}
 			/>
 		</ClayForm.Group>
@@ -67,13 +62,7 @@ SelectField.propTypes = {
 					value: PropTypes.string.isRequired,
 				})
 			).isRequired,
-		}),
-		validValues: PropTypes.arrayOf(
-			PropTypes.shape({
-				label: PropTypes.string.isRequired,
-				value: PropTypes.string.isRequired,
-			})
-		),
+		}).isRequired,
 	}),
 
 	onValueSelect: PropTypes.func.isRequired,

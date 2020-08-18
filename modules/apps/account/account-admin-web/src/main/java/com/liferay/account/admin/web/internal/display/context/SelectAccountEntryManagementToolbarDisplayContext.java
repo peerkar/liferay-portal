@@ -20,7 +20,6 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
-import com.liferay.portal.kernel.util.ParamUtil;
 
 import java.util.List;
 
@@ -55,16 +54,12 @@ public class SelectAccountEntryManagementToolbarDisplayContext
 
 	@Override
 	public Boolean isSelectable() {
-		return !isSingleSelect();
+		return false;
 	}
 
 	@Override
 	public Boolean isShowCreationMenu() {
 		return false;
-	}
-
-	public boolean isSingleSelect() {
-		return ParamUtil.getBoolean(liferayPortletRequest, "singleSelect");
 	}
 
 	@Override

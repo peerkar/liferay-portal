@@ -44,37 +44,36 @@ public class NoSuchFileException extends NoSuchModelException {
 
 	public NoSuchFileException(
 		long companyId, long repositoryId, String fileName, String version,
-		Throwable throwable) {
+		Throwable cause) {
 
 		super(
 			String.format(
 				"{companyId=%s, repositoryId=%s, fileName=%s, version=%s, " +
 					"cause=%s}",
-				companyId, repositoryId, fileName, version, throwable),
-			throwable);
+				companyId, repositoryId, fileName, version, cause),
+			cause);
 	}
 
 	public NoSuchFileException(
-		long companyId, long repositoryId, String fileName,
-		Throwable throwable) {
+		long companyId, long repositoryId, String fileName, Throwable cause) {
 
 		super(
 			String.format(
 				"{companyId=%s, repositoryId=%s, fileName=%s, cause=%s}",
-				companyId, repositoryId, fileName, throwable),
-			throwable);
+				companyId, repositoryId, fileName, cause),
+			cause);
 	}
 
 	public NoSuchFileException(String msg) {
 		super(msg);
 	}
 
-	public NoSuchFileException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public NoSuchFileException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NoSuchFileException(Throwable throwable) {
-		super(throwable);
+	public NoSuchFileException(Throwable cause) {
+		super(cause);
 	}
 
 }

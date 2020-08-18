@@ -21,9 +21,9 @@ public class UnfollowCCRRequest
 	extends CrossClusterRequest implements CCRRequest<UnfollowCCRResponse> {
 
 	public UnfollowCCRRequest(String indexName) {
-		_indexName = indexName;
-
 		setPreferLocalCluster(true);
+
+		_indexName = indexName;
 	}
 
 	@Override

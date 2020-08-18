@@ -14,11 +14,8 @@
 
 package com.liferay.translation.service.impl;
 
+import com.liferay.info.item.InfoItemClassPKReference;
 import com.liferay.info.item.InfoItemFieldValues;
-import com.liferay.info.item.InfoItemReference;
-import com.liferay.info.item.InfoItemServiceTracker;
-import com.liferay.info.item.provider.InfoItemObjectProvider;
-import com.liferay.info.item.updater.InfoItemFieldValuesUpdater;
 import com.liferay.petra.io.StreamUtil;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -37,8 +34,6 @@ import com.liferay.translation.service.base.TranslationEntryLocalServiceBaseImpl
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Serializable;
-
-import java.nio.charset.StandardCharsets;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -60,15 +55,15 @@ public class TranslationEntryLocalServiceImpl
 	@Override
 	public TranslationEntry addOrUpdateTranslationEntry(
 			long groupId, String languageId,
-			InfoItemReference infoItemReference,
+			InfoItemClassPKReference infoItemClassPKReference,
 			InfoItemFieldValues infoItemFieldValues,
 			ServiceContext serviceContext)
 		throws PortalException {
 
 		try {
 			return addOrUpdateTranslationEntry(
-				groupId, infoItemReference.getClassName(),
-				infoItemReference.getClassPK(),
+				groupId, infoItemClassPKReference.getClassName(),
+				infoItemClassPKReference.getClassPK(),
 				StreamUtil.toString(
 					_xliffTranslationInfoItemFieldValuesExporter.
 						exportInfoItemFieldValues(
@@ -118,13 +113,9 @@ public class TranslationEntryLocalServiceImpl
 		translationEntry.setStatusDate(
 			serviceContext.getModifiedDate(new Date()));
 
-		translationEntry = translationEntryPersistence.update(translationEntry);
-
-		return WorkflowHandlerRegistryUtil.startWorkflowInstance(
-			translationEntry.getCompanyId(), translationEntry.getGroupId(),
-			serviceContext.getUserId(), TranslationEntry.class.getName(),
-			translationEntry.getTranslationEntryId(), translationEntry,
-			serviceContext, new HashMap<>());
+		return _startWorkflowInstance(
+			translationEntryPersistence.update(translationEntry),
+			serviceContext);
 	}
 
 	@Override
@@ -143,7 +134,7 @@ public class TranslationEntryLocalServiceImpl
 		try {
 			return _xliffTranslationInfoItemFieldValuesImporter.
 				importInfoItemFieldValues(
-					groupId, new InfoItemReference(className, classPK),
+					groupId, new InfoItemClassPKReference(className, classPK),
 					new ByteArrayInputStream(content.getBytes()));
 		}
 		catch (IOException ioException) {
@@ -161,10 +152,6 @@ public class TranslationEntryLocalServiceImpl
 		TranslationEntry translationEntry =
 			translationEntryPersistence.findByPrimaryKey(translationEntryId);
 
-		if (status == WorkflowConstants.STATUS_APPROVED) {
-			_updateInfoItem(translationEntry);
-		}
-
 		translationEntry.setStatus(status);
 
 		User user = _userLocalService.getUser(userId);
@@ -178,44 +165,18 @@ public class TranslationEntryLocalServiceImpl
 		return translationEntryPersistence.update(translationEntry);
 	}
 
-	private void _updateInfoItem(TranslationEntry translationEntry)
+	private TranslationEntry _startWorkflowInstance(
+			TranslationEntry translationEntry, ServiceContext serviceContext)
 		throws PortalException {
 
-		try {
-			InfoItemFieldValuesUpdater<Object> infoItemFieldValuesUpdater =
-				_infoItemServiceTracker.getFirstInfoItemService(
-					InfoItemFieldValuesUpdater.class,
-					translationEntry.getClassName());
+		Map<String, Serializable> workflowContext = new HashMap<>();
 
-			InfoItemObjectProvider<Object> infoItemObjectProvider =
-				_infoItemServiceTracker.getFirstInfoItemService(
-					InfoItemObjectProvider.class,
-					translationEntry.getClassName());
-
-			String content = translationEntry.getContent();
-
-			infoItemFieldValuesUpdater.updateFromInfoItemFieldValues(
-				infoItemObjectProvider.getInfoItem(
-					translationEntry.getClassPK()),
-				_xliffTranslationInfoItemFieldValuesImporter.
-					importInfoItemFieldValues(
-						translationEntry.getGroupId(),
-						new InfoItemReference(
-							translationEntry.getClassName(),
-							translationEntry.getClassPK()),
-						new ByteArrayInputStream(
-							content.getBytes(StandardCharsets.UTF_8))));
-		}
-		catch (PortalException | RuntimeException exception) {
-			throw exception;
-		}
-		catch (Exception exception) {
-			throw new PortalException(exception);
-		}
+		return WorkflowHandlerRegistryUtil.startWorkflowInstance(
+			translationEntry.getCompanyId(), translationEntry.getGroupId(),
+			serviceContext.getUserId(), TranslationEntry.class.getName(),
+			translationEntry.getTranslationEntryId(), translationEntry,
+			serviceContext, workflowContext);
 	}
-
-	@Reference
-	private InfoItemServiceTracker _infoItemServiceTracker;
 
 	@Reference
 	private Portal _portal;

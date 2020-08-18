@@ -1080,8 +1080,8 @@ public class FileEntryStagedModelDataHandler
 		catch (PortalException | SystemException exception) {
 			throw exception;
 		}
-		catch (Throwable throwable) {
-			throw new PortalException(throwable);
+		catch (Throwable t) {
+			throw new PortalException(t);
 		}
 		finally {
 			ServiceContextThreadLocal.popServiceContext();

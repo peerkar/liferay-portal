@@ -28,12 +28,12 @@ public class ExpiredLockException extends PortalException {
 		super(msg);
 	}
 
-	public ExpiredLockException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public ExpiredLockException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public ExpiredLockException(Throwable throwable) {
-		super(throwable);
+	public ExpiredLockException(Throwable cause) {
+		super(cause);
 	}
 
 }

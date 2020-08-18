@@ -160,7 +160,7 @@ public class PortalLogAssertorTest {
 					}
 
 					System.out.println(
-						"Error detected, dumping the full log for reference:");
+						"Detected error, dumpping full log for reference:");
 
 					Files.copy(
 						Paths.get(

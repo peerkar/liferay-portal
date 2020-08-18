@@ -18,6 +18,7 @@ import com.liferay.change.tracking.spi.reference.TableReferenceDefinition;
 import com.liferay.change.tracking.spi.reference.builder.ChildTableReferenceInfoBuilder;
 import com.liferay.change.tracking.spi.reference.builder.ParentTableReferenceInfoBuilder;
 import com.liferay.journal.model.JournalArticleLocalizationTable;
+import com.liferay.journal.model.JournalArticleTable;
 import com.liferay.journal.service.persistence.JournalArticleLocalizationPersistence;
 import com.liferay.portal.kernel.model.CompanyTable;
 import com.liferay.portal.kernel.service.persistence.BasePersistence;
@@ -45,7 +46,11 @@ public class JournalArticleLocalizationTableReferenceDefinition
 
 		parentTableReferenceInfoBuilder.singleColumnReference(
 			JournalArticleLocalizationTable.INSTANCE.companyId,
-			CompanyTable.INSTANCE.companyId);
+			CompanyTable.INSTANCE.companyId
+		).singleColumnReference(
+			JournalArticleLocalizationTable.INSTANCE.articlePK,
+			JournalArticleTable.INSTANCE.id
+		);
 	}
 
 	@Override

@@ -16,8 +16,6 @@ package com.liferay.source.formatter.checkstyle.checks;
 
 import com.liferay.portal.kernel.util.ListUtil;
 
-import com.puppycrawl.tools.checkstyle.api.DetailAST;
-
 import java.util.List;
 
 /**
@@ -31,11 +29,6 @@ public class CreationMenuBuilderCheck extends BaseBuilderCheck {
 	}
 
 	@Override
-	protected String getAssignClassName(DetailAST assignDetailAST) {
-		return getNewInstanceTypeName(assignDetailAST);
-	}
-
-	@Override
 	protected List<BaseBuilderCheck.BuilderInformation>
 		getBuilderInformationList() {
 
@@ -44,13 +37,6 @@ public class CreationMenuBuilderCheck extends BaseBuilderCheck {
 				"CreationMenu", "CreationMenuBuilder", "addDropdownItem",
 				"addFavoriteDropdownItem", "addPrimaryDropdownItem",
 				"addRestDropdownItem"));
-	}
-
-	@Override
-	protected List<String> getSupportsFunctionMethodNames() {
-		return ListUtil.fromArray(
-			"addDropdownItem", "addFavoriteDropdownItem",
-			"addPrimaryDropdownItem", "addRestDropdownItem");
 	}
 
 	@Override

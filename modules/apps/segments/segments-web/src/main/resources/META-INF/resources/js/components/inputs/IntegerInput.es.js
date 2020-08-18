@@ -12,7 +12,6 @@
  * details.
  */
 
-import {ClaySelectWithOption} from '@clayui/form';
 import propTypes from 'prop-types';
 import React from 'react';
 
@@ -20,12 +19,7 @@ class IntegerInput extends React.Component {
 	static propTypes = {
 		disabled: propTypes.bool,
 		onChange: propTypes.func.isRequired,
-		options: propTypes.array,
 		value: propTypes.oneOfType([propTypes.string, propTypes.number]),
-	};
-
-	static defaultProps = {
-		options: [],
 	};
 
 	_handleIntegerChange = (event) => {
@@ -37,28 +31,15 @@ class IntegerInput extends React.Component {
 	};
 
 	render() {
-		const {disabled, options, value} = this.props;
+		const {disabled, value} = this.props;
 
-		return options.length === 0 ? (
+		return (
 			<input
 				className="criterion-input form-control"
 				data-testid="integer-number"
 				disabled={disabled}
 				onChange={this._handleIntegerChange}
 				type="number"
-				value={value}
-			/>
-		) : (
-			<ClaySelectWithOption
-				className="criterion-input form-control"
-				data-testid="options-integer"
-				disabled={disabled}
-				onChange={this._handleIntegerChange}
-				options={options.map((o) => ({
-					disabled: o.disabled,
-					label: o.label,
-					value: o.value,
-				}))}
 				value={value}
 			/>
 		);

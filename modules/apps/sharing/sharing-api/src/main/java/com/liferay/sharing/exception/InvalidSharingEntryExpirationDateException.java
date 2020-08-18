@@ -30,13 +30,13 @@ public class InvalidSharingEntryExpirationDateException
 	}
 
 	public InvalidSharingEntryExpirationDateException(
-		String msg, Throwable throwable) {
+		String msg, Throwable cause) {
 
-		super(msg, throwable);
+		super(msg, cause);
 	}
 
-	public InvalidSharingEntryExpirationDateException(Throwable throwable) {
-		super(throwable);
+	public InvalidSharingEntryExpirationDateException(Throwable cause) {
+		super(cause);
 	}
 
 }

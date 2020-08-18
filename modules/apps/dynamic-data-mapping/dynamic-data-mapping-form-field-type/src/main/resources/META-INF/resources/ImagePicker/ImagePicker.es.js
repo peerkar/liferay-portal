@@ -224,8 +224,6 @@ const ImagePicker = ({
 };
 
 const Main = ({
-	displayErrors,
-	errorMessage,
 	id,
 	inputValue,
 	itemSelectorURL,
@@ -233,26 +231,9 @@ const Main = ({
 	onChange,
 	portletNamespace,
 	readOnly,
-	valid,
 	value,
 	...otherProps
 }) => {
-	const getErrorMessages = (errorMessage, isSignedIn) => {
-		const errorMessages = [errorMessage];
-
-		if (!isSignedIn) {
-			errorMessages.push(
-				Liferay.Language.get(
-					'you-need-to-be-signed-in-to-edit-this-field'
-				)
-			);
-		}
-
-		return errorMessages.join(' ');
-	};
-
-	const isSignedIn = Liferay.ThemeDisplay.isSignedIn();
-
 	const transformValue = (sourceValue) => {
 		if (sourceValue) {
 			if (typeof sourceValue === 'string') {
@@ -267,15 +248,7 @@ const Main = ({
 	};
 
 	return (
-		<FieldBase
-			{...otherProps}
-			displayErrors={isSignedIn ? displayErrors : true}
-			errorMessage={getErrorMessages(errorMessage, isSignedIn)}
-			id={id}
-			name={name}
-			readOnly={isSignedIn ? readOnly : true}
-			valid={isSignedIn ? valid : false}
-		>
+		<FieldBase {...otherProps} id={id} name={name} readOnly={readOnly}>
 			<ImagePicker
 				id={id}
 				inputValue={
@@ -291,7 +264,7 @@ const Main = ({
 				}
 				onFieldChanged={({event, ...data}) => onChange(event, data)}
 				portletNamespace={portletNamespace}
-				readOnly={isSignedIn ? readOnly : true}
+				readOnly={readOnly}
 			/>
 		</FieldBase>
 	);

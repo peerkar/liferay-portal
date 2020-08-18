@@ -24,9 +24,9 @@ public class StatsClusterRequest
 	implements ClusterRequest<StatsClusterResponse> {
 
 	public StatsClusterRequest(String[] nodeIds) {
-		_nodeIds = nodeIds;
-
 		setPreferLocalCluster(true);
+
+		_nodeIds = nodeIds;
 	}
 
 	@Override

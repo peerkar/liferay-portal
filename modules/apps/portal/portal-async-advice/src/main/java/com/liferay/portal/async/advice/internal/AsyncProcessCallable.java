@@ -59,8 +59,8 @@ public class AsyncProcessCallable
 				}
 			}
 		}
-		catch (Throwable throwable) {
-			throw new RuntimeException(throwable);
+		catch (Throwable t) {
+			throw new RuntimeException(t);
 		}
 
 		return null;

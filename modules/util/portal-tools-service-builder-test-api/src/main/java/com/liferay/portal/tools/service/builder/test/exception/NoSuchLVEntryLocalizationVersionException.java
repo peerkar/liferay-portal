@@ -30,13 +30,13 @@ public class NoSuchLVEntryLocalizationVersionException
 	}
 
 	public NoSuchLVEntryLocalizationVersionException(
-		String msg, Throwable throwable) {
+		String msg, Throwable cause) {
 
-		super(msg, throwable);
+		super(msg, cause);
 	}
 
-	public NoSuchLVEntryLocalizationVersionException(Throwable throwable) {
-		super(throwable);
+	public NoSuchLVEntryLocalizationVersionException(Throwable cause) {
+		super(cause);
 	}
 
 }

@@ -46,10 +46,8 @@ import java.rmi.RemoteException;
  *
  * @author José Manuel Navarro
  * @see ScreensCommentServiceHttp
- * @deprecated As of Athanasius (7.3.x), with no direct replacement
  * @generated
  */
-@Deprecated
 public class ScreensCommentServiceSoap {
 
 	public static String addComment(String className, long classPK, String body)

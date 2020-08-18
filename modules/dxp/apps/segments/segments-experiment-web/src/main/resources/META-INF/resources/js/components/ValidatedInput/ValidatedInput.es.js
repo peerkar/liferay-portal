@@ -51,8 +51,7 @@ function ValidatedInput(props) {
 				<>
 					{label}
 					<ClayIcon
-						className="lexicon-icon-sm ml-1 reference-mark text-warning"
-						style={{verticalAlign: 'super'}}
+						className="ml-1 reference-mark text-warning"
 						symbol="asterisk"
 					/>
 				</>

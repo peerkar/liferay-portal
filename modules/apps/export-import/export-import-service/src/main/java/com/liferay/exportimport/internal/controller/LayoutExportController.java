@@ -130,7 +130,7 @@ public class LayoutExportController implements ExportController {
 
 			return file;
 		}
-		catch (Throwable throwable) {
+		catch (Throwable t) {
 			ExportImportThreadLocal.setLayoutExportInProcess(false);
 
 			_exportImportLifecycleManager.fireExportImportLifecycleEvent(
@@ -140,9 +140,9 @@ public class LayoutExportController implements ExportController {
 					exportImportConfiguration.getExportImportConfigurationId()),
 				_portletDataContextFactory.clonePortletDataContext(
 					portletDataContext),
-				throwable);
+				t);
 
-			throw throwable;
+			throw t;
 		}
 	}
 

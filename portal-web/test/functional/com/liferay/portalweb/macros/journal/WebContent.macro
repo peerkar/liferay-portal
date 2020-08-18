@@ -379,7 +379,7 @@ definition {
 
 		Panel.expandPanel(panel = "Friendly URL");
 
-		Type.typePause(
+		Type(
 			locator1 = "TextInput#FRIENDLY_URL",
 			value1 = "${friendlyUrl}");
 
@@ -450,9 +450,8 @@ definition {
 
 			Alert.viewErrorMessage(errorMessage = "You cannot select more than one category for Vocabulary Name.");
 		}
-		else {
-			PortletEntry.publish();
-		}
+
+		PortletEntry.publish();
 	}
 
 	macro addWithPriorityCP {
@@ -924,7 +923,7 @@ definition {
 			locator1 = "WCEditWebContent#DISPLAY_PAGE_SELECT",
 			value1 = "Specific Display Page Template");
 
-		Click.javaScriptClick(locator1 = "WCEditWebContent#DISPLAY_PAGE_CHOOSE_BUTTON");
+		Click(locator1 = "WCEditWebContent#DISPLAY_PAGE_CHOOSE_BUTTON");
 
 		Pause(locator1 = "5000");
 

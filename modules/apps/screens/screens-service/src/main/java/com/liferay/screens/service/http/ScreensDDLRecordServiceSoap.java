@@ -47,10 +47,8 @@ import java.rmi.RemoteException;
  *
  * @author José Manuel Navarro
  * @see ScreensDDLRecordServiceHttp
- * @deprecated As of Athanasius (7.3.x), with no direct replacement
  * @generated
  */
-@Deprecated
 public class ScreensDDLRecordServiceSoap {
 
 	public static String getDDLRecord(long ddlRecordId, String locale)

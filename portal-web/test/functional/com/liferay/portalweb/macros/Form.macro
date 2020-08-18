@@ -8,16 +8,12 @@ definition {
 		if (IsElementNotPresent(locator1 = "Form#SIDEBAR_CLOSE")) {
 			MouseOver.mouseOverNotVisible(locator1 = "Form#ADD_FIELD");
 
-			ScrollBy(value1 = "0, 230");
-
 			Click(locator1 = "Form#ADD_FIELD");
 		}
 	}
 
 	macro addPage {
 		var key_formAddNewPageNumber = "${formAddNewPageNumber}";
-
-		ScrollBy(value1 = "0, 230");
 
 		AssertClick(
 			locator1 = "Form#PAGE_CONTROLS_ADD_NEW_PAGE",
@@ -26,8 +22,6 @@ definition {
 
 	macro addSuccessPage {
 		Click(locator1 = "Form#PAGE_CONTROLS_ELLIPSIS_ICON");
-
-		ScrollBy(value1 = "0, 230");
 
 		AssertClick(
 			locator1 = "Form#PAGE_CONTROLS_ADD_SUCCESS_PAGE",
@@ -58,8 +52,6 @@ definition {
 		Pause(locator1 = "1000");
 
 		Click(locator1 = "Form#SIDEBAR_CLOSE");
-
-		ScrollBy(value1 = "0, 230");
 
 		Pause(locator1 = "1000");
 	}
@@ -248,8 +240,6 @@ definition {
 	macro editPageTitle {
 		var key_titleNumber = "${formTitleNumber}";
 
-		ScrollBy(value1 = "0, 230");
-
 		WaitForElementPresent(
 			locator1 = "Form#PAGE_TITLE_FIELD",
 			value1 = "${formPageName}");
@@ -303,8 +293,6 @@ definition {
 		var key_fieldLocation = "${fieldPositionNumber}";
 
 		var key_fieldType = "${elementSetTitle}";
-
-		ScrollBy(value1 = "0, 320");
 
 		DragAndDrop.dragAndDropPortletToObject(
 			locator1 = "Form#ADD_FIELD_TYPE",

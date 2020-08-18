@@ -12,7 +12,8 @@
 import ClayButton from '@clayui/button';
 import ClayForm, {ClayInput} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
-import React from 'react';
+import EditAppContext from 'app-builder-web/js/pages/apps/edit/EditAppContext.es';
+import React, {useContext} from 'react';
 
 import {
 	ADD_STEP_ACTION,
@@ -20,10 +21,12 @@ import {
 	UPDATE_STEP_ACTION,
 } from '../configReducer.es';
 
-export default function ActionsTab({
-	config: {currentStep, stepIndex},
-	dispatchConfig,
-}) {
+export default () => {
+	const {
+		config: {currentStep, stepIndex},
+		dispatchConfig,
+	} = useContext(EditAppContext);
+
 	const {
 		appWorkflowTransitions: [primaryAction = {}, secondaryAction] = [{}],
 	} = currentStep;
@@ -139,4 +142,4 @@ export default function ActionsTab({
 			)}
 		</>
 	);
-}
+};

@@ -13,23 +13,25 @@ import ClayAutocomplete from '@clayui/autocomplete';
 import {ClayInput} from '@clayui/form';
 import React, {useCallback, useEffect, useState} from 'react';
 
-import AutocompleteDropDown from './AutocompleteDropDown.es';
+import {DropDown} from './AutocompleteDropDown.es';
 
-export default function Autocomplete({
+const Autocomplete = ({
 	children,
 	defaultValue = '',
 	disabled,
-	id = '',
 	items,
 	onChange,
 	onSelect,
 	placeholder = Liferay.Language.get('select-or-type-an-option'),
-}) {
+}) => {
 	const [activeItem, setActiveItem] = useState(-1);
-	const [dropDownVisible, setDropDownVisible] = useState(false);
-	const [filteredItems, setFilteredItems] = useState(items);
+	const [dropDownItems, setDropDownItems] = useState([]);
 	const [value, setValue] = useState(defaultValue);
+	const [dropDownVisible, setDropDownVisible] = useState(false);
 	const [selected, setSelected] = useState(false);
+	const keyArrowDown = 38;
+	const keyArrowUp = 40;
+	const keyEnter = 13;
 
 	const handleChange = useCallback(
 		({target: {value}}) => {
@@ -71,34 +73,25 @@ export default function Autocomplete({
 		setDropDownVisible(true);
 	};
 
-	const onKeyDown = ({key}) => {
-		const item = filteredItems[activeItem];
+	const onKeyDown = useCallback(
+		({keyCode}) => {
+			const item = dropDownItems[activeItem];
 
-		const updateIndex = (index) => {
-			setActiveItem(index);
-
-			const element = document.querySelector(
-				`#dropDownList${id} > li:nth-child(${index})`
-			);
-
-			if (typeof element?.scrollIntoView === 'function') {
-				element.scrollIntoView();
+			if (keyCode === keyArrowDown && activeItem > 0) {
+				setActiveItem(activeItem - 1);
 			}
-		};
-
-		if (key === 'ArrowDown' && activeItem < filteredItems.length - 1) {
-			updateIndex(activeItem + 1);
-		}
-		else if (key === 'ArrowUp' && activeItem > 0) {
-			updateIndex(activeItem - 1);
-		}
-		else if (key === 'Enter' && item) {
-			handleSelect(item);
-		}
-		else if (key === 'Tab') {
-			onBlur();
-		}
-	};
+			else if (
+				keyCode === keyArrowUp &&
+				activeItem < dropDownItems.length - 1
+			) {
+				setActiveItem(activeItem + 1);
+			}
+			else if (keyCode === keyEnter && item) {
+				handleSelect(item);
+			}
+		},
+		[activeItem, dropDownItems, handleSelect]
+	);
 
 	useEffect(() => {
 		if (disabled) {
@@ -108,17 +101,14 @@ export default function Autocomplete({
 	}, [disabled]);
 
 	useEffect(() => {
-		setFilteredItems(items);
+		setDropDownItems(items);
 	}, [items]);
 
 	useEffect(() => {
 		if (!onChange) {
-			const match = new RegExp(
-				value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
-				'gi'
-			);
+			const match = new RegExp(formatRegExp(value), 'gi');
 
-			setFilteredItems(
+			setDropDownItems(
 				items ? items.filter((item) => item.name.match(match)) : []
 			);
 		}
@@ -153,11 +143,10 @@ export default function Autocomplete({
 					</ClayInput.GroupItem>
 				</ClayInput.Group>
 
-				<AutocompleteDropDown
+				<Autocomplete.DropDown
 					active={dropDownVisible}
 					activeItem={activeItem}
-					id={id}
-					items={filteredItems}
+					items={dropDownItems}
 					match={value}
 					onSelect={handleSelect}
 					setActiveItem={setActiveItem}
@@ -165,4 +154,12 @@ export default function Autocomplete({
 			</ClayAutocomplete>
 		</>
 	);
-}
+};
+
+const formatRegExp = (value) => {
+	return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+};
+
+Autocomplete.DropDown = DropDown;
+
+export {Autocomplete};

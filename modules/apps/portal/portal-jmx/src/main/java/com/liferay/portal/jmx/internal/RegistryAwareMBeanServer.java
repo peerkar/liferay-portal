@@ -68,9 +68,12 @@ public class RegistryAwareMBeanServer implements MBeanServer {
 			NotificationFilter notificationFilter, Object handback)
 		throws InstanceNotFoundException {
 
+		ObjectName platformObjectName = getPlatformObjectName(objectName);
+		ObjectName platformListenerObjectName = getPlatformObjectName(
+			listenerObjectName);
+
 		_mBeanServer.addNotificationListener(
-			getPlatformObjectName(objectName),
-			getPlatformObjectName(listenerObjectName), notificationFilter,
+			platformObjectName, platformListenerObjectName, notificationFilter,
 			handback);
 	}
 
@@ -321,9 +324,12 @@ public class RegistryAwareMBeanServer implements MBeanServer {
 			ObjectName objectName, ObjectName listenerObjectName)
 		throws InstanceNotFoundException, ListenerNotFoundException {
 
+		ObjectName platformObjectName = getPlatformObjectName(objectName);
+		ObjectName platformListenerObjectName = getPlatformObjectName(
+			listenerObjectName);
+
 		_mBeanServer.removeNotificationListener(
-			getPlatformObjectName(objectName),
-			getPlatformObjectName(listenerObjectName));
+			platformObjectName, platformListenerObjectName);
 	}
 
 	@Override
@@ -332,9 +338,12 @@ public class RegistryAwareMBeanServer implements MBeanServer {
 			NotificationFilter notificationFilter, Object handback)
 		throws InstanceNotFoundException, ListenerNotFoundException {
 
+		ObjectName platformObjectName = getPlatformObjectName(objectName);
+		ObjectName platformListenerObjectName = getPlatformObjectName(
+			listenerObjectName);
+
 		_mBeanServer.removeNotificationListener(
-			getPlatformObjectName(objectName),
-			getPlatformObjectName(listenerObjectName), notificationFilter,
+			platformObjectName, platformListenerObjectName, notificationFilter,
 			handback);
 	}
 

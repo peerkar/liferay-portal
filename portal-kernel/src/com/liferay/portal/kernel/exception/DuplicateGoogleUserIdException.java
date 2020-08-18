@@ -26,12 +26,12 @@ public class DuplicateGoogleUserIdException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateGoogleUserIdException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public DuplicateGoogleUserIdException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public DuplicateGoogleUserIdException(Throwable throwable) {
-		super(throwable);
+	public DuplicateGoogleUserIdException(Throwable cause) {
+		super(cause);
 	}
 
 }

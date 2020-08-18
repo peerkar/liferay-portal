@@ -28,12 +28,12 @@ public class NtlmLogonException extends SystemException {
 		super(msg);
 	}
 
-	public NtlmLogonException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public NtlmLogonException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NtlmLogonException(Throwable throwable) {
-		super(throwable);
+	public NtlmLogonException(Throwable cause) {
+		super(cause);
 	}
 
 }

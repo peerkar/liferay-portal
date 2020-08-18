@@ -55,15 +55,6 @@ export default function ItemSelector({
 						'page-editor__item-selector__content-input': showAddButton,
 					})}
 					id={itemSelectorInputId}
-					onClick={() => {
-						if (showAddButton) {
-							openInfoItemSelector(
-								onItemSelect,
-								eventName || defaultEventName,
-								itemSelectorURL || config.infoItemSelectorURL
-							);
-						}
-					}}
 					readOnly
 					sizing="sm"
 					type="text"

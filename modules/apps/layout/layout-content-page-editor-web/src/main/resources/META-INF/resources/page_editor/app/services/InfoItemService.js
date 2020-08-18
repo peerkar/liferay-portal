@@ -94,13 +94,11 @@ export default {
 	 * @param {object} options
 	 * @param {string} options.classNameId Asset's className
 	 * @param {string} options.classTypeId Asset's classTypeId
-	 * @param {string} options.fieldType Type of field to which we are mapping
 	 * @param {function} options.onNetworkStatus
 	 */
 	getAvailableStructureMappingFields({
 		classNameId,
 		classTypeId,
-		fieldType,
 		onNetworkStatus,
 	}) {
 		return serviceFetch(
@@ -109,7 +107,6 @@ export default {
 				body: {
 					classNameId,
 					classTypeId,
-					fieldType,
 				},
 			},
 			onNetworkStatus

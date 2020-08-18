@@ -488,7 +488,7 @@ public abstract class BaseSLAResourceTestCase {
 		}
 	}
 
-	protected void assertValid(SLA sla) throws Exception {
+	protected void assertValid(SLA sla) {
 		boolean valid = true;
 
 		if (sla.getDateModified() == null) {

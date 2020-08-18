@@ -22,11 +22,10 @@ import com.liferay.portal.kernel.exception.PortalException;
 public class NoSuchFormVariationException extends PortalException {
 
 	public NoSuchFormVariationException(
-		String formVariationKey, Throwable throwable) {
+		String formVariationKey, Throwable cause) {
 
 		super(
-			"Unable to get form variation with key " + formVariationKey,
-			throwable);
+			"Unable to get form variation with key " + formVariationKey, cause);
 
 		_formVariationKey = formVariationKey;
 	}

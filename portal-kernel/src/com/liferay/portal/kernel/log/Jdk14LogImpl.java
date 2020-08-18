@@ -32,13 +32,13 @@ public class Jdk14LogImpl implements Log {
 	}
 
 	@Override
-	public void debug(Object msg, Throwable throwable) {
-		_log.log(Level.FINE, msg.toString(), throwable);
+	public void debug(Object msg, Throwable t) {
+		_log.log(Level.FINE, msg.toString(), t);
 	}
 
 	@Override
-	public void debug(Throwable throwable) {
-		_log.log(Level.FINE, throwable.getMessage(), throwable);
+	public void debug(Throwable t) {
+		_log.log(Level.FINE, t.getMessage(), t);
 	}
 
 	@Override
@@ -47,13 +47,13 @@ public class Jdk14LogImpl implements Log {
 	}
 
 	@Override
-	public void error(Object msg, Throwable throwable) {
-		_log.log(Level.SEVERE, msg.toString(), throwable);
+	public void error(Object msg, Throwable t) {
+		_log.log(Level.SEVERE, msg.toString(), t);
 	}
 
 	@Override
-	public void error(Throwable throwable) {
-		_log.log(Level.SEVERE, throwable.getMessage(), throwable);
+	public void error(Throwable t) {
+		_log.log(Level.SEVERE, t.getMessage(), t);
 	}
 
 	@Override
@@ -62,13 +62,13 @@ public class Jdk14LogImpl implements Log {
 	}
 
 	@Override
-	public void fatal(Object msg, Throwable throwable) {
-		_log.log(Level.SEVERE, msg.toString(), throwable);
+	public void fatal(Object msg, Throwable t) {
+		_log.log(Level.SEVERE, msg.toString(), t);
 	}
 
 	@Override
-	public void fatal(Throwable throwable) {
-		_log.log(Level.SEVERE, throwable.getMessage(), throwable);
+	public void fatal(Throwable t) {
+		_log.log(Level.SEVERE, t.getMessage(), t);
 	}
 
 	public Logger getWrappedLogger() {
@@ -81,13 +81,13 @@ public class Jdk14LogImpl implements Log {
 	}
 
 	@Override
-	public void info(Object msg, Throwable throwable) {
-		_log.log(Level.INFO, msg.toString(), throwable);
+	public void info(Object msg, Throwable t) {
+		_log.log(Level.INFO, msg.toString(), t);
 	}
 
 	@Override
-	public void info(Throwable throwable) {
-		_log.log(Level.INFO, throwable.getMessage(), throwable);
+	public void info(Throwable t) {
+		_log.log(Level.INFO, t.getMessage(), t);
 	}
 
 	@Override
@@ -130,13 +130,13 @@ public class Jdk14LogImpl implements Log {
 	}
 
 	@Override
-	public void trace(Object msg, Throwable throwable) {
-		_log.log(Level.FINEST, msg.toString(), throwable);
+	public void trace(Object msg, Throwable t) {
+		_log.log(Level.FINEST, msg.toString(), t);
 	}
 
 	@Override
-	public void trace(Throwable throwable) {
-		_log.log(Level.FINEST, throwable.getMessage(), throwable);
+	public void trace(Throwable t) {
+		_log.log(Level.FINEST, t.getMessage(), t);
 	}
 
 	@Override
@@ -145,13 +145,13 @@ public class Jdk14LogImpl implements Log {
 	}
 
 	@Override
-	public void warn(Object msg, Throwable throwable) {
-		_log.log(Level.WARNING, msg.toString(), throwable);
+	public void warn(Object msg, Throwable t) {
+		_log.log(Level.WARNING, msg.toString(), t);
 	}
 
 	@Override
-	public void warn(Throwable throwable) {
-		_log.log(Level.WARNING, throwable.getMessage(), throwable);
+	public void warn(Throwable t) {
+		_log.log(Level.WARNING, t.getMessage(), t);
 	}
 
 	private final Logger _log;

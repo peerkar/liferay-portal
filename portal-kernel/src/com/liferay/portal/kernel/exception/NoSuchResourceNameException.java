@@ -26,12 +26,12 @@ public class NoSuchResourceNameException extends PortalException {
 		super(msg);
 	}
 
-	public NoSuchResourceNameException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public NoSuchResourceNameException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NoSuchResourceNameException(Throwable throwable) {
-		super(throwable);
+	public NoSuchResourceNameException(Throwable cause) {
+		super(cause);
 	}
 
 }

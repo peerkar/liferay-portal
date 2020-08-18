@@ -28,12 +28,12 @@ public class EntryEmailNotificationsException extends PortalException {
 		super(msg);
 	}
 
-	public EntryEmailNotificationsException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public EntryEmailNotificationsException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public EntryEmailNotificationsException(Throwable throwable) {
-		super(throwable);
+	public EntryEmailNotificationsException(Throwable cause) {
+		super(cause);
 	}
 
 }

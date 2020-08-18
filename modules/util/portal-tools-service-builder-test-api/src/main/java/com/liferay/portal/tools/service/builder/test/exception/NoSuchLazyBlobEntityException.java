@@ -28,12 +28,12 @@ public class NoSuchLazyBlobEntityException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchLazyBlobEntityException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public NoSuchLazyBlobEntityException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NoSuchLazyBlobEntityException(Throwable throwable) {
-		super(throwable);
+	public NoSuchLazyBlobEntityException(Throwable cause) {
+		super(cause);
 	}
 
 }

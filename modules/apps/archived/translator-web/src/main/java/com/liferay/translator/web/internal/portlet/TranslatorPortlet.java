@@ -108,11 +108,10 @@ public class TranslatorPortlet extends MVCPortlet {
 			}
 		}
 		catch (WebCacheException webCacheException) {
-			Throwable throwable = webCacheException.getCause();
+			Throwable cause = webCacheException.getCause();
 
-			if (throwable instanceof MicrosoftTranslatorException) {
-				SessionErrors.add(
-					actionRequest, throwable.getClass(), throwable);
+			if (cause instanceof MicrosoftTranslatorException) {
+				SessionErrors.add(actionRequest, cause.getClass(), cause);
 			}
 			else {
 				throw new PortletException(webCacheException);

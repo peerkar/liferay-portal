@@ -91,12 +91,12 @@ public class ParserRegistrar {
 					_bundleContext, SortParser.class,
 					_sortParserProvider.provide(entityModel));
 			}
-			catch (Throwable throwable) {
+			catch (Throwable t) {
 				parserServiceRegistrations.unregister();
 
 				_bundleContext.ungetService(serviceReference);
 
-				throw throwable;
+				throw t;
 			}
 
 			return parserServiceRegistrations;

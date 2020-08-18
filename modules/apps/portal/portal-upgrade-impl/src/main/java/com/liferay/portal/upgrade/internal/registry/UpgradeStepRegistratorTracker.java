@@ -138,13 +138,13 @@ public class UpgradeStepRegistratorTracker {
 						bundleSymbolicName, upgradeInfos,
 						OutputStreamContainerConstants.FACTORY_NAME_DUMMY);
 				}
-				catch (Throwable throwable) {
+				catch (Throwable t) {
 					_swappedLogExecutor.execute(
 						bundleSymbolicName,
 						() -> _log.error(
 							"Failed upgrade process for module ".concat(
 								bundleSymbolicName),
-							throwable),
+							t),
 						null);
 				}
 			}

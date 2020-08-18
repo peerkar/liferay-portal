@@ -89,16 +89,23 @@ public class DDMFormFieldFreeMarkerRenderer implements DDMFormFieldRenderer {
 		throws PortalException {
 
 		try {
+			HttpServletRequest httpServletRequest =
+				ddmFormFieldRenderingContext.getHttpServletRequest();
+			HttpServletResponse httpServletResponse =
+				ddmFormFieldRenderingContext.getHttpServletResponse();
+			Fields fields = ddmFormFieldRenderingContext.getFields();
+			String portletNamespace =
+				ddmFormFieldRenderingContext.getPortletNamespace();
+			String namespace = ddmFormFieldRenderingContext.getNamespace();
+			String mode = ddmFormFieldRenderingContext.getMode();
+			boolean readOnly = ddmFormFieldRenderingContext.isReadOnly();
+			boolean showEmptyFieldLabel =
+				ddmFormFieldRenderingContext.isShowEmptyFieldLabel();
+
 			return getFieldHTML(
-				ddmFormFieldRenderingContext.getHttpServletRequest(),
-				ddmFormFieldRenderingContext.getHttpServletResponse(),
-				ddmFormField, ddmFormFieldRenderingContext.getFields(), null,
-				ddmFormFieldRenderingContext.getPortletNamespace(),
-				ddmFormFieldRenderingContext.getNamespace(),
-				ddmFormFieldRenderingContext.getMode(),
-				ddmFormFieldRenderingContext.isReadOnly(),
-				ddmFormFieldRenderingContext.isShowEmptyFieldLabel(),
-				ddmFormFieldRenderingContext.getLocale());
+				httpServletRequest, httpServletResponse, ddmFormField, fields,
+				null, portletNamespace, namespace, mode, readOnly,
+				showEmptyFieldLabel, ddmFormFieldRenderingContext.getLocale());
 		}
 		catch (Exception exception) {
 			throw new PortalException(exception);

@@ -1466,7 +1466,8 @@ public class TransactionalPortalCacheTest {
 		}
 
 		@Override
-		public void suppressLifecycleListenerThrowable(Throwable throwable) {
+		public void suppressLifecycleListenerThrowable(
+			Throwable lifecycleThrowable) {
 		}
 
 		private TestTrasactionStatus(

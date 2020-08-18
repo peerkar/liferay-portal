@@ -28,12 +28,12 @@ public class DuplicateCustomJspException extends HotDeployException {
 		super(msg);
 	}
 
-	public DuplicateCustomJspException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public DuplicateCustomJspException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public DuplicateCustomJspException(Throwable throwable) {
-		super(throwable);
+	public DuplicateCustomJspException(Throwable cause) {
+		super(cause);
 	}
 
 }

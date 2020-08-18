@@ -138,14 +138,11 @@ public class LayoutsAdminManagementToolbarDisplayContext
 		long firstLayoutPageTemplateCollectionId =
 			_layoutsAdminDisplayContext.
 				getFirstLayoutPageTemplateCollectionId();
-		Layout selLayout = _layoutsAdminDisplayContext.getSelLayout();
 		long selPlid = _layoutsAdminDisplayContext.getSelPlid();
 
 		return CreationMenuBuilder.addPrimaryDropdownItem(
 			() ->
 				_layoutsAdminDisplayContext.isShowPublicPages() &&
-				_layoutsAdminDisplayContext.isShowAddChildPageAction(
-					selLayout) &&
 				(!_layoutsAdminDisplayContext.isPrivateLayout() ||
 				 _layoutsAdminDisplayContext.isFirstColumn() ||
 				 !_layoutsAdminDisplayContext.hasLayouts()),
@@ -160,8 +157,6 @@ public class LayoutsAdminManagementToolbarDisplayContext
 		).addPrimaryDropdownItem(
 			() ->
 				_layoutsAdminDisplayContext.isShowPublicPages() &&
-				_layoutsAdminDisplayContext.isShowAddChildPageAction(
-					selLayout) &&
 				(!_layoutsAdminDisplayContext.isPrivateLayout() ||
 				 _layoutsAdminDisplayContext.isFirstColumn() ||
 				 !_layoutsAdminDisplayContext.hasLayouts()),
@@ -173,9 +168,7 @@ public class LayoutsAdminManagementToolbarDisplayContext
 			}
 		).addPrimaryDropdownItem(
 			() ->
-				(_layoutsAdminDisplayContext.isShowAddChildPageAction(
-					selLayout) &&
-				 _layoutsAdminDisplayContext.isPrivateLayout()) ||
+				_layoutsAdminDisplayContext.isPrivateLayout() ||
 				_layoutsAdminDisplayContext.isFirstColumn() ||
 				!_layoutsAdminDisplayContext.hasLayouts(),
 			dropdownItem -> {
@@ -263,12 +256,6 @@ public class LayoutsAdminManagementToolbarDisplayContext
 	@Override
 	public Boolean isShowCreationMenu() {
 		try {
-			CreationMenu creationMenu = getCreationMenu();
-
-			if (creationMenu.isEmpty()) {
-				return false;
-			}
-
 			return _layoutsAdminDisplayContext.isShowAddRootLayoutButton();
 		}
 		catch (PortalException portalException) {

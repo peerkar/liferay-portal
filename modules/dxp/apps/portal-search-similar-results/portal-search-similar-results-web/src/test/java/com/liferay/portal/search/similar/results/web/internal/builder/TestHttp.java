@@ -185,6 +185,8 @@ public class TestHttp {
 				continue;
 			}
 
+			String key = kvp[0];
+
 			String value = StringPool.BLANK;
 
 			if (kvp.length > 1) {
@@ -195,8 +197,6 @@ public class TestHttp {
 					continue;
 				}
 			}
-
-			String key = kvp[0];
 
 			String[] values = parameterMap.get(key);
 

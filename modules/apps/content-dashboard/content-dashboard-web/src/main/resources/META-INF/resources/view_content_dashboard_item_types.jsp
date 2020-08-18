@@ -37,12 +37,10 @@ ContentDashboardItemTypeItemSelectorViewDisplayContext contentDashboardItemTypeI
 		>
 
 			<%
-			InfoItemReference infoItemReference = contentDashboardItemType.getInfoItemReference();
-
 			Map<String, Object> data = HashMapBuilder.<String, Object>put(
-				"className", infoItemReference.getClassName()
+				"className", contentDashboardItemType.getClassName()
 			).put(
-				"classPK", infoItemReference.getClassPK()
+				"classPK", contentDashboardItemType.getClassPK()
 			).put(
 				"title", contentDashboardItemType.getFullLabel(locale)
 			).build();

@@ -22,13 +22,12 @@ import com.liferay.layout.page.template.util.JustifyConverter;
 import com.liferay.layout.page.template.util.MarginConverter;
 import com.liferay.layout.page.template.util.PaddingConverter;
 import com.liferay.layout.page.template.util.ShadowConverter;
-import com.liferay.layout.util.structure.ContainerStyledLayoutStructureItem;
+import com.liferay.layout.util.structure.ContainerLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
@@ -36,7 +35,6 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -59,8 +57,8 @@ public class ContainerLayoutStructureItemImporter
 			Set<String> warningMessages)
 		throws Exception {
 
-		ContainerStyledLayoutStructureItem containerStyledLayoutStructureItem =
-			(ContainerStyledLayoutStructureItem)
+		ContainerLayoutStructureItem containerLayoutStructureItem =
+			(ContainerLayoutStructureItem)
 				layoutStructure.addContainerLayoutStructureItem(
 					parentItemId, position);
 
@@ -68,7 +66,7 @@ public class ContainerLayoutStructureItemImporter
 			pageElement.getDefinition());
 
 		if (definitionMap != null) {
-			containerStyledLayoutStructureItem.setBackgroundColorCssClass(
+			containerLayoutStructureItem.setBackgroundColorCssClass(
 				(String)definitionMap.get("backgroundColor"));
 
 			Map<String, Object> backgroundFragmentImageMap =
@@ -101,7 +99,7 @@ public class ContainerLayoutStructureItemImporter
 						jsonObject, (Map<String, Object>)urlMap.get("mapping"));
 				}
 
-				containerStyledLayoutStructureItem.setBackgroundImageJSONObject(
+				containerLayoutStructureItem.setBackgroundImageJSONObject(
 					jsonObject);
 			}
 
@@ -109,12 +107,12 @@ public class ContainerLayoutStructureItemImporter
 				(Map<String, Object>)definitionMap.get("layout");
 
 			if (containerLayout != null) {
-				containerStyledLayoutStructureItem.setAlign(
+				containerLayoutStructureItem.setAlign(
 					AlignConverter.convertToInternalValue(
 						(String)containerLayout.get("align")));
-				containerStyledLayoutStructureItem.setBorderColor(
+				containerLayoutStructureItem.setBorderColor(
 					(String)containerLayout.get("borderColor"));
-				containerStyledLayoutStructureItem.setBorderRadius(
+				containerLayoutStructureItem.setBorderRadius(
 					BorderRadiusConverter.convertToInternalValue(
 						(String)containerLayout.get("borderRadius")));
 
@@ -122,58 +120,54 @@ public class ContainerLayoutStructureItemImporter
 					"borderWidth");
 
 				if (borderWidth != null) {
-					containerStyledLayoutStructureItem.setBorderWidth(
-						borderWidth);
+					containerLayoutStructureItem.setBorderWidth(borderWidth);
 				}
 
-				containerStyledLayoutStructureItem.setContentDisplay(
+				containerLayoutStructureItem.setContentDisplay(
 					StringUtil.toLowerCase(
 						(String)containerLayout.get("contentDisplay")));
-				containerStyledLayoutStructureItem.setJustify(
+				containerLayoutStructureItem.setJustify(
 					JustifyConverter.convertToInternalValue(
 						(String)containerLayout.get("justify")));
 				Integer marginBottom = MarginConverter.convertToInternalValue(
 					(Integer)containerLayout.get("marginBottom"));
 
 				if (marginBottom != null) {
-					containerStyledLayoutStructureItem.setMarginBottom(
-						marginBottom);
+					containerLayoutStructureItem.setMarginBottom(marginBottom);
 				}
 
 				Integer marginLeft = MarginConverter.convertToInternalValue(
 					(Integer)containerLayout.get("marginLeft"));
 
 				if (marginLeft != null) {
-					containerStyledLayoutStructureItem.setMarginLeft(
-						marginLeft);
+					containerLayoutStructureItem.setMarginLeft(marginLeft);
 				}
 
 				Integer marginRight = MarginConverter.convertToInternalValue(
 					(Integer)containerLayout.get("marginRight"));
 
 				if (marginRight != null) {
-					containerStyledLayoutStructureItem.setMarginRight(
-						marginRight);
+					containerLayoutStructureItem.setMarginRight(marginRight);
 				}
 
 				Integer marginTop = MarginConverter.convertToInternalValue(
 					(Integer)containerLayout.get("marginTop"));
 
 				if (marginTop != null) {
-					containerStyledLayoutStructureItem.setMarginTop(marginTop);
+					containerLayoutStructureItem.setMarginTop(marginTop);
 				}
 
 				Integer opacity = (Integer)containerLayout.get("opacity");
 
 				if (opacity != null) {
-					containerStyledLayoutStructureItem.setOpacity(opacity);
+					containerLayoutStructureItem.setOpacity(opacity);
 				}
 
 				Integer paddingBottom = PaddingConverter.convertToInternalValue(
 					(Integer)containerLayout.get("paddingBottom"));
 
 				if (paddingBottom != null) {
-					containerStyledLayoutStructureItem.setPaddingBottom(
+					containerLayoutStructureItem.setPaddingBottom(
 						paddingBottom);
 				}
 
@@ -186,20 +180,18 @@ public class ContainerLayoutStructureItemImporter
 					(Integer)containerLayout.get("paddingRight"));
 
 				if (paddingLeft != null) {
-					containerStyledLayoutStructureItem.setPaddingLeft(
-						paddingLeft);
+					containerLayoutStructureItem.setPaddingLeft(paddingLeft);
 				}
 				else if (paddingHorizontal != null) {
-					containerStyledLayoutStructureItem.setPaddingLeft(
+					containerLayoutStructureItem.setPaddingLeft(
 						paddingHorizontal);
 				}
 
 				if (paddingRight != null) {
-					containerStyledLayoutStructureItem.setPaddingRight(
-						paddingRight);
+					containerLayoutStructureItem.setPaddingRight(paddingRight);
 				}
 				else if (paddingHorizontal != null) {
-					containerStyledLayoutStructureItem.setPaddingRight(
+					containerLayoutStructureItem.setPaddingRight(
 						paddingHorizontal);
 				}
 
@@ -207,11 +199,10 @@ public class ContainerLayoutStructureItemImporter
 					(Integer)containerLayout.get("paddingTop"));
 
 				if (paddingTop != null) {
-					containerStyledLayoutStructureItem.setPaddingTop(
-						paddingTop);
+					containerLayoutStructureItem.setPaddingTop(paddingTop);
 				}
 
-				containerStyledLayoutStructureItem.setShadow(
+				containerLayoutStructureItem.setShadow(
 					ShadowConverter.convertToInternalValue(
 						(String)containerLayout.get("shadow")));
 
@@ -221,22 +212,11 @@ public class ContainerLayoutStructureItemImporter
 					(String)containerLayout.get("widthType"));
 
 				if (widthType != null) {
-					containerStyledLayoutStructureItem.setWidthType(widthType);
+					containerLayoutStructureItem.setWidthType(widthType);
 				}
 				else if (containerType != null) {
-					containerStyledLayoutStructureItem.setWidthType(
-						containerType);
+					containerLayoutStructureItem.setWidthType(containerType);
 				}
-			}
-
-			Map<String, Object> styles = (Map<String, Object>)definitionMap.get(
-				"styles");
-
-			if (styles != null) {
-				JSONObject jsonObject = JSONUtil.put(
-					"styles", _toStylesJSONObject(styles));
-
-				containerStyledLayoutStructureItem.updateItemConfig(jsonObject);
 			}
 
 			Map<String, Object> fragmentLinkMap =
@@ -268,12 +248,11 @@ public class ContainerLayoutStructureItemImporter
 						StringPool.UNDERLINE + StringUtil.toLowerCase(target));
 				}
 
-				containerStyledLayoutStructureItem.setLinkJSONObject(
-					jsonObject);
+				containerLayoutStructureItem.setLinkJSONObject(jsonObject);
 			}
 		}
 
-		return containerStyledLayoutStructureItem;
+		return containerLayoutStructureItem;
 	}
 
 	@Override
@@ -369,53 +348,6 @@ public class ContainerLayoutStructureItemImporter
 				"classPK", classPK
 			);
 		}
-	}
-
-	private JSONObject _toStylesJSONObject(Map<String, Object> styles) {
-		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
-
-		for (Map.Entry<String, Object> entry : styles.entrySet()) {
-			if (entry.getValue() instanceof HashMap) {
-				Map<String, Object> childStyleMap =
-					(Map<String, Object>)entry.getValue();
-
-				if (Objects.equals(entry.getKey(), "backgroundImage")) {
-					JSONObject backgroundImageJSONObject =
-						JSONFactoryUtil.createJSONObject();
-
-					Map<String, Object> titleMap =
-						(Map<String, Object>)childStyleMap.get("title");
-
-					if (titleMap != null) {
-						backgroundImageJSONObject.put(
-							"title", _getLocalizedValue(titleMap));
-					}
-
-					Map<String, Object> urlMap =
-						(Map<String, Object>)childStyleMap.get("url");
-
-					if (urlMap != null) {
-						backgroundImageJSONObject.put(
-							"url", _getLocalizedValue(urlMap));
-
-						_processMapping(
-							backgroundImageJSONObject,
-							(Map<String, Object>)urlMap.get("mapping"));
-					}
-
-					jsonObject.put(entry.getKey(), backgroundImageJSONObject);
-				}
-				else {
-					jsonObject.put(
-						entry.getKey(), _toStylesJSONObject(childStyleMap));
-				}
-			}
-			else {
-				jsonObject.put(entry.getKey(), entry.getValue());
-			}
-		}
-
-		return jsonObject;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

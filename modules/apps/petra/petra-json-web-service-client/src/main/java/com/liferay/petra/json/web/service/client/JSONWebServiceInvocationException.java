@@ -29,19 +29,17 @@ public class JSONWebServiceInvocationException extends JSONWebServiceException {
 	}
 
 	public JSONWebServiceInvocationException(
-		String message, int status, Throwable throwable) {
+		String message, int status, Throwable cause) {
 
-		super(message, status, throwable);
+		super(message, status, cause);
 	}
 
-	public JSONWebServiceInvocationException(
-		String message, Throwable throwable) {
-
-		super(message, throwable);
+	public JSONWebServiceInvocationException(String message, Throwable cause) {
+		super(message, cause);
 	}
 
-	public JSONWebServiceInvocationException(Throwable throwable) {
-		super(throwable);
+	public JSONWebServiceInvocationException(Throwable cause) {
+		super(cause);
 	}
 
 }

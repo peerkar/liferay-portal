@@ -65,7 +65,6 @@ class Analytics {
 		instance.config = config;
 		instance.identityEndpoint = `${endpointUrl}/identity`;
 		instance.delay = config.flushInterval || FLUSH_INTERVAL;
-		instance._disposed = false;
 
 		// Register initial middlewares
 
@@ -208,11 +207,7 @@ class Analytics {
 	 * @param {Object} eventProps Complementary information about the event
 	 */
 	send(eventId, applicationId, eventProps) {
-		if (
-			this._isTrackingDisabled() ||
-			!applicationId ||
-			instance._disposed
-		) {
+		if (this._isTrackingDisabled() || !applicationId) {
 			return;
 		}
 
@@ -260,7 +255,6 @@ class Analytics {
 	 * Clears interval and calls plugins disposers if available
 	 */
 	disposeInternal() {
-		instance._disposed = true;
 		instance._eventQueue.dispose();
 
 		if (instance._pluginDisposers) {

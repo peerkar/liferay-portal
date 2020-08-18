@@ -78,8 +78,8 @@ public class ConstantsBeanFactoryImpl implements ConstantsBeanFactory {
 
 				return constantsBeanClass.newInstance();
 			}
-			catch (Throwable throwable) {
-				throw new RuntimeException(throwable);
+			catch (Throwable t) {
+				throw new RuntimeException(t);
 			}
 		}
 	}
@@ -194,8 +194,8 @@ public class ConstantsBeanFactoryImpl implements ConstantsBeanFactory {
 				ClassLoader.class, "defineClass", String.class, byte[].class,
 				int.class, int.class);
 		}
-		catch (Throwable throwable) {
-			throw new ExceptionInInitializerError(throwable);
+		catch (Throwable t) {
+			throw new ExceptionInInitializerError(t);
 		}
 	}
 

@@ -106,7 +106,9 @@ public class NewEnvTestRule implements TestRule {
 			new LocalProcessLauncher.ShutdownHook() {
 
 				@Override
-				public boolean shutdown(int shutdownCode, Throwable throwable) {
+				public boolean shutdown(
+					int shutdownCode, Throwable shutdownThrowable) {
+
 					System.exit(shutdownCode);
 
 					return true;
@@ -543,15 +545,15 @@ public class NewEnvTestRule implements TestRule {
 				future.get();
 			}
 			catch (ExecutionException executionException) {
-				Throwable throwable = executionException.getCause();
+				Throwable cause = executionException.getCause();
 
-				while (throwable instanceof InvocationTargetException ||
-					   throwable instanceof ProcessException) {
+				while (cause instanceof InvocationTargetException ||
+					   cause instanceof ProcessException) {
 
-					throwable = throwable.getCause();
+					cause = cause.getCause();
 				}
 
-				throw throwable;
+				throw cause;
 			}
 		}
 

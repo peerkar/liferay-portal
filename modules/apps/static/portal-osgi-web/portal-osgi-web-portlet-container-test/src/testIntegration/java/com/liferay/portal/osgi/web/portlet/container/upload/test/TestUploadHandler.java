@@ -72,21 +72,21 @@ public class TestUploadHandler {
 					WebKeys.UPLOAD_EXCEPTION);
 
 			if (uploadException != null) {
-				Throwable throwable = uploadException.getCause();
+				Throwable cause = uploadException.getCause();
 
 				if (uploadException.isExceededFileSizeLimit()) {
-					throw new FileSizeException(throwable);
+					throw new FileSizeException(cause);
 				}
 
 				if (uploadException.isExceededLiferayFileItemSizeLimit()) {
-					throw new LiferayFileItemException(throwable);
+					throw new LiferayFileItemException(cause);
 				}
 
 				if (uploadException.isExceededUploadRequestSizeLimit()) {
-					throw new UploadRequestSizeException(throwable);
+					throw new UploadRequestSizeException(cause);
 				}
 
-				throw new PortalException(throwable);
+				throw new PortalException(cause);
 			}
 
 			JSONObject imageJSONObject = _getImageJSONObject(portletRequest);

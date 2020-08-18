@@ -12,16 +12,6 @@
  * details.
  */
 
-const getLocalizedValue = (defaultLanguageId, localizedValues) => {
-	const languageId = themeDisplay.getLanguageId();
-
-	if (localizedValues[languageId]) {
-		return localizedValues[languageId];
-	}
-
-	return localizedValues[defaultLanguageId];
-};
-
 const sub = (langKey, args) => {
 	const SPLIT_REGEX = /({\d+})/g;
 
@@ -45,8 +35,6 @@ const sub = (langKey, args) => {
 
 	return keyArray.join('');
 };
-
-export {getLocalizedValue};
 
 export default {
 	sub,

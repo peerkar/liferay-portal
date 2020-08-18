@@ -52,7 +52,7 @@ public class PortletTransactionManager implements PlatformTransactionManager {
 			return;
 		}
 
-		Throwable throwable1 = null;
+		Throwable throwable = null;
 
 		try {
 			TransactionStatusWrapper transactionStatusWrapper =
@@ -62,13 +62,13 @@ public class PortletTransactionManager implements PlatformTransactionManager {
 
 			transactionStatusWrapper.reset();
 		}
-		catch (Throwable throwable2) {
-			throwable1 = throwable2;
+		catch (Throwable t) {
+			throwable = t;
 
-			throw throwable2;
+			throw t;
 		}
 		finally {
-			if (throwable1 == null) {
+			if (throwable == null) {
 				_portalHibernateTransactionManager.commit(transactionStatus);
 			}
 			else {

@@ -84,10 +84,10 @@ public class ClientState {
 
 				_socketState.connect(passCode);
 			}
-			catch (Throwable throwable) {
+			catch (Throwable t) {
 				_frameworkState.uninstallBundle(_bundleId);
 
-				throw throwable;
+				throw t;
 			}
 		}
 
@@ -103,10 +103,10 @@ public class ClientState {
 					try {
 						_frameworkState.uninstallBundle(_bundleId);
 					}
-					catch (Throwable throwable) {
+					catch (Throwable t) {
 						throw new IOException(
 							"Unable to uninstall bundle " + _bundleId + ": " +
-								throwable);
+								t);
 					}
 					finally {
 						_frameworkState.close();

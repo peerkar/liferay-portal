@@ -30,15 +30,15 @@ public class DuplicateSamlSpIdpConnectionSamlIdpEntityIdException
 	}
 
 	public DuplicateSamlSpIdpConnectionSamlIdpEntityIdException(
-		String msg, Throwable throwable) {
+		String msg, Throwable cause) {
 
-		super(msg, throwable);
+		super(msg, cause);
 	}
 
 	public DuplicateSamlSpIdpConnectionSamlIdpEntityIdException(
-		Throwable throwable) {
+		Throwable cause) {
 
-		super(throwable);
+		super(cause);
 	}
 
 }

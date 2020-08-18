@@ -133,41 +133,46 @@ Layout selLayout = layoutsSEODisplayContext.getSelLayout();
 
 						<div>
 
+							<%
+							Map<String, Object> props = HashMapBuilder.<String, Object>put(
+								"displayType", "og"
+							).put(
+								"targets",
+								HashMapBuilder.<String, Object>put(
+									"description",
+									HashMapBuilder.<String, Object>put(
+										"defaultValue", selLayout.getDescriptionMap()
+									).put(
+										"id", "openGraphDescription"
+									).build()
+								).put(
+									"imgUrl",
+									HashMapBuilder.<String, Object>put(
+										"defaultValue",
+										layoutsSEODisplayContext.getDefaultOpenGraphImageURL()
+									).put(
+										"value",
+										layoutsSEODisplayContext.getOpenGraphImageURL()
+									).build()
+								).put(
+									"title",
+									HashMapBuilder.<String, Object>put(
+										"defaultValue", layoutsSEODisplayContext.getDefaultPageTitleMap()
+									).put(
+										"id", "openGraphTitle"
+									).build()
+								).put(
+									"url",
+									Collections.singletonMap("defaultValue", layoutsSEODisplayContext.getDefaultCanonicalURLMap())
+								).build()
+							).put(
+								"titleSuffix", layoutsSEODisplayContext.getPageTitleSuffix()
+							).build();
+							%>
+
 							<react:component
 								module="js/seo/PreviewSeo.es"
-								props='<%=
-									HashMapBuilder.<String, Object>put(
-										"displayType", "og"
-									).put(
-										"targets",
-										HashMapBuilder.<String, Object>put(
-											"description",
-											HashMapBuilder.<String, Object>put(
-												"defaultValue", selLayout.getDescriptionMap()
-											).put(
-												"id", "openGraphDescription"
-											).build()
-										).put(
-											"imgUrl",
-											HashMapBuilder.<String, Object>put(
-												"defaultValue", layoutsSEODisplayContext.getDefaultOpenGraphImageURL()
-											).put(
-												"value", layoutsSEODisplayContext.getOpenGraphImageURL()
-											).build()
-										).put(
-											"title",
-											HashMapBuilder.<String, Object>put(
-												"defaultValue", layoutsSEODisplayContext.getDefaultPageTitleMap()
-											).put(
-												"id", "openGraphTitle"
-											).build()
-										).put(
-											"url", Collections.singletonMap("defaultValue", layoutsSEODisplayContext.getDefaultCanonicalURLMap())
-										).build()
-									).put(
-										"titleSuffix", layoutsSEODisplayContext.getPageTitleSuffix()
-									).build()
-								%>'
+								props="<%= props %>"
 								servletContext="<%= application %>"
 							/>
 						</div>

@@ -28,9 +28,9 @@ public class SuggestSearchRequest
 	implements SearchRequest<SuggestSearchResponse> {
 
 	public SuggestSearchRequest(String... indexNames) {
-		_indexNames = indexNames;
-
 		setPreferLocalCluster(true);
+
+		_indexNames = indexNames;
 	}
 
 	@Override

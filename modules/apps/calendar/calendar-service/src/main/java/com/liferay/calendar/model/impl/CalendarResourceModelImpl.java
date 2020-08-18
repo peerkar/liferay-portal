@@ -165,9 +165,7 @@ public class CalendarResourceModelImpl
 	 *
 	 * @param soapModel the soap model instance to convert
 	 * @return the normal model instance
-	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
 	 */
-	@Deprecated
 	public static CalendarResource toModel(CalendarResourceSoap soapModel) {
 		if (soapModel == null) {
 			return null;
@@ -201,9 +199,7 @@ public class CalendarResourceModelImpl
 	 *
 	 * @param soapModels the soap model instances to convert
 	 * @return the normal model instances
-	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
 	 */
-	@Deprecated
 	public static List<CalendarResource> toModels(
 		CalendarResourceSoap[] soapModels) {
 

@@ -44,7 +44,7 @@
 
 	var TPL_LEXICON_ICON =
 		'<svg class="lexicon-icon lexicon-icon-{0} {1}" focusable="false" role="image">' +
-		'<use href="' +
+		'<use data-href="' +
 		themeDisplay.getPathThemeImages() +
 		'/lexicon/icons.svg#{0}" />' +
 		'</svg>';

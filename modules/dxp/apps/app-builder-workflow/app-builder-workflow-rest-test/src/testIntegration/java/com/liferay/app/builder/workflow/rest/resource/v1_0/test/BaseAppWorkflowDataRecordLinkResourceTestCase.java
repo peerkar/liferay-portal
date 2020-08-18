@@ -271,8 +271,7 @@ public abstract class BaseAppWorkflowDataRecordLinkResourceTestCase {
 	}
 
 	protected void assertValid(
-			AppWorkflowDataRecordLink appWorkflowDataRecordLink)
-		throws Exception {
+		AppWorkflowDataRecordLink appWorkflowDataRecordLink) {
 
 		boolean valid = true;
 

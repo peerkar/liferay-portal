@@ -127,8 +127,6 @@ public class FragmentEntryLinkPersistenceTest {
 
 		newFragmentEntryLink.setMvccVersion(RandomTestUtil.nextLong());
 
-		newFragmentEntryLink.setCtCollectionId(RandomTestUtil.nextLong());
-
 		newFragmentEntryLink.setUuid(RandomTestUtil.randomString());
 
 		newFragmentEntryLink.setGroupId(RandomTestUtil.nextLong());
@@ -184,9 +182,6 @@ public class FragmentEntryLinkPersistenceTest {
 		Assert.assertEquals(
 			existingFragmentEntryLink.getMvccVersion(),
 			newFragmentEntryLink.getMvccVersion());
-		Assert.assertEquals(
-			existingFragmentEntryLink.getCtCollectionId(),
-			newFragmentEntryLink.getCtCollectionId());
 		Assert.assertEquals(
 			existingFragmentEntryLink.getUuid(),
 			newFragmentEntryLink.getUuid());
@@ -407,10 +402,10 @@ public class FragmentEntryLinkPersistenceTest {
 
 	protected OrderByComparator<FragmentEntryLink> getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create(
-			"FragmentEntryLink", "mvccVersion", true, "ctCollectionId", true,
-			"uuid", true, "fragmentEntryLinkId", true, "groupId", true,
-			"companyId", true, "userId", true, "userName", true, "createDate",
-			true, "modifiedDate", true, "originalFragmentEntryLinkId", true,
+			"FragmentEntryLink", "mvccVersion", true, "uuid", true,
+			"fragmentEntryLinkId", true, "groupId", true, "companyId", true,
+			"userId", true, "userName", true, "createDate", true,
+			"modifiedDate", true, "originalFragmentEntryLinkId", true,
 			"fragmentEntryId", true, "segmentsExperienceId", true,
 			"classNameId", true, "classPK", true, "plid", true, "namespace",
 			true, "position", true, "rendererKey", true, "lastPropagationDate",
@@ -665,8 +660,6 @@ public class FragmentEntryLinkPersistenceTest {
 		FragmentEntryLink fragmentEntryLink = _persistence.create(pk);
 
 		fragmentEntryLink.setMvccVersion(RandomTestUtil.nextLong());
-
-		fragmentEntryLink.setCtCollectionId(RandomTestUtil.nextLong());
 
 		fragmentEntryLink.setUuid(RandomTestUtil.randomString());
 

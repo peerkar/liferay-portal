@@ -61,10 +61,8 @@ import java.util.Map;
  *
  * @author Brian Wing Shun Chan
  * @see AssetVocabularyServiceHttp
- * @deprecated As of Athanasius (7.3.x), with no direct replacement
  * @generated
  */
-@Deprecated
 public class AssetVocabularyServiceSoap {
 
 	public static com.liferay.asset.kernel.model.AssetVocabularySoap

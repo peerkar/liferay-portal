@@ -118,10 +118,13 @@ export default ({
 		}),
 	};
 
+	const availableLanguageIds = Object.keys(dataLayout.name);
+
 	const normalizedDataDefinition = {
 		...dataDefinition,
+		availableLanguageIds,
 		dataDefinitionFields: dataDefinition.dataDefinitionFields.map((field) =>
-			normalizeField(dataDefinition.availableLanguageIds, field)
+			normalizeField(availableLanguageIds, field)
 		),
 		name: {
 			...dataDefinition.name,

@@ -45,7 +45,6 @@ import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Stian Sigvartsen
- * @deprecated As of Athanasius (7.3.x), with no direct replacement
  */
 @Component(
 	immediate = true,
@@ -56,7 +55,6 @@ import org.osgi.service.component.annotations.Reference;
 	},
 	service = MVCRenderCommand.class
 )
-@Deprecated
 public class FacebookConnectLoginErrorMVCRenderCommand
 	implements MVCRenderCommand {
 

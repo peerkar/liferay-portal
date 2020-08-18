@@ -31,7 +31,6 @@ export const UPDATE_STEP_INDEX = 'UPDATE_STEP_INDEX';
 export const UPDATE_TABLE_VIEW = 'UPDATE_TABLE_VIEW';
 
 export const getInitialConfig = () => {
-	const defaultLanguageId = themeDisplay.getLanguageId();
 	const initialSteps = [
 		{
 			appWorkflowTransitions: [
@@ -49,10 +48,7 @@ export const getInitialConfig = () => {
 
 	return {
 		currentStep: initialSteps[0],
-		dataObject: {
-			availableLanguageIds: [defaultLanguageId],
-			defaultLanguageId,
-		},
+		dataObject: {},
 		draftConfig: {},
 		formView: {},
 		listItems: {

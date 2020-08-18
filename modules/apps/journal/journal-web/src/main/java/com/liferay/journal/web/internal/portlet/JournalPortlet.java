@@ -19,7 +19,6 @@ import com.liferay.asset.kernel.exception.AssetCategoryException;
 import com.liferay.asset.kernel.exception.AssetTagException;
 import com.liferay.document.library.kernel.exception.DuplicateFileEntryException;
 import com.liferay.document.library.kernel.exception.FileSizeException;
-import com.liferay.dynamic.data.mapping.configuration.DDMWebConfiguration;
 import com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
 import com.liferay.dynamic.data.mapping.exception.NoSuchTemplateException;
 import com.liferay.dynamic.data.mapping.exception.StorageFieldRequiredException;
@@ -96,7 +95,6 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	configurationPid = {
-		"com.liferay.dynamic.data.mapping.configuration.DDMWebConfiguration",
 		"com.liferay.journal.web.internal.configuration.JournalDDMEditorConfiguration",
 		"com.liferay.journal.web.internal.configuration.JournalWebConfiguration"
 	},
@@ -162,8 +160,6 @@ public class JournalPortlet extends MVCPortlet {
 			DDMFormValuesToMapConverter.class.getName(),
 			_ddmFormValuesToMapConverter);
 		renderRequest.setAttribute(
-			DDMWebConfiguration.class.getName(), _ddmWebConfiguration);
-		renderRequest.setAttribute(
 			JournalDDMEditorConfiguration.class.getName(),
 			_journalDDMEditorConfiguration);
 		renderRequest.setAttribute(
@@ -202,8 +198,6 @@ public class JournalPortlet extends MVCPortlet {
 	@Activate
 	@Modified
 	protected void activate(Map<String, Object> properties) {
-		_ddmWebConfiguration = ConfigurableUtil.createConfigurable(
-			DDMWebConfiguration.class, properties);
 		_journalDDMEditorConfiguration = ConfigurableUtil.createConfigurable(
 			JournalDDMEditorConfiguration.class, properties);
 		_journalFileUploadsConfiguration = ConfigurableUtil.createConfigurable(
@@ -261,38 +255,38 @@ public class JournalPortlet extends MVCPortlet {
 	}
 
 	@Override
-	protected boolean isSessionErrorException(Throwable throwable) {
-		if (throwable instanceof ArticleContentException ||
-			throwable instanceof ArticleContentSizeException ||
-			throwable instanceof ArticleDisplayDateException ||
-			throwable instanceof ArticleExpirationDateException ||
-			throwable instanceof ArticleIdException ||
-			throwable instanceof ArticleSmallImageNameException ||
-			throwable instanceof ArticleSmallImageSizeException ||
-			throwable instanceof ArticleTitleException ||
-			throwable instanceof ArticleVersionException ||
-			throwable instanceof AssetCategoryException ||
-			throwable instanceof AssetTagException ||
-			throwable instanceof DuplicateArticleIdException ||
-			throwable instanceof DuplicateFeedIdException ||
-			throwable instanceof DuplicateFileEntryException ||
-			throwable instanceof DuplicateFolderNameException ||
-			throwable instanceof ExportImportContentValidationException ||
-			throwable instanceof FeedContentFieldException ||
-			throwable instanceof FeedIdException ||
-			throwable instanceof FeedNameException ||
-			throwable instanceof FeedTargetLayoutFriendlyUrlException ||
-			throwable instanceof FeedTargetPortletIdException ||
-			throwable instanceof FileSizeException ||
-			throwable instanceof FolderNameException ||
-			throwable instanceof InvalidDDMStructureException ||
-			throwable instanceof InvalidFolderException ||
-			throwable instanceof LiferayFileItemException ||
-			throwable instanceof LocaleException ||
-			throwable instanceof MaxAddMenuFavItemsException ||
-			throwable instanceof StorageFieldRequiredException ||
-			throwable instanceof SystemException ||
-			super.isSessionErrorException(throwable)) {
+	protected boolean isSessionErrorException(Throwable cause) {
+		if (cause instanceof ArticleContentException ||
+			cause instanceof ArticleContentSizeException ||
+			cause instanceof ArticleDisplayDateException ||
+			cause instanceof ArticleExpirationDateException ||
+			cause instanceof ArticleIdException ||
+			cause instanceof ArticleSmallImageNameException ||
+			cause instanceof ArticleSmallImageSizeException ||
+			cause instanceof ArticleTitleException ||
+			cause instanceof ArticleVersionException ||
+			cause instanceof AssetCategoryException ||
+			cause instanceof AssetTagException ||
+			cause instanceof DuplicateArticleIdException ||
+			cause instanceof DuplicateFeedIdException ||
+			cause instanceof DuplicateFileEntryException ||
+			cause instanceof DuplicateFolderNameException ||
+			cause instanceof ExportImportContentValidationException ||
+			cause instanceof FeedContentFieldException ||
+			cause instanceof FeedIdException ||
+			cause instanceof FeedNameException ||
+			cause instanceof FeedTargetLayoutFriendlyUrlException ||
+			cause instanceof FeedTargetPortletIdException ||
+			cause instanceof FileSizeException ||
+			cause instanceof FolderNameException ||
+			cause instanceof InvalidDDMStructureException ||
+			cause instanceof InvalidFolderException ||
+			cause instanceof LiferayFileItemException ||
+			cause instanceof LocaleException ||
+			cause instanceof MaxAddMenuFavItemsException ||
+			cause instanceof StorageFieldRequiredException ||
+			cause instanceof SystemException ||
+			super.isSessionErrorException(cause)) {
 
 			return true;
 		}
@@ -318,8 +312,6 @@ public class JournalPortlet extends MVCPortlet {
 
 	@Reference
 	private DDMTemplateHelper _ddmTemplateHelper;
-
-	private volatile DDMWebConfiguration _ddmWebConfiguration;
 
 	@Reference
 	private ItemSelector _itemSelector;

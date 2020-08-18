@@ -57,17 +57,16 @@ if ((user.getUserId() == fileEntry.getUserId()) || permissionChecker.isContentRe
 				>
 					<c:choose>
 						<c:when test="<%= fileVersion.getFileVersionId() != curFileVersion.getFileVersionId() %>">
-							<aui:a
-								cssClass="selector-button"
-								data='<%=
-									HashMapBuilder.<String, Object>put(
-										"sourceversion", curFileVersion.getFileVersionId()
-									).put(
-										"targetversion", fileVersion.getFileVersionId()
-									).build()
-								%>'
-								href="javascript:;"
-							>
+
+							<%
+							Map<String, Object> data = HashMapBuilder.<String, Object>put(
+								"sourceversion", curFileVersion.getFileVersionId()
+							).put(
+								"targetversion", fileVersion.getFileVersionId()
+							).build();
+							%>
+
+							<aui:a cssClass="selector-button" data="<%= data %>" href="javascript:;">
 								<%= HtmlUtil.escape(curFileVersion.getTitle()) %>
 							</aui:a>
 						</c:when>

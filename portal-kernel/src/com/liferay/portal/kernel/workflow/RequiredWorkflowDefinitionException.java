@@ -36,14 +36,12 @@ public class RequiredWorkflowDefinitionException extends WorkflowException {
 		super(msg);
 	}
 
-	public RequiredWorkflowDefinitionException(
-		String msg, Throwable throwable) {
-
-		super(msg, throwable);
+	public RequiredWorkflowDefinitionException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public RequiredWorkflowDefinitionException(Throwable throwable) {
-		super(throwable);
+	public RequiredWorkflowDefinitionException(Throwable cause) {
+		super(cause);
 	}
 
 	public List<WorkflowDefinitionLink> getWorkflowDefinitionLinks() {

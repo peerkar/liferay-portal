@@ -61,9 +61,7 @@ public class AsahInterestTermProviderTest {
 		);
 
 		Assert.assertArrayEquals(
-			interestTerms,
-			_asahInterestTermProvider.getInterestTerms(
-				RandomTestUtil.randomLong(), userId));
+			interestTerms, _asahInterestTermProvider.getInterestTerms(userId));
 
 		Mockito.verify(
 			_messageBus, Mockito.never()
@@ -76,8 +74,7 @@ public class AsahInterestTermProviderTest {
 	public void testGetInterestTermsWithEmptyAcClientUserId() {
 		Assert.assertArrayEquals(
 			new String[0],
-			_asahInterestTermProvider.getInterestTerms(
-				RandomTestUtil.randomLong(), StringPool.BLANK));
+			_asahInterestTermProvider.getInterestTerms(StringPool.BLANK));
 	}
 
 	@Test
@@ -91,9 +88,7 @@ public class AsahInterestTermProviderTest {
 		);
 
 		Assert.assertArrayEquals(
-			new String[0],
-			_asahInterestTermProvider.getInterestTerms(
-				RandomTestUtil.randomLong(), userId));
+			new String[0], _asahInterestTermProvider.getInterestTerms(userId));
 
 		Mockito.verify(
 			_messageBus, Mockito.times(1)

@@ -26,12 +26,12 @@ public class PortletIdException extends PortalException {
 		super(msg);
 	}
 
-	public PortletIdException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public PortletIdException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public PortletIdException(Throwable throwable) {
-		super(throwable);
+	public PortletIdException(Throwable cause) {
+		super(cause);
 	}
 
 }

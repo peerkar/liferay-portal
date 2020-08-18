@@ -21,14 +21,12 @@ import com.liferay.portal.kernel.exception.PortalException;
  */
 public class DisplayPageTemplateValidatorException extends PortalException {
 
-	public DisplayPageTemplateValidatorException(
-		String msg, Throwable throwable) {
-
-		super(msg, throwable);
+	public DisplayPageTemplateValidatorException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public DisplayPageTemplateValidatorException(Throwable throwable) {
-		super(throwable);
+	public DisplayPageTemplateValidatorException(Throwable cause) {
+		super(cause);
 	}
 
 }

@@ -250,7 +250,7 @@ public abstract class BaseAssigneeResourceTestCase {
 		}
 	}
 
-	protected void assertValid(Assignee assignee) throws Exception {
+	protected void assertValid(Assignee assignee) {
 		boolean valid = true;
 
 		if (assignee.getId() == null) {

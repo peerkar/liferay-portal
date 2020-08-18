@@ -30,9 +30,7 @@ const renderTopper = ({
 } = {}) => {
 	const row = {
 		children: [],
-		config: {
-			styles: {},
-		},
+		config: {},
 		itemId: 'row',
 		parentId: null,
 		type: LAYOUT_DATA_ITEM_TYPES.row,

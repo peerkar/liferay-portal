@@ -210,7 +210,6 @@ definition {
 
 	@priority = "5"
 	test ViewImageEditorControls {
-		property environment.acceptance = "true";
 		property portal.acceptance = "true";
 
 		JSONDocument.addFileWithUploadedFile(

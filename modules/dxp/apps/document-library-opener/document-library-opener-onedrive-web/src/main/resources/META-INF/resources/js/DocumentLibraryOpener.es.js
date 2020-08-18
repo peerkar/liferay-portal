@@ -76,6 +76,7 @@ class DocumentLibraryOpener {
 	_showError(message) {
 		openToast({
 			message,
+			title: Liferay.Language.get('error'),
 			type: 'danger',
 		});
 	}

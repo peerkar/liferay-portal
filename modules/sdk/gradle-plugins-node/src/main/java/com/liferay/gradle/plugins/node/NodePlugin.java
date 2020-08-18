@@ -14,7 +14,6 @@
 
 package com.liferay.gradle.plugins.node;
 
-import com.liferay.gradle.plugins.node.internal.util.FileUtil;
 import com.liferay.gradle.plugins.node.internal.util.GradleUtil;
 import com.liferay.gradle.plugins.node.internal.util.StringUtil;
 import com.liferay.gradle.plugins.node.tasks.DownloadNodeModuleTask;
@@ -95,8 +94,6 @@ public class NodePlugin implements Plugin<Project> {
 	public void apply(Project project) {
 		final NodeExtension nodeExtension = GradleUtil.addExtension(
 			project, EXTENSION_NAME, NodeExtension.class);
-
-		_configureExtensionNode(project, nodeExtension);
 
 		Delete cleanNpmTask = _addTaskCleanNpm(project, nodeExtension);
 
@@ -418,29 +415,6 @@ public class NodePlugin implements Plugin<Project> {
 				}
 			}
 		}
-	}
-
-	private void _configureExtensionNode(
-		final Project project, NodeExtension nodeExtension) {
-
-		if (FileUtil.exists(project, "package-lock.json")) {
-			return;
-		}
-
-		Project rootProject = project.getRootProject();
-
-		PluginContainer rootPluginContainer = rootProject.getPlugins();
-
-		rootPluginContainer.withId(
-			"com.liferay.yarn",
-			new Action<Plugin>() {
-
-				@Override
-				public void execute(Plugin plugin) {
-					nodeExtension.setUseNpm(false);
-				}
-
-			});
 	}
 
 	private void _configureTaskDownloadNodeGlobal(

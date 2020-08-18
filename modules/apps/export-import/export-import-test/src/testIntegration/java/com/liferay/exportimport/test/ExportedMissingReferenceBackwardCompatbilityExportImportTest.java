@@ -105,13 +105,13 @@ public class ExportedMissingReferenceBackwardCompatbilityExportImportTest
 			exportImportLayouts(layoutIds, getExportParameterMap());
 		}
 		catch (PortletDataException portletDataException) {
-			Throwable throwable = portletDataException.getCause();
+			Throwable cause = portletDataException.getCause();
 
-			if (!(throwable instanceof NullPointerException)) {
+			if (!(cause instanceof NullPointerException)) {
 				throw portletDataException;
 			}
 
-			StackTraceElement[] stackTrace = throwable.getStackTrace();
+			StackTraceElement[] stackTrace = cause.getStackTrace();
 
 			if (Objects.equals(
 					stackTrace[0].getClassName(),

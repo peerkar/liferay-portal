@@ -31,8 +31,8 @@ import com.liferay.info.field.type.TagsInfoFieldType;
 import com.liferay.info.field.type.TextInfoFieldType;
 import com.liferay.info.field.type.URLInfoFieldType;
 import com.liferay.info.form.InfoForm;
+import com.liferay.info.item.InfoItemClassPKReference;
 import com.liferay.info.item.InfoItemFieldValues;
-import com.liferay.info.item.InfoItemReference;
 import com.liferay.info.item.InfoItemServiceTracker;
 import com.liferay.info.item.provider.InfoItemFieldValuesProvider;
 import com.liferay.info.item.provider.InfoItemFormProvider;
@@ -280,14 +280,15 @@ public class JournalArticleInfoItemFormProviderTest {
 		InfoItemFieldValues infoItemFieldValues =
 			infoItemFieldValuesProvider.getInfoItemFieldValues(journalArticle);
 
-		InfoItemReference infoItemReference =
-			infoItemFieldValues.getInfoItemReference();
+		InfoItemClassPKReference infoItemClassPKReference =
+			infoItemFieldValues.getInfoItemClassPKReference();
 
 		Assert.assertEquals(
 			journalArticle.getResourcePrimKey(),
-			infoItemReference.getClassPK());
+			infoItemClassPKReference.getClassPK());
 		Assert.assertEquals(
-			JournalArticle.class.getName(), infoItemReference.getClassName());
+			JournalArticle.class.getName(),
+			infoItemClassPKReference.getClassName());
 
 		Collection<InfoFieldValue<Object>> infoFieldValues =
 			infoItemFieldValues.getInfoFieldValues();

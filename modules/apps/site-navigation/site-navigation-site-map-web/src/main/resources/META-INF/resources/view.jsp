@@ -16,13 +16,15 @@
 
 <%@ include file="/init.jsp" %>
 
+<%
+Map<String, Object> contextObjects = HashMapBuilder.<String, Object>put(
+	"siteNavigationSiteMapDisplayContext", siteNavigationSiteMapDisplayContext
+).build();
+%>
+
 <liferay-ddm:template-renderer
 	className="<%= LayoutSet.class.getName() %>"
-	contextObjects='<%=
-		HashMapBuilder.<String, Object>put(
-			"siteNavigationSiteMapDisplayContext", siteNavigationSiteMapDisplayContext
-		).build()
-	%>'
+	contextObjects="<%= contextObjects %>"
 	displayStyle="<%= siteNavigationSiteMapPortletInstanceConfiguration.displayStyle() %>"
 	displayStyleGroupId="<%= siteNavigationSiteMapDisplayContext.getDisplayStyleGroupId() %>"
 	entries="<%= siteNavigationSiteMapDisplayContext.getRootLayouts() %>"

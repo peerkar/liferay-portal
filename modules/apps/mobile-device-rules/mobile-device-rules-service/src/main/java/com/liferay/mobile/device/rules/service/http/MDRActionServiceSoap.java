@@ -61,10 +61,8 @@ import java.util.Map;
  *
  * @author Edward C. Han
  * @see MDRActionServiceHttp
- * @deprecated As of Athanasius (7.3.x), with no direct replacement
  * @generated
  */
-@Deprecated
 public class MDRActionServiceSoap {
 
 	public static com.liferay.mobile.device.rules.model.MDRActionSoap addAction(

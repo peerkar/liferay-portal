@@ -83,7 +83,9 @@ definition {
 
 		SelectFrameTop();
 
-		Button.clickAdd();
+		AssertClick(
+			locator1 = "Button#ADD",
+			value1 = "Add");
 
 		Alert.viewSuccessMessage();
 	}
@@ -104,9 +106,7 @@ definition {
 
 		LexiconEntry.gotoAdd();
 
-		AssertElementPresent.assertVisible(
-			key_text = "Add",
-			locator1 = "Button#ANY");
+		AssertElementPresent.assertVisible(locator1 = "Button#ADD");
 
 		SelectFrame(locator1 = "IFrame#MODAL_BODY");
 
@@ -121,8 +121,7 @@ definition {
 		SelectFrameTop();
 
 		AssertClick.assertTextClickAtWaitForLastScript(
-			key_text = "Add",
-			locator1 = "Button#ANY",
+			locator1 = "Button#ADD",
 			value1 = "Add");
 
 		Alert.viewSuccessMessage();

@@ -37,10 +37,9 @@ public class ThemeLoaderHotDeployListener extends BaseHotDeployListener {
 		try {
 			doInvokeDeploy(hotDeployEvent);
 		}
-		catch (Throwable throwable) {
+		catch (Throwable t) {
 			throwHotDeployException(
-				hotDeployEvent, "Error registering theme loader for ",
-				throwable);
+				hotDeployEvent, "Error registering theme loader for ", t);
 		}
 	}
 
@@ -51,10 +50,9 @@ public class ThemeLoaderHotDeployListener extends BaseHotDeployListener {
 		try {
 			doInvokeUndeploy(hotDeployEvent);
 		}
-		catch (Throwable throwable) {
+		catch (Throwable t) {
 			throwHotDeployException(
-				hotDeployEvent, "Error unregistering theme loader for ",
-				throwable);
+				hotDeployEvent, "Error unregistering theme loader for ", t);
 		}
 	}
 

@@ -131,10 +131,11 @@ public class UpdateMembershipsMVCActionCommandTest {
 		_userLocalService.updateUser(
 			_user.getUserId(), _user.getPassword(), null, null,
 			_user.isPasswordReset(), null, null, _user.getScreenName(),
-			_user.getEmailAddress(), true, null, _user.getLanguageId(),
-			_user.getTimeZoneId(), _user.getGreeting(), _user.getComments(),
-			_user.getFirstName(), _user.getMiddleName(), _user.getLastName(),
-			contact.getPrefixId(), contact.getSuffixId(), _user.isMale(),
+			_user.getEmailAddress(), _user.getFacebookId(), _user.getOpenId(),
+			true, null, _user.getLanguageId(), _user.getTimeZoneId(),
+			_user.getGreeting(), _user.getComments(), _user.getFirstName(),
+			_user.getMiddleName(), _user.getLastName(), contact.getPrefixId(),
+			contact.getSuffixId(), _user.isMale(),
 			birthdayCal.get(Calendar.MONTH), birthdayCal.get(Calendar.DATE),
 			birthdayCal.get(Calendar.YEAR), contact.getSmsSn(),
 			contact.getFacebookSn(), contact.getJabberSn(),
@@ -236,39 +237,33 @@ public class UpdateMembershipsMVCActionCommandTest {
 
 			_parameters = HashMapBuilder.put(
 				"addDepotGroupIds",
-				() -> {
-					LongStream addDepotGroupIdLongStream = Arrays.stream(
+				new String[] {
+					Arrays.stream(
 						Optional.ofNullable(
 							addDepotGroupIds
 						).orElse(
 							new long[0]
-						));
-
-					return new String[] {
-						addDepotGroupIdLongStream.mapToObj(
-							String::valueOf
-						).collect(
-							Collectors.joining()
 						)
-					};
+					).mapToObj(
+						String::valueOf
+					).collect(
+						Collectors.joining()
+					)
 				}
 			).put(
 				"deleteDepotGroupIds",
-				() -> {
-					LongStream deleteDepotGroupIdLongStream = Arrays.stream(
+				new String[] {
+					Arrays.stream(
 						Optional.ofNullable(
 							deleteGroupIds
 						).orElse(
 							new long[0]
-						));
-
-					return new String[] {
-						deleteDepotGroupIdLongStream.mapToObj(
-							String::valueOf
-						).collect(
-							Collectors.joining()
 						)
-					};
+					).mapToObj(
+						String::valueOf
+					).collect(
+						Collectors.joining()
+					)
 				}
 			).put(
 				"p_u_i_d", new String[] {String.valueOf(_user.getUserId())}

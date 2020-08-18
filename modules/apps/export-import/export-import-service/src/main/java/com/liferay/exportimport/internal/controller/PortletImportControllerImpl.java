@@ -303,7 +303,7 @@ public class PortletImportControllerImpl implements PortletImportController {
 					portletDataContext),
 				userId);
 		}
-		catch (Throwable throwable) {
+		catch (Throwable t) {
 			ExportImportThreadLocal.setPortletImportInProcess(false);
 
 			_exportImportLifecycleManager.fireExportImportLifecycleEvent(
@@ -313,9 +313,9 @@ public class PortletImportControllerImpl implements PortletImportController {
 					exportImportConfiguration.getExportImportConfigurationId()),
 				_portletDataContextFactory.clonePortletDataContext(
 					portletDataContext),
-				throwable);
+				t);
 
-			throw throwable;
+			throw t;
 		}
 	}
 

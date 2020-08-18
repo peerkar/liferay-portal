@@ -132,7 +132,7 @@ public class ConfigurationHandler {
 			int typeCode, PushbackReader pushbackReader)
 		throws IOException {
 
-		List<Object> objects = new ArrayList<>();
+		List<Object> list = new ArrayList<>();
 
 		while (true) {
 			int token = _ignorablePageBreakAndWhiteSpace(pushbackReader);
@@ -149,7 +149,7 @@ public class ConfigurationHandler {
 
 				_read(pushbackReader);
 
-				objects.add(value);
+				list.add(value);
 
 				token = _ignorablePageBreakAndWhiteSpace(pushbackReader);
 			}
@@ -157,10 +157,10 @@ public class ConfigurationHandler {
 			if (token == CharPool.CLOSE_BRACKET) {
 				Class<?> type = _codeToType.get(typeCode);
 
-				Object array = Array.newInstance(type, objects.size());
+				Object array = Array.newInstance(type, list.size());
 
-				for (int i = 0; i < objects.size(); i++) {
-					Array.set(array, i, objects.get(i));
+				for (int i = 0; i < list.size(); i++) {
+					Array.set(array, i, list.get(i));
 				}
 
 				return array;
@@ -178,7 +178,7 @@ public class ConfigurationHandler {
 			int typeCode, PushbackReader pushbackReader)
 		throws IOException {
 
-		Collection<Object> objects = new ArrayList<>();
+		Collection<Object> collection = new ArrayList<>();
 
 		while (true) {
 			int token = _ignorablePageBreakAndWhiteSpace(pushbackReader);
@@ -195,13 +195,13 @@ public class ConfigurationHandler {
 
 				_read(pushbackReader);
 
-				objects.add(value);
+				collection.add(value);
 
 				token = _ignorablePageBreakAndWhiteSpace(pushbackReader);
 			}
 
 			if (token == CharPool.CLOSE_PARENTHESIS) {
-				return objects;
+				return collection;
 			}
 			else if (token < 0) {
 				return null;

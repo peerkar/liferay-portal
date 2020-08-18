@@ -313,8 +313,7 @@ public class AssetListEntryServiceTest {
 			assetListEntry.getAssetListEntryId());
 
 		Assert.assertEquals(
-			assetListEntry.getAssetEntryType(),
-			TestAssetRendererFactory.class.getName());
+			assetListEntry.getAssetEntryType(), AssetEntry.class.getName());
 
 		_assetListEntryService.deleteAssetEntrySelection(
 			assetListEntry.getAssetListEntryId(), 0, 1);

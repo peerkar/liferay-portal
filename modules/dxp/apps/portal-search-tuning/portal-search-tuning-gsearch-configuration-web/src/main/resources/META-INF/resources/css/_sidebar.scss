@@ -1,0 +1,43 @@
+.sidebar {
+	margin-top: 4rem;
+	min-width: 384px;
+	position: fixed;
+	right: 0;
+	width: 20%;
+	z-index: 200;
+
+	.component-title {
+		font-size: 1rem;
+	}
+
+	.empty-list-message {
+		padding: 16px;
+		text-align: center;
+	}
+
+	.list-group-item {
+		border: 0;
+
+		&.hover {
+			background-color: $primaryL4;
+		}
+
+		.autofit-col:first-of-type {
+			padding-right: 0.5rem;
+		}
+
+		.button-wrapper {
+			background-color: $primaryL4;
+			display: table;
+			height: 100%;
+			padding-left: 1rem;
+			position: absolute;
+			right: 0.5rem;
+
+			.add-fragment-button {
+				display: table-cell;
+				vertical-align: middle;
+			}
+		}
+	}
+}

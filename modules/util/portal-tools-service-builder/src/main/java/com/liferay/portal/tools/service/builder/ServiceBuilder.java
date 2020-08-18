@@ -368,8 +368,8 @@ public class ServiceBuilder {
 		try {
 			ClearThreadLocalUtil.clearThreadLocal();
 		}
-		catch (Throwable throwable) {
-			throwable.printStackTrace();
+		catch (Throwable t) {
+			t.printStackTrace();
 		}
 
 		Introspector.flushCaches();
@@ -7125,13 +7125,7 @@ public class ServiceBuilder {
 		}
 
 		versionEntityElement.addAttribute("local-service", "false");
-
-		if (entity.isChangeTrackingEnabled()) {
-			versionEntityElement.addAttribute("mvcc-enabled", "true");
-		}
-		else {
-			versionEntityElement.addAttribute("mvcc-enabled", "false");
-		}
+		versionEntityElement.addAttribute("mvcc-enabled", "false");
 
 		versionEntityElement.addAttribute("name", entity.getName() + "Version");
 
@@ -7183,10 +7177,7 @@ public class ServiceBuilder {
 		for (Element columnElement : columnElements) {
 			String name = columnElement.attributeValue("name");
 
-			if (!name.equals("mvccVersion") && !name.equals("headId") &&
-				(!name.equals("ctCollectionId") ||
-				 !entity.isChangeTrackingEnabled())) {
-
+			if (!name.equals("mvccVersion") && !name.equals("headId")) {
 				versionEntityColumnElement = versionEntityElement.addElement(
 					"column");
 

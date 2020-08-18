@@ -124,7 +124,7 @@ definition {
 			locator1 = "TextInput#FILE",
 			value1 = "${pageTemplateZipFileName}");
 
-		Button.clickImport();
+		Click(locator1 = "Button#IMPORT");
 
 		Alert.viewSuccessMessage();
 
@@ -154,7 +154,7 @@ definition {
 
 		Check.checkNotVisible(
 			key_card = "${pageTemplateName}",
-			locator1 = "Card#CARD_CHECKBOX");
+			locator1 = "LexiconCard#CARD_CHECKBOX");
 	}
 
 	macro viewEntryWorkflowStatus {

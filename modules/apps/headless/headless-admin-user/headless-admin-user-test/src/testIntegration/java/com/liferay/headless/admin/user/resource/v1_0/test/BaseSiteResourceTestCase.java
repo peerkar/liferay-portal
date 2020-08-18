@@ -371,7 +371,7 @@ public abstract class BaseSiteResourceTestCase {
 		}
 	}
 
-	protected void assertValid(Site site) throws Exception {
+	protected void assertValid(Site site) {
 		boolean valid = true;
 
 		if (site.getId() == null) {

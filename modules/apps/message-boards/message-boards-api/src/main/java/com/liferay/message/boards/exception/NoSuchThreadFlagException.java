@@ -28,12 +28,12 @@ public class NoSuchThreadFlagException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchThreadFlagException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public NoSuchThreadFlagException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NoSuchThreadFlagException(Throwable throwable) {
-		super(throwable);
+	public NoSuchThreadFlagException(Throwable cause) {
+		super(cause);
 	}
 
 }

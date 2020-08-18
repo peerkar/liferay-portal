@@ -60,7 +60,6 @@ public class ElsePoshiElement extends ThenPoshiElement {
 	}
 
 	protected ElsePoshiElement() {
-		super(_ELEMENT_NAME);
 	}
 
 	protected ElsePoshiElement(Element element) {

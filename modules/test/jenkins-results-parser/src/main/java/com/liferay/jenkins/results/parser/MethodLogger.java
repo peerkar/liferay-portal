@@ -41,8 +41,8 @@ public class MethodLogger implements InvocationHandler {
 		try {
 			result = method.invoke(_object, args);
 		}
-		catch (Throwable throwable) {
-			throw throwable;
+		catch (Throwable t) {
+			throw t;
 		}
 		finally {
 			String duration = JenkinsResultsParserUtil.toDurationString(

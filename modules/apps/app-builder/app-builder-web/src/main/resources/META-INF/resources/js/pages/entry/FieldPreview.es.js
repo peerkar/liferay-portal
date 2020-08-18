@@ -18,10 +18,7 @@ import {SheetSection} from '@clayui/layout';
 import ClayPanel from '@clayui/panel';
 import {ClayTooltipProvider} from '@clayui/tooltip';
 import {DataDefinitionUtils} from 'data-engine-taglib';
-import React, {useContext, useEffect, useState} from 'react';
-
-import {AppContext} from '../../AppContext.es';
-import {getLocalizedUserPreferenceValue} from '../../utils/lang.es';
+import React, {useEffect, useState} from 'react';
 
 const createFileEntryPreviewURL = (groupId, fileEntryId) => {
 	const portletURL = Liferay.PortletURL.createURL(
@@ -158,16 +155,7 @@ export const SectionRenderer = ({
 	dataDefinition,
 	fieldName,
 }) => {
-	const {userLanguageId} = useContext(AppContext);
-	const {label} = DataDefinitionUtils.getDataDefinitionField(
-		dataDefinition,
-		fieldName
-	);
-	const localizedLabel = getLocalizedUserPreferenceValue(
-		label,
-		userLanguageId,
-		dataDefinition.defaultLanguageId
-	);
+	const label = DataDefinitionUtils.getFieldLabel(dataDefinition, fieldName);
 
 	return (
 		<ClayPanel
@@ -178,9 +166,7 @@ export const SectionRenderer = ({
 				<SheetSection>
 					<div className="autofit-row sheet-subtitle">
 						<span className="autofit-col autofit-col-expand">
-							<label className="text-uppercase">
-								{localizedLabel}
-							</label>
+							<label className="text-uppercase">{label}</label>
 						</span>
 					</div>
 				</SheetSection>
@@ -272,26 +258,12 @@ export const FieldValuePreview = ({
 	return <Renderer value={value} />;
 };
 
-export default ({
-	dataDefinition,
-	dataRecordValues,
-	defaultLanguageId,
-	fieldName,
-}) => {
-	const {userLanguageId} = useContext(AppContext);
-	const {label} = DataDefinitionUtils.getDataDefinitionField(
-		dataDefinition,
-		fieldName
-	);
-	const localizedLabel = getLocalizedUserPreferenceValue(
-		label,
-		userLanguageId,
-		defaultLanguageId
-	);
+export default ({dataDefinition, dataRecordValues, fieldName}) => {
+	const label = DataDefinitionUtils.getFieldLabel(dataDefinition, fieldName);
 
 	return (
 		<div className="data-record-field-preview">
-			<label>{localizedLabel}</label>
+			<label>{label}</label>
 
 			<FieldValuePreview
 				dataDefinition={dataDefinition}

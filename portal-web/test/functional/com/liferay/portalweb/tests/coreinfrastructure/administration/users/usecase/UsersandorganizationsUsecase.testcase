@@ -1702,7 +1702,9 @@ definition {
 			configurationName = "Organization Type",
 			configurationScope = "System Scope");
 
-		Button.clickAdd();
+		AssertClick(
+			locator1 = "Button#ADD",
+			value1 = "Add");
 
 		for (var settingName : list "Name,Children Types") {
 			SystemSettings.editTextAreaSetting(

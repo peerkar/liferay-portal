@@ -28,14 +28,12 @@ public class ExportArticleTargetExtensionException extends PortalException {
 		super(msg);
 	}
 
-	public ExportArticleTargetExtensionException(
-		String msg, Throwable throwable) {
-
-		super(msg, throwable);
+	public ExportArticleTargetExtensionException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public ExportArticleTargetExtensionException(Throwable throwable) {
-		super(throwable);
+	public ExportArticleTargetExtensionException(Throwable cause) {
+		super(cause);
 	}
 
 }

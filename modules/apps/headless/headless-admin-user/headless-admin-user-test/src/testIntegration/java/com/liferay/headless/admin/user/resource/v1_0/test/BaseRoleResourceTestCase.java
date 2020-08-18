@@ -466,7 +466,7 @@ public abstract class BaseRoleResourceTestCase {
 		}
 	}
 
-	protected void assertValid(Role role) throws Exception {
+	protected void assertValid(Role role) {
 		boolean valid = true;
 
 		if (role.getDateCreated() == null) {

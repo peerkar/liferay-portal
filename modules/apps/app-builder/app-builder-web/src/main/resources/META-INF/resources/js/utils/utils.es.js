@@ -13,12 +13,7 @@
  */
 
 export const concatValues = (values) =>
-	values
-		.join(', ')
-		.replace(
-			/, ([^,]*)$/,
-			` ${Liferay.Language.get('and').toLowerCase()} $1`
-		);
+	values.join(', ').replace(/, ([^,]*)$/, ' and $1');
 
 export const isEqualObjects = (firstObj = {}, secondObj = {}) => {
 	if (typeof firstObj !== 'object' || typeof secondObj !== 'object') {
@@ -26,4 +21,15 @@ export const isEqualObjects = (firstObj = {}, secondObj = {}) => {
 	}
 
 	return JSON.stringify(firstObj) === JSON.stringify(secondObj);
+};
+
+export const getTranslatedValue = (item, propertyKey) => {
+	const {
+		defaultLanguageId = themeDisplay.getLanguageId(),
+		[propertyKey]: value,
+	} = item;
+
+	return typeof value === 'object'
+		? value[themeDisplay.getLanguageId()] || value[defaultLanguageId]
+		: value;
 };

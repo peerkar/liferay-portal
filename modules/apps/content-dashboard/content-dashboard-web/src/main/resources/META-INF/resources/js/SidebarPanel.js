@@ -136,13 +136,13 @@ const SidebarPanel = React.forwardRef(
 		}, [View]);
 
 		useImperativeHandle(ref, () => ({
-			close: () => safeDispatch({type: 'CLOSE_SIDEBAR'}),
+			close: () => dispatch({type: 'CLOSE_SIDEBAR'}),
 			open: (fetchURL, View) => {
 				CurrentView.current = View;
 
 				getData(fetchURL);
 
-				safeDispatch({type: 'OPEN_SIDEBAR'});
+				dispatch({type: 'OPEN_SIDEBAR'});
 			},
 		}));
 

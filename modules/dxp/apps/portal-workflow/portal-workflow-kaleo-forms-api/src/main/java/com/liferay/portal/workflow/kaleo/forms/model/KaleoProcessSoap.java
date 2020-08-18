@@ -24,10 +24,8 @@ import java.util.List;
  * This class is used by SOAP remote services, specifically {@link com.liferay.portal.workflow.kaleo.forms.service.http.KaleoProcessServiceSoap}.
  *
  * @author Marcellus Tavares
- * @deprecated As of Athanasius (7.3.x), with no direct replacement
  * @generated
  */
-@Deprecated
 public class KaleoProcessSoap implements Serializable {
 
 	public static KaleoProcessSoap toSoapModel(KaleoProcess model) {

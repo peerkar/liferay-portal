@@ -65,9 +65,6 @@ public class NotificationMessageHelper {
 			WorkflowConstants.CONTEXT_GROUP_ID,
 			String.valueOf(
 				workflowContext.get(WorkflowConstants.CONTEXT_GROUP_ID))
-		).put(
-			WorkflowConstants.CONTEXT_URL,
-			String.valueOf(workflowContext.get(WorkflowConstants.CONTEXT_URL))
 		);
 
 		KaleoInstanceToken kaleoInstanceToken =

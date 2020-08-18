@@ -116,6 +116,8 @@ definition {
 
 		WaitForElementPresent(locator1 = "//script[contains(@src,'OpenToast.es.js')]");
 
+		Alert.viewSuccessMessage();
+
 		Navigator.openURL();
 	}
 

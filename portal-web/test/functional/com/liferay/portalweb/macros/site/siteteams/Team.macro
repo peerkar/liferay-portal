@@ -56,7 +56,9 @@ definition {
 
 			SelectFrameTop();
 
-			Button.clickAdd();
+			AssertClick(
+				locator1 = "Button#ADD",
+				value1 = "Add");
 
 			Alert.viewSuccessMessage();
 
@@ -103,7 +105,9 @@ definition {
 
 			Pause(locator1 = "3000");
 
-			Button.clickAdd();
+			AssertClick(
+				locator1 = "Button#ADD",
+				value1 = "Add");
 
 			Alert.viewSuccessMessage();
 		}

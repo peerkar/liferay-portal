@@ -704,7 +704,7 @@ public abstract class BaseDataListViewResourceTestCase {
 		}
 	}
 
-	protected void assertValid(DataListView dataListView) throws Exception {
+	protected void assertValid(DataListView dataListView) {
 		boolean valid = true;
 
 		if (dataListView.getDateCreated() == null) {

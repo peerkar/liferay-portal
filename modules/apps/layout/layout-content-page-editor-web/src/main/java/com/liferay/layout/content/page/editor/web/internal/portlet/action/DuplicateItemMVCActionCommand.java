@@ -28,7 +28,7 @@ import com.liferay.layout.content.page.editor.constants.ContentPageEditorPortlet
 import com.liferay.layout.content.page.editor.web.internal.excecption.NoninstanceablePortletException;
 import com.liferay.layout.content.page.editor.web.internal.util.FragmentEntryLinkUtil;
 import com.liferay.layout.content.page.editor.web.internal.util.layout.structure.LayoutStructureUtil;
-import com.liferay.layout.util.structure.FragmentStyledLayoutStructureItem;
+import com.liferay.layout.util.structure.FragmentLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -179,19 +179,19 @@ public class DuplicateItemMVCActionCommand
 							duplicatedLayoutStructureItem.getItemId());
 
 						if (!(duplicatedLayoutStructureItem instanceof
-								FragmentStyledLayoutStructureItem)) {
+								FragmentLayoutStructureItem)) {
 
 							continue;
 						}
 
-						FragmentStyledLayoutStructureItem
-							fragmentStyledLayoutStructureItem =
-								(FragmentStyledLayoutStructureItem)
+						FragmentLayoutStructureItem
+							fragmentLayoutStructureItem =
+								(FragmentLayoutStructureItem)
 									duplicatedLayoutStructureItem;
 
 						long fragmentEntryLinkId = _duplicateFragmentEntryLink(
 							actionRequest,
-							fragmentStyledLayoutStructureItem.
+							fragmentLayoutStructureItem.
 								getFragmentEntryLinkId());
 
 						layoutStructure.updateItemConfig(

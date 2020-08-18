@@ -191,21 +191,21 @@ public class EditPageAttachmentsMVCActionCommand extends BaseMVCActionCommand {
 					WebKeys.UPLOAD_EXCEPTION);
 
 			if (uploadException != null) {
-				Throwable throwable = uploadException.getCause();
+				Throwable cause = uploadException.getCause();
 
 				if (uploadException.isExceededFileSizeLimit()) {
-					throw new FileSizeException(throwable);
+					throw new FileSizeException(cause);
 				}
 
 				if (uploadException.isExceededLiferayFileItemSizeLimit()) {
-					throw new LiferayFileItemException(throwable);
+					throw new LiferayFileItemException(cause);
 				}
 
 				if (uploadException.isExceededUploadRequestSizeLimit()) {
-					throw new UploadRequestSizeException(throwable);
+					throw new UploadRequestSizeException(cause);
 				}
 
-				throw new PortalException(throwable);
+				throw new PortalException(cause);
 			}
 			else if (cmd.equals(Constants.ADD_TEMP)) {
 				addTempAttachment(actionRequest, actionResponse);
@@ -402,9 +402,9 @@ public class EditPageAttachmentsMVCActionCommand extends BaseMVCActionCommand {
 				"mvcPath", "/html/porltet/document_library/error.jsp");
 		}
 		else {
-			Throwable throwable = exception.getCause();
+			Throwable cause = exception.getCause();
 
-			if (throwable instanceof DuplicateFileEntryException) {
+			if (cause instanceof DuplicateFileEntryException) {
 				SessionErrors.add(
 					actionRequest, DuplicateFileEntryException.class);
 			}

@@ -12,19 +12,22 @@
  * details.
  */
 
-import React, {useContext, useState} from 'react';
+import React, {useContext, useReducer} from 'react';
 
 import {CollectionItemContext, INITIAL_STATE} from './CollectionItemContext';
-import {useIsActive} from './Controls';
+import {useActiveItemId} from './Controls';
 
 const CollectionActiveItemDispatchContext = React.createContext(() => {});
 const CollectionActiveItemStateContext = React.createContext(INITIAL_STATE);
 
 export function CollectionActiveItemContextProvider({children}) {
-	const [state, setState] = useState(INITIAL_STATE);
+	const [state, dispatch] = useReducer(
+		(state, action) => (state !== action ? action : state),
+		INITIAL_STATE
+	);
 
 	return (
-		<CollectionActiveItemDispatchContext.Provider value={setState}>
+		<CollectionActiveItemDispatchContext.Provider value={dispatch}>
 			<CollectionActiveItemStateContext.Provider value={state}>
 				{children}
 			</CollectionActiveItemStateContext.Provider>
@@ -33,12 +36,12 @@ export function CollectionActiveItemContextProvider({children}) {
 }
 
 export function useSetCollectionActiveItemContext(itemId) {
-	const isActive = useIsActive();
+	const activeItemId = useActiveItemId();
 	const collectionContext = useContext(CollectionItemContext);
-	const setState = useContext(CollectionActiveItemDispatchContext);
+	const dispatch = useContext(CollectionActiveItemDispatchContext);
 
-	if (isActive(itemId)) {
-		setState(collectionContext);
+	if (itemId === activeItemId) {
+		dispatch(collectionContext);
 	}
 }
 

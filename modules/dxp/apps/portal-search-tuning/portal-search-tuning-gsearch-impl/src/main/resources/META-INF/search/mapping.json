@@ -1,0 +1,78 @@
+{
+	"mappings": {
+		"_doc": {
+			"dynamic_templates": [
+				{
+					"template_keyword": {
+						"mapping": {
+							"fields": {
+								"ngram": {
+									"analyzer": "gsearch_shingle_analyzer",
+									"search_analyzer": "gsearch_shingle_analyzer",
+									"type": "text"
+								},
+								"suggest": {
+									"analyzer": "simple",
+									"search_analyzer": "simple",
+									"type": "completion"
+								}
+							},
+							"store": true,
+							"type": "text"
+						},
+						"match": "keywordSearch_*",
+						"match_mapping_type": "string"
+					}
+				},
+				{
+					"template_spellCheckWord": {
+						"mapping": {
+							"fields": {
+								"ngram": {
+									"analyzer": "gsearch_shingle_analyzer",
+									"search_analyzer": "gsearch_shingle_analyzer",
+									"type": "text"
+								},
+								"suggest": {
+									"analyzer": "simple",
+									"search_analyzer": "simple",
+									"type": "completion"
+								}
+							},
+							"store": true,
+							"type": "text"
+						},
+						"match": "spellCheckWord_*",
+						"match_mapping_type": "string"
+					}
+				}
+			],
+			"properties": {
+				"companyId": {
+					"store": true,
+					"type": "keyword"
+				},
+				"groupId": {
+					"store": true,
+					"type": "keyword"
+				},
+				"priority": {
+					"store": true,
+					"type": "double"
+				},
+				"type": {
+					"store": true,
+					"type": "keyword"
+				},
+				"uid": {
+					"store": true,
+					"type": "keyword"
+				}
+			}
+		}
+	},
+	"settings": {
+		"index.auto_expand_replicas": "0-all",
+		"index.number_of_shards": 1
+	}
+}

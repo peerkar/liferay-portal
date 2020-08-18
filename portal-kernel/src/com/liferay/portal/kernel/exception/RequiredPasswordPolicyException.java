@@ -26,12 +26,12 @@ public class RequiredPasswordPolicyException extends PortalException {
 		super(msg);
 	}
 
-	public RequiredPasswordPolicyException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public RequiredPasswordPolicyException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public RequiredPasswordPolicyException(Throwable throwable) {
-		super(throwable);
+	public RequiredPasswordPolicyException(Throwable cause) {
+		super(cause);
 	}
 
 }

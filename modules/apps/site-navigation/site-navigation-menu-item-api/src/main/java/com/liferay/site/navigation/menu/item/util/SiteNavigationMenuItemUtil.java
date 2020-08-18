@@ -139,13 +139,14 @@ public class SiteNavigationMenuItemUtil {
 
 			for (Map.Entry<Locale, String> nameEntry : nameMap.entrySet()) {
 				String languageId = LocaleUtil.toLanguageId(nameEntry.getKey());
+				String value = nameEntry.getValue();
 
 				if (Validator.isNull(
 						typeSettingsUnicodeProperties.getProperty(
 							"name_" + languageId))) {
 
 					typeSettingsUnicodeProperties.setProperty(
-						"name_" + languageId, nameEntry.getValue());
+						"name_" + languageId, value);
 				}
 			}
 		}

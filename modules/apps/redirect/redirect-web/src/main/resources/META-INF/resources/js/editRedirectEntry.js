@@ -83,6 +83,7 @@ export default function ({
 						message: Liferay.Language.get(
 							'an-unexpected-error-occurred'
 						),
+						title: `${Liferay.Language.get('error')}:`,
 						type: 'danger',
 					});
 				});

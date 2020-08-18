@@ -82,9 +82,7 @@ definition {
 				urlName = "${urlName}");
 		}
 
-		MouseOver(
-			key_text = "Add",
-			locator1 = "Button#ANY");
+		MouseOver(locator1 = "Button#ADD");
 
 		Button.clickAdd();
 
@@ -164,7 +162,9 @@ definition {
 
 				SelectFrameTop();
 
-				Button.clickAdd();
+				AssertClick(
+					locator1 = "Button#ADD",
+					value1 = "Add");
 
 				IFrame.selectTopFrame();
 

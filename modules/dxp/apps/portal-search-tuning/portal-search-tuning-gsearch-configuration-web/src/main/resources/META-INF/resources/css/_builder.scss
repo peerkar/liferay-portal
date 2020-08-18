@@ -1,0 +1,42 @@
+.builder {
+	max-width: 624px;
+	padding-top: 6rem;
+
+	.configuration-fragment {
+		margin-bottom: 1rem;
+		padding: 0;
+
+		.configuration-editor {
+			padding: 0 1.5rem 1rem;
+
+			.codemirror-editor-wrapper {
+				background-color: $secondaryHover;
+				border: 0.0625rem $mainLighten74 solid;
+				border-radius: 0.25rem;
+			}
+		}
+
+		.list-group {
+			margin: 0.5rem 0;
+
+			.list-group-item {
+				border: 0;
+			}
+		}
+	}
+
+	.configuration-header {
+		margin-bottom: 1.25rem;
+
+		button {
+			color: $mainLighten28;
+			float: right;
+			font-size: 0.875rem;
+			margin: 0.125rem 1rem 0 0;
+		}
+	}
+}
+
+.shifted {
+	margin-right: 384px;
+}

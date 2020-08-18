@@ -20,10 +20,6 @@
 }
 
 .lfr-search-container-wrapper {
-	.quick-action-menu {
-		padding-left: 20px;
-	}
-
 	.taglib-search-iterator-page-iterator-bottom {
 		margin-top: 24px;
 	}
@@ -77,14 +73,6 @@
 	position: fixed;
 	width: $sidebarWidth;
 	z-index: $zindex-dropdown - 1;
-}
-
-.sidebar-body {
-	padding-top: 0;
-}
-
-.sidebar-body > .sidebar-section {
-	margin-bottom: 16px;
 }
 
 .sidebar-open {

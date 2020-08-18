@@ -17,7 +17,7 @@ package com.liferay.app.builder.deploy;
 import com.liferay.app.builder.model.AppBuilderApp;
 import com.liferay.app.builder.service.AppBuilderAppLocalService;
 
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.osgi.annotation.versioning.ProviderType;
 import org.osgi.framework.ServiceRegistration;
@@ -32,7 +32,8 @@ public interface AppDeployer {
 
 	public default boolean undeploy(
 			AppBuilderAppLocalService appBuilderAppLocalService, long appId,
-			Map<Long, ServiceRegistration<?>[]> serviceRegistrationsMap)
+			ConcurrentHashMap<Long, ServiceRegistration<?>[]>
+				serviceRegistrationsMap)
 		throws Exception {
 
 		ServiceRegistration<?>[] serviceRegistrations =

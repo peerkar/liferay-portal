@@ -452,7 +452,7 @@ public abstract class BaseFormResourceTestCase {
 		}
 	}
 
-	protected void assertValid(Form form) throws Exception {
+	protected void assertValid(Form form) {
 		boolean valid = true;
 
 		if (form.getDateCreated() == null) {

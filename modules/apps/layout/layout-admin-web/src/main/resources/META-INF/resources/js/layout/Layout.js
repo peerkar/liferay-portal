@@ -138,6 +138,7 @@ const Layout = ({
 				if (errorMessage) {
 					openToast({
 						message: errorMessage,
+						title: Liferay.Language.get('error'),
 						type: 'danger',
 					});
 				}

@@ -53,29 +53,29 @@ public abstract class AbstractTestRule<C, M> implements TestRule {
 			public void evaluate() throws Throwable {
 				C c = beforeClass(description);
 
-				Throwable throwable1 = null;
+				Throwable throwable = null;
 
 				try {
 					statement.evaluate();
 				}
-				catch (Throwable throwable2) {
-					throwable1 = throwable2;
+				catch (Throwable t) {
+					throwable = t;
 				}
 				finally {
 					try {
 						afterClass(description, c);
 					}
-					catch (Throwable throwable2) {
-						if (throwable1 != null) {
-							throwable2.addSuppressed(throwable1);
+					catch (Throwable t) {
+						if (throwable != null) {
+							t.addSuppressed(throwable);
 						}
 
-						throwable1 = throwable2;
+						throwable = t;
 					}
 				}
 
-				if (throwable1 != null) {
-					throw throwable1;
+				if (throwable != null) {
+					throw throwable;
 				}
 			}
 
@@ -93,29 +93,29 @@ public abstract class AbstractTestRule<C, M> implements TestRule {
 
 				M m = beforeMethod(description, target);
 
-				Throwable throwable1 = null;
+				Throwable throwable = null;
 
 				try {
 					statement.evaluate();
 				}
-				catch (Throwable throwable2) {
-					throwable1 = throwable2;
+				catch (Throwable t) {
+					throwable = t;
 				}
 				finally {
 					try {
 						afterMethod(description, m, target);
 					}
-					catch (Throwable throwable2) {
-						if (throwable1 != null) {
-							throwable2.addSuppressed(throwable1);
+					catch (Throwable t) {
+						if (throwable != null) {
+							t.addSuppressed(throwable);
 						}
 
-						throwable1 = throwable2;
+						throwable = t;
 					}
 				}
 
-				if (throwable1 != null) {
-					throw throwable1;
+				if (throwable != null) {
+					throw throwable;
 				}
 			}
 

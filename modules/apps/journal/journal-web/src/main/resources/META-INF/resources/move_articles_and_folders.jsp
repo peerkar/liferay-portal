@@ -182,11 +182,13 @@ JournalMoveEntriesDisplayContext journalMovesEntriesDisplayContext = new Journal
 	<portlet:param name="folderId" value="<%= String.valueOf(journalMovesEntriesDisplayContext.getNewFolderId()) %>" />
 </portlet:renderURL>
 
+<%
+Map<String, Object> context = HashMapBuilder.<String, Object>put(
+	"selectFolderURL", selectFolderURL
+).build();
+%>
+
 <liferay-frontend:component
-	context='<%=
-		HashMapBuilder.<String, Object>put(
-			"selectFolderURL", selectFolderURL
-		).build()
-	%>'
+	context="<%= context %>"
 	module="js/MoveEntries.es"
 />

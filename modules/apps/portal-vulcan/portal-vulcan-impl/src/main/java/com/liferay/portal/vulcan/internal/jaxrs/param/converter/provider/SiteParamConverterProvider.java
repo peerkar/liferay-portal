@@ -14,11 +14,6 @@
 
 package com.liferay.portal.vulcan.internal.jaxrs.param.converter.provider;
 
-import com.liferay.depot.model.DepotEntry;
-import com.liferay.depot.service.DepotEntryLocalService;
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
@@ -43,11 +38,7 @@ import javax.ws.rs.ext.Provider;
 public class SiteParamConverterProvider
 	implements ParamConverter<Long>, ParamConverterProvider {
 
-	public SiteParamConverterProvider(
-		DepotEntryLocalService depotEntryLocalService,
-		GroupLocalService groupLocalService) {
-
-		_depotEntryLocalService = depotEntryLocalService;
+	public SiteParamConverterProvider(GroupLocalService groupLocalService) {
 		_groupLocalService = groupLocalService;
 	}
 
@@ -56,17 +47,8 @@ public class SiteParamConverterProvider
 		MultivaluedMap<String, String> multivaluedMap =
 			_uriInfo.getPathParameters();
 
-		Long siteId = null;
-
-		if (multivaluedMap.containsKey("assetLibraryId")) {
-			siteId = getDepotGroupId(
-				multivaluedMap.getFirst("assetLibraryId"),
-				_company.getCompanyId());
-		}
-		else {
-			siteId = getGroupId(
-				_company.getCompanyId(), multivaluedMap.getFirst("siteId"));
-		}
+		Long siteId = getGroupId(
+			_company.getCompanyId(), multivaluedMap.getFirst("siteId"));
 
 		if (siteId != null) {
 			return siteId;
@@ -87,20 +69,22 @@ public class SiteParamConverterProvider
 		return null;
 	}
 
-	public Long getDepotGroupId(String assetLibraryId, long companyId) {
-		if (assetLibraryId == null) {
-			return null;
-		}
-
-		return _getDepotGroupId(assetLibraryId, companyId);
-	}
-
 	public Long getGroupId(long companyId, String siteId) {
 		if (siteId == null) {
 			return null;
 		}
 
-		return _getGroupId(companyId, siteId);
+		Group group = _fetchGroup(companyId, siteId);
+
+		if (group == null) {
+			return null;
+		}
+
+		if (_isDepotOrSite(group) || _isDepotOrSite(group.getLiveGroup())) {
+			return group.getGroupId();
+		}
+
+		return null;
 	}
 
 	@Override
@@ -108,58 +92,14 @@ public class SiteParamConverterProvider
 		return String.valueOf(parameter);
 	}
 
-	private boolean _checkGroup(Group group) {
-		if ((group != null) &&
-			(_isDepotOrSite(group) || _isDepotOrSite(group.getLiveGroup()))) {
-
-			return true;
-		}
-
-		return false;
-	}
-
-	private Long _getDepotGroupId(String assetLibraryId, long companyId) {
-		Group group = _groupLocalService.fetchGroup(companyId, assetLibraryId);
-
-		if (group == null) {
-			try {
-				DepotEntry depotEntry = _depotEntryLocalService.fetchDepotEntry(
-					GetterUtil.getLong(assetLibraryId));
-
-				if (depotEntry == null) {
-					return null;
-				}
-
-				group = depotEntry.getGroup();
-			}
-			catch (PortalException portalException) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(portalException, portalException);
-				}
-
-				return null;
-			}
-		}
-
-		if (_checkGroup(group)) {
-			return group.getGroupId();
-		}
-
-		return null;
-	}
-
-	private Long _getGroupId(long companyId, String groupKey) {
+	private Group _fetchGroup(long companyId, String groupKey) {
 		Group group = _groupLocalService.fetchGroup(companyId, groupKey);
 
-		if (group == null) {
-			group = _groupLocalService.fetchGroup(GetterUtil.getLong(groupKey));
+		if (group != null) {
+			return group;
 		}
 
-		if (_checkGroup(group)) {
-			return group.getGroupId();
-		}
-
-		return null;
+		return _groupLocalService.fetchGroup(GetterUtil.getLong(groupKey));
 	}
 
 	private boolean _hasSiteIdAnnotation(Annotation[] annotations) {
@@ -167,8 +107,6 @@ public class SiteParamConverterProvider
 			String annotationString = annotation.toString();
 
 			if (annotationString.equals(
-					"@javax.ws.rs.PathParam(value=assetLibraryId)") ||
-				annotationString.equals(
 					"@javax.ws.rs.PathParam(value=siteId)")) {
 
 				return true;
@@ -179,6 +117,10 @@ public class SiteParamConverterProvider
 	}
 
 	private boolean _isDepotOrSite(Group group) {
+		if (group == null) {
+			return false;
+		}
+
 		if ((group.getType() == GroupConstants.TYPE_DEPOT) || group.isSite()) {
 			return true;
 		}
@@ -186,13 +128,9 @@ public class SiteParamConverterProvider
 		return false;
 	}
 
-	private static final Log _log = LogFactoryUtil.getLog(
-		SiteParamConverterProvider.class);
-
 	@Context
 	private Company _company;
 
-	private final DepotEntryLocalService _depotEntryLocalService;
 	private final GroupLocalService _groupLocalService;
 
 	@Context

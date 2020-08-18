@@ -28,12 +28,12 @@ public class NoSuchTaskFormInstanceException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchTaskFormInstanceException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public NoSuchTaskFormInstanceException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NoSuchTaskFormInstanceException(Throwable throwable) {
-		super(throwable);
+	public NoSuchTaskFormInstanceException(Throwable cause) {
+		super(cause);
 	}
 
 }

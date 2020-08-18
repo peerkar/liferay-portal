@@ -69,18 +69,6 @@ describe('Field Text', () => {
 		expect(container).toMatchSnapshot();
 	});
 
-	it('is readOnly', () => {
-		const {container} = render(
-			<TextWithProvider {...defaultTextConfig} readOnly={true} />
-		);
-
-		act(() => {
-			jest.runAllTimers();
-		});
-
-		expect(container).toMatchSnapshot();
-	});
-
 	it('has a helptext', () => {
 		const {container} = render(
 			<TextWithProvider {...defaultTextConfig} tip="Type something" />

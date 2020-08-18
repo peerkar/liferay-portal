@@ -215,11 +215,9 @@ public class DDMStructureLocalServiceImpl
 
 		// Structure layout
 
-		if (ddmFormLayout != null) {
-			_ddmStructureLayoutLocalService.addStructureLayout(
-				userId, groupId, structureVersion.getStructureVersionId(),
-				ddmFormLayout, serviceContext);
-		}
+		_ddmStructureLayoutLocalService.addStructureLayout(
+			userId, groupId, structureVersion.getStructureVersionId(),
+			ddmFormLayout, serviceContext);
 
 		// Data provider instance links
 

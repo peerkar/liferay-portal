@@ -18,11 +18,12 @@
 
 <%
 JournalArticle article = (JournalArticle)request.getAttribute(WebKeys.JOURNAL_ARTICLE);
+String ddmTemplateKey = (String)request.getAttribute(WebKeys.JOURNAL_TEMPLATE_ID);
 %>
 
 <liferay-journal:journal-article
 	articleId="<%= article.getArticleId() %>"
-	ddmTemplateKey="<%= (String)request.getAttribute(WebKeys.JOURNAL_TEMPLATE_ID) %>"
+	ddmTemplateKey="<%= ddmTemplateKey %>"
 	groupId="<%= article.getGroupId() %>"
 	languageId="<%= themeDisplay.getLanguageId() %>"
 />

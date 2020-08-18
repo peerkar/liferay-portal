@@ -1,4 +1,4 @@
-@import 'atlas-variables';
+@import 'atlas';
 
 .lfr-depot-dashboard-container {
 	.card .autofit-col {
@@ -6,24 +6,11 @@
 	}
 
 	a.card-title {
-		&::after {
-			bottom: 0;
-			content: '';
-			left: 0;
-			pointer-events: auto;
-			position: absolute;
-			right: 0;
-			top: 0;
-			z-index: 1;
-		}
+		@extend .stretched-link;
 
 		&:hover {
-			color: $dark;
+			color: inherit;
 			text-decoration: unset;
 		}
-	}
-
-	.template-card-horizontal .card-title {
-		color: $dark;
 	}
 }

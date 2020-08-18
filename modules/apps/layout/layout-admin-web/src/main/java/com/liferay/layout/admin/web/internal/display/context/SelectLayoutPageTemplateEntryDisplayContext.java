@@ -14,7 +14,6 @@
 
 package com.liferay.layout.admin.web.internal.display.context;
 
-import com.liferay.exportimport.kernel.staging.StagingUtil;
 import com.liferay.layout.admin.web.internal.util.LayoutPageTemplatePortletUtil;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
@@ -23,9 +22,7 @@ import com.liferay.layout.page.template.service.LayoutPageTemplateEntryServiceUt
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Group;
-import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutTypeController;
-import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -122,31 +119,6 @@ public class SelectLayoutPageTemplateEntryDisplayContext {
 				WorkflowConstants.STATUS_APPROVED);
 	}
 
-	public StyleBookEntry getLayoutStyleBookEntry(Layout layout) {
-		StyleBookEntry styleBookEntry = null;
-
-		if (layout.getStyleBookEntryId() > 0) {
-			styleBookEntry = StyleBookEntryLocalServiceUtil.fetchStyleBookEntry(
-				layout.getStyleBookEntryId());
-		}
-
-		if ((styleBookEntry == null) && (layout.getMasterLayoutPlid() > 0)) {
-			Layout masterLayout = LayoutLocalServiceUtil.fetchLayout(
-				layout.getMasterLayoutPlid());
-
-			styleBookEntry = StyleBookEntryLocalServiceUtil.fetchStyleBookEntry(
-				masterLayout.getStyleBookEntryId());
-		}
-
-		if (styleBookEntry == null) {
-			styleBookEntry =
-				StyleBookEntryLocalServiceUtil.fetchDefaultStyleBookEntry(
-					StagingUtil.getLiveGroupId(layout.getGroupId()));
-		}
-
-		return styleBookEntry;
-	}
-
 	public List<LayoutPageTemplateEntry> getMasterLayoutPageTemplateEntries() {
 		List<LayoutPageTemplateEntry> masterLayoutPageTemplateEntries =
 			new ArrayList<>();
@@ -206,9 +178,8 @@ public class SelectLayoutPageTemplateEntryDisplayContext {
 
 	public List<StyleBookEntry> getStyleBookEntries() {
 		return StyleBookEntryLocalServiceUtil.getStyleBookEntries(
-			StagingUtil.getLiveGroupId(_themeDisplay.getScopeGroupId()),
-			QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-			new StyleBookEntryNameComparator(true));
+			_themeDisplay.getScopeGroupId(), QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS, new StyleBookEntryNameComparator(true));
 	}
 
 	public List<String> getTypes() {

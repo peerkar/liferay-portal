@@ -1,0 +1,17 @@
+Bundle-Name: Liferay Portal Search Tuning GSearch Configuration API
+Bundle-SymbolicName: com.liferay.portal.search.tuning.gsearch.configuration.api
+Bundle-Version: 1.0.0
+Export-Package:\
+	com.liferay.portal.search.tuning.gsearch.configuration.comparator,\
+	com.liferay.portal.search.tuning.gsearch.configuration.constants,\
+	com.liferay.portal.search.tuning.gsearch.configuration.constants.json.keys,\
+	com.liferay.portal.search.tuning.gsearch.configuration.constants.json.keys.query,\
+	com.liferay.portal.search.tuning.gsearch.configuration.constants.json.keys.suggester,\
+	com.liferay.portal.search.tuning.gsearch.configuration.constants.json.values,\
+	com.liferay.portal.search.tuning.gsearch.configuration.exception,\
+	com.liferay.portal.search.tuning.gsearch.configuration.model,\
+	com.liferay.portal.search.tuning.gsearch.configuration.service,\
+	com.liferay.portal.search.tuning.gsearch.configuration.service.persistence,\
+	com.liferay.portal.search.tuning.gsearch.configuration.validation
+-check: EXPORTS
+-includeresource: META-INF/service.xml=../portal-search-tuning-gsearch-configuration-service/service.xml

@@ -15,10 +15,8 @@
 package com.liferay.portal.search.tuning.synonyms.web.internal.index.name;
 
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.search.index.IndexNameBuilder;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Adam Brandizzi
@@ -28,21 +26,13 @@ public class SynonymSetIndexNameBuilderImpl
 	implements SynonymSetIndexNameBuilder {
 
 	@Override
-	public SynonymSetIndexName getSynonymSetIndexName(long companyId) {
+	public SynonymSetIndexName getSynonymSetIndexName(String companyIndexName) {
 		return new SynonymSetIndexNameImpl(
-			_indexNameBuilder.getIndexName(companyId) + StringPool.DASH +
-				SYNONYMS_INDEX_NAME_SUFFIX);
+			INDEX_NAME_PREFIX + StringPool.MINUS + companyIndexName);
 	}
 
-	@Reference(unbind = "-")
-	protected void setIndexNameBuilder(IndexNameBuilder indexNameBuilder) {
-		_indexNameBuilder = indexNameBuilder;
-	}
-
-	protected static final String SYNONYMS_INDEX_NAME_SUFFIX =
-		"search-tuning-synonyms";
-
-	private IndexNameBuilder _indexNameBuilder;
+	protected static final String INDEX_NAME_PREFIX =
+		"liferay-search-tuning-synonyms";
 
 	private static class SynonymSetIndexNameImpl
 		implements SynonymSetIndexName {

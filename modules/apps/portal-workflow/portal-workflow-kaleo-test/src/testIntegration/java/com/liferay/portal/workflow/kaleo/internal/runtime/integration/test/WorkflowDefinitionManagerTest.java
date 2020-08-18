@@ -436,7 +436,9 @@ public class WorkflowDefinitionManagerTest {
 			Assert.fail();
 		}
 		catch (WorkflowException workflowException) {
-			return workflowException.getMessage();
+			Throwable throwable = workflowException.getCause();
+
+			return throwable.getMessage();
 		}
 
 		return null;

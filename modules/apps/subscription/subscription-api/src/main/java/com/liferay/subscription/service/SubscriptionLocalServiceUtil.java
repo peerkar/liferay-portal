@@ -451,7 +451,8 @@ public class SubscriptionLocalServiceUtil {
 	/**
 	 * @param className the entity's class name
 	 * @return the subscriptions to the class name
-	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
+	 * @deprecated As of Athanasius (7.3.x), with no direct replacement  Returns
+	 all the subscriptions to the class name.
 	 */
 	@Deprecated
 	public static java.util.List<com.liferay.subscription.model.Subscription>
@@ -472,7 +473,8 @@ public class SubscriptionLocalServiceUtil {
 	/**
 	 * @param className the entity's class name
 	 * @return the subscriptions to the class name
-	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
+	 * @deprecated As of Athanasius (7.3.x), with no direct replacement  Returns
+	 the number of the subscriptions to the class name.
 	 */
 	@Deprecated
 	public static int getSubscriptionsCount(String className) {

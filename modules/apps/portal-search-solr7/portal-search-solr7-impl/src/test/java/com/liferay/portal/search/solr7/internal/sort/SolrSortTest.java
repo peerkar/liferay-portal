@@ -28,8 +28,4 @@ public class SolrSortTest extends BaseSortTestCase {
 		return new SolrIndexingFixture();
 	}
 
-	protected String getScoreParameter() {
-		return "score";
-	}
-
 }

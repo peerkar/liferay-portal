@@ -23,11 +23,17 @@
 		}
 	}
 
-	.btn-secondary:active,
-	.btn-secondary[aria-pressed='true'],
-	.btn-secondary[aria-pressed='true']:hover {
-		background-color: $gray-200;
-		border-color: $gray-400;
+	button {
+		color: $secondary;
+	}
+
+	button.btn-primary {
+		color: $white;
+	}
+
+	button.btn-secondary {
+		background-color: $white;
+		color: $secondary !important;
 	}
 
 	& > .container-fluid {

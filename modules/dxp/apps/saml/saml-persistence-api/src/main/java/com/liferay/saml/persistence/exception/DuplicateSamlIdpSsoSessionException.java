@@ -28,14 +28,12 @@ public class DuplicateSamlIdpSsoSessionException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateSamlIdpSsoSessionException(
-		String msg, Throwable throwable) {
-
-		super(msg, throwable);
+	public DuplicateSamlIdpSsoSessionException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public DuplicateSamlIdpSsoSessionException(Throwable throwable) {
-		super(throwable);
+	public DuplicateSamlIdpSsoSessionException(Throwable cause) {
+		super(cause);
 	}
 
 }

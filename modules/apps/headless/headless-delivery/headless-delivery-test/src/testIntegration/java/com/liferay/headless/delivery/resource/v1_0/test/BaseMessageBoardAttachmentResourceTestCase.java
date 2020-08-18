@@ -667,9 +667,7 @@ public abstract class BaseMessageBoardAttachmentResourceTestCase {
 		}
 	}
 
-	protected void assertValid(MessageBoardAttachment messageBoardAttachment)
-		throws Exception {
-
+	protected void assertValid(MessageBoardAttachment messageBoardAttachment) {
 		boolean valid = true;
 
 		if (messageBoardAttachment.getId() == null) {

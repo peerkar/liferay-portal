@@ -63,7 +63,7 @@ public class SelectDisplayPageMasterLayoutDisplayContext {
 
 		for (InfoItemClassDetails infoItemClassDetails :
 				_infoItemServiceTracker.getInfoItemClassDetails(
-					DisplayPageInfoItemCapability.KEY)) {
+					DisplayPageInfoItemCapability.INSTANCE)) {
 
 			mappingTypesJSONArray.put(
 				JSONUtil.put(

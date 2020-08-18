@@ -14,8 +14,6 @@
 
 package com.liferay.segments.asah.rest.resource.v1_0;
 
-import com.liferay.portal.kernel.service.GroupLocalService;
-import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.segments.asah.rest.dto.v1_0.Experiment;
 import com.liferay.segments.asah.rest.dto.v1_0.Status;
@@ -75,10 +73,6 @@ public interface StatusResource {
 
 	public void setContextUser(
 		com.liferay.portal.kernel.model.User contextUser);
-
-	public void setGroupLocalService(GroupLocalService groupLocalService);
-
-	public void setRoleLocalService(RoleLocalService roleLocalService);
 
 	public static class FactoryHolder {
 

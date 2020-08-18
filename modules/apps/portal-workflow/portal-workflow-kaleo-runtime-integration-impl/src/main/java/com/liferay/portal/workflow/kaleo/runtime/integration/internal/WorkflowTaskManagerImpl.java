@@ -221,9 +221,6 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 
 			return workflowTask;
 		}
-		catch (WorkflowException workflowException) {
-			throw workflowException;
-		}
 		catch (Exception exception) {
 			throw new WorkflowException("Unable to complete task", exception);
 		}
@@ -284,9 +281,6 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 
 			return ListUtil.fromCollection(assignableUsers);
 		}
-		catch (WorkflowException workflowException) {
-			throw workflowException;
-		}
 		catch (Exception exception) {
 			throw new WorkflowException(exception);
 		}
@@ -319,9 +313,6 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 			).collect(
 				Collectors.toList()
 			);
-		}
-		catch (WorkflowException workflowException) {
-			throw workflowException;
 		}
 		catch (Exception exception) {
 			throw new WorkflowException(exception);
@@ -722,9 +713,6 @@ public class WorkflowTaskManagerImpl implements WorkflowTaskManager {
 			}
 
 			return false;
-		}
-		catch (WorkflowException workflowException) {
-			throw workflowException;
 		}
 		catch (Exception exception) {
 			throw new WorkflowException(exception);

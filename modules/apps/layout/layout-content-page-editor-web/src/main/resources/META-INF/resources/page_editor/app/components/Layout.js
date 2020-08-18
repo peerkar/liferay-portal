@@ -136,21 +136,16 @@ export default function Layout({mainItemId}) {
 
 			<ShortcutManager />
 
-			{mainItem && (
-				<div
-					className="page-editor"
-					id="page-editor"
-					onClick={onClick}
-					ref={layoutRef}
-				>
-					<EditableProcessorContextProvider>
-						<LayoutDataItem
-							item={mainItem}
-							layoutData={layoutData}
-						/>
-					</EditableProcessorContextProvider>
-				</div>
-			)}
+			<div
+				className={classNames('page-editor')}
+				id="page-editor"
+				onClick={onClick}
+				ref={layoutRef}
+			>
+				<EditableProcessorContextProvider>
+					<LayoutDataItem item={mainItem} layoutData={layoutData} />
+				</EditableProcessorContextProvider>
+			</div>
 		</>
 	);
 }

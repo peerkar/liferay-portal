@@ -59,7 +59,9 @@ definition {
 
 		SelectFrameTop();
 
-		Button.clickImport();
+		Click.mouseDownMouseUp(
+			key_text = "Import",
+			locator1 = "Modal#ANY_BUTTON");
 
 		SelectFrame.selectFrameNoLoading(locator1 = "IFrame#MODAL_IFRAME");
 
@@ -81,7 +83,9 @@ definition {
 
 		SelectFrameTop();
 
-		Button.clickImport();
+		Click.mouseDownMouseUp(
+			key_text = "Import",
+			locator1 = "Modal#ANY_BUTTON");
 
 		SelectFrame.selectFrameNoLoading(locator1 = "IFrame#MODAL_IFRAME");
 

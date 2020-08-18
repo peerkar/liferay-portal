@@ -243,7 +243,7 @@ public abstract class BasePageDefinitionResourceTestCase {
 		}
 	}
 
-	protected void assertValid(PageDefinition pageDefinition) throws Exception {
+	protected void assertValid(PageDefinition pageDefinition) {
 		boolean valid = true;
 
 		for (String additionalAssertFieldName :

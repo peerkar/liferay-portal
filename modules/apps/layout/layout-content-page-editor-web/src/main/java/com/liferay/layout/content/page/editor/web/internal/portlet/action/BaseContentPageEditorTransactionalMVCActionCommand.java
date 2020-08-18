@@ -54,18 +54,18 @@ public abstract class BaseContentPageEditorTransactionalMVCActionCommand
 			jsonObject = TransactionInvokerUtil.invoke(
 				_transactionConfig, callable);
 		}
-		catch (Throwable throwable) {
+		catch (Throwable t) {
 			if (_log.isDebugEnabled()) {
-				_log.debug(throwable, throwable);
+				_log.debug(t, t);
 			}
 
 			Exception exception = null;
 
-			if (throwable instanceof Exception) {
-				exception = (Exception)throwable;
+			if (t instanceof Exception) {
+				exception = (Exception)t;
 			}
 			else {
-				exception = new Exception(throwable);
+				exception = new Exception(t);
 			}
 
 			jsonObject = processException(actionRequest, exception);

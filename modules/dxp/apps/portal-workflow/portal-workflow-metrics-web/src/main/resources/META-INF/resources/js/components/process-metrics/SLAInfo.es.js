@@ -83,7 +83,6 @@ const SLAInfo = ({processId}) => {
 						<ChildLink
 							className="font-weight-bold"
 							data-testid="slaInfoLink"
-							query={{slaInfoLink: true}}
 							to={alert.link}
 						>
 							{alert.linkText}

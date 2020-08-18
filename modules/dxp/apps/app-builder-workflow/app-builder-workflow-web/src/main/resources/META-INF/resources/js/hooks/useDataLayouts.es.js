@@ -13,20 +13,41 @@ import {getItem} from 'app-builder-web/js/utils/client.es';
 import {errorToast} from 'app-builder-web/js/utils/toast.es';
 import {useEffect, useState} from 'react';
 
-export default function useDataLayouts(dataLayoutIds = []) {
-	const [dataLayouts, setDataLayouts] = useState([]);
+export default function useDataLayouts(dataDefinitionId, dataLayoutIds = []) {
+	const [state, setState] = useState({
+		dataDefinition: null,
+		dataLayouts: [],
+		isLoading: true,
+	});
 
 	useEffect(() => {
 		if (dataLayoutIds.length) {
-			Promise.all(
-				dataLayoutIds.map((dataLayoutId) =>
+			Promise.all([
+				getItem(
+					`/o/data-engine/v2.0/data-definitions/${dataDefinitionId}`
+				),
+				...dataLayoutIds.map((dataLayoutId) =>
 					getItem(`/o/data-engine/v2.0/data-layouts/${dataLayoutId}`)
-				)
-			)
-				.then(setDataLayouts)
-				.catch(() => errorToast());
-		}
-	}, [dataLayoutIds]);
+				),
+			])
+				.then(([dataDefinition, ...dataLayouts]) => {
+					setState((prevState) => ({
+						...prevState,
+						dataDefinition,
+						dataLayouts,
+						isLoading: false,
+					}));
+				})
+				.catch(() => {
+					setState((prevState) => ({
+						...prevState,
+						isLoading: false,
+					}));
 
-	return dataLayouts;
+					errorToast();
+				});
+		}
+	}, [dataDefinitionId, dataLayoutIds]);
+
+	return state;
 }

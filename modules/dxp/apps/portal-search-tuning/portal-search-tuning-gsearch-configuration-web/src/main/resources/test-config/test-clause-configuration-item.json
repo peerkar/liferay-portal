@@ -1,0 +1,24 @@
+{
+    "clauses": [{
+        "occur": "must",
+        "query": {
+            "default_operator": "or",
+            "boost": 2,
+            "fields": [
+                {
+                    "field": "title_${context.language_id}",
+                    "boost": "3"
+                },
+                {
+                    "field": "content_${context.language_id}",
+                    "boost": "3"
+                }
+            ]
+        },
+        "context": "query",
+        "type": "simple_query_string"
+    }],
+    "description": "",
+    "conditions": [],
+    "enabled": true
+}

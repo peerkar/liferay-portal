@@ -611,7 +611,7 @@ public class StagingImpl implements Staging {
 		ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
 			"content.Language", locale, getClass());
 
-		Throwable throwable = exception.getCause();
+		Throwable cause = exception.getCause();
 
 		if (exception.getCause() instanceof ConnectException) {
 			Map<String, Serializable> settingsMap =
@@ -675,13 +675,11 @@ public class StagingImpl implements Staging {
 			if (exportImportContentValidationException.getType() ==
 					ExportImportContentValidationException.ARTICLE_NOT_FOUND) {
 
-				if ((throwable != null) &&
-					(throwable.getLocalizedMessage() != null)) {
-
+				if ((cause != null) && (cause.getLocalizedMessage() != null)) {
 					errorMessage = LanguageUtil.format(
 						resourceBundle,
 						"unable-to-validate-referenced-journal-article-x",
-						throwable.getLocalizedMessage());
+						cause.getLocalizedMessage());
 				}
 				else {
 					errorMessage = LanguageUtil.get(
@@ -883,8 +881,8 @@ public class StagingImpl implements Staging {
 			errorType = ServletResponseConstants.SC_FILE_CUSTOM_EXCEPTION;
 		}
 		else if ((exception instanceof ExportImportIOException) ||
-				 ((throwable instanceof SystemException) &&
-				  (throwable.getCause() instanceof ExportImportIOException))) {
+				 ((cause instanceof SystemException) &&
+				  (cause.getCause() instanceof ExportImportIOException))) {
 
 			ExportImportIOException exportImportIOException = null;
 
@@ -893,7 +891,7 @@ public class StagingImpl implements Staging {
 			}
 			else {
 				exportImportIOException =
-					(ExportImportIOException)throwable.getCause();
+					(ExportImportIOException)cause.getCause();
 			}
 
 			if (exportImportIOException.getType() ==
@@ -1188,7 +1186,7 @@ public class StagingImpl implements Staging {
 			errorType = ServletResponseConstants.SC_FILE_CUSTOM_EXCEPTION;
 		}
 		else if ((exception instanceof LayoutImportException) ||
-				 (throwable instanceof LayoutImportException)) {
+				 (cause instanceof LayoutImportException)) {
 
 			LayoutImportException layoutImportException = null;
 
@@ -1196,7 +1194,7 @@ public class StagingImpl implements Staging {
 				layoutImportException = (LayoutImportException)exception;
 			}
 			else {
-				layoutImportException = (LayoutImportException)throwable;
+				layoutImportException = (LayoutImportException)cause;
 			}
 
 			if (layoutImportException.getType() ==

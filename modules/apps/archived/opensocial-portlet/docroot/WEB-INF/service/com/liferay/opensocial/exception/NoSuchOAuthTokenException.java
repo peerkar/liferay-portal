@@ -28,12 +28,12 @@ public class NoSuchOAuthTokenException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchOAuthTokenException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public NoSuchOAuthTokenException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NoSuchOAuthTokenException(Throwable throwable) {
-		super(throwable);
+	public NoSuchOAuthTokenException(Throwable cause) {
+		super(cause);
 	}
 
 }

@@ -19,7 +19,7 @@ import com.liferay.fragment.renderer.DefaultFragmentRendererContext;
 import com.liferay.fragment.renderer.FragmentRendererController;
 import com.liferay.fragment.service.FragmentEntryLinkLocalServiceUtil;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
-import com.liferay.layout.util.structure.FragmentStyledLayoutStructureItem;
+import com.liferay.layout.util.structure.FragmentLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.petra.string.StringBundler;
@@ -106,25 +106,20 @@ public class LayoutPageTemplateStructureRenderUtil {
 		for (LayoutStructureItem layoutStructureItem :
 				layoutStructure.getLayoutStructureItems()) {
 
-			if (!(layoutStructureItem instanceof
-					FragmentStyledLayoutStructureItem)) {
-
+			if (!(layoutStructureItem instanceof FragmentLayoutStructureItem)) {
 				continue;
 			}
 
-			FragmentStyledLayoutStructureItem
-				fragmentStyledLayoutStructureItem =
-					(FragmentStyledLayoutStructureItem)layoutStructureItem;
+			FragmentLayoutStructureItem fragmentLayoutStructureItem =
+				(FragmentLayoutStructureItem)layoutStructureItem;
 
-			if (fragmentStyledLayoutStructureItem.getFragmentEntryLinkId() <=
-					0) {
-
+			if (fragmentLayoutStructureItem.getFragmentEntryLinkId() <= 0) {
 				continue;
 			}
 
 			sb.append(
 				_renderFragmentEntryLink(
-					fragmentStyledLayoutStructureItem.getFragmentEntryLinkId(),
+					fragmentLayoutStructureItem.getFragmentEntryLinkId(),
 					fragmentRendererController, httpServletRequest,
 					httpServletResponse, mode, parameterMap, locale,
 					segmentsExperienceIds));

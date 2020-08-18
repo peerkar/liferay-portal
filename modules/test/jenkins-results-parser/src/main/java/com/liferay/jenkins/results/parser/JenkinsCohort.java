@@ -19,8 +19,6 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * @author Kenji Heigel
@@ -43,40 +42,16 @@ public class JenkinsCohort {
 		update();
 	}
 
-	public int getIdleJenkinsSlaveCount() {
-		int idleJenkinsSlaveCount = 0;
-
-		for (JenkinsMaster jenkinsMaster : _jenkinsMastersMap.values()) {
-			idleJenkinsSlaveCount += jenkinsMaster.getIdleJenkinsSlavesCount();
-		}
-
-		return idleJenkinsSlaveCount;
+	public int getIdleCINodeCount() {
+		return _idleCINodeCount;
 	}
 
 	public String getName() {
 		return _name;
 	}
 
-	public int getOfflineJenkinsSlaveCount() {
-		int offlineJenkinsSlaveCount = 0;
-
-		for (JenkinsMaster jenkinsMaster : _jenkinsMastersMap.values()) {
-			offlineJenkinsSlaveCount +=
-				jenkinsMaster.getOfflineJenkinsSlavesCount();
-		}
-
-		return offlineJenkinsSlaveCount;
-	}
-
-	public int getOnlineJenkinsSlaveCount() {
-		int onlineJenkinsSlaveCount = 0;
-
-		for (JenkinsMaster jenkinsMaster : _jenkinsMastersMap.values()) {
-			onlineJenkinsSlaveCount +=
-				jenkinsMaster.getOnlineJenkinsSlavesCount();
-		}
-
-		return onlineJenkinsSlaveCount;
+	public int getOnlineCINodeCount() {
+		return _onlineCINodeCount;
 	}
 
 	public int getQueuedBuildCount() {
@@ -116,29 +91,29 @@ public class JenkinsCohort {
 				"Unable to get Jenkins properties", ioException);
 		}
 
-		if (_jenkinsMastersMap.isEmpty()) {
-			List<JenkinsMaster> jenkinsMasters =
-				JenkinsResultsParserUtil.getJenkinsMasters(
-					buildProperties, 16, getName());
-
-			for (JenkinsMaster jenkinsMaster : jenkinsMasters) {
-				_jenkinsMastersMap.put(jenkinsMaster.getName(), jenkinsMaster);
-			}
-		}
-
 		List<Callable<Void>> callables = new ArrayList<>();
-		final List<String> buildURLs = Collections.synchronizedList(
-			new ArrayList<String>());
+		final List<String> jobURLs = new ArrayList<>();
 
-		for (final JenkinsMaster jenkinsMaster : _jenkinsMastersMap.values()) {
+		List<JenkinsMaster> jenkinsMasters =
+			JenkinsResultsParserUtil.getJenkinsMasters(
+				buildProperties, 16, getName());
+
+		for (final JenkinsMaster jenkinsMaster : jenkinsMasters) {
 			Callable<Void> callable = new Callable<Void>() {
 
 				@Override
 				public Void call() {
 					jenkinsMaster.update();
 
-					buildURLs.addAll(jenkinsMaster.getBuildURLs());
-					buildURLs.addAll(jenkinsMaster.getQueuedBuildURLs());
+					jobURLs.addAll(jenkinsMaster.getRunningJobURLs());
+					jobURLs.addAll(jenkinsMaster.getQueuedJobURLs());
+
+					_onlineCINodeCount =
+						_onlineCINodeCount +
+							jenkinsMaster.getOnlineJenkinsSlavesCount();
+
+					_idleCINodeCount =
+						_idleCINodeCount + jenkinsMaster.getIdleSlavesCount();
 
 					return null;
 				}
@@ -150,15 +125,15 @@ public class JenkinsCohort {
 
 		ThreadPoolExecutor threadPoolExecutor =
 			JenkinsResultsParserUtil.getNewThreadPoolExecutor(
-				_jenkinsMastersMap.size(), true);
+				jenkinsMasters.size(), true);
 
 		ParallelExecutor<Void> parallelExecutor = new ParallelExecutor<>(
 			callables, threadPoolExecutor);
 
 		parallelExecutor.execute();
 
-		for (String buildURL : buildURLs) {
-			_loadBuildURL(buildURL);
+		for (String jobURL : jobURLs) {
+			_loadJobURL(jobURL);
 		}
 	}
 
@@ -169,90 +144,61 @@ public class JenkinsCohort {
 		sb.append(System.currentTimeMillis());
 		sb.append(");\nvar nodeData = ");
 
-		JSONArray nodeDataTableJSONArray = new JSONArray();
+		JSONArray nodeDataJSONArray = new JSONArray();
 
-		nodeDataTableJSONArray.put(
-			Arrays.asList(
-				"Occupied Nodes", "Online Nodes", "Queued Builds",
-				"Offline Nodes", "Idle Nodes"));
+		JSONObject nodeDataJSONObject = new JSONObject();
 
-		nodeDataTableJSONArray.put(
-			Arrays.asList(
-				getRunningBuildCount(), getOnlineJenkinsSlaveCount(),
-				getQueuedBuildCount(), getOfflineJenkinsSlaveCount(),
-				getIdleJenkinsSlaveCount()));
+		nodeDataJSONObject.put("CI Node Capacity", getOnlineCINodeCount());
+		nodeDataJSONObject.put("Idle Nodes", getIdleCINodeCount());
+		nodeDataJSONObject.put(
+			"Total CI Load", getRunningBuildCount() + getQueuedBuildCount());
 
-		sb.append(nodeDataTableJSONArray.toString());
+		nodeDataJSONArray.put(nodeDataJSONObject);
+
+		sb.append(nodeDataJSONArray.toString());
 
 		sb.append(";\nvar buildLoadData = ");
 
-		JSONArray buildLoadDataTableJSONArray = new JSONArray();
-
-		buildLoadDataTableJSONArray.put(
-			Arrays.asList(
-				"Name", "Total Builds", "Current Builds", "Queued Builds",
-				"Top Level Builds"));
+		JSONArray buildLoadDataJSONArray = new JSONArray();
 
 		for (JenkinsCohortJob jenkinsCohortJob :
 				_jenkinsCohortJobsMap.values()) {
 
+			JSONObject jsonObject = new JSONObject();
+
+			jsonObject.put("Name", jenkinsCohortJob.getJobName());
+
+			DecimalFormat decimalFormat = new DecimalFormat("###.###%");
+
+			jsonObject.put(
+				"Load %",
+				decimalFormat.format(jenkinsCohortJob.getLoadPercentage()));
+
+			jsonObject.put(
+				"Current Builds", jenkinsCohortJob.getRunningBuildCount());
+			jsonObject.put(
+				"Queued Builds", jenkinsCohortJob.getQueuedBuildCount());
+			jsonObject.put(
+				"Total Builds", jenkinsCohortJob.getTotalBuildCount());
+
 			List<String> topLevelBuildURLs =
 				jenkinsCohortJob.getTopLevelBuildURLs();
 
-			buildLoadDataTableJSONArray.put(
-				Arrays.asList(
-					jenkinsCohortJob.getJobName(),
-					_createJSONArray(
-						jenkinsCohortJob.getTotalBuildCount(),
-						_formatBuildCountText(
-							jenkinsCohortJob.getTotalBuildCount(),
-							jenkinsCohortJob.getTotalBuildPercentage())),
-					_createJSONArray(
-						jenkinsCohortJob.getRunningBuildCount(),
-						_formatBuildCountText(
-							jenkinsCohortJob.getRunningBuildCount(),
-							jenkinsCohortJob.getRunningBuildPercentage())),
-					_createJSONArray(
-						jenkinsCohortJob.getQueuedBuildCount(),
-						_formatBuildCountText(
-							jenkinsCohortJob.getQueuedBuildCount(),
-							jenkinsCohortJob.getQueuedBuildPercentage())),
-					topLevelBuildURLs.size()));
+			jsonObject.put("Top Level Builds", topLevelBuildURLs.size());
+
+			buildLoadDataJSONArray.put(jsonObject);
 		}
 
-		sb.append(buildLoadDataTableJSONArray.toString());
+		sb.append(buildLoadDataJSONArray.toString());
 
 		sb.append(";");
 
-		JenkinsResultsParserUtil.write(filePath + "/data.js", sb.toString());
+		JenkinsResultsParserUtil.write(
+			filePath + "/ci-system-status-data.js", sb.toString());
 	}
 
-	private static JSONArray _createJSONArray(Object... items) {
-		JSONArray jsonArray = new JSONArray();
-
-		for (Object item : items) {
-			jsonArray.put(item);
-		}
-
-		return jsonArray;
-	}
-
-	private static String _getPercentage(Integer dividend, Integer divisor) {
-		double quotient = (double)dividend / (double)divisor;
-
-		DecimalFormat decimalFormat = new DecimalFormat("###.##%");
-
-		return decimalFormat.format(quotient);
-	}
-
-	private String _formatBuildCountText(
-		int buildCount, String buildPercentage) {
-
-		return buildCount + " (" + buildPercentage + ")";
-	}
-
-	private void _loadBuildURL(String buildURL) {
-		Matcher jobNameMatcher = _jobNamePattern.matcher(buildURL);
+	private void _loadJobURL(String jobURL) {
+		Matcher jobNameMatcher = _jobNamePattern.matcher(jobURL);
 
 		jobNameMatcher.find();
 
@@ -272,7 +218,7 @@ public class JenkinsCohort {
 
 		JenkinsCohortJob jenkinsCohortJob = _jenkinsCohortJobsMap.get(jobName);
 
-		Matcher buildNumberMatcher = _buildNumberPattern.matcher(buildURL);
+		Matcher buildNumberMatcher = _buildNumberPattern.matcher(jobURL);
 
 		if (buildNumberMatcher.find()) {
 			jenkinsCohortJob.incrementRunningJobCount();
@@ -282,7 +228,7 @@ public class JenkinsCohort {
 		}
 
 		if (batchJobName == null) {
-			jenkinsCohortJob.addTopLevelBuildURL(buildURL);
+			jenkinsCohortJob.addTopLevelBuildURL(jobURL);
 		}
 	}
 
@@ -291,10 +237,11 @@ public class JenkinsCohort {
 	private static final Pattern _jobNamePattern = Pattern.compile(
 		"https?:.*job\\/(.*?)\\/");
 
+	private int _idleCINodeCount;
 	private final Map<String, JenkinsCohortJob> _jenkinsCohortJobsMap =
 		new HashMap<>();
-	private Map<String, JenkinsMaster> _jenkinsMastersMap = new HashMap<>();
 	private final String _name;
+	private int _onlineCINodeCount;
 
 	private class JenkinsCohortJob {
 
@@ -310,22 +257,18 @@ public class JenkinsCohort {
 			return _jenkinsCohortJobName;
 		}
 
+		public double getLoadPercentage() {
+			return (double)getTotalBuildCount() /
+				(double)(JenkinsCohort.this.getRunningBuildCount() +
+					JenkinsCohort.this.getQueuedBuildCount());
+		}
+
 		public int getQueuedBuildCount() {
 			return _queuedBuildCount;
 		}
 
-		public String getQueuedBuildPercentage() {
-			return _getPercentage(
-				_queuedBuildCount, JenkinsCohort.this.getQueuedBuildCount());
-		}
-
 		public int getRunningBuildCount() {
 			return _runningBuildCount;
-		}
-
-		public String getRunningBuildPercentage() {
-			return _getPercentage(
-				_runningBuildCount, JenkinsCohort.this.getRunningBuildCount());
 		}
 
 		public List<String> getTopLevelBuildURLs() {
@@ -334,13 +277,6 @@ public class JenkinsCohort {
 
 		public int getTotalBuildCount() {
 			return _queuedBuildCount + _runningBuildCount;
-		}
-
-		public String getTotalBuildPercentage() {
-			return _getPercentage(
-				getTotalBuildCount(),
-				JenkinsCohort.this.getRunningBuildCount() +
-					JenkinsCohort.this.getQueuedBuildCount());
 		}
 
 		public void incrementQueuedJobCount() {

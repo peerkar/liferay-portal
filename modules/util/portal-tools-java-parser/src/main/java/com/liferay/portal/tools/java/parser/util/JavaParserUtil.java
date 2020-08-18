@@ -85,8 +85,6 @@ import java.util.List;
  */
 public class JavaParserUtil {
 
-	public static final int NO_MAX_LINE_LENGTH = -1;
-
 	public static String getLastLine(String s) {
 		int x = s.lastIndexOf("\n");
 

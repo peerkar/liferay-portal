@@ -28,12 +28,12 @@ public class AppTitleException extends PortalException {
 		super(msg);
 	}
 
-	public AppTitleException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public AppTitleException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public AppTitleException(Throwable throwable) {
-		super(throwable);
+	public AppTitleException(Throwable cause) {
+		super(cause);
 	}
 
 }

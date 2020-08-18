@@ -10,7 +10,6 @@
  */
 
 import '@testing-library/jest-dom/extend-expect';
-import {waitForElementToBeRemoved} from '@testing-library/dom';
 import {
 	act,
 	cleanup,
@@ -28,50 +27,18 @@ import {ENTRY} from '../../constants.es';
 const context = {
 	appId: 1,
 	basePortletURL: 'portlet_url',
-	baseResourceURL: 'resource_url',
 	dataLayoutIds: [123],
 	namespace: '_portlet_',
 };
 
-const mockFetch = jest.fn().mockResolvedValue();
 const mockNavigate = jest.fn();
+const mockSubmit = jest.fn();
 const mockToast = jest.fn();
 
-jest.mock('dynamic-data-mapping-form-renderer', () => ({
-	PagesVisitor: jest.fn().mockImplementation(() => ({
-		mapFields: (callback) =>
-			[
-				{
-					fieldName: 'Text',
-					localizable: true,
-					value: 'text',
-					visible: true,
-				},
-				{
-					fieldName: 'Text1',
-					localizable: true,
-					repeatable: true,
-					value: 'text1',
-					visible: true,
-				},
-				{type: 'fieldset'},
-				{fieldName: 'Text2', value: 'text2'},
-			].map(callback),
-	})),
-}));
-
 jest.mock('frontend-js-web', () => ({
-	createResourceURL: jest.fn().mockImplementation((url, params) => {
-		const query = Object.keys(params).reduce(
-			(query, key, index) =>
-				`${index !== 0 ? '&' : ''}${query}${key}=${params[key]}`,
-			'?'
-		);
-
-		return `${url}${query}`;
-	}),
+	createResourceURL: jest.fn(() => 'http://resource_url?'),
 	debounce: jest.fn().mockResolvedValue(),
-	fetch: (...args) => mockFetch(...args),
+	fetch: jest.fn().mockResolvedValue(),
 }));
 
 const mockAddItem = jest.fn().mockResolvedValue(ENTRY.DATA_RECORD_APPS(1));
@@ -102,15 +69,22 @@ jest.mock('app-builder-web/js/utils/toast.es', () => ({
 	successToast: (title) => mockToast(title),
 }));
 
-describe('EditEntry', () => {
-	const dataRecord = JSON.stringify({
-		dataRecordValues: {
-			Text: {en_US: 'text'},
-			Text1: {en_US: ['text1']},
-			Text2: '',
-		},
-	});
+jest.mock(
+	'../../../src/main/resources/META-INF/resources/js/hooks/useDDMForms.es',
+	() => (_, onSubmitCallback) => {
+		return (event) => {
+			onSubmitCallback(event);
+			mockSubmit();
+		};
+	}
+);
 
+window.Liferay.Util = {
+	navigate: (url) => mockNavigate(url),
+	ns: jest.fn(),
+};
+
+describe('EditEntry', () => {
 	afterEach(cleanup);
 
 	afterAll(() => {
@@ -119,33 +93,10 @@ describe('EditEntry', () => {
 
 	beforeAll(() => {
 		const div = document.createElement('div');
-		const form = document.createElement('form');
-		const [mockFormId] = context.dataLayoutIds;
 
-		form.id = mockFormId;
 		div.id = 'edit-app-content';
 
 		document.body.appendChild(div);
-		document.body.appendChild(form);
-
-		global.URLSearchParams = jest
-			.fn()
-			.mockImplementation((params) => params);
-
-		window.Liferay.Util = {
-			navigate: (url) => mockNavigate(url),
-			ns: jest.fn().mockImplementation((_, params) => params),
-		};
-
-		window.Liferay.componentReady = jest.fn().mockResolvedValue({
-			reactComponentRef: {
-				current: {
-					get: () => null,
-					getFormNode: () => document.getElementById(mockFormId),
-					validate: jest.fn().mockResolvedValue(true),
-				},
-			},
-		});
 	});
 
 	it('renders on create mode', async () => {
@@ -156,35 +107,21 @@ describe('EditEntry', () => {
 			{wrapper: PermissionsContextProviderWrapper}
 		);
 
+		const buttons = queryAllByRole('button');
+
 		expect(
 			container.querySelector('.control-menu-level-1-heading')
 		).toHaveTextContent('add-entry');
 
-		await waitForElementToBeRemoved(() =>
-			container.querySelector('span.loading-animation')
-		);
-
-		const buttons = queryAllByRole('button');
-
 		expect(buttons.length).toBe(2);
-		expect(buttons[0]).toHaveTextContent('Submit');
+		expect(buttons[0]).toHaveTextContent('submit');
 		expect(buttons[1]).toHaveTextContent('cancel');
 
 		await act(async () => {
 			await fireEvent.click(buttons[0]);
 		});
 
-		expect(mockFetch).toHaveBeenCalledWith(
-			`${context.baseResourceURL}?p_p_resource_id=/app_builder/add_data_record`,
-			{
-				body: {
-					appBuilderAppId: 1,
-					dataRecord,
-					dataRecordId: '0',
-				},
-				method: 'POST',
-			}
-		);
+		expect(mockSubmit.mock.calls.length).toBe(1);
 		expect(mockToast).toHaveBeenCalledWith('an-entry-was-added');
 		expect(mockNavigate).toHaveBeenCalledWith(context.basePortletURL);
 	});
@@ -197,18 +134,14 @@ describe('EditEntry', () => {
 			{wrapper: PermissionsContextProviderWrapper}
 		);
 
+		const buttons = queryAllByRole('button');
+
 		expect(
 			container.querySelector('.control-menu-level-1-heading')
 		).toHaveTextContent('edit-entry');
 
-		await waitForElementToBeRemoved(() =>
-			container.querySelector('span.loading-animation')
-		);
-
-		const buttons = queryAllByRole('button');
-
 		expect(buttons.length).toBe(2);
-		expect(buttons[0]).toHaveTextContent('Close');
+		expect(buttons[0]).toHaveTextContent('submit');
 		expect(buttons[1]).toHaveTextContent('cancel');
 
 		await waitForElement(() => document.getElementById('workflowInfoBar'));
@@ -217,20 +150,7 @@ describe('EditEntry', () => {
 			await fireEvent.click(buttons[0]);
 		});
 
-		expect(mockFetch).toHaveBeenCalledWith(
-			`${context.baseResourceURL}?p_p_resource_id=/app_builder/update_data_record`,
-			{
-				body: {
-					appBuilderAppId: 1,
-					dataRecord,
-					dataRecordId: '1',
-					taskName: 'Review',
-					transitionName: 'Close',
-					workflowInstanceId: undefined,
-				},
-				method: 'POST',
-			}
-		);
+		expect(mockSubmit.mock.calls.length).toBe(2);
 		expect(mockToast).toHaveBeenCalledWith('an-entry-was-updated');
 		expect(mockNavigate).toHaveBeenCalledWith('/home');
 	});

@@ -16,11 +16,6 @@ import {PortletBase, fetch} from 'frontend-js-web';
 import core from 'metal';
 import {EventHandler} from 'metal-events';
 
-const RECENTLY_REMOVED_ATTACHMENTS = {
-	multiple: Liferay.Language.get('x-recently-removed-attachments'),
-	single: Liferay.Language.get('x-recently-removed-attachment'),
-};
-
 /**
  * MBPortlet handles the actions of replying or editing a
  * message board.
@@ -258,9 +253,11 @@ class MBPortlet extends PortletBase {
 					deletedAttachmentsElement.style.display = 'initial';
 					deletedAttachmentsElement.innerHTML =
 						Liferay.Util.sub(
-							attachments.deleted.length > 1
-								? RECENTLY_REMOVED_ATTACHMENTS.multiple
-								: RECENTLY_REMOVED_ATTACHMENTS.single,
+							Liferay.Language.get(
+								attachments.deleted.length > 1
+									? 'x-recently-removed-attachments'
+									: 'x-recently-removed-attachment'
+							),
 							attachments.deleted.length
 						) + ' &raquo';
 				}

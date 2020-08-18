@@ -15,26 +15,17 @@
 package com.liferay.info.item.provider;
 
 import com.liferay.info.exception.NoSuchInfoItemException;
-import com.liferay.info.item.ClassPKInfoItemIdentifier;
-import com.liferay.info.item.InfoItemIdentifier;
+import com.liferay.info.item.InfoItemReference;
 
 /**
  * @author Jorge Ferrer
  */
 public interface InfoItemObjectProvider<T> {
 
-	public default T getInfoItem(InfoItemIdentifier infoItemIdentifier)
+	public default T getInfoItem(InfoItemReference infoItemReference)
 		throws NoSuchInfoItemException {
 
-		if (!(infoItemIdentifier instanceof ClassPKInfoItemIdentifier)) {
-			throw new NoSuchInfoItemException(
-				"Unsupported info item identifier type " + infoItemIdentifier);
-		}
-
-		ClassPKInfoItemIdentifier classPKInfoItemIdentifier =
-			(ClassPKInfoItemIdentifier)infoItemIdentifier;
-
-		return getInfoItem(classPKInfoItemIdentifier.getClassPK());
+		return getInfoItem(infoItemReference.getClassPK());
 	}
 
 	public T getInfoItem(long classPK) throws NoSuchInfoItemException;

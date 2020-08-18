@@ -12,10 +12,6 @@
  * details.
  */
 
-AUI = () => ({
-	use: (key, callback) => callback(key),
-});
-
 window.Liferay = {
 	...(window.Liferay || {}),
 };

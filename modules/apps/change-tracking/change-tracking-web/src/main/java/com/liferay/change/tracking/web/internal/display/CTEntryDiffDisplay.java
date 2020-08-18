@@ -79,9 +79,7 @@ public class CTEntryDiffDisplay {
 
 	public String getRightTitle() throws PortalException {
 		String title = _ctDisplayRendererRegistry.getTitle(
-			_ctDisplayRendererRegistry.getCtCollectionId(
-				_ctCollection, _ctEntry),
-			_ctEntry, _locale);
+			_ctCollection, _ctEntry, _locale);
 
 		if (isChangeType(CTConstants.CT_CHANGE_TYPE_ADDITION)) {
 			return StringBundler.concat(

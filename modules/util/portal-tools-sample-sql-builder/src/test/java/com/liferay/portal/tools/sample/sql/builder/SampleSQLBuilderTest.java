@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.dao.db.DBType;
 import com.liferay.portal.kernel.util.FileUtil;
+import com.liferay.portal.kernel.util.SortedProperties;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.portal.test.rule.LogAssertionTestRule;
@@ -76,7 +77,7 @@ public class SampleSQLBuilderTest {
 
 		DBManagerUtil.setDB(DBType.HYPERSONIC, null);
 
-		Properties properties = new Properties();
+		Properties properties = new SortedProperties();
 
 		File tempDir = new File(
 			SystemProperties.get(SystemProperties.TMP_DIR),

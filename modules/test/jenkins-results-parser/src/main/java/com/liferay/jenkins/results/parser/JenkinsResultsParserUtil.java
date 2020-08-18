@@ -15,7 +15,6 @@
 package com.liferay.jenkins.results.parser;
 
 import com.google.common.collect.Lists;
-import com.google.common.io.CountingInputStream;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -42,7 +41,6 @@ import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.net.UnknownHostException;
 
-import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
@@ -493,26 +491,6 @@ public class JenkinsResultsParserUtil {
 			commands);
 	}
 
-	public static void executeBashCommandService(
-		String command, File baseDir, Map<String, String> environments,
-		long maxLogSize) {
-
-		_executeCommandService(
-			command, baseDir, environments, maxLogSize, false);
-	}
-
-	public static void executeBatchCommandService(
-		String command, File baseDir, Map<String, String> environments,
-		long maxLogSize) {
-
-		if (!isWindows()) {
-			throw new RuntimeException("Invalid OS: " + SystemUtils.OS_NAME);
-		}
-
-		_executeCommandService(
-			command, baseDir, environments, maxLogSize, true);
-	}
-
 	public static void executeJenkinsScript(
 		String jenkinsMasterName, String script) {
 
@@ -876,7 +854,7 @@ public class JenkinsResultsParserUtil {
 	public static String getBuildProperty(String propertyName)
 		throws IOException {
 
-		return getBuildProperty(true, propertyName);
+		return getBuildProperty(false, propertyName);
 	}
 
 	public static List<String> getBuildPropertyAsList(
@@ -1651,8 +1629,7 @@ public class JenkinsResultsParserUtil {
 	}
 
 	public static String getProperty(
-		Properties properties, String basePropertyName,
-		boolean useBasePropertyAsDefault, String... opts) {
+		Properties properties, String basePropertyName, String... opts) {
 
 		if ((opts == null) || (opts.length == 0)) {
 			return _getProperty(
@@ -1670,12 +1647,12 @@ public class JenkinsResultsParserUtil {
 		for (Object key : properties.keySet()) {
 			String keyString = key.toString();
 
-			if (keyString.matches(
-					Pattern.quote(basePropertyName) + "(\\[.*|$)")) {
-
-				matchingProperties.setProperty(
-					keyString, properties.getProperty(keyString));
+			if (!keyString.startsWith(basePropertyName)) {
+				continue;
 			}
+
+			matchingProperties.setProperty(
+				keyString, properties.getProperty(keyString));
 		}
 
 		Set<Set<String>> targetOptSets = _getOrderedOptSets(opts);
@@ -1727,23 +1704,11 @@ public class JenkinsResultsParserUtil {
 			}
 		}
 
-		if (propertyName != null) {
-			return _getProperty(
-				properties, new ArrayList<String>(), propertyName);
+		if (propertyName == null) {
+			propertyName = basePropertyName;
 		}
 
-		if (useBasePropertyAsDefault) {
-			return _getProperty(
-				properties, new ArrayList<String>(), basePropertyName);
-		}
-
-		return null;
-	}
-
-	public static String getProperty(
-		Properties properties, String basePropertyName, String... opts) {
-
-		return getProperty(properties, basePropertyName, true, opts);
+		return _getProperty(properties, new ArrayList<String>(), propertyName);
 	}
 
 	public static String getRandomGitHubDevNodeHostname() {
@@ -3271,85 +3236,6 @@ public class JenkinsResultsParserUtil {
 		return duration;
 	}
 
-	private static void _executeCommandService(
-		final String command, final File baseDir,
-		final Map<String, String> environments, final long maxLogSize,
-		final boolean batchCommand) {
-
-		if (batchCommand && !isWindows()) {
-			throw new RuntimeException("Invalid OS: " + SystemUtils.OS_NAME);
-		}
-
-		Runnable runnable = new Runnable() {
-
-			public void run() {
-				StringBuilder sb = new StringBuilder();
-
-				try {
-					if (isWindows()) {
-						if (batchCommand) {
-							sb.append("cmd.exe /c ");
-						}
-						else {
-							sb.append("C:\\Program Files\\Git\\bin\\sh.exe ");
-						}
-					}
-					else {
-						sb.append("/bin/sh ");
-					}
-
-					sb.append(command);
-
-					Runtime runtime = Runtime.getRuntime();
-
-					String[] environmentParameters =
-						new String[environments.size()];
-
-					int i = 0;
-
-					for (Map.Entry<String, String> environment :
-							environments.entrySet()) {
-
-						environmentParameters[i] = combine(
-							environment.getKey(), "=", environment.getValue());
-
-						i++;
-					}
-
-					Process process = runtime.exec(
-						sb.toString(), environmentParameters, baseDir);
-
-					try (CountingInputStream countingInputStream =
-							new CountingInputStream(process.getInputStream());
-						InputStreamReader inputStreamReader =
-							new InputStreamReader(
-								countingInputStream, StandardCharsets.UTF_8)) {
-
-						int logCharInt = 0;
-
-						while ((logCharInt = inputStreamReader.read()) != -1) {
-							if (countingInputStream.getCount() > maxLogSize) {
-								continue;
-							}
-
-							System.out.print((char)logCharInt);
-						}
-					}
-
-					process.waitFor();
-				}
-				catch (InterruptedException | IOException exception) {
-					throw new RuntimeException(exception);
-				}
-			}
-
-		};
-
-		Thread thread = new Thread(runnable);
-
-		thread.start();
-	}
-
 	private static File _getCacheFile(String key) {
 		String fileName = combine(
 			System.getProperty("java.io.tmpdir"), "/jenkins-cached-files/",
@@ -3637,7 +3523,7 @@ public class JenkinsResultsParserUtil {
 		int maxOptCount = 0;
 
 		for (String propertyName : propertyNames) {
-			Matcher matcher = _propertyOptionPattern.matcher(propertyName);
+			Matcher matcher = _propertyNamePattern.matcher(propertyName);
 
 			Set<String> optSet = new LinkedHashSet<>();
 
@@ -3807,7 +3693,7 @@ public class JenkinsResultsParserUtil {
 		"http://(test-[0-9]+-[0-9]+)/");
 	private static final Pattern _nestedPropertyPattern = Pattern.compile(
 		"\\$\\{([^\\}]+)\\}");
-	private static final Pattern _propertyOptionPattern = Pattern.compile(
+	private static final Pattern _propertyNamePattern = Pattern.compile(
 		"\\[(?<opt>[^\\]]+)\\]");
 	private static final Set<String> _redactTokens = new HashSet<>();
 	private static final Pattern _remoteURLAuthorityPattern1 = Pattern.compile(

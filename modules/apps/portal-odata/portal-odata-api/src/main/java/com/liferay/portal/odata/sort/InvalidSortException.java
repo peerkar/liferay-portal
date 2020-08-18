@@ -36,14 +36,14 @@ public class InvalidSortException extends BadRequestException {
 
 	/**
 	 * Creates a new {@code InvalidSortException} with the provided message and
-	 * throwable.
+	 * cause.
 	 *
 	 * @param  msg the message
-	 * @param  throwable the throwable
+	 * @param  cause the cause
 	 * @review
 	 */
-	public InvalidSortException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public InvalidSortException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
 }

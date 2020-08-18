@@ -23,10 +23,10 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 public class LoggedExceptionInInitializerError
 	extends ExceptionInInitializerError {
 
-	public LoggedExceptionInInitializerError(Throwable throwable) {
-		super(throwable);
+	public LoggedExceptionInInitializerError(Throwable cause) {
+		super(cause);
 
-		_log.error(throwable, throwable);
+		_log.error(cause, cause);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

@@ -34,12 +34,12 @@ public class LayoutPrototypeException extends PortalException {
 		super(msg);
 	}
 
-	public LayoutPrototypeException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public LayoutPrototypeException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public LayoutPrototypeException(Throwable throwable) {
-		super(throwable);
+	public LayoutPrototypeException(Throwable cause) {
+		super(cause);
 	}
 
 	public List<Tuple> getMissingLayoutPrototypes() {

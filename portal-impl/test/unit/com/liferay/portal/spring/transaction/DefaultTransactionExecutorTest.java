@@ -102,10 +102,10 @@ public class DefaultTransactionExecutorTest
 
 				Assert.fail();
 			}
-			catch (Throwable throwable) {
-				Assert.assertEquals("createThrowable", throwable.getMessage());
+			catch (Throwable t) {
+				Assert.assertEquals("createThrowable", t.getMessage());
 
-				Throwable[] throwables = throwable.getSuppressed();
+				Throwable[] throwables = t.getSuppressed();
 
 				Assert.assertEquals(
 					Arrays.toString(throwables), 1, throwables.length);
@@ -124,10 +124,10 @@ public class DefaultTransactionExecutorTest
 
 				Assert.fail();
 			}
-			catch (Throwable throwable) {
-				Assert.assertSame(exception1, throwable);
+			catch (Throwable t) {
+				Assert.assertSame(exception1, t);
 
-				Throwable[] throwables = throwable.getSuppressed();
+				Throwable[] throwables = t.getSuppressed();
 
 				Assert.assertEquals(
 					Arrays.toString(throwables), 1, throwables.length);
@@ -148,10 +148,10 @@ public class DefaultTransactionExecutorTest
 
 				Assert.fail();
 			}
-			catch (Throwable throwable) {
-				Assert.assertEquals("createThrowable", throwable.getMessage());
+			catch (Throwable t) {
+				Assert.assertEquals("createThrowable", t.getMessage());
 
-				Throwable[] throwables = throwable.getSuppressed();
+				Throwable[] throwables = t.getSuppressed();
 
 				Assert.assertEquals(
 					Arrays.toString(throwables), 1, throwables.length);
@@ -170,10 +170,10 @@ public class DefaultTransactionExecutorTest
 
 				Assert.fail();
 			}
-			catch (Throwable throwable) {
-				Assert.assertSame(exception2, throwable);
+			catch (Throwable t) {
+				Assert.assertSame(exception2, t);
 
-				Throwable[] throwables = throwable.getSuppressed();
+				Throwable[] throwables = t.getSuppressed();
 
 				Assert.assertEquals(
 					Arrays.toString(throwables), 1, throwables.length);

@@ -35,7 +35,6 @@ import React, {
 import {useKeyDown} from '../../hooks/index.es';
 import isClickOutside from '../../utils/clickOutside.es';
 import CustomObjectFieldsList from './CustomObjectFieldsList.es';
-import DataLayoutBuilderContext from './DataLayoutBuilderInstanceContext.es';
 import FormViewContext from './FormViewContext.es';
 
 const DropDown = () => {
@@ -118,7 +117,7 @@ const Header = ({onCloseSearch, onSearch, searchText}) => {
 
 	const [{dataDefinition}] = useContext(FormViewContext);
 	const {
-		name: {[dataDefinition.defaultLanguageId]: dataDefinitionName = ''},
+		name: {en_US: dataDefinitionName = ''},
 	} = dataDefinition;
 
 	return (
@@ -188,7 +187,6 @@ export default () => {
 		dispatch,
 	] = useContext(FormViewContext);
 	const [searchText, setSearchText] = useState('');
-	const [dataLayoutBuilder] = useContext(DataLayoutBuilderContext);
 	const sidebarRef = useRef();
 
 	useKeyDown(() => {
@@ -208,7 +206,6 @@ export default () => {
 					target,
 					'.data-layout-builder-sidebar',
 					'.dropdown-menu',
-					'.nav-underline',
 					'#ddm-actionable-fields-container'
 				)
 			) {
@@ -217,15 +214,13 @@ export default () => {
 					type:
 						DataLayoutBuilderActions.UPDATE_FOCUSED_CUSTOM_OBJECT_FIELD,
 				});
-
-				dataLayoutBuilder.dispatch('sidebarFieldBlurred');
 			}
 		};
 
 		window.addEventListener('click', eventHandler);
 
 		return () => window.removeEventListener('click', eventHandler);
-	}, [dataLayoutBuilder, dispatch]);
+	}, [dispatch]);
 
 	const empty = dataDefinitionFields.length === 0;
 

@@ -232,8 +232,7 @@ public class KaleoDesignerPortlet extends MVCPortlet {
 	}
 
 	protected Integer[] getRoleTypesObj(int type) {
-		if ((type == RoleConstants.TYPE_DEPOT) ||
-			(type == RoleConstants.TYPE_ORGANIZATION) ||
+		if ((type == RoleConstants.TYPE_ORGANIZATION) ||
 			(type == RoleConstants.TYPE_REGULAR) ||
 			(type == RoleConstants.TYPE_SITE)) {
 

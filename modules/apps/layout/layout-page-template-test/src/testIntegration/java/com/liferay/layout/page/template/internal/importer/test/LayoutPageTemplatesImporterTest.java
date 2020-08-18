@@ -30,13 +30,13 @@ import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
 import com.liferay.layout.util.constants.LayoutDataItemTypeConstants;
-import com.liferay.layout.util.structure.CollectionStyledLayoutStructureItem;
+import com.liferay.layout.util.structure.CollectionLayoutStructureItem;
 import com.liferay.layout.util.structure.ColumnLayoutStructureItem;
-import com.liferay.layout.util.structure.ContainerStyledLayoutStructureItem;
-import com.liferay.layout.util.structure.FragmentStyledLayoutStructureItem;
+import com.liferay.layout.util.structure.ContainerLayoutStructureItem;
+import com.liferay.layout.util.structure.FragmentLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
-import com.liferay.layout.util.structure.RowStyledLayoutStructureItem;
+import com.liferay.layout.util.structure.RowLayoutStructureItem;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -167,18 +167,17 @@ public class LayoutPageTemplatesImporterTest {
 			_getMainChildLayoutStructureItem(layoutStructure);
 
 		Assert.assertTrue(
-			layoutStructureItem instanceof CollectionStyledLayoutStructureItem);
+			layoutStructureItem instanceof CollectionLayoutStructureItem);
 
-		CollectionStyledLayoutStructureItem
-			collectionStyledLayoutStructureItem =
-				(CollectionStyledLayoutStructureItem)layoutStructureItem;
+		CollectionLayoutStructureItem collectionLayoutStructureItem =
+			(CollectionLayoutStructureItem)layoutStructureItem;
 
-		Assert.assertNotNull(collectionStyledLayoutStructureItem);
+		Assert.assertNotNull(collectionLayoutStructureItem);
 
 		Assert.assertEquals(
-			2, collectionStyledLayoutStructureItem.getNumberOfColumns());
+			2, collectionLayoutStructureItem.getNumberOfColumns());
 		Assert.assertEquals(
-			4, collectionStyledLayoutStructureItem.getNumberOfItems());
+			4, collectionLayoutStructureItem.getNumberOfItems());
 	}
 
 	@Test
@@ -200,19 +199,18 @@ public class LayoutPageTemplatesImporterTest {
 			_getMainChildLayoutStructureItem(layoutStructure);
 
 		Assert.assertTrue(
-			layoutStructureItem instanceof RowStyledLayoutStructureItem);
+			layoutStructureItem instanceof RowLayoutStructureItem);
 
-		RowStyledLayoutStructureItem rowStyledLayoutStructureItem =
-			(RowStyledLayoutStructureItem)layoutStructureItem;
+		RowLayoutStructureItem rowLayoutStructureItem =
+			(RowLayoutStructureItem)layoutStructureItem;
 
-		Assert.assertNotNull(rowStyledLayoutStructureItem);
+		Assert.assertNotNull(rowLayoutStructureItem);
 
-		Assert.assertEquals(
-			6, rowStyledLayoutStructureItem.getNumberOfColumns());
-		Assert.assertFalse(rowStyledLayoutStructureItem.isGutters());
+		Assert.assertEquals(6, rowLayoutStructureItem.getNumberOfColumns());
+		Assert.assertFalse(rowLayoutStructureItem.isGutters());
 
 		List<String> rowChildrenItemsIds =
-			rowStyledLayoutStructureItem.getChildrenItemIds();
+			rowLayoutStructureItem.getChildrenItemIds();
 
 		Assert.assertEquals(
 			rowChildrenItemsIds.toString(), 6, rowChildrenItemsIds.size());
@@ -253,28 +251,27 @@ public class LayoutPageTemplatesImporterTest {
 			_getMainChildLayoutStructureItem(layoutStructure);
 
 		Assert.assertTrue(
-			layoutStructureItem instanceof ContainerStyledLayoutStructureItem);
+			layoutStructureItem instanceof ContainerLayoutStructureItem);
 
-		ContainerStyledLayoutStructureItem containerStyledLayoutStructureItem =
-			(ContainerStyledLayoutStructureItem)layoutStructureItem;
+		ContainerLayoutStructureItem containerLayoutStructureItem =
+			(ContainerLayoutStructureItem)layoutStructureItem;
 
 		Assert.assertNotNull(layoutStructure);
 
 		Assert.assertEquals(
-			"fluid", containerStyledLayoutStructureItem.getContainerType());
+			"danger",
+			containerLayoutStructureItem.getBackgroundColorCssClass());
 		Assert.assertEquals(
-			0, containerStyledLayoutStructureItem.getMarginRight());
+			"fluid", containerLayoutStructureItem.getContainerType());
+		Assert.assertEquals(5, containerLayoutStructureItem.getPaddingBottom());
+		Assert.assertEquals(5, containerLayoutStructureItem.getPaddingLeft());
+		Assert.assertEquals(0, containerLayoutStructureItem.getMarginRight());
+		Assert.assertEquals(5, containerLayoutStructureItem.getPaddingTop());
 		Assert.assertEquals(
-			5, containerStyledLayoutStructureItem.getPaddingBottom());
-		Assert.assertEquals(
-			5, containerStyledLayoutStructureItem.getPaddingLeft());
-		Assert.assertEquals(
-			5, containerStyledLayoutStructureItem.getPaddingTop());
-		Assert.assertEquals(
-			"fluid", containerStyledLayoutStructureItem.getWidthType());
+			"fluid", containerLayoutStructureItem.getWidthType());
 
 		JSONObject jsonObject =
-			containerStyledLayoutStructureItem.getBackgroundImageJSONObject();
+			containerLayoutStructureItem.getBackgroundImageJSONObject();
 
 		Assert.assertEquals("test.jpg", jsonObject.get("title"));
 		Assert.assertEquals("test-image.jpg", jsonObject.get("url"));
@@ -318,14 +315,14 @@ public class LayoutPageTemplatesImporterTest {
 			_getMainChildLayoutStructureItem(layoutStructure);
 
 		Assert.assertTrue(
-			layoutStructureItem instanceof FragmentStyledLayoutStructureItem);
+			layoutStructureItem instanceof FragmentLayoutStructureItem);
 
-		FragmentStyledLayoutStructureItem fragmentStyledLayoutStructureItem =
-			(FragmentStyledLayoutStructureItem)layoutStructureItem;
+		FragmentLayoutStructureItem fragmentLayoutStructureItem =
+			(FragmentLayoutStructureItem)layoutStructureItem;
 
 		FragmentEntryLink fragmentEntryLink =
 			_fragmentEntryLinkLocalService.fetchFragmentEntryLink(
-				fragmentStyledLayoutStructureItem.getFragmentEntryLinkId());
+				fragmentLayoutStructureItem.getFragmentEntryLinkId());
 
 		Assert.assertNotNull(fragmentEntryLink);
 
@@ -695,14 +692,14 @@ public class LayoutPageTemplatesImporterTest {
 			_getMainChildLayoutStructureItem(layoutStructure);
 
 		Assert.assertTrue(
-			layoutStructureItem instanceof FragmentStyledLayoutStructureItem);
+			layoutStructureItem instanceof FragmentLayoutStructureItem);
 
-		FragmentStyledLayoutStructureItem fragmentStyledLayoutStructureItem =
-			(FragmentStyledLayoutStructureItem)layoutStructureItem;
+		FragmentLayoutStructureItem fragmentLayoutStructureItem =
+			(FragmentLayoutStructureItem)layoutStructureItem;
 
 		FragmentEntryLink fragmentEntryLink =
 			_fragmentEntryLinkLocalService.fetchFragmentEntryLink(
-				fragmentStyledLayoutStructureItem.getFragmentEntryLinkId());
+				fragmentLayoutStructureItem.getFragmentEntryLinkId());
 
 		Assert.assertNotNull(fragmentEntryLink);
 

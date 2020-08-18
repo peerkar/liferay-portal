@@ -98,21 +98,11 @@ export default (state, action) => {
 
 			return {
 				pages: pageVisitor.mapColumns((column) => {
-					const filter = (fields) =>
-						fields
-							.filter((field) => field.name !== action.payload)
-							.map((field) => {
-								return {
-									...field,
-									nestedFields: field.nestedFields
-										? filter(field.nestedFields)
-										: [],
-								};
-							});
-
 					return {
 						...column,
-						fields: filter(column.fields),
+						fields: column.fields.filter(
+							(field) => field.name !== action.payload
+						),
 					};
 				}),
 			};
@@ -122,28 +112,30 @@ export default (state, action) => {
 
 			return {
 				pages: pageVisitor.mapColumns((column) => {
-					const addRepeatedField = (fields) => {
-						const sourceFieldIndex = fields.reduce(
-							(sourceFieldIndex = -1, field, index) => {
-								if (field.name === action.payload) {
-									sourceFieldIndex = index;
-								}
+					const {fields} = column;
+					const sourceFieldIndex = fields.reduce(
+						(sourceFieldIndex = -1, field, index) => {
+							if (field.name === action.payload) {
+								sourceFieldIndex = index;
+							}
 
-								return sourceFieldIndex;
-							},
-							-1
+							return sourceFieldIndex;
+						},
+						-1
+					);
+
+					if (sourceFieldIndex > -1) {
+						const newFieldIndex = sourceFieldIndex + 1;
+						const newField = createRepeatedField(
+							fields[sourceFieldIndex],
+							newFieldIndex
 						);
 
-						if (sourceFieldIndex > -1) {
-							const newFieldIndex = sourceFieldIndex + 1;
-							const newField = createRepeatedField(
-								fields[sourceFieldIndex],
-								newFieldIndex
-							);
+						let currentRepeatedIndex = 0;
 
-							let currentRepeatedIndex = 0;
-
-							return [
+						return {
+							...column,
+							fields: [
 								...fields.slice(0, newFieldIndex),
 								newField,
 								...fields.slice(newFieldIndex),
@@ -170,23 +162,11 @@ export default (state, action) => {
 								}
 
 								return currentField;
-							});
-						}
+							}),
+						};
+					}
 
-						return fields.map((field) => {
-							return {
-								...field,
-								nestedFields: field.nestedFields
-									? addRepeatedField(field.nestedFields)
-									: [],
-							};
-						});
-					};
-
-					return {
-						...column,
-						fields: addRepeatedField(column.fields),
-					};
+					return column;
 				}),
 			};
 		}

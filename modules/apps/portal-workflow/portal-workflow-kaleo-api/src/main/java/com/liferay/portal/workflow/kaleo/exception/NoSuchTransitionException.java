@@ -28,12 +28,12 @@ public class NoSuchTransitionException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchTransitionException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public NoSuchTransitionException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NoSuchTransitionException(Throwable throwable) {
-		super(throwable);
+	public NoSuchTransitionException(Throwable cause) {
+		super(cause);
 	}
 
 }

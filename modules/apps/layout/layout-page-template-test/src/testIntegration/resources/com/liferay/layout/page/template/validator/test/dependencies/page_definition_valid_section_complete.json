@@ -5,7 +5,10 @@
 				"definition": {
 					"backgroundColor": "danger",
 					"layout": {
-						"containerType": "Fluid"
+						"containerType": "Fluid",
+						"paddingBottom": 8,
+						"paddingHorizontal": 8,
+						"paddingTop": 4
 					}
 				},
 				"pageElements": [
@@ -31,7 +34,10 @@
 						}
 					},
 					"layout": {
-						"containerType": "Fixed"
+						"containerType": "Fixed",
+						"paddingBottom": 8,
+						"paddingHorizontal": 6,
+						"paddingTop": 0
 					}
 				},
 				"pageElements": [

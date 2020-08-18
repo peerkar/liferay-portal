@@ -100,9 +100,9 @@ public class IntrabandRPCUtilTest {
 			Assert.fail();
 		}
 		catch (ExecutionException executionException) {
-			Throwable throwable = executionException.getCause();
+			Throwable t = executionException.getCause();
 
-			Assert.assertEquals(exception.getMessage(), throwable.getMessage());
+			Assert.assertEquals(exception.getMessage(), t.getMessage());
 		}
 	}
 

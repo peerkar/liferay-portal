@@ -14,14 +14,13 @@
 
 package com.liferay.layout.taglib.internal.display.context;
 
+import com.liferay.asset.display.page.constants.AssetDisplayPageWebKeys;
 import com.liferay.asset.info.display.contributor.util.ContentAccessor;
 import com.liferay.document.library.kernel.model.DLFileEntry;
-import com.liferay.info.constants.InfoDisplayWebKeys;
 import com.liferay.info.display.contributor.InfoDisplayContributor;
 import com.liferay.info.display.contributor.InfoDisplayContributorTracker;
 import com.liferay.info.display.contributor.InfoDisplayObjectProvider;
 import com.liferay.info.field.InfoFieldValue;
-import com.liferay.info.item.InfoItemDetails;
 import com.liferay.info.item.InfoItemServiceTracker;
 import com.liferay.info.item.provider.InfoItemFieldValuesProvider;
 import com.liferay.info.list.renderer.DefaultInfoListRendererContext;
@@ -36,9 +35,8 @@ import com.liferay.layout.list.retriever.LayoutListRetrieverTracker;
 import com.liferay.layout.list.retriever.ListObjectReference;
 import com.liferay.layout.list.retriever.ListObjectReferenceFactory;
 import com.liferay.layout.list.retriever.ListObjectReferenceFactoryTracker;
-import com.liferay.layout.util.structure.CollectionStyledLayoutStructureItem;
-import com.liferay.layout.util.structure.ContainerStyledLayoutStructureItem;
-import com.liferay.layout.util.structure.StyledLayoutStructureItem;
+import com.liferay.layout.util.structure.CollectionLayoutStructureItem;
+import com.liferay.layout.util.structure.ContainerLayoutStructureItem;
 import com.liferay.petra.io.unsync.UnsyncStringWriter;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -94,11 +92,11 @@ public class RenderFragmentLayoutDisplayContext {
 	}
 
 	public List<Object> getCollection(
-		CollectionStyledLayoutStructureItem collectionStyledLayoutStructureItem,
+		CollectionLayoutStructureItem collectionLayoutStructureItem,
 		long[] segmentsExperienceIds) {
 
 		JSONObject collectionJSONObject =
-			collectionStyledLayoutStructureItem.getCollectionJSONObject();
+			collectionLayoutStructureItem.getCollectionJSONObject();
 
 		if (collectionJSONObject.length() <= 0) {
 			return Collections.emptyList();
@@ -126,19 +124,17 @@ public class RenderFragmentLayoutDisplayContext {
 		defaultLayoutListRetrieverContext.setSegmentsExperienceIdsOptional(
 			segmentsExperienceIds);
 		defaultLayoutListRetrieverContext.setPagination(
-			Pagination.of(
-				collectionStyledLayoutStructureItem.getNumberOfItems(), 0));
+			Pagination.of(collectionLayoutStructureItem.getNumberOfItems(), 0));
 
 		return layoutListRetriever.getList(
 			listObjectReference, defaultLayoutListRetrieverContext);
 	}
 
 	public InfoDisplayContributor<?> getCollectionInfoDisplayContributor(
-		CollectionStyledLayoutStructureItem
-			collectionStyledLayoutStructureItem) {
+		CollectionLayoutStructureItem collectionLayoutStructureItem) {
 
 		ListObjectReference listObjectReference = _getListObjectReference(
-			collectionStyledLayoutStructureItem.getCollectionJSONObject());
+			collectionLayoutStructureItem.getCollectionJSONObject());
 
 		if (listObjectReference == null) {
 			return null;
@@ -155,13 +151,12 @@ public class RenderFragmentLayoutDisplayContext {
 	}
 
 	public String getContainerLinkHref(
-			ContainerStyledLayoutStructureItem
-				containerStyledLayoutStructureItem,
+			ContainerLayoutStructureItem containerLayoutStructureItem,
 			Object displayObject)
 		throws PortalException {
 
 		JSONObject linkJSONObject =
-			containerStyledLayoutStructureItem.getLinkJSONObject();
+			containerLayoutStructureItem.getLinkJSONObject();
 
 		if (linkJSONObject == null) {
 			return StringPool.BLANK;
@@ -170,38 +165,36 @@ public class RenderFragmentLayoutDisplayContext {
 		String mappedField = linkJSONObject.getString("mappedField");
 
 		if (Validator.isNotNull(mappedField)) {
-			Object infoItem = _httpServletRequest.getAttribute(
-				InfoDisplayWebKeys.INFO_ITEM);
+			InfoDisplayObjectProvider<Object> infoDisplayObjectProvider =
+				(InfoDisplayObjectProvider<Object>)
+					_httpServletRequest.getAttribute(
+						AssetDisplayPageWebKeys.INFO_DISPLAY_OBJECT_PROVIDER);
 
-			InfoItemDetails infoItemDetails =
-				(InfoItemDetails)_httpServletRequest.getAttribute(
-					InfoDisplayWebKeys.INFO_ITEM_DETAILS);
+			if ((_infoDisplayContributorTracker != null) &&
+				(infoDisplayObjectProvider != null)) {
 
-			if ((infoItem != null) && (infoItemDetails != null)) {
-				InfoItemFieldValuesProvider<Object>
-					infoItemFieldValuesProvider =
-						_infoItemServiceTracker.getFirstInfoItemService(
-							InfoItemFieldValuesProvider.class,
-							infoItemDetails.getClassName());
+				InfoDisplayContributor<Object> infoDisplayContributor =
+					(InfoDisplayContributor<Object>)
+						_infoDisplayContributorTracker.
+							getInfoDisplayContributor(
+								PortalUtil.getClassName(
+									infoDisplayObjectProvider.
+										getClassNameId()));
 
-				if (infoItemFieldValuesProvider != null) {
-					InfoFieldValue<Object> infoItemFieldValue =
-						infoItemFieldValuesProvider.getInfoItemFieldValue(
-							infoItem, mappedField);
+				if (infoDisplayContributor != null) {
+					Object object =
+						infoDisplayContributor.getInfoDisplayFieldValue(
+							infoDisplayObjectProvider.getDisplayObject(),
+							mappedField, LocaleUtil.getDefault());
 
-					if (infoItemFieldValue != null) {
-						Object object = infoItemFieldValue.getValue(
-							LocaleUtil.getDefault());
+					if (object instanceof String) {
+						String fieldValue = (String)object;
 
-						if (object instanceof String) {
-							String fieldValue = (String)object;
-
-							if (Validator.isNotNull(fieldValue)) {
-								return fieldValue;
-							}
-
-							return StringPool.BLANK;
+						if (Validator.isNotNull(fieldValue)) {
+							return fieldValue;
 						}
+
+						return StringPool.BLANK;
 					}
 				}
 			}
@@ -268,10 +261,10 @@ public class RenderFragmentLayoutDisplayContext {
 	}
 
 	public String getContainerLinkTarget(
-		ContainerStyledLayoutStructureItem containerStyledLayoutStructureItem) {
+		ContainerLayoutStructureItem containerLayoutStructureItem) {
 
 		JSONObject linkJSONObject =
-			containerStyledLayoutStructureItem.getLinkJSONObject();
+			containerLayoutStructureItem.getLinkJSONObject();
 
 		if (linkJSONObject == null) {
 			return StringPool.BLANK;
@@ -281,183 +274,122 @@ public class RenderFragmentLayoutDisplayContext {
 	}
 
 	public String getCssClass(
-		StyledLayoutStructureItem styledLayoutStructureItem) {
+		ContainerLayoutStructureItem containerLayoutStructureItem) {
 
-		StringBundler cssClassSB = new StringBundler(43);
+		StringBundler cssClassSB = new StringBundler(31);
 
-		if (Validator.isNotNull(styledLayoutStructureItem.getAlign())) {
+		if (Validator.isNotNull(containerLayoutStructureItem.getAlign())) {
 			cssClassSB.append(" ");
-			cssClassSB.append(styledLayoutStructureItem.getAlign());
+			cssClassSB.append(containerLayoutStructureItem.getAlign());
 		}
 
 		if (Validator.isNotNull(
-				styledLayoutStructureItem.getBackgroundColorCssClass())) {
+				containerLayoutStructureItem.getBackgroundColorCssClass())) {
 
 			cssClassSB.append(" bg-");
 			cssClassSB.append(
-				styledLayoutStructureItem.getBackgroundColorCssClass());
+				containerLayoutStructureItem.getBackgroundColorCssClass());
 		}
 
 		if (Validator.isNotNull(
-				styledLayoutStructureItem.getBorderColorCssClass())) {
+				containerLayoutStructureItem.getBorderColor())) {
 
 			cssClassSB.append(" border-");
-			cssClassSB.append(
-				styledLayoutStructureItem.getBorderColorCssClass());
+			cssClassSB.append(containerLayoutStructureItem.getBorderColor());
 		}
 
-		if (Validator.isNotNull(styledLayoutStructureItem.getBorderRadius())) {
+		if (Validator.isNotNull(
+				containerLayoutStructureItem.getBorderRadius())) {
+
 			cssClassSB.append(" ");
-			cssClassSB.append(styledLayoutStructureItem.getBorderRadius());
+			cssClassSB.append(containerLayoutStructureItem.getBorderRadius());
 		}
 
 		if (Objects.equals(
-				styledLayoutStructureItem.getContentDisplay(), "block")) {
+				containerLayoutStructureItem.getContentDisplay(), "block")) {
 
 			cssClassSB.append(" d-block");
 		}
 
 		if (Objects.equals(
-				styledLayoutStructureItem.getContentDisplay(), "flex")) {
+				containerLayoutStructureItem.getContentDisplay(), "flex")) {
 
 			cssClassSB.append(" d-flex");
 		}
 
-		if (Validator.isNotNull(
-				styledLayoutStructureItem.getFontWeightCssClass())) {
-
-			cssClassSB.append(StringPool.SPACE);
-			cssClassSB.append(
-				styledLayoutStructureItem.getFontWeightCssClass());
-		}
-
-		if (Validator.isNotNull(
-				styledLayoutStructureItem.getFontSizeCssClass())) {
-
-			cssClassSB.append(StringPool.SPACE);
-			cssClassSB.append(styledLayoutStructureItem.getFontSizeCssClass());
-		}
-
-		if (Validator.isNotNull(
-				styledLayoutStructureItem.getHeightCssClass())) {
-
-			cssClassSB.append(StringPool.SPACE);
-			cssClassSB.append(styledLayoutStructureItem.getHeightCssClass());
-		}
-
-		if (Validator.isNotNull(styledLayoutStructureItem.getJustify())) {
+		if (Validator.isNotNull(containerLayoutStructureItem.getJustify())) {
 			cssClassSB.append(" ");
-			cssClassSB.append(styledLayoutStructureItem.getJustify());
+			cssClassSB.append(containerLayoutStructureItem.getJustify());
 		}
 
-		boolean addHorizontalMargin = true;
-
-		if (styledLayoutStructureItem instanceof
-				ContainerStyledLayoutStructureItem) {
-
-			ContainerStyledLayoutStructureItem
-				containerStyledLayoutStructureItem =
-					(ContainerStyledLayoutStructureItem)
-						styledLayoutStructureItem;
-
-			if (Objects.equals(
-					containerStyledLayoutStructureItem.getWidthType(),
-					"fixed")) {
-
-				cssClassSB.append(" container");
-			}
-
-			if (!Objects.equals(
-					containerStyledLayoutStructureItem.getWidthType(),
-					"fixed")) {
-
-				addHorizontalMargin = false;
-			}
-		}
-
-		if (styledLayoutStructureItem.getMarginBottom() != -1L) {
+		if (containerLayoutStructureItem.getMarginBottom() != -1L) {
 			cssClassSB.append(" mb-");
-			cssClassSB.append(styledLayoutStructureItem.getMarginBottom());
+			cssClassSB.append(containerLayoutStructureItem.getMarginBottom());
 		}
 
-		if (addHorizontalMargin) {
-			if (styledLayoutStructureItem.getMarginLeft() != -1L) {
+		if (!Objects.equals(
+				containerLayoutStructureItem.getWidthType(), "fixed")) {
+
+			if (containerLayoutStructureItem.getMarginLeft() != -1L) {
 				cssClassSB.append(" ml-");
-				cssClassSB.append(styledLayoutStructureItem.getMarginLeft());
+				cssClassSB.append(containerLayoutStructureItem.getMarginLeft());
 			}
 
-			if (styledLayoutStructureItem.getMarginRight() != -1L) {
+			if (containerLayoutStructureItem.getMarginRight() != -1L) {
 				cssClassSB.append(" mr-");
-				cssClassSB.append(styledLayoutStructureItem.getMarginRight());
+				cssClassSB.append(
+					containerLayoutStructureItem.getMarginRight());
 			}
 		}
 
-		if (styledLayoutStructureItem.getMarginTop() != -1L) {
+		if (containerLayoutStructureItem.getMarginTop() != -1L) {
 			cssClassSB.append(" mt-");
-			cssClassSB.append(styledLayoutStructureItem.getMarginTop());
+			cssClassSB.append(containerLayoutStructureItem.getMarginTop());
 		}
 
-		if (styledLayoutStructureItem.getPaddingBottom() != -1L) {
+		if (containerLayoutStructureItem.getPaddingBottom() != -1L) {
 			cssClassSB.append(" pb-");
-			cssClassSB.append(styledLayoutStructureItem.getPaddingBottom());
+			cssClassSB.append(containerLayoutStructureItem.getPaddingBottom());
 		}
 
-		if (styledLayoutStructureItem.getPaddingLeft() != -1L) {
+		if (containerLayoutStructureItem.getPaddingLeft() != -1L) {
 			cssClassSB.append(" pl-");
-			cssClassSB.append(styledLayoutStructureItem.getPaddingLeft());
+			cssClassSB.append(containerLayoutStructureItem.getPaddingLeft());
 		}
 
-		if (styledLayoutStructureItem.getPaddingRight() != -1L) {
+		if (containerLayoutStructureItem.getPaddingRight() != -1L) {
 			cssClassSB.append(" pr-");
-			cssClassSB.append(styledLayoutStructureItem.getPaddingRight());
+			cssClassSB.append(containerLayoutStructureItem.getPaddingRight());
 		}
 
-		if (styledLayoutStructureItem.getPaddingTop() != -1L) {
+		if (containerLayoutStructureItem.getPaddingTop() != -1L) {
 			cssClassSB.append(" pt-");
-			cssClassSB.append(styledLayoutStructureItem.getPaddingTop());
+			cssClassSB.append(containerLayoutStructureItem.getPaddingTop());
 		}
 
-		if (Validator.isNotNull(styledLayoutStructureItem.getShadow())) {
-			cssClassSB.append(StringPool.SPACE);
-			cssClassSB.append(styledLayoutStructureItem.getShadow());
+		if (Validator.isNotNull(containerLayoutStructureItem.getShadow())) {
+			cssClassSB.append(" ");
+			cssClassSB.append(containerLayoutStructureItem.getShadow());
 		}
 
-		if (Validator.isNotNull(
-				styledLayoutStructureItem.getTextAlignCssClass()) &&
-			!Objects.equals(
-				styledLayoutStructureItem.getTextAlignCssClass(), "none")) {
+		if (Objects.equals(
+				containerLayoutStructureItem.getWidthType(), "fixed")) {
 
-			cssClassSB.append(StringPool.SPACE);
-			cssClassSB.append(styledLayoutStructureItem.getTextAlignCssClass());
-		}
-
-		if (Validator.isNotNull(
-				styledLayoutStructureItem.getTextColorCssClass())) {
-
-			cssClassSB.append(StringPool.SPACE);
-			cssClassSB.append(styledLayoutStructureItem.getTextColorCssClass());
-		}
-
-		if (Validator.isNotNull(styledLayoutStructureItem.getWidthCssClass())) {
-			cssClassSB.append(StringPool.SPACE);
-			cssClassSB.append(styledLayoutStructureItem.getWidthCssClass());
+			cssClassSB.append(" container");
 		}
 
 		return cssClassSB.toString();
 	}
 
 	public InfoListRenderer<?> getInfoListRenderer(
-		CollectionStyledLayoutStructureItem
-			collectionStyledLayoutStructureItem) {
+		CollectionLayoutStructureItem collectionLayoutStructureItem) {
 
-		if (Validator.isNull(
-				collectionStyledLayoutStructureItem.getListStyle())) {
-
+		if (Validator.isNull(collectionLayoutStructureItem.getListStyle())) {
 			return null;
 		}
 
 		return _infoListRendererTracker.getInfoListRenderer(
-			collectionStyledLayoutStructureItem.getListStyle());
+			collectionLayoutStructureItem.getListStyle());
 	}
 
 	public InfoListRendererContext getInfoListRendererContext(
@@ -527,23 +459,16 @@ public class RenderFragmentLayoutDisplayContext {
 		return unsyncStringWriter.toString();
 	}
 
-	public String getStyle(StyledLayoutStructureItem styledLayoutStructureItem)
+	public String getStyle(
+			ContainerLayoutStructureItem containerLayoutStructureItem)
 		throws PortalException {
 
-		StringBundler styleSB = new StringBundler(39);
+		StringBundler styleSB = new StringBundler(12);
 
 		styleSB.append("box-sizing: border-box;");
 
 		String backgroundImage = _getBackgroundImage(
-			styledLayoutStructureItem.getBackgroundImageJSONObject());
-
-		if (Validator.isNotNull(
-				styledLayoutStructureItem.getBackgroundColor())) {
-
-			styleSB.append("background-color: ");
-			styleSB.append(styledLayoutStructureItem.getBackgroundColor());
-			styleSB.append(StringPool.SEMICOLON);
-		}
+			containerLayoutStructureItem.getBackgroundImageJSONObject());
 
 		if (Validator.isNotNull(backgroundImage)) {
 			styleSB.append("background-position: 50% 50%; background-repeat: ");
@@ -553,64 +478,16 @@ public class RenderFragmentLayoutDisplayContext {
 			styleSB.append(");");
 		}
 
-		if (Validator.isNotNull(styledLayoutStructureItem.getBorderColor())) {
-			styleSB.append("border-color: ");
-			styleSB.append(styledLayoutStructureItem.getBorderColor());
-			styleSB.append(StringPool.SEMICOLON);
-		}
-
-		if (styledLayoutStructureItem.getBorderWidth() != -1L) {
+		if (containerLayoutStructureItem.getBorderWidth() != -1L) {
 			styleSB.append("border-style: solid; border-width: ");
-			styleSB.append(styledLayoutStructureItem.getBorderWidth());
+			styleSB.append(containerLayoutStructureItem.getBorderWidth());
 			styleSB.append("px;");
 		}
 
-		if (Validator.isNotNull(styledLayoutStructureItem.getFontFamily())) {
-			styleSB.append("font-family: ");
-			styleSB.append(styledLayoutStructureItem.getFontFamily());
-			styleSB.append(StringPool.SEMICOLON);
-		}
-
-		if (Validator.isNotNull(styledLayoutStructureItem.getMaxHeight())) {
-			styleSB.append("max-height: ");
-			styleSB.append(styledLayoutStructureItem.getMaxHeight());
-			styleSB.append(StringPool.SEMICOLON);
-		}
-
-		if (Validator.isNotNull(styledLayoutStructureItem.getMaxWidth())) {
-			styleSB.append("max-width: ");
-			styleSB.append(styledLayoutStructureItem.getMaxWidth());
-			styleSB.append(StringPool.SEMICOLON);
-		}
-
-		if (Validator.isNotNull(styledLayoutStructureItem.getMinHeight())) {
-			styleSB.append("min-height: ");
-			styleSB.append(styledLayoutStructureItem.getMinHeight());
-			styleSB.append(StringPool.SEMICOLON);
-		}
-
-		if (Validator.isNotNull(styledLayoutStructureItem.getMinWidth())) {
-			styleSB.append("min-width: ");
-			styleSB.append(styledLayoutStructureItem.getMinWidth());
-			styleSB.append(StringPool.SEMICOLON);
-		}
-
-		if (styledLayoutStructureItem.getOpacity() != -1L) {
+		if (containerLayoutStructureItem.getOpacity() != -1L) {
 			styleSB.append("opacity: ");
-			styleSB.append(styledLayoutStructureItem.getOpacity() / 100.0);
-			styleSB.append(StringPool.SEMICOLON);
-		}
-
-		if (Validator.isNotNull(styledLayoutStructureItem.getOverflow())) {
-			styleSB.append("overflow: ");
-			styleSB.append(styledLayoutStructureItem.getOverflow());
-			styleSB.append(StringPool.SEMICOLON);
-		}
-
-		if (Validator.isNotNull(styledLayoutStructureItem.getTextColor())) {
-			styleSB.append("color: ");
-			styleSB.append(styledLayoutStructureItem.getTextColor());
-			styleSB.append(StringPool.SEMICOLON);
+			styleSB.append(containerLayoutStructureItem.getOpacity() / 100.0);
+			styleSB.append(";");
 		}
 
 		return styleSB.toString();
@@ -626,44 +503,41 @@ public class RenderFragmentLayoutDisplayContext {
 		String mappedField = rowConfigJSONObject.getString("mappedField");
 
 		if (Validator.isNotNull(mappedField)) {
-			Object infoItem = _httpServletRequest.getAttribute(
-				InfoDisplayWebKeys.INFO_ITEM);
+			InfoDisplayObjectProvider<Object> infoDisplayObjectProvider =
+				(InfoDisplayObjectProvider<Object>)
+					_httpServletRequest.getAttribute(
+						AssetDisplayPageWebKeys.INFO_DISPLAY_OBJECT_PROVIDER);
 
-			InfoItemDetails infoItemDetails =
-				(InfoItemDetails)_httpServletRequest.getAttribute(
-					InfoDisplayWebKeys.INFO_ITEM_DETAILS);
+			if ((_infoDisplayContributorTracker != null) &&
+				(infoDisplayObjectProvider != null)) {
 
-			if ((infoItem != null) && (infoItemDetails != null)) {
-				InfoItemFieldValuesProvider<Object>
-					infoItemFieldValuesProvider =
-						_infoItemServiceTracker.getFirstInfoItemService(
-							InfoItemFieldValuesProvider.class,
-							infoItemDetails.getClassName());
+				InfoDisplayContributor<Object> infoDisplayContributor =
+					(InfoDisplayContributor<Object>)
+						_infoDisplayContributorTracker.
+							getInfoDisplayContributor(
+								PortalUtil.getClassName(
+									infoDisplayObjectProvider.
+										getClassNameId()));
 
-				if (infoItemFieldValuesProvider != null) {
-					InfoFieldValue<Object> infoItemFieldValue =
-						infoItemFieldValuesProvider.getInfoItemFieldValue(
-							infoItem, mappedField);
+				if (infoDisplayContributor != null) {
+					Object object =
+						infoDisplayContributor.getInfoDisplayFieldValue(
+							infoDisplayObjectProvider.getDisplayObject(),
+							mappedField, LocaleUtil.getDefault());
 
-					if (infoItemFieldValue != null) {
-						Object object = infoItemFieldValue.getValue(
-							LocaleUtil.getDefault());
+					if (object instanceof JSONObject) {
+						JSONObject fieldValueJSONObject = (JSONObject)object;
 
-						if (object instanceof JSONObject) {
-							JSONObject fieldValueJSONObject =
-								(JSONObject)object;
+						return fieldValueJSONObject.getString(
+							"url", StringPool.BLANK);
+					}
+					else if (object instanceof String) {
+						return (String)object;
+					}
+					else if (object instanceof WebImage) {
+						WebImage webImage = (WebImage)object;
 
-							return fieldValueJSONObject.getString(
-								"url", StringPool.BLANK);
-						}
-						else if (object instanceof String) {
-							return (String)object;
-						}
-						else if (object instanceof WebImage) {
-							WebImage webImage = (WebImage)object;
-
-							return webImage.getUrl();
-						}
+						return webImage.getUrl();
 					}
 				}
 			}

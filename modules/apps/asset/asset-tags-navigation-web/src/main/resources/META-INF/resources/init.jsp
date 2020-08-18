@@ -36,7 +36,8 @@ page import="com.liferay.portal.kernel.util.ListUtil" %><%@
 page import="com.liferay.portal.kernel.util.PrefsParamUtil" %>
 
 <%@ page import="java.util.ArrayList" %><%@
-page import="java.util.List" %>
+page import="java.util.List" %><%@
+page import="java.util.Map" %>
 
 <liferay-theme:defineObjects />
 

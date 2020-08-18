@@ -28,14 +28,12 @@ public class DuplicateEntryEmailAddressException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateEntryEmailAddressException(
-		String msg, Throwable throwable) {
-
-		super(msg, throwable);
+	public DuplicateEntryEmailAddressException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public DuplicateEntryEmailAddressException(Throwable throwable) {
-		super(throwable);
+	public DuplicateEntryEmailAddressException(Throwable cause) {
+		super(cause);
 	}
 
 }

@@ -779,7 +779,7 @@ public abstract class BaseDataLayoutResourceTestCase {
 		}
 	}
 
-	protected void assertValid(DataLayout dataLayout) throws Exception {
+	protected void assertValid(DataLayout dataLayout) {
 		boolean valid = true;
 
 		if (dataLayout.getDateCreated() == null) {

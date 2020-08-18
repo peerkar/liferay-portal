@@ -19,7 +19,6 @@ import {
 	generateName,
 	getRepeatedIndex,
 } from 'dynamic-data-mapping-form-renderer';
-import {openToast} from 'frontend-js-web';
 import Component from 'metal-jsx';
 import {Config} from 'metal-state';
 
@@ -70,15 +69,7 @@ class LayoutProvider extends Component {
 	}
 
 	dispatch(event, payload) {
-		try {
-			this.emit(event, payload);
-		}
-		catch (e) {
-			openToast({
-				message: e.message,
-				type: 'danger',
-			});
-		}
+		this.emit(event, payload);
 	}
 
 	getChildContext() {
@@ -174,7 +165,7 @@ class LayoutProvider extends Component {
 
 		pages = visitor.mapFields(
 			(field) => {
-				const {settingsContext} = field;
+				const {options, settingsContext} = field;
 
 				const newSettingsContext = {
 					...settingsContext,
@@ -193,6 +184,7 @@ class LayoutProvider extends Component {
 						instanceId: field.instanceId || generateInstanceId(),
 						repeatedIndex: getRepeatedIndex(field.name),
 					}),
+					options,
 					selected: focusedField.fieldName === field.fieldName,
 					settingsContext: newSettingsContext,
 				};

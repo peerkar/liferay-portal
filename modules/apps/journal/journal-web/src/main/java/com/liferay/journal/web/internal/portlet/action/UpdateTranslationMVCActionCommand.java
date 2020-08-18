@@ -17,11 +17,10 @@ package com.liferay.journal.web.internal.portlet.action;
 import com.liferay.info.field.InfoField;
 import com.liferay.info.field.InfoFieldValue;
 import com.liferay.info.form.InfoForm;
+import com.liferay.info.item.InfoItemClassPKReference;
 import com.liferay.info.item.InfoItemFieldValues;
-import com.liferay.info.item.InfoItemReference;
 import com.liferay.info.item.InfoItemServiceTracker;
 import com.liferay.info.item.provider.InfoItemFormProvider;
-import com.liferay.info.item.updater.InfoItemFieldValuesUpdater;
 import com.liferay.info.localized.InfoLocalizedValue;
 import com.liferay.journal.constants.JournalPortletKeys;
 import com.liferay.journal.model.JournalArticle;
@@ -36,7 +35,10 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PropertiesParamUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
-import com.liferay.translation.service.TranslationEntryService;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.translation.info.item.updater.InfoItemFieldValuesUpdater;
+import com.liferay.translation.model.TranslationEntry;
+import com.liferay.translation.service.TranslationEntryLocalService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,13 +70,15 @@ public class UpdateTranslationMVCActionCommand extends BaseMVCActionCommand {
 		try {
 			JournalArticle article = ActionUtil.getArticle(actionRequest);
 
-			InfoItemReference infoItemReference = new InfoItemReference(
-				JournalArticle.class.getName(), article.getResourcePrimKey());
+			InfoItemClassPKReference infoItemClassPKReference =
+				new InfoItemClassPKReference(
+					JournalArticle.class.getName(),
+					article.getResourcePrimKey());
 
 			InfoItemFieldValues infoItemFieldValues =
 				InfoItemFieldValues.builder(
-				).infoItemReference(
-					infoItemReference
+				).infoItemClassPKReference(
+					infoItemClassPKReference
 				).infoFieldValues(
 					_getInfoFieldValues(actionRequest, article)
 				).build();
@@ -82,9 +86,29 @@ public class UpdateTranslationMVCActionCommand extends BaseMVCActionCommand {
 			ServiceContext serviceContext = ServiceContextFactory.getInstance(
 				actionRequest);
 
-			_translationEntryService.addOrUpdateTranslationEntry(
-				article.getGroupId(), _getTargetLanguageId(actionRequest),
-				infoItemReference, infoItemFieldValues, serviceContext);
+			if (serviceContext.getWorkflowAction() ==
+					WorkflowConstants.ACTION_SAVE_DRAFT) {
+
+				_translationEntryLocalService.addOrUpdateTranslationEntry(
+					article.getGroupId(), _getTargetLanguageId(actionRequest),
+					infoItemClassPKReference, infoItemFieldValues,
+					serviceContext);
+			}
+			else {
+				_journalArticleInfoItemFieldValuesUpdater.
+					updateFromInfoItemFieldValues(article, infoItemFieldValues);
+
+				TranslationEntry translationEntry =
+					_translationEntryLocalService.fetchTranslationEntry(
+						infoItemClassPKReference.getClassName(),
+						infoItemClassPKReference.getClassPK(),
+						_getTargetLanguageId(actionRequest));
+
+				if (translationEntry != null) {
+					_translationEntryLocalService.deleteTranslationEntry(
+						translationEntry);
+				}
+			}
 		}
 		catch (Exception exception) {
 			_log.error(exception, exception);
@@ -152,6 +176,6 @@ public class UpdateTranslationMVCActionCommand extends BaseMVCActionCommand {
 		_journalArticleInfoItemFieldValuesUpdater;
 
 	@Reference
-	private TranslationEntryService _translationEntryService;
+	private TranslationEntryLocalService _translationEntryLocalService;
 
 }

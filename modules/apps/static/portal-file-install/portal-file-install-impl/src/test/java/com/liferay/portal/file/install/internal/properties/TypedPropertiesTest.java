@@ -15,7 +15,6 @@
 package com.liferay.portal.file.install.internal.properties;
 
 import com.liferay.petra.string.StringBundler;
-import com.liferay.petra.string.StringPool;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -35,7 +34,7 @@ public class TypedPropertiesTest {
 
 	@Test
 	public void testClear() {
-		TypedProperties typedProperties = new TypedProperties();
+		TypedProperties typedProperties = new TypedProperties(null);
 
 		typedProperties.put("testKey1", 1);
 		typedProperties.put("testKey2", 2);
@@ -49,7 +48,7 @@ public class TypedPropertiesTest {
 
 	@Test
 	public void testIterator() {
-		TypedProperties typedProperties = new TypedProperties();
+		TypedProperties typedProperties = new TypedProperties(null);
 
 		typedProperties.put("testKey", 1);
 
@@ -78,8 +77,21 @@ public class TypedPropertiesTest {
 	}
 
 	@Test
-	public void testLoadAndStoreSubstitution() throws IOException {
-		TypedProperties typedProperties = new TypedProperties();
+	public void testLoadNontyped() throws IOException {
+		TypedProperties typedProperties = new TypedProperties(null);
+
+		try (StringReader stringReader = new StringReader(
+				"testKey = \"testvalue\"")) {
+
+			typedProperties.load(stringReader);
+		}
+
+		Assert.assertEquals("testvalue", typedProperties.get("testKey"));
+	}
+
+	@Test
+	public void testLoadSubstitution() throws IOException {
+		TypedProperties typedProperties = new TypedProperties(null);
 
 		String systemKey = "testSystemKey";
 
@@ -89,9 +101,9 @@ public class TypedPropertiesTest {
 
 		System.setProperty(systemKey, systemValue);
 
-		String line = StringBundler.concat("testKey = \"${", systemKey, "}\"");
+		try (StringReader stringReader = new StringReader(
+				StringBundler.concat("testKey = \"${", systemKey, "}\""))) {
 
-		try (StringReader stringReader = new StringReader(line)) {
 			typedProperties.load(stringReader);
 
 			Assert.assertEquals(
@@ -105,31 +117,11 @@ public class TypedPropertiesTest {
 				System.setProperty(systemKey, oldSystemValue);
 			}
 		}
-
-		try (StringWriter stringWriter = new StringWriter()) {
-			typedProperties.save(stringWriter);
-
-			Assert.assertEquals(
-				line.concat(StringPool.NEW_LINE), stringWriter.toString());
-		}
-	}
-
-	@Test
-	public void testLoadNontyped() throws IOException {
-		TypedProperties typedProperties = new TypedProperties();
-
-		try (StringReader stringReader = new StringReader(
-				"testKey = \"testvalue\"")) {
-
-			typedProperties.load(stringReader);
-		}
-
-		Assert.assertEquals("testvalue", typedProperties.get("testKey"));
 	}
 
 	@Test
 	public void testLoadTyped() throws IOException {
-		TypedProperties typedProperties = new TypedProperties();
+		TypedProperties typedProperties = new TypedProperties(null);
 
 		try (StringReader stringReader = new StringReader("testKey = I\"1\"")) {
 			typedProperties.load(stringReader);
@@ -140,7 +132,7 @@ public class TypedPropertiesTest {
 
 	@Test
 	public void testRemove() {
-		TypedProperties typedProperties = new TypedProperties();
+		TypedProperties typedProperties = new TypedProperties(null);
 
 		typedProperties.put("testKey", "testValue");
 
@@ -153,7 +145,7 @@ public class TypedPropertiesTest {
 
 	@Test
 	public void testStoreNontyped() throws IOException {
-		TypedProperties typedProperties = new TypedProperties();
+		TypedProperties typedProperties = new TypedProperties(null);
 
 		try (StringReader stringReader = new StringReader(
 				"testKey = \"testValue\"")) {
@@ -171,7 +163,7 @@ public class TypedPropertiesTest {
 
 	@Test
 	public void testStoreTyped() throws IOException {
-		TypedProperties typedProperties = new TypedProperties();
+		TypedProperties typedProperties = new TypedProperties(null);
 
 		try (StringReader stringReader = new StringReader("testKey = I\"1\"")) {
 			typedProperties.load(stringReader);
@@ -186,7 +178,7 @@ public class TypedPropertiesTest {
 
 	@Test
 	public void testWriteNontyped() {
-		TypedProperties typedProperties = new TypedProperties();
+		TypedProperties typedProperties = new TypedProperties(null);
 
 		typedProperties.put("testKey", "testValue");
 
@@ -195,7 +187,7 @@ public class TypedPropertiesTest {
 
 	@Test
 	public void testWriteTyped() {
-		TypedProperties typedProperties = new TypedProperties();
+		TypedProperties typedProperties = new TypedProperties(null);
 
 		typedProperties.put("testKey", 1);
 

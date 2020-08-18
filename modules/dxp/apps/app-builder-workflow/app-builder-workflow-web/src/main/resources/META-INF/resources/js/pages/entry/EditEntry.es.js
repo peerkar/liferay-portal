@@ -12,7 +12,6 @@
 import ClayButton from '@clayui/button';
 import {AppContext} from 'app-builder-web/js/AppContext.es';
 import {ControlMenuBase} from 'app-builder-web/js/components/control-menu/ControlMenu.es';
-import {Loading} from 'app-builder-web/js/components/loading/Loading.es';
 import {getItem} from 'app-builder-web/js/utils/client.es';
 import {successToast} from 'app-builder-web/js/utils/toast.es';
 import {createResourceURL, fetch} from 'frontend-js-web';
@@ -81,7 +80,6 @@ export default function EditEntry({dataRecordId, redirect}) {
 
 	const {appWorkflowTransitions: [transition = {}] = []} = initialState;
 
-	const [isLoading, setLoading] = useState(true);
 	const [transitioning, setTransitioning] = useState(false);
 	const [workflowInfo, setWorkflowInfo] = useState();
 
@@ -169,38 +167,6 @@ export default function EditEntry({dataRecordId, redirect}) {
 		)
 	);
 
-	useEffect(() => {
-		setLoading(true);
-
-		if (appWorkflowDefinitionId) {
-			if (isEdit) {
-				getItem(
-					`/o/portal-workflow-metrics/v1.0/processes/${appWorkflowDefinitionId}/instances`,
-					{classPKs: [dataRecordId]}
-				).then(({items, totalCount}) => {
-					setLoading(false);
-
-					if (totalCount > 0) {
-						setWorkflowInfo({
-							...items.pop(),
-							appVersion,
-							tasks: appWorkflowTasks,
-						});
-					}
-				});
-			}
-			else {
-				setLoading(false);
-			}
-		}
-	}, [
-		appVersion,
-		appWorkflowDefinitionId,
-		appWorkflowTasks,
-		dataRecordId,
-		isEdit,
-	]);
-
 	if (workflowInfo) {
 		const {
 			assignees = [],
@@ -252,6 +218,29 @@ export default function EditEntry({dataRecordId, redirect}) {
 		);
 	}
 
+	useEffect(() => {
+		if (appWorkflowDefinitionId && isEdit) {
+			getItem(
+				`/o/portal-workflow-metrics/v1.0/processes/${appWorkflowDefinitionId}/instances`,
+				{classPKs: [dataRecordId]}
+			).then(({items, totalCount}) => {
+				if (totalCount > 0) {
+					setWorkflowInfo({
+						...items.pop(),
+						appVersion,
+						tasks: appWorkflowTasks,
+					});
+				}
+			});
+		}
+	}, [
+		appVersion,
+		appWorkflowDefinitionId,
+		appWorkflowTasks,
+		dataRecordId,
+		isEdit,
+	]);
+
 	return (
 		<>
 			<ControlMenuBase
@@ -260,21 +249,19 @@ export default function EditEntry({dataRecordId, redirect}) {
 				url={location.href}
 			/>
 
-			<Loading isLoading={isLoading}>
-				{workflowInfo && createWorkflowInfoPortal(workflowInfo)}
+			{workflowInfo && createWorkflowInfoPortal(workflowInfo)}
 
-				<ClayButton.Group className="app-builder-form-buttons" spaced>
-					{actionButtons}
+			<ClayButton.Group className="app-builder-form-buttons" spaced>
+				{actionButtons}
 
-					<ClayButton
-						disabled={transitioning}
-						displayType="secondary"
-						onClick={onCancel}
-					>
-						{Liferay.Language.get('cancel')}
-					</ClayButton>
-				</ClayButton.Group>
-			</Loading>
+				<ClayButton
+					disabled={transitioning}
+					displayType="secondary"
+					onClick={onCancel}
+				>
+					{Liferay.Language.get('cancel')}
+				</ClayButton>
+			</ClayButton.Group>
 		</>
 	);
 }

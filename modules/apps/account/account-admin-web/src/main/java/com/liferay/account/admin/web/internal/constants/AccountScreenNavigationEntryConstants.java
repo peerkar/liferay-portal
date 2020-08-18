@@ -32,6 +32,8 @@ public class AccountScreenNavigationEntryConstants {
 
 	public static final String CATEGORY_KEY_GENERAL = "general";
 
+	public static final String CATEGORY_KEY_INFORMATION = "information";
+
 	public static final String CATEGORY_KEY_ORGANIZATIONS = "organizations";
 
 	public static final String CATEGORY_KEY_PREFERENCES = "preferences";

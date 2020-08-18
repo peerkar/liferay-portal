@@ -112,16 +112,6 @@ public class PageSectionDefinitionSerDes {
 			sb.append(String.valueOf(pageSectionDefinition.getLayout()));
 		}
 
-		if (pageSectionDefinition.getStyles() != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"styles\": ");
-
-			sb.append(_toJSON(pageSectionDefinition.getStyles()));
-		}
-
 		sb.append("}");
 
 		return sb.toString();
@@ -188,14 +178,6 @@ public class PageSectionDefinitionSerDes {
 				"layout", String.valueOf(pageSectionDefinition.getLayout()));
 		}
 
-		if (pageSectionDefinition.getStyles() == null) {
-			map.put("styles", null);
-		}
-		else {
-			map.put(
-				"styles", String.valueOf(pageSectionDefinition.getStyles()));
-		}
-
 		return map;
 	}
 
@@ -249,13 +231,6 @@ public class PageSectionDefinitionSerDes {
 				if (jsonParserFieldValue != null) {
 					pageSectionDefinition.setLayout(
 						LayoutSerDes.toDTO((String)jsonParserFieldValue));
-				}
-			}
-			else if (Objects.equals(jsonParserFieldName, "styles")) {
-				if (jsonParserFieldValue != null) {
-					pageSectionDefinition.setStyles(
-						(Map)PageSectionDefinitionSerDes.toMap(
-							(String)jsonParserFieldValue));
 				}
 			}
 			else {

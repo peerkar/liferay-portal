@@ -22,7 +22,6 @@ import com.liferay.exportimport.kernel.lar.StagedModelType;
 import com.liferay.layout.page.template.model.LayoutPageTemplateCollection;
 import com.liferay.layout.page.template.service.LayoutPageTemplateCollectionLocalService;
 import com.liferay.layout.page.template.service.persistence.LayoutPageTemplateCollectionPersistence;
-import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.petra.sql.dsl.query.DSLQuery;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.dao.db.DB;
@@ -44,9 +43,7 @@ import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalServiceImpl;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
-import com.liferay.portal.kernel.service.change.tracking.CTService;
 import com.liferay.portal.kernel.service.persistence.BasePersistence;
-import com.liferay.portal.kernel.service.persistence.change.tracking.CTPersistence;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PortalUtil;
@@ -557,8 +554,7 @@ public abstract class LayoutPageTemplateCollectionLocalServiceBaseImpl
 	public Class<?>[] getAopInterfaces() {
 		return new Class<?>[] {
 			LayoutPageTemplateCollectionLocalService.class,
-			IdentifiableOSGiService.class, CTService.class,
-			PersistedModelLocalService.class
+			IdentifiableOSGiService.class, PersistedModelLocalService.class
 		};
 	}
 
@@ -578,24 +574,8 @@ public abstract class LayoutPageTemplateCollectionLocalServiceBaseImpl
 		return LayoutPageTemplateCollectionLocalService.class.getName();
 	}
 
-	@Override
-	public CTPersistence<LayoutPageTemplateCollection> getCTPersistence() {
-		return layoutPageTemplateCollectionPersistence;
-	}
-
-	@Override
-	public Class<LayoutPageTemplateCollection> getModelClass() {
+	protected Class<?> getModelClass() {
 		return LayoutPageTemplateCollection.class;
-	}
-
-	@Override
-	public <R, E extends Throwable> R updateWithUnsafeFunction(
-			UnsafeFunction<CTPersistence<LayoutPageTemplateCollection>, R, E>
-				updateUnsafeFunction)
-		throws E {
-
-		return updateUnsafeFunction.apply(
-			layoutPageTemplateCollectionPersistence);
 	}
 
 	protected String getModelClassName() {

@@ -45,9 +45,9 @@ public class ExportImportContentValidationException extends PortalException {
 	}
 
 	public ExportImportContentValidationException(
-		String className, Throwable throwable) {
+		String className, Throwable cause) {
 
-		super(throwable);
+		super(cause);
 
 		_className = className;
 	}

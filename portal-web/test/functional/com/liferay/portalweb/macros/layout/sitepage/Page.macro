@@ -190,9 +190,13 @@ definition {
 
 		SelectFrame(locator1 = "IFrame#MODAL_BODY");
 
-		LexiconCard.viewCardTitle(card = "${themeName}");
+		var key_cardText = "${themeName}";
 
-		LexiconCard.clickCardTitle(card = "${themeName}");
+		AssertTextPresent(
+			locator1 = "Card#SPECIFIC_LARGE_TEXT",
+			value1 = "${key_cardText}");
+
+		Click(locator1 = "Card#SPECIFIC_LARGE_TEXT");
 
 		SelectFrameTop(value1 = "relative=top");
 
@@ -216,9 +220,9 @@ definition {
 	macro changeSinglePageTheme {
 		ContentPages.clickPencil();
 
-		PageEditor.gotoTab(tabName = "Page Design Options");
-
-		Click(locator1 = "PageEditor#MORE_LINK");
+		Click.clickNoMouseOver(
+			key_tabName = "${tabName}",
+			locator1 = "PageEditor#FRAGMENT_SIDEBAR_TAB_BUTTON");
 
 		Click(locator1 = "SitePagesEditPage#REGULAR_UNIQUE_LOOK_AND_FEEL");
 
@@ -226,9 +230,13 @@ definition {
 
 		SelectFrame(locator1 = "IFrame#MODAL_BODY");
 
-		LexiconCard.viewCardTitle(card = "${themeName}");
+		var key_cardText = "${themeName}";
 
-		LexiconCard.clickCardTitle(card = "${themeName}");
+		AssertTextPresent(
+			locator1 = "Card#SPECIFIC_LARGE_TEXT",
+			value1 = "${key_cardText}");
+
+		Click(locator1 = "Card#SPECIFIC_LARGE_TEXT");
 
 		SelectFrameTop(value1 = "relative=top");
 
@@ -1010,11 +1018,15 @@ definition {
 	}
 
 	macro viewPageTemplateTypeNotPresent {
-		LexiconCard.viewCardNotPresent(card = "${pageTemplateName}");
+		AssertElementNotPresent(
+			key_cardText = "${pageTemplateName}",
+			locator1 = "Card#SPECIFIC_LARGE_TEXT");
 	}
 
 	macro viewPageTemplateTypePresent {
-		LexiconCard.viewCardPresent(card = "${pageTemplateName}");
+		AssertElementPresent(
+			key_cardText = "${pageTemplateName}",
+			locator1 = "Card#SPECIFIC_LARGE_TEXT");
 	}
 
 	macro viewPanelPortletListCP {

@@ -192,12 +192,12 @@ public class NettyFabricAgentStub implements FabricAgent {
 		catch (CancellationException cancellationException) {
 			nettyFabricWorkerStub.setCancel();
 		}
-		catch (Throwable throwable) {
-			if (throwable instanceof ExecutionException) {
-				throwable = throwable.getCause();
+		catch (Throwable t) {
+			if (t instanceof ExecutionException) {
+				t = t.getCause();
 			}
 
-			nettyFabricWorkerStub.setException(throwable);
+			nettyFabricWorkerStub.setException(t);
 		}
 
 		return nettyFabricWorkerStub;

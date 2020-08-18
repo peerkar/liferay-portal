@@ -28,12 +28,12 @@ public class DuplicateCalendarResourceException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateCalendarResourceException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public DuplicateCalendarResourceException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public DuplicateCalendarResourceException(Throwable throwable) {
-		super(throwable);
+	public DuplicateCalendarResourceException(Throwable cause) {
+		super(cause);
 	}
 
 }

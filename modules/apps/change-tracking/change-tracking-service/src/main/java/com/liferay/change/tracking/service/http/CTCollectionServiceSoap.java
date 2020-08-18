@@ -57,10 +57,8 @@ import java.rmi.RemoteException;
  *
  * @author Brian Wing Shun Chan
  * @see CTCollectionServiceHttp
- * @deprecated As of Athanasius (7.3.x), with no direct replacement
  * @generated
  */
-@Deprecated
 public class CTCollectionServiceSoap {
 
 	public static com.liferay.change.tracking.model.CTCollectionSoap
@@ -110,21 +108,6 @@ public class CTCollectionServiceSoap {
 
 			return com.liferay.change.tracking.model.CTCollectionSoap.
 				toSoapModel(returnValue);
-		}
-		catch (Exception exception) {
-			_log.error(exception, exception);
-
-			throw new RemoteException(exception.getMessage());
-		}
-	}
-
-	public static void discardCTEntries(
-			long ctCollectionId, long modelClassNameId, long modelClassPK)
-		throws RemoteException {
-
-		try {
-			CTCollectionServiceUtil.discardCTEntries(
-				ctCollectionId, modelClassNameId, modelClassPK);
 		}
 		catch (Exception exception) {
 			_log.error(exception, exception);

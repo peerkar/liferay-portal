@@ -35,12 +35,12 @@ public class SystemException extends NestableRuntimeException {
 		super(msg);
 	}
 
-	public SystemException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public SystemException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public SystemException(Throwable throwable) {
-		super(throwable);
+	public SystemException(Throwable cause) {
+		super(cause);
 	}
 
 }

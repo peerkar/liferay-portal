@@ -56,6 +56,7 @@ export default function AddCommentForm({fragmentEntryLinkId}) {
 					message: Liferay.Language.get(
 						'the-comment-could-not-be-saved'
 					),
+					title: Liferay.Language.get('error'),
 					type: 'danger',
 				});
 

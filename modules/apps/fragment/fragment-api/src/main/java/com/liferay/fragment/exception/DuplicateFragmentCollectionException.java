@@ -28,14 +28,12 @@ public class DuplicateFragmentCollectionException extends PortalException {
 		super(msg);
 	}
 
-	public DuplicateFragmentCollectionException(
-		String msg, Throwable throwable) {
-
-		super(msg, throwable);
+	public DuplicateFragmentCollectionException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public DuplicateFragmentCollectionException(Throwable throwable) {
-		super(throwable);
+	public DuplicateFragmentCollectionException(Throwable cause) {
+		super(cause);
 	}
 
 }

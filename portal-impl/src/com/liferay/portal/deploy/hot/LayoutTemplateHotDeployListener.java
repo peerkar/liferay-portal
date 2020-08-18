@@ -45,10 +45,9 @@ public class LayoutTemplateHotDeployListener extends BaseHotDeployListener {
 		try {
 			doInvokeDeploy(hotDeployEvent);
 		}
-		catch (Throwable throwable) {
+		catch (Throwable t) {
 			throwHotDeployException(
-				hotDeployEvent, "Error registering layout templates for ",
-				throwable);
+				hotDeployEvent, "Error registering layout templates for ", t);
 		}
 	}
 
@@ -59,10 +58,9 @@ public class LayoutTemplateHotDeployListener extends BaseHotDeployListener {
 		try {
 			doInvokeUndeploy(hotDeployEvent);
 		}
-		catch (Throwable throwable) {
+		catch (Throwable t) {
 			throwHotDeployException(
-				hotDeployEvent, "Error unregistering layout templates for ",
-				throwable);
+				hotDeployEvent, "Error unregistering layout templates for ", t);
 		}
 	}
 

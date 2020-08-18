@@ -551,8 +551,8 @@ public class PoshiRunnerExecutor {
 
 			runFunctionCommandElement(commandElement);
 		}
-		catch (Throwable throwable) {
-			String warningMessage = _getWarningFromThrowable(throwable);
+		catch (Throwable t) {
+			String warningMessage = _getWarningFromThrowable(t);
 
 			if (warningMessage != null) {
 				_functionWarningMessage = warningMessage;
@@ -564,7 +564,7 @@ public class PoshiRunnerExecutor {
 					PoshiRunnerStackTraceUtil.setCurrentElement(executeElement);
 
 					SummaryLogger.failSummary(
-						_functionExecuteElement, throwable.getMessage(),
+						_functionExecuteElement, t.getMessage(),
 						_poshiLogger.getDetailsLinkId());
 
 					_poshiLogger.failCommand(_functionExecuteElement);
@@ -573,7 +573,7 @@ public class PoshiRunnerExecutor {
 					_functionWarningMessage = null;
 				}
 
-				throw throwable;
+				throw t;
 			}
 		}
 
@@ -850,10 +850,10 @@ public class PoshiRunnerExecutor {
 			_poshiLogger.logExternalMethodCommand(
 				executeElement, args, returnValue);
 		}
-		catch (Throwable throwable) {
+		catch (Throwable t) {
 			_poshiLogger.updateStatus(executeElement, "fail");
 
-			throw throwable;
+			throw t;
 		}
 
 		_poshiLogger.updateStatus(executeElement, "pass");
@@ -1370,10 +1370,10 @@ public class PoshiRunnerExecutor {
 			return throwable.getMessage();
 		}
 
-		Throwable causeThrowable = throwable.getCause();
+		Throwable cause = throwable.getCause();
 
-		if (causeThrowable != null) {
-			return _getWarningFromThrowable(causeThrowable);
+		if (cause != null) {
+			return _getWarningFromThrowable(cause);
 		}
 
 		return null;

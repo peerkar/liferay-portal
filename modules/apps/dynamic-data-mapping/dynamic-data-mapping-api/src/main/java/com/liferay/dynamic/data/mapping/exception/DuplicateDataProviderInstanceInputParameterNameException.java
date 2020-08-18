@@ -32,15 +32,15 @@ public class DuplicateDataProviderInstanceInputParameterNameException
 	}
 
 	public DuplicateDataProviderInstanceInputParameterNameException(
-		String msg, Throwable throwable) {
+		String msg, Throwable cause) {
 
-		super(msg, throwable);
+		super(msg, cause);
 	}
 
 	public DuplicateDataProviderInstanceInputParameterNameException(
-		Throwable throwable) {
+		Throwable cause) {
 
-		super(throwable);
+		super(cause);
 	}
 
 }

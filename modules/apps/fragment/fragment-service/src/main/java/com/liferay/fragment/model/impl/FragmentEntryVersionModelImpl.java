@@ -70,7 +70,6 @@ public class FragmentEntryVersionModelImpl
 	public static final String TABLE_NAME = "FragmentEntryVersion";
 
 	public static final Object[][] TABLE_COLUMNS = {
-		{"mvccVersion", Types.BIGINT}, {"ctCollectionId", Types.BIGINT},
 		{"fragmentEntryVersionId", Types.BIGINT}, {"version", Types.INTEGER},
 		{"uuid_", Types.VARCHAR}, {"fragmentEntryId", Types.BIGINT},
 		{"groupId", Types.BIGINT}, {"companyId", Types.BIGINT},
@@ -90,8 +89,6 @@ public class FragmentEntryVersionModelImpl
 		new HashMap<String, Integer>();
 
 	static {
-		TABLE_COLUMNS_MAP.put("mvccVersion", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("ctCollectionId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("fragmentEntryVersionId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("version", Types.INTEGER);
 		TABLE_COLUMNS_MAP.put("uuid_", Types.VARCHAR);
@@ -121,7 +118,7 @@ public class FragmentEntryVersionModelImpl
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table FragmentEntryVersion (mvccVersion LONG default 0 not null,ctCollectionId LONG default 0 not null,fragmentEntryVersionId LONG not null,version INTEGER,uuid_ VARCHAR(75) null,fragmentEntryId LONG,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,fragmentCollectionId LONG,fragmentEntryKey VARCHAR(75) null,name VARCHAR(75) null,css TEXT null,html TEXT null,js TEXT null,cacheable BOOLEAN,configuration TEXT null,previewFileEntryId LONG,readOnly BOOLEAN,type_ INTEGER,lastPublishDate DATE null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,primary key (fragmentEntryVersionId, ctCollectionId))";
+		"create table FragmentEntryVersion (fragmentEntryVersionId LONG not null primary key,version INTEGER,uuid_ VARCHAR(75) null,fragmentEntryId LONG,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,fragmentCollectionId LONG,fragmentEntryKey VARCHAR(75) null,name VARCHAR(75) null,css TEXT null,html TEXT null,js TEXT null,cacheable BOOLEAN,configuration TEXT null,previewFileEntryId LONG,readOnly BOOLEAN,type_ INTEGER,lastPublishDate DATE null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null)";
 
 	public static final String TABLE_SQL_DROP =
 		"drop table FragmentEntryVersion";
@@ -301,18 +298,6 @@ public class FragmentEntryVersionModelImpl
 					<String, BiConsumer<FragmentEntryVersion, ?>>();
 
 		attributeGetterFunctions.put(
-			"mvccVersion", FragmentEntryVersion::getMvccVersion);
-		attributeSetterBiConsumers.put(
-			"mvccVersion",
-			(BiConsumer<FragmentEntryVersion, Long>)
-				FragmentEntryVersion::setMvccVersion);
-		attributeGetterFunctions.put(
-			"ctCollectionId", FragmentEntryVersion::getCtCollectionId);
-		attributeSetterBiConsumers.put(
-			"ctCollectionId",
-			(BiConsumer<FragmentEntryVersion, Long>)
-				FragmentEntryVersion::setCtCollectionId);
-		attributeGetterFunctions.put(
 			"fragmentEntryVersionId",
 			FragmentEntryVersion::getFragmentEntryVersionId);
 		attributeSetterBiConsumers.put(
@@ -476,7 +461,6 @@ public class FragmentEntryVersionModelImpl
 
 	@Override
 	public void populateVersionedModel(FragmentEntry fragmentEntry) {
-		fragmentEntry.setCtCollectionId(getCtCollectionId());
 		fragmentEntry.setUuid(getUuid());
 		fragmentEntry.setGroupId(getGroupId());
 		fragmentEntry.setCompanyId(getCompanyId());
@@ -517,26 +501,6 @@ public class FragmentEntryVersionModelImpl
 		populateVersionedModel(fragmentEntry);
 
 		return fragmentEntry;
-	}
-
-	@Override
-	public long getMvccVersion() {
-		return _mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		_mvccVersion = mvccVersion;
-	}
-
-	@Override
-	public long getCtCollectionId() {
-		return _ctCollectionId;
-	}
-
-	@Override
-	public void setCtCollectionId(long ctCollectionId) {
-		_ctCollectionId = ctCollectionId;
 	}
 
 	@Override
@@ -1124,8 +1088,6 @@ public class FragmentEntryVersionModelImpl
 		FragmentEntryVersionImpl fragmentEntryVersionImpl =
 			new FragmentEntryVersionImpl();
 
-		fragmentEntryVersionImpl.setMvccVersion(getMvccVersion());
-		fragmentEntryVersionImpl.setCtCollectionId(getCtCollectionId());
 		fragmentEntryVersionImpl.setFragmentEntryVersionId(
 			getFragmentEntryVersionId());
 		fragmentEntryVersionImpl.setVersion(getVersion());
@@ -1286,10 +1248,6 @@ public class FragmentEntryVersionModelImpl
 	public CacheModel<FragmentEntryVersion> toCacheModel() {
 		FragmentEntryVersionCacheModel fragmentEntryVersionCacheModel =
 			new FragmentEntryVersionCacheModel();
-
-		fragmentEntryVersionCacheModel.mvccVersion = getMvccVersion();
-
-		fragmentEntryVersionCacheModel.ctCollectionId = getCtCollectionId();
 
 		fragmentEntryVersionCacheModel.fragmentEntryVersionId =
 			getFragmentEntryVersionId();
@@ -1507,8 +1465,6 @@ public class FragmentEntryVersionModelImpl
 
 	}
 
-	private long _mvccVersion;
-	private long _ctCollectionId;
 	private long _fragmentEntryVersionId;
 	private int _version;
 	private int _originalVersion;

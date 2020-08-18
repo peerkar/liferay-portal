@@ -133,11 +133,13 @@ public class JournalArticleAtomCollectionProvider
 			AtomRequestContext atomRequestContext)
 		throws Exception {
 
+		List<JournalArticle> journalArticles = new ArrayList<>();
+
 		long companyId = CompanyThreadLocal.getCompanyId();
 		long groupId = atomRequestContext.getLongParameter("groupId");
 
 		if ((companyId <= 0) || (groupId <= 0)) {
-			return new ArrayList<>();
+			return journalArticles;
 		}
 
 		List<Long> folderIds = Collections.emptyList();

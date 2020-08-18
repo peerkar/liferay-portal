@@ -351,9 +351,8 @@ public class LPKGBundleTrackerCustomizer
 				_recordTrackedBundles(bundle, innerBundleLocations);
 			}
 		}
-		catch (Throwable throwable) {
-			_log.error(
-				"Rollback bundle installation for " + bundles, throwable);
+		catch (Throwable t) {
+			_log.error("Rollback bundle installation for " + bundles, t);
 
 			for (Bundle newBundle : bundles) {
 				try {
@@ -494,12 +493,12 @@ public class LPKGBundleTrackerCustomizer
 			try {
 				_uninstallBundle(prefix, newBundle);
 			}
-			catch (Throwable throwable) {
+			catch (Throwable t) {
 				_log.error(
 					StringBundler.concat(
 						"Unable to uninstall ", newBundle,
 						" in response to uninstallation of ", bundle),
-					throwable);
+					t);
 			}
 		}
 
@@ -735,8 +734,8 @@ public class LPKGBundleTrackerCustomizer
 					trackedBundles.add(installedBundle);
 				}
 			}
-			catch (Throwable throwable) {
-				_log.error("Unable to uninstall LPKG " + bundle, throwable);
+			catch (Throwable t) {
+				_log.error("Unable to uninstall LPKG " + bundle, t);
 
 				return Collections.emptyList();
 			}

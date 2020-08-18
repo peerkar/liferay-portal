@@ -101,7 +101,6 @@ public class IfPoshiElement extends PoshiElement {
 	}
 
 	protected IfPoshiElement() {
-		this(_ELEMENT_NAME);
 	}
 
 	protected IfPoshiElement(Element element) {
@@ -117,10 +116,6 @@ public class IfPoshiElement extends PoshiElement {
 		throws PoshiScriptParserException {
 
 		super("if", parentPoshiElement, poshiScript);
-	}
-
-	protected IfPoshiElement(String name) {
-		super(name);
 	}
 
 	protected IfPoshiElement(String name, Element element) {

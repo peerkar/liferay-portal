@@ -142,13 +142,13 @@ public class DeleteLayoutMVCActionCommand extends BaseMVCActionCommand {
 			_layoutService.deleteLayout(selPlid, serviceContext);
 		}
 		catch (Exception exception) {
-			Throwable throwable = exception.getCause();
+			Throwable cause = exception.getCause();
 
-			if (throwable instanceof
+			if (cause instanceof
 					RequiredSegmentsExperienceException.
 						MustNotDeleteSegmentsExperienceReferencedBySegmentsExperiments) {
 
-				SessionErrors.add(actionRequest, throwable.getClass());
+				SessionErrors.add(actionRequest, cause.getClass());
 			}
 			else {
 				throw exception;

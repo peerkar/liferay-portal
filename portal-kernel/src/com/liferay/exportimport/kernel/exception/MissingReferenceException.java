@@ -36,14 +36,14 @@ public class MissingReferenceException extends PortalException {
 		_missingReferences = null;
 	}
 
-	public MissingReferenceException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public MissingReferenceException(String msg, Throwable cause) {
+		super(msg, cause);
 
 		_missingReferences = null;
 	}
 
-	public MissingReferenceException(Throwable throwable) {
-		super(throwable);
+	public MissingReferenceException(Throwable cause) {
+		super(cause);
 
 		_missingReferences = null;
 	}

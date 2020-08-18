@@ -114,6 +114,7 @@ String version = openSSOConfiguration.version();
 					message: Liferay.Language.get(
 						'an-unexpected-system-error-occurred'
 					),
+					title: Liferay.Language.get('error'),
 					type: 'danger',
 				});
 			});

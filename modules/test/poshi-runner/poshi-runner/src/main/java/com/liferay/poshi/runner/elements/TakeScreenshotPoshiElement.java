@@ -63,7 +63,6 @@ public class TakeScreenshotPoshiElement extends PoshiElement {
 	}
 
 	protected TakeScreenshotPoshiElement() {
-		super(_ELEMENT_NAME);
 	}
 
 	protected TakeScreenshotPoshiElement(Element element) {

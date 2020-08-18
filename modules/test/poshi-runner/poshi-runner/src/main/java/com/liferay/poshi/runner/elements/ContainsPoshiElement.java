@@ -68,7 +68,6 @@ public class ContainsPoshiElement extends PoshiElement {
 	}
 
 	protected ContainsPoshiElement() {
-		super(_ELEMENT_NAME);
 	}
 
 	protected ContainsPoshiElement(Element element) {

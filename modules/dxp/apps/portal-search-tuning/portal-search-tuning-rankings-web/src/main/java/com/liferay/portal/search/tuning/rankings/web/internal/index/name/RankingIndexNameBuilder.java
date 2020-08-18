@@ -19,6 +19,6 @@ package com.liferay.portal.search.tuning.rankings.web.internal.index.name;
  */
 public interface RankingIndexNameBuilder {
 
-	public RankingIndexName getRankingIndexName(long companyId);
+	public RankingIndexName getRankingIndexName(String companyIndexName);
 
 }

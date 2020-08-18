@@ -34,6 +34,7 @@ page import="com.liferay.site.navigation.site.map.web.internal.configuration.Sit
 page import="com.liferay.site.navigation.site.map.web.internal.display.context.SiteNavigationSiteMapDisplayContext" %>
 
 <%@ page import="java.util.List" %><%@
+page import="java.util.Map" %><%@
 page import="java.util.Objects" %>
 
 <liferay-theme:defineObjects />

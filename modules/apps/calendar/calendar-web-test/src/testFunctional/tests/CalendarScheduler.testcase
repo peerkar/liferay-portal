@@ -68,7 +68,7 @@ definition {
 	}
 
 	@description = "This is a use case for LPS-67400."
-	@priority = "3"
+	@priority = "2"
 	test ViewCreatedEventVisibleOnScheduler {
 		CalendarNavigator.gotoAddEvent();
 

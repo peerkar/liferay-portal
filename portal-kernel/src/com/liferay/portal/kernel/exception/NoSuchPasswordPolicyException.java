@@ -26,12 +26,12 @@ public class NoSuchPasswordPolicyException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchPasswordPolicyException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public NoSuchPasswordPolicyException(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 
-	public NoSuchPasswordPolicyException(Throwable throwable) {
-		super(throwable);
+	public NoSuchPasswordPolicyException(Throwable cause) {
+		super(cause);
 	}
 
 }
