@@ -16,12 +16,15 @@ package com.liferay.search.experiences.blueprints.options.web.internal.portlet.s
 
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
 import com.liferay.search.experiences.blueprints.engine.constants.SearchContextAttributeKeys;
 import com.liferay.search.experiences.blueprints.options.web.internal.constants.BlueprintsOptionsPortletKeys;
 import com.liferay.search.experiences.blueprints.options.web.internal.portlet.preferences.BlueprintsOptionsPortletPreferences;
 import com.liferay.search.experiences.blueprints.options.web.internal.portlet.preferences.BlueprintsOptionsPortletPreferencesImpl;
+
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -43,18 +46,28 @@ public class BlueprintsOptionsPortletSharedSearchContributor
 	public void contribute(
 		PortletSharedSearchSettings portletSharedSearchSettings) {
 
-		BlueprintsOptionsPortletPreferences
-			blueprintsOptionsPortletPreferences =
-				new BlueprintsOptionsPortletPreferencesImpl(
-					portletSharedSearchSettings.
-						getPortletPreferencesOptional());
-
 		SearchContext searchContext =
 			portletSharedSearchSettings.getSearchContext();
 
-		searchContext.setAttribute(
-			SearchContextAttributeKeys.BLUEPRINT_ID,
-			blueprintsOptionsPortletPreferences.getBlueprintIdString());
+		String blueprintId = (String)searchContext.getAttribute(
+			SearchContextAttributeKeys.BLUEPRINT_ID);
+
+		if (Validator.isNull(blueprintId)) {
+			BlueprintsOptionsPortletPreferences
+				blueprintsOptionsPortletPreferences =
+					new BlueprintsOptionsPortletPreferencesImpl(
+						portletSharedSearchSettings.
+							getPortletPreferencesOptional());
+
+			String blueprintIdPreference =
+				blueprintsOptionsPortletPreferences.getBlueprintIdString();
+
+			if (!Objects.equals(blueprintIdPreference, "0")) {
+				searchContext.setAttribute(
+					SearchContextAttributeKeys.BLUEPRINT_ID,
+					blueprintIdPreference);
+			}
+		}
 
 		HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(
 			portletSharedSearchSettings.getRenderRequest());
