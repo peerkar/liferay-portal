@@ -39,18 +39,20 @@ import org.osgi.service.component.annotations.Component;
 public class IntegerArraySXPParameterBuilder implements SXPParameterBuilder {
 
 	@Override
-	public Optional<SXPParameter> build(JSONObject jsonObject, 
-			SearchRequestBuilder searchRequestBuilder) {
+	public Optional<SXPParameter> build(
+		JSONObject jsonObject, SearchRequestBuilder searchRequestBuilder) {
 
 		String parameterName = jsonObject.getString("parameter_name");
 
-		Integer[] integerArray1 = SearchContextUtil.getIntegerArrayAttribute(parameterName, searchRequestBuilder);
-		
+		Integer[] integerArray1 = SearchContextUtil.getIntegerArrayAttribute(
+			parameterName, searchRequestBuilder);
+
 		if (!Objects.isNull(integerArray1)) {
 			return _toParameter(integerArray1, parameterName);
 		}
 
-		String[] stringArray = SearchContextUtil.getStringArrayAttribute(parameterName, searchRequestBuilder);
+		String[] stringArray = SearchContextUtil.getStringArrayAttribute(
+			parameterName, searchRequestBuilder);
 
 		if (!Objects.isNull(stringArray)) {
 			Integer[] integerArray2 = _toIntegerArray(stringArray);
@@ -87,10 +89,10 @@ public class IntegerArraySXPParameterBuilder implements SXPParameterBuilder {
 		Integer[] arr, String parameterName) {
 
 		return Optional.of(
-			new IntegerArraySXPParameter(
-				parameterName, true, arr));
+			new IntegerArraySXPParameter(parameterName, true, arr));
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		IntegerArraySXPParameterBuilder.class);
+
 }

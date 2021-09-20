@@ -48,7 +48,7 @@ public class SystemSXPParameterContributor implements SXPParameterContributor {
 
 		_addExplainParameter(searchRequestBuilder, sxpParameterDataBuilder);
 
-		_addIncludeResponseStringParameter(
+		_addIncludeResponseStringSXPParameter(
 			searchRequestBuilder, sxpParameterDataBuilder);
 
 		_addPreviewParameter(searchRequestBuilder, sxpParameterDataBuilder);
@@ -95,7 +95,7 @@ public class SystemSXPParameterContributor implements SXPParameterContributor {
 		}
 	}
 
-	private void _addIncludeResponseStringParameter(
+	private void _addIncludeResponseStringSXPParameter(
 		SearchRequestBuilder searchRequestBuilder,
 		SXPParameterDataBuilder sxpParameterDataBuilder) {
 

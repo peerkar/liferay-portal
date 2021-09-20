@@ -15,13 +15,13 @@
 package com.liferay.search.experiences.internal.blueprint.parameter.builder;
 
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.search.experiences.blueprint.parameter.SXPParameter;
 import com.liferay.search.experiences.blueprint.parameter.StringArraySXPParameter;
 import com.liferay.search.experiences.internal.blueprint.util.SXPJSONUtil;
 import com.liferay.search.experiences.internal.blueprint.util.SearchContextUtil;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import org.osgi.service.component.annotations.Component;
@@ -36,32 +36,33 @@ import org.osgi.service.component.annotations.Component;
 public class StringArraySXPParameterBuilder implements SXPParameterBuilder {
 
 	@Override
-	public Optional<SXPParameter> build(JSONObject jsonObject, 
-			SearchRequestBuilder searchRequestBuilder) {
+	public Optional<SXPParameter> build(
+		JSONObject jsonObject, SearchRequestBuilder searchRequestBuilder) {
 
 		String parameterName = jsonObject.getString("parameter_name");
 
-		Optional<String[]> optional = _getValueOptional(jsonObject, parameterName, searchRequestBuilder);
+		Optional<String[]> optional = _getValueOptional(
+			jsonObject, parameterName, searchRequestBuilder);
 
 		if (!optional.isPresent()) {
 			return Optional.empty();
 		}
 
 		return Optional.of(
-			new StringArraySXPParameter(
-				parameterName, true,
-				optional.get()));
+			new StringArraySXPParameter(parameterName, true, optional.get()));
 	}
-	
-	private Optional<String[]> _getValueOptional(JSONObject jsonObject,  String parameterName,
-			SearchRequestBuilder searchRequestBuilder) {
 
-		String[] value = SearchContextUtil.getStringArrayAttribute(parameterName, searchRequestBuilder);
-		
-		if (Validator.isNotNull(value)) {
+	private Optional<String[]> _getValueOptional(
+		JSONObject jsonObject, String parameterName,
+		SearchRequestBuilder searchRequestBuilder) {
+
+		String[] value = SearchContextUtil.getStringArrayAttribute(
+			parameterName, searchRequestBuilder);
+
+		if (!Objects.isNull(value)) {
 			return Optional.of(value);
 		}
-		
+
 		if (jsonObject.has("default")) {
 			return SXPJSONUtil.getStringArrayOptional(jsonObject, "default");
 		}

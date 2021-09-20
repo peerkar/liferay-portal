@@ -18,13 +18,13 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.search.experiences.blueprint.parameter.DoubleSXPParameter;
 import com.liferay.search.experiences.blueprint.parameter.SXPParameter;
 import com.liferay.search.experiences.internal.blueprint.util.SXPValueUtil;
 import com.liferay.search.experiences.internal.blueprint.util.SearchContextUtil;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import org.osgi.service.component.annotations.Component;
@@ -39,12 +39,13 @@ import org.osgi.service.component.annotations.Component;
 public class DoubleSXPParameterBuilder implements SXPParameterBuilder {
 
 	@Override
-	public Optional<SXPParameter> build(JSONObject jsonObject, 
-			SearchRequestBuilder searchRequestBuilder) {
-		
+	public Optional<SXPParameter> build(
+		JSONObject jsonObject, SearchRequestBuilder searchRequestBuilder) {
+
 		String parameterName = jsonObject.getString("parameter_name");
 
-		Optional<Double> optional = _getValueOptional(jsonObject, parameterName, searchRequestBuilder);
+		Optional<Double> optional = _getValueOptional(
+			jsonObject, parameterName, searchRequestBuilder);
 
 		if (!optional.isPresent()) {
 			return Optional.empty();
@@ -53,11 +54,10 @@ public class DoubleSXPParameterBuilder implements SXPParameterBuilder {
 		return Optional.of(
 			new DoubleSXPParameter(
 				parameterName, true,
-				_getAdjustedValue(jsonObject, optional.get())));
+				getAdjustedValue(jsonObject, optional.get())));
 	}
 
-	protected double _getAdjustedValue(JSONObject jsonObject, Double value) {
-		
+	protected double getAdjustedValue(JSONObject jsonObject, Double value) {
 		Optional<Double> minValue = SXPValueUtil.stringToDoubleOptional(
 			jsonObject.getString("min_value"));
 
@@ -65,7 +65,9 @@ public class DoubleSXPParameterBuilder implements SXPParameterBuilder {
 			(Double.compare(value, minValue.get()) < 0)) {
 
 			if (_log.isWarnEnabled()) {
-				_log.warn(minValue.get() + " is below the minimum. Setting min value");
+				_log.warn(
+					minValue.get() +
+						" is below the minimum. Setting min value");
 			}
 
 			return minValue.get();
@@ -78,7 +80,9 @@ public class DoubleSXPParameterBuilder implements SXPParameterBuilder {
 			(Double.compare(value, maxValue.get()) > 0)) {
 
 			if (_log.isWarnEnabled()) {
-				_log.warn(maxValue.get() + " is above the maximum. Setting max value");
+				_log.warn(
+					maxValue.get() +
+						" is above the maximum. Setting max value");
 			}
 
 			return maxValue.get();
@@ -86,22 +90,23 @@ public class DoubleSXPParameterBuilder implements SXPParameterBuilder {
 
 		return value;
 	}
-	
-	private Optional<Double> _getValueOptional(JSONObject jsonObject,  String parameterName,
-			SearchRequestBuilder searchRequestBuilder) {
 
-		Double value = SearchContextUtil.getDoubleAttribute(parameterName, searchRequestBuilder);
-		
-		if (Validator.isNotNull(value)) {
+	private Optional<Double> _getValueOptional(
+		JSONObject jsonObject, String parameterName,
+		SearchRequestBuilder searchRequestBuilder) {
+
+		Double value = SearchContextUtil.getDoubleAttribute(
+			parameterName, searchRequestBuilder);
+
+		if (!Objects.isNull(value)) {
 			return Optional.of(value);
 		}
-		
+
 		if (jsonObject.has("default")) {
 			return Optional.of(GetterUtil.getDouble("default"));
 		}
 
 		return Optional.empty();
-
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

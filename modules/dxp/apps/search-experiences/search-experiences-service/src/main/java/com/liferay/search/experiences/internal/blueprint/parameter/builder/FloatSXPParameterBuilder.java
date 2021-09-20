@@ -18,13 +18,13 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.search.experiences.blueprint.parameter.FloatSXPParameter;
 import com.liferay.search.experiences.blueprint.parameter.SXPParameter;
 import com.liferay.search.experiences.internal.blueprint.util.SXPValueUtil;
 import com.liferay.search.experiences.internal.blueprint.util.SearchContextUtil;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import org.osgi.service.component.annotations.Component;
@@ -39,13 +39,13 @@ import org.osgi.service.component.annotations.Component;
 public class FloatSXPParameterBuilder implements SXPParameterBuilder {
 
 	@Override
-	public Optional<SXPParameter> build(JSONObject jsonObject, 
-			SearchRequestBuilder searchRequestBuilder) {
-		
+	public Optional<SXPParameter> build(
+		JSONObject jsonObject, SearchRequestBuilder searchRequestBuilder) {
+
 		String parameterName = jsonObject.getString("parameter_name");
 
 		Optional<Float> optional = _getValueOptional(
-				jsonObject, parameterName, searchRequestBuilder);
+			jsonObject, parameterName, searchRequestBuilder);
 
 		if (!optional.isPresent()) {
 			return Optional.empty();
@@ -54,11 +54,10 @@ public class FloatSXPParameterBuilder implements SXPParameterBuilder {
 		return Optional.of(
 			new FloatSXPParameter(
 				parameterName, true,
-				_getAdjustedValue(optional.get(), jsonObject)));
+				getAdjustedValue(optional.get(), jsonObject)));
 	}
 
-	protected float _getAdjustedValue(float value, JSONObject jsonObject) {
-		
+	protected float getAdjustedValue(float value, JSONObject jsonObject) {
 		Optional<Float> minValue = SXPValueUtil.stringToFloatOptional(
 			jsonObject.getString("min_value"));
 
@@ -66,7 +65,9 @@ public class FloatSXPParameterBuilder implements SXPParameterBuilder {
 			(Float.compare(value, minValue.get()) < 0)) {
 
 			if (_log.isWarnEnabled()) {
-				_log.warn(minValue.get() + " is below the minimum. Setting min value");
+				_log.warn(
+					minValue.get() +
+						" is below the minimum. Setting min value");
 			}
 
 			value = minValue.get();
@@ -79,7 +80,9 @@ public class FloatSXPParameterBuilder implements SXPParameterBuilder {
 			(Float.compare(value, maxValue.get()) > 0)) {
 
 			if (_log.isWarnEnabled()) {
-				_log.warn(maxValue.get() + " is above the maximum. Setting max value");
+				_log.warn(
+					maxValue.get() +
+						" is above the maximum. Setting max value");
 			}
 
 			value = maxValue.get();
@@ -87,24 +90,26 @@ public class FloatSXPParameterBuilder implements SXPParameterBuilder {
 
 		return value;
 	}
-	
-	private Optional<Float> _getValueOptional(JSONObject jsonObject,  String parameterName,
-			SearchRequestBuilder searchRequestBuilder) {
 
-		Float value = SearchContextUtil.getFloatAttribute(parameterName, searchRequestBuilder);
-		
-		if (Validator.isNotNull(value)) {
+	private Optional<Float> _getValueOptional(
+		JSONObject jsonObject, String parameterName,
+		SearchRequestBuilder searchRequestBuilder) {
+
+		Float value = SearchContextUtil.getFloatAttribute(
+			parameterName, searchRequestBuilder);
+
+		if (!Objects.isNull(value)) {
 			return Optional.of(value);
 		}
-		
+
 		if (jsonObject.has("default")) {
 			return Optional.of(GetterUtil.getFloat("default"));
 		}
 
 		return Optional.empty();
-
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		FloatSXPParameterBuilder.class);
+
 }

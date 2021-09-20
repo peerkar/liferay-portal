@@ -1,0 +1,75 @@
+{
+	"element-payload": {
+		"configuration": {
+			"elementTemplateJSON": {
+				"category": "conditional",
+				"clauses": [
+					{
+						"context": "query",
+						"occur": "should",
+						"query": {
+							"wrapper": {
+								"query": {
+									"term": {
+										"assetCategoryIds": {
+											"boost": "${configuration.boost}",
+											"value": "${configuration.asset_category_id}"
+										}
+									}
+								}
+							}
+						}
+					}
+				],
+				"conditions": {
+					"contains": {
+						"parameter_name": "${keywords}",
+						"value": "${configuration.keywords}"
+					}
+				},
+				"description": {
+					"en_US": "Show Web Contents in a category higher in the results, if searchphrase contains any of the given keywords"
+				},
+				"enabled": true,
+				"icon": "thumbs-up",
+				"title": {
+					"en_US": "Boost Contents in a Category by Keyword Match"
+				}
+			},
+			"uiConfigurationJSON": {
+				"fieldSets": [
+					{
+						"fields": [
+							{
+								"label": "Asset Category ID",
+								"name": "asset_category_id",
+								"type": "number"
+							},
+							{
+								"label": "Keywords",
+								"name": "keywords",
+								"type": "multiselect"
+							},
+							{
+								"defaultValue": 10,
+								"label": "Boost",
+								"name": "boost",
+								"type": "number",
+								"typeOptions": {
+									"min": 0
+								}
+							}
+						]
+					}
+				]
+			}
+		},
+		"description": {
+			"en_US": "Show Web Contents in a category higher in the results, if searchphrase contains any of the given keywords"
+		},
+		"title": {
+			"en_US": "Boost Contents in a Category by Keyword Match"
+		}
+	},
+	"type": 10
+}

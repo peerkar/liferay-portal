@@ -1,0 +1,70 @@
+{
+	"element-payload": {
+		"configuration": {
+			"elementTemplateJSON": {
+				"category": "conditional",
+				"clauses": [
+					{
+						"context": "query",
+						"occur": "should",
+						"query": {
+							"wrapper": {
+								"query": {
+									"term": {
+										"assetCategoryIds": {
+											"boost": "${configuration.boost}",
+											"value": "${configuration.asset_category_id}"
+										}
+									}
+								}
+							}
+						}
+					}
+				],
+				"conditions": {
+					"equals": {
+						"parameter_name": "${user.is_signed_in}",
+						"value": false
+					}
+				},
+				"description": {
+					"en_US": "Boost Contents in a category, if user is not logged in"
+				},
+				"enabled": true,
+				"icon": "thumbs-up",
+				"title": {
+					"en_US": "Boost Contents in a Category for Guest Users"
+				}
+			},
+			"uiConfigurationJSON": {
+				"fieldSets": [
+					{
+						"fields": [
+							{
+								"label": "Asset Category ID",
+								"name": "asset_category_id",
+								"type": "number"
+							},
+							{
+								"defaultValue": 20,
+								"label": "Boost",
+								"name": "boost",
+								"type": "number",
+								"typeOptions": {
+									"min": 0
+								}
+							}
+						]
+					}
+				]
+			}
+		},
+		"description": {
+			"en_US": "Boost Contents in a category, if user is not logged in"
+		},
+		"title": {
+			"en_US": "Boost Contents in a Category for Guest Users"
+		}
+	},
+	"type": 10
+}

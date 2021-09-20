@@ -1,0 +1,66 @@
+{
+	"element-payload": {
+		"configuration": {
+			"elementTemplateJSON": {
+				"category": "conditional",
+				"clauses": [
+					{
+						"context": "query",
+						"occur": "filter",
+						"query": {
+							"wrapper": {
+								"query": {
+									"bool": {
+										"must_not": [
+											{
+												"term": {
+													"assetCategoryIds": {
+														"value": "${configuration.asset_category_id}"
+													}
+												}
+											}
+										]
+									}
+								}
+							}
+						}
+					}
+				],
+				"conditions": {
+					"equals": {
+						"parameter_name": "${user.is_signed_in}",
+						"value": false
+					}
+				},
+				"description": {
+					"en_US": "Hide contents in a category if user is not logged in"
+				},
+				"enabled": true,
+				"icon": "hidden",
+				"title": {
+					"en_US": "Hide Contents in a Category for Guest Users"
+				}
+			},
+			"uiConfigurationJSON": {
+				"fieldSets": [
+					{
+						"fields": [
+							{
+								"label": "Asset Category ID",
+								"name": "asset_category_id",
+								"type": "number"
+							}
+						]
+					}
+				]
+			}
+		},
+		"description": {
+			"en_US": "Hide contents in a category if user is not logged in"
+		},
+		"title": {
+			"en_US": "Hide Contents in a Category for Guest Users"
+		}
+	},
+	"type": 10
+}

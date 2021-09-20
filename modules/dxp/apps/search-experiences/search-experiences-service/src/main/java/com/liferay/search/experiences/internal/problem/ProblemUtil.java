@@ -99,20 +99,20 @@ public class ProblemUtil {
 
 	public static void addWarning(
 		String className, String languageKey, Object rootObject,
+		String rootProperty, String rootValue) {
+
+		_addProblem(
+			className, languageKey, null, rootObject, rootProperty, rootValue,
+			Severity.WARN, null);
+	}
+
+	public static void addWarning(
+		String className, String languageKey, Object rootObject,
 		String rootProperty, String rootValue, Throwable throwable) {
 
 		_addProblem(
 			className, languageKey, _getExceptionMessage(throwable, className),
 			rootObject, rootProperty, rootValue, Severity.WARN, throwable);
-	}
-
-	public static void addWarning(
-		String className, String languageKey, Object rootObject,
-		String rootProperty, String rootValue) {
-
-		_addProblem(
-			className, languageKey, null, rootObject, rootProperty,
-			rootValue, Severity.WARN, null);
 	}
 
 	public static List<Problem> getProblems() {

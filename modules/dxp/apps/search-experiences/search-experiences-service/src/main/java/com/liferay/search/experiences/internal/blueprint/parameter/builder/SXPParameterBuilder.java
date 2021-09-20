@@ -26,6 +26,6 @@ import java.util.Optional;
 public interface SXPParameterBuilder {
 
 	public Optional<SXPParameter> build(
-		 JSONObject jsonObject, SearchRequestBuilder searchRequestBuilder);
+		JSONObject jsonObject, SearchRequestBuilder searchRequestBuilder);
 
 }

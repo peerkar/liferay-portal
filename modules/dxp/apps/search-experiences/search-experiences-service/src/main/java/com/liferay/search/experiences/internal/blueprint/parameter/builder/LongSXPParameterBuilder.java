@@ -39,13 +39,13 @@ import org.osgi.service.component.annotations.Component;
 public class LongSXPParameterBuilder implements SXPParameterBuilder {
 
 	@Override
-	public Optional<SXPParameter> build(JSONObject jsonObject, 
-			SearchRequestBuilder searchRequestBuilder) {
+	public Optional<SXPParameter> build(
+		JSONObject jsonObject, SearchRequestBuilder searchRequestBuilder) {
 
-		String parameterName = jsonObject.getString(
-			"parameter_name");
+		String parameterName = jsonObject.getString("parameter_name");
 
-		Optional<Long> optional = _getValueOptional(jsonObject, parameterName, searchRequestBuilder);
+		Optional<Long> optional = _getValueOptional(
+			jsonObject, parameterName, searchRequestBuilder);
 
 		if (!optional.isPresent()) {
 			return Optional.empty();
@@ -54,8 +54,7 @@ public class LongSXPParameterBuilder implements SXPParameterBuilder {
 		return Optional.of(
 			new LongSXPParameter(
 				parameterName, true,
-				_getAdjustedValue(
-						optional.get(), jsonObject)));
+				_getAdjustedValue(optional.get(), jsonObject)));
 	}
 
 	private long _getAdjustedValue(
@@ -86,15 +85,17 @@ public class LongSXPParameterBuilder implements SXPParameterBuilder {
 		return value;
 	}
 
-	private Optional<Long> _getValueOptional(JSONObject jsonObject,  String parameterName,
-			SearchRequestBuilder searchRequestBuilder) {
+	private Optional<Long> _getValueOptional(
+		JSONObject jsonObject, String parameterName,
+		SearchRequestBuilder searchRequestBuilder) {
 
-		Long value = SearchContextUtil.getLongAttribute(parameterName, searchRequestBuilder);
+		Long value = SearchContextUtil.getLongAttribute(
+			parameterName, searchRequestBuilder);
 
-		if (!Validator.isNotNull(value)) {
+		if (Validator.isNull(value)) {
 			return Optional.of(value);
 		}
-		
+
 		if (jsonObject.has("default")) {
 			return SXPJSONUtil.getLongOptional(jsonObject, "Object/default");
 		}

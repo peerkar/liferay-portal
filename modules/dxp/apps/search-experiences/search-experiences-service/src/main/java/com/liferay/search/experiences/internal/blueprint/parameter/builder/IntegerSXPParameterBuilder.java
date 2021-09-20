@@ -17,7 +17,6 @@ package com.liferay.search.experiences.internal.blueprint.parameter.builder;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.search.experiences.blueprint.parameter.IntegerSXPParameter;
 import com.liferay.search.experiences.blueprint.parameter.SXPParameter;
@@ -25,6 +24,7 @@ import com.liferay.search.experiences.internal.blueprint.util.SXPJSONUtil;
 import com.liferay.search.experiences.internal.blueprint.util.SXPValueUtil;
 import com.liferay.search.experiences.internal.blueprint.util.SearchContextUtil;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import org.osgi.service.component.annotations.Component;
@@ -39,12 +39,13 @@ import org.osgi.service.component.annotations.Component;
 public class IntegerSXPParameterBuilder implements SXPParameterBuilder {
 
 	@Override
-	public Optional<SXPParameter> build(JSONObject jsonObject, 
-			SearchRequestBuilder searchRequestBuilder) {
+	public Optional<SXPParameter> build(
+		JSONObject jsonObject, SearchRequestBuilder searchRequestBuilder) {
 
 		String parameterName = jsonObject.getString("parameter_name");
 
-		Optional<Integer> optional = _getValueOptional(jsonObject, parameterName, searchRequestBuilder);
+		Optional<Integer> optional = _getValueOptional(
+			jsonObject, parameterName, searchRequestBuilder);
 
 		if (!optional.isPresent()) {
 			return Optional.empty();
@@ -85,16 +86,18 @@ public class IntegerSXPParameterBuilder implements SXPParameterBuilder {
 
 		return value;
 	}
-	
-	private Optional<Integer> _getValueOptional(JSONObject jsonObject,  String parameterName,
-			SearchRequestBuilder searchRequestBuilder) {
 
-		Integer value = SearchContextUtil.getIntegerAttribute(parameterName, searchRequestBuilder);
+	private Optional<Integer> _getValueOptional(
+		JSONObject jsonObject, String parameterName,
+		SearchRequestBuilder searchRequestBuilder) {
 
-		if (!Validator.isNotNull(value)) {
+		Integer value = SearchContextUtil.getIntegerAttribute(
+			parameterName, searchRequestBuilder);
+
+		if (!Objects.isNull(value)) {
 			return Optional.of(value);
 		}
-		
+
 		if (jsonObject.has("default")) {
 			return SXPJSONUtil.getIntegerOptional(jsonObject, "Object/default");
 		}
@@ -104,4 +107,5 @@ public class IntegerSXPParameterBuilder implements SXPParameterBuilder {
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		IntegerSXPParameterBuilder.class);
+
 }

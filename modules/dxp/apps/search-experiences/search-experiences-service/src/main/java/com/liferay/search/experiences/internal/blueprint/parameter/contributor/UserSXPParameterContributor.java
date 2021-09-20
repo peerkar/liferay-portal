@@ -51,6 +51,7 @@ import com.liferay.segments.context.Context;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -74,15 +75,15 @@ public class UserSXPParameterContributor implements SXPParameterContributor {
 
 	@Override
 	public void contribute(
-		SearchRequestBuilder searchRequestBuilder, SXPBlueprint sxpBlueprint, SXPParameterDataBuilder sxpParameterDataBuilder
-		) {
+		SearchRequestBuilder searchRequestBuilder, SXPBlueprint sxpBlueprint,
+		SXPParameterDataBuilder sxpParameterDataBuilder) {
 
 		long userId = _getUserId(searchRequestBuilder);
 
 		if (userId == 0) {
 			ProblemUtil.addWarning(
-				getClass().getName(), "user-id-not-found-in-attributes",
-				null, null, null);
+				getClass().getName(), "user-id-not-found-in-attributes", null,
+				null, null);
 
 			return;
 		}

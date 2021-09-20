@@ -26,6 +26,7 @@ import com.liferay.search.experiences.internal.blueprint.util.SearchContextUtil;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Optional;
@@ -43,14 +44,13 @@ import org.osgi.service.component.annotations.Component;
 public class DateSXPParameterBuilder implements SXPParameterBuilder {
 
 	@Override
-	public Optional<SXPParameter> build(JSONObject jsonObject, 
-			SearchRequestBuilder searchRequestBuilder) {
+	public Optional<SXPParameter> build(
+		JSONObject jsonObject, SearchRequestBuilder searchRequestBuilder) {
 
-		String parameterName = jsonObject.getString(
-			"parameter_name");
+		String parameterName = jsonObject.getString("parameter_name");
 
 		String dateString = SearchContextUtil.getStringAttribute(
-				parameterName, searchRequestBuilder);
+			parameterName, searchRequestBuilder);
 
 		if (Validator.isBlank(dateString)) {
 			return Optional.empty();
@@ -68,14 +68,11 @@ public class DateSXPParameterBuilder implements SXPParameterBuilder {
 			return Optional.empty();
 		}
 
-		return Optional.of(
-			new DateSXPParameter(
-				parameterName, true, date));
+		return Optional.of(new DateSXPParameter(parameterName, true, date));
 	}
 
 	private Date _getDate(
-		String dateString, JSONObject jsonObject, 
-		String timeZoneId) {
+		String dateString, JSONObject jsonObject, String timeZoneId) {
 
 		String dateFormat = jsonObject.getString("date_format");
 
@@ -103,26 +100,22 @@ public class DateSXPParameterBuilder implements SXPParameterBuilder {
 		return null;
 	}
 
-	private String _getTimeZoneId(
-			SearchRequestBuilder searchRequestBuilder) {
-		
+	private String _getTimeZoneId(SearchRequestBuilder searchRequestBuilder) {
 		return searchRequestBuilder.withSearchContextGet(
-				searchContext -> {
-					
-					TimeZone timeZone = searchContext.getTimeZone();
+			searchContext -> {
+				TimeZone timeZone = searchContext.getTimeZone();
 
-					if (timeZone != null) {
-						return timeZone.getID();
-					}
-					
-					TimeZone defaultTimeZone = TimeZoneUtil.getDefault();
-					
-					return defaultTimeZone.getID();
+				if (timeZone != null) {
+					return timeZone.getID();
+				}
 
-				});
-		
+				TimeZone defaultTimeZone = TimeZoneUtil.getDefault();
+
+				return defaultTimeZone.getID();
+			});
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		DateSXPParameterBuilder.class);
+
 }

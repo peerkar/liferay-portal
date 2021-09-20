@@ -35,32 +35,33 @@ import org.osgi.service.component.annotations.Component;
 public class StringSXPParameterBuilder implements SXPParameterBuilder {
 
 	@Override
-	public Optional<SXPParameter> build(JSONObject jsonObject, 
-			SearchRequestBuilder searchRequestBuilder) {
+	public Optional<SXPParameter> build(
+		JSONObject jsonObject, SearchRequestBuilder searchRequestBuilder) {
 
 		String parameterName = jsonObject.getString("parameter_name");
 
-		Optional<String> optional = _getValueOptional(jsonObject, parameterName, searchRequestBuilder);
+		Optional<String> optional = _getValueOptional(
+			jsonObject, parameterName, searchRequestBuilder);
 
 		if (!optional.isPresent()) {
 			return Optional.empty();
 		}
 
 		return Optional.of(
-			new StringSXPParameter(
-				parameterName, true,
-				optional.get()));
+			new StringSXPParameter(parameterName, true, optional.get()));
 	}
 
-	private Optional<String> _getValueOptional(JSONObject jsonObject,  String parameterName,
-			SearchRequestBuilder searchRequestBuilder) {
+	private Optional<String> _getValueOptional(
+		JSONObject jsonObject, String parameterName,
+		SearchRequestBuilder searchRequestBuilder) {
 
-		String value = SearchContextUtil.getStringAttribute(parameterName, searchRequestBuilder);
-		
+		String value = SearchContextUtil.getStringAttribute(
+			parameterName, searchRequestBuilder);
+
 		if (!Validator.isBlank(value)) {
 			return Optional.of(value);
 		}
-		
+
 		if (jsonObject.has("default")) {
 			return Optional.of(jsonObject.getString("default"));
 		}

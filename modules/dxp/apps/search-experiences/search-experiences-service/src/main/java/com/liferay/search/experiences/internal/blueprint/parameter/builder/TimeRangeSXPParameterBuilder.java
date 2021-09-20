@@ -34,15 +34,16 @@ import org.osgi.service.component.annotations.Component;
 	immediate = true, property = "name=time_range",
 	service = SXPParameterBuilder.class
 )
-public class TimeRangeSXPParameterBuilder  implements SXPParameterBuilder {
+public class TimeRangeSXPParameterBuilder implements SXPParameterBuilder {
 
 	@Override
-	public Optional<SXPParameter> build(JSONObject jsonObject, 
-			SearchRequestBuilder searchRequestBuilder) {
+	public Optional<SXPParameter> build(
+		JSONObject jsonObject, SearchRequestBuilder searchRequestBuilder) {
 
 		String parameterName = jsonObject.getString("parameter_name");
 
-		String value = SearchContextUtil.getStringAttribute(parameterName, searchRequestBuilder);
+		String value = SearchContextUtil.getStringAttribute(
+			parameterName, searchRequestBuilder);
 
 		if (Validator.isBlank(value)) {
 			return Optional.empty();
@@ -54,9 +55,7 @@ public class TimeRangeSXPParameterBuilder  implements SXPParameterBuilder {
 			return Optional.empty();
 		}
 
-		return Optional.of(
-			new DateSXPParameter(
-				parameterName, true, timeFrom));
+		return Optional.of(new DateSXPParameter(parameterName, true, timeFrom));
 	}
 
 	private Date _getTimeFrom(String value) {
@@ -92,4 +91,5 @@ public class TimeRangeSXPParameterBuilder  implements SXPParameterBuilder {
 
 		return timeFrom;
 	}
+
 }

@@ -39,18 +39,20 @@ import org.osgi.service.component.annotations.Component;
 public class LongArraySXPParameterBuilder implements SXPParameterBuilder {
 
 	@Override
-	public Optional<SXPParameter> build(JSONObject jsonObject, 
-			SearchRequestBuilder searchRequestBuilder) {
+	public Optional<SXPParameter> build(
+		JSONObject jsonObject, SearchRequestBuilder searchRequestBuilder) {
 
 		String parameterName = jsonObject.getString("parameter_name");
 
-		Long[] longArray1 = SearchContextUtil.getLongArrayAttribute(parameterName, searchRequestBuilder);
-		
+		Long[] longArray1 = SearchContextUtil.getLongArrayAttribute(
+			parameterName, searchRequestBuilder);
+
 		if (!Objects.isNull(longArray1)) {
 			return _toParameter(longArray1, parameterName);
 		}
 
-		String[] stringArray = SearchContextUtil.getStringArrayAttribute(parameterName, searchRequestBuilder);
+		String[] stringArray = SearchContextUtil.getStringArrayAttribute(
+			parameterName, searchRequestBuilder);
 
 		if (!Objects.isNull(stringArray)) {
 			Long[] longArray2 = _toLongArray(stringArray);
@@ -86,9 +88,7 @@ public class LongArraySXPParameterBuilder implements SXPParameterBuilder {
 	private Optional<SXPParameter> _toParameter(
 		Long[] arr, String parameterName) {
 
-		return Optional.of(
-			new LongArraySXPParameter(
-				parameterName, true, arr));
+		return Optional.of(new LongArraySXPParameter(parameterName, true, arr));
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

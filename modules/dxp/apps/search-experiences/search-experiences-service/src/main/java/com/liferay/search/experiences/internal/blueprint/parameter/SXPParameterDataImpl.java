@@ -27,10 +27,15 @@ import java.util.stream.Stream;
 public class SXPParameterDataImpl implements SXPParameterData {
 
 	public SXPParameterDataImpl(
-		String keywords,List<SXPParameter> sxpParameters) {
+		String keywords, List<SXPParameter> sxpParameters) {
 
 		_keywords = keywords;
 		_sxpParameters = sxpParameters;
+	}
+
+	@Override
+	public String getKeywords() {
+		return _keywords;
 	}
 
 	@Override
@@ -43,19 +48,14 @@ public class SXPParameterDataImpl implements SXPParameterData {
 	}
 
 	@Override
-	public Optional<SXPParameter> getSXPParameterOptionalByNameTemplateVariableName(
-		String name) {
+	public Optional<SXPParameter>
+		getSXPParameterOptionalByNameTemplateVariableName(String name) {
 
 		Stream<SXPParameter> stream = _sxpParameters.stream();
 
 		return stream.filter(
 			p -> name.equals(p.getTemplateVariable())
 		).findFirst();
-	}
-	
-	@Override
-	public String getKeywords() {
-		return _keywords;
 	}
 
 	@Override
