@@ -19,12 +19,12 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.search.experiences.blueprints.parameter.IntegerArraySXPParameter;
-import com.liferay.search.experiences.blueprints.parameter.LongArraySXPParameter;
-import com.liferay.search.experiences.blueprints.parameter.StringArraySXPParameter;
-import com.liferay.search.experiences.blueprints.parameter.StringSXPParameter;
-import com.liferay.search.experiences.blueprints.parameter.visitor.EvaluationVisitor;
-import com.liferay.search.experiences.exception.SXPParameterException;
+import com.liferay.search.experiences.blueprint.parameter.IntegerArraySXPParameter;
+import com.liferay.search.experiences.blueprint.parameter.LongArraySXPParameter;
+import com.liferay.search.experiences.blueprint.parameter.SXPParameter.EvaluationVisitor;
+import com.liferay.search.experiences.blueprint.parameter.StringArraySXPParameter;
+import com.liferay.search.experiences.blueprint.parameter.StringSXPParameter;
+import com.liferay.search.experiences.blueprint.parameter.exception.SXPParameterException;
 
 import java.util.Arrays;
 import java.util.stream.Stream;

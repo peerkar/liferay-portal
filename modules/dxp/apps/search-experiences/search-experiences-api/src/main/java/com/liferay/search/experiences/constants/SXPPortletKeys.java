@@ -22,5 +22,12 @@ public class SXPPortletKeys {
 	public static final String SXP_BLUEPRINT =
 		"com_liferay_search_experiences_web_internal_" +
 			"_portlet_SXPBlueprintPortlet";
+	
+	public static final String SXP_BLUEPRINT_OPTIONS =
+			"com_liferay_search_experiences_web_internal_" +
+				"options_portlet_SXPBlueprintOptionsPortlet";
 
+	public static final String SXP_RESULT =
+		"com_liferay_search_experiences_web_internal_" +
+				"result_portlet_SXPResultPortlet";
 }

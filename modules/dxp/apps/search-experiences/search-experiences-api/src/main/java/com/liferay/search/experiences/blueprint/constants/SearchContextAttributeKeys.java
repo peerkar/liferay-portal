@@ -19,10 +19,10 @@ package com.liferay.search.experiences.blueprint.constants;
  */
 public class SearchContextAttributeKeys {
 
-	public static final String BLUEPRINT_ID = "search.experiences.blueprint.id";
+	public static final String SXP_BLUEPRINT_ID = "sxp.blueprint.id";
 
 	public static final String FEDERATED_SEARCH_KEY = "federatedSearchKey";
 
-	public static final String IP_ADDRESS = "search.experiences.ipAddress";
+	public static final String IP_ADDRESS = "sxp.ipAddress";
 
 }
