@@ -597,13 +597,15 @@ function EditSXPBlueprintForm({
 			return;
 		}
 
-		const resultsError = {
-			errors: [
-				{
-					msg: DEFAULT_ERROR,
-					severity: Liferay.Language.get('error'),
-				},
-			],
+		const resultsError = (msg) => {
+			return {
+				errors: [
+					{
+						msg,
+						severity: Liferay.Language.get('error'),
+					},
+				],
+			};
 		};
 
 		return fetch(
@@ -637,7 +639,11 @@ function EditSXPBlueprintForm({
 		)
 			.then((response) => {
 				if (!response.ok) {
-					return resultsError;
+					if (response.status === 400) {
+						return response.json().then((json) => {
+							return resultsError(json.title);
+						});
+					}
 				}
 
 				return response.json();
@@ -652,7 +658,7 @@ function EditSXPBlueprintForm({
 				setTimeout(() => {
 					setPreviewInfo({
 						loading: false,
-						results: resultsError,
+						results: resultsError(DEFAULT_ERROR),
 					});
 				}, 100);
 			});
