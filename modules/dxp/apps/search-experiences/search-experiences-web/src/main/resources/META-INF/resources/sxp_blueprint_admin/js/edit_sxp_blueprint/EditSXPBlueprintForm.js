@@ -183,6 +183,9 @@ function EditSXPBlueprintForm({
 			).then((response) => {
 				if (!response.ok) {
 					setShowSubmitWarningModal(false);
+					
+					console.log("NNNNNNNNNNNNNNNNNNNNNNN");
+					console.log(response);
 
 					throw DEFAULT_ERROR;
 				}
@@ -597,14 +600,17 @@ function EditSXPBlueprintForm({
 			return;
 		}
 
-		const resultsError = {
-			errors: [
-				{
-					msg: DEFAULT_ERROR,
-					severity: Liferay.Language.get('error'),
-				},
-			],
-		};
+		const resultsError = msg => {
+			return {
+				errors: [
+					{
+						msg: msg,
+						severity: Liferay.Language.get('error'),
+					},
+				]
+			};
+		}
+		
 
 		return fetch(
 			addParams('/o/search-experiences-rest/v1.0/search', {
@@ -636,8 +642,13 @@ function EditSXPBlueprintForm({
 			}
 		)
 			.then((response) => {
+				
 				if (!response.ok) {
-					return resultsError;
+					if (response.status === 400) {
+				      return response.json().then((json) => {
+				    	  return resultsError(json.title);
+				      });
+					}
 				}
 
 				return response.json();
@@ -652,7 +663,7 @@ function EditSXPBlueprintForm({
 				setTimeout(() => {
 					setPreviewInfo({
 						loading: false,
-						results: resultsError,
+						results: resultsError(DEFAULT_ERROR),
 					});
 				}, 100);
 			});
