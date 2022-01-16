@@ -597,13 +597,15 @@ function EditSXPBlueprintForm({
 			return;
 		}
 
-		const resultsError = {
-			errors: [
-				{
-					msg: DEFAULT_ERROR,
-					severity: Liferay.Language.get('error'),
-				},
-			],
+		const resultsError = (msg) => {
+			return {
+				errors: [
+					{
+						msg,
+						severity: Liferay.Language.get('error'),
+					},
+				],
+			};
 		};
 
 		return fetch(
@@ -637,12 +639,45 @@ function EditSXPBlueprintForm({
 		)
 			.then((response) => {
 				if (!response.ok) {
-					return resultsError;
+					if (response.status === 400) {
+						return response.json().then((json) => {
+							return resultsError(json.title);
+						});
+					}
 				}
 
 				return response.json();
 			})
 			.then((responseContent) => {
+				if (
+					responseContent.searchHits?.totalHits === 0 &&
+					responseContent.responseString?.startsWith(
+						'java.lang.RuntimeException'
+					)
+				) {
+					const errorJSONObjectIdx = responseContent.responseString.indexOf(
+						'{"error":{'
+					);
+
+					let errorMsg;
+
+					if (errorJSONObjectIdx > 0) {
+						const errorJSONObject = JSON.parse(
+							responseContent.responseString.substring(
+								errorJSONObjectIdx
+							)
+						);
+
+						errorMsg = errorJSONObject.error.root_cause[0]?.reason;
+					}
+
+					if (!errorMsg) {
+						errorMsg = responseContent.responseString;
+					}
+
+					responseContent = resultsError(errorMsg);
+				}
+
 				setPreviewInfo({
 					loading: false,
 					results: responseContent,
@@ -652,7 +687,7 @@ function EditSXPBlueprintForm({
 				setTimeout(() => {
 					setPreviewInfo({
 						loading: false,
-						results: resultsError,
+						results: resultsError(DEFAULT_ERROR),
 					});
 				}, 100);
 			});
