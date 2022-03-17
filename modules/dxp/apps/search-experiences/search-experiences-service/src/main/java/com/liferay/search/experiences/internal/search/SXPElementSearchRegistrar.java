@@ -43,13 +43,10 @@ public class SXPElementSearchRegistrar {
 					Field.ENTRY_CLASS_PK, Field.GROUP_ID, Field.HIDDEN,
 					Field.MODIFIED_DATE, Field.SCOPE_GROUP_ID, Field.UID,
 					"readOnly");
-
 				modelSearchDefinition.setDefaultSelectedLocalizedFieldNames(
 					Field.DESCRIPTION, Field.TITLE);
-
 				modelSearchDefinition.setModelIndexWriteContributor(
 					modelIndexWriterContributor);
-
 				modelSearchDefinition.setModelSummaryContributor(
 					modelSummaryContributor);
 			});
