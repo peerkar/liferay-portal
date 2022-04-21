@@ -14,8 +14,15 @@
 
 package com.liferay.portal.search.web.internal.layout.prototype;
 
+import com.liferay.layout.page.template.importer.LayoutPageTemplatesImporter;
+import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
+import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
 import com.liferay.layout.page.template.util.LayoutPrototypeHelperUtil;
+import com.liferay.layout.util.LayoutCopyHelper;
+import com.liferay.layout.util.structure.LayoutStructure;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -24,22 +31,25 @@ import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.model.LayoutPrototype;
+import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.LayoutPrototypeLocalService;
+import com.liferay.portal.kernel.service.LayoutSetLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.language.LanguageResources;
 import com.liferay.portal.search.web.layout.prototype.SearchLayoutPrototypeCustomizer;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -51,6 +61,7 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
  * @author Adam Brandizzi
  * @author André de Oliveira
  * @author Lino Alves
+ * @author Petteri Karttunen
  */
 @Component(immediate = true, service = SearchLayoutFactory.class)
 public class SearchLayoutFactoryImpl implements SearchLayoutFactory {
@@ -61,11 +72,64 @@ public class SearchLayoutFactoryImpl implements SearchLayoutFactory {
 			return;
 		}
 
-		Optional<LayoutPrototype> optional = _findSearchLayoutPrototype(
-			group.getCompanyId());
+		ServiceContext serviceContext = new ServiceContext();
 
-		optional.ifPresent(
-			layoutPrototype -> createSearchLayout(group, layoutPrototype));
+		String currentName = PrincipalThreadLocal.getName();
+		ServiceContext currentServiceContext =
+			ServiceContextThreadLocal.popServiceContext();
+
+		PrincipalThreadLocal.setName(String.valueOf(group.getCreatorUserId()));
+		ServiceContextThreadLocal.pushServiceContext(serviceContext);
+
+		try {
+			Layout layout = _layoutLocalService.addLayout(
+				group.getCreatorUserId(), group.getGroupId(), false,
+				LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
+				_getSearchTitleLocalizationMap(),
+				_getSearchTitleLocalizationMap(),
+				_getSearchDescriptionLocalizationMap(), null, null,
+				LayoutConstants.TYPE_CONTENT, StringPool.BLANK, true,
+				_getFriendlyURLMap(), serviceContext);
+
+			Layout draftLayout = layout.fetchDraftLayout();
+
+			_importPageElement(draftLayout);
+
+			layout = _layoutCopyHelper.copyLayout(draftLayout, layout);
+
+			// TODO
+
+			_layoutLocalService.updateLayout(
+				layout.getGroupId(), layout.isPrivateLayout(),
+				layout.getLayoutId(), layout.getTypeSettings());
+
+			_layoutLocalService.updateStatus(
+				layout.getUserId(), layout.getPlid(),
+				WorkflowConstants.STATUS_APPROVED, serviceContext);
+
+			UnicodeProperties unicodeProperties =
+				group.getTypeSettingsProperties();
+
+			unicodeProperties.put("searchLayoutCreated", "true");
+
+			group.setTypeSettingsProperties(unicodeProperties);
+
+			groupLocalService.updateGroup(group);
+
+			if (_log.isInfoEnabled()) {
+				_log.info("Search Page created");
+			}
+		}
+		catch (RuntimeException runtimeException) {
+			throw runtimeException;
+		}
+		catch (Exception exception) {
+			throw new SystemException(exception);
+		}
+		finally {
+			PrincipalThreadLocal.setName(currentName);
+			ServiceContextThreadLocal.pushServiceContext(currentServiceContext);
+		}
 	}
 
 	@Override
@@ -83,58 +147,6 @@ public class SearchLayoutFactoryImpl implements SearchLayoutFactory {
 		}
 		catch (Exception exception) {
 			throw new SystemException(exception);
-		}
-	}
-
-	protected void createSearchLayout(
-		Group group, LayoutPrototype layoutPrototype) {
-
-		try {
-			Layout baseLayout = layoutPrototype.getLayout();
-
-			createSearchLayout(group, layoutPrototype, baseLayout);
-		}
-		catch (RuntimeException runtimeException) {
-			throw runtimeException;
-		}
-		catch (Exception exception) {
-			throw new SystemException(exception);
-		}
-	}
-
-	protected void createSearchLayout(
-			Group group, LayoutPrototype layoutPrototype, Layout baseLayout)
-		throws Exception {
-
-		ServiceContext serviceContext = new ServiceContext();
-
-		serviceContext.setAttribute(
-			"layoutPrototypeLinkEnabled", Boolean.FALSE);
-
-		serviceContext.setAttribute(
-			"layoutPrototypeUuid", layoutPrototype.getUuid());
-
-		serviceContext.setUserId(group.getCreatorUserId());
-
-		layoutLocalService.addLayout(
-			group.getCreatorUserId(), group.getGroupId(), false,
-			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
-			layoutPrototype.getNameMap(), baseLayout.getTitleMap(),
-			layoutPrototype.getDescriptionMap(), baseLayout.getKeywordsMap(),
-			baseLayout.getRobotsMap(), LayoutConstants.TYPE_PORTLET,
-			baseLayout.getTypeSettings(), baseLayout.isPrivateLayout(),
-			_getFriendlyURLMap(), serviceContext);
-
-		UnicodeProperties unicodeProperties = group.getTypeSettingsProperties();
-
-		unicodeProperties.put("searchLayoutCreated", "true");
-
-		group.setTypeSettingsProperties(unicodeProperties);
-
-		groupLocalService.updateGroup(group);
-
-		if (_log.isInfoEnabled()) {
-			_log.info("Search Page created");
 		}
 	}
 
@@ -201,25 +213,6 @@ public class SearchLayoutFactoryImpl implements SearchLayoutFactory {
 	@Reference
 	protected UserLocalService userLocalService;
 
-	private Optional<LayoutPrototype> _findSearchLayoutPrototype(
-		long companyId) {
-
-		Map<Locale, String> searchTitleLocalizationMap =
-			_getSearchTitleLocalizationMap();
-
-		List<LayoutPrototype> layoutPrototypes =
-			layoutPrototypeLocalService.getLayoutPrototypes(
-				QueryUtil.ALL_POS, QueryUtil.ALL_POS);
-
-		Stream<LayoutPrototype> stream1 = layoutPrototypes.stream();
-
-		Stream<LayoutPrototype> stream2 = stream1.filter(
-			layoutPrototype -> _isSearchLayoutPrototype(
-				layoutPrototype, companyId, searchTitleLocalizationMap));
-
-		return stream2.findAny();
-	}
-
 	private Map<Locale, String> _getFriendlyURLMap() {
 		return LocalizationUtil.getLocalizationMap("/search");
 	}
@@ -248,17 +241,28 @@ public class SearchLayoutFactoryImpl implements SearchLayoutFactory {
 		return false;
 	}
 
-	private boolean _isSearchLayoutPrototype(
-		LayoutPrototype layoutPrototype, long companyId,
-		Map<Locale, String> searchTitleLocalizationMap) {
+	private void _importPageElement(Layout layout) throws PortalException {
+		try {
+			LayoutPageTemplateStructure layoutPageTemplateStructure =
+				_layoutPageTemplateStructureLocalService.
+					fetchLayoutPageTemplateStructure(
+						layout.getGroupId(), layout.getPlid(), true);
 
-		if ((layoutPrototype.getCompanyId() == companyId) &&
-			searchTitleLocalizationMap.equals(layoutPrototype.getNameMap())) {
+			LayoutStructure layoutStructure = LayoutStructure.of(
+				layoutPageTemplateStructure.getDefaultSegmentsExperienceData());
 
-			return true;
+			Class<?> clazz = getClass();
+
+			String pageElementJSON = StringUtil.read(
+				clazz.getClassLoader(), _PATH + "page-definition.json");
+
+			_layoutPageTemplatesImporter.importPageElement(
+				layout, layoutStructure, layoutStructure.getMainItemId(),
+				pageElementJSON, 0);
 		}
-
-		return false;
+		catch (Exception exception) {
+			throw new PortalException(exception);
+		}
 	}
 
 	private boolean _shouldCreateSearchLayout(Group group) {
@@ -275,11 +279,30 @@ public class SearchLayoutFactoryImpl implements SearchLayoutFactory {
 		return true;
 	}
 
+	private static final String _PATH =
+		"com/liferay/portal/search/web/internal/layout/prototype/dependencies/";
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		SearchLayoutFactoryImpl.class);
 
 	private final SearchLayoutPrototypeCustomizer
 		_defaultSearchLayoutPrototypeCustomizer =
 			new DefaultSearchLayoutPrototypeCustomizer();
+
+	@Reference
+	private LayoutCopyHelper _layoutCopyHelper;
+
+	@Reference
+	private LayoutLocalService _layoutLocalService;
+
+	@Reference
+	private LayoutPageTemplatesImporter _layoutPageTemplatesImporter;
+
+	@Reference
+	private LayoutPageTemplateStructureLocalService
+		_layoutPageTemplateStructureLocalService;
+
+	@Reference
+	private LayoutSetLocalService _layoutSetLocalService;
 
 }

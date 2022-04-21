@@ -14,11 +14,9 @@
 
 package com.liferay.portal.search.web.internal.layout.prototype;
 
-import com.liferay.exportimport.kernel.staging.MergeLayoutPrototypesThreadLocal;
 import com.liferay.portal.instance.lifecycle.BasePortalInstanceLifecycleListener;
 import com.liferay.portal.instance.lifecycle.PortalInstanceLifecycleListener;
 import com.liferay.portal.kernel.model.Company;
-import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.service.GroupLocalService;
@@ -38,24 +36,9 @@ public class AddLayoutPrototypePortalInstanceLifecycleListener
 	public void portalInstanceRegistered(Company company) throws Exception {
 		searchLayoutFactory.createSearchLayoutPrototype(company);
 
-		Group guestGroup = groupLocalService.getGroup(
-			company.getCompanyId(), GroupConstants.GUEST);
-
-		try {
-			MergeLayoutPrototypesThreadLocal.setInProgress(true);
-
-			searchLayoutFactory.createSearchLayout(guestGroup);
-		}
-		finally {
-			MergeLayoutPrototypesThreadLocal.setInProgress(false);
-		}
-	}
-
-	@Reference(
-		target = ModuleServiceLifecycle.PORTLETS_INITIALIZED, unbind = "-"
-	)
-	protected void setModuleServiceLifecycle(
-		ModuleServiceLifecycle moduleServiceLifecycle) {
+		searchLayoutFactory.createSearchLayout(
+			groupLocalService.getGroup(
+				company.getCompanyId(), GroupConstants.GUEST));
 	}
 
 	@Reference
@@ -63,5 +46,10 @@ public class AddLayoutPrototypePortalInstanceLifecycleListener
 
 	@Reference
 	protected SearchLayoutFactory searchLayoutFactory;
+
+	@Reference(
+		target = ModuleServiceLifecycle.PORTLETS_INITIALIZED, unbind = "-"
+	)
+	private ModuleServiceLifecycle _moduleServiceLifecycle;
 
 }
