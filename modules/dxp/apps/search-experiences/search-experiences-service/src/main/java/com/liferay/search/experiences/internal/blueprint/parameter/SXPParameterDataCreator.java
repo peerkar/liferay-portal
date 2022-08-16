@@ -39,6 +39,7 @@ import com.liferay.search.experiences.blueprint.parameter.contributor.SXPParamet
 import com.liferay.search.experiences.blueprint.parameter.contributor.SXPParameterContributorDefinitionProvider;
 import com.liferay.search.experiences.internal.blueprint.parameter.contributor.ContextSXPParameterContributor;
 import com.liferay.search.experiences.internal.blueprint.parameter.contributor.IpstackSXPParameterContributor;
+import com.liferay.search.experiences.internal.blueprint.parameter.contributor.MLSXPParameterContributor;
 import com.liferay.search.experiences.internal.blueprint.parameter.contributor.OpenWeatherMapSXPParameterContributor;
 import com.liferay.search.experiences.internal.blueprint.parameter.contributor.SXPParameterContributor;
 import com.liferay.search.experiences.internal.blueprint.parameter.contributor.TimeSXPParameterContributor;
@@ -136,6 +137,7 @@ public class SXPParameterDataCreator
 		_sxpParameterContributors = new SXPParameterContributor[] {
 			new ContextSXPParameterContributor(_groupLocalService, _language),
 			new IpstackSXPParameterContributor(_configurationProvider),
+			new MLSXPParameterContributor(_configurationProvider),
 			new OpenWeatherMapSXPParameterContributor(_configurationProvider),
 			new TimeSXPParameterContributor(),
 			new UserSXPParameterContributor(
