@@ -1184,6 +1184,17 @@
 					},
 					"match": "*_short"
 				}
+			},
+			{
+				"template_text_embedding": {
+					"mapping": {
+				        "type": "dense_vector",
+				        "dims": 768,
+				        "index": true,
+				        "similarity": "cosine"
+					},
+					"path_match": "text_embedding*"
+				}
 			}
 		],
 		"properties": {
