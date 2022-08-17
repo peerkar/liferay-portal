@@ -19,7 +19,9 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.servlet.URLEncoder;
 import com.liferay.portal.kernel.util.HttpUtil;
+import com.liferay.portal.kernel.util.URLCodec;
 import com.liferay.portal.kernel.webcache.WebCacheItem;
 import com.liferay.portal.kernel.webcache.WebCachePoolUtil;
 import com.liferay.search.experiences.blueprint.exception.InvalidWebCacheItemException;
@@ -63,7 +65,7 @@ public class TXTAITransformWebCacheItem implements WebCacheItem {
 				host += "/";
 			}
 
-			String url = StringBundler.concat(host, "transform?text=", _text);
+			String url = StringBundler.concat(host, "transform?text=", URLCodec.encodeURL(_text, true));
 
 			return JSONFactoryUtil.createJSONArray(HttpUtil.URLtoString(url));
 		}
