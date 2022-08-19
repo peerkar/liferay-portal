@@ -14,6 +14,8 @@
 
 package com.liferay.portal.search.tuning.rankings.web.internal.searcher;
 
+import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.search.searcher.SearchRequest;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.portal.search.searcher.SearchRequestBuilderFactory;
@@ -25,6 +27,7 @@ import com.liferay.portal.search.tuning.rankings.web.internal.index.name.Ranking
 import com.liferay.portal.search.tuning.rankings.web.internal.searcher.helper.RankingSearchRequestHelper;
 
 import java.util.Optional;
+import java.util.function.Function;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -48,9 +51,13 @@ public class RankingSearchRequestContributor
 			return searchRequest;
 		}
 
-		Optional<Ranking> optional =
-			rankingIndexReader.fetchByQueryStringOptional(
-				rankingIndexName, searchRequest.getQueryString());
+		SearchContext searchContext = _getSearchContext(searchRequest);
+
+		Optional<Ranking> optional = rankingIndexReader.fetchOptional(
+			searchContext.getGroupIds(), searchRequest.getQueryString(),
+			rankingIndexName,
+			GetterUtil.getLong(
+				searchContext.getAttribute("search.experiences.blueprint.id")));
 
 		return optional.map(
 			ranking -> contribute(searchRequest, ranking)
@@ -92,6 +99,13 @@ public class RankingSearchRequestContributor
 			searchContext -> companyIds[0] = searchContext.getCompanyId());
 
 		return rankingIndexNameBuilder.getRankingIndexName(companyIds[0]);
+	}
+
+	private SearchContext _getSearchContext(SearchRequest searchRequest) {
+		SearchRequestBuilder searchRequestBuilder =
+			searchRequestBuilderFactory.builder(searchRequest);
+
+		return searchRequestBuilder.withSearchContextGet(Function.identity());
 	}
 
 }
