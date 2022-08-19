@@ -36,6 +36,7 @@ public class Ranking {
 
 	public Ranking(Ranking ranking) {
 		_aliases = new ArrayList<>(ranking._aliases);
+		_groupIds = ranking._groupIds;
 		_hiddenDocumentIds = new LinkedHashSet<>(ranking._hiddenDocumentIds);
 		_inactive = ranking._inactive;
 		_indexName = ranking._indexName;
@@ -44,10 +45,15 @@ public class Ranking {
 		_pins = new ArrayList<>(ranking._pins);
 		_queryString = ranking._queryString;
 		_rankingDocumentId = ranking._rankingDocumentId;
+		_sxpBlueprintId = ranking._sxpBlueprintId;
 	}
 
 	public List<String> getAliases() {
 		return Collections.unmodifiableList(_aliases);
+	}
+
+	public long[] getGroupIds() {
+		return _groupIds;
 	}
 
 	public List<String> getHiddenDocumentIds() {
@@ -100,6 +106,10 @@ public class Ranking {
 		return _rankingDocumentId;
 	}
 
+	public long getSXPBlueprintId() {
+		return _sxpBlueprintId;
+	}
+
 	public boolean isInactive() {
 		return _inactive;
 	}
@@ -146,6 +156,12 @@ public class Ranking {
 
 		public Ranking build() {
 			return new Ranking(_ranking);
+		}
+
+		public RankingBuilder groupIds(long[] groupIds) {
+			_ranking._groupIds = groupIds;
+
+			return this;
 		}
 
 		public RankingBuilder hiddenDocumentIds(
@@ -209,6 +225,12 @@ public class Ranking {
 			return this;
 		}
 
+		public RankingBuilder sxpBlueprintId(long sxpBlueprintId) {
+			_ranking._sxpBlueprintId = sxpBlueprintId;
+
+			return this;
+		}
+
 		protected static <T, V extends T> List<T> toList(List<V> list) {
 			if (list != null) {
 				return new ArrayList<>(list);
@@ -225,6 +247,7 @@ public class Ranking {
 	}
 
 	private List<String> _aliases = new ArrayList<>();
+	private long[] _groupIds;
 	private Set<String> _hiddenDocumentIds = new LinkedHashSet<>();
 	private boolean _inactive;
 	private String _indexName;
@@ -233,5 +256,6 @@ public class Ranking {
 	private List<Pin> _pins = new ArrayList<>();
 	private String _queryString;
 	private String _rankingDocumentId;
+	private long _sxpBlueprintId;
 
 }

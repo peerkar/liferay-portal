@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import org.osgi.service.component.annotations.Component;
 
 /**
@@ -39,6 +41,8 @@ public class DocumentToRankingTranslatorImpl
 		return builder(
 		).aliases(
 			_getAliases(document)
+		).groupIds(
+			_getGroupIds(document)
 		).hiddenDocumentIds(
 			document.getStrings(RankingFields.BLOCKS)
 		).inactive(
@@ -53,6 +57,8 @@ public class DocumentToRankingTranslatorImpl
 			_getQueryString(document)
 		).rankingDocumentId(
 			rankingDocumentId
+		).sxpBlueprintId(
+			document.getLong(RankingFields.SXP_BLUEPRINT_ID)
 		).build();
 	}
 
@@ -73,6 +79,16 @@ public class DocumentToRankingTranslatorImpl
 		}
 
 		return aliases;
+	}
+
+	private long[] _getGroupIds(Document document) {
+		List<Long> groupIds = document.getLongs(RankingFields.GROUP_IDS);
+
+		if (groupIds.isEmpty()) {
+			return new long[0];
+		}
+
+		return ArrayUtils.toPrimitive(groupIds.toArray(new Long[0]));
 	}
 
 	private String _getName(Document document) {

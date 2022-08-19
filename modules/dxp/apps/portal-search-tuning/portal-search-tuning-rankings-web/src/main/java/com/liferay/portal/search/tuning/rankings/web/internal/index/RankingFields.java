@@ -23,6 +23,8 @@ public class RankingFields {
 
 	public static final String BLOCKS = "blocks";
 
+	public static final String GROUP_IDS = "groupIds";
+
 	public static final String INACTIVE = "inactive";
 
 	public static final String INDEX = "index";
@@ -40,6 +42,8 @@ public class RankingFields {
 	public static final String QUERY_STRINGS = "queryStrings";
 
 	public static final String QUERY_STRINGS_KEYWORD = "queryStrings.keyword";
+
+	public static final String SXP_BLUEPRINT_ID = "sxpBlueprintId";
 
 	public static final String UID = "uid";
 

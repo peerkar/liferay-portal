@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -42,6 +44,8 @@ public class RankingToDocumentTranslatorImpl
 		).setStrings(
 			RankingFields.BLOCKS,
 			ArrayUtil.toStringArray(ranking.getHiddenDocumentIds())
+		).setLongs(
+			RankingFields.GROUP_IDS, ArrayUtils.toObject(ranking.getGroupIds())
 		).setBoolean(
 			RankingFields.INACTIVE, ranking.isInactive()
 		).setString(
@@ -55,6 +59,8 @@ public class RankingToDocumentTranslatorImpl
 		).setStrings(
 			RankingFields.QUERY_STRINGS,
 			ArrayUtil.toStringArray(ranking.getQueryStrings())
+		).setLong(
+			RankingFields.SXP_BLUEPRINT_ID, ranking.getSXPBlueprintId()
 		).setString(
 			RankingFields.UID, ranking.getRankingDocumentId()
 		).build();
