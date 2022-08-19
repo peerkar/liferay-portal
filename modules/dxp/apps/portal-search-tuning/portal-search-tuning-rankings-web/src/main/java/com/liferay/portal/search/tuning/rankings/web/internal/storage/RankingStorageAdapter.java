@@ -63,8 +63,9 @@ public class RankingStorageAdapter {
 
 		rankingJSONStorageHelper.updateJSONStorageEntry(
 			_getClassPK(ranking.getRankingDocumentId()), ranking.getAliases(),
-			ranking.getHiddenDocumentIds(), ranking.isInactive(),
-			ranking.getName(), ranking.getPins());
+			ranking.getGroupIds(), ranking.getHiddenDocumentIds(),
+			ranking.isInactive(), ranking.getName(), ranking.getPins(),
+			ranking.getSXPBlueprintId());
 
 		rankingIndexWriter.update(rankingIndexName, ranking);
 	}

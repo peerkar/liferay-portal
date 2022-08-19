@@ -26,6 +26,8 @@ import com.liferay.portal.search.tuning.rankings.web.internal.index.Ranking;
 
 import java.util.List;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -36,9 +38,10 @@ import org.osgi.service.component.annotations.Reference;
 public class RankingJSONStorageHelper {
 
 	public void addJSONStorageEntry(
-		long companyId, List<String> aliases, List<String> hiddenDocumentIds,
-		boolean inactive, String indexName, String name, List<Ranking.Pin> pins,
-		String queryString) {
+		long companyId, List<String> aliases, long[] groupIds,
+		List<String> hiddenDocumentIds, boolean inactive, String indexName,
+		String name, List<Ranking.Pin> pins, String queryString,
+		long sxpBlueprintId) {
 
 		long classPK = counterLocalService.increment();
 
@@ -56,6 +59,9 @@ public class RankingJSONStorageHelper {
 		JSONObject jsonObject = JSONUtil.put(
 			"aliases", JSONFactoryUtil.createJSONArray(aliases)
 		).put(
+			"groupIds",
+			JSONFactoryUtil.createJSONArray(ArrayUtils.toObject(groupIds))
+		).put(
 			"hiddenDocumentIds",
 			JSONFactoryUtil.createJSONArray(hiddenDocumentIds)
 		).put(
@@ -70,6 +76,8 @@ public class RankingJSONStorageHelper {
 			"queryString", queryString
 		).put(
 			"rankingDocumentId", Ranking.class.getName() + "_PORTLET_" + classPK
+		).put(
+			"sxpBlueprintId", sxpBlueprintId
 		);
 
 		jsonStorageEntryLocalService.addJSONStorageEntries(
@@ -107,8 +115,9 @@ public class RankingJSONStorageHelper {
 	}
 
 	public void updateJSONStorageEntry(
-		long classPK, List<String> aliases, List<String> hiddenDocumentIds,
-		boolean inactive, String name, List<Ranking.Pin> pins) {
+		long classPK, List<String> aliases, long[] groupIds,
+		List<String> hiddenDocumentIds, boolean inactive, String name,
+		List<Ranking.Pin> pins, long sxpBlueprintId) {
 
 		JSONObject jsonObject = jsonStorageEntryLocalService.getJSONObject(
 			classNameLocalService.getClassNameId(Ranking.class), classPK);
@@ -127,6 +136,9 @@ public class RankingJSONStorageHelper {
 		jsonObject.put(
 			"aliases", JSONFactoryUtil.createJSONArray(aliases)
 		).put(
+			"groupIds",
+			JSONFactoryUtil.createJSONArray(ArrayUtils.toObject(groupIds))
+		).put(
 			"hiddenDocumentIds",
 			JSONFactoryUtil.createJSONArray(hiddenDocumentIds)
 		).put(
@@ -135,6 +147,8 @@ public class RankingJSONStorageHelper {
 			"name", name
 		).put(
 			"pins", pinsJSONArray
+		).put(
+			"sxpBlueprintId", sxpBlueprintId
 		);
 
 		jsonStorageEntryLocalService.updateJSONStorageEntries(

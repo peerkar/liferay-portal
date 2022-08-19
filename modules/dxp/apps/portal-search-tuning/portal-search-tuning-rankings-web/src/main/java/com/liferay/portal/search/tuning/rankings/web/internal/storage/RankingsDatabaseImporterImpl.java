@@ -127,9 +127,10 @@ public class RankingsDatabaseImporterImpl implements RankingsDatabaseImporter {
 			}
 
 			rankingJSONStorageHelper.addJSONStorageEntry(
-				companyId, ranking.getAliases(), ranking.getHiddenDocumentIds(),
-				ranking.isInactive(), ranking.getIndexName(), ranking.getName(),
-				ranking.getPins(), ranking.getQueryString());
+				companyId, ranking.getAliases(), ranking.getGroupIds(),
+				ranking.getHiddenDocumentIds(), ranking.isInactive(),
+				ranking.getIndexName(), ranking.getName(), ranking.getPins(),
+				ranking.getQueryString(), ranking.getSXPBlueprintId());
 		}
 
 		if (_log.isInfoEnabled()) {
