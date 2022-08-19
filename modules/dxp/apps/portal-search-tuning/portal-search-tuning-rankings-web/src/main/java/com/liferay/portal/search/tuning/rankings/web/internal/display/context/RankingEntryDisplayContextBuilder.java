@@ -34,11 +34,13 @@ public class RankingEntryDisplayContextBuilder {
 			new RankingEntryDisplayContext();
 
 		_setAliases(rankingEntryDisplayContext);
+		_setGroupIds(rankingEntryDisplayContext);
 		_setHiddenResultsCount(rankingEntryDisplayContext);
 		_setInactive(rankingEntryDisplayContext);
 		_setIndex(rankingEntryDisplayContext);
 		_setNameForDisplay(rankingEntryDisplayContext);
 		_setPinnedResultsCount(rankingEntryDisplayContext);
+		_setSXPBlueprintId(rankingEntryDisplayContext);
 		_setUid(rankingEntryDisplayContext);
 
 		return rankingEntryDisplayContext;
@@ -54,6 +56,12 @@ public class RankingEntryDisplayContextBuilder {
 		rankingEntryDisplayContext.setAliases(
 			StringUtil.merge(
 				_ranking.getAliases(), StringPool.COMMA_AND_SPACE));
+	}
+
+	private void _setGroupIds(
+		RankingEntryDisplayContext rankingEntryDisplayContext) {
+
+		rankingEntryDisplayContext.setGroupIds(_ranking.getGroupIds());
 	}
 
 	private void _setHiddenResultsCount(
@@ -86,6 +94,13 @@ public class RankingEntryDisplayContextBuilder {
 
 		rankingEntryDisplayContext.setPinnedResultsCount(
 			_getSizeString(_ranking.getPins()));
+	}
+
+	private void _setSXPBlueprintId(
+		RankingEntryDisplayContext rankingEntryDisplayContext) {
+
+		rankingEntryDisplayContext.setSXPBlueprintId(
+			_ranking.getSXPBlueprintId());
 	}
 
 	private void _setUid(

@@ -29,6 +29,10 @@ public class RankingEntryDisplayContext {
 		return null;
 	}
 
+	public long[] getGroupIds() {
+		return _groupIds;
+	}
+
 	public String getHiddenResultsCount() {
 		return _hiddenResultsCount;
 	}
@@ -61,6 +65,10 @@ public class RankingEntryDisplayContext {
 		_aliases = aliases;
 	}
 
+	public void setGroupIds(long[] groupIds) {
+		_groupIds = groupIds;
+	}
+
 	public void setHiddenResultsCount(String hiddenResultsCount) {
 		_hiddenResultsCount = hiddenResultsCount;
 	}
@@ -81,16 +89,22 @@ public class RankingEntryDisplayContext {
 		_pinnedResultsCount = pinnedResultsCount;
 	}
 
+	public void setSXPBlueprintId(long sxpBlueprintId) {
+		_sxpBlueprintId = sxpBlueprintId;
+	}
+
 	public void setUid(String uid) {
 		_uid = uid;
 	}
 
 	private String _aliases;
+	private long[] _groupIds;
 	private String _hiddenResultsCount;
 	private boolean _inactive;
 	private String _index;
 	private String _keywords;
 	private String _pinnedResultsCount;
+	private long _sxpBlueprintId;
 	private String _uid;
 
 }
