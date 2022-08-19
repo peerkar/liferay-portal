@@ -23,11 +23,12 @@ import java.util.Optional;
  */
 public interface RankingIndexReader {
 
-	public Optional<Ranking> fetchByQueryStringOptional(
-		RankingIndexName rankingIndexName, String queryString);
+	public Optional<Ranking> fetchOptional(
+		long[] groupIds, String queryString, RankingIndexName rankingIndexName,
+		long sxpBlueprintId);
 
 	public Optional<Ranking> fetchOptional(
-		RankingIndexName rankingIndexName, String id);
+		String id, RankingIndexName rankingIndexName);
 
 	public boolean isExists(RankingIndexName rankingIndexName);
 

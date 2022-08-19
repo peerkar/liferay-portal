@@ -15,6 +15,7 @@
 package com.liferay.portal.search.tuning.rankings.web.internal.index;
 
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.document.Document;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
@@ -43,8 +44,9 @@ import org.osgi.service.component.annotations.Reference;
 public class RankingIndexReaderImpl implements RankingIndexReader {
 
 	@Override
-	public Optional<Ranking> fetchByQueryStringOptional(
-		RankingIndexName rankingIndexName, String queryString) {
+	public Optional<Ranking> fetchOptional(
+		long[] groupIds, String queryString, RankingIndexName rankingIndexName,
+		long sxpBlueprintId) {
 
 		if (Validator.isBlank(queryString)) {
 			return Optional.empty();
@@ -54,17 +56,18 @@ public class RankingIndexReaderImpl implements RankingIndexReader {
 
 		searchSearchRequest.setIndexNames(rankingIndexName.getIndexName());
 		searchSearchRequest.setQuery(_getQueryStringQuery(queryString));
-		searchSearchRequest.setSize(1);
+		searchSearchRequest.setSize(3);
 
 		SearchSearchResponse searchSearchResponse =
 			_searchEngineAdapter.execute(searchSearchRequest);
 
-		return _getFirstRankingOptional(rankingIndexName, searchSearchResponse);
+		return _getRankingOptional(
+			groupIds, rankingIndexName, searchSearchResponse, sxpBlueprintId);
 	}
 
 	@Override
 	public Optional<Ranking> fetchOptional(
-		RankingIndexName rankingIndexName, String id) {
+		String id, RankingIndexName rankingIndexName) {
 
 		return Optional.ofNullable(
 			_getDocument(rankingIndexName, id)
@@ -120,29 +123,6 @@ public class RankingIndexReaderImpl implements RankingIndexReader {
 		return null;
 	}
 
-	private Optional<Ranking> _getFirstRankingOptional(
-		RankingIndexName rankingIndexName,
-		SearchSearchResponse searchSearchResponse) {
-
-		if (searchSearchResponse.getCount() == 0) {
-			return Optional.empty();
-		}
-
-		SearchHit searchHit = _getFirstSearchHit(searchSearchResponse);
-
-		return fetchOptional(rankingIndexName, searchHit.getId());
-	}
-
-	private SearchHit _getFirstSearchHit(
-		SearchSearchResponse searchSearchResponse) {
-
-		SearchHits searchHits = searchSearchResponse.getSearchHits();
-
-		List<SearchHit> searchHitsList = searchHits.getSearchHits();
-
-		return searchHitsList.get(0);
-	}
-
 	private BooleanQuery _getQueryStringQuery(String queryString) {
 		BooleanQuery booleanQuery = _queries.booleanQuery();
 
@@ -152,6 +132,53 @@ public class RankingIndexReaderImpl implements RankingIndexReader {
 			_queries.term(RankingFields.INACTIVE, true));
 
 		return booleanQuery;
+	}
+
+	private Optional<Ranking> _getRankingOptional(
+		long[] groupIds, RankingIndexName rankingIndexName,
+		SearchSearchResponse searchSearchResponse, long sxpBlueprintId) {
+
+		if (searchSearchResponse.getCount() == 0) {
+			return Optional.empty();
+		}
+
+		SearchHits searchHits = searchSearchResponse.getSearchHits();
+
+		List<SearchHit> searchHitsList = searchHits.getSearchHits();
+
+		List<Long> groupIdsList = ListUtil.fromArray(groupIds);
+
+		String id = null;
+
+		for (SearchHit searchHit : searchHitsList) {
+			Document document = searchHit.getDocument();
+
+			List<Long> rankingGroupIds = document.getLongs(
+				RankingFields.GROUP_IDS);
+
+			long rankingSXPBlueprintId = document.getLong(
+				RankingFields.SXP_BLUEPRINT_ID);
+
+			if ((sxpBlueprintId != 0) &&
+				(sxpBlueprintId == rankingSXPBlueprintId)) {
+
+				return fetchOptional(searchHit.getId(), rankingIndexName);
+			}
+			else if (!groupIdsList.isEmpty() && !rankingGroupIds.isEmpty()) {
+				for (Long groupId : groupIds) {
+					if (rankingGroupIds.contains(groupId)) {
+						id = searchHit.getId();
+
+						break;
+					}
+				}
+			}
+			else if (id == null) {
+				id = searchHit.getId();
+			}
+		}
+
+		return fetchOptional(id, rankingIndexName);
 	}
 
 	@Reference
