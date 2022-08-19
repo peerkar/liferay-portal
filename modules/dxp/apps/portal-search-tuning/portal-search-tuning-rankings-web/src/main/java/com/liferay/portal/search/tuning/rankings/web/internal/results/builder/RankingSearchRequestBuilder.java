@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.tuning.rankings.web.internal.results.builder;
 
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.search.filter.ComplexQueryPartBuilderFactory;
 import com.liferay.portal.search.query.IdsQuery;
 import com.liferay.portal.search.query.Queries;
@@ -55,7 +56,17 @@ public class RankingSearchRequestBuilder {
 		).size(
 			_size
 		).withSearchContext(
-			searchContext -> searchContext.setCompanyId(_companyId)
+			searchContext -> {
+				searchContext.setCompanyId(_companyId);
+
+				if (_sxpBlueprintId > 0) {
+					searchContext.setAttribute(
+						"search.experiences.blueprint.id", _sxpBlueprintId);
+				}
+				else if (!ArrayUtil.isEmpty(_groupIds)) {
+					searchContext.setGroupIds(_groupIds);
+				}
+			}
 		);
 	}
 
@@ -67,6 +78,12 @@ public class RankingSearchRequestBuilder {
 
 	public RankingSearchRequestBuilder from(int from) {
 		_from = from;
+
+		return this;
+	}
+
+	public RankingSearchRequestBuilder groupIds(long[] groupIds) {
+		_groupIds = groupIds;
 
 		return this;
 	}
@@ -83,6 +100,12 @@ public class RankingSearchRequestBuilder {
 		return this;
 	}
 
+	public RankingSearchRequestBuilder sxpBlueprintId(long sxpBlueprintId) {
+		_sxpBlueprintId = sxpBlueprintId;
+
+		return this;
+	}
+
 	protected Query getIdsQuery(String id) {
 		IdsQuery idsQuery = _queries.ids();
 
@@ -95,9 +118,11 @@ public class RankingSearchRequestBuilder {
 	private final ComplexQueryPartBuilderFactory
 		_complexQueryPartBuilderFactory;
 	private int _from;
+	private long[] _groupIds;
 	private final Queries _queries;
 	private String _queryString;
 	private final SearchRequestBuilderFactory _searchRequestBuilderFactory;
 	private int _size;
+	private long _sxpBlueprintId;
 
 }

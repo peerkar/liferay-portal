@@ -195,12 +195,16 @@ public class EditRankingMVCActionCommand extends BaseMVCActionCommand {
 			}
 		}
 
-		rankingBuilder.indexName(
+		rankingBuilder.groupIds(
+			editRankingMVCActionRequest.getGroupIds()
+		).indexName(
 			getIndexName(actionRequest)
 		).name(
 			editRankingMVCActionRequest.getQueryString()
 		).queryString(
 			editRankingMVCActionRequest.getQueryString()
+		).sxpBlueprintId(
+			editRankingMVCActionRequest.getSXPBlueprintId()
 		);
 
 		Ranking ranking = rankingBuilder.build();
@@ -212,7 +216,7 @@ public class EditRankingMVCActionCommand extends BaseMVCActionCommand {
 		String id = rankingStorageAdapter.create(rankingIndexName, ranking);
 
 		Optional<Ranking> optional = rankingIndexReader.fetchOptional(
-			rankingIndexName, id);
+			id, rankingIndexName);
 
 		return optional.get();
 	}
@@ -390,7 +394,7 @@ public class EditRankingMVCActionCommand extends BaseMVCActionCommand {
 
 		for (String rankingDocumentId : rankingDocumentIds) {
 			Optional<Ranking> optional = rankingIndexReader.fetchOptional(
-				rankingIndexName, rankingDocumentId);
+				rankingDocumentId, rankingIndexName);
 
 			if (optional.isPresent()) {
 				Ranking ranking = optional.get();
@@ -534,9 +538,9 @@ public class EditRankingMVCActionCommand extends BaseMVCActionCommand {
 		String id = editRankingMVCActionRequest.getResultsRankingUid();
 
 		Optional<Ranking> optional = rankingIndexReader.fetchOptional(
+			id,
 			rankingIndexNameBuilder.getRankingIndexName(
-				portal.getCompanyId(actionRequest)),
-			id);
+				portal.getCompanyId(actionRequest)));
 
 		if (!optional.isPresent()) {
 			return;
@@ -620,19 +624,25 @@ public class EditRankingMVCActionCommand extends BaseMVCActionCommand {
 		public static final String PARAM_KEYWORDS = "keywords";
 
 		public EditRankingMVCActionRequest(ActionRequest actionRequest) {
-			_cmd = ParamUtil.getString(actionRequest, Constants.CMD);
-			_redirect = ParamUtil.getString(actionRequest, "redirect");
-			_inactive = ParamUtil.getBoolean(actionRequest, "inactive");
-			_queryString = ParamUtil.getString(actionRequest, PARAM_KEYWORDS);
-			_resultsRankingUid = ParamUtil.getString(
-				actionRequest, "resultsRankingUid");
-
 			_aliases = Arrays.asList(
 				ParamUtil.getStringValues(actionRequest, PARAM_ALIASES));
+			_cmd = ParamUtil.getString(actionRequest, Constants.CMD);
+			_groupIds = ParamUtil.getLongValues(actionRequest, "groupIds");
+			_inactive = ParamUtil.getBoolean(actionRequest, "inactive");
+			_queryString = ParamUtil.getString(actionRequest, PARAM_KEYWORDS);
+			_redirect = ParamUtil.getString(actionRequest, "redirect");
+			_resultsRankingUid = ParamUtil.getString(
+				actionRequest, "resultsRankingUid");
+			_sxpBlueprintId = ParamUtil.getLong(
+				actionRequest, "sxpBlueprintId");
 		}
 
 		public List<String> getAliases() {
 			return Collections.unmodifiableList(_aliases);
+		}
+
+		public long[] getGroupIds() {
+			return _groupIds;
 		}
 
 		public boolean getInactive() {
@@ -651,16 +661,22 @@ public class EditRankingMVCActionCommand extends BaseMVCActionCommand {
 			return _resultsRankingUid;
 		}
 
+		public long getSXPBlueprintId() {
+			return _sxpBlueprintId;
+		}
+
 		public boolean isCmd(String cmd) {
 			return Objects.equals(cmd, _cmd);
 		}
 
 		private final List<String> _aliases;
 		private final String _cmd;
+		private final long[] _groupIds;
 		private final boolean _inactive;
 		private final String _queryString;
 		private final String _redirect;
 		private final String _resultsRankingUid;
+		private final long _sxpBlueprintId;
 
 	}
 

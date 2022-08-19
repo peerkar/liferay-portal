@@ -76,7 +76,7 @@ public class RankingGetVisibleResultsBuilder {
 
 	public JSONObject build() {
 		Optional<Ranking> optional = _rankingIndexReader.fetchOptional(
-			_rankingIndexName, _rankingId);
+			_rankingId, _rankingIndexName);
 
 		if (!optional.isPresent()) {
 			return JSONUtil.put(
@@ -109,6 +109,12 @@ public class RankingGetVisibleResultsBuilder {
 		return this;
 	}
 
+	public RankingGetVisibleResultsBuilder groupIds(long[] groupIds) {
+		_groupIds = groupIds;
+
+		return this;
+	}
+
 	public RankingGetVisibleResultsBuilder queryString(String queryString) {
 		_queryString = queryString;
 
@@ -123,6 +129,12 @@ public class RankingGetVisibleResultsBuilder {
 
 	public RankingGetVisibleResultsBuilder size(int size) {
 		_size = size;
+
+		return this;
+	}
+
+	public RankingGetVisibleResultsBuilder sxpBlueprintId(long sxpBlueprintId) {
+		_sxpBlueprintId = sxpBlueprintId;
 
 		return this;
 	}
@@ -161,10 +173,14 @@ public class RankingGetVisibleResultsBuilder {
 				_companyId
 			).from(
 				_from
+			).groupIds(
+				_groupIds
 			).queryString(
 				queryString
 			).size(
 				_size
+			).sxpBlueprintId(
+				_sxpBlueprintId
 			).build();
 
 		_rankingSearchRequestHelper.contribute(searchRequestBuilder, ranking);
@@ -209,6 +225,7 @@ public class RankingGetVisibleResultsBuilder {
 	private final DLAppLocalService _dlAppLocalService;
 	private final FastDateFormatFactory _fastDateFormatFactory;
 	private int _from;
+	private long[] _groupIds;
 	private final Queries _queries;
 	private String _queryString;
 	private String _rankingId;
@@ -221,5 +238,6 @@ public class RankingGetVisibleResultsBuilder {
 	private final Searcher _searcher;
 	private final SearchRequestBuilderFactory _searchRequestBuilderFactory;
 	private int _size;
+	private long _sxpBlueprintId;
 
 }

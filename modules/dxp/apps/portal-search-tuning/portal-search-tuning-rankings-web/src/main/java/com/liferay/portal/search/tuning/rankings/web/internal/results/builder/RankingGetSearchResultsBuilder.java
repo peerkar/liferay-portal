@@ -84,6 +84,12 @@ public class RankingGetSearchResultsBuilder {
 		return this;
 	}
 
+	public RankingGetSearchResultsBuilder groupIds(long[] groupIds) {
+		_groupIds = groupIds;
+
+		return this;
+	}
+
 	public RankingGetSearchResultsBuilder queryString(String queryString) {
 		_queryString = queryString;
 
@@ -92,6 +98,12 @@ public class RankingGetSearchResultsBuilder {
 
 	public RankingGetSearchResultsBuilder size(int size) {
 		_size = size;
+
+		return this;
+	}
+
+	public RankingGetSearchResultsBuilder sxpBlueprintId(long sxpBlueprintId) {
+		_sxpBlueprintId = sxpBlueprintId;
 
 		return this;
 	}
@@ -116,10 +128,14 @@ public class RankingGetSearchResultsBuilder {
 			_companyId
 		).from(
 			_from
-		).size(
-			_size
+		).groupIds(
+			_groupIds
 		).queryString(
 			_queryString
+		).size(
+			_size
+		).sxpBlueprintId(
+			_sxpBlueprintId
 		).build(
 		).build();
 	}
@@ -159,6 +175,7 @@ public class RankingGetSearchResultsBuilder {
 	private final DLAppLocalService _dlAppLocalService;
 	private final FastDateFormatFactory _fastDateFormatFactory;
 	private int _from;
+	private long[] _groupIds;
 	private final Queries _queries;
 	private String _queryString;
 	private final ResourceActions _resourceActions;
@@ -167,5 +184,6 @@ public class RankingGetSearchResultsBuilder {
 	private final Searcher _searcher;
 	private final SearchRequestBuilderFactory _searchRequestBuilderFactory;
 	private int _size;
+	private long _sxpBlueprintId;
 
 }

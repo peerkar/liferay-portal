@@ -69,7 +69,7 @@ public class RankingGetHiddenResultsBuilder {
 
 	public JSONObject build() {
 		Optional<Ranking> optional = _rankingIndexReader.fetchOptional(
-			_rankingIndexName, _rankingId);
+			_rankingId, _rankingIndexName);
 
 		if (!optional.isPresent()) {
 			return JSONUtil.put(

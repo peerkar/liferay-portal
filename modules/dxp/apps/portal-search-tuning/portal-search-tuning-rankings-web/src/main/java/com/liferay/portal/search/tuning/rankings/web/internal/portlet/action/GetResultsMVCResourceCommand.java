@@ -157,10 +157,14 @@ public class GetResultsMVCResourceCommand implements MVCResourceCommand {
 			rankingMVCResourceRequest.getCompanyId()
 		).from(
 			rankingMVCResourceRequest.getFrom()
+		).groupIds(
+			rankingMVCResourceRequest.getGroupIds()
 		).queryString(
 			rankingMVCResourceRequest.getQueryString()
 		).size(
 			rankingMVCResourceRequest.getSize()
+		).sxpBlueprintId(
+			rankingMVCResourceRequest.getSXPBlueprintId()
 		).build();
 	}
 
@@ -182,12 +186,16 @@ public class GetResultsMVCResourceCommand implements MVCResourceCommand {
 			rankingMVCResourceRequest.getCompanyId()
 		).from(
 			rankingMVCResourceRequest.getFrom()
+		).groupIds(
+			rankingMVCResourceRequest.getGroupIds()
 		).queryString(
 			rankingMVCResourceRequest.getQueryString()
 		).rankingId(
 			rankingMVCResourceRequest.getRankingId()
 		).size(
 			rankingMVCResourceRequest.getSize()
+		).sxpBlueprintId(
+			rankingMVCResourceRequest.getSXPBlueprintId()
 		).build();
 	}
 
@@ -261,6 +269,10 @@ public class GetResultsMVCResourceCommand implements MVCResourceCommand {
 			return ParamUtil.getInteger(_resourceRequest, "from");
 		}
 
+		public long[] getGroupIds() {
+			return ParamUtil.getLongValues(_resourceRequest, "groupIds");
+		}
+
 		public String getQueryString() {
 			return ParamUtil.getString(_resourceRequest, "keywords");
 		}
@@ -271,6 +283,10 @@ public class GetResultsMVCResourceCommand implements MVCResourceCommand {
 
 		public int getSize() {
 			return ParamUtil.getInteger(_resourceRequest, "size", 10);
+		}
+
+		public long getSXPBlueprintId() {
+			return ParamUtil.getLong(_resourceRequest, "sxpBlueprintId");
 		}
 
 		private final ResourceRequest _resourceRequest;
