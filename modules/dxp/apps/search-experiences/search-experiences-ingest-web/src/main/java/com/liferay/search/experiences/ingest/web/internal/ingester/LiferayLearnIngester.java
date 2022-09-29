@@ -19,7 +19,6 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.search.document.DocumentBuilderFactory;
 import com.liferay.search.experiences.ingest.web.internal.importer.JournalArticleImporter;
 import com.liferay.search.experiences.ingest.web.internal.importer.JournalArticleImporterImpl;
 import com.liferay.search.experiences.ingest.web.internal.ingester.liferay.download.Downloader;
@@ -39,11 +38,9 @@ import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 
 import org.apache.commons.lang.StringUtils;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -205,9 +202,6 @@ public class LiferayLearnIngester implements Ingester {
 
 		return elements.html();
 	}
-
-	@Reference
-	private DocumentBuilderFactory _documentBuilderFactory;
 
 	@Reference
 	private Downloader _downloader;

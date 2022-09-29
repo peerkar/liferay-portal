@@ -26,15 +26,11 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.search.document.DocumentBuilderFactory;
 import com.liferay.search.experiences.ingest.web.internal.importer.JournalArticleImporterImpl;
-import com.liferay.search.experiences.ingest.web.internal.ingester.liferay.download.Downloader;
-import com.liferay.search.experiences.ingest.web.internal.ingester.liferay.scrape.ScraperFactory;
 import com.liferay.search.experiences.ingest.web.internal.util.CSVUtil;
 import com.liferay.search.experiences.ingest.web.internal.util.TagUtil;
 
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -141,12 +137,6 @@ public class LiferayZenDeskIngester implements Ingester {
 		LiferayZenDeskIngester.class);
 
 	@Reference
-	private DocumentBuilderFactory _documentBuilderFactory;
-
-	@Reference
-	private Downloader _downloader;
-
-	@Reference
 	private Http _http;
 
 	@Reference
@@ -154,8 +144,4 @@ public class LiferayZenDeskIngester implements Ingester {
 
 	@Reference
 	private JSONFactory _jsonFactory;
-
-	@Reference
-	private ScraperFactory _scraperFactory;
-
 }
