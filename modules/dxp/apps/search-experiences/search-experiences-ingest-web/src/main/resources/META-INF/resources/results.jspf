@@ -18,7 +18,6 @@
 List<String> failedItems = (List<String>)request.getAttribute("failedItems");
 
 List<String> ingestedItems = (List<String>)request.getAttribute("ingestedItems");
-
 %>
 
 <c:choose>

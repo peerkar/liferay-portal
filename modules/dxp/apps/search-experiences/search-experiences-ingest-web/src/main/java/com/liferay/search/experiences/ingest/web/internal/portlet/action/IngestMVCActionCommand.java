@@ -69,6 +69,12 @@ public class IngestMVCActionCommand extends BaseMVCActionCommand {
 
 		ExportImportThreadLocal.setPortletImportInProcess(false);
 
+		_setResultsInfo(actionRequest, results);
+	}
+
+	private void _setResultsInfo(
+		ActionRequest actionRequest, Map<String, List<String>> results) {
+
 		if (results.isEmpty()) {
 			SessionErrors.add(actionRequest, "noItemsWereIngested");
 		}

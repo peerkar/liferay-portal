@@ -31,6 +31,7 @@ import com.liferay.search.experiences.ingest.web.internal.util.CSVUtil;
 import com.liferay.search.experiences.ingest.web.internal.util.TagUtil;
 
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -47,10 +48,10 @@ import org.osgi.service.component.annotations.Reference;
  * @author Gustavo Lima
  */
 @Component(
-	enabled = false, immediate = true, property = "type=liferay_zendesk",
+	enabled = false, immediate = true, property = "type=liferay_help_center",
 	service = Ingester.class
 )
-public class LiferayZenDeskIngester implements Ingester {
+public class LiferayHelpCenterIngester implements Ingester {
 
 	@Override
 	public Map<String, List<String>> ingest(
@@ -59,8 +60,9 @@ public class LiferayZenDeskIngester implements Ingester {
 		return _ingest(actionRequest);
 	}
 
-	private String _getApiUrl(int page) {
-		return StringBundler.concat(_API_URL, "?page=", page, "&per_page=30");
+	private String _getApiUrl(int itemsPerPage, int page) {
+		return StringBundler.concat(
+			_API_URL, "?page=", page, "&per_page=", itemsPerPage);
 	}
 
 	private String[] _getAssetTagNames(JSONObject jsonObject) {
@@ -89,7 +91,14 @@ public class LiferayZenDeskIngester implements Ingester {
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		int numOfPages = ParamUtil.getInteger(actionRequest, "numOfPages", 1);
+		int itemsPerPage = ParamUtil.getInteger(
+			actionRequest, "liferayHelpCenterItemsPerPage", 30);
+
+		int numOfPages = ParamUtil.getInteger(
+			actionRequest, "liferayHelpCenterNumOfPages", 1);
+
+		int startPage = ParamUtil.getInteger(
+			actionRequest, "liferayHelpCenterStartPage", 1);
 
 		JournalArticleImporterImpl journalArticleImporterImpl =
 			new JournalArticleImporterImpl(
@@ -108,7 +117,8 @@ public class LiferayZenDeskIngester implements Ingester {
 		try {
 			for (int i = 0; i < numOfPages; i++) {
 				JSONObject jsonObject = _jsonFactory.createJSONObject(
-					_http.URLtoString(_getApiUrl(i + 1)));
+					_http.URLtoString(
+						_getApiUrl(itemsPerPage, startPage + i + 1)));
 
 				JSONArray jsonArray = jsonObject.getJSONArray("articles");
 
@@ -134,7 +144,7 @@ public class LiferayZenDeskIngester implements Ingester {
 			"/articles.json";
 
 	private static final Log _log = LogFactoryUtil.getLog(
-		LiferayZenDeskIngester.class);
+		LiferayHelpCenterIngester.class);
 
 	@Reference
 	private Http _http;
@@ -144,4 +154,5 @@ public class LiferayZenDeskIngester implements Ingester {
 
 	@Reference
 	private JSONFactory _jsonFactory;
+
 }

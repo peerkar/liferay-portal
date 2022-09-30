@@ -1,3 +1,4 @@
+<%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -11,14 +12,8 @@
  *
  *
  */
+--%>
 
-package com.liferay.search.experiences.ingest.web.internal.ingester.liferay.download;
-
-/**
- * @author André de Oliveira
- */
-public interface Downloader {
-
-	public String download(String address);
-
-}
+<aui:fieldset label="source-parameters">
+	<aui:input label="number-of-levels-to-crawl" name="liferayLearnLevelsToCrawl" value="2" />
+</aui:fieldset>

@@ -1,3 +1,4 @@
+<%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -11,20 +12,12 @@
  *
  *
  */
+--%>
 
-package com.liferay.search.experiences.ingest.web.internal.ingester.liferay.scrape;
+<aui:fieldset label="source-parameters">
+	<aui:input label="number-of-pages-to-ingest" name="liferayHelpCenterNumOfPages" value="1" />
+	<aui:input label="page-to-start-from" name="liferayHelpCenterStartPage" value="1" />
+	<aui:input label="items-per-page" name="liferayHelpCenterItemsPerPage" value="30" />
 
-import org.osgi.service.component.annotations.Component;
-
-/**
- * @author André de Oliveira
- */
-@Component(enabled = true, immediate = true, service = ScraperFactory.class)
-public class ScraperFactoryImpl implements ScraperFactory {
-
-	@Override
-	public Scraper.Builder builder() {
-		return new ScraperImpl.ScraperBuilderImpl();
-	}
-
-}
+	<p>Liferay Help Center has currently <strong><%= (int)request.getAttribute("liferayHelpCenterNumberOfArticles") %></strong> articles.</p>
+</aui:fieldset>

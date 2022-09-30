@@ -112,6 +112,11 @@ public class JournalArticleImporterImpl implements JournalArticleImporter {
 	}
 
 	@Override
+	public int getNumberOfProcessedItems() {
+		return _failedTitles.size() + _ingestedTitles.size();
+	}
+
+	@Override
 	public JournalArticle updateJournalArticle(JournalArticle journalArticle) {
 		return _journalArticleLocalService.updateJournalArticle(journalArticle);
 	}

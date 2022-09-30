@@ -84,7 +84,7 @@ public class WikipediaIngester implements Ingester {
 		_ingest(
 			CSVUtil.csvtoStringList(
 				ParamUtil.getString(actionRequest, "wikiArticles")),
-			0, journalArticleImporterImpl,
+			journalArticleImporterImpl,
 			ParamUtil.getInteger(actionRequest, "numberOfArticles", 10),
 			ParamUtil.getString(actionRequest, "wikiLanguage", "en"));
 
@@ -156,14 +156,13 @@ public class WikipediaIngester implements Ingester {
 	}
 
 	private void _ingest(
-		List<String> articleList, int counter,
-		JournalArticleImporter journalArticleImporter, int limit,
-		String wikiLanguage) {
+		List<String> articleList, JournalArticleImporter journalArticleImporter,
+		int limit, String wikiLanguage) {
 
 		List<String> articleLinks = new ArrayList<>();
 
 		for (String article : articleList) {
-			if (counter >= limit) {
+			if (journalArticleImporter.getNumberOfProcessedItems() >= limit) {
 				return;
 			}
 
@@ -192,16 +191,13 @@ public class WikipediaIngester implements Ingester {
 			catch (Exception exception) {
 				_log.error(exception);
 			}
-
-			counter++;
 		}
 
 		if (articleLinks.isEmpty()) {
 			return;
 		}
 
-		_ingest(
-			articleLinks, counter, journalArticleImporter, limit, wikiLanguage);
+		_ingest(articleLinks, journalArticleImporter, limit, wikiLanguage);
 	}
 
 	private static final String _API_URL_SUFFIX =

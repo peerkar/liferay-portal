@@ -15,39 +15,35 @@
 package com.liferay.search.experiences.ingest.web.internal.ingester;
 
 import com.liferay.journal.service.JournalArticleLocalService;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.search.experiences.ingest.web.internal.importer.JournalArticleImporter;
 import com.liferay.search.experiences.ingest.web.internal.importer.JournalArticleImporterImpl;
-import com.liferay.search.experiences.ingest.web.internal.ingester.liferay.download.Downloader;
-import com.liferay.search.experiences.ingest.web.internal.ingester.liferay.scrape.Crawler;
-import com.liferay.search.experiences.ingest.web.internal.ingester.liferay.scrape.CrawlerImpl;
-import com.liferay.search.experiences.ingest.web.internal.ingester.liferay.scrape.Scraper;
-import com.liferay.search.experiences.ingest.web.internal.ingester.liferay.scrape.ScraperFactory;
 import com.liferay.search.experiences.ingest.web.internal.util.CSVUtil;
 
+import java.io.IOException;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 
-import org.apache.commons.lang.StringUtils;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * @author André de Oliveira
  * @author Petteri Karttunen
- * @author Gustavo Lima
  */
 @Component(
 	enabled = false, immediate = true, property = "type=liferay_learn",
@@ -76,140 +72,158 @@ public class LiferayLearnIngester implements Ingester {
 						actionRequest, "userIds",
 						String.valueOf(themeDisplay.getUserId()))));
 
-		Scraper scraper = _scraperFactory.builder(
-		).consumeImmediately(
-			false
-		).crawlerBuilder(
-			_getCrawlerBuilder()
-		).journalArticleImporter(
-			journalArticleImporter
-		).onAddress(
-			this::_ingest
-		).build();
-
-		scraper.scrape();
+		_crawlHomePage(
+			ParamUtil.getInteger(actionRequest, "liferayLearnLevelsToCrawl", 2),
+			journalArticleImporter);
 
 		return journalArticleImporter.getIngestResults();
 	}
 
-	private Crawler _buildCrawler(Consumer<String> consumer) {
-		return CrawlerImpl.builder(
-		).base(
-			"https://learn.liferay.com/"
-		).listLinksDelimiter(
-			"<section class=\"col-md-12 justify-content-center products\">",
-			"</section>"
-		).delimiter(
-			"</a>"
-		).ignores(
-			new ArrayList<>(Arrays.asList("reference/latest/en/index.html"))
-		).html(
-			_downloader.download("https://learn.liferay.com/index.html")
-		).onAddress(
-			address -> _crawl1(consumer, address)
-		).build();
-	}
+	private void _crawlHomePage(
+		int levelsToCrawl, JournalArticleImporter journalArticleImporter) {
 
-	private void _crawl1(Consumer<String> consumer, String seed) {
-		CrawlerImpl.builder(
-		).base(
-			StringUtils.substringBefore(seed, "index.html")
-		).listLinksDelimiter(
-			"<ul>", "</ul>"
-		).html(
-			_downloader.download(seed)
-		).onAddress(
-			address -> _crawl2(consumer, address)
-		).build(
-		).crawl();
-	}
+		Document document = _getDocument(_ROOT_URL);
 
-	private void _crawl2(Consumer<String> consumer, String seed) {
-		CrawlerImpl.builder(
-		).base(
-			StringUtils.substringBeforeLast(seed, "/") + "/"
-		).listLinksDelimiter(
-			"<ul>", "</ul>"
-		).html(
-			_downloader.download(seed)
-		).onAddress(
-			consumer
-		).build(
-		).crawl();
-	}
+		if (document == null) {
+			_log.error("Unable to retrieve homepage");
 
-	private String[] _getAssetTagNames(String content) {
-		return new String[] {_getLiferayVersion(content), "Liferay Learn"};
-	}
-
-	private Crawler.Builder _getCrawlerBuilder() {
-		return new Crawler.Builder() {
-
-			@Override
-			public Crawler build() {
-				return _buildCrawler(_consumer);
-			}
-
-			@Override
-			public Crawler.Builder onAddress(Consumer<String> consumer) {
-				_consumer = consumer;
-
-				return this;
-			}
-
-			private Consumer<String> _consumer;
-
-		};
-	}
-
-	private String _getLiferayVersion(String content) {
-		String aux = StringUtils.substringAfter(content, "Liferay DXP 7.");
-
-		if (aux.equals("")) {
-			aux = StringUtils.substringAfter(content, "Liferay Portal 6.");
-
-			return "Liferay DXP 6." + aux.charAt(0);
+			return;
 		}
 
-		return "Liferay DXP 7." + aux.charAt(0);
+		for (Element link : document.select(".products a[href]")) {
+			if (_isValidLink(link.attr("href"))) {
+				_crawlTopic(
+					journalArticleImporter, levelsToCrawl, link.absUrl("href"),
+					new ArrayList<String>());
+			}
+		}
 	}
 
-	private String _getTitle(String content) {
-		String title = StringUtils.substringBetween(
-			content, "<title>", "</title>");
+	private void _crawlTopic(
+		JournalArticleImporter journalArticleImporter, int levelsToCrawl,
+		String url, List<String> visitedPages) {
 
-		return StringUtils.substringBeforeLast(title, "&");
+		visitedPages.add(url);
+
+		Document document = _getDocument(url);
+
+		if (document == null) {
+			return;
+		}
+
+		for (Element link :
+				document.select(".doc-nav .toctree-l1 a.reference.internal")) {
+
+			if (_isValidLink(link.attr("href"))) {
+				_crawlTopicChildren(
+					journalArticleImporter, 2, levelsToCrawl,
+					link.absUrl("href"), visitedPages);
+			}
+		}
 	}
 
-	private void _ingest(
-		String address, JournalArticleImporter journalArticleImporter) {
+	private void _crawlTopicChildren(
+		JournalArticleImporter journalArticleImporter, int level,
+		int levelsToCrawl, String url, List<String> visitedPages) {
 
-		String content = _downloader.download(address);
+		System.out.println("Level: " + level + ": " + url);
 
-		if (Validator.isBlank(content)) {
+		if (visitedPages.contains(url) || (level > levelsToCrawl)) {
+			return;
+		}
+
+		visitedPages.add(url);
+
+		Document document = _getDocument(url);
+
+		if (document == null) {
 			return;
 		}
 
 		journalArticleImporter.addJournalArticle(
-			_getAssetTagNames(content), _sanitizeContent(content),
-			_getTitle(content));
+			_getAssetTagNames(), _getContent(document), _getTitle(document));
+
+		for (Element link :
+				document.select(
+					".doc-nav .toctree-l" + level + " a.reference.internal")) {
+
+			String href = link.attr("href");
+
+			if (_isValidLink(href)) {
+				_crawlTopicChildren(
+					journalArticleImporter, level + 1, levelsToCrawl,
+					link.absUrl("href"), visitedPages);
+			}
+		}
 	}
 
-	private String _sanitizeContent(String content) {
-		Document doc = Jsoup.parse(content);
+	private String[] _getAssetTagNames() {
+		return new String[] {"Liferay Learn"};
+	}
 
-		Elements elements = doc.select("div#docContent");
+	private String _getContent(Document document) {
+		Elements elements = document.select("div#docContent");
 
 		return elements.html();
 	}
 
-	@Reference
-	private Downloader _downloader;
+	private Document _getDocument(String url) {
+		try {
+			Connection connection = Jsoup.connect(url);
+
+			Document document = connection.get();
+
+			Connection.Response response = connection.response();
+
+			if (response.statusCode() == 200) {
+				return document;
+			}
+		}
+		catch (IOException ioException) {
+			_log.error(ioException);
+		}
+
+		return null;
+	}
+
+	private String _getTitle(Document document) {
+		Elements elements = document.select("#breadcrumbCurrentArticle");
+
+		return elements.html();
+	}
+
+	private boolean _isValidLink(String link) {
+		if (!_excludedLinks.contains(link) &&
+			!_excludedLinkPrefixes.contains(link)) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	private static final String _ROOT_URL =
+		"https://learn.liferay.com/index.html";
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		LiferayLearnIngester.class);
+
+	private static final List<String> _excludedLinkPrefixes =
+		new ArrayList<String>() {
+			{
+				add("../");
+				add("http:");
+				add("https:");
+			}
+		};
+	private static final List<String> _excludedLinks = new ArrayList<String>() {
+		{
+			add("reference/latest/en/index.html");
+			add("#");
+		}
+	};
 
 	@Reference
 	private JournalArticleLocalService _journalArticleLocalService;
-
-	@Reference
-	private ScraperFactory _scraperFactory;
 
 }

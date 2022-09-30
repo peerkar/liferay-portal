@@ -34,15 +34,19 @@ String type = ParamUtil.getString(request, "type", "google_places");
 			<aui:option label="google-places" value="google_places" />
 			<aui:option label="wikipedia-articles" value="wikipedia" />
 			<aui:option label="liferay-learn" value="liferay_learn" />
-			<aui:option label="liferay-zendesk" value="liferay_zendesk" />
+			<aui:option label="liferay-help-center" value="liferay_help_center" />
 		</aui:select>
 
 		<div class="ingestion-type google_places <%= type.equals("google_places") ? "" : "hide" %>">
 			<%@ include file="/ingester/google_places.jspf" %>
 		</div>
 
-		<div class="ingestion-type liferay_zendesk <%= type.equals("liferay_zendesk") ? "" : "hide" %>">
-			<%@ include file="/ingester/liferay_zendesk.jspf" %>
+		<div class="ingestion-type liferay_learn <%= type.equals("liferay_learn") ? "" : "hide" %>">
+			<%@ include file="/ingester/liferay_learn.jspf" %>
+		</div>
+
+		<div class="ingestion-type liferay_help_center <%= type.equals("liferay_help_center") ? "" : "hide" %>">
+			<%@ include file="/ingester/liferay_help_center.jspf" %>
 		</div>
 
 		<div class="ingestion-type wikipedia <%= type.equals("wikipedia") ? "" : "hide" %>">

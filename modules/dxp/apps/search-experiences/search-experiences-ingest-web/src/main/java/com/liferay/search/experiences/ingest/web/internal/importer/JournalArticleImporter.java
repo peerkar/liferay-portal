@@ -33,6 +33,8 @@ public interface JournalArticleImporter {
 
 	public Map<String, List<String>> getIngestResults();
 
+	public int getNumberOfProcessedItems();
+
 	public JournalArticle updateJournalArticle(JournalArticle journalArticle);
 
 }
