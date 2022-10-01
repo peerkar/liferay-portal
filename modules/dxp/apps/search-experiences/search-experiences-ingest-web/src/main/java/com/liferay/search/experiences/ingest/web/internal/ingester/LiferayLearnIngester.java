@@ -126,8 +126,6 @@ public class LiferayLearnIngester implements Ingester {
 		JournalArticleImporter journalArticleImporter, int level,
 		int levelsToCrawl, String url, List<String> visitedPages) {
 
-		System.out.println("Level: " + level + ": " + url);
-
 		if (visitedPages.contains(url) || (level > levelsToCrawl)) {
 			return;
 		}
