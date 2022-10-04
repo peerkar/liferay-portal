@@ -160,7 +160,9 @@ public class LiferayLearnIngester implements Ingester {
 	}
 
 	private String _getContent(Document document) {
-		Elements elements = document.select("div#docContent");
+		Elements elements = document.select(
+			"#docContent .article-body .section " +
+				">*:not(.toctree-wrapper):not(.toctree-wrapper + ul)");
 
 		return elements.html();
 	}
