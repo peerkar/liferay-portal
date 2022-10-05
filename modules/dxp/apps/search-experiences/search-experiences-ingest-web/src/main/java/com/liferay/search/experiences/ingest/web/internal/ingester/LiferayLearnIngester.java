@@ -15,10 +15,14 @@
 package com.liferay.search.experiences.ingest.web.internal.ingester;
 
 import com.liferay.journal.service.JournalArticleLocalService;
+import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.search.experiences.ingest.web.internal.importer.JournalArticleImporter;
 import com.liferay.search.experiences.ingest.web.internal.importer.JournalArticleImporterImpl;
@@ -138,8 +142,12 @@ public class LiferayLearnIngester implements Ingester {
 			return;
 		}
 
-		journalArticleImporter.addJournalArticle(
-			_getAssetTagNames(), _getContent(document), _getTitle(document));
+		String content = _getContent(document);
+
+		if (!Validator.isBlank(content)) {
+			journalArticleImporter.addJournalArticle(
+				_getAssetTagNames(url), content, _getTitle(document));
+		}
 
 		for (Element link :
 				document.select(
@@ -155,16 +163,17 @@ public class LiferayLearnIngester implements Ingester {
 		}
 	}
 
-	private String[] _getAssetTagNames() {
-		return new String[] {"Liferay Learn"};
+	private String[] _getAssetTagNames(String url) {
+		return new String[] {"Liferay Learn", _getProductTag(url)};
 	}
 
 	private String _getContent(Document document) {
 		Elements elements = document.select(
 			"#docContent .article-body .section " +
-				">*:not(.toctree-wrapper):not(.toctree-wrapper + ul)");
+				">*:not(h1:first-child):not(.landing-page):not(script):" +
+					"not(.toctree-wrapper):not(.toctree-wrapper + ul)");
 
-		return elements.html();
+		return StringUtil.trim(elements.html());
 	}
 
 	private Document _getDocument(String url) {
@@ -186,6 +195,16 @@ public class LiferayLearnIngester implements Ingester {
 		return null;
 	}
 
+	private String _getProductTag(String url) {
+		String relativeUrl = StringUtil.removeSubstring(url, _BASE_URL);
+
+		String[] urlParts = StringUtil.split(relativeUrl, "/");
+
+		String productTag = urlParts[1];
+
+		return StringUtil.replace(productTag, CharPool.DASH, StringPool.SPACE);
+	}
+
 	private String _getTitle(Document document) {
 		Elements elements = document.select("#breadcrumbCurrentArticle");
 
@@ -201,6 +220,8 @@ public class LiferayLearnIngester implements Ingester {
 
 		return false;
 	}
+
+	private static final String _BASE_URL = "https://learn.liferay.com";
 
 	private static final String _ROOT_URL =
 		"https://learn.liferay.com/index.html";
