@@ -105,9 +105,9 @@ public class JournalArticleImporterImpl implements JournalArticleImporter {
 	@Override
 	public Map<String, List<String>> getIngestResults() {
 		return HashMapBuilder.<String, List<String>>put(
-			"failedItems", _failedTitles
+			"failedTitles", _failedTitles
 		).put(
-			"ingestedItems", _ingestedTitles
+			"ingestedTitles", _ingestedTitles
 		).build();
 	}
 

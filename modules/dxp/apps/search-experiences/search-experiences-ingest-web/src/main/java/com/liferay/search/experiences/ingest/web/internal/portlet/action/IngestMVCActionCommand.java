@@ -79,18 +79,19 @@ public class IngestMVCActionCommand extends BaseMVCActionCommand {
 			SessionErrors.add(actionRequest, "noItemsWereIngested");
 		}
 		else {
-			List<String> failedItems = results.get("failedItems");
+			List<String> failedTitles = results.get("failedTitles");
 
-			actionRequest.setAttribute("failedItems", failedItems);
-
-			actionRequest.setAttribute("failedItemsCount", failedItems.size());
-
-			List<String> ingestedItems = results.get("ingestedItems");
-
-			actionRequest.setAttribute("ingestedItems", ingestedItems);
+			actionRequest.setAttribute("failedTitles", failedTitles);
 
 			actionRequest.setAttribute(
-				"ingestedItemsCount", ingestedItems.size());
+				"failedTitlesCount", failedTitles.size());
+
+			List<String> ingestedTitles = results.get("ingestedTitles");
+
+			actionRequest.setAttribute("ingestedTitles", ingestedTitles);
+
+			actionRequest.setAttribute(
+				"ingestedTitlesCount", ingestedTitles.size());
 		}
 	}
 
