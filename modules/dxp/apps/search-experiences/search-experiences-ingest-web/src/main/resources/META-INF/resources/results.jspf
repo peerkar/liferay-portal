@@ -15,50 +15,50 @@
 --%>
 
 <%
-List<String> failedItems = (List<String>)request.getAttribute("failedItems");
+List<String> failedTitles = (List<String>)request.getAttribute("failedTitles");
 
-List<String> ingestedItems = (List<String>)request.getAttribute("ingestedItems");
+List<String> ingestedTitles = (List<String>)request.getAttribute("ingestedTitles");
 %>
 
-<c:choose>
-	<c:when test="<%= (ingestedItems != null) && ingestedItems.isEmpty() %>">
-		<div class="alert alert-info results">
-			<liferay-ui:message key="no-items-were-ingested" />
-		</div>
-	</c:when>
-	<c:when test="<%= (ingestedItems != null) && !ingestedItems.isEmpty() %>">
-		<div class="alert-success results">
-			<h1><liferay-ui:message key="ingested-items" /></h1>
+<c:if test="<%= ingestedTitles != null %>">
+	<div class="alert-success results">
+		<h1><liferay-ui:message key="ingested-items" /></h1>
 
-			<ul>
+		<c:choose>
+			<c:when test="<%= ingestedTitles.isEmpty() %>">
+				<p><liferay-ui:message key="no-items-were-ingested" /></p>
+			</c:when>
+			<c:otherwise>
+				<ul>
 
-				<%
-				for (String item : ingestedItems) {
-				%>
+					<%
+					for (String item : ingestedTitles) {
+					%>
 
-					<li><%= item %></li>
+						<li><%= item %></li>
 
-				<%
-				}
-				%>
+					<%
+					}
+					%>
 
-			</ul>
+				</ul>
+			</c:otherwise>
+		</c:choose>
 
-			<p>
-				<strong>Total: </strong> <%= (int)request.getAttribute("ingestedItemsCount") %>
-			</p>
-		</div>
-	</c:when>
-</c:choose>
+		<p>
+			<strong>Total: </strong> <%= (int)request.getAttribute("ingestedTitlesCount") %>
+		</p>
+	</div>
+</c:if>
 
-<c:if test="<% (failedItems != null) && !failedItems.isEmpty() %>">
+<c:if test="<%= (failedTitles != null) && !failedTitles.isEmpty() %>">
 	<div class="alert-warning results results-container">
 		<h1><liferay-ui:message key="failed-items" /></h1>
 
 		<ul>
 
 			<%
-			for (String item : failedItems) {
+			for (String item : failedTitles) {
 			%>
 
 				<li><%= item %></li>
@@ -70,7 +70,9 @@ List<String> ingestedItems = (List<String>)request.getAttribute("ingestedItems")
 		</ul>
 
 		<p>
-			<strong>Total: </strong> <%= (int)request.getAttribute("failedItemsCount") %>
+			<strong>Total: </strong> <%= (int)request.getAttribute("failedTitlesCount") %>
 		</p>
+
+		<p><liferay-ui:message key="see-log-for-more-information" /></p>
 	</div>
 </c:if>
