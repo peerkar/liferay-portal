@@ -147,7 +147,6 @@ public class IEXCloudNewsIngester implements Ingester {
 						resultJSONObject.getString("summary"),
 						resultJSONObject.getString("headline"));
 
-				journalArticleImporterImpl.updateJournalArticle(journalArticle);
 			}
 		}
 		catch (IOException | JSONException exception) {
