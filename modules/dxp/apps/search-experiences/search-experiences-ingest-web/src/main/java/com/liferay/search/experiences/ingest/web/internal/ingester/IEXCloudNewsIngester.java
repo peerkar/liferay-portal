@@ -14,7 +14,6 @@
 
 package com.liferay.search.experiences.ingest.web.internal.ingester;
 
-import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -30,6 +29,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.search.experiences.ingest.web.internal.importer.JournalArticleImporterImpl;
 import com.liferay.search.experiences.ingest.web.internal.util.CSVUtil;
+import com.liferay.search.experiences.ingest.web.internal.util.TagUtil;
 
 import java.io.IOException;
 
@@ -103,9 +103,23 @@ public class IEXCloudNewsIngester implements Ingester {
 	private String[] _getAssetTagNames(JSONObject jsonObject) {
 		List<String> assetTagNames = new ArrayList<>();
 
-		assetTagNames.add(jsonObject.getString("provider"));
-		assetTagNames.add(jsonObject.getString("source"));
-		assetTagNames.add(jsonObject.getString("symbol"));
+		String provider = jsonObject.getString("provider");
+
+		if (TagUtil.isValidTag(provider)) {
+			assetTagNames.add(TagUtil.cleanTag(provider));
+		}
+
+		String source = jsonObject.getString("source");
+
+		if (TagUtil.isValidTag(source)) {
+			assetTagNames.add(TagUtil.cleanTag(source));
+		}
+
+		String symbol = jsonObject.getString("symbol");
+
+		if (TagUtil.isValidTag(symbol)) {
+			assetTagNames.add(TagUtil.cleanTag(symbol));
+		}
 
 		return assetTagNames.toArray(new String[0]);
 	}
@@ -141,12 +155,10 @@ public class IEXCloudNewsIngester implements Ingester {
 			for (int i = 0; i < jsonArray.length(); i++) {
 				JSONObject resultJSONObject = jsonArray.getJSONObject(i);
 
-				JournalArticle journalArticle =
-					journalArticleImporterImpl.addJournalArticle(
-						_getAssetTagNames(resultJSONObject),
-						resultJSONObject.getString("summary"),
-						resultJSONObject.getString("headline"));
-
+				journalArticleImporterImpl.addJournalArticle(
+					_getAssetTagNames(resultJSONObject),
+					resultJSONObject.getString("summary"),
+					resultJSONObject.getString("headline"));
 			}
 		}
 		catch (IOException | JSONException exception) {

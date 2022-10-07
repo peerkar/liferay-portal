@@ -1,4 +1,4 @@
 Bundle-Name: Liferay Search Experiences Ingest Web
 Bundle-SymbolicName: com.liferay.search.experiences.ingest.web
-Bundle-Version: 1.1.0
+Bundle-Version: 1.1.1
 Liferay-Enterprise-App: dxp.only=true;product.id=22b7e30f-34d4-4a63-9696-56987ad66e4e
