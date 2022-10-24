@@ -20,6 +20,7 @@ import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.search.experiences.configuration.SemanticSearchConfiguration;
+import com.liferay.search.experiences.ml.sentence.embedding.SentenceEmbeddingRetriever;
 
 import java.util.Map;
 
@@ -40,6 +41,22 @@ public class SentenceEmbeddingRetrieverImpl
 	implements SentenceEmbeddingRetriever {
 
 	@Override
+	public Double[] getSentenceEmbedding(
+		SemanticSearchConfiguration semanticSearchConfiguration, String text) {
+
+		SentenceTransformer sentenceTransformer =
+			_sentenceTransformerServiceTrackerMap.getService(
+				semanticSearchConfiguration.sentenceTransformProvider());
+
+		if (sentenceTransformer == null) {
+			return new Double[0];
+		}
+
+		return sentenceTransformer.getSentenceEmbedding(
+			semanticSearchConfiguration, text);
+	}
+
+	@Override
 	public Double[] getSentenceEmbedding(String text) {
 		if (!GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-163688"))) {
 			return new Double[0];
@@ -53,7 +70,8 @@ public class SentenceEmbeddingRetrieverImpl
 			return new Double[0];
 		}
 
-		return sentenceTransformer.getSentenceEmbedding(text);
+		return sentenceTransformer.getSentenceEmbedding(
+			_semanticSearchConfiguration, text);
 	}
 
 	@Activate
