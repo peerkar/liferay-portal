@@ -36,7 +36,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Alessio Antonio Rendina
  */
 @Component(
-	enabled = false, immediate = true,
+	immediate = true,
 	property = {
 		"javax.portlet.name=" + CPPortletKeys.COMMERCE_INVENTORY,
 		"mvc.command.name=/commerce_inventory/edit_commerce_inventory_warehouse_item"
@@ -92,13 +92,13 @@ public class EditCommerceInventoryWarehouseItemMVCActionCommand
 			ActionRequest actionRequest)
 		throws PortalException {
 
+		long mvccVersion = ParamUtil.getLong(actionRequest, "mvccVersion");
 		long commerceInventoryWarehouseItemId = ParamUtil.getLong(
 			actionRequest, "commerceInventoryWarehouseItemId");
 
 		int quantity = ParamUtil.getInteger(actionRequest, "quantity");
 		int reservedQuantity = ParamUtil.getInteger(
 			actionRequest, "reservedQuantity");
-		long mvccVersion = ParamUtil.getLong(actionRequest, "mvccVersion");
 
 		_commerceInventoryWarehouseItemService.
 			updateCommerceInventoryWarehouseItem(

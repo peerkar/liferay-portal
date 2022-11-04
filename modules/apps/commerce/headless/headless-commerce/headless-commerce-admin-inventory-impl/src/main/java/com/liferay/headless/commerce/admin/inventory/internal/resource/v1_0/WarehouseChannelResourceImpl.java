@@ -53,7 +53,6 @@ import org.osgi.service.component.annotations.ServiceScope;
  * @author Alessio Antonio Rendina
  */
 @Component(
-	enabled = false,
 	properties = "OSGI-INF/liferay/rest/v1_0/warehouse-channel.properties",
 	scope = ServiceScope.PROTOTYPE,
 	service = {NestedFieldSupport.class, WarehouseChannelResource.class}
@@ -207,9 +206,9 @@ public class WarehouseChannelResourceImpl
 		return HashMapBuilder.<String, Map<String, String>>put(
 			"delete",
 			addAction(
-				"UPDATE", commerceChannelRel.getClassPK(),
+				"UPDATE", commerceChannelRel.getCommerceChannelRelId(),
 				"deleteWarehouseChannel",
-				_commerceInventoryWarehouseModelResourcePermission)
+				_commerceChannelRelModelResourcePermission)
 		).build();
 	}
 
@@ -243,6 +242,12 @@ public class WarehouseChannelResourceImpl
 
 		return warehouseChannels;
 	}
+
+	@Reference(
+		target = "(model.class.name=com.liferay.commerce.product.model.CommerceChannelRel)"
+	)
+	private ModelResourcePermission<CommerceChannelRel>
+		_commerceChannelRelModelResourcePermission;
 
 	@Reference
 	private CommerceChannelRelService _commerceChannelRelService;

@@ -72,7 +72,7 @@ definition {
 
 		Picklist.updatePicklistName(picklistName = "Update Picklist Test");
 
-		Picklist.cancelUpdatePicklist();
+		Button.clickCancel();
 
 		Picklist.assertPicklistNotPresent(picklistName = "Update Picklist Test");
 	}
@@ -400,7 +400,7 @@ definition {
 		Picklist.addPicklistViaAPI(picklistName = "Picklist Test");
 
 		Picklist.addPicklistItemViaAPI(
-			itemKey = "PicklistItemKeyTest",
+			itemKey = "itemKeyName",
 			itemName = "Picklist Item Name Test",
 			picklistName = "Picklist Test");
 
@@ -411,10 +411,10 @@ definition {
 			picklistOption = "View");
 
 		Picklist.optionsPicklistItem(
-			itemKey = "PicklistItemKeyTest",
+			itemKey = "itemKeyName",
 			picklistItemOption = "View");
 
-		Picklist.assertDisableKey();
+		Picklist.assertDisableKey(keyName = "itemKeyName");
 	}
 
 	@description = "LPS-136595 - Verify it is possible to search for a Picklist"
@@ -491,7 +491,7 @@ definition {
 
 		Picklist.addLanguageOnPicklistItem(
 			itemName = "Teste de entrada",
-			newlanguage = "pt-BR");
+			newLanguage = "pt_BR");
 
 		Button.clickSave();
 
@@ -506,8 +506,8 @@ definition {
 			picklistItemOption = "View");
 
 		Picklist.assertPicklistItemByLanguage(
-			language = "pt-BR",
-			nameItem = "Teste de entrada");
+			nameItem = "Teste de entrada",
+			newLanguage = "pt_BR");
 	}
 
 	@description = "LPS-136595 - Verify it is possible to set a different language for Picklists item's name when updating it"
@@ -546,8 +546,8 @@ definition {
 			itemName = "Item Test");
 
 		Picklist.assertPicklistItemByLanguage(
-			language = "pt-BR",
-			nameItem = "Teste na lista");
+			nameItem = "Teste na lista",
+			newLanguage = "pt_BR");
 	}
 
 	@description = "LPS-136595 - Verify it is possible to set a different language for a Picklist name"
@@ -565,7 +565,7 @@ definition {
 
 		Picklist.addLanguageOnPicklist(
 			itemName = "Teste na lista",
-			newlanguage = "pt-BR");
+			newLanguage = "pt_BR");
 
 		Button.clickSave();
 
@@ -576,8 +576,8 @@ definition {
 			picklistOption = "View");
 
 		Picklist.assertPicklistNameByLanguage(
-			language = "pt-BR",
-			nameItem = "Teste na lista");
+			nameItem = "Teste na lista",
+			newLanguage = "pt_BR");
 	}
 
 	@description = "LPS-136595 - Verify it is possible to update a Picklist item's name"
@@ -748,7 +748,7 @@ definition {
 
 			Picklist.addLanguageOnPicklist(
 				itemName = "Teste na lista",
-				newlanguage = "pt-BR");
+				newLanguage = "pt_BR");
 		}
 
 		task ("Go to Picklist Item and add a new language") {
@@ -758,7 +758,7 @@ definition {
 
 			Picklist.addLanguageOnPicklistItem(
 				itemName = "Teste de entrada",
-				newlanguage = "pt-BR");
+				newLanguage = "pt_BR");
 
 			Button.clickSave();
 		}
@@ -859,7 +859,7 @@ definition {
 
 		Picklist.addLanguageOnPicklistItem(
 			itemName = "Teste de entrada",
-			newlanguage = "pt-BR");
+			newLanguage = "pt_BR");
 
 		Button.clickSave();
 
@@ -931,7 +931,7 @@ definition {
 
 		Picklist.addLanguageOnPicklist(
 			itemName = "Teste na lista",
-			newlanguage = "pt-BR");
+			newLanguage = "pt_BR");
 
 		Picklist.optionsPicklistItem(
 			itemKey = "PicklistItemKeyTest",
@@ -939,7 +939,7 @@ definition {
 
 		Picklist.addLanguageOnPicklistItem(
 			itemName = "Teste de entrada",
-			newlanguage = "pt-BR");
+			newLanguage = "pt_BR");
 
 		Button.clickSave();
 
@@ -1000,7 +1000,7 @@ definition {
 
 			Picklist.addLanguageOnPicklist(
 				itemName = "Teste na lista",
-				newlanguage = "pt-BR");
+				newLanguage = "pt_BR");
 
 			Button.clickSave();
 		}
@@ -1073,7 +1073,7 @@ definition {
 
 		Picklist.addLanguageOnPicklist(
 			itemName = "Teste na lista",
-			newlanguage = "pt-BR");
+			newLanguage = "pt_BR");
 
 		Picklist.optionsPicklistItem(
 			itemKey = "PicklistItemKeyTest",
@@ -1081,7 +1081,7 @@ definition {
 
 		Picklist.addLanguageOnPicklistItem(
 			itemName = "Teste de entrada",
-			newlanguage = "pt-BR");
+			newLanguage = "pt_BR");
 
 		Button.clickSave();
 

@@ -32,7 +32,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Igor Beslic
  */
 @Component(
-	immediate = true,
 	property = {
 		"panel.app.order:Integer=1000",
 		"panel.category.key=" + PanelCategoryKeys.APPLICATIONS_MENU_APPLICATIONS_BATCH_PLANNER
@@ -40,6 +39,11 @@ import org.osgi.service.component.annotations.Reference;
 	service = PanelApp.class
 )
 public class BatchPlannerPanelApp extends BasePanelApp {
+
+	@Override
+	public Portlet getPortlet() {
+		return _portlet;
+	}
 
 	@Override
 	public String getPortletId() {
@@ -59,13 +63,9 @@ public class BatchPlannerPanelApp extends BasePanelApp {
 		return super.isShow(permissionChecker, group);
 	}
 
-	@Override
 	@Reference(
-		target = "(javax.portlet.name=" + BatchPlannerPortletKeys.BATCH_PLANNER + ")",
-		unbind = "-"
+		target = "(javax.portlet.name=" + BatchPlannerPortletKeys.BATCH_PLANNER + ")"
 	)
-	public void setPortlet(Portlet portlet) {
-		super.setPortlet(portlet);
-	}
+	private Portlet _portlet;
 
 }

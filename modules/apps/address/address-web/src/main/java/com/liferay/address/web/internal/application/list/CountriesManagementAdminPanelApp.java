@@ -27,7 +27,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Pei-Jung Lan
  */
 @Component(
-	immediate = true,
 	property = {
 		"panel.app.order:Integer=1100",
 		"panel.category.key=" + PortletCategoryKeys.CONTROL_PANEL_CONFIGURATION
@@ -37,17 +36,18 @@ import org.osgi.service.component.annotations.Reference;
 public class CountriesManagementAdminPanelApp extends BasePanelApp {
 
 	@Override
+	public Portlet getPortlet() {
+		return _portlet;
+	}
+
+	@Override
 	public String getPortletId() {
 		return AddressPortletKeys.COUNTRIES_MANAGEMENT_ADMIN;
 	}
 
-	@Override
 	@Reference(
-		target = "(javax.portlet.name=" + AddressPortletKeys.COUNTRIES_MANAGEMENT_ADMIN + ")",
-		unbind = "-"
+		target = "(javax.portlet.name=" + AddressPortletKeys.COUNTRIES_MANAGEMENT_ADMIN + ")"
 	)
-	public void setPortlet(Portlet portlet) {
-		super.setPortlet(portlet);
-	}
+	private Portlet _portlet;
 
 }

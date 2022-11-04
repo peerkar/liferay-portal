@@ -37,7 +37,6 @@ import com.liferay.object.model.ObjectField;
 import com.liferay.object.rest.dto.v1_0.ObjectEntry;
 import com.liferay.object.rest.manager.v1_0.ObjectEntryManager;
 import com.liferay.object.rest.manager.v1_0.ObjectEntryManagerTracker;
-import com.liferay.object.scope.ObjectScopeProviderRegistry;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryService;
 import com.liferay.object.service.ObjectFieldLocalService;
@@ -485,17 +484,27 @@ public class ObjectDDMStorageAdapter implements DDMStorageAdapter {
 
 			return String.valueOf(
 				_getValue(
-					value.getDefaultLocale(),
+					ddmFormFieldValue, value.getDefaultLocale(),
 					objectFieldDBTypes.get(objectFieldName),
 					values.get(value.getDefaultLocale())));
 		}
 	}
 
 	private Object _getValue(
-			Locale locale, String objectFieldDBType, String value)
-		throws ParseException {
+			DDMFormFieldValue ddmFormFieldValue, Locale locale,
+			String objectFieldDBType, String value)
+		throws JSONException, ParseException {
 
-		if (Objects.equals(objectFieldDBType, "BigDecimal")) {
+		if (StringUtil.equals(
+				ddmFormFieldValue.getType(),
+				DDMFormFieldTypeConstants.DOCUMENT_LIBRARY)) {
+
+			JSONObject fileEntryValueJSONObject = _jsonFactory.createJSONObject(
+				value);
+
+			return fileEntryValueJSONObject.getString("fileEntryId");
+		}
+		else if (Objects.equals(objectFieldDBType, "BigDecimal")) {
 			if (value.isEmpty()) {
 				return GetterUtil.DEFAULT_DOUBLE;
 			}
@@ -547,9 +556,6 @@ public class ObjectDDMStorageAdapter implements DDMStorageAdapter {
 
 	@Reference
 	private ObjectFieldLocalService _objectFieldLocalService;
-
-	@Reference
-	private ObjectScopeProviderRegistry _objectScopeProviderRegistry;
 
 	@Reference
 	private UserLocalService _userLocalService;

@@ -59,9 +59,11 @@ type ObjectFieldBusinessType =
 	| 'Attachment'
 	| 'Date'
 	| 'Decimal'
+	| 'Formula'
 	| 'Integer'
 	| 'LongInteger'
 	| 'LongText'
+	| 'MultiselectPicklist'
 	| 'Picklist'
 	| 'PrecisionDecimal'
 	| 'Relationship'
@@ -75,7 +77,7 @@ interface ObjectFieldType {
 }
 interface ObjectField {
 	DBType: string;
-	businessType: ObjectFieldBusinessType | string;
+	businessType: ObjectFieldBusinessType;
 	defaultValue?: string;
 	externalReferenceCode?: string;
 	id: number;
@@ -83,7 +85,8 @@ interface ObjectField {
 	indexedAsKeyword: boolean;
 	indexedLanguageId: Locale | null;
 	label: LocalizedValue<string>;
-	listTypeDefinitionId: number;
+	listTypeDefinitionExternalReferenceCode: string;
+	listTypeDefinitionId?: number;
 	name: string;
 	objectFieldSettings?: ObjectFieldSetting[];
 	relationshipId?: number;
@@ -104,7 +107,7 @@ interface ObjectDefinition {
 	active: boolean;
 	dateCreated: string;
 	dateModified: string;
-	enabledCategorization: boolean;
+	enableCategorization: boolean;
 	id: number;
 	label: LocalizedValue<string>;
 	name: string;
@@ -216,6 +219,8 @@ type ObjectFieldSettingName =
 	| 'maximumFileSize'
 	| 'objectFieldName'
 	| 'objectRelationshipName'
+	| 'output'
+	| 'script'
 	| 'showCounter'
 	| 'showFilesInDocumentsAndMedia'
 	| 'stateFlow'
@@ -262,6 +267,7 @@ type ObjectValidationType = {
 
 interface PickList {
 	actions: Actions;
+	externalReferenceCode: string;
 	id: number;
 	listTypeEntries: PickListItem[];
 	name: string;

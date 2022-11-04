@@ -15,6 +15,8 @@
 package com.liferay.object.rest.internal.openapi.v1_0;
 
 import com.liferay.object.constants.ObjectFieldConstants;
+import com.liferay.object.constants.ObjectFieldSettingConstants;
+import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.rest.dto.v1_0.FileEntry;
@@ -26,17 +28,20 @@ import com.liferay.object.rest.openapi.v1_0.ObjectEntryOpenAPIResource;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
+import com.liferay.object.util.ObjectFieldSettingValueUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.vulcan.batch.engine.Field;
 import com.liferay.portal.vulcan.openapi.DTOProperty;
 import com.liferay.portal.vulcan.openapi.OpenAPISchemaFilter;
 import com.liferay.portal.vulcan.resource.OpenAPIResource;
-import com.liferay.portal.vulcan.util.TransformUtil;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.Schema;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -61,10 +66,10 @@ public class ObjectEntryOpenAPIResourceImpl
 
 	@Override
 	public Map<String, Field> getFields(
-			long objectDefinitionId, UriInfo uriInfo)
+			ObjectDefinition objectDefinition, UriInfo uriInfo)
 		throws Exception {
 
-		Response response = getOpenAPI(objectDefinitionId, "json", uriInfo);
+		Response response = getOpenAPI(objectDefinition, "json", uriInfo);
 
 		OpenAPI openAPI = (OpenAPI)response.getEntity();
 
@@ -126,15 +131,14 @@ public class ObjectEntryOpenAPIResourceImpl
 
 	@Override
 	public Response getOpenAPI(
-			long objectDefinitionId, String type, UriInfo uriInfo)
+			ObjectDefinition objectDefinition, String type, UriInfo uriInfo)
 		throws Exception {
 
-		_objectDefinition = _objectDefinitionLocalService.getObjectDefinition(
-			objectDefinitionId);
+		_objectDefinition = objectDefinition;
 
 		return _openAPIResource.getOpenAPI(
 			new ObjectEntryOpenAPIContributor(
-				_objectDefinition, _objectDefinitionLocalService,
+				_objectDefinition, _objectDefinitionLocalService, this,
 				_objectRelationshipLocalService),
 			_getOpenAPISchemaFilter(_objectDefinition.getRESTContextPath()),
 			new HashSet<Class<?>>() {
@@ -206,11 +210,37 @@ public class ObjectEntryOpenAPIResourceImpl
 		DTOProperty dtoProperty = new DTOProperty(
 			new HashMap<>(), "ObjectEntry", "object");
 
-		dtoProperty.setDTOProperties(
-			TransformUtil.transform(
+		List<DTOProperty> dtoProperties = new ArrayList<>();
+
+		for (ObjectField objectField :
 				_objectFieldLocalService.getObjectFields(
-					_objectDefinition.getObjectDefinitionId()),
-				this::_getDTOProperty));
+					_objectDefinition.getObjectDefinitionId())) {
+
+			dtoProperties.add(_getDTOProperty(objectField));
+
+			if (GetterUtil.getBoolean(
+					PropsUtil.get("feature.flag.LPS-164801")) &&
+				Objects.equals(
+					objectField.getRelationshipType(),
+					ObjectRelationshipConstants.TYPE_ONE_TO_MANY)) {
+
+				dtoProperties.add(
+					new DTOProperty(
+						Collections.singletonMap("x-parent-map", "properties"),
+						ObjectFieldSettingValueUtil.getObjectFieldSettingValue(
+							objectField,
+							ObjectFieldSettingConstants.
+								NAME_OBJECT_RELATIONSHIP_ERC_FIELD_NAME),
+						String.class.getSimpleName()) {
+
+						{
+							setRequired(objectField.isRequired());
+						}
+					});
+			}
+		}
+
+		dtoProperty.setDTOProperties(dtoProperties);
 
 		openAPISchemaFilter.setDTOProperties(Arrays.asList(dtoProperty));
 

@@ -32,6 +32,7 @@ import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.odata.filter.ExpressionConvert;
 import com.liferay.portal.odata.filter.FilterParserProvider;
+import com.liferay.portal.odata.sort.SortParserProvider;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.workflow.metrics.rest.internal.security.permission.LiberalPermissionChecker;
 import com.liferay.portal.workflow.metrics.rest.resource.v1_0.TimeRangeResource;
@@ -52,9 +53,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.ComponentServiceObjects;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceScope;
 
@@ -62,7 +61,10 @@ import org.osgi.service.component.annotations.ReferenceScope;
  * @author Rafael Praxedes
  * @generated
  */
-@Component(immediate = true, service = TimeRangeResource.Factory.class)
+@Component(
+	property = "resource.locator.key=/portal-workflow-metrics/v1.0/TimeRange",
+	service = TimeRangeResource.Factory.class
+)
 @Generated("")
 public class TimeRangeResourceFactoryImpl implements TimeRangeResource.Factory {
 
@@ -133,16 +135,6 @@ public class TimeRangeResourceFactoryImpl implements TimeRangeResource.Factory {
 			private User _user;
 
 		};
-	}
-
-	@Activate
-	protected void activate() {
-		TimeRangeResource.FactoryHolder.factory = this;
-	}
-
-	@Deactivate
-	protected void deactivate() {
-		TimeRangeResource.FactoryHolder.factory = null;
 	}
 
 	private static Function<InvocationHandler, TimeRangeResource>
@@ -216,6 +208,7 @@ public class TimeRangeResourceFactoryImpl implements TimeRangeResource.Factory {
 		timeRangeResource.setResourcePermissionLocalService(
 			_resourcePermissionLocalService);
 		timeRangeResource.setRoleLocalService(_roleLocalService);
+		timeRangeResource.setSortParserProvider(_sortParserProvider);
 
 		try {
 			return method.invoke(timeRangeResource, arguments);
@@ -263,6 +256,9 @@ public class TimeRangeResourceFactoryImpl implements TimeRangeResource.Factory {
 
 	@Reference
 	private RoleLocalService _roleLocalService;
+
+	@Reference
+	private SortParserProvider _sortParserProvider;
 
 	@Reference
 	private UserLocalService _userLocalService;

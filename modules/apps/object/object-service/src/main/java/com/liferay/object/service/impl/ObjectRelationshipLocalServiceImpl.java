@@ -59,7 +59,6 @@ import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -479,8 +478,7 @@ public class ObjectRelationshipLocalServiceImpl
 		objectRelationship = _updateObjectRelationship(
 			parameterObjectFieldId, deletionType, labelMap, objectRelationship);
 
-		if (GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-158962")) &&
-			(objectRelationship.getObjectFieldId2() != 0) &&
+		if ((objectRelationship.getObjectFieldId2() != 0) &&
 			StringUtil.equals(
 				deletionType,
 				ObjectRelationshipConstants.DELETION_TYPE_DISASSOCIATE)) {
@@ -540,8 +538,13 @@ public class ObjectRelationshipLocalServiceImpl
 
 		_objectFieldSettingLocalService.addObjectFieldSetting(
 			user.getUserId(), objectField.getObjectFieldId(),
-			ObjectFieldSettingConstants.OBJECT_DEFINITION_1_SHORT_NAME,
+			ObjectFieldSettingConstants.NAME_OBJECT_DEFINITION_1_SHORT_NAME,
 			objectDefinition1.getShortName());
+
+		_objectFieldSettingLocalService.addObjectFieldSetting(
+			user.getUserId(), objectField.getObjectFieldId(),
+			ObjectFieldSettingConstants.NAME_OBJECT_RELATIONSHIP_ERC_FIELD_NAME,
+			StringUtil.replaceLast(objectField.getName(), "Id", "ERC"));
 
 		if (objectDefinition2.isApproved()) {
 			runSQL(

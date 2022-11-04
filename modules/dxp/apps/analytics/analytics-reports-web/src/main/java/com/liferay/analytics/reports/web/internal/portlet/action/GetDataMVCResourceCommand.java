@@ -26,12 +26,11 @@ import com.liferay.analytics.reports.web.internal.model.TimeSpan;
 import com.liferay.analytics.reports.web.internal.util.AnalyticsReportsUtil;
 import com.liferay.info.item.ClassPKInfoItemIdentifier;
 import com.liferay.info.item.InfoItemReference;
-import com.liferay.info.item.InfoItemServiceTracker;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.NoSuchModelException;
 import com.liferay.portal.kernel.json.JSONArray;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
@@ -91,7 +90,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Cristina González
  */
 @Component(
-	immediate = true,
 	property = {
 		"javax.portlet.name=" + AnalyticsReportsPortletKeys.ANALYTICS_REPORTS,
 		"mvc.command.name=/analytics_reports/get_data"
@@ -255,7 +253,7 @@ public class GetDataMVCResourceCommand extends BaseMVCResourceCommand {
 		String canonicalURL, Locale locale, ResourceRequest resourceRequest,
 		ResourceResponse resourceResponse) {
 
-		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+		JSONObject jsonObject = _jsonFactory.createJSONObject();
 
 		Optional.ofNullable(
 			analyticsReportsInfoItem.getActions()
@@ -623,7 +621,7 @@ public class GetDataMVCResourceCommand extends BaseMVCResourceCommand {
 	private Http _http;
 
 	@Reference
-	private InfoItemServiceTracker _infoItemServiceTracker;
+	private JSONFactory _jsonFactory;
 
 	@Reference
 	private Language _language;

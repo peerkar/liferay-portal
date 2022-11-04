@@ -1454,6 +1454,22 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 
 		if (status == WorkflowConstants.STATUS_APPROVED) {
 
+			// Resources
+
+			if (oldStatus == WorkflowConstants.STATUS_DRAFT) {
+				if (serviceContext.isAddGroupPermissions() ||
+					serviceContext.isAddGuestPermissions()) {
+
+					addEntryResources(
+						entry, serviceContext.isAddGroupPermissions(),
+						serviceContext.isAddGuestPermissions());
+				}
+				else {
+					addEntryResources(
+						entry, serviceContext.getModelPermissions());
+				}
+			}
+
 			// Asset
 
 			_assetEntryLocalService.updateEntry(

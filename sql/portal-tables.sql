@@ -246,8 +246,8 @@ create table Contact_ (
 	firstName VARCHAR(75) null,
 	middleName VARCHAR(75) null,
 	lastName VARCHAR(75) null,
-	prefixId LONG,
-	suffixId LONG,
+	prefixListTypeId LONG,
+	suffixListTypeId LONG,
 	male BOOLEAN,
 	birthday DATE null,
 	smsSn VARCHAR(75) null,
@@ -483,7 +483,7 @@ create table EmailAddress (
 	classNameId LONG,
 	classPK LONG,
 	address VARCHAR(254) null,
-	typeId LONG,
+	listTypeId LONG,
 	primary_ BOOLEAN
 );
 
@@ -868,7 +868,7 @@ create table Organization_ (
 	recursable BOOLEAN,
 	regionId LONG,
 	countryId LONG,
-	statusId LONG,
+	statusListTypeId LONG,
 	comments STRING null,
 	logoId LONG,
 	primary key (organizationId, ctCollectionId)
@@ -1637,7 +1637,7 @@ create table Website (
 	classNameId LONG,
 	classPK LONG,
 	url STRING null,
-	typeId LONG,
+	listTypeId LONG,
 	primary_ BOOLEAN,
 	lastPublishDate DATE null
 );

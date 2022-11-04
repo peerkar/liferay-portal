@@ -87,7 +87,7 @@ else if (metadataField.equals("view-count")) {
 	<c:when test='<%= Objects.equals(value, "author") %>'>
 
 		<%
-		User assetRendererUser = UserLocalServiceUtil.getUser(assetRenderer.getUserId());
+		User assetRendererUser = UserLocalServiceUtil.fetchUser(assetRenderer.getUserId());
 
 		String displayDate = StringPool.BLANK;
 
@@ -111,7 +111,14 @@ else if (metadataField.equals("view-count")) {
 			</div>
 
 			<div class="asset-user-info">
-				<span class="user-info"><%= HtmlUtil.escape(assetRendererUser.getFullName()) %></span>
+				<c:choose>
+					<c:when test="<%= assetRendererUser != null %>">
+						<span class="user-info"><%= HtmlUtil.escape(assetRendererUser.getFullName()) %></span>
+					</c:when>
+					<c:otherwise>
+						<span class="user-info"><liferay-ui:message key="anonymous"></liferay-ui:message></span>
+					</c:otherwise>
+				</c:choose>
 
 				<span class="date-info"><%= displayDate %></span>
 			</div>

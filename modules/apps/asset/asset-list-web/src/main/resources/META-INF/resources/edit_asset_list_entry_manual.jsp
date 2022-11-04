@@ -51,9 +51,12 @@ AssetListEntry assetListEntry = assetListDisplayContext.getAssetListEntry();
 
 			<c:if test="<%= !editAssetListDisplayContext.isLiveGroup() %>">
 				<liferay-frontend:edit-form-footer>
-					<aui:button disabled="<%= editAssetListDisplayContext.isNoAssetTypeSelected() %>" id="saveButton" onClick='<%= liferayPortletResponse.getNamespace() + "saveSelectBoxes();" %>' type="submit" />
-
-					<aui:button href="<%= editAssetListDisplayContext.getBackURL() %>" type="cancel" />
+					<liferay-frontend:edit-form-buttons
+						redirect="<%= editAssetListDisplayContext.getBackURL() %>"
+						submitDisabled="<%= editAssetListDisplayContext.isNoAssetTypeSelected() %>"
+						submitId="saveButton"
+						submitOnClick='<%= liferayPortletResponse.getNamespace() + "saveSelectBoxes();" %>'
+					/>
 				</liferay-frontend:edit-form-footer>
 			</c:if>
 		</liferay-frontend:edit-form>
@@ -211,8 +214,8 @@ AssetListEntry assetListEntry = assetListDisplayContext.getAssetListEntry();
 	</c:otherwise>
 </c:choose>
 
-<aui:script require="frontend-js-web/liferay/delegate/delegate.es as delegateModule">
-	var delegate = delegateModule.default;
+<aui:script require="frontend-js-web/index as frontendJsWeb">
+	var {delegate} = frontendJsWeb;
 
 	var delegateHandler = delegate(
 		document.body,
@@ -226,14 +229,16 @@ AssetListEntry assetListEntry = assetListDisplayContext.getAssetListEntry();
 			Liferay.Util.openSelectionModal({
 				customSelectEvent: true,
 				multiple: true,
-				onSelect: function (selectedItems) {
-					if (selectedItems) {
+				onSelect: function (data) {
+					if (data.value && data.value.length) {
+						const selectedItems = data.value;
 						var assetEntryIds = [];
 
 						Array.prototype.forEach.call(
 							selectedItems,
-							(assetEntry) => {
-								assetEntryIds.push(assetEntry.value);
+							(selectedItem) => {
+								const assetEntry = JSON.parse(selectedItem);
+								assetEntryIds.push(assetEntry.assetEntryId);
 							}
 						);
 

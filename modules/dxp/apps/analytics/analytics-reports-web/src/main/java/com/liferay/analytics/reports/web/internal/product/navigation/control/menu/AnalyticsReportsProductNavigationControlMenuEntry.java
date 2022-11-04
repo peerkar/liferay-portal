@@ -75,7 +75,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Sarai Díaz
  */
 @Component(
-	immediate = true,
 	property = {
 		"product.navigation.control.menu.category.key=" + ProductNavigationControlMenuCategoryKeys.USER,
 		"product.navigation.control.menu.entry.order:Integer=400"
@@ -318,7 +317,7 @@ public class AnalyticsReportsProductNavigationControlMenuEntry
 
 		return Optional.ofNullable(
 			(InfoItemReference)httpServletRequest.getAttribute(
-				AnalyticsReportsWebKeys.INFO_ITEM_REFERENCE)
+				AnalyticsReportsWebKeys.ANALYTICS_INFO_ITEM_REFERENCE)
 		).orElseGet(
 			() -> new InfoItemReference(
 				Layout.class.getName(), themeDisplay.getPlid())

@@ -63,10 +63,14 @@ public class AccountEntryWrapper
 		attributes.put("emailAddress", getEmailAddress());
 		attributes.put("logoId", getLogoId());
 		attributes.put("name", getName());
+		attributes.put("restrictMembership", isRestrictMembership());
 		attributes.put("taxExemptionCode", getTaxExemptionCode());
 		attributes.put("taxIdNumber", getTaxIdNumber());
 		attributes.put("type", getType());
 		attributes.put("status", getStatus());
+		attributes.put("statusByUserId", getStatusByUserId());
+		attributes.put("statusByUserName", getStatusByUserName());
+		attributes.put("statusDate", getStatusDate());
 
 		return attributes;
 	}
@@ -186,6 +190,13 @@ public class AccountEntryWrapper
 			setName(name);
 		}
 
+		Boolean restrictMembership = (Boolean)attributes.get(
+			"restrictMembership");
+
+		if (restrictMembership != null) {
+			setRestrictMembership(restrictMembership);
+		}
+
 		String taxExemptionCode = (String)attributes.get("taxExemptionCode");
 
 		if (taxExemptionCode != null) {
@@ -209,11 +220,41 @@ public class AccountEntryWrapper
 		if (status != null) {
 			setStatus(status);
 		}
+
+		Long statusByUserId = (Long)attributes.get("statusByUserId");
+
+		if (statusByUserId != null) {
+			setStatusByUserId(statusByUserId);
+		}
+
+		String statusByUserName = (String)attributes.get("statusByUserName");
+
+		if (statusByUserName != null) {
+			setStatusByUserName(statusByUserName);
+		}
+
+		Date statusDate = (Date)attributes.get("statusDate");
+
+		if (statusDate != null) {
+			setStatusDate(statusDate);
+		}
 	}
 
 	@Override
 	public AccountEntry cloneWithOriginalValues() {
 		return wrap(model.cloneWithOriginalValues());
+	}
+
+	@Override
+	public java.util.List<com.liferay.portal.kernel.model.Organization>
+		fetchOrganizations() {
+
+		return model.fetchOrganizations();
+	}
+
+	@Override
+	public java.util.List<com.liferay.portal.kernel.model.User> fetchUsers() {
+		return model.fetchUsers();
 	}
 
 	@Override
@@ -402,6 +443,16 @@ public class AccountEntryWrapper
 	}
 
 	/**
+	 * Returns the restrict membership of this account entry.
+	 *
+	 * @return the restrict membership of this account entry
+	 */
+	@Override
+	public boolean getRestrictMembership() {
+		return model.getRestrictMembership();
+	}
+
+	/**
 	 * Returns the status of this account entry.
 	 *
 	 * @return the status of this account entry
@@ -409,6 +460,46 @@ public class AccountEntryWrapper
 	@Override
 	public int getStatus() {
 		return model.getStatus();
+	}
+
+	/**
+	 * Returns the status by user ID of this account entry.
+	 *
+	 * @return the status by user ID of this account entry
+	 */
+	@Override
+	public long getStatusByUserId() {
+		return model.getStatusByUserId();
+	}
+
+	/**
+	 * Returns the status by user name of this account entry.
+	 *
+	 * @return the status by user name of this account entry
+	 */
+	@Override
+	public String getStatusByUserName() {
+		return model.getStatusByUserName();
+	}
+
+	/**
+	 * Returns the status by user uuid of this account entry.
+	 *
+	 * @return the status by user uuid of this account entry
+	 */
+	@Override
+	public String getStatusByUserUuid() {
+		return model.getStatusByUserUuid();
+	}
+
+	/**
+	 * Returns the status date of this account entry.
+	 *
+	 * @return the status date of this account entry
+	 */
+	@Override
+	public Date getStatusDate() {
+		return model.getStatusDate();
 	}
 
 	/**
@@ -479,6 +570,96 @@ public class AccountEntryWrapper
 	@Override
 	public String getUuid() {
 		return model.getUuid();
+	}
+
+	/**
+	 * Returns <code>true</code> if this account entry is approved.
+	 *
+	 * @return <code>true</code> if this account entry is approved; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isApproved() {
+		return model.isApproved();
+	}
+
+	/**
+	 * Returns <code>true</code> if this account entry is denied.
+	 *
+	 * @return <code>true</code> if this account entry is denied; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isDenied() {
+		return model.isDenied();
+	}
+
+	/**
+	 * Returns <code>true</code> if this account entry is a draft.
+	 *
+	 * @return <code>true</code> if this account entry is a draft; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isDraft() {
+		return model.isDraft();
+	}
+
+	/**
+	 * Returns <code>true</code> if this account entry is expired.
+	 *
+	 * @return <code>true</code> if this account entry is expired; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isExpired() {
+		return model.isExpired();
+	}
+
+	/**
+	 * Returns <code>true</code> if this account entry is inactive.
+	 *
+	 * @return <code>true</code> if this account entry is inactive; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isInactive() {
+		return model.isInactive();
+	}
+
+	/**
+	 * Returns <code>true</code> if this account entry is incomplete.
+	 *
+	 * @return <code>true</code> if this account entry is incomplete; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isIncomplete() {
+		return model.isIncomplete();
+	}
+
+	/**
+	 * Returns <code>true</code> if this account entry is pending.
+	 *
+	 * @return <code>true</code> if this account entry is pending; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isPending() {
+		return model.isPending();
+	}
+
+	/**
+	 * Returns <code>true</code> if this account entry is restrict membership.
+	 *
+	 * @return <code>true</code> if this account entry is restrict membership; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isRestrictMembership() {
+		return model.isRestrictMembership();
+	}
+
+	/**
+	 * Returns <code>true</code> if this account entry is scheduled.
+	 *
+	 * @return <code>true</code> if this account entry is scheduled; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isScheduled() {
+		return model.isScheduled();
 	}
 
 	@Override
@@ -647,6 +828,16 @@ public class AccountEntryWrapper
 	}
 
 	/**
+	 * Sets whether this account entry is restrict membership.
+	 *
+	 * @param restrictMembership the restrict membership of this account entry
+	 */
+	@Override
+	public void setRestrictMembership(boolean restrictMembership) {
+		model.setRestrictMembership(restrictMembership);
+	}
+
+	/**
 	 * Sets the status of this account entry.
 	 *
 	 * @param status the status of this account entry
@@ -654,6 +845,46 @@ public class AccountEntryWrapper
 	@Override
 	public void setStatus(int status) {
 		model.setStatus(status);
+	}
+
+	/**
+	 * Sets the status by user ID of this account entry.
+	 *
+	 * @param statusByUserId the status by user ID of this account entry
+	 */
+	@Override
+	public void setStatusByUserId(long statusByUserId) {
+		model.setStatusByUserId(statusByUserId);
+	}
+
+	/**
+	 * Sets the status by user name of this account entry.
+	 *
+	 * @param statusByUserName the status by user name of this account entry
+	 */
+	@Override
+	public void setStatusByUserName(String statusByUserName) {
+		model.setStatusByUserName(statusByUserName);
+	}
+
+	/**
+	 * Sets the status by user uuid of this account entry.
+	 *
+	 * @param statusByUserUuid the status by user uuid of this account entry
+	 */
+	@Override
+	public void setStatusByUserUuid(String statusByUserUuid) {
+		model.setStatusByUserUuid(statusByUserUuid);
+	}
+
+	/**
+	 * Sets the status date of this account entry.
+	 *
+	 * @param statusDate the status date of this account entry
+	 */
+	@Override
+	public void setStatusDate(Date statusDate) {
+		model.setStatusDate(statusDate);
 	}
 
 	/**

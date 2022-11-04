@@ -53,7 +53,7 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 
 		App app = _appPersistence.findByPrimaryKey(appId);
 
-		validate(bundleSymbolicName, contextName);
+		_validate(bundleSymbolicName, contextName);
 
 		long moduleId = counterLocalService.increment();
 
@@ -96,7 +96,7 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 		return modulePersistence.findByAppId(appId);
 	}
 
-	protected void validate(String bundleSymbolicName, String contextName)
+	private void _validate(String bundleSymbolicName, String contextName)
 		throws PortalException {
 
 		if (Validator.isNull(bundleSymbolicName) &&

@@ -32,6 +32,10 @@ public class ContentLanguageUtil {
 		String[] availableLocaleIds, String defaultLocaleId,
 		HttpServletResponse httpServletResponse, Locale requestedLocale) {
 
+		if (httpServletResponse == null) {
+			return;
+		}
+
 		Locale contentLocale = Stream.of(
 			availableLocaleIds
 		).map(
@@ -43,11 +47,9 @@ public class ContentLanguageUtil {
 			LocaleUtil.fromLanguageId(defaultLocaleId)
 		);
 
-		if (httpServletResponse != null) {
-			httpServletResponse.addHeader(
-				HttpHeaders.CONTENT_LANGUAGE,
-				LocaleUtil.toW3cLanguageId(contentLocale));
-		}
+		httpServletResponse.addHeader(
+			HttpHeaders.CONTENT_LANGUAGE,
+			LocaleUtil.toW3cLanguageId(contentLocale));
 	}
 
 }

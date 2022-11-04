@@ -48,10 +48,12 @@ import com.liferay.object.model.ObjectEntryTable;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.ObjectRelationship;
 import com.liferay.object.model.impl.ObjectDefinitionImpl;
+import com.liferay.object.rest.manager.v1_0.ObjectEntryManagerTracker;
 import com.liferay.object.scope.ObjectScopeProviderRegistry;
 import com.liferay.object.service.ObjectActionLocalService;
 import com.liferay.object.service.ObjectDefinitionLocalServiceUtil;
 import com.liferay.object.service.ObjectEntryLocalService;
+import com.liferay.object.service.ObjectEntryService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectLayoutLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
@@ -577,7 +579,8 @@ public class ObjectDefinitionLocalServiceImpl
 				_assetVocabularyLocalService, _bundleContext,
 				_dynamicQueryBatchIndexingActionableFactory, _groupLocalService,
 				_listTypeEntryLocalService, _modelSearchRegistrarHelper, this,
-				_objectEntryLocalService, _objectFieldLocalService,
+				_objectEntryLocalService, _objectEntryManagerTracker,
+				_objectEntryService, _objectFieldLocalService,
 				_objectLayoutLocalService, _objectRelationshipLocalService,
 				_objectScopeProviderRegistry, _objectViewLocalService,
 				_persistedModelLocalServiceRegistry, _portletLocalService,
@@ -883,7 +886,8 @@ public class ObjectDefinitionLocalServiceImpl
 				}
 				else {
 					_objectFieldLocalService.addCustomObjectField(
-						userId, objectField.getListTypeDefinitionId(),
+						objectField.getExternalReferenceCode(), userId,
+						objectField.getListTypeDefinitionId(),
 						objectDefinition.getObjectDefinitionId(),
 						objectField.getBusinessType(), objectField.getDBType(),
 						objectField.getDefaultValue(), objectField.isIndexed(),
@@ -927,23 +931,25 @@ public class ObjectDefinitionLocalServiceImpl
 				_language.get(LocaleUtil.getDefault(), "create-date")),
 			"createDate", false, false);
 
-		String dbColumnName = ObjectEntryTable.INSTANCE.objectEntryId.getName();
+		if (!objectDefinition.isSystem() ||
+			GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-164801"))) {
 
-		if (system) {
-			dbColumnName = pkObjectFieldName;
-		}
-
-		if (!objectDefinition.isSystem()) {
 			_objectFieldLocalService.addSystemObjectField(
 				userId, objectDefinition.getObjectDefinitionId(),
 				ObjectFieldConstants.BUSINESS_TYPE_TEXT,
 				ObjectEntryTable.INSTANCE.externalReferenceCode.getName(),
-				ObjectEntryTable.INSTANCE.getTableName(),
-				ObjectFieldConstants.DB_TYPE_STRING, null, false, false, null,
+				dbTableName, ObjectFieldConstants.DB_TYPE_STRING, null, false,
+				false, null,
 				LocalizedMapUtil.getLocalizedMap(
 					_language.get(
 						LocaleUtil.getDefault(), "external-reference-code")),
 				"externalReferenceCode", false, false);
+		}
+
+		String dbColumnName = ObjectEntryTable.INSTANCE.objectEntryId.getName();
+
+		if (system) {
+			dbColumnName = pkObjectFieldName;
 		}
 
 		_objectFieldLocalService.addSystemObjectField(
@@ -1148,16 +1154,12 @@ public class ObjectDefinitionLocalServiceImpl
 		_validateObjectFieldId(objectDefinition, descriptionObjectFieldId);
 		_validateObjectFieldId(objectDefinition, titleObjectFieldId);
 		_validateActive(objectDefinition, active);
-
-		if (GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-158672"))) {
-			_validateEnableCategorization(
-				enableCategorization, objectDefinition.getStorageType(),
-				objectDefinition.isSystem());
-			_validateEnableComments(
-				enableComments, objectDefinition.getStorageType(),
-				objectDefinition.isSystem());
-		}
-
+		_validateEnableCategorization(
+			enableCategorization, objectDefinition.getStorageType(),
+			objectDefinition.isSystem());
+		_validateEnableComments(
+			enableComments, objectDefinition.getStorageType(),
+			objectDefinition.isSystem());
 		_validateEnableObjectEntryHistory(
 			objectDefinition.isApproved(),
 			objectDefinition.isEnableObjectEntryHistory() !=
@@ -1186,20 +1188,8 @@ public class ObjectDefinitionLocalServiceImpl
 		objectDefinition.setTitleObjectFieldId(titleObjectFieldId);
 		objectDefinition.setAccountEntryRestricted(accountEntryRestricted);
 		objectDefinition.setActive(active);
-
-		if (GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-158672"))) {
-			objectDefinition.setEnableCategorization(enableCategorization);
-			objectDefinition.setEnableComments(enableComments);
-		}
-		else {
-			objectDefinition.setEnableCategorization(
-				!objectDefinition.isSystem() &&
-				StringUtil.equals(
-					objectDefinition.getStorageType(),
-					ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT));
-			objectDefinition.setEnableComments(false);
-		}
-
+		objectDefinition.setEnableCategorization(enableCategorization);
+		objectDefinition.setEnableComments(enableComments);
 		objectDefinition.setEnableObjectEntryHistory(enableObjectEntryHistory);
 		objectDefinition.setLabelMap(labelMap, LocaleUtil.getSiteDefault());
 		objectDefinition.setPanelAppOrder(panelAppOrder);
@@ -1375,10 +1365,6 @@ public class ObjectDefinitionLocalServiceImpl
 
 		if (!enableObjectEntryHistoryChanged) {
 			return;
-		}
-
-		if (!GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-158473"))) {
-			throw new UnsupportedOperationException();
 		}
 
 		if (system) {
@@ -1606,7 +1592,13 @@ public class ObjectDefinitionLocalServiceImpl
 	private ObjectEntryLocalService _objectEntryLocalService;
 
 	@Reference
+	private ObjectEntryManagerTracker _objectEntryManagerTracker;
+
+	@Reference
 	private ObjectEntryPersistence _objectEntryPersistence;
+
+	@Reference
+	private ObjectEntryService _objectEntryService;
 
 	@Reference
 	private ObjectFieldLocalService _objectFieldLocalService;

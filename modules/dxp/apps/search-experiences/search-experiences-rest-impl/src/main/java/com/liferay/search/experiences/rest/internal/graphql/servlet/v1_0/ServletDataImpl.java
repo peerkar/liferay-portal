@@ -19,14 +19,17 @@ import com.liferay.search.experiences.rest.internal.graphql.mutation.v1_0.Mutati
 import com.liferay.search.experiences.rest.internal.graphql.query.v1_0.Query;
 import com.liferay.search.experiences.rest.resource.v1_0.FieldMappingInfoResource;
 import com.liferay.search.experiences.rest.resource.v1_0.KeywordQueryContributorResource;
+import com.liferay.search.experiences.rest.resource.v1_0.MLModelResource;
 import com.liferay.search.experiences.rest.resource.v1_0.ModelPrefilterContributorResource;
 import com.liferay.search.experiences.rest.resource.v1_0.QueryPrefilterContributorResource;
 import com.liferay.search.experiences.rest.resource.v1_0.SXPBlueprintResource;
 import com.liferay.search.experiences.rest.resource.v1_0.SXPElementResource;
 import com.liferay.search.experiences.rest.resource.v1_0.SXPParameterContributorDefinitionResource;
+import com.liferay.search.experiences.rest.resource.v1_0.SearchIndexResource;
 import com.liferay.search.experiences.rest.resource.v1_0.SearchResponseResource;
 import com.liferay.search.experiences.rest.resource.v1_0.SearchableAssetNameDisplayResource;
 import com.liferay.search.experiences.rest.resource.v1_0.SearchableAssetNameResource;
+import com.liferay.search.experiences.rest.resource.v1_0.SentenceTransformerValidationResultResource;
 
 import javax.annotation.Generated;
 
@@ -41,7 +44,7 @@ import org.osgi.service.component.annotations.ReferenceScope;
  * @author Brian Wing Shun Chan
  * @generated
  */
-@Component(immediate = true, service = ServletData.class)
+@Component(service = ServletData.class)
 @Generated("")
 public class ServletDataImpl implements ServletData {
 
@@ -53,11 +56,16 @@ public class ServletDataImpl implements ServletData {
 			_sxpElementResourceComponentServiceObjects);
 		Mutation.setSearchResponseResourceComponentServiceObjects(
 			_searchResponseResourceComponentServiceObjects);
+		Mutation.
+			setSentenceTransformerValidationResultResourceComponentServiceObjects(
+				_sentenceTransformerValidationResultResourceComponentServiceObjects);
 
 		Query.setFieldMappingInfoResourceComponentServiceObjects(
 			_fieldMappingInfoResourceComponentServiceObjects);
 		Query.setKeywordQueryContributorResourceComponentServiceObjects(
 			_keywordQueryContributorResourceComponentServiceObjects);
+		Query.setMLModelResourceComponentServiceObjects(
+			_mlModelResourceComponentServiceObjects);
 		Query.setModelPrefilterContributorResourceComponentServiceObjects(
 			_modelPrefilterContributorResourceComponentServiceObjects);
 		Query.setQueryPrefilterContributorResourceComponentServiceObjects(
@@ -69,6 +77,8 @@ public class ServletDataImpl implements ServletData {
 		Query.
 			setSXPParameterContributorDefinitionResourceComponentServiceObjects(
 				_sxpParameterContributorDefinitionResourceComponentServiceObjects);
+		Query.setSearchIndexResourceComponentServiceObjects(
+			_searchIndexResourceComponentServiceObjects);
 		Query.setSearchableAssetNameResourceComponentServiceObjects(
 			_searchableAssetNameResourceComponentServiceObjects);
 		Query.setSearchableAssetNameDisplayResourceComponentServiceObjects(
@@ -103,12 +113,20 @@ public class ServletDataImpl implements ServletData {
 		_searchResponseResourceComponentServiceObjects;
 
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
+	private ComponentServiceObjects<SentenceTransformerValidationResultResource>
+		_sentenceTransformerValidationResultResourceComponentServiceObjects;
+
+	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
 	private ComponentServiceObjects<FieldMappingInfoResource>
 		_fieldMappingInfoResourceComponentServiceObjects;
 
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
 	private ComponentServiceObjects<KeywordQueryContributorResource>
 		_keywordQueryContributorResourceComponentServiceObjects;
+
+	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
+	private ComponentServiceObjects<MLModelResource>
+		_mlModelResourceComponentServiceObjects;
 
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
 	private ComponentServiceObjects<ModelPrefilterContributorResource>
@@ -121,6 +139,10 @@ public class ServletDataImpl implements ServletData {
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
 	private ComponentServiceObjects<SXPParameterContributorDefinitionResource>
 		_sxpParameterContributorDefinitionResourceComponentServiceObjects;
+
+	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
+	private ComponentServiceObjects<SearchIndexResource>
+		_searchIndexResourceComponentServiceObjects;
 
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
 	private ComponentServiceObjects<SearchableAssetNameResource>

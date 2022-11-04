@@ -14,7 +14,6 @@
 
 package com.liferay.portlet.configuration.icon.print.internal;
 
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.portlet.configuration.icon.BasePortletConfigurationIcon;
 import com.liferay.portal.kernel.portlet.configuration.icon.PortletConfigurationIcon;
@@ -42,22 +41,7 @@ public class PrintPortletConfigurationIcon
 
 	@Override
 	public String getMessage(PortletRequest portletRequest) {
-		return _language.get(
-			getResourceBundle(getLocale(portletRequest)), "print");
-	}
-
-	@Override
-	public String getOnClick(
-		PortletRequest portletRequest, PortletResponse portletResponse) {
-
-		ThemeDisplay themeDisplay = (ThemeDisplay)portletRequest.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
-		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
-
-		return StringBundler.concat(
-			"location.href = '", portletDisplay.getURLPrint(),
-			"'; return false;");
+		return _language.get(getLocale(portletRequest), "print");
 	}
 
 	@Override
@@ -90,11 +74,6 @@ public class PrintPortletConfigurationIcon
 		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
 
 		return portletDisplay.isShowPrintIcon();
-	}
-
-	@Override
-	public boolean isToolTip() {
-		return false;
 	}
 
 	@Reference

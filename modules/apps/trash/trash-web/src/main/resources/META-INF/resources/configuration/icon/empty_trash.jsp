@@ -21,7 +21,7 @@
 </portlet:actionURL>
 
 <liferay-util:buffer
-	var="onClickFn"
+	var="onClickBuffer"
 >
 	Liferay.Util.openConfirmModal({
 		message: '<liferay-ui:message key="are-you-sure-you-want-to-empty-the-recycle-bin" />',
@@ -36,6 +36,6 @@
 <liferay-ui:icon
 	id="emptyRecycleBinButton"
 	message="empty-the-recycle-bin"
-	onClick="<%= onClickFn %>"
+	onClick="<%= onClickBuffer %>"
 	url="javascript:void(0);"
 />

@@ -36,6 +36,18 @@ definition {
 		Alert.viewSuccessMessage();
 	}
 
+	macro activeStatusViaDropdown {
+		Click(locator1 = "CustomerPortalSite#DROPDOWN_STATUS");
+
+		CP2ActivationKeys.clickAtDropdownItem(dropdownItem = "${dropdownItem}");
+
+		Type(
+			locator1 = "CustomerPortalSite#ID_CONFIRMATION",
+			value1 = "${value}");
+
+		CustomerPortal.clickAtButton(text = "Confirm");
+	}
+
 	macro addCPObject {
 		ApplicationsMenu.gotoPortlet(
 			category = "Object",
@@ -121,10 +133,46 @@ definition {
 		}
 	}
 
+	macro assertAlertInfoMessage {
+		AssertTextEquals(
+			locator1 = "CustomerPortalSite#ALERT_INFO_MESSAGE",
+			value1 = "${messageText}");
+	}
+
+	macro assertButtonIsActive {
+		var key_text = "${text}";
+
+		AssertElementPresent(locator1 = "CustomerPortalSite#ANY_ACTIVE_BUTTON");
+	}
+
+	macro assertButtonIsDisabled {
+		var key_text = "${text}";
+
+		AssertElementPresent(locator1 = "CustomerPortalSite#ANY_DISABLED_BUTTON");
+	}
+
 	macro assertButtonIsVisible {
 		var key_text = "${text}";
 
 		AssertVisible(locator1 = "CustomerPortalSite#BUTTON");
+	}
+
+	macro assertButtonNotPresent {
+		var key_text = "${text}";
+
+		AssertElementNotPresent(locator1 = "CustomerPortalSite#ANY_BUTTON");
+	}
+
+	macro assertErrorMessageIsNotVisible {
+		var key_errorMessage = "${errorMessage}";
+
+		AssertElementNotPresent(locator1 = "CustomerPortalSite#ERROR_MESSAGE");
+	}
+
+	macro assertErrorMessageIsVisible {
+		var key_errorMessage = "${errorMessage}";
+
+		AssertVisible(locator1 = "CustomerPortalSite#ERROR_MESSAGE");
 	}
 
 	macro assertPageTitle {
@@ -256,13 +304,36 @@ definition {
 	}
 
 	macro clickOnTheCloseButton {
-		Click(locator1 = "CustomerPortalSite#CLOSE_MODAL_CARD");
+		var key_modalTitle = "${modalTitle}";
+
+		Click(locator1 = "CustomerPortalSite#CLOSE_MODAL");
 	}
 
 	macro createCPSiteObjects {
 		CustomerPortal.showCPObject(title = "Account Flag");
 
 		CustomerPortal.showCPObject(title = "Koroneiki Account");
+	}
+
+	macro createUserForCP {
+		JSONUser.addUser(
+			userEmailAddress = "test.user@liferay.com",
+			userFirstName = "${userFirstName}",
+			userLastName = "${userLastName}",
+			userScreenName = "${userScreenName}");
+
+		JSONUser.setFirstPassword(
+			agreeToTermsAndAnswerReminderQuery = "true",
+			requireReset = "false",
+			userEmailAddress = "test.user@liferay.com");
+
+		Accounts.openAccountsAdmin();
+
+		LexiconEntry.gotoEntry(rowEntry = "${accountName}");
+
+		Accounts.assignUsers(
+			accountName = "${accountName}",
+			assigneeName = "${userName}");
 	}
 
 	macro customerPortalApisTearDown {
@@ -335,7 +406,7 @@ definition {
 			cardName = "Non-Production",
 			locator1 = "CustomerPortalSite#CARD_NAME");
 
-		Click(locator1 = "CustomerPortalSite#CLOSE_MODAL_CARD");
+		CustomerPortal.clickOnTheCloseButton(modalTitle = "LXC - SM Non-Production");
 	}
 
 	macro fullOnboardingFlow {
@@ -420,6 +491,12 @@ definition {
 			rowEntry = "Test Test");
 	}
 
+	macro putMouseOverButton {
+		var key_text = "${text}";
+
+		MouseOver(locator1 = "CustomerPortalSite#ANY_BUTTON");
+	}
+
 	macro replaceCertificateAndPrivateKey {
 		WaitForLiferayEvent.initializeLiferayEventLog();
 
@@ -474,9 +551,11 @@ definition {
 	}
 
 	macro search {
-		Type(
-			locator1 = "CustomerPortalSite#SEARCH_BAR",
-			value1 = "${searchItem}");
+		if (IsElementPresent(locator1 = "CustomerPortalSite#SEARCH_BAR")) {
+			Type(
+				locator1 = "CustomerPortalSite#SEARCH_BAR",
+				value1 = "${searchItem}");
+		}
 	}
 
 	macro selectNavigatorWindow {
@@ -658,6 +737,12 @@ definition {
 		AssertVisible(locator1 = "CustomerPortalSite#ALERT_NOTIFICATIONS");
 	}
 
+	macro viewAlertInfo {
+		var key_alertText = "${alertText}";
+
+		AssertElementPresent(locator1 = "CustomerPortalSite#ALERT_INFO");
+	}
+
 	macro viewAllProjectsTitlePage {
 		AssertElementPresent(locator1 = "CustomerPortalSite#PROJECT_TITLE_MAIN_PAGE");
 	}
@@ -793,6 +878,18 @@ definition {
 		CustomerPortal.viewObjectInfo(index = "${index}");
 
 		AssertElementPresent(locator1 = "CustomerPortalSite#FIELDS_KORONEIKI");
+	}
+
+	macro viewVersions {
+		Click(
+			key_dropdownLabel = "${dropDownLabel}",
+			locator1 = "CustomerPortalSite#VERSION_DROPDOWN");
+
+		for (var dropDownItem : list "${dropDownItems}") {
+			AssertVisible(
+				key_text = "${dropDownItem}",
+				locator1 = "CustomerPortalSite#VERSION_DROPDOWN");
+		}
 	}
 
 	macro waitCP20PageToLoad {

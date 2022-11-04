@@ -15,6 +15,7 @@
 package com.liferay.portal.security.audit.wiring.internal.servlet.filter;
 
 import com.liferay.petra.lang.CentralizedThreadLocal;
+import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.audit.AuditRequestThreadLocal;
@@ -24,6 +25,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.CompanyConstants;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.servlet.BaseFilter;
@@ -100,17 +102,23 @@ public class AuditFilter extends BaseFilter implements TryFilter {
 		String userLogin = StringPool.BLANK;
 
 		if (userId != null) {
-			User user = _userLocalService.getUser(userId);
+			try (SafeCloseable safeCloseable =
+					CompanyThreadLocal.setWithSafeCloseable(
+						_portal.getCompanyId(httpServletRequest))) {
 
-			userEmailAddress = user.getEmailAddress();
+				User user = _userLocalService.getUser(userId);
 
-			auditRequestThreadLocal.setRealUserEmailAddress(userEmailAddress);
+				userEmailAddress = user.getEmailAddress();
 
-			auditRequestThreadLocal.setRealUserId(userId);
+				auditRequestThreadLocal.setRealUserEmailAddress(
+					userEmailAddress);
 
-			userLogin = _getUserLogin(user);
+				auditRequestThreadLocal.setRealUserId(userId);
 
-			auditRequestThreadLocal.setRealUserLogin(userLogin);
+				userLogin = _getUserLogin(user);
+
+				auditRequestThreadLocal.setRealUserLogin(userLogin);
+			}
 		}
 
 		StringBuffer sb = httpServletRequest.getRequestURL();

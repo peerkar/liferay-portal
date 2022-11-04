@@ -13,77 +13,79 @@
  */
 
 import ClayIcon from '@clayui/icon';
-import {useEffect} from 'react';
-import {Link, useParams} from 'react-router-dom';
+import {Link, useOutletContext} from 'react-router-dom';
+import {KeyedMutator} from 'swr';
 
 import Avatar from '../../components/Avatar';
+import AssignToMe from '../../components/Avatar/AssigneToMe';
 import Code from '../../components/Code';
 import Container from '../../components/Layout/Container';
 import ListView from '../../components/ListView';
 import Loading from '../../components/Loading';
 import TaskbarProgress from '../../components/ProgressBar/TaskbarProgress';
 import StatusBadge from '../../components/StatusBadge';
+import {StatusBadgeType} from '../../components/StatusBadge/StatusBadge';
 import QATable from '../../components/Table/QATable';
 import useCaseResultGroupBy from '../../data/useCaseResultGroupBy';
 import {useFetch} from '../../hooks/useFetch';
 import useHeader from '../../hooks/useHeader';
+import useMutate from '../../hooks/useMutate';
 import i18n from '../../i18n';
-import {TestrayTask, testrayTaskImpl} from '../../services/rest';
+import {filters} from '../../schema/filter';
 import {
-	SUBTASK_STATUS,
-	StatusesProgressScore,
-	chartClassNames,
-} from '../../util/constants';
+	APIResponse,
+	PickList,
+	TestraySubTask,
+	TestrayTask,
+	TestrayTaskUser,
+	UserAccount,
+	testrayTaskImpl,
+	testrayTaskUsersImpl,
+} from '../../services/rest';
+import {testraySubTaskImpl} from '../../services/rest/TestraySubtask';
+import {StatusesProgressScore, chartClassNames} from '../../util/constants';
 import {getTimeFromNow} from '../../util/date';
-import {assigned} from '../../util/mock';
+import {searchUtil} from '../../util/search';
+import SubtaskCompleteModal from './Subtask/SubtaskCompleteModal';
+import useSubtasksActions from './Subtask/useSubtasksActions';
 
-export const progressScoreItems = [
-	[StatusesProgressScore.SELF, 7000],
-	[StatusesProgressScore.OTHER, 8967],
-	[StatusesProgressScore.INCOMPLETE, 1000],
-];
-function getTotalCompletedScore(scores: [string, number][]) {
-	let totalCompleted = 0;
-
-	for (const [scoreName, score] of scores) {
-		if (scoreName !== StatusesProgressScore.INCOMPLETE) {
-			totalCompleted += score;
-		}
-	}
-
-	return totalCompleted;
-}
+type OutletContext = {
+	mutateTask?: KeyedMutator<TestrayTask>;
+	testrayTask: TestrayTask;
+};
 
 const ShortcutIcon = () => (
 	<ClayIcon className="ml-2" fontSize={12} symbol="shortcut" />
 );
 
 const TestFlowTasks = () => {
-	const {testrayTaskId} = useParams();
+	const {mutateTask, testrayTask} = useOutletContext<OutletContext>();
+	const {updateItemFromList} = useMutate();
+	const {actions, completeModal} = useSubtasksActions();
 
-	const {data: testrayTask, loading} = useFetch<TestrayTask>(
-		testrayTaskImpl.getResource(testrayTaskId as string),
-		(response) => testrayTaskImpl.transformData(response)
+	const {data: taskUserResponse} = useFetch<APIResponse<TestrayTaskUser>>(
+		testrayTask?.id
+			? `${testrayTaskImpl.getNestedObject(
+					'taskToTasksUsers',
+					testrayTask.id
+			  )}?nestedFields=task,user`
+			: null,
+		(response) => testrayTaskUsersImpl.transformDataFromList(response)
 	);
+
+	const taskUsers: TestrayTaskUser[] = taskUserResponse?.items || [];
+
+	const users = taskUsers
+		.filter(({user}) => user)
+		.map(({user}) => user as UserAccount);
+
+	useHeader({useTabs: []});
 
 	const {
 		donut: {columns},
 	} = useCaseResultGroupBy(testrayTask?.build?.id);
 
-	const {setHeading} = useHeader({timeout: 50, useTabs: []});
-
-	useEffect(() => {
-		if (testrayTask) {
-			setHeading([
-				{
-					category: i18n.translate('tasks'),
-					title: testrayTask.name,
-				},
-			]);
-		}
-	}, [setHeading, testrayTask]);
-
-	if (loading || !testrayTask) {
+	if (!testrayTask) {
 		return <Loading />;
 	}
 
@@ -99,16 +101,11 @@ const TestFlowTasks = () => {
 									value: (
 										<StatusBadge
 											type={
-												(SUBTASK_STATUS as any)[
-													testrayTask.dueStatus
-												]?.color
+												testrayTask.dueStatus
+													.key as StatusBadgeType
 											}
 										>
-											{
-												(SUBTASK_STATUS as any)[
-													testrayTask.dueStatus
-												]?.label
-											}
+											{testrayTask.dueStatus.name}
 										</StatusBadge>
 									),
 								},
@@ -116,7 +113,13 @@ const TestFlowTasks = () => {
 									title: i18n.translate('assigned-users'),
 									value: (
 										<Avatar.Group
-											assignedUsers={assigned}
+											assignedUsers={users.map(
+												({givenName}) => ({
+													name: givenName,
+													url:
+														'https://picsum.photos/200',
+												})
+											)}
 											groupSize={3}
 										/>
 									),
@@ -196,11 +199,21 @@ const TestFlowTasks = () => {
 				<div className="pb-5">
 					<TaskbarProgress
 						displayTotalCompleted
-						items={progressScoreItems as any}
+						items={[
+							[StatusesProgressScore.SELF, 0],
+							[
+								StatusesProgressScore.OTHER,
+								Number(testrayTask.subtaskScoreCompleted ?? 0),
+							],
+							[
+								StatusesProgressScore.INCOMPLETE,
+								Number(testrayTask.subtaskScoreIncomplete ?? 0),
+							],
+						]}
 						legend
 						taskbarClassNames={chartClassNames}
-						totalCompleted={getTotalCompletedScore(
-							progressScoreItems as any
+						totalCompleted={Number(
+							testrayTask.subtaskScoreCompleted ?? 0
 						)}
 					/>
 				</div>
@@ -208,34 +221,37 @@ const TestFlowTasks = () => {
 
 			<Container className="mt-3">
 				<ListView
-					managementToolbarProps={{title: i18n.translate('subtasks')}}
-					resource="/subtasks"
+					managementToolbarProps={{
+						filterFields: filters.subtasks as any,
+						title: i18n.translate('subtasks'),
+					}}
+					resource={testraySubTaskImpl.resource}
 					tableProps={{
+						actions,
 						columns: [
 							{
 								clickable: true,
 								key: 'name',
+								sorteable: true,
 								value: i18n.translate('name'),
 							},
 							{
 								clickable: true,
 								key: 'dueStatus',
-								render: (status) => (
+								render: (dueStatus: PickList) => (
 									<StatusBadge
-										type={
-											(SUBTASK_STATUS as any)[status]
-												?.color
-										}
+										type={dueStatus?.key as StatusBadgeType}
 									>
-										{(SUBTASK_STATUS as any)[status]?.label}
+										{dueStatus?.name}
 									</StatusBadge>
 								),
-
+								sorteable: true,
 								value: i18n.translate('status'),
 							},
 							{
 								clickable: true,
 								key: 'score',
+								sorteable: true,
 								value: i18n.translate('score'),
 							},
 							{
@@ -244,31 +260,71 @@ const TestFlowTasks = () => {
 								value: i18n.translate('tests'),
 							},
 							{
-								clickable: true,
-								key: 'error',
+								key: 'errors',
 								render: (value) => <Code>{value}</Code>,
 								size: 'xl',
 								value: i18n.translate('errors'),
 							},
 							{
-								clickable: true,
-								key: 'assignee',
-								render: (assignee: any) =>
-									assignee && (
-										<Avatar
-											displayName
-											name={assignee[0]?.name}
-											url={assignee[0]?.url}
+								key: 'user',
+								render: (
+									_: any,
+									subtask: TestraySubTask,
+									mutate
+								) => {
+									if (subtask.user) {
+										return (
+											<Avatar
+												className="text-capitalize"
+												displayName
+												name={`${subtask?.user?.emailAddress
+													.split('@')[0]
+													.replace('.', ' ')}`}
+												size="sm"
+											/>
+										);
+									}
+
+									return (
+										<AssignToMe
+											onClick={() =>
+												testraySubTaskImpl
+													.assignToMe(subtask)
+													.then(() => {
+														updateItemFromList(
+															mutate,
+															0,
+															{},
+															{
+																revalidate: true,
+															}
+														);
+													})
+											}
 										/>
-									),
-								size: 'sm',
+									);
+								},
 								value: i18n.translate('assignee'),
 							},
 						],
-						navigateTo: () => '/testflow/subtasks',
+						navigateTo: (subtask) => `subtasks/${subtask.id}`,
+						rowSelectable: true,
+						rowWrap: true,
+					}}
+					transformData={(response) =>
+						testraySubTaskImpl.transformDataFromList(response)
+					}
+					variables={{
+						filter: searchUtil.eq('taskId', testrayTask.id),
 					}}
 				/>
 			</Container>
+
+			<SubtaskCompleteModal
+				modal={completeModal}
+				mutate={mutateTask}
+				subtask={completeModal.modalState}
+			/>
 		</>
 	);
 };

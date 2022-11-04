@@ -214,6 +214,7 @@ export const mockedProps = {
 		},
 	],
 	modifiedDate: '2020-07-27T10:56:56.027',
+	singlePageApplicationEnabled: false,
 	specificFields: {
 		'display-date': {
 			title: 'Display Date',
@@ -466,4 +467,9 @@ export const mockedVideoShortcutDocumentProps = {
 	subType: 'External Video Shortcut',
 	type: 'Document',
 	viewURLs: [],
+};
+
+export const mockedContentWithVersions = {
+	getItemVersionsURL:
+		'http://localhost:8080/group/guest/p_p_id=com_liferay_content_dashboard_web_portlet_ContentDashboardAdminPortlet&p_p_lifecycle=2&p_p_state=maximized&p_p_mode=view&p_p_resource_id=%2Fcontent_dashboard%2Fget_content_dashboard_item_versions',
 };

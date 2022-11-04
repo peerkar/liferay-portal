@@ -28,17 +28,23 @@ import com.liferay.object.model.ObjectField;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.util.LocalizedMapUtil;
 import com.liferay.object.util.ObjectFieldUtil;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.util.PropsUtil;
 
 import java.util.Collections;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -55,15 +61,30 @@ public class ListTypeDefinitionLocalServiceTest {
 	public static final AggregateTestRule aggregateTestRule =
 		new LiferayIntegrationTestRule();
 
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+		PropsUtil.addProperties(
+			UnicodePropertiesBuilder.setProperty(
+				"feature.flag.LPS-164278", "true"
+			).build());
+	}
+
+	@AfterClass
+	public static void tearDownClass() throws Exception {
+		PropsUtil.addProperties(
+			UnicodePropertiesBuilder.setProperty(
+				"feature.flag.LPS-164278", "false"
+			).build());
+	}
+
 	@Test
 	public void testAddListTypeDefinition() throws Exception {
-		ListTypeDefinition listTypeDefinition =
-			_listTypeDefinitionLocalService.addListTypeDefinition(
-				TestPropsValues.getUserId(),
-				Collections.singletonMap(
-					LocaleUtil.US, RandomTestUtil.randomString()));
+		ListTypeDefinition listTypeDefinition = _addListTypeDefinition();
 
 		Assert.assertNotNull(listTypeDefinition);
+		Assert.assertTrue(
+			Validator.isNotNull(listTypeDefinition.getExternalReferenceCode()));
+		Assert.assertTrue(Validator.isNotNull(listTypeDefinition.getName()));
 		Assert.assertNotNull(
 			_listTypeDefinitionLocalService.fetchListTypeDefinition(
 				listTypeDefinition.getListTypeDefinitionId()));
@@ -142,6 +163,42 @@ public class ListTypeDefinitionLocalServiceTest {
 		Assert.assertNull(
 			_listTypeEntryLocalService.fetchListTypeEntry(
 				listTypeEntry.getListTypeEntryId()));
+	}
+
+	@Test
+	public void testUpdateListTypeDefinition() throws Exception {
+		ListTypeDefinition listTypeDefinition = _addListTypeDefinition();
+
+		String externalReferenceCode = RandomTestUtil.randomString();
+		String name = RandomTestUtil.randomString();
+
+		listTypeDefinition =
+			_listTypeDefinitionLocalService.updateListTypeDefinition(
+				externalReferenceCode,
+				listTypeDefinition.getListTypeDefinitionId(),
+				Collections.singletonMap(LocaleUtil.getDefault(), name));
+
+		Assert.assertEquals(
+			externalReferenceCode,
+			listTypeDefinition.getExternalReferenceCode());
+		Assert.assertEquals(
+			name, listTypeDefinition.getName(LocaleUtil.getDefault()));
+
+		listTypeDefinition =
+			_listTypeDefinitionLocalService.updateListTypeDefinition(
+				StringPool.BLANK, listTypeDefinition.getListTypeDefinitionId(),
+				Collections.singletonMap(LocaleUtil.getDefault(), name));
+
+		externalReferenceCode = listTypeDefinition.getExternalReferenceCode();
+
+		Assert.assertFalse(externalReferenceCode.isEmpty());
+	}
+
+	private ListTypeDefinition _addListTypeDefinition() throws Exception {
+		return _listTypeDefinitionLocalService.addListTypeDefinition(
+			TestPropsValues.getUserId(),
+			Collections.singletonMap(
+				LocaleUtil.US, RandomTestUtil.randomString()));
 	}
 
 	@Inject

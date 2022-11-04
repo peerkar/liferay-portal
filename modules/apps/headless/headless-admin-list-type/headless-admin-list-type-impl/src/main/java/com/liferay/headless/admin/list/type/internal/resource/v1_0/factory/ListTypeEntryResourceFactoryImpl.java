@@ -34,6 +34,7 @@ import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.odata.filter.ExpressionConvert;
 import com.liferay.portal.odata.filter.FilterParserProvider;
+import com.liferay.portal.odata.sort.SortParserProvider;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 
 import java.lang.reflect.Constructor;
@@ -52,9 +53,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.ComponentServiceObjects;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceScope;
 
@@ -62,7 +61,10 @@ import org.osgi.service.component.annotations.ReferenceScope;
  * @author Gabriel Albuquerque
  * @generated
  */
-@Component(immediate = true, service = ListTypeEntryResource.Factory.class)
+@Component(
+	property = "resource.locator.key=/headless-admin-list-type/v1.0/ListTypeEntry",
+	service = ListTypeEntryResource.Factory.class
+)
 @Generated("")
 public class ListTypeEntryResourceFactoryImpl
 	implements ListTypeEntryResource.Factory {
@@ -134,16 +136,6 @@ public class ListTypeEntryResourceFactoryImpl
 			private User _user;
 
 		};
-	}
-
-	@Activate
-	protected void activate() {
-		ListTypeEntryResource.FactoryHolder.factory = this;
-	}
-
-	@Deactivate
-	protected void deactivate() {
-		ListTypeEntryResource.FactoryHolder.factory = null;
 	}
 
 	private static Function<InvocationHandler, ListTypeEntryResource>
@@ -219,6 +211,7 @@ public class ListTypeEntryResourceFactoryImpl
 		listTypeEntryResource.setResourcePermissionLocalService(
 			_resourcePermissionLocalService);
 		listTypeEntryResource.setRoleLocalService(_roleLocalService);
+		listTypeEntryResource.setSortParserProvider(_sortParserProvider);
 
 		try {
 			return method.invoke(listTypeEntryResource, arguments);
@@ -268,6 +261,9 @@ public class ListTypeEntryResourceFactoryImpl
 
 	@Reference
 	private RoleLocalService _roleLocalService;
+
+	@Reference
+	private SortParserProvider _sortParserProvider;
 
 	@Reference
 	private UserLocalService _userLocalService;

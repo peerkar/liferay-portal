@@ -51,7 +51,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlParser;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.LocalizationUtil;
+import com.liferay.portal.kernel.util.Localization;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.model.uid.UIDFactory;
@@ -279,11 +279,10 @@ public class WikiPageIndexer
 			String languageId = LocaleUtil.toLanguageId(locale);
 
 			document.addText(
-				LocalizationUtil.getLocalizedName(Field.CONTENT, languageId),
+				_localization.getLocalizedName(Field.CONTENT, languageId),
 				content);
 			document.addText(
-				LocalizationUtil.getLocalizedName(Field.TITLE, languageId),
-				title);
+				_localization.getLocalizedName(Field.TITLE, languageId), title);
 		}
 
 		document.addNumber(
@@ -299,10 +298,9 @@ public class WikiPageIndexer
 
 		String languageId = LocaleUtil.toLanguageId(locale);
 
-		String content = LocalizationUtil.getLocalizedName(
+		String content = _localization.getLocalizedName(
 			Field.CONTENT, languageId);
-		String title = LocalizationUtil.getLocalizedName(
-			Field.TITLE, languageId);
+		String title = _localization.getLocalizedName(Field.TITLE, languageId);
 
 		Summary summary = createSummary(document, title, content);
 
@@ -347,8 +345,7 @@ public class WikiPageIndexer
 		}
 
 		_indexWriterHelper.updateDocument(
-			getSearchEngineId(), wikiPage.getCompanyId(), getDocument(wikiPage),
-			isCommitImmediately());
+			wikiPage.getCompanyId(), getDocument(wikiPage));
 
 		_reindexAttachments(wikiPage);
 	}
@@ -359,8 +356,8 @@ public class WikiPageIndexer
 	private void _deleteDocument(WikiPage wikiPage) {
 		try {
 			_indexWriterHelper.deleteDocument(
-				getSearchEngineId(), wikiPage.getCompanyId(),
-				uidFactory.getUID(wikiPage), isCommitImmediately());
+				wikiPage.getCompanyId(), uidFactory.getUID(wikiPage),
+				isCommitImmediately());
 		}
 		catch (SearchException searchException) {
 			throw new RuntimeException(searchException);
@@ -446,7 +443,6 @@ public class WikiPageIndexer
 					}
 				}
 			});
-		indexableActionableDynamicQuery.setSearchEngineId(getSearchEngineId());
 
 		indexableActionableDynamicQuery.performActions();
 	}
@@ -462,6 +458,9 @@ public class WikiPageIndexer
 
 	@Reference
 	private Language _language;
+
+	@Reference
+	private Localization _localization;
 
 	private final RelatedEntryIndexer _relatedEntryIndexer =
 		new BaseRelatedEntryIndexer();

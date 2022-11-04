@@ -16,14 +16,9 @@ package com.liferay.commerce.avalara.connector.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
-import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
-
 /**
- * @author Calvin Keum
+ * @author Katie Nesterovich
  */
-@ExtendedObjectClassDefinition(
-	category = "tax-rate", scope = ExtendedObjectClassDefinition.Scope.GROUP
-)
 @Meta.OCD(
 	id = "com.liferay.commerce.avalara.connector.configuration.CommerceAvalaraConnectorConfiguration",
 	localization = "content/Language",

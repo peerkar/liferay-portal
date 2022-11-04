@@ -27,7 +27,6 @@ import com.liferay.headless.admin.user.dto.v1_0.UserAccount;
 import com.liferay.headless.admin.user.dto.v1_0.UserAccountContactInformation;
 import com.liferay.headless.admin.user.internal.dto.v1_0.converter.AccountResourceDTOConverter;
 import com.liferay.headless.admin.user.internal.dto.v1_0.converter.OrganizationResourceDTOConverter;
-import com.liferay.headless.admin.user.internal.dto.v1_0.converter.UserAccountResourceDTOConverter;
 import com.liferay.headless.admin.user.internal.dto.v1_0.converter.UserResourceDTOConverter;
 import com.liferay.headless.admin.user.internal.dto.v1_0.util.CustomFieldsUtil;
 import com.liferay.headless.admin.user.internal.dto.v1_0.util.ServiceBuilderAddressUtil;
@@ -469,8 +468,8 @@ public class UserAccountResourceImpl
 				user.getScreenName(), user.getEmailAddress(), false, null,
 				user.getLanguageId(), user.getTimeZoneId(), user.getGreeting(),
 				user.getComments(), user.getFirstName(), user.getMiddleName(),
-				user.getLastName(), contact.getPrefixId(),
-				contact.getSuffixId(), user.isMale(),
+				user.getLastName(), contact.getPrefixListTypeId(),
+				contact.getSuffixListTypeId(), user.isMale(),
 				_getBirthdayMonth(userAccount), _getBirthdayDay(userAccount),
 				_getBirthdayYear(userAccount), sms, facebook, jabber, skype,
 				twitter, user.getJobTitle(), user.getGroupIds(),
@@ -1267,9 +1266,6 @@ public class UserAccountResourceImpl
 
 	@Reference
 	private Portal _portal;
-
-	@Reference
-	private UserAccountResourceDTOConverter _userAccountResourceDTOConverter;
 
 	@Reference
 	private UserGroupRoleLocalService _userGroupRoleLocalService;

@@ -1,4 +1,7 @@
 {
+	"dependencies": {
+		"frontend-js-web": "*"
+	},
 	"main": "js/index.js",
 	"name": "@liferay/analytics-settings-web",
 	"scripts": {
@@ -6,5 +9,5 @@
 		"checkFormat": "liferay-npm-scripts check",
 		"format": "liferay-npm-scripts fix"
 	},
-	"version": "5.0.41"
+	"version": "5.0.45"
 }

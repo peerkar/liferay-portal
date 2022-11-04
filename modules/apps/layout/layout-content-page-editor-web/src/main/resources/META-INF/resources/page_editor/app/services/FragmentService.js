@@ -313,6 +313,7 @@ export default {
 		fragmentEntryLinkId,
 		languageId,
 		onNetworkStatus,
+		segmentsExperienceId,
 	}) {
 		return serviceFetch(
 			config.updateConfigurationValuesURL,
@@ -321,6 +322,7 @@ export default {
 					editableValues: JSON.stringify(editableValues),
 					fragmentEntryLinkId,
 					languageId,
+					segmentsExperienceId,
 				},
 			},
 			onNetworkStatus,
@@ -340,6 +342,7 @@ export default {
 		fragmentEntryLinkId,
 		languageId,
 		onNetworkStatus,
+		segmentsExperienceId,
 	}) {
 		return serviceFetch(
 			config.editFragmentEntryLinkURL,
@@ -348,6 +351,7 @@ export default {
 					editableValues: JSON.stringify(editableValues),
 					fragmentEntryLinkId,
 					languageId,
+					segmentsExperienceId,
 				},
 			},
 			onNetworkStatus,

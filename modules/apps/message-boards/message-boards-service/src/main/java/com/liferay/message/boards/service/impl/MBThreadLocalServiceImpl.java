@@ -1019,7 +1019,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 
 		// Attachments
 
-		moveAttachmentsFolders(
+		_moveAttachmentsFolders(
 			message, oldAttachmentsFolderId, oldThread, thread, serviceContext);
 
 		// Indexer
@@ -1030,7 +1030,7 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 
 		// Update children
 
-		moveChildrenMessages(message, category, oldThread.getThreadId());
+		_moveChildrenMessages(message, category, oldThread.getThreadId());
 
 		// Indexer
 
@@ -1134,7 +1134,10 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 		return thread;
 	}
 
-	protected void moveAttachmentsFolders(
+	@Reference
+	protected ExpandoRowLocalService expandoRowLocalService;
+
+	private void _moveAttachmentsFolders(
 			MBMessage message, long oldAttachmentsFolderId, MBThread oldThread,
 			MBThread newThread, ServiceContext serviceContext)
 		throws PortalException {
@@ -1154,13 +1157,13 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 			oldThread.getThreadId(), message.getMessageId());
 
 		for (MBMessage childMessage : childMessages) {
-			moveAttachmentsFolders(
+			_moveAttachmentsFolders(
 				childMessage, childMessage.getAttachmentsFolderId(), oldThread,
 				newThread, serviceContext);
 		}
 	}
 
-	protected void moveChildrenMessages(
+	private void _moveChildrenMessages(
 			MBMessage parentMessage, MBCategory category, long oldThreadId)
 		throws PortalException {
 
@@ -1177,12 +1180,9 @@ public class MBThreadLocalServiceImpl extends MBThreadLocalServiceBaseImpl {
 
 			indexer.reindex(_mbMessagePersistence.update(message));
 
-			moveChildrenMessages(message, category, oldThreadId);
+			_moveChildrenMessages(message, category, oldThreadId);
 		}
 	}
-
-	@Reference
-	protected ExpandoRowLocalService expandoRowLocalService;
 
 	@Reference
 	private AssetEntryLocalService _assetEntryLocalService;

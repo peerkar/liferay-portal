@@ -27,7 +27,7 @@ import com.liferay.layout.content.page.editor.web.internal.util.layout.structure
 import com.liferay.layout.page.template.importer.LayoutPageTemplatesImporter;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
@@ -50,7 +50,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Pavel Savinov
  */
 @Component(
-	immediate = true,
 	property = {
 		"javax.portlet.name=" + ContentPageEditorPortletKeys.CONTENT_PAGE_EDITOR_PORTLET,
 		"mvc.command.name=/layout_content_page_editor/add_fragment_entry_links"
@@ -132,12 +131,9 @@ public class AddFragmentEntryLinksMVCActionCommand
 				fragmentComposition.getData(), position, segmentsExperienceId);
 
 		for (FragmentEntryLink fragmentEntryLink : fragmentEntryLinks) {
-			List<FragmentEntryLinkListener> fragmentEntryLinkListeners =
-				_fragmentEntryLinkListenerTracker.
-					getFragmentEntryLinkListeners();
-
 			for (FragmentEntryLinkListener fragmentEntryLinkListener :
-					fragmentEntryLinkListeners) {
+					_fragmentEntryLinkListenerTracker.
+						getFragmentEntryLinkListeners()) {
 
 				fragmentEntryLinkListener.onAddFragmentEntryLink(
 					fragmentEntryLink);
@@ -145,7 +141,7 @@ public class AddFragmentEntryLinksMVCActionCommand
 		}
 
 		JSONObject fragmentEntryLinksJSONObject =
-			JSONFactoryUtil.createJSONObject();
+			_jsonFactory.createJSONObject();
 
 		layoutStructure = LayoutStructureUtil.getLayoutStructure(
 			themeDisplay.getScopeGroupId(), themeDisplay.getPlid(),
@@ -191,6 +187,9 @@ public class AddFragmentEntryLinksMVCActionCommand
 
 	@Reference
 	private FragmentEntryLinkManager _fragmentEntryLinkManager;
+
+	@Reference
+	private JSONFactory _jsonFactory;
 
 	@Reference
 	private Language _language;

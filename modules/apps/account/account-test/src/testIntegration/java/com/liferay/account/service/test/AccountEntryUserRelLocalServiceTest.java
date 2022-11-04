@@ -14,6 +14,7 @@
 
 package com.liferay.account.service.test;
 
+import com.liferay.account.configuration.AccountEntryEmailConfiguration;
 import com.liferay.account.constants.AccountConstants;
 import com.liferay.account.exception.AccountEntryTypeException;
 import com.liferay.account.exception.DuplicateAccountEntryIdException;
@@ -29,6 +30,8 @@ import com.liferay.account.service.AccountEntryUserRelLocalService;
 import com.liferay.account.service.AccountRoleLocalService;
 import com.liferay.account.service.test.util.AccountEntryTestUtil;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.petra.function.transform.TransformUtil;
+import com.liferay.portal.configuration.test.util.CompanyConfigurationTemporarySwapper;
 import com.liferay.portal.configuration.test.util.ConfigurationTestUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.NoSuchUserException;
@@ -37,8 +40,11 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.UserConstants;
 import com.liferay.portal.kernel.search.BaseModelSearchResult;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserGroupRoleLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.settings.SettingsFactoryUtil;
+import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DataGuard;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
@@ -52,9 +58,11 @@ import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.test.mail.MailMessage;
+import com.liferay.portal.test.mail.MailServiceTestUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.vulcan.util.TransformUtil;
+import com.liferay.portal.test.rule.SynchronousMailTestRule;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,6 +76,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import org.springframework.mock.web.MockHttpServletRequest;
+
 /**
  * @author Drew Brokke
  */
@@ -77,8 +87,9 @@ public class AccountEntryUserRelLocalServiceTest {
 
 	@ClassRule
 	@Rule
-	public static final LiferayIntegrationTestRule liferayIntegrationTestRule =
-		new LiferayIntegrationTestRule();
+	public static final AggregateTestRule aggregateTestRule =
+		new AggregateTestRule(
+			new LiferayIntegrationTestRule(), SynchronousMailTestRule.INSTANCE);
 
 	@Before
 	public void setUp() throws Exception {
@@ -238,6 +249,7 @@ public class AccountEntryUserRelLocalServiceTest {
 
 		try {
 			_accountEntry.setDomains("test1.com,test2.com");
+			_accountEntry.setRestrictMembership(true);
 
 			_accountEntry = _accountEntryLocalService.updateAccountEntry(
 				_accountEntry);
@@ -247,23 +259,32 @@ public class AccountEntryUserRelLocalServiceTest {
 			_userInfo.emailAddress =
 				_userInfo.screenName + "@invalid-domain.com";
 
+			try {
+				_addAccountEntryUserRel(_accountEntry.getAccountEntryId());
+
+				Assert.fail();
+			}
+			catch (UserEmailAddressException.MustHaveValidDomain
+						userEmailAddressException) {
+
+				Assert.assertEquals(
+					_userInfo.emailAddress,
+					userEmailAddressException.emailAddress);
+				Assert.assertEquals(
+					_accountEntry.getDomains(),
+					userEmailAddressException.validDomains);
+				Assert.assertEquals(
+					String.format(
+						"Email address %s must have one of the valid " +
+							"domains: %s",
+						_userInfo.emailAddress, _accountEntry.getDomains()),
+					userEmailAddressException.getMessage());
+			}
+
+			_accountEntry = _accountEntryLocalService.updateRestrictMembership(
+				_accountEntry.getAccountEntryId(), false);
+
 			_addAccountEntryUserRel(_accountEntry.getAccountEntryId());
-
-			Assert.fail();
-		}
-		catch (UserEmailAddressException.MustHaveValidDomain
-					userEmailAddressException) {
-
-			Assert.assertEquals(
-				_userInfo.emailAddress, userEmailAddressException.emailAddress);
-			Assert.assertEquals(
-				_accountEntry.getDomains(),
-				userEmailAddressException.validDomains);
-			Assert.assertEquals(
-				String.format(
-					"Email address %s must have one of the valid domains: %s",
-					_userInfo.emailAddress, _accountEntry.getDomains()),
-				userEmailAddressException.getMessage());
 		}
 		finally {
 			PrincipalThreadLocal.setName(originalName);
@@ -520,6 +541,96 @@ public class AccountEntryUserRelLocalServiceTest {
 		Arrays.sort(actualUserIds);
 
 		Assert.assertArrayEquals(expectedUserIds, actualUserIds);
+	}
+
+	@Test
+	public void testInviteUser() throws Exception {
+		int initialInboxSize = MailServiceTestUtil.getInboxSize();
+
+		User user = UserTestUtil.addUser();
+
+		Assert.assertFalse(
+			_accountEntryUserRelLocalService.hasAccountEntryUserRel(
+				_accountEntry.getAccountEntryId(), user.getUserId()));
+
+		_accountEntryUserRelLocalService.inviteUser(
+			_accountEntry.getAccountEntryId(), null, user.getEmailAddress(),
+			TestPropsValues.getUser(),
+			ServiceContextTestUtil.getServiceContext());
+
+		Assert.assertTrue(
+			_accountEntryUserRelLocalService.hasAccountEntryUserRel(
+				_accountEntry.getAccountEntryId(), user.getUserId()));
+
+		Assert.assertEquals(
+			initialInboxSize, MailServiceTestUtil.getInboxSize());
+
+		String emailAddress = "newuser@liferay.com";
+
+		Assert.assertNull(
+			_userLocalService.fetchUserByEmailAddress(
+				_accountEntry.getCompanyId(), emailAddress));
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext();
+
+		serviceContext.setRequest(new MockHttpServletRequest());
+
+		_accountEntryUserRelLocalService.inviteUser(
+			_accountEntry.getAccountEntryId(), null, emailAddress,
+			TestPropsValues.getUser(), serviceContext);
+
+		Assert.assertEquals(
+			initialInboxSize + 1, MailServiceTestUtil.getInboxSize());
+
+		MailMessage mailMessage = MailServiceTestUtil.getLastMailMessage();
+
+		Assert.assertEquals(
+			emailAddress, mailMessage.getFirstHeaderValue("To"));
+
+		String mailMessageBody = mailMessage.getBody();
+
+		Assert.assertTrue(
+			mailMessageBody.contains(
+				"Follow the link below to set up your account"));
+	}
+
+	@Test
+	public void testInviteUserWithCustomEmailTemplates() throws Exception {
+		String invitationEmailBody = "Custom email body";
+		String invitationEmailSubject = "Custom email subject";
+
+		try (CompanyConfigurationTemporarySwapper
+				companyConfigurationTemporarySwapper =
+					new CompanyConfigurationTemporarySwapper(
+						TestPropsValues.getCompanyId(),
+						AccountEntryEmailConfiguration.class.getName(),
+						HashMapDictionaryBuilder.<String, Object>put(
+							"invitationEmailBody", invitationEmailBody
+						).put(
+							"invitationEmailSubject", invitationEmailSubject
+						).build(),
+						SettingsFactoryUtil.getSettingsFactory())) {
+
+			ServiceContext serviceContext =
+				ServiceContextTestUtil.getServiceContext();
+
+			serviceContext.setRequest(new MockHttpServletRequest());
+
+			_accountEntryUserRelLocalService.inviteUser(
+				_accountEntry.getAccountEntryId(), null, "user@test.com",
+				TestPropsValues.getUser(), serviceContext);
+
+			MailMessage mailMessage = MailServiceTestUtil.getLastMailMessage();
+
+			Assert.assertEquals(
+				invitationEmailSubject,
+				mailMessage.getFirstHeaderValue("Subject"));
+
+			String mailMessageBody = mailMessage.getBody();
+
+			Assert.assertTrue(mailMessageBody.contains(invitationEmailBody));
+		}
 	}
 
 	@Test

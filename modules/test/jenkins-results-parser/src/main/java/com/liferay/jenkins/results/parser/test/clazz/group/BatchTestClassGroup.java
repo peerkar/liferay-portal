@@ -17,10 +17,10 @@ package com.liferay.jenkins.results.parser.test.clazz.group;
 import com.google.common.collect.Lists;
 
 import com.liferay.jenkins.results.parser.BatchHistory;
-import com.liferay.jenkins.results.parser.HistoryUtil;
 import com.liferay.jenkins.results.parser.JenkinsMaster;
 import com.liferay.jenkins.results.parser.JenkinsResultsParserUtil;
 import com.liferay.jenkins.results.parser.Job;
+import com.liferay.jenkins.results.parser.JobHistory;
 import com.liferay.jenkins.results.parser.PortalGitWorkingDirectory;
 import com.liferay.jenkins.results.parser.PortalTestClassJob;
 import com.liferay.jenkins.results.parser.TestHistory;
@@ -37,6 +37,7 @@ import java.nio.file.PathMatcher;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,8 +67,7 @@ public abstract class BatchTestClassGroup extends BaseTestClassGroup {
 
 		long averageTestDuration = _getDefaultTestDuration();
 
-		BatchHistory batchHistory = HistoryUtil.getBatchHistory(
-			batchName, getJob());
+		BatchHistory batchHistory = getBatchHistory();
 
 		if (batchHistory != null) {
 			TestHistory testHistory = batchHistory.getTestHistory(testName);
@@ -87,10 +87,9 @@ public abstract class BatchTestClassGroup extends BaseTestClassGroup {
 			return _averageTestOverheadDurations.get(testName);
 		}
 
-		long averageTestOverheadDuration = _getDefaultTestDuration();
+		long averageTestOverheadDuration = _getDefaultTestOverheadDuration();
 
-		BatchHistory batchHistory = HistoryUtil.getBatchHistory(
-			batchName, getJob());
+		BatchHistory batchHistory = getBatchHistory();
 
 		if (batchHistory != null) {
 			TestHistory testHistory = batchHistory.getTestHistory(testName);
@@ -140,6 +139,20 @@ public abstract class BatchTestClassGroup extends BaseTestClassGroup {
 
 	public List<AxisTestClassGroup> getAxisTestClassGroups() {
 		return axisTestClassGroups;
+	}
+
+	public BatchHistory getBatchHistory() {
+		if (_batchHistory != null) {
+			return _batchHistory;
+		}
+
+		Job job = getJob();
+
+		JobHistory jobHistory = job.getJobHistory();
+
+		_batchHistory = jobHistory.getBatchHistory(getBatchName());
+
+		return _batchHistory;
 	}
 
 	public String getBatchJobName() {
@@ -834,9 +847,45 @@ public abstract class BatchTestClassGroup extends BaseTestClassGroup {
 
 	}
 
+	protected static class TestClassDurationComparator
+		implements Comparator<TestClass> {
+
+		@Override
+		public int compare(TestClass testClass1, TestClass testClass2) {
+			Long duration1 =
+				testClass1.getAverageDuration() +
+					testClass1.getAverageOverheadDuration();
+			Long duration2 =
+				testClass2.getAverageDuration() +
+					testClass2.getAverageOverheadDuration();
+
+			return duration2.compareTo(duration1);
+		}
+
+	}
+
 	private long _getDefaultTestDuration() {
 		JobProperty jobProperty = getJobProperty(
 			"test.batch.default.test.duration");
+
+		if (jobProperty == null) {
+			return 0L;
+		}
+
+		String jobPropertyValue = jobProperty.getValue();
+
+		if (JenkinsResultsParserUtil.isNullOrEmpty(jobPropertyValue)) {
+			return 0L;
+		}
+
+		recordJobProperty(jobProperty);
+
+		return Long.valueOf(jobPropertyValue);
+	}
+
+	private long _getDefaultTestOverheadDuration() {
+		JobProperty jobProperty = getJobProperty(
+			"test.batch.default.test.overhead.duration");
 
 		if (jobProperty == null) {
 			return 0L;
@@ -1112,6 +1161,7 @@ public abstract class BatchTestClassGroup extends BaseTestClassGroup {
 	private final Map<String, Long> _averageTestDurations = new HashMap<>();
 	private final Map<String, Long> _averageTestOverheadDurations =
 		new HashMap<>();
+	private BatchHistory _batchHistory;
 	private final List<JobProperty> _jobProperties = new ArrayList<>();
 	private final List<SegmentTestClassGroup> _segmentTestClassGroups =
 		new ArrayList<>();

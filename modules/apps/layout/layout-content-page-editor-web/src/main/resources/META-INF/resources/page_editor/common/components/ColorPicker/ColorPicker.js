@@ -80,7 +80,7 @@ export function ColorPicker({
 	const [activeColorPicker, setActiveColorPicker] = useState(false);
 	const [clearedValue, setClearedValue] = useState(false);
 	const [color, setColor] = usePropsFirst(
-		tokenValues[value]?.value || value,
+		tokenValues[value]?.value || value || defaultTokenValue,
 		{forceProp: clearedValue}
 	);
 	const colorButtonRef = useRef(null);
@@ -91,7 +91,9 @@ export function ColorPicker({
 	});
 	const inputRef = useRef(null);
 	const [tokenLabel, setTokenLabel] = usePropsFirst(
-		value ? tokenValues[value]?.label : defaultTokenLabel,
+		value
+			? tokenValues[value]?.label
+			: field.inherited && defaultTokenLabel,
 		{forceProp: clearedValue}
 	);
 
@@ -231,7 +233,7 @@ export function ColorPicker({
 						active={activeDropdownColorPicker}
 						colors={colors}
 						fieldLabel={showLabel ? null : field.label}
-						inherited={field.inherited}
+						inherited={!value && field.inherited}
 						label={tokenLabel}
 						onSetActive={setActiveDropdownColorPicker}
 						onValueChange={({label, name, value}) =>
@@ -292,7 +294,7 @@ export function ColorPicker({
 								sizing="sm"
 								value={
 									error.value ||
-									(color.startsWith('#')
+									(color?.startsWith('#')
 										? color.toUpperCase()
 										: color)
 								}
@@ -301,67 +303,55 @@ export function ColorPicker({
 					</ClayInput.Group>
 				)}
 
-				{value || Liferay.FeatureFlags['LPS-163362'] ? (
-					tokenLabel ? (
-						canDetachTokenValues && (
-							<ClayButtonWithIcon
-								className="border-0 flex-shrink-0 mb-0 ml-2 page-editor__color-picker__action-button"
-								displayType="secondary"
-								onClick={() => {
-									if (
-										!tokenValues[value] &&
-										Liferay.FeatureFlags['LPS-163362']
-									) {
-										setCustomColors([defaultTokenLabel]);
+				{tokenLabel ? (
+					canDetachTokenValues && (
+						<ClayButtonWithIcon
+							className="border-0 flex-shrink-0 mb-0 ml-2 page-editor__color-picker__action-button"
+							displayType="secondary"
+							onClick={() => {
+								if (tokenValues[value]) {
+									setCustomColors([
+										tokenValues[value].value.replace(
+											'#',
+											''
+										),
+									]);
 
-										onSetValue(defaultTokenLabel, null);
-									}
-									else {
-										setCustomColors([
-											tokenValues[value].value.replace(
-												'#',
-												''
-											),
-										]);
-
-										onSetValue(
-											tokenValues[value].value,
-											null
-										);
-									}
-								}}
-								small
-								symbol="chain-broken"
-								title={
-									Liferay.FeatureFlags['LPS-163362']
-										? Liferay.Language.get('detach-style')
-										: Liferay.Language.get('detach-token')
+									onSetValue(tokenValues[value].value, null);
 								}
-							/>
-						)
-					) : (
-						<DropdownColorPicker
-							active={activeDropdownColorPicker}
-							colors={colors}
-							fieldLabel={showLabel ? null : field.label}
-							onSetActive={setActiveDropdownColorPicker}
-							onValueChange={({label, name, value}) => {
-								onSetValue(value, label, name);
+								else {
+									setCustomColors([defaultTokenValue]);
 
-								if (error.value) {
-									setError({
-										label: null,
-										value: null,
-									});
-									deleteStyleError(field.name);
+									onSetValue(defaultTokenValue, null);
 								}
 							}}
-							showSelector={false}
 							small
-							value={color}
+							symbol="chain-broken"
+							title={Liferay.Language.get('detach-style')}
 						/>
 					)
-				) : null}
+				) : (
+					<DropdownColorPicker
+						active={activeDropdownColorPicker}
+						colors={colors}
+						fieldLabel={showLabel ? null : field.label}
+						onSetActive={setActiveDropdownColorPicker}
+						onValueChange={({label, name, value}) => {
+							onSetValue(value, label, name);
+
+							if (error.value) {
+								setError({
+									label: null,
+									value: null,
+								});
+								deleteStyleError(field.name);
+							}
+						}}
+						showSelector={false}
+						small
+						value={color}
+					/>
+				)}
 
 				{value ? (
 					<ClayButtonWithIcon
@@ -380,7 +370,7 @@ export function ColorPicker({
 
 							onSetValue(
 								field.defaultValue ?? null,
-								field.defaultValue ? null : defaultTokenLabel
+								field.defaultValue ? null : defaultTokenValue
 							);
 						}}
 						small

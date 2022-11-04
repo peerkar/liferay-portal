@@ -21,7 +21,6 @@ import com.liferay.data.engine.content.type.DataDefinitionContentType;
 import com.liferay.data.engine.field.type.util.LocalizedValueUtil;
 import com.liferay.data.engine.model.DEDataDefinitionFieldLink;
 import com.liferay.data.engine.model.DEDataListView;
-import com.liferay.data.engine.nativeobject.tracker.DataEngineNativeObjectTracker;
 import com.liferay.data.engine.rest.dto.v2_0.DataDefinition;
 import com.liferay.data.engine.rest.dto.v2_0.DataDefinitionField;
 import com.liferay.data.engine.rest.dto.v2_0.DataLayout;
@@ -86,7 +85,6 @@ import com.liferay.portal.kernel.editor.configuration.EditorConfiguration;
 import com.liferay.portal.kernel.editor.configuration.EditorConfigurationFactory;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
@@ -640,7 +638,7 @@ public class DataDefinitionResourceImpl extends BaseDataDefinitionResourceImpl {
 					nestedDataDefinitionFields = ArrayUtil.append(
 						nestedDataDefinitionFields,
 						gson.fromJson(
-							JSONFactoryUtil.looseSerializeDeep(
+							_jsonFactory.looseSerializeDeep(
 								dataDefinitionField1),
 							DataDefinitionField.class));
 				}
@@ -767,8 +765,8 @@ public class DataDefinitionResourceImpl extends BaseDataDefinitionResourceImpl {
 					_portal.getPortletId(contextHttpServletRequest)));
 			ddmFormRenderingContext.setReturnFullContext(true);
 
-			return JSONFactoryUtil.createJSONObject(
-				JSONFactoryUtil.looseSerializeDeep(
+			return _jsonFactory.createJSONObject(
+				_jsonFactory.looseSerializeDeep(
 					_ddmFormTemplateContextFactory.create(
 						ddmFormFieldTypeSettingsDDMForm,
 						DDMFormLayoutFactory.create(
@@ -1521,9 +1519,6 @@ public class DataDefinitionResourceImpl extends BaseDataDefinitionResourceImpl {
 	@Reference
 	private DataDefinitionModelResourcePermission
 		_dataDefinitionModelResourcePermission;
-
-	@Reference
-	private DataEngineNativeObjectTracker _dataEngineNativeObjectTracker;
 
 	@Reference
 	private DataLayoutResource.Factory _dataLayoutResourceFactory;

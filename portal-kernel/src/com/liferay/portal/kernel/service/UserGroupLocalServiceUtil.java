@@ -132,21 +132,40 @@ public class UserGroupLocalServiceUtil {
 		return getService().addUserGroup(userGroup);
 	}
 
-	public static void addUserUserGroup(long userId, long userGroupId) {
+	/**
+	 * @throws PortalException
+	 */
+	public static void addUserUserGroup(long userId, long userGroupId)
+		throws PortalException {
+
 		getService().addUserUserGroup(userId, userGroupId);
 	}
 
-	public static void addUserUserGroup(long userId, UserGroup userGroup) {
+	/**
+	 * @throws PortalException
+	 */
+	public static void addUserUserGroup(long userId, UserGroup userGroup)
+		throws PortalException {
+
 		getService().addUserUserGroup(userId, userGroup);
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	public static void addUserUserGroups(
-		long userId, List<UserGroup> userGroups) {
+			long userId, List<UserGroup> userGroups)
+		throws PortalException {
 
 		getService().addUserUserGroups(userId, userGroups);
 	}
 
-	public static void addUserUserGroups(long userId, long[] userGroupIds) {
+	/**
+	 * @throws PortalException
+	 */
+	public static void addUserUserGroups(long userId, long[] userGroupIds)
+		throws PortalException {
+
 		getService().addUserUserGroups(userId, userGroupIds);
 	}
 

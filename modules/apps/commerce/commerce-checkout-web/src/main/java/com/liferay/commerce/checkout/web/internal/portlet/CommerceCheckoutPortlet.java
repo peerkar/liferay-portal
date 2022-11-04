@@ -24,13 +24,12 @@ import com.liferay.commerce.order.CommerceOrderHttpHelper;
 import com.liferay.commerce.order.CommerceOrderValidatorRegistry;
 import com.liferay.commerce.product.service.CommerceChannelLocalService;
 import com.liferay.commerce.service.CommerceOrderService;
-import com.liferay.commerce.util.CommerceCheckoutStepServicesTracker;
+import com.liferay.commerce.util.CommerceCheckoutStepRegistry;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.WorkflowDefinitionLink;
 import com.liferay.portal.kernel.model.WorkflowInstanceLink;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService;
 import com.liferay.portal.kernel.service.WorkflowInstanceLinkLocalService;
 import com.liferay.portal.kernel.util.CookieKeys;
@@ -64,7 +63,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Alessio Antonio Rendina
  */
 @Component(
-	enabled = false, immediate = true,
+	immediate = true,
 	property = {
 		"com.liferay.portlet.add-default-resource=true",
 		"com.liferay.portlet.css-class-wrapper=portlet-commerce-checkout",
@@ -159,7 +158,7 @@ public class CommerceCheckoutPortlet extends MVCPortlet {
 
 			CheckoutDisplayContext checkoutDisplayContext =
 				new CheckoutDisplayContext(
-					_commerceCheckoutStepServicesTracker,
+					_commerceCheckoutStepRegistry,
 					_portal.getLiferayPortletRequest(renderRequest),
 					_portal.getLiferayPortletResponse(renderResponse), _portal);
 
@@ -256,8 +255,7 @@ public class CommerceCheckoutPortlet extends MVCPortlet {
 	private CommerceChannelLocalService _commerceChannelLocalService;
 
 	@Reference
-	private CommerceCheckoutStepServicesTracker
-		_commerceCheckoutStepServicesTracker;
+	private CommerceCheckoutStepRegistry _commerceCheckoutStepRegistry;
 
 	@Reference
 	private CommerceOrderHttpHelper _commerceOrderHttpHelper;
@@ -267,9 +265,6 @@ public class CommerceCheckoutPortlet extends MVCPortlet {
 
 	@Reference
 	private CommerceOrderValidatorRegistry _commerceOrderValidatorRegistry;
-
-	@Reference
-	private CompanyLocalService _companyLocalService;
 
 	@Reference
 	private Portal _portal;

@@ -78,6 +78,10 @@ public class AccountEntryTable extends BaseTable<AccountEntryTable> {
 		"logoId", Long.class, Types.BIGINT, Column.FLAG_DEFAULT);
 	public final Column<AccountEntryTable, String> name = createColumn(
 		"name", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
+	public final Column<AccountEntryTable, Boolean> restrictMembership =
+		createColumn(
+			"restrictMembership", Boolean.class, Types.BOOLEAN,
+			Column.FLAG_DEFAULT);
 	public final Column<AccountEntryTable, String> taxExemptionCode =
 		createColumn(
 			"taxExemptionCode", String.class, Types.VARCHAR,
@@ -88,6 +92,14 @@ public class AccountEntryTable extends BaseTable<AccountEntryTable> {
 		"type_", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
 	public final Column<AccountEntryTable, Integer> status = createColumn(
 		"status", Integer.class, Types.INTEGER, Column.FLAG_DEFAULT);
+	public final Column<AccountEntryTable, Long> statusByUserId = createColumn(
+		"statusByUserId", Long.class, Types.BIGINT, Column.FLAG_DEFAULT);
+	public final Column<AccountEntryTable, String> statusByUserName =
+		createColumn(
+			"statusByUserName", String.class, Types.VARCHAR,
+			Column.FLAG_DEFAULT);
+	public final Column<AccountEntryTable, Date> statusDate = createColumn(
+		"statusDate", Date.class, Types.TIMESTAMP, Column.FLAG_DEFAULT);
 
 	private AccountEntryTable() {
 		super("AccountEntry", AccountEntryTable::new);

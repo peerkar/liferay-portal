@@ -42,6 +42,7 @@ import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.portal.kernel.servlet.PortletServlet;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.portlet.MockLiferayPortletActionRequest;
 import com.liferay.portal.kernel.test.portlet.MockLiferayPortletActionResponse;
@@ -321,12 +322,17 @@ public class ContentLayoutTestUtil {
 		mockLiferayPortletActionRequest.addParameter(
 			"itemId", jsonObject.getString("addedItemId"));
 
+		JSONObject responseJSONObject = (JSONObject)ReflectionTestUtil.invoke(
+			mvcActionCommand, "_updateItemConfig",
+			new Class<?>[] {ActionRequest.class, ActionResponse.class},
+			mockLiferayPortletActionRequest,
+			new MockLiferayPortletActionResponse());
+
 		jsonObject.put(
-			"layoutData",
-			(JSONObject)ReflectionTestUtil.invoke(
-				mvcActionCommand, "_updateItemConfig",
-				new Class<?>[] {ActionRequest.class},
-				mockLiferayPortletActionRequest));
+			"layoutData", responseJSONObject.getJSONObject("layoutData")
+		).put(
+			"pageContents", responseJSONObject.getJSONObject("pageContents")
+		);
 
 		return jsonObject;
 	}
@@ -376,9 +382,26 @@ public class ContentLayoutTestUtil {
 		mockLiferayPortletActionRequest.setAttribute(
 			JavaConstants.JAVAX_PORTLET_RESPONSE,
 			new MockLiferayPortletActionResponse());
-		mockLiferayPortletActionRequest.setAttribute(WebKeys.LAYOUT, layout);
+
+		MockHttpServletRequest mockHttpServletRequest =
+			new MockHttpServletRequest();
+
+		mockHttpServletRequest.setAttribute(WebKeys.LAYOUT, layout);
+
+		ThemeDisplay themeDisplay = getThemeDisplay(company, group, layout);
+
+		themeDisplay.setRequest(mockHttpServletRequest);
+
+		mockHttpServletRequest.setAttribute(
+			WebKeys.THEME_DISPLAY, themeDisplay);
+
 		mockLiferayPortletActionRequest.setAttribute(
-			WebKeys.THEME_DISPLAY, getThemeDisplay(company, group, layout));
+			PortletServlet.PORTLET_SERVLET_REQUEST, mockHttpServletRequest);
+
+		mockLiferayPortletActionRequest.setAttribute(WebKeys.LAYOUT, layout);
+
+		mockLiferayPortletActionRequest.setAttribute(
+			WebKeys.THEME_DISPLAY, themeDisplay);
 
 		mockLiferayPortletActionRequest.addParameter(
 			"segmentsExperienceId",
@@ -480,10 +503,15 @@ public class ContentLayoutTestUtil {
 			ReflectionTestUtil.invoke(
 				publishLayoutMVCActionCommand, "_publishLayout",
 				new Class<?>[] {
-					Layout.class, Layout.class, ServiceContext.class, long.class
+					ActionRequest.class, ActionResponse.class, Layout.class,
+					Layout.class, ServiceContext.class, long.class
 				},
-				draftLayout, layout, serviceContext,
-				TestPropsValues.getUserId());
+				getMockLiferayPortletActionRequest(
+					CompanyLocalServiceUtil.getCompany(layout.getCompanyId()),
+					GroupLocalServiceUtil.getGroup(layout.getGroupId()),
+					layout),
+				new MockLiferayPortletActionResponse(), draftLayout, layout,
+				serviceContext, TestPropsValues.getUserId());
 		}
 		finally {
 			ServiceContextThreadLocal.popServiceContext();

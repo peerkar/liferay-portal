@@ -238,13 +238,13 @@ SiteNavigationMenu siteNavigationMenu = siteNavigationMenuDisplayContext.getSite
 	</liferay-frontend:edit-form-body>
 
 	<liferay-frontend:edit-form-footer>
-		<aui:button type="submit" />
-
-		<aui:button type="cancel" />
+		<liferay-frontend:edit-form-buttons />
 	</liferay-frontend:edit-form-footer>
 </liferay-frontend:edit-form>
 
-<aui:script require="frontend-js-web/liferay/delegate/delegate.es as delegateModule">
+<aui:script require="frontend-js-web/index as frontendJsWeb">
+	var {delegate} = frontendJsWeb;
+
 	var form = document.<portlet:namespace />fm;
 
 	form.addEventListener('change', <portlet:namespace />resetPreview);
@@ -488,8 +488,6 @@ SiteNavigationMenu siteNavigationMenu = siteNavigationMenuDisplayContext.getSite
 		siteNavigationMenuIdInput &&
 		siteNavigationMenuType
 	) {
-		var delegate = delegateModule.default;
-
 		delegate(
 			document.<portlet:namespace />fm,
 			'change',

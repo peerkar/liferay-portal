@@ -47,7 +47,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Drew Brokke
  * @author Erick Monteiro
  */
-@Component(immediate = true, service = UADAnonymousUserProvider.class)
+@Component(service = UADAnonymousUserProvider.class)
 public class UADAnonymousUserProviderImpl implements UADAnonymousUserProvider {
 
 	@Override
@@ -95,8 +95,8 @@ public class UADAnonymousUserProviderImpl implements UADAnonymousUserProvider {
 		String firstName = "Anonymous";
 		String middleName = StringPool.BLANK;
 		String lastName = "Anonymous";
-		long prefixId = 0;
-		long suffixId = 0;
+		long prefixListTypeId = 0;
+		long suffixListTypeId = 0;
 		int birthdayMonth = Calendar.JANUARY;
 		int birthdayDay = 1;
 		int birthdayYear = 1970;
@@ -105,8 +105,9 @@ public class UADAnonymousUserProviderImpl implements UADAnonymousUserProvider {
 		User anonymousUser = _userLocalService.addUser(
 			creatorUserId, companyId, false, randomString, randomString, false,
 			screenName, emailAddress, locale, firstName, middleName, lastName,
-			prefixId, suffixId, true, birthdayMonth, birthdayDay, birthdayYear,
-			jobTitle, null, null, null, null, false, null);
+			prefixListTypeId, suffixListTypeId, true, birthdayMonth,
+			birthdayDay, birthdayYear, jobTitle, null, null, null, null, false,
+			null);
 
 		anonymousUser.setComments(
 			StringBundler.concat(

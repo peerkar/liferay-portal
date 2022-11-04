@@ -236,11 +236,11 @@ public class QuerySXPSearchRequestBodyContributor
 		}
 
 		return rescoreBuilder.queryWeight(
-			rescore.getQueryWeight()
+			GetterUtil.getFloat(rescore.getQueryWeight())
 		).rescoreQueryWeight(
-			rescore.getRescoreQueryWeight()
+			GetterUtil.getFloat(rescore.getRescoreQueryWeight())
 		).windowSize(
-			rescore.getWindowSize()
+			GetterUtil.getInteger(rescore.getWindowSize())
 		).build();
 	}
 

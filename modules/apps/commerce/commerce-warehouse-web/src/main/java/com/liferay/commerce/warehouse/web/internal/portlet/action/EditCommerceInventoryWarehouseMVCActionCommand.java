@@ -40,11 +40,13 @@ import com.liferay.portal.kernel.transaction.TransactionConfig;
 import com.liferay.portal.kernel.transaction.TransactionInvokerUtil;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.Localization;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
 
-import java.util.Collections;
+import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 import javax.portlet.ActionRequest;
@@ -58,7 +60,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Alessio Antonio Rendina
  */
 @Component(
-	enabled = false, immediate = true,
+	immediate = true,
 	property = {
 		"javax.portlet.name=" + CPPortletKeys.COMMERCE_INVENTORY_WAREHOUSE,
 		"mvc.command.name=/commerce_inventory_warehouse/edit_commerce_inventory_warehouse"
@@ -243,9 +245,10 @@ public class EditCommerceInventoryWarehouseMVCActionCommand
 		long commerceInventoryWarehouseId = ParamUtil.getLong(
 			actionRequest, "commerceInventoryWarehouseId");
 
-		String name = ParamUtil.getString(actionRequest, "name");
-		String description = ParamUtil.getString(actionRequest, "description");
-
+		Map<Locale, String> nameMap = _localization.getLocalizationMap(
+			actionRequest, "name");
+		Map<Locale, String> descriptionMap = _localization.getLocalizationMap(
+			actionRequest, "description");
 		boolean active = ParamUtil.getBoolean(actionRequest, "active");
 		String street1 = ParamUtil.getString(actionRequest, "street1");
 		String street2 = ParamUtil.getString(actionRequest, "street2");
@@ -269,14 +272,10 @@ public class EditCommerceInventoryWarehouseMVCActionCommand
 			commerceInventoryWarehouse =
 				_commerceInventoryWarehouseService.
 					addCommerceInventoryWarehouse(
-						null,
-						Collections.singletonMap(
-							serviceContext.getLocale(), name),
-						Collections.singletonMap(
-							serviceContext.getLocale(), description),
-						active, street1, street2, street3, city, zip,
-						commerceRegionCode, commerceCountryCode, latitude,
-						longitude, serviceContext);
+						null, nameMap, descriptionMap, active, street1, street2,
+						street3, city, zip, commerceRegionCode,
+						commerceCountryCode, latitude, longitude,
+						serviceContext);
 
 			actionRequest.setAttribute(
 				"commerceInventoryWarehouseId",
@@ -286,11 +285,7 @@ public class EditCommerceInventoryWarehouseMVCActionCommand
 			commerceInventoryWarehouse =
 				_commerceInventoryWarehouseService.
 					updateCommerceInventoryWarehouse(
-						commerceInventoryWarehouseId,
-						Collections.singletonMap(
-							serviceContext.getLocale(), name),
-						Collections.singletonMap(
-							serviceContext.getLocale(), description),
+						commerceInventoryWarehouseId, nameMap, descriptionMap,
 						active, street1, street2, street3, city, zip,
 						commerceRegionCode, commerceCountryCode, latitude,
 						longitude, mvccVersion, serviceContext);
@@ -315,6 +310,9 @@ public class EditCommerceInventoryWarehouseMVCActionCommand
 
 	@Reference
 	private CountryLocalService _countryLocalService;
+
+	@Reference
+	private Localization _localization;
 
 	@Reference
 	private Portal _portal;

@@ -29,7 +29,6 @@ import com.liferay.commerce.model.CommerceOrder;
 import com.liferay.commerce.model.CommerceShipment;
 import com.liferay.commerce.product.model.CommerceChannel;
 import com.liferay.commerce.product.service.CommerceChannelLocalService;
-import com.liferay.commerce.product.service.CommerceChannelService;
 import com.liferay.commerce.service.CommerceOrderService;
 import com.liferay.commerce.service.CommerceShipmentService;
 import com.liferay.frontend.data.set.provider.FDSDataProvider;
@@ -66,7 +65,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Alessio Antonio Rendina
  */
 @Component(
-	enabled = false, immediate = true,
+	immediate = true,
 	property = "fds.data.provider.key=" + CommerceShipmentFDSNames.SHIPMENTS,
 	service = FDSDataProvider.class
 )
@@ -245,9 +244,6 @@ public class CommerceShipmentFDSDataProvider
 
 	@Reference
 	private CommerceChannelLocalService _commerceChannelLocalService;
-
-	@Reference
-	private CommerceChannelService _commerceChannelService;
 
 	@Reference
 	private CommerceOrderService _commerceOrderService;

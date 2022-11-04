@@ -53,6 +53,11 @@ if (portletTitleBasedNavigation) {
 %>
 
 <c:if test="<%= portletTitleBasedNavigation %>">
+
+	<%
+	KBDropdownItemsProvider kbDropdownItemsProvider = new KBDropdownItemsProvider(liferayPortletRequest, liferayPortletResponse);
+	%>
+
 	<div class="management-bar management-bar-light navbar navbar-expand-md">
 		<clay:container-fluid>
 			<ul class="navbar-nav navbar-nav-expand">
@@ -61,9 +66,14 @@ if (portletTitleBasedNavigation) {
 				</li>
 				<li class="nav-item">
 					<liferay-frontend:sidebar-toggler-button
-						cssClass="btn-unstyled"
+						cssClass="btn btn-monospaced btn-sm btn-unstyled"
 						icon="info-circle-open"
-						label="info"
+					/>
+				</li>
+				<li class="nav-item">
+					<clay:dropdown-actions
+						dropdownItems="<%= kbDropdownItemsProvider.getKBArticleDropdownItems(kbArticle) %>"
+						propsTransformer="admin/js/KBDropdownPropsTransformer"
 					/>
 				</li>
 			</ul>
@@ -94,12 +104,12 @@ if (portletTitleBasedNavigation) {
 			<liferay-util:include page="/admin/common/kb_article_tools.jsp" servletContext="<%= application %>" />
 		</div>
 
-		<div <%= portletTitleBasedNavigation ? "class=\"panel\"" : StringPool.BLANK %>>
-			<div class="kb-entity-body <%= portletTitleBasedNavigation ? "panel-body" : StringPool.BLANK %>">
+		<div <%= portletTitleBasedNavigation ? "class=\"sheet\"" : StringPool.BLANK %>>
+			<div class="kb-entity-body">
 				<c:if test="<%= portletTitleBasedNavigation %>">
-					<h1>
+					<div class="kb-article-title">
 						<%= HtmlUtil.escape(kbArticle.getTitle()) %>
-					</h1>
+					</div>
 				</c:if>
 
 				<div id="<portlet:namespace /><%= kbArticle.getResourcePrimKey() %>">
@@ -165,33 +175,64 @@ if (portletTitleBasedNavigation) {
 				</c:if>
 			</div>
 
-			<c:if test="<%= enableKBArticleSuggestions %>">
+			<%
+			int status = WorkflowConstants.STATUS_APPROVED;
+
+			if (portletTitleBasedNavigation) {
+				status = WorkflowConstants.STATUS_ANY;
+			}
+
+			List<KBArticle> childKBArticles = KBArticleServiceUtil.getKBArticles(scopeGroupId, kbArticle.getResourcePrimKey(), status, QueryUtil.ALL_POS, QueryUtil.ALL_POS, new KBArticlePriorityComparator(true));
+			%>
+
+			<c:if test="<%= enableKBArticleSuggestions || !childKBArticles.isEmpty() %>">
 				<c:choose>
 					<c:when test="<%= portletTitleBasedNavigation %>">
 						<liferay-ui:panel-container
-							extended="<%= false %>"
+							cssClass="mt-5 panel-group-flush panel-group-sm"
+							extended="<%= true %>"
 							markupView="lexicon"
 							persistState="<%= true %>"
 						>
-							<liferay-ui:panel
-								collapsible="<%= true %>"
-								extended="<%= false %>"
-								markupView="lexicon"
-								persistState="<%= true %>"
-								title="suggestions"
-							>
-								<liferay-util:include page="/admin/common/kb_article_suggestions.jsp" servletContext="<%= application %>" />
-							</liferay-ui:panel>
+							<c:if test="<%= enableKBArticleSuggestions %>">
+								<liferay-ui:panel
+									collapsible="<%= true %>"
+									cssClass="panel-unstyled"
+									extended="<%= true %>"
+									markupView="lexicon"
+									persistState="<%= true %>"
+									title="suggestions"
+								>
+									<liferay-util:include page="/admin/common/kb_article_suggestions.jsp" servletContext="<%= application %>" />
+								</liferay-ui:panel>
+							</c:if>
+
+							<c:if test="<%= !childKBArticles.isEmpty() %>">
+								<liferay-ui:panel
+									collapsible="<%= true %>"
+									cssClass="panel-unstyled"
+									extended="<%= true %>"
+									markupView="lexicon"
+									persistState="<%= true %>"
+									title='<%= LanguageUtil.format(request, "child-articles-x", childKBArticles.size(), false) %>'
+								>
+									<liferay-util:include page="/admin/common/kb_article_child.jsp" servletContext="<%= application %>" />
+								</liferay-ui:panel>
+							</c:if>
 						</liferay-ui:panel-container>
 					</c:when>
 					<c:otherwise>
-						<liferay-util:include page="/admin/common/kb_article_suggestions.jsp" servletContext="<%= application %>" />
+						<c:if test="<%= enableKBArticleSuggestions %>">
+							<liferay-util:include page="/admin/common/kb_article_suggestions.jsp" servletContext="<%= application %>" />
+						</c:if>
+
+						<c:if test="<%= !childKBArticles.isEmpty() %>">
+							<liferay-util:include page="/admin/common/kb_article_child.jsp" servletContext="<%= application %>" />
+						</c:if>
 					</c:otherwise>
 				</c:choose>
 			</c:if>
 		</div>
-
-		<liferay-util:include page="/admin/common/kb_article_child.jsp" servletContext="<%= application %>" />
 	</div>
 </div>
 

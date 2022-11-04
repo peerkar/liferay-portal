@@ -34,6 +34,7 @@ import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.odata.filter.ExpressionConvert;
 import com.liferay.portal.odata.filter.FilterParserProvider;
+import com.liferay.portal.odata.sort.SortParserProvider;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 
 import java.lang.reflect.Constructor;
@@ -52,9 +53,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.ComponentServiceObjects;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceScope;
 
@@ -62,7 +61,10 @@ import org.osgi.service.component.annotations.ReferenceScope;
  * @author Javier Gamarra
  * @generated
  */
-@Component(immediate = true, service = ObjectActionResource.Factory.class)
+@Component(
+	property = "resource.locator.key=/object-admin/v1.0/ObjectAction",
+	service = ObjectActionResource.Factory.class
+)
 @Generated("")
 public class ObjectActionResourceFactoryImpl
 	implements ObjectActionResource.Factory {
@@ -134,16 +136,6 @@ public class ObjectActionResourceFactoryImpl
 			private User _user;
 
 		};
-	}
-
-	@Activate
-	protected void activate() {
-		ObjectActionResource.FactoryHolder.factory = this;
-	}
-
-	@Deactivate
-	protected void deactivate() {
-		ObjectActionResource.FactoryHolder.factory = null;
 	}
 
 	private static Function<InvocationHandler, ObjectActionResource>
@@ -218,6 +210,7 @@ public class ObjectActionResourceFactoryImpl
 		objectActionResource.setResourcePermissionLocalService(
 			_resourcePermissionLocalService);
 		objectActionResource.setRoleLocalService(_roleLocalService);
+		objectActionResource.setSortParserProvider(_sortParserProvider);
 
 		try {
 			return method.invoke(objectActionResource, arguments);
@@ -267,6 +260,9 @@ public class ObjectActionResourceFactoryImpl
 
 	@Reference
 	private RoleLocalService _roleLocalService;
+
+	@Reference
+	private SortParserProvider _sortParserProvider;
 
 	@Reference
 	private UserLocalService _userLocalService;

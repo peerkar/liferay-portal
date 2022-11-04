@@ -18,7 +18,6 @@ import com.liferay.info.item.selector.InfoItemSelectorView;
 import com.liferay.item.selector.ItemSelectorReturnType;
 import com.liferay.item.selector.ItemSelectorView;
 import com.liferay.item.selector.ItemSelectorViewDescriptor;
-import com.liferay.item.selector.ItemSelectorViewDescriptorRenderer;
 import com.liferay.item.selector.PortletItemSelectorView;
 import com.liferay.item.selector.criteria.InfoItemItemSelectorReturnType;
 import com.liferay.item.selector.criteria.info.item.criterion.InfoItemItemSelectorCriterion;
@@ -33,11 +32,9 @@ import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
@@ -104,15 +101,6 @@ public class KBArticleItemSelectorView
 	}
 
 	@Override
-	public boolean isVisible(ThemeDisplay themeDisplay) {
-		if (GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-125653"))) {
-			return true;
-		}
-
-		return false;
-	}
-
-	@Override
 	public void renderHTML(
 			ServletRequest servletRequest, ServletResponse servletResponse,
 			InfoItemItemSelectorCriterion infoItemItemSelectorCriterion,
@@ -144,10 +132,6 @@ public class KBArticleItemSelectorView
 	private static final List<ItemSelectorReturnType>
 		_supportedItemSelectorReturnTypes = Collections.singletonList(
 			new InfoItemItemSelectorReturnType());
-
-	@Reference
-	private ItemSelectorViewDescriptorRenderer<InfoItemItemSelectorCriterion>
-		_itemSelectorViewDescriptorRenderer;
 
 	@Reference
 	private KBArticleLocalService _kbArticleLocalService;

@@ -38,7 +38,6 @@ import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
@@ -55,7 +54,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Albert Lee
  */
 @Component(
-	immediate = true,
 	property = {
 		"javax.portlet.name=" + AccountPortletKeys.ACCOUNT_ENTRIES_ADMIN,
 		"javax.portlet.name=" + AccountPortletKeys.ACCOUNT_ENTRIES_MANAGEMENT,
@@ -83,21 +81,29 @@ public class EditAccountEntryMVCActionCommand
 		String cmd = ParamUtil.getString(actionRequest, Constants.CMD);
 
 		try {
-			String redirect = ParamUtil.getString(actionRequest, "redirect");
+			AccountEntry accountEntry = null;
 
 			if (cmd.equals(Constants.ADD)) {
-				AccountEntry accountEntry = _addAccountEntry(actionRequest);
+				accountEntry = _addAccountEntry(actionRequest);
 
-				redirect = HttpComponentsUtil.setParameter(
-					redirect, actionResponse.getNamespace() + "accountEntryId",
-					accountEntry.getAccountEntryId());
+				actionRequest.setAttribute(
+					WebKeys.REDIRECT,
+					HttpComponentsUtil.setParameter(
+						ParamUtil.getString(actionRequest, "redirect"),
+						actionResponse.getNamespace() + "accountEntryId",
+						accountEntry.getAccountEntryId()));
 			}
 			else if (cmd.equals(Constants.UPDATE)) {
-				updateAccountEntry(actionRequest);
+				accountEntry = updateAccountEntry(actionRequest);
 			}
 
-			if (Validator.isNotNull(redirect)) {
-				sendRedirect(actionRequest, actionResponse, redirect);
+			if (accountEntry != null) {
+				accountEntry.setRestrictMembership(
+					ParamUtil.getBoolean(
+						actionRequest, "restrictMembership",
+						accountEntry.isRestrictMembership()));
+
+				_accountEntryService.updateAccountEntry(accountEntry);
 			}
 		}
 		catch (Exception exception) {
@@ -111,23 +117,16 @@ public class EditAccountEntryMVCActionCommand
 					 exception instanceof
 						 DuplicateAccountEntryExternalReferenceCodeException) {
 
-				SessionErrors.add(actionRequest, exception.getClass());
-
 				hideDefaultErrorMessage(actionRequest);
 
-				actionResponse.setRenderParameter(
-					"mvcRenderCommandName",
-					"/account_admin/edit_account_entry");
+				sendRedirect(actionRequest, actionResponse);
 			}
 
-			throw exception;
-		}
-		catch (Throwable throwable) {
-			throw new Exception(throwable);
+			throw new PortletException(exception);
 		}
 	}
 
-	protected void updateAccountEntry(ActionRequest actionRequest)
+	protected AccountEntry updateAccountEntry(ActionRequest actionRequest)
 		throws Exception {
 
 		long accountEntryId = ParamUtil.getLong(
@@ -153,8 +152,7 @@ public class EditAccountEntryMVCActionCommand
 		accountEntry = _accountEntryService.updateAccountEntry(
 			accountEntryId, accountEntry.getParentAccountEntryId(), name,
 			description, deleteLogo, domains, emailAddress,
-			_getLogoBytes(actionRequest), taxIdNumber,
-			_getStatus(actionRequest),
+			_getLogoBytes(actionRequest), taxIdNumber, accountEntry.getStatus(),
 			ServiceContextFactory.getInstance(
 				AccountEntry.class.getName(), actionRequest));
 
@@ -179,6 +177,8 @@ public class EditAccountEntryMVCActionCommand
 						accountEntryId);
 			}
 		}
+
+		return accountEntry;
 	}
 
 	private AccountEntry _addAccountEntry(ActionRequest actionRequest)
@@ -206,7 +206,7 @@ public class EditAccountEntryMVCActionCommand
 			themeDisplay.getUserId(), AccountConstants.ACCOUNT_ENTRY_ID_DEFAULT,
 			name, description, domains, emailAddress,
 			_getLogoBytes(actionRequest), taxIdNumber, type,
-			_getStatus(actionRequest),
+			WorkflowConstants.STATUS_APPROVED,
 			ServiceContextFactory.getInstance(
 				AccountEntry.class.getName(), actionRequest));
 
@@ -225,16 +225,6 @@ public class EditAccountEntryMVCActionCommand
 		FileEntry fileEntry = _dlAppLocalService.getFileEntry(fileEntryId);
 
 		return FileUtil.getBytes(fileEntry.getContentStream());
-	}
-
-	private int _getStatus(ActionRequest actionRequest) {
-		boolean active = ParamUtil.getBoolean(actionRequest, "active");
-
-		if (active) {
-			return WorkflowConstants.STATUS_APPROVED;
-		}
-
-		return WorkflowConstants.STATUS_INACTIVE;
 	}
 
 	private boolean _isAllowUpdateDomains(String type) {

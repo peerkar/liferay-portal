@@ -68,7 +68,7 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Marcellus Tavares
  */
-@Component(immediate = true, service = DDMFormValuesValidator.class)
+@Component(service = DDMFormValuesValidator.class)
 public class DDMFormValuesValidatorImpl implements DDMFormValuesValidator {
 
 	@Override
@@ -84,7 +84,7 @@ public class DDMFormValuesValidatorImpl implements DDMFormValuesValidator {
 
 		_ddmFormFieldValueExpressionParameterAccessor =
 			new DDMFormFieldValueExpressionParameterAccessor(
-				ddmFormValues.getDefaultLocale(), timeZoneId);
+				_jsonFactory, ddmFormValues.getDefaultLocale(), timeZoneId);
 
 		DDMForm ddmForm = ddmFormValues.getDDMForm();
 

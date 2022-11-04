@@ -147,8 +147,7 @@ const Layout: React.FC<React.HTMLAttributes<HTMLElement>> = () => {
 
 			dispatch({
 				payload: {
-					enabledCategorization:
-						objectDefinition.enabledCategorization,
+					enableCategorization: objectDefinition.enableCategorization,
 					objectLayout,
 					objectRelationships: normalizeObjectRelationships({
 						objectLayoutTabs,

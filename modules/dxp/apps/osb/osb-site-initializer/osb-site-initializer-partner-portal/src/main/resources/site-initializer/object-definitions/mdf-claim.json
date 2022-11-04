@@ -7,6 +7,43 @@
 		{
 			"DBType": "String",
 			"businessType": "Text",
+			"externalReferenceCode": "MDF_Request__c",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "MDF Request External Reference Code SF"
+			},
+			"name": "mdfRequestExternalReferenceCodeSF",
+			"required": false,
+			"type": "String"
+		},
+		{
+			"DBType": "String",
+			"businessType": "Text",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "External Reference Code SF"
+			},
+			"name": "externalReferenceCodeSF",
+			"required": false,
+			"type": "String"
+		},
+		{
+			"DBType": "BigDecimal",
+			"businessType": "PrecisionDecimal",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "MDF Request Total Cost of Expense"
+			},
+			"name": "mdfRequestTotalCostOfExpense",
+			"required": false,
+			"type": "BigDecimal"
+		},
+		{
+			"DBType": "BigDecimal",
+			"businessType": "PrecisionDecimal",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -14,23 +51,23 @@
 			},
 			"name": "mdfRequestedAmount",
 			"required": false,
-			"type": "String"
+			"type": "BigDecimal"
 		},
 		{
-			"DBType": "String",
+			"DBType": "Boolean",
 			"businessType": "Text",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
-				"en_US": "Type"
+				"en_US": "Partial"
 			},
-			"name": "type",
+			"name": "partial",
 			"required": false,
-			"type": "String"
+			"type": "Boolean"
 		},
 		{
-			"DBType": "String",
-			"businessType": "Text",
+			"DBType": "BigDecimal",
+			"businessType": "PrecisionDecimal",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -38,7 +75,7 @@
 			},
 			"name": "amountClaimed",
 			"required": false,
-			"type": "String"
+			"type": "BigDecimal"
 		},
 		{
 			"DBType": "String",
@@ -49,18 +86,6 @@
 				"en_US": "Payment Received"
 			},
 			"name": "paymentReceived",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Check"
-			},
-			"name": "check",
 			"required": false,
 			"type": "String"
 		},

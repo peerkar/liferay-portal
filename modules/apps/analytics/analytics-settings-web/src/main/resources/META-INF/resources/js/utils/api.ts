@@ -15,7 +15,7 @@
 import {fetch} from 'frontend-js-web';
 
 export function fetchConnection(token: string) {
-	return fetch('/o/analytics-settings-rest/v1.0/data-source', {
+	return fetch('/o/analytics-settings-rest/v1.0/data-sources', {
 		body: JSON.stringify({
 			token,
 		}),
@@ -25,15 +25,25 @@ export function fetchConnection(token: string) {
 }
 
 export function deleteConnection() {
-	return fetch('/o/analytics-settings-rest/v1.0/data-source', {
+	return fetch('/o/analytics-settings-rest/v1.0/data-sources', {
 		method: 'DELETE',
 	});
 }
 
 export function fetchProperties() {
-	return fetch('/o/analytics-settings-rest/v1.0/channel', {
+	return fetch('/o/analytics-settings-rest/v1.0/channels', {
 		method: 'GET',
 	})
 		.then((response) => response.json())
 		.then((data) => data);
+}
+
+export function createProperty(name: string) {
+	return fetch('/o/analytics-settings-rest/v1.0/channels', {
+		body: JSON.stringify({
+			name,
+		}),
+		headers: {'Content-Type': 'application/json'},
+		method: 'POST',
+	});
 }

@@ -21,7 +21,6 @@ import com.liferay.portal.kernel.model.BaseModelListener;
 import com.liferay.portal.kernel.model.Contact;
 import com.liferay.portal.kernel.model.ModelListener;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.service.ContactLocalService;
 import com.liferay.portal.security.audit.event.generators.constants.EventTypes;
 import com.liferay.portal.security.audit.event.generators.util.Attribute;
 import com.liferay.portal.security.audit.event.generators.util.AttributesBuilder;
@@ -83,10 +82,10 @@ public class ContactModelListener extends BaseModelListener<Contact> {
 		attributesBuilder.add("lastName");
 		attributesBuilder.add("male");
 		attributesBuilder.add("middleName");
-		attributesBuilder.add("prefixId");
+		attributesBuilder.add("prefixListTypeId");
 		attributesBuilder.add("skypeSn");
 		attributesBuilder.add("smsSn");
-		attributesBuilder.add("suffixId");
+		attributesBuilder.add("suffixListTypeId");
 		attributesBuilder.add("twitterSn");
 
 		return attributesBuilder.getAttributes();
@@ -94,8 +93,5 @@ public class ContactModelListener extends BaseModelListener<Contact> {
 
 	@Reference
 	private AuditRouter _auditRouter;
-
-	@Reference
-	private ContactLocalService _contactLocalService;
 
 }

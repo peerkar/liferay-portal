@@ -1,6 +1,6 @@
 Bundle-Name: Liferay Portal Vulcan API
 Bundle-SymbolicName: com.liferay.portal.vulcan.api
-Bundle-Version: 17.0.1
+Bundle-Version: 21.0.1
 Export-Package:\
 	com.liferay.portal.vulcan.accept.language,\
 	com.liferay.portal.vulcan.aggregation,\
@@ -25,6 +25,7 @@ Export-Package:\
 	com.liferay.portal.vulcan.pagination,\
 	com.liferay.portal.vulcan.permission,\
 	com.liferay.portal.vulcan.resource,\
+	com.liferay.portal.vulcan.resource.locator,\
 	com.liferay.portal.vulcan.status,\
 	com.liferay.portal.vulcan.util,\
 	com.liferay.portal.vulcan.yaml,\
@@ -33,11 +34,13 @@ Export-Package:\
 	com.liferay.portal.vulcan.yaml.graphql,\
 	com.liferay.portal.vulcan.yaml.openapi,\
 	\
-	graphql.annotations.annotationTypes;version="5.4"
+	graphql.annotations.annotationTypes;version="6.0"
 Import-Package:\
 	!graphql.annotations.directives.*,\
 	!graphql.annotations.processor.typeFunctions.*,\
 	!graphql.annotations.typeResolvers.*,\
+	\
+	!graphql.introspection.*,\
 	\
 	!graphql.schema.*,\
 	\

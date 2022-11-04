@@ -131,6 +131,9 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 				_objectRelationshipLocalService, _objectScopeProviderRegistry,
 				_restContextPathResolverRegistry,
 				_templateInfoItemFieldSetProvider, _userLocalService);
+		InfoPermissionProvider infoPermissionProvider =
+			new ObjectEntryInfoPermissionProvider(
+				objectDefinition, _portletLocalService, _portletPermission);
 
 		List<ServiceRegistration<?>> serviceRegistrations = ListUtil.fromArray(
 			_bundleContext.registerService(
@@ -176,19 +179,6 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 				HashMapDictionaryBuilder.<String, Object>put(
 					Constants.SERVICE_RANKING, 10
 				).put(
-					"company.id", objectDefinition.getCompanyId()
-				).put(
-					"item.class.name", objectDefinition.getClassName()
-				).build()),
-			_bundleContext.registerService(
-				InfoItemFieldValuesProvider.class,
-				new ObjectEntryInfoItemFieldValuesProvider(
-					_assetDisplayPageFriendlyURLProvider,
-					_infoItemFieldReaderFieldSetProvider, _jsonFactory,
-					_listTypeEntryLocalService, _objectEntryLocalService,
-					_objectFieldLocalService, _templateInfoItemFieldSetProvider,
-					_userLocalService),
-				HashMapDictionaryBuilder.<String, Object>put(
 					"company.id", objectDefinition.getCompanyId()
 				).put(
 					"item.class.name", objectDefinition.getClassName()
@@ -250,9 +240,7 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 					"item.class.name", objectDefinition.getClassName()
 				).build()),
 			_bundleContext.registerService(
-				InfoPermissionProvider.class,
-				new ObjectEntryInfoPermissionProvider(
-					objectDefinition, _portletLocalService, _portletPermission),
+				InfoPermissionProvider.class, infoPermissionProvider,
 				HashMapDictionaryBuilder.<String, Object>put(
 					"company.id", objectDefinition.getCompanyId()
 				).put(
@@ -261,8 +249,9 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 			_bundleContext.registerService(
 				ItemSelectorView.class,
 				new ObjectEntryItemSelectorView(
-					_itemSelectorViewDescriptorRenderer, objectDefinition,
-					_objectDefinitionLocalService, _objectEntryLocalService,
+					infoPermissionProvider, _itemSelectorViewDescriptorRenderer,
+					objectDefinition, _objectDefinitionLocalService,
+					_objectEntryLocalService,
 					_objectEntryManagerTracker.getObjectEntryManager(
 						objectDefinition.getStorageType()),
 					_objectRelatedModelsProviderRegistry,
@@ -354,12 +343,34 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 					"mvc.command.name", "/object_entries/edit_object_entry"
 				).build()));
 
+		// TODO Explain 910ae730
+
+		serviceRegistrations.add(
+			_bundleContext.registerService(
+				InfoItemFieldValuesProvider.class,
+				new ObjectEntryInfoItemFieldValuesProvider(
+					_assetDisplayPageFriendlyURLProvider,
+					_infoItemFieldReaderFieldSetProvider, _jsonFactory,
+					_listTypeEntryLocalService, objectDefinition,
+					_objectEntryLocalService, _objectEntryManagerTracker,
+					_objectFieldLocalService, _templateInfoItemFieldSetProvider,
+					_userLocalService),
+				HashMapDictionaryBuilder.<String, Object>put(
+					"company.id", objectDefinition.getCompanyId()
+				).put(
+					"item.class.name", objectDefinition.getClassName()
+				).build()));
+
 		// Register ObjectEntriesPanelApp after ObjectEntriesPortlet. See
 		// LPS-140379.
 
 		serviceRegistrations.add(
 			_bundleContext.registerService(
-				PanelApp.class, new ObjectEntriesPanelApp(objectDefinition),
+				PanelApp.class,
+				new ObjectEntriesPanelApp(
+					objectDefinition,
+					_portletLocalService.getPortletById(
+						objectDefinition.getPortletId())),
 				HashMapDictionaryBuilder.<String, Object>put(
 					"panel.app.order:Integer",
 					objectDefinition.getPanelAppOrder()

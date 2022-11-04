@@ -409,6 +409,20 @@ definition {
 		Check.checkToggleSwitch(locator1 = "CommerceEntry#ACTIVE_CHECKBOX");
 	}
 
+	macro addNewWarehousesEntry {
+		WaitForElementPresent(locator1 = "IFrame#MODAL_BODY");
+
+		SelectFrame.selectFrameNoLoading(locator1 = "IFrame#MODAL_BODY");
+
+		Type(
+			locator1 = "CommerceEntry#NAME_FIELD",
+			value1 = "${warehouseName}");
+
+		Button.click(button = "Submit");
+
+		SelectFrameTop();
+	}
+
 	macro addNewWeightUnit {
 		Type(
 			locator1 = "CommerceEntry#NAME_FIELD",
@@ -773,6 +787,25 @@ definition {
 				key_entry = "${uploadFileName}",
 				locator1 = "CommerceNavigation#ANY_ENTRY_NAME_WITHOUT_CONTAINS");
 		}
+	}
+
+	macro checkProductsEntryFields {
+		WaitForElementPresent(
+			key_title = "${productName}",
+			locator1 = "Header#H3_TITLE");
+
+		AssertElementPresent(
+			key_status = "Draft",
+			locator1 = "CommerceEntry#WORKFLOW_STATUS");
+
+		AssertSelectedLabel(
+			key_fieldLabel = "Catalog",
+			locator1 = "Select#GENERIC_SELECT_FIELD",
+			value1 = "${productCatalog}");
+
+		AssertTextEquals(
+			locator1 = "CommerceEntry#NAME_FIELD",
+			value1 = "${productName}");
 	}
 
 	macro clickButtonWithName {
@@ -1506,13 +1539,6 @@ definition {
 				locator1 = "Select#GENERIC_SELECT_FIELD",
 				value1 = "${accountDefaultShipping}");
 		}
-
-		if ("${isAccountActive}" == "true") {
-			AssertChecked.assertCheckedNotVisible(locator1 = "ToggleSwitch#ACCOUNT_STATUS");
-		}
-		else {
-			AssertNotChecked.assertNotCheckedNotVisible(locator1 = "ToggleSwitch#ACCOUNT_STATUS");
-		}
 	}
 
 	macro viewCatalogsEntry {
@@ -1642,9 +1668,11 @@ definition {
 			}
 		}
 		else {
-			AssertChecked(
-				locator1 = "Radio#ANY",
-				radioLabel = "All Accounts");
+			if (IsElementPresent(key_eligibilityCardTitle = "Accounts Entry", locator1 = "CommerceEntry#ELIGIBILITY_CARD_TITLE")) {
+				AssertChecked(
+					locator1 = "Radio#ANY",
+					radioLabel = "All Accounts");
+			}
 		}
 
 		if (isSet(channelsEligibility)) {

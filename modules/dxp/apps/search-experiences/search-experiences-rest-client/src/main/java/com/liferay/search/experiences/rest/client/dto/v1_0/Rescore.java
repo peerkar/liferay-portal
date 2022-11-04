@@ -55,16 +55,16 @@ public class Rescore implements Cloneable, Serializable {
 
 	protected Object query;
 
-	public Float getQueryWeight() {
+	public Object getQueryWeight() {
 		return queryWeight;
 	}
 
-	public void setQueryWeight(Float queryWeight) {
+	public void setQueryWeight(Object queryWeight) {
 		this.queryWeight = queryWeight;
 	}
 
 	public void setQueryWeight(
-		UnsafeSupplier<Float, Exception> queryWeightUnsafeSupplier) {
+		UnsafeSupplier<Object, Exception> queryWeightUnsafeSupplier) {
 
 		try {
 			queryWeight = queryWeightUnsafeSupplier.get();
@@ -74,18 +74,18 @@ public class Rescore implements Cloneable, Serializable {
 		}
 	}
 
-	protected Float queryWeight;
+	protected Object queryWeight;
 
-	public Float getRescoreQueryWeight() {
+	public Object getRescoreQueryWeight() {
 		return rescoreQueryWeight;
 	}
 
-	public void setRescoreQueryWeight(Float rescoreQueryWeight) {
+	public void setRescoreQueryWeight(Object rescoreQueryWeight) {
 		this.rescoreQueryWeight = rescoreQueryWeight;
 	}
 
 	public void setRescoreQueryWeight(
-		UnsafeSupplier<Float, Exception> rescoreQueryWeightUnsafeSupplier) {
+		UnsafeSupplier<Object, Exception> rescoreQueryWeightUnsafeSupplier) {
 
 		try {
 			rescoreQueryWeight = rescoreQueryWeightUnsafeSupplier.get();
@@ -95,7 +95,7 @@ public class Rescore implements Cloneable, Serializable {
 		}
 	}
 
-	protected Float rescoreQueryWeight;
+	protected Object rescoreQueryWeight;
 
 	public String getScoreMode() {
 		return scoreMode;
@@ -118,16 +118,16 @@ public class Rescore implements Cloneable, Serializable {
 
 	protected String scoreMode;
 
-	public Integer getWindowSize() {
+	public Object getWindowSize() {
 		return windowSize;
 	}
 
-	public void setWindowSize(Integer windowSize) {
+	public void setWindowSize(Object windowSize) {
 		this.windowSize = windowSize;
 	}
 
 	public void setWindowSize(
-		UnsafeSupplier<Integer, Exception> windowSizeUnsafeSupplier) {
+		UnsafeSupplier<Object, Exception> windowSizeUnsafeSupplier) {
 
 		try {
 			windowSize = windowSizeUnsafeSupplier.get();
@@ -137,7 +137,7 @@ public class Rescore implements Cloneable, Serializable {
 		}
 	}
 
-	protected Integer windowSize;
+	protected Object windowSize;
 
 	@Override
 	public Rescore clone() throws CloneNotSupportedException {

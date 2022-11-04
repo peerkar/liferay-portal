@@ -16,15 +16,13 @@ package com.liferay.fragment.internal.listener;
 
 import com.liferay.fragment.listener.FragmentEntryLinkListener;
 import com.liferay.fragment.listener.FragmentEntryLinkListenerTracker;
+import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerList;
+import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerListFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
+import org.osgi.framework.BundleContext;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.service.component.annotations.Deactivate;
 
 /**
  * @author Eudaldo Alonso
@@ -34,27 +32,21 @@ public class FragmentEntryLinkListenerTrackerImpl
 	implements FragmentEntryLinkListenerTracker {
 
 	@Override
-	public List<FragmentEntryLinkListener> getFragmentEntryLinkListeners() {
-		return new ArrayList<>(_fragmentEntryLinkListeners);
+	public Iterable<FragmentEntryLinkListener> getFragmentEntryLinkListeners() {
+		return _serviceTrackerList;
 	}
 
-	@Reference(
-		cardinality = ReferenceCardinality.MULTIPLE,
-		policy = ReferencePolicy.DYNAMIC
-	)
-	protected void setFragmentEntryLinkListener(
-		FragmentEntryLinkListener fragmentEntryLinkListener) {
-
-		_fragmentEntryLinkListeners.add(fragmentEntryLinkListener);
+	@Activate
+	protected void activate(BundleContext bundleContext) {
+		_serviceTrackerList = ServiceTrackerListFactory.open(
+			bundleContext, FragmentEntryLinkListener.class);
 	}
 
-	protected void unsetFragmentEntryLinkListener(
-		FragmentEntryLinkListener fragmentEntryLinkListener) {
-
-		_fragmentEntryLinkListeners.remove(fragmentEntryLinkListener);
+	@Deactivate
+	protected void deactivate() {
+		_serviceTrackerList.close();
 	}
 
-	private final List<FragmentEntryLinkListener> _fragmentEntryLinkListeners =
-		new CopyOnWriteArrayList<>();
+	private ServiceTrackerList<FragmentEntryLinkListener> _serviceTrackerList;
 
 }

@@ -26,6 +26,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>DISABLED_BUTTON_SPECIFIC</td>
+	<td>//button[normalize-space()='${key_text}' and @disabled]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>ADD_ADDRESS</td>
 	<td>//a[contains(@class,'add-address')]</td>
 	<td></td>
@@ -97,7 +102,7 @@
 </tr>
 <tr>
 	<td>ANY_TITLE</td>
-	<td>//button[@title='${key_title}']</td>
+	<td>//button[@title='${key_title}'] | //button//span[@*='${key_title}']</td>
 	<td></td>
 </tr>
 <tr>
@@ -127,7 +132,7 @@
 </tr>
 <tr>
 	<td>ANY_DISABLED</td>
-	<td>//button[@disabled][contains(@class,'btn')][normalize-space()='${key_text}'] | //button[@disabled][contains(@class,'btn')][@*='${key_text}']</td>
+	<td>//button[@disabled][contains(@class,'btn')][normalize-space()='${key_text}'] | //button[@disabled][contains(@class,'btn')][@*='${key_text}'] | //button[@disabled][contains(@class,'btn') and contains(@aria-label,'${key_text}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -578,6 +583,11 @@
 <tr>
 	<td>OK</td>
 	<td>//button[contains(.,'OK')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>OPEN</td>
+	<td>//a[*[name()='svg'][contains(@class,'circle-open')]]</td>
 	<td></td>
 </tr>
 <tr>

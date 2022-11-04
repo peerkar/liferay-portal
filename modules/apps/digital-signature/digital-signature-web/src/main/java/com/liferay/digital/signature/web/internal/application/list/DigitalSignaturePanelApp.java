@@ -32,7 +32,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Keven Leone
  */
 @Component(
-	immediate = true,
 	property = {
 		"panel.app.order:Integer=600",
 		"panel.category.key=" + PanelCategoryKeys.SITE_ADMINISTRATION_CONTENT
@@ -40,6 +39,11 @@ import org.osgi.service.component.annotations.Reference;
 	service = PanelApp.class
 )
 public class DigitalSignaturePanelApp extends BasePanelApp {
+
+	@Override
+	public Portlet getPortlet() {
+		return _portlet;
+	}
 
 	@Override
 	public String getPortletId() {
@@ -61,13 +65,9 @@ public class DigitalSignaturePanelApp extends BasePanelApp {
 		return super.isShow(permissionChecker, group);
 	}
 
-	@Override
 	@Reference(
-		target = "(javax.portlet.name=" + DigitalSignaturePortletKeys.DIGITAL_SIGNATURE + ")",
-		unbind = "-"
+		target = "(javax.portlet.name=" + DigitalSignaturePortletKeys.DIGITAL_SIGNATURE + ")"
 	)
-	public void setPortlet(Portlet portlet) {
-		super.setPortlet(portlet);
-	}
+	private Portlet _portlet;
 
 }

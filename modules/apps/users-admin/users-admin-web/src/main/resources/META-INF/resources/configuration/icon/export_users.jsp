@@ -25,7 +25,7 @@ int status = GetterUtil.getInteger(request.getAttribute(UsersAdminWebKeys.STATUS
 </liferay-portlet:resourceURL>
 
 <liferay-util:buffer
-	var="onClickFn"
+	var="onClickBuffer"
 >
 	Liferay.Util.openConfirmModal({
 		message: '<liferay-ui:message key="warning-this-csv-file-contains-user-supplied-inputs" unicode="<%= true %>" />',
@@ -40,6 +40,6 @@ int status = GetterUtil.getInteger(request.getAttribute(UsersAdminWebKeys.STATUS
 <liferay-ui:icon
 	message="export-users"
 	method="get"
-	onClick="<%= onClickFn %>"
+	onClick="<%= onClickBuffer %>"
 	url="javascript:void(0);"
 />

@@ -41,6 +41,7 @@ import com.liferay.headless.admin.user.internal.dto.v1_0.util.PhoneUtil;
 import com.liferay.headless.admin.user.internal.dto.v1_0.util.PostalAddressUtil;
 import com.liferay.headless.admin.user.internal.dto.v1_0.util.ServiceBuilderListTypeUtil;
 import com.liferay.headless.admin.user.internal.dto.v1_0.util.WebUrlUtil;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.Contact;
 import com.liferay.portal.kernel.model.Group;
@@ -61,7 +62,6 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
-import com.liferay.portal.vulcan.util.TransformUtil;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -135,10 +135,12 @@ public class UserResourceDTOConverter
 				givenName = user.getFirstName();
 				honorificPrefix =
 					ServiceBuilderListTypeUtil.getServiceBuilderListTypeMessage(
-						contact.getPrefixId(), dtoConverterContext.getLocale());
+						contact.getPrefixListTypeId(),
+						dtoConverterContext.getLocale());
 				honorificSuffix =
 					ServiceBuilderListTypeUtil.getServiceBuilderListTypeMessage(
-						contact.getSuffixId(), dtoConverterContext.getLocale());
+						contact.getSuffixListTypeId(),
+						dtoConverterContext.getLocale());
 				id = user.getUserId();
 				jobTitle = user.getJobTitle();
 				keywords = ListUtil.toArray(

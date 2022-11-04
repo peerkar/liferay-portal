@@ -12,9 +12,8 @@ definition {
 
 	macro _assertManagerFirstnameCorrect {
 		var actualManagerFirstname = ObjectDefinitionAPI._getNestedObjectFirstnameByObjectId(
-			nestedField = "${nestedField}",
+			nestedObjectParameterName = "${nestedObjectParameterName}",
 			objectId = "${objectId}",
-			relationshipName = "${relationshipName}",
 			responseToParse = "${responseToParse}");
 
 		TestUtils.assertEquals(
@@ -24,9 +23,8 @@ definition {
 
 	macro _assertManagerIdCorrect {
 		var actualManagerId = ObjectDefinitionAPI._getNestedObjectIdByObjectId(
-			nestedField = "${nestedField}",
+			nestedObjectParameterName = "${nestedObjectParameterName}",
 			objectId = "${objectId}",
-			relationshipName = "${relationshipName}",
 			responseToParse = "${responseToParse}");
 
 		TestUtils.assertEquals(
@@ -234,13 +232,13 @@ definition {
 	}
 
 	macro _getNestedObjectFirstnameByObjectId {
-		var nestedObjectFirstname = JSONUtil.getWithJSONPath("${responseToParse}", "$.items[?(@.id==${objectId})].r_${relationshipName}_c_${nestedField}.firstname");
+		var nestedObjectFirstname = JSONUtil.getWithJSONPath("${responseToParse}", "$.items[?(@.id==${objectId})].r_supervisor_c_manager.firstname");
 
 		return "${nestedObjectFirstname}";
 	}
 
 	macro _getNestedObjectIdByObjectId {
-		var nestedObjectId = JSONUtil.getWithJSONPath("${responseToParse}", "$.items[?(@.id==${objectId})].r_${relationshipName}_c_${nestedField}.id");
+		var nestedObjectId = JSONUtil.getWithJSONPath("${responseToParse}", "$.items[?(@.id==${objectId})].${nestedObjectParameterName}.id");
 
 		return "${nestedObjectId}";
 	}
@@ -430,7 +428,53 @@ definition {
 		return "${response}";
 	}
 
+	macro assertCreateBatchInActionBlock {
+		Variables.assertDefined(parameterList = "${responseToParse}");
+
+		var actualBatch = JSONUtil.getWithJSONPath("${responseToParse}", "$.actions.createBatch");
+		var portalURL = JSONCompany.getPortalURL();
+
+		if (isSet(objectDefinitionId)) {
+			var href = "${portalURL}/o/object-admin/v1.0/object-definitions/${objectDefinitionId}/${objectSchema}/batch";
+		}
+		else if (isSet(en_US_plural_label)) {
+			var href = "${portalURL}/o/c/${en_US_plural_label}/batch";
+		}
+		else {
+			var href = "${portalURL}/o/object-admin/v1.0/object-definitions/batch";
+		}
+
+		var expectedBatch = StringUtil.add("{method=POST,", " href=${href}}", "");
+
+		TestUtils.assertEquals(
+			actual = "${actualBatch}",
+			expected = "${expectedBatch}");
+	}
+
+	macro assertCreateBatchWithGetObjectSchemas {
+		Variables.assertDefined(parameterList = "${objectDefinitionId},${objectSchemas}");
+
+		var portalURL = JSONCompany.getPortalURL();
+
+		for (var objectSchema : list "${objectSchemas}") {
+			var curl = '''
+				${portalURL}/o/object-admin/v1.0/object-definitions/${objectDefinitionId}/${objectSchema} \
+				-H Content-Type: application/json \
+				-u test@liferay.com:test
+			''';
+
+			var response = JSONCurlUtil.get("${curl}");
+
+			ObjectDefinitionAPI.assertCreateBatchInActionBlock(
+				objectDefinitionId = "${objectDefinitionId}",
+				objectSchema = "${objectSchema}",
+				responseToParse = "${response}");
+		}
+	}
+
 	macro assertEmployeeHasNestedFieldManager {
+		var nestedObjectParameterName = StringUtil.replace("${nestedField}", "Id", "");
+
 		ObjectDefinitionAPI._assertEmployeeFirstnameCorrect(
 			expectedEmployeeFirstname = "${expectedEmployeeFirstname}",
 			objectId = "${objectId}",
@@ -440,15 +484,13 @@ definition {
 			expectedManagerFirstname = "${expectedManagerFirstname}",
 			nestedField = "${nestedField}",
 			objectId = "${objectId}",
-			relationshipName = "${relationshipName}",
 			responseToParse = "${responseToParse}");
 
 		ObjectDefinitionAPI._assertManagerIdCorrect(
 			expectedManagerFirstname = "${expectedManagerFirstname}",
 			expectedManagerId = "${expectedManagerId}",
-			nestedField = "${nestedField}",
+			nestedObjectParameterName = "${nestedObjectParameterName}",
 			objectId = "${objectId}",
-			relationshipName = "${relationshipName}",
 			responseToParse = "${responseToParse}");
 	}
 
@@ -638,6 +680,20 @@ definition {
 		var objectDefinitionId = JSONCurlUtil.get("${curl}", "$.items[?(@['name'] == '${name}')]['id']");
 
 		return "${objectDefinitionId}";
+	}
+
+	macro getObjectDefinitions {
+		var portalURL = JSONCompany.getPortalURL();
+
+		var curl = '''
+			${portalURL}/o/object-admin/v1.0/object-definitions \
+			-H Content-Type: application/json \
+			-u test@liferay.com:test
+		''';
+
+		var response = JSONCurlUtil.get("${curl}");
+
+		return "${response}";
 	}
 
 	macro getObjectEntries {

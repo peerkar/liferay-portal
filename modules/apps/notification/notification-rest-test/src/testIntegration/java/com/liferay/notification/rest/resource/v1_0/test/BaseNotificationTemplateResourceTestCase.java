@@ -196,6 +196,7 @@ public abstract class BaseNotificationTemplateResourceTestCase {
 		notificationTemplate.setDescription(regex);
 		notificationTemplate.setFrom(regex);
 		notificationTemplate.setName(regex);
+		notificationTemplate.setType(regex);
 
 		String json = NotificationTemplateSerDes.toJSON(notificationTemplate);
 
@@ -208,6 +209,7 @@ public abstract class BaseNotificationTemplateResourceTestCase {
 		Assert.assertEquals(regex, notificationTemplate.getDescription());
 		Assert.assertEquals(regex, notificationTemplate.getFrom());
 		Assert.assertEquals(regex, notificationTemplate.getName());
+		Assert.assertEquals(regex, notificationTemplate.getType());
 	}
 
 	@Test
@@ -840,6 +842,28 @@ public abstract class BaseNotificationTemplateResourceTestCase {
 
 	protected NotificationTemplate
 			testPutNotificationTemplate_addNotificationTemplate()
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	@Test
+	public void testPostNotificationTemplateCopy() throws Exception {
+		NotificationTemplate randomNotificationTemplate =
+			randomNotificationTemplate();
+
+		NotificationTemplate postNotificationTemplate =
+			testPostNotificationTemplateCopy_addNotificationTemplate(
+				randomNotificationTemplate);
+
+		assertEquals(randomNotificationTemplate, postNotificationTemplate);
+		assertValid(postNotificationTemplate);
+	}
+
+	protected NotificationTemplate
+			testPostNotificationTemplateCopy_addNotificationTemplate(
+				NotificationTemplate notificationTemplate)
 		throws Exception {
 
 		throw new UnsupportedOperationException(
@@ -1639,8 +1663,11 @@ public abstract class BaseNotificationTemplateResourceTestCase {
 		}
 
 		if (entityFieldName.equals("type")) {
-			throw new IllegalArgumentException(
-				"Invalid entity field " + entityFieldName);
+			sb.append("'");
+			sb.append(String.valueOf(notificationTemplate.getType()));
+			sb.append("'");
+
+			return sb.toString();
 		}
 
 		throw new IllegalArgumentException(
@@ -1699,6 +1726,7 @@ public abstract class BaseNotificationTemplateResourceTestCase {
 				id = RandomTestUtil.randomLong();
 				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
 				objectDefinitionId = RandomTestUtil.randomLong();
+				type = StringUtil.toLowerCase(RandomTestUtil.randomString());
 			}
 		};
 	}

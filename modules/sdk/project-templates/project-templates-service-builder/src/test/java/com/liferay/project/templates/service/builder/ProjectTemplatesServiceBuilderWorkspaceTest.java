@@ -17,6 +17,7 @@ package com.liferay.project.templates.service.builder;
 import com.liferay.maven.executor.MavenExecutor;
 import com.liferay.project.templates.BaseProjectTemplatesTestCase;
 import com.liferay.project.templates.extensions.util.Validator;
+import com.liferay.project.templates.extensions.util.VersionUtil;
 import com.liferay.project.templates.util.FileTestUtil;
 
 import java.io.File;
@@ -47,59 +48,68 @@ public class ProjectTemplatesServiceBuilderWorkspaceTest
 	public static final MavenExecutor mavenExecutor = new MavenExecutor();
 
 	@Parameterized.Parameters(
-		name = "Testcase-{index}: testing {0}, {1}, {2}, {3}"
+		name = "Testcase-{index}: testing {0}, {1}, {2}, {3}, {4}"
 	)
 	public static Iterable<Object[]> data() {
 		return Arrays.asList(
 			new Object[][] {
 				{
 					"spring", "guestbook", "com.liferay.docs.guestbook",
-					"7.0.6-2"
+					"7.0.10.17", "dxp"
 				},
 				{
 					"spring", "guestbook", "com.liferay.docs.guestbook",
-					"7.1.3-1"
-				},
-				{"ds", "guestbook", "com.liferay.docs.guestbook", "7.2.1-1"},
-				{"ds", "guestbook", "com.liferay.docs.guestbook", "7.3.7"},
-				{"ds", "guestbook", "com.liferay.docs.guestbook", "7.4.3.36"},
-				{
-					"spring", "backend-integration",
-					"com.liferay.docs.guestbook", "7.0.6-2"
+					"7.1.10.7", "dxp"
 				},
 				{
+					"ds", "guestbook", "com.liferay.docs.guestbook", "7.2.10.7",
+					"dxp"
+				},
+				{
+					"ds", "guestbook", "com.liferay.docs.guestbook", "7.3.7",
+					"portal"
+				},
+				{
+					"ds", "guestbook", "com.liferay.docs.guestbook", "7.4.3.36",
+					"portal"
+				},
+				{
 					"spring", "backend-integration",
-					"com.liferay.docs.guestbook", "7.1.3-1"
+					"com.liferay.docs.guestbook", "7.0.10.17", "dxp"
+				},
+				{
+					"spring", "backend-integration",
+					"com.liferay.docs.guestbook", "7.1.10.7", "dxp"
 				},
 				{
 					"ds", "backend-integration", "com.liferay.docs.guestbook",
-					"7.2.1-1"
+					"7.2.10.7", "dxp"
 				},
 				{
 					"ds", "backend-integration", "com.liferay.docs.guestbook",
-					"7.3.7"
+					"7.3.7", "portal"
 				},
 				{
 					"ds", "backend-integration", "com.liferay.docs.guestbook",
-					"7.4.3.36"
+					"7.4.3.36", "portal"
 				},
 				{
 					"spring", "backend-integration",
-					"com.liferay.docs.guestbook", "7.2.1-1"
+					"com.liferay.docs.guestbook", "7.2.10.7", "dxp"
 				},
 				{
 					"spring", "backend-integration",
-					"com.liferay.docs.guestbook", "7.3.7"
+					"com.liferay.docs.guestbook", "7.3.7", "portal"
 				},
 				{
 					"spring", "backend-integration",
-					"com.liferay.docs.guestbook", "7.4.3.36"
+					"com.liferay.docs.guestbook", "7.4.3.36", "portal"
 				},
-				{"spring", "sample", "com.test.sample", "7.0.6-2"},
-				{"spring", "sample", "com.test.sample", "7.1.3-1"},
-				{"ds", "sample", "com.test.sample", "7.2.1-1"},
-				{"ds", "sample", "com.test.sample", "7.3.7"},
-				{"ds", "sample", "com.test.sample", "7.4.3.36"}
+				{"spring", "sample", "com.test.sample", "7.0.10.17", "dxp"},
+				{"spring", "sample", "com.test.sample", "7.1.10.7", "dxp"},
+				{"ds", "sample", "com.test.sample", "7.2.10.7", "dxp"},
+				{"ds", "sample", "com.test.sample", "7.3.7", "portal"},
+				{"ds", "sample", "com.test.sample", "7.4.3.36", "portal"}
 			});
 	}
 
@@ -121,12 +131,13 @@ public class ProjectTemplatesServiceBuilderWorkspaceTest
 
 	public ProjectTemplatesServiceBuilderWorkspaceTest(
 		String dependencyInjector, String name, String packageName,
-		String liferayVersion) {
+		String liferayVersion, String product) {
 
 		_dependencyInjector = dependencyInjector;
 		_name = name;
 		_packageName = packageName;
 		_liferayVersion = liferayVersion;
+		_product = product;
 	}
 
 	@Test
@@ -136,32 +147,6 @@ public class ProjectTemplatesServiceBuilderWorkspaceTest
 		File gradleWorkspaceDir = buildWorkspace(
 			temporaryFolder, "gradle", "gradleWS", _liferayVersion,
 			mavenExecutor);
-
-		if (_liferayVersion.startsWith("7.0")) {
-			writeGradlePropertiesInWorkspace(
-				gradleWorkspaceDir,
-				"liferay.workspace.target.platform.version=7.0.6-2");
-		}
-		else if (_liferayVersion.startsWith("7.1")) {
-			writeGradlePropertiesInWorkspace(
-				gradleWorkspaceDir,
-				"liferay.workspace.target.platform.version=7.1.3-1");
-		}
-		else if (_liferayVersion.startsWith("7.2")) {
-			writeGradlePropertiesInWorkspace(
-				gradleWorkspaceDir,
-				"liferay.workspace.target.platform.version=7.2.1-1");
-		}
-		else if (_liferayVersion.startsWith("7.3")) {
-			writeGradlePropertiesInWorkspace(
-				gradleWorkspaceDir,
-				"liferay.workspace.target.platform.version=7.3.7");
-		}
-		else if (_liferayVersion.startsWith("7.4")) {
-			writeGradlePropertiesInWorkspace(
-				gradleWorkspaceDir,
-				"liferay.workspace.target.platform.version=7.4.3.36");
-		}
 
 		File gradleWorkspaceModulesDir = new File(
 			gradleWorkspaceDir, "modules");
@@ -174,9 +159,9 @@ public class ProjectTemplatesServiceBuilderWorkspaceTest
 		}
 
 		File gradleProjectDir = buildTemplateWithGradle(
-			gradleWorkspaceModulesDir, template, _name, "--package-name",
-			_packageName, "--dependency-injector", _dependencyInjector,
-			"--liferay-version", _liferayVersion);
+			gradleWorkspaceModulesDir, template, _name, "--dependency-injector",
+			_dependencyInjector, "--liferay-version", _liferayVersion,
+			"--package-name", _packageName, "--product", _product);
 
 		if (_name.contains("sample")) {
 			testContains(
@@ -202,36 +187,13 @@ public class ProjectTemplatesServiceBuilderWorkspaceTest
 				"dependency-injector=\"ds\"");
 		}
 
-		if (_liferayVersion.startsWith("7.0") ||
-			_liferayVersion.startsWith("7.1")) {
-
+		if (VersionUtil.getMinorVersion(_liferayVersion) < 3) {
 			testContains(
 				gradleProjectDir, _name + "-api/build.gradle",
-				DEPENDENCY_PORTAL_KERNEL, "biz.aQute.bnd.annotation");
+				DEPENDENCY_RELEASE_DXP_API);
 			testContains(
 				gradleProjectDir, _name + "-service/build.gradle",
-				DEPENDENCY_PORTAL_KERNEL, "biz.aQute.bnd.annotation");
-
-			testNotContains(
-				gradleProjectDir, _name + "-api/build.gradle",
-				"org.osgi.annotation.versioning");
-			testNotContains(
-				gradleProjectDir, _name + "-service/build.gradle",
-				"org.osgi.annotation.versioning");
-		}
-		else if (_liferayVersion.startsWith("7.2")) {
-			testContains(
-				gradleProjectDir, _name + "-api/build.gradle",
-				DEPENDENCY_PORTAL_KERNEL, "org.osgi.annotation.versioning");
-			testContains(
-				gradleProjectDir, _name + "-service/build.gradle",
-				DEPENDENCY_PORTAL_KERNEL, "org.osgi.annotation.versioning");
-
-			testNotContains(
-				gradleProjectDir, _name + "-api/build.gradle", "biz.aQute.bnd");
-			testNotContains(
-				gradleProjectDir, _name + "-service/build.gradle",
-				"biz.aQute.bnd");
+				DEPENDENCY_RELEASE_DXP_API);
 		}
 		else {
 			testContains(
@@ -240,12 +202,6 @@ public class ProjectTemplatesServiceBuilderWorkspaceTest
 			testContains(
 				gradleProjectDir, _name + "-service/build.gradle",
 				DEPENDENCY_RELEASE_PORTAL_API);
-
-			testNotContains(
-				gradleProjectDir, _name + "-api/build.gradle", "biz.aQute.bnd");
-			testNotContains(
-				gradleProjectDir, _name + "-service/build.gradle",
-				"biz.aQute.bnd");
 		}
 
 		File gradleUADModuleDir = new File(gradleProjectDir, _name + "-uad");
@@ -267,9 +223,9 @@ public class ProjectTemplatesServiceBuilderWorkspaceTest
 
 		File mavenProjectDir = buildTemplateWithMaven(
 			mavenModulesDir, mavenModulesDir, template, _name, "com.test",
-			mavenExecutor, "-Dpackage=" + _packageName,
-			"-DdependencyInjector=" + _dependencyInjector,
-			"-DliferayVersion=" + _liferayVersion);
+			mavenExecutor, "-DdependencyInjector=" + _dependencyInjector,
+			"-DliferayVersion=" + _liferayVersion, "-Dpackage=" + _packageName,
+			"-Dproduct=" + _product);
 
 		File mavenUADModuleDir = new File(mavenProjectDir, _name + "-uad");
 
@@ -300,5 +256,6 @@ public class ProjectTemplatesServiceBuilderWorkspaceTest
 	private final String _liferayVersion;
 	private final String _name;
 	private final String _packageName;
+	private final String _product;
 
 }

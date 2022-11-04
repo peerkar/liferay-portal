@@ -51,6 +51,16 @@
 	<td></td>
 </tr>
 <tr>
+	<td>ACCOUNT_MANAGEMENT_REVERSE_SORT_DIRECTION_BUTTON</td>
+	<td>//div//a[@class='nav-link nav-link-monospaced link-unstyled']/..//..//*[contains(@class, 'lexicon-icon lexicon-icon-order')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ACCOUNT_MANAGEMENT_REVERSE_SORT_DIRECTION_BUTTON_ICON</td>
+	<td>//nav[contains(@class,'management-bar')]//*[*[name()='svg'][contains(@class,'${key_icon}')] and contains(@title,'Reverse Sort Direction')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>ACCOUNT_SELECTOR_ACCOUNT_LIST_ITEM</td>
 	<td>//ul[contains(@class,'accounts-list')]//button[@class='dropdown-item']/span[contains(.,'${key_accountName}')]</td>
 	<td></td>
@@ -424,6 +434,16 @@
 <tr>
 	<td>CHECKOUT_SUMMARY_SHIPPING_ADDRESS</td>
 	<td>//address[@class='shipping-address' and contains(.,'${key_addressInfo}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CHECKOUT_SUMMARY_SHIPPING_COST</td>
+	<td>//div[contains(@class,'shipping-method')]//div[contains(@class,'shipping-cost') and contains(.,'${key_shippingCost}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CHECKOUT_SUMMARY_SHIPPING_OPTION</td>
+	<td>//div[contains(@class,'shipping-method')]//div[contains(@class,'shipping-description') and contains(.,'${key_shippingOption}')]</td>
 	<td></td>
 </tr>
 <tr>

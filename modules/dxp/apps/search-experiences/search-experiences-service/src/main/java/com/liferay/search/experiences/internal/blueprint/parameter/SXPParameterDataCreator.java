@@ -24,7 +24,6 @@ import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.service.GroupLocalService;
-import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.UserGroupGroupRoleLocalService;
 import com.liferay.portal.kernel.service.UserGroupLocalService;
@@ -41,10 +40,12 @@ import com.liferay.search.experiences.blueprint.parameter.contributor.SXPParamet
 import com.liferay.search.experiences.blueprint.parameter.contributor.SXPParameterContributorDefinitionProvider;
 import com.liferay.search.experiences.internal.blueprint.parameter.contributor.ContextSXPParameterContributor;
 import com.liferay.search.experiences.internal.blueprint.parameter.contributor.IpstackSXPParameterContributor;
+import com.liferay.search.experiences.internal.blueprint.parameter.contributor.MLSXPParameterContributor;
 import com.liferay.search.experiences.internal.blueprint.parameter.contributor.OpenWeatherMapSXPParameterContributor;
 import com.liferay.search.experiences.internal.blueprint.parameter.contributor.SXPParameterContributor;
 import com.liferay.search.experiences.internal.blueprint.parameter.contributor.TimeSXPParameterContributor;
 import com.liferay.search.experiences.internal.blueprint.parameter.contributor.UserSXPParameterContributor;
+import com.liferay.search.experiences.ml.sentence.embedding.SentenceEmbeddingRetriever;
 import com.liferay.search.experiences.rest.dto.v1_0.Configuration;
 import com.liferay.search.experiences.rest.dto.v1_0.Parameter;
 import com.liferay.search.experiences.rest.dto.v1_0.ParameterConfiguration;
@@ -138,6 +139,8 @@ public class SXPParameterDataCreator
 		_sxpParameterContributors = new SXPParameterContributor[] {
 			new ContextSXPParameterContributor(_groupLocalService, _language),
 			new IpstackSXPParameterContributor(_configurationProvider),
+			new MLSXPParameterContributor(
+				_configurationProvider, _sentenceEmbeddingRetriever),
 			new OpenWeatherMapSXPParameterContributor(_configurationProvider),
 			new TimeSXPParameterContributor(),
 			new UserSXPParameterContributor(
@@ -726,9 +729,6 @@ public class SXPParameterDataCreator
 	private Language _language;
 
 	@Reference
-	private LayoutLocalService _layoutLocalService;
-
-	@Reference
 	private Portal _portal;
 
 	@Reference
@@ -736,6 +736,9 @@ public class SXPParameterDataCreator
 
 	@Reference
 	private SegmentsEntryRetriever _segmentsEntryRetriever;
+
+	@Reference
+	private SentenceEmbeddingRetriever _sentenceEmbeddingRetriever;
 
 	private SXPParameterContributor[] _sxpParameterContributors;
 

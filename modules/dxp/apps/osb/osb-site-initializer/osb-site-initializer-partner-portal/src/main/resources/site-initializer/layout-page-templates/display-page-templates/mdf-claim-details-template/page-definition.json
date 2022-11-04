@@ -399,6 +399,12 @@
 												"key": "mdf-claim-manager-status"
 											},
 											"fragmentConfig": {
+												"channelAccountManager": false,
+												"channelFinanceManager": false,
+												"channelGeneralManager": false,
+												"channelGlobalMarketingManager": false,
+												"channelRegionalMarketingManager": false,
+												"user": false
 											},
 											"fragmentFields": [
 											],
@@ -686,6 +692,19 @@
 																"marginTop": "1",
 																"textAlign": ""
 															},
+															"indexed": true
+														},
+														"type": "Fragment"
+													},
+													{
+														"definition": {
+															"fragment": {
+																"key": "claim-detail-panel-list"
+															},
+															"fragmentConfig": {
+															},
+															"fragmentFields": [
+															],
 															"indexed": true
 														},
 														"type": "Fragment"

@@ -27,7 +27,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Pei-Jung Lan
  */
 @Component(
-	immediate = true,
 	property = {
 		"panel.app.order:Integer=500",
 		"panel.category.key=" + PanelCategoryKeys.CONTROL_PANEL_SYSTEM
@@ -37,17 +36,18 @@ import org.osgi.service.component.annotations.Reference;
 public class OnDemandAdminPanelApp extends BasePanelApp {
 
 	@Override
+	public Portlet getPortlet() {
+		return _portlet;
+	}
+
+	@Override
 	public String getPortletId() {
 		return OnDemandAdminPortletKeys.ON_DEMAND_ADMIN;
 	}
 
-	@Override
 	@Reference(
-		target = "(javax.portlet.name=" + OnDemandAdminPortletKeys.ON_DEMAND_ADMIN + ")",
-		unbind = "-"
+		target = "(javax.portlet.name=" + OnDemandAdminPortletKeys.ON_DEMAND_ADMIN + ")"
 	)
-	public void setPortlet(Portlet portlet) {
-		super.setPortlet(portlet);
-	}
+	private Portlet _portlet;
 
 }

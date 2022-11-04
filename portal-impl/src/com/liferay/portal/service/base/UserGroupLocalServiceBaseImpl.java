@@ -790,30 +790,42 @@ public abstract class UserGroupLocalServiceBaseImpl
 	}
 
 	/**
+	 * @throws PortalException
 	 */
 	@Override
-	public void addUserUserGroup(long userId, long userGroupId) {
+	public void addUserUserGroup(long userId, long userGroupId)
+		throws PortalException {
+
 		userPersistence.addUserGroup(userId, userGroupId);
 	}
 
 	/**
+	 * @throws PortalException
 	 */
 	@Override
-	public void addUserUserGroup(long userId, UserGroup userGroup) {
+	public void addUserUserGroup(long userId, UserGroup userGroup)
+		throws PortalException {
+
 		userPersistence.addUserGroup(userId, userGroup);
 	}
 
 	/**
+	 * @throws PortalException
 	 */
 	@Override
-	public void addUserUserGroups(long userId, long[] userGroupIds) {
+	public void addUserUserGroups(long userId, long[] userGroupIds)
+		throws PortalException {
+
 		userPersistence.addUserGroups(userId, userGroupIds);
 	}
 
 	/**
+	 * @throws PortalException
 	 */
 	@Override
-	public void addUserUserGroups(long userId, List<UserGroup> userGroups) {
+	public void addUserUserGroups(long userId, List<UserGroup> userGroups)
+		throws PortalException {
+
 		userPersistence.addUserGroups(userId, userGroups);
 	}
 

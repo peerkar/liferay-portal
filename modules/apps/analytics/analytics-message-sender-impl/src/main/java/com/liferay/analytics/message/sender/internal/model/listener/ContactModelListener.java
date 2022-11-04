@@ -31,9 +31,7 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Rachael Koestartyo
  */
-@Component(
-	immediate = true, service = {EntityModelListener.class, ModelListener.class}
-)
+@Component(service = {EntityModelListener.class, ModelListener.class})
 public class ContactModelListener extends BaseEntityModelListener<Contact> {
 
 	@Override
@@ -70,8 +68,8 @@ public class ContactModelListener extends BaseEntityModelListener<Contact> {
 		"emailAddress", "employeeNumber", "employeeStatusId", "facebookSn",
 		"firstName", "hoursOfOperation", "jabberSn", "jobClass", "jobTitle",
 		"lastName", "male", "middleName", "modifiedDate", "parentContactId",
-		"prefixId", "skypeSn", "smsSn", "suffixId", "twitterSn", "userId",
-		"userName");
+		"prefixListTypeId", "skypeSn", "smsSn", "suffixListTypeId", "twitterSn",
+		"userId", "userName");
 
 	@Reference
 	private ContactLocalService _contactLocalService;

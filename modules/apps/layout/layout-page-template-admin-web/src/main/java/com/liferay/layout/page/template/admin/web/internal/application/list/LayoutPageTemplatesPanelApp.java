@@ -37,7 +37,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Jürgen Kapler
  */
 @Component(
-	immediate = true,
 	property = {
 		"javax.portlet.name=" + LayoutPageTemplateAdminPortletKeys.LAYOUT_PAGE_TEMPLATES,
 		"panel.app.order:Integer=400",
@@ -67,6 +66,11 @@ public class LayoutPageTemplatesPanelApp extends BasePanelApp {
 	}
 
 	@Override
+	public Portlet getPortlet() {
+		return _portlet;
+	}
+
+	@Override
 	public String getPortletId() {
 		return LayoutPageTemplateAdminPortletKeys.LAYOUT_PAGE_TEMPLATES;
 	}
@@ -84,20 +88,16 @@ public class LayoutPageTemplatesPanelApp extends BasePanelApp {
 		return super.isShow(permissionChecker, group);
 	}
 
-	@Override
-	@Reference(
-		target = "(javax.portlet.name=" + LayoutPageTemplateAdminPortletKeys.LAYOUT_PAGE_TEMPLATES + ")",
-		unbind = "-"
-	)
-	public void setPortlet(Portlet portlet) {
-		super.setPortlet(portlet);
-	}
-
 	@Reference
 	private GroupLocalService _groupLocalService;
 
 	@Reference
 	private Language _language;
+
+	@Reference(
+		target = "(javax.portlet.name=" + LayoutPageTemplateAdminPortletKeys.LAYOUT_PAGE_TEMPLATES + ")"
+	)
+	private Portlet _portlet;
 
 	@Reference
 	private StagingGroupHelper _stagingGroupHelper;

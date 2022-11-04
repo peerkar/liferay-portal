@@ -130,13 +130,29 @@ public interface UserGroupLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public UserGroup addUserGroup(UserGroup userGroup);
 
-	public void addUserUserGroup(long userId, long userGroupId);
+	/**
+	 * @throws PortalException
+	 */
+	public void addUserUserGroup(long userId, long userGroupId)
+		throws PortalException;
 
-	public void addUserUserGroup(long userId, UserGroup userGroup);
+	/**
+	 * @throws PortalException
+	 */
+	public void addUserUserGroup(long userId, UserGroup userGroup)
+		throws PortalException;
 
-	public void addUserUserGroups(long userId, List<UserGroup> userGroups);
+	/**
+	 * @throws PortalException
+	 */
+	public void addUserUserGroups(long userId, List<UserGroup> userGroups)
+		throws PortalException;
 
-	public void addUserUserGroups(long userId, long[] userGroupIds);
+	/**
+	 * @throws PortalException
+	 */
+	public void addUserUserGroups(long userId, long[] userGroupIds)
+		throws PortalException;
 
 	public void clearGroupUserGroups(long groupId);
 

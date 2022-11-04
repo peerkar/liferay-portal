@@ -270,11 +270,13 @@ definition {
 			category = "Inventory Management",
 			portlet = "Warehouses");
 
-		Click(
-			key_language = "Italy",
-			locator1 = "Icon#DEPOT_LANGUAGES_ELLIPSIS");
+		CommerceNavigator.gotoEntry(entryName = "Italy");
 
-		MenuItem.clickNoError(menuItem = "Deactivate");
+		Uncheck.uncheckToggleSwitch(
+			key_toggleSwitchLabel = "Active",
+			locator1 = "ToggleSwitch#ANY_TOGGLE_SWITCH");
+
+		Button.clickSave();
 
 		CommerceNavigator.gotoPortlet(
 			category = "Order Management",
@@ -312,15 +314,20 @@ definition {
 			category = "Inventory Management",
 			portlet = "Warehouses");
 
-		Click(
-			key_language = "Italy",
-			locator1 = "Icon#DEPOT_LANGUAGES_ELLIPSIS");
+		CommerceNavigator.gotoEntry(entryName = "Italy");
 
-		MenuItem.clickNoError(menuItem = "Activate");
+		Check.checkToggleSwitch(
+			key_toggleSwitchLabel = "Active",
+			locator1 = "ToggleSwitch#ANY_TOGGLE_SWITCH");
+
+		Button.clickSave();
+
+		Click(locator1 = "Icon#BACK");
 
 		AssertElementPresent(
+			key_activeStatus = "Yes",
 			key_warehouseName = "Italy",
-			locator1 = "CommerceOrders#ORDER_WAREHOUSE_BY_ACTIVE_STATUS");
+			locator1 = "CommerceEntry#WAREHOUSE_ACTIVE_STATUS");
 	}
 
 	@description = "This is a test for COMMERCE-6254. Shipment weight should be correctly calculated"

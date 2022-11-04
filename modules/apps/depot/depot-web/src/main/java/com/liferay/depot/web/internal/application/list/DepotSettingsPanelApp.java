@@ -22,7 +22,6 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
-import com.liferay.portal.kernel.util.Portal;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -41,6 +40,11 @@ import org.osgi.service.component.annotations.Reference;
 public class DepotSettingsPanelApp extends BasePanelApp {
 
 	@Override
+	public Portlet getPortlet() {
+		return _portlet;
+	}
+
+	@Override
 	public String getPortletId() {
 		return DepotPortletKeys.DEPOT_SETTINGS;
 	}
@@ -56,16 +60,9 @@ public class DepotSettingsPanelApp extends BasePanelApp {
 		return super.isShow(permissionChecker, group);
 	}
 
-	@Override
 	@Reference(
-		target = "(javax.portlet.name=" + DepotPortletKeys.DEPOT_SETTINGS + ")",
-		unbind = "-"
+		target = "(javax.portlet.name=" + DepotPortletKeys.DEPOT_SETTINGS + ")"
 	)
-	public void setPortlet(Portlet portlet) {
-		super.setPortlet(portlet);
-	}
-
-	@Reference
-	private Portal _portal;
+	private Portlet _portlet;
 
 }

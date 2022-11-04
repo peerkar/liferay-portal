@@ -14,6 +14,8 @@
 
 package com.liferay.object.admin.rest.internal.resource.v1_0;
 
+import com.liferay.list.type.service.ListTypeDefinitionLocalService;
+import com.liferay.list.type.service.ListTypeEntryLocalService;
 import com.liferay.object.admin.rest.dto.v1_0.ObjectAction;
 import com.liferay.object.admin.rest.dto.v1_0.ObjectDefinition;
 import com.liferay.object.admin.rest.dto.v1_0.ObjectField;
@@ -60,6 +62,7 @@ import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.language.LanguageResources;
@@ -219,6 +222,8 @@ public class ObjectDefinitionResourceImpl
 			throw new ObjectDefinitionStorageTypeException();
 		}
 
+		_addListTypeDefinition(objectDefinition);
+
 		com.liferay.object.model.ObjectDefinition
 			serviceBuilderObjectDefinition =
 				_objectDefinitionService.addCustomObjectDefinition(
@@ -234,7 +239,8 @@ public class ObjectDefinitionResourceImpl
 					transformToList(
 						objectDefinition.getObjectFields(),
 						objectField -> ObjectFieldUtil.toObjectField(
-							objectField, _objectFieldLocalService,
+							_listTypeDefinitionLocalService, objectField,
+							_objectFieldLocalService,
 							_objectFieldSettingLocalService,
 							_objectFilterLocalService)));
 
@@ -282,7 +288,9 @@ public class ObjectDefinitionResourceImpl
 
 		// TODO Move logic to service
 
-		if (!Validator.isBlank(objectDefinition.getStorageType())) {
+		if (!Validator.isBlank(objectDefinition.getStorageType()) &&
+			!GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-135430"))) {
+
 			throw new ObjectDefinitionStorageTypeException();
 		}
 
@@ -290,6 +298,10 @@ public class ObjectDefinitionResourceImpl
 			serviceBuilderObjectDefinition =
 				_objectDefinitionService.getObjectDefinition(
 					objectDefinitionId);
+
+		if (!serviceBuilderObjectDefinition.isApproved()) {
+			_addListTypeDefinition(objectDefinition);
+		}
 
 		long titleObjectFieldId = 0;
 
@@ -309,20 +321,6 @@ public class ObjectDefinitionResourceImpl
 					objectDefinitionId, titleObjectFieldId));
 		}
 
-		boolean enableCategorization = true;
-		boolean enableComments = false;
-		boolean enableObjectEntryHistory = false;
-
-		if (GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-158672"))) {
-			enableCategorization = objectDefinition.getEnableCategorization();
-			enableComments = objectDefinition.getEnableComments();
-		}
-
-		if (GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-158473"))) {
-			enableObjectEntryHistory =
-				objectDefinition.getEnableObjectEntryHistory();
-		}
-
 		serviceBuilderObjectDefinition =
 			_objectDefinitionService.updateCustomObjectDefinition(
 				objectDefinition.getExternalReferenceCode(), objectDefinitionId,
@@ -332,7 +330,11 @@ public class ObjectDefinitionResourceImpl
 				GetterUtil.getBoolean(
 					objectDefinition.getAccountEntryRestricted()),
 				GetterUtil.getBoolean(objectDefinition.getActive(), true),
-				enableCategorization, enableComments, enableObjectEntryHistory,
+				GetterUtil.getBoolean(
+					objectDefinition.getEnableCategorization(), true),
+				GetterUtil.getBoolean(objectDefinition.getEnableComments()),
+				GetterUtil.getBoolean(
+					objectDefinition.getEnableObjectEntryHistory()),
 				LocalizedMapUtil.getLocalizedMap(objectDefinition.getLabel()),
 				objectDefinition.getName(), objectDefinition.getPanelAppOrder(),
 				objectDefinition.getPanelCategoryKey(),
@@ -347,13 +349,16 @@ public class ObjectDefinitionResourceImpl
 
 		for (ObjectField objectField : objectDefinition.getObjectFields()) {
 			_objectFieldLocalService.updateObjectField(
-				contextUser.getUserId(), objectDefinitionId,
-				GetterUtil.getLong(objectField.getId()),
 				objectField.getExternalReferenceCode(),
-				GetterUtil.getLong(objectField.getListTypeDefinitionId()),
-				objectField.getBusinessTypeAsString(), null, null,
-				objectField.getDBTypeAsString(), objectField.getDefaultValue(),
-				objectField.getIndexed(), objectField.getIndexedAsKeyword(),
+				GetterUtil.getLong(objectField.getId()),
+				contextUser.getUserId(),
+				ObjectFieldUtil.getListTypeDefinitionId(
+					serviceBuilderObjectDefinition.getCompanyId(),
+					_listTypeDefinitionLocalService, objectField),
+				objectDefinitionId, objectField.getBusinessTypeAsString(), null,
+				null, objectField.getDBTypeAsString(),
+				objectField.getDefaultValue(), objectField.getIndexed(),
+				objectField.getIndexedAsKeyword(),
 				objectField.getIndexedLanguageId(),
 				com.liferay.portal.vulcan.util.LocalizedMapUtil.getLocalizedMap(
 					objectField.getLabel()),
@@ -441,6 +446,26 @@ public class ObjectDefinitionResourceImpl
 		}
 
 		return postObjectDefinition(objectDefinition);
+	}
+
+	private void _addListTypeDefinition(ObjectDefinition objectDefinition)
+		throws Exception {
+
+		if (objectDefinition.getObjectFields() == null) {
+			return;
+		}
+
+		for (ObjectField objectField : objectDefinition.getObjectFields()) {
+			if (StringUtil.equals(
+					objectField.getBusinessTypeAsString(),
+					ObjectFieldConstants.BUSINESS_TYPE_PICKLIST)) {
+
+				ObjectFieldUtil.addListTypeDefinition(
+					contextUser.getCompanyId(), _listTypeDefinitionLocalService,
+					_listTypeEntryLocalService, objectField,
+					contextUser.getUserId());
+			}
+		}
 	}
 
 	private void _addObjectDefinitionResources(
@@ -594,22 +619,11 @@ public class ObjectDefinitionResourceImpl
 				active = objectDefinition.isActive();
 				dateCreated = objectDefinition.getCreateDate();
 				dateModified = objectDefinition.getModifiedDate();
-
-				if (GetterUtil.getBoolean(
-						PropsUtil.get("feature.flag.LPS-158672"))) {
-
-					enableCategorization =
-						objectDefinition.getEnableCategorization();
-					enableComments = objectDefinition.getEnableComments();
-				}
-
-				if (GetterUtil.getBoolean(
-						PropsUtil.get("feature.flag.LPS-158473"))) {
-
-					enableObjectEntryHistory =
-						objectDefinition.getEnableObjectEntryHistory();
-				}
-
+				enableCategorization =
+					objectDefinition.getEnableCategorization();
+				enableComments = objectDefinition.getEnableComments();
+				enableObjectEntryHistory =
+					objectDefinition.getEnableObjectEntryHistory();
 				externalReferenceCode =
 					objectDefinition.getExternalReferenceCode();
 				id = objectDefinition.getObjectDefinitionId();
@@ -717,6 +731,12 @@ public class ObjectDefinitionResourceImpl
 
 	@Reference
 	private Language _language;
+
+	@Reference
+	private ListTypeDefinitionLocalService _listTypeDefinitionLocalService;
+
+	@Reference
+	private ListTypeEntryLocalService _listTypeEntryLocalService;
 
 	@Reference
 	private ObjectActionLocalService _objectActionLocalService;

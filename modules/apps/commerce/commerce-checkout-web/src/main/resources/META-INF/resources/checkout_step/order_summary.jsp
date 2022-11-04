@@ -58,8 +58,11 @@ Map<Long, List<CommerceOrderValidatorResult>> commerceOrderValidatorResultsMap =
 	<liferay-ui:error exception="<%= CommerceOrderShippingMethodException.class %>" message="please-select-a-valid-shipping-method" />
 	<liferay-ui:error exception="<%= NoSuchDiscountException.class %>" message="the-inserted-coupon-is-no-longer-valid" />
 
-	<aui:row>
-		<aui:col cssClass="commerce-checkout-summary" width="<%= 70 %>">
+	<clay:row>
+		<clay:col
+			cssClass="commerce-checkout-summary"
+			size="8"
+		>
 			<ul class="commerce-checkout-summary-header">
 				<li class="autofit-row">
 					<div class="autofit-col autofit-col-expand">
@@ -87,6 +90,8 @@ Map<Long, List<CommerceOrderValidatorResult>> commerceOrderValidatorResultsMap =
 
 						<%
 						CPDefinition cpDefinition = commerceOrderItem.getCPDefinition();
+
+						String cpInstanceCDNURL = orderSummaryCheckoutStepDisplayContext.getCPInstanceCDNURL(commerceOrderItem);
 						%>
 
 						<liferay-ui:search-container-column-text
@@ -95,10 +100,17 @@ Map<Long, List<CommerceOrderValidatorResult>> commerceOrderValidatorResultsMap =
 						>
 							<span class="sticker sticker-xl">
 								<span class="sticker-overlay">
-									<liferay-adaptive-media:img
-										class="sticker-img"
-										fileVersion="<%= orderSummaryCheckoutStepDisplayContext.getCPInstanceImageFileVersion(commerceOrderItem) %>"
-									/>
+									<c:choose>
+										<c:when test="<%= Validator.isNotNull(cpInstanceCDNURL) %>">
+											<img class="sticker-img" src="<%= cpInstanceCDNURL %>" />
+										</c:when>
+										<c:otherwise>
+											<liferay-adaptive-media:img
+												class="sticker-img"
+												fileVersion="<%= orderSummaryCheckoutStepDisplayContext.getCPInstanceImageFileVersion(commerceOrderItem) %>"
+											/>
+										</c:otherwise>
+									</c:choose>
 								</span>
 							</span>
 						</liferay-ui:search-container-column-text>
@@ -373,9 +385,12 @@ Map<Long, List<CommerceOrderValidatorResult>> commerceOrderValidatorResultsMap =
 					</div>
 				</li>
 			</ul>
-		</aui:col>
+		</clay:col>
 
-		<aui:col cssClass="commerce-checkout-info" width="<%= 30 %>">
+		<clay:col
+			cssClass="commerce-checkout-info"
+			size="4"
+		>
 
 			<%
 			CommerceAddress shippingAddress = commerceOrder.getShippingAddress();
@@ -591,6 +606,6 @@ Map<Long, List<CommerceOrderValidatorResult>> commerceOrderValidatorResultsMap =
 					</div>
 				</div>
 			</c:if>
-		</aui:col>
-	</aui:row>
+		</clay:col>
+	</clay:row>
 </div>

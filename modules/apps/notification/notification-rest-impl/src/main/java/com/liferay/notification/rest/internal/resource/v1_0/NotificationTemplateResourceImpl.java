@@ -30,6 +30,7 @@ import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.vulcan.aggregation.Aggregation;
 import com.liferay.portal.vulcan.pagination.Page;
@@ -136,9 +137,40 @@ public class NotificationTemplateResourceImpl
 				LocalizedMapUtil.getLocalizedMap(
 					notificationTemplate.getSubject()),
 				LocalizedMapUtil.getLocalizedMap(notificationTemplate.getTo()),
-				notificationTemplate.getTypeAsString(),
+				notificationTemplate.getType(),
 				ListUtil.fromArray(
 					notificationTemplate.getAttachmentObjectFieldIds())));
+	}
+
+	@Override
+	public NotificationTemplate postNotificationTemplateCopy(
+			Long notificationTemplateId)
+		throws Exception {
+
+		com.liferay.notification.model.NotificationTemplate
+			notificationTemplate =
+				_notificationTemplateService.getNotificationTemplate(
+					notificationTemplateId);
+
+		return _toNotificationTemplate(
+			_notificationTemplateService.addNotificationTemplate(
+				notificationTemplate.getUserId(),
+				notificationTemplate.getObjectDefinitionId(),
+				notificationTemplate.getBcc(),
+				notificationTemplate.getBodyMap(), notificationTemplate.getCc(),
+				notificationTemplate.getDescription(),
+				notificationTemplate.getFrom(),
+				notificationTemplate.getFromNameMap(),
+				StringUtil.appendParentheticalSuffix(
+					notificationTemplate.getName(), "copy"),
+				notificationTemplate.getRecipientType(),
+				notificationTemplate.getSubjectMap(),
+				notificationTemplate.getToMap(), notificationTemplate.getType(),
+				transform(
+					_notificationTemplateAttachmentLocalService.
+						getNotificationTemplateAttachments(
+							notificationTemplateId),
+					NotificationTemplateAttachment::getObjectFieldId)));
 	}
 
 	@Override
@@ -165,7 +197,7 @@ public class NotificationTemplateResourceImpl
 				LocalizedMapUtil.getLocalizedMap(
 					notificationTemplate.getSubject()),
 				LocalizedMapUtil.getLocalizedMap(notificationTemplate.getTo()),
-				notificationTemplate.getTypeAsString(),
+				notificationTemplate.getType(),
 				ListUtil.fromArray(
 					notificationTemplate.getAttachmentObjectFieldIds())));
 	}
@@ -177,6 +209,14 @@ public class NotificationTemplateResourceImpl
 		return new NotificationTemplate() {
 			{
 				actions = HashMapBuilder.put(
+					"copy",
+					addAction(
+						ActionKeys.UPDATE, "postNotificationTemplateCopy",
+						com.liferay.notification.model.NotificationTemplate.
+							class.getName(),
+						serviceBuilderNotificationTemplate.
+							getNotificationTemplateId())
+				).put(
 					"delete",
 					addAction(
 						ActionKeys.DELETE, "deleteNotificationTemplate",
@@ -243,8 +283,7 @@ public class NotificationTemplateResourceImpl
 					serviceBuilderNotificationTemplate.getSubjectMap());
 				to = LocalizedMapUtil.getLanguageIdMap(
 					serviceBuilderNotificationTemplate.getToMap());
-				type = NotificationTemplate.Type.create(
-					serviceBuilderNotificationTemplate.getType());
+				type = serviceBuilderNotificationTemplate.getType();
 			}
 		};
 	}

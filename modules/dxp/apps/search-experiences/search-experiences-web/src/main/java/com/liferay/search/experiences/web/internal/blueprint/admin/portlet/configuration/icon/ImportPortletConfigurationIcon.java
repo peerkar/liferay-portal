@@ -14,7 +14,6 @@
 
 package com.liferay.search.experiences.web.internal.blueprint.admin.portlet.configuration.icon;
 
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.configuration.icon.BasePortletConfigurationIcon;
@@ -23,13 +22,10 @@ import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.search.experiences.constants.SXPActionKeys;
 import com.liferay.search.experiences.constants.SXPConstants;
 import com.liferay.search.experiences.constants.SXPPortletKeys;
-
-import java.util.ResourceBundle;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
@@ -54,44 +50,30 @@ public class ImportPortletConfigurationIcon
 
 	@Override
 	public String getMessage(PortletRequest portletRequest) {
-		ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
-			"content.Language", getLocale(portletRequest), getClass());
-
-		return _language.get(resourceBundle, "import");
-	}
-
-	@Override
-	public String getOnClick(
-		PortletRequest portletRequest, PortletResponse portletResponse) {
-
-		return StringBundler.concat(
-			"Liferay.Util.openModal({height: '320px', size: 'md', title: '",
-			getMessage(portletRequest), "', url: '",
-			PortletURLBuilder.create(
-				_portal.getControlPanelPortletURL(
-					portletRequest, SXPPortletKeys.SXP_BLUEPRINT_ADMIN,
-					PortletRequest.RENDER_PHASE)
-			).setMVCPath(
-				"/sxp_blueprint_admin/view_import.jsp"
-			).setRedirect(
-				() -> {
-					ThemeDisplay themeDisplay =
-						(ThemeDisplay)portletRequest.getAttribute(
-							WebKeys.THEME_DISPLAY);
-
-					return themeDisplay.getURLCurrent();
-				}
-			).setWindowState(
-				LiferayWindowState.POP_UP
-			).buildString(),
-			"'});");
+		return _language.get(getLocale(portletRequest), "import");
 	}
 
 	@Override
 	public String getURL(
 		PortletRequest portletRequest, PortletResponse portletResponse) {
 
-		return "javascript:void(0);";
+		return PortletURLBuilder.create(
+			_portal.getControlPanelPortletURL(
+				portletRequest, SXPPortletKeys.SXP_BLUEPRINT_ADMIN,
+				PortletRequest.RENDER_PHASE)
+		).setMVCPath(
+			"/sxp_blueprint_admin/view_import.jsp"
+		).setRedirect(
+			() -> {
+				ThemeDisplay themeDisplay =
+					(ThemeDisplay)portletRequest.getAttribute(
+						WebKeys.THEME_DISPLAY);
+
+				return themeDisplay.getURLCurrent();
+			}
+		).setWindowState(
+			LiferayWindowState.POP_UP
+		).buildString();
 	}
 
 	@Override
@@ -113,6 +95,11 @@ public class ImportPortletConfigurationIcon
 		}
 
 		return false;
+	}
+
+	@Override
+	public boolean isUseDialog() {
+		return true;
 	}
 
 	@Reference

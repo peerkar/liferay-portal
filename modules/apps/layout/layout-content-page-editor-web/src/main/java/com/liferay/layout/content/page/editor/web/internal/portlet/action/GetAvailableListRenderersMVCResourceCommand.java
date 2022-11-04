@@ -19,7 +19,7 @@ import com.liferay.info.list.renderer.InfoListRendererTracker;
 import com.liferay.info.search.InfoSearchClassMapperTracker;
 import com.liferay.layout.content.page.editor.constants.ContentPageEditorPortletKeys;
 import com.liferay.portal.kernel.json.JSONArray;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCResourceCommand;
@@ -40,7 +40,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Pavel Savinov
  */
 @Component(
-	immediate = true,
 	property = {
 		"javax.portlet.name=" + ContentPageEditorPortletKeys.CONTENT_PAGE_EDITOR_PORTLET,
 		"mvc.command.name=/layout_content_page_editor/get_available_list_renderers"
@@ -55,7 +54,7 @@ public class GetAvailableListRenderersMVCResourceCommand
 			ResourceRequest resourceRequest, ResourceResponse resourceResponse)
 		throws Exception {
 
-		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+		JSONArray jsonArray = _jsonFactory.createJSONArray();
 
 		List<InfoListRenderer<?>> infoListRenderers =
 			_infoListRendererTracker.getInfoListRenderers(
@@ -83,5 +82,8 @@ public class GetAvailableListRenderersMVCResourceCommand
 
 	@Reference
 	private InfoSearchClassMapperTracker _infoSearchClassMapperTracker;
+
+	@Reference
+	private JSONFactory _jsonFactory;
 
 }

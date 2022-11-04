@@ -30,7 +30,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Leonardo Barros
  */
 @Component(
-	immediate = true,
 	property = {
 		"panel.app.order:Integer=700",
 		"panel.category.key=" + PanelCategoryKeys.SITE_ADMINISTRATION_CONTENT
@@ -38,6 +37,11 @@ import org.osgi.service.component.annotations.Reference;
 	service = PanelApp.class
 )
 public class DDMDataProviderPanelApp extends BasePanelApp {
+
+	@Override
+	public Portlet getPortlet() {
+		return _portlet;
+	}
 
 	@Override
 	public String getPortletId() {
@@ -51,13 +55,9 @@ public class DDMDataProviderPanelApp extends BasePanelApp {
 		return false;
 	}
 
-	@Override
 	@Reference(
-		target = "(javax.portlet.name=" + DDMPortletKeys.DYNAMIC_DATA_MAPPING_DATA_PROVIDER + ")",
-		unbind = "-"
+		target = "(javax.portlet.name=" + DDMPortletKeys.DYNAMIC_DATA_MAPPING_DATA_PROVIDER + ")"
 	)
-	public void setPortlet(Portlet portlet) {
-		super.setPortlet(portlet);
-	}
+	private Portlet _portlet;
 
 }

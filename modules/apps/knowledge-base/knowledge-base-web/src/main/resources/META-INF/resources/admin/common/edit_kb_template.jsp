@@ -55,7 +55,10 @@ renderResponse.setTitle((kbTemplate == null) ? LanguageUtil.get(request, "new-te
 					editorName="ckeditor"
 					name="contentEditor"
 					placeholder="content"
-				/>
+					required="<%= true %>"
+				>
+					<aui:validator name="required" />
+				</liferay-editor:editor>
 
 				<aui:input name="content" type="hidden" />
 			</aui:fieldset>

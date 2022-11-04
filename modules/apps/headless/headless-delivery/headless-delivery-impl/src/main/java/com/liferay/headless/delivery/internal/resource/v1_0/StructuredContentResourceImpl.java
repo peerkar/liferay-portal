@@ -111,7 +111,6 @@ import com.liferay.portal.vulcan.util.ContentLanguageUtil;
 import com.liferay.portal.vulcan.util.LocalDateTimeUtil;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 import com.liferay.portal.vulcan.util.SearchUtil;
-import com.liferay.portal.vulcan.util.TransformUtil;
 import com.liferay.ratings.kernel.service.RatingsEntryLocalService;
 
 import java.io.Serializable;
@@ -809,7 +808,7 @@ public class StructuredContentResourceImpl
 	private List<DDMFormField> _getRootDDMFormFields(
 		DDMStructure ddmStructure) {
 
-		return TransformUtil.transform(
+		return transform(
 			ddmStructure.getRootFieldNames(),
 			fieldName -> DDMFormFieldUtil.getDDMFormField(
 				_ddmStructureService, ddmStructure, fieldName));

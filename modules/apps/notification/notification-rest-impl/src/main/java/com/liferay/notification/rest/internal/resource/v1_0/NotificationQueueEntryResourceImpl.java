@@ -16,11 +16,11 @@ package com.liferay.notification.rest.internal.resource.v1_0;
 
 import com.liferay.notification.constants.NotificationConstants;
 import com.liferay.notification.constants.NotificationQueueEntryConstants;
+import com.liferay.notification.handler.NotificationHandler;
+import com.liferay.notification.handler.NotificationHandlerTracker;
 import com.liferay.notification.rest.dto.v1_0.NotificationQueueEntry;
 import com.liferay.notification.rest.resource.v1_0.NotificationQueueEntryResource;
 import com.liferay.notification.service.NotificationQueueEntryService;
-import com.liferay.notification.type.NotificationType;
-import com.liferay.notification.util.NotificationTypeRegistry;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Sort;
@@ -108,8 +108,8 @@ public class NotificationQueueEntryResourceImpl
 				serviceBuilderNotificationQueueEntry)
 		throws PortalException {
 
-		NotificationType notificationType =
-			_notificationTypeRegistry.getNotificationType(
+		NotificationHandler notificationHandler =
+			_notificationHandlerServiceTracker.getNotificationHandler(
 				_portal.getClassName(
 					serviceBuilderNotificationQueueEntry.getClassNameId()));
 
@@ -163,17 +163,18 @@ public class NotificationQueueEntryResourceImpl
 				subject = serviceBuilderNotificationQueueEntry.getSubject();
 				to = serviceBuilderNotificationQueueEntry.getTo();
 				toName = serviceBuilderNotificationQueueEntry.getToName();
-				triggerBy = notificationType.getLabel(
+				triggerBy = notificationHandler.getTriggerBy(
 					contextAcceptLanguage.getPreferredLocale());
+				type = serviceBuilderNotificationQueueEntry.getType();
 			}
 		};
 	}
 
 	@Reference
-	private NotificationQueueEntryService _notificationQueueEntryService;
+	private NotificationHandlerTracker _notificationHandlerServiceTracker;
 
 	@Reference
-	private NotificationTypeRegistry _notificationTypeRegistry;
+	private NotificationQueueEntryService _notificationQueueEntryService;
 
 	@Reference
 	private Portal _portal;

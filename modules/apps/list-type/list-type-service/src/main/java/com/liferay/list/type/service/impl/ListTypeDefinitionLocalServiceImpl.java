@@ -14,6 +14,7 @@
 
 package com.liferay.list.type.service.impl;
 
+import com.liferay.list.type.exception.DuplicateListTypeExternalReferenceCodeException;
 import com.liferay.list.type.exception.ListTypeDefinitionNameException;
 import com.liferay.list.type.exception.RequiredListTypeDefinitionException;
 import com.liferay.list.type.model.ListTypeDefinition;
@@ -30,9 +31,12 @@ import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.ResourceLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.Validator;
 
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 
@@ -61,23 +65,35 @@ public class ListTypeDefinitionLocalServiceImpl
 			listTypeDefinitionPersistence.create(
 				counterLocalService.increment());
 
-		User user = _userLocalService.getUser(userId);
+		return _addListTypeDefinition(userId, listTypeDefinition, nameMap);
+	}
 
-		listTypeDefinition.setCompanyId(user.getCompanyId());
-		listTypeDefinition.setUserId(user.getUserId());
-		listTypeDefinition.setUserName(user.getFullName());
+	@Indexable(type = IndexableType.REINDEX)
+	@Override
+	public ListTypeDefinition addListTypeDefinition(
+			String externalReferenceCode, long userId)
+		throws PortalException {
 
-		listTypeDefinition.setNameMap(nameMap);
+		ListTypeDefinition listTypeDefinition =
+			listTypeDefinitionPersistence.create(
+				counterLocalService.increment());
 
-		listTypeDefinition = listTypeDefinitionPersistence.update(
-			listTypeDefinition);
+		if (GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-164278"))) {
+			int count = listTypeDefinitionPersistence.countByC_ERC(
+				listTypeDefinition.getCompanyId(), externalReferenceCode);
 
-		_resourceLocalService.addResources(
-			listTypeDefinition.getCompanyId(), 0,
-			listTypeDefinition.getUserId(), ListTypeDefinition.class.getName(),
-			listTypeDefinition.getListTypeDefinitionId(), false, true, true);
+			if (count != 0) {
+				throw new DuplicateListTypeExternalReferenceCodeException(
+					listTypeDefinition.getExternalReferenceCode());
+			}
+		}
 
-		return listTypeDefinition;
+		listTypeDefinition.setExternalReferenceCode(externalReferenceCode);
+
+		return _addListTypeDefinition(
+			userId, listTypeDefinition,
+			Collections.singletonMap(
+				LocaleUtil.getDefault(), externalReferenceCode));
 	}
 
 	@Indexable(type = IndexableType.DELETE)
@@ -123,7 +139,8 @@ public class ListTypeDefinitionLocalServiceImpl
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public ListTypeDefinition updateListTypeDefinition(
-			long listTypeDefinitionId, Map<Locale, String> nameMap)
+			String externalReferenceCode, long listTypeDefinitionId,
+			Map<Locale, String> nameMap)
 		throws PortalException {
 
 		_validateName(nameMap, LocaleUtil.getSiteDefault());
@@ -132,9 +149,34 @@ public class ListTypeDefinitionLocalServiceImpl
 			listTypeDefinitionPersistence.findByPrimaryKey(
 				listTypeDefinitionId);
 
+		listTypeDefinition.setExternalReferenceCode(externalReferenceCode);
 		listTypeDefinition.setNameMap(nameMap);
 
 		return listTypeDefinitionPersistence.update(listTypeDefinition);
+	}
+
+	private ListTypeDefinition _addListTypeDefinition(
+			long userId, ListTypeDefinition listTypeDefinition,
+			Map<Locale, String> nameMap)
+		throws PortalException {
+
+		User user = _userLocalService.getUser(userId);
+
+		listTypeDefinition.setCompanyId(user.getCompanyId());
+		listTypeDefinition.setUserId(user.getUserId());
+		listTypeDefinition.setUserName(user.getFullName());
+
+		listTypeDefinition.setNameMap(nameMap);
+
+		listTypeDefinition = listTypeDefinitionPersistence.update(
+			listTypeDefinition);
+
+		_resourceLocalService.addResources(
+			listTypeDefinition.getCompanyId(), 0,
+			listTypeDefinition.getUserId(), ListTypeDefinition.class.getName(),
+			listTypeDefinition.getListTypeDefinitionId(), false, true, true);
+
+		return listTypeDefinition;
 	}
 
 	private void _validateName(

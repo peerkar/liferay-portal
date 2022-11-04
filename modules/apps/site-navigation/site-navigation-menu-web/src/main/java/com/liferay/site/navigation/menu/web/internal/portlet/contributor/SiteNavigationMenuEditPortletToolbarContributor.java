@@ -50,7 +50,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Jürgen Kappler
  */
 @Component(
-	immediate = true,
 	property = {
 		"javax.portlet.name=" + SiteNavigationMenuPortletKeys.SITE_NAVIGATION_MENU,
 		"mvc.path=-", "mvc.path=/view.jsp"
@@ -123,8 +122,12 @@ public class SiteNavigationMenuEditPortletToolbarContributor
 				_portal.getHttpServletRequest(portletRequest), "edit"));
 
 		SiteNavigationMenu siteNavigationMenu =
-			_siteNavigationMenuLocalService.getSiteNavigationMenu(
+			_siteNavigationMenuLocalService.fetchSiteNavigationMenu(
 				siteNavigationMenuId);
+
+		if (siteNavigationMenu == null) {
+			return null;
+		}
 
 		urlMenuItem.setURL(
 			PortletURLBuilder.create(

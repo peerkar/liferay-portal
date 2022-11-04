@@ -18,23 +18,23 @@ import {RequestStatus} from '../../common/enums/requestStatus';
 import useLiferayNavigate from '../../common/hooks/useLiferayNavigate';
 import MDFRequest from '../../common/interfaces/mdfRequest';
 import {Liferay} from '../../common/services/liferay';
+import isObjectEmpty from '../../common/utils/isObjectEmpty';
 import {StepType} from './enums/stepType';
 import Activities from './steps/Activities';
 import activitiesSchema from './steps/Activities/schema/yup';
 import Goals from './steps/Goals';
 import goalsSchema from './steps/Goals/schema/yup';
 import Review from './steps/Review/Review';
-import isObjectEmpty from './utils/isObjectEmpty';
 import submitForm from './utils/submitForm';
 
 const initialFormValues: MDFRequest = {
 	activities: [],
 	additionalOption: {},
-	campaignName: '',
 	company: {},
 	country: {},
 	liferayBusinessSalesGoals: [],
 	overallCampaignDescription: '',
+	overallCampaignName: '',
 	requestStatus: RequestStatus.PENDING,
 	targetAudienceRoles: [],
 	targetMarkets: [],

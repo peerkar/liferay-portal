@@ -20,10 +20,6 @@
 CPContentHelper cpContentHelper = (CPContentHelper)request.getAttribute(CPContentWebKeys.CP_CONTENT_HELPER);
 
 CPCatalogEntry cpCatalogEntry = cpContentHelper.getCPCatalogEntry(request);
-
-CPSku cpSku = cpContentHelper.getDefaultCPSku(cpCatalogEntry);
-
-String productDetailURL = cpContentHelper.getFriendlyURL(cpCatalogEntry, themeDisplay);
 %>
 
 <div class="cp-renderer">
@@ -31,11 +27,28 @@ String productDetailURL = cpContentHelper.getFriendlyURL(cpCatalogEntry, themeDi
 
 	<div class="card d-flex flex-column product-card">
 		<div class="card-item-first position-relative">
+
+			<%
+			String productDetailURL = cpContentHelper.getFriendlyURL(cpCatalogEntry, themeDisplay);
+			%>
+
 			<a href="<%= productDetailURL %>">
-				<liferay-adaptive-media:img
-					class="img-fluid product-card-picture"
-					fileVersion="<%= cpContentHelper.getCPDefinitionImageFileVersion(cpCatalogEntry.getCPDefinitionId(), request) %>"
-				/>
+
+				<%
+				String cpDefinitionCDNURL = cpContentHelper.getCPDefinitionCDNURL(cpCatalogEntry.getCPDefinitionId(), request);
+				%>
+
+				<c:choose>
+					<c:when test="<%= Validator.isNotNull(cpDefinitionCDNURL) %>">
+						<img class="img-fluid product-card-picture" src="<%= cpDefinitionCDNURL %>" />
+					</c:when>
+					<c:otherwise>
+						<liferay-adaptive-media:img
+							class="img-fluid product-card-picture"
+							fileVersion="<%= cpContentHelper.getCPDefinitionImageFileVersion(cpCatalogEntry.getCPDefinitionId(), request) %>"
+						/>
+					</c:otherwise>
+				</c:choose>
 
 				<div class="aspect-ratio-item-bottom-left">
 					<commerce-ui:availability-label
@@ -47,6 +60,11 @@ String productDetailURL = cpContentHelper.getFriendlyURL(cpCatalogEntry, themeDi
 
 		<div class="card-body d-flex flex-column justify-content-between py-2">
 			<div class="cp-information">
+
+				<%
+				CPSku cpSku = cpContentHelper.getDefaultCPSku(cpCatalogEntry);
+				%>
+
 				<p class="card-subtitle" title="<%= (cpSku == null) ? StringPool.BLANK : cpSku.getSku() %>">
 					<span class="text-truncate-inline">
 						<span class="text-truncate"><%= (cpSku == null) ? StringPool.BLANK : cpSku.getSku() %></span>

@@ -25,6 +25,7 @@ import com.liferay.commerce.model.CommerceAddress;
 import com.liferay.commerce.model.CommerceGeocoder;
 import com.liferay.commerce.model.impl.CommerceAddressImpl;
 import com.liferay.commerce.service.base.CommerceAddressLocalServiceBaseImpl;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Address;
 import com.liferay.portal.kernel.model.Group;
@@ -43,7 +44,6 @@ import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.spring.extender.service.ServiceReference;
-import com.liferay.portal.vulcan.util.TransformUtil;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -108,7 +108,7 @@ public class CommerceAddressLocalServiceImpl
 			ServiceContext serviceContext)
 		throws PortalException {
 
-		validate(name, street1, city, zip, countryId, type);
+		_validate(name, street1, city, zip, countryId, type);
 
 		User user = _userLocalService.getUser(serviceContext.getUserId());
 
@@ -542,7 +542,7 @@ public class CommerceAddressLocalServiceImpl
 
 		Address address = _addressLocalService.getAddress(commerceAddressId);
 
-		validate(name, street1, city, zip, countryId, type);
+		_validate(name, street1, city, zip, countryId, type);
 
 		address = _addressLocalService.updateAddress(
 			commerceAddressId, name, description, street1, street2, street3,
@@ -553,7 +553,26 @@ public class CommerceAddressLocalServiceImpl
 		return CommerceAddressImpl.fromAddress(address);
 	}
 
-	protected void validate(
+	private OrderByComparator<Address> _getAddressOrderByComparator(
+		OrderByComparator<CommerceAddress> orderByComparator) {
+
+		if (orderByComparator == null) {
+			return null;
+		}
+
+		return new OrderByComparator<Address>() {
+
+			@Override
+			public int compare(Address address1, Address address2) {
+				return orderByComparator.compare(
+					CommerceAddressImpl.fromAddress(address1),
+					CommerceAddressImpl.fromAddress(address2));
+			}
+
+		};
+	}
+
+	private void _validate(
 			String name, String street1, String city, String zip,
 			long countryId, int type)
 		throws PortalException {
@@ -581,25 +600,6 @@ public class CommerceAddressLocalServiceImpl
 		if (!ArrayUtil.contains(CommerceAddressConstants.ADDRESS_TYPES, type)) {
 			throw new CommerceAddressTypeException();
 		}
-	}
-
-	private OrderByComparator<Address> _getAddressOrderByComparator(
-		OrderByComparator<CommerceAddress> orderByComparator) {
-
-		if (orderByComparator == null) {
-			return null;
-		}
-
-		return new OrderByComparator<Address>() {
-
-			@Override
-			public int compare(Address address1, Address address2) {
-				return orderByComparator.compare(
-					CommerceAddressImpl.fromAddress(address1),
-					CommerceAddressImpl.fromAddress(address2));
-			}
-
-		};
 	}
 
 	@ServiceReference(type = AddressLocalService.class)

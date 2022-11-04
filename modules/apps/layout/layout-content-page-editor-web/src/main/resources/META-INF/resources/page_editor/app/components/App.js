@@ -23,19 +23,26 @@ import {DisplayPagePreviewItemContextProvider} from '../contexts/DisplayPagePrev
 import {EditableProcessorContextProvider} from '../contexts/EditableProcessorContext';
 import {FormValidationContextProvider} from '../contexts/FormValidationContext';
 import {GlobalContextProvider} from '../contexts/GlobalContext';
+import {
+	KeyboardMovementContextProvider,
+	useMovementSource,
+} from '../contexts/KeyboardMovementContext';
 import {StoreContextProvider} from '../contexts/StoreContext';
-import WidgetsManager from '../contexts/WidgetsManager';
 import {reducer} from '../reducers/index';
 import {DragAndDropContextProvider} from '../utils/drag-and-drop/useDragAndDrop';
 import CommonStylesManager from './CommonStylesManager';
 import {DisplayPagePreviewItemSelector} from './DisplayPagePreviewItemSelector';
 import DragPreview from './DragPreview';
 import ItemConfigurationSidebar from './ItemConfigurationSidebar';
+import KeyboardMovementManager from './KeyboardMovementManager';
+import KeyboardMovementPreview from './KeyboardMovementPreview';
+import KeyboardMovementText from './KeyboardMovementText';
 import {LayoutBreadcrumbs} from './LayoutBreadcrumbs';
 import LayoutViewport from './LayoutViewport';
 import ShortcutManager from './ShortcutManager';
 import Sidebar from './Sidebar';
 import Toolbar from './Toolbar';
+import WidgetsManager from './WidgetsManager';
 import AppHooks from './app-hooks/index';
 
 export default function App({state}) {
@@ -59,21 +66,27 @@ export default function App({state}) {
 								<FormValidationContextProvider>
 									<Toolbar />
 
-									<ShortcutManager />
+									<KeyboardMovementContextProvider>
+										<KeyboardManager />
 
-									<GlobalContextProvider>
-										<CommonStylesManager />
+										<KeyboardMovementPreview />
 
-										<LayoutViewport />
+										<KeyboardMovementText />
 
-										<LayoutBreadcrumbs />
+										<GlobalContextProvider>
+											<CommonStylesManager />
 
-										<StyleBookContextProvider>
-											<Sidebar />
+											<LayoutViewport />
 
-											<ItemConfigurationSidebar />
-										</StyleBookContextProvider>
-									</GlobalContextProvider>
+											<LayoutBreadcrumbs />
+
+											<StyleBookContextProvider>
+												<Sidebar />
+
+												<ItemConfigurationSidebar />
+											</StyleBookContextProvider>
+										</GlobalContextProvider>
+									</KeyboardMovementContextProvider>
 								</FormValidationContextProvider>
 							</DisplayPagePreviewItemContextProvider>
 						</EditableProcessorContextProvider>
@@ -87,3 +100,9 @@ export default function App({state}) {
 App.propTypes = {
 	state: PropTypes.object.isRequired,
 };
+
+function KeyboardManager() {
+	const movementSource = useMovementSource();
+
+	return movementSource ? <KeyboardMovementManager /> : <ShortcutManager />;
+}

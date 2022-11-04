@@ -377,6 +377,8 @@ definition {
 			portlet = "Products");
 
 		CommerceProducts.checkProductStatusAfterDuplicationAndConvertionToDraft(
+			checkProductFields = "true",
+			compileDescription = "false",
 			entryName = "Any Product",
 			productCatalog = "Master",
 			productName = "Any Product",
@@ -397,19 +399,11 @@ definition {
 			productName = "Simple T-Shirt",
 			productType = "Simple");
 
-		Click(
-			key_itemName = "",
-			locator1 = "CommerceEntry#SPECIFIC_MENU_ITEM");
-
-		Click(
-			key_optionValue = "Duplicate",
-			locator1 = "CommerceFrontStore#FS_PRODUCT_OPTION");
-
-		CommerceEntry.addProductsEntry(
+		CommerceProducts.duplicateProduct(
+			checkProductFields = "true",
+			compileDescription = "false",
 			productCatalog = "Master",
-			productFullDescription = "",
-			productName = "Copy of Simple T-Shirt",
-			productShortDescription = "",
+			productName = "Simple T-Shirt",
 			publishProduct = "false");
 
 		AssertElementPresent(
@@ -477,6 +471,8 @@ definition {
 			portlet = "Products");
 
 		CommerceProducts.checkProductStatusAfterDuplicationAndConvertionToDraft(
+			checkProductFields = "true",
+			compileDescription = "false",
 			entryName = "Approved Product",
 			productCatalog = "Master",
 			productName = "Approved Product",
@@ -569,6 +565,8 @@ definition {
 		Click(locator1 = "Icon#BACK");
 
 		CommerceProducts.checkProductStatusAfterDuplicationAndConvertionToDraft(
+			checkProductFields = "true",
+			compileDescription = "false",
 			entryName = "Simple T-Shirt",
 			productCatalog = "Minium",
 			productName = "Simple T-Shirt",
@@ -596,6 +594,8 @@ definition {
 			portlet = "Products");
 
 		CommerceProducts.checkProductStatusAfterDuplicationAndConvertionToDraft(
+			checkProductFields = "true",
+			compileDescription = "false",
 			entryName = "Denied Product",
 			productCatalog = "Master",
 			productName = "Denied Product",
@@ -618,19 +618,11 @@ definition {
 			productType = "Simple",
 			publishProduct = "false");
 
-		Click(
-			key_itemName = "",
-			locator1 = "CommerceEntry#SPECIFIC_MENU_ITEM");
-
-		Click(
-			key_optionValue = "Duplicate",
-			locator1 = "CommerceFrontStore#FS_PRODUCT_OPTION");
-
-		CommerceEntry.addProductsEntry(
+		CommerceProducts.duplicateProduct(
+			checkProductFields = "true",
+			compileDescription = "false",
 			productCatalog = "Master",
-			productFullDescription = "",
-			productName = "Copy of Simple T-Shirt",
-			productShortDescription = "",
+			productName = "Simple T-Shirt",
 			publishProduct = "false");
 
 		AssertElementPresent(
@@ -850,6 +842,8 @@ definition {
 			portlet = "Products");
 
 		CommerceProducts.checkProductStatusAfterDuplicationAndConvertionToDraft(
+			checkProductFields = "true",
+			compileDescription = "false",
 			entryName = "Draft Product",
 			productCatalog = "Master",
 			productName = "Draft Product",
@@ -908,6 +902,8 @@ definition {
 		Click(locator1 = "Icon#BACK");
 
 		CommerceProducts.checkProductStatusAfterDuplicationAndConvertionToDraft(
+			checkProductFields = "true",
+			compileDescription = "false",
 			entryName = "Simple T-Shirt",
 			productCatalog = "Minium",
 			productName = "Simple T-Shirt",
@@ -935,6 +931,8 @@ definition {
 			portlet = "Products");
 
 		CommerceProducts.checkProductStatusAfterDuplicationAndConvertionToDraft(
+			checkProductFields = "true",
+			compileDescription = "false",
 			entryName = "Expired Product",
 			productCatalog = "Master",
 			productName = "Expired Product",
@@ -956,6 +954,8 @@ definition {
 			portlet = "Products");
 
 		CommerceProducts.checkProductStatusAfterDuplicationAndConvertionToDraft(
+			checkProductFields = "true",
+			compileDescription = "false",
 			entryName = "Inactive Product",
 			productCatalog = "Master",
 			productName = "Inactive Product",
@@ -977,6 +977,8 @@ definition {
 			portlet = "Products");
 
 		CommerceProducts.checkProductStatusAfterDuplicationAndConvertionToDraft(
+			checkProductFields = "true",
+			compileDescription = "false",
 			entryName = "Incomplete Product",
 			productCatalog = "Master",
 			productName = "Incomplete Product",
@@ -998,6 +1000,8 @@ definition {
 			portlet = "Products");
 
 		CommerceProducts.checkProductStatusAfterDuplicationAndConvertionToDraft(
+			checkProductFields = "true",
+			compileDescription = "false",
 			entryName = "In Recycle Bin Product",
 			productCatalog = "Master",
 			productName = "In Recycle Bin Product",
@@ -1019,6 +1023,8 @@ definition {
 			portlet = "Products");
 
 		CommerceProducts.checkProductStatusAfterDuplicationAndConvertionToDraft(
+			checkProductFields = "true",
+			compileDescription = "false",
 			entryName = "Pending Product",
 			productCatalog = "Master",
 			productName = "Pending Product",
@@ -1114,6 +1120,8 @@ definition {
 		Click(locator1 = "Icon#BACK");
 
 		CommerceProducts.checkProductStatusAfterDuplicationAndConvertionToDraft(
+			checkProductFields = "true",
+			compileDescription = "false",
 			entryName = "Simple T-Shirt",
 			productCatalog = "Minium",
 			productName = "Simple T-Shirt",
@@ -1156,10 +1164,85 @@ definition {
 			portlet = "Products");
 
 		CommerceProducts.checkProductStatusAfterDuplicationAndConvertionToDraft(
+			checkProductFields = "true",
+			compileDescription = "false",
 			entryName = "Scheduled Product",
 			productCatalog = "Master",
 			productName = "Scheduled Product",
 			status = "Scheduled");
+	}
+
+	@description = "This is a test for bug COMMERCE-9546. Verify a product image converted in base64 can be uploaded via headless API with the extension setted"
+	@priority = "4"
+	test CanUploadProductBase64ImageViaAPI {
+		property portal.acceptance = "false";
+
+		task ("Given a Minium Site is created") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+		}
+
+		task ("When a PATCH call is made for the product ABS Sensor") {
+			var attachment = CommerceUtilities.getConvertedBase64File(file = "Commerce_Black.jpg");
+
+			CommerceJSONProductsAPI._patchCommerceProductImageUsingERC(
+				attachment = "${attachment}",
+				contentType = "image/png",
+				imageTitle = "Black T-Shirt",
+				productERC = "MIN93015minium-initializer");
+		}
+
+		task ("Then into the product ABS Sensor Media tab a new entry is present with the png extension") {
+			CommerceProducts.openProductsAdmin();
+
+			AppBuilderAdmin.searchByItem(itemName = "ABS Sensor");
+
+			CommerceNavigator.gotoEntry(entryName = "ABS Sensor");
+
+			CommerceEntry.gotoMenuTab(menuTab = "Media");
+
+			takeScreenshot();
+
+			AssertElementPresent(
+				key_entryName = "Black T-Shirt",
+				locator1 = "CommerceEntry#TABLE_LIST_TITLE");
+
+			AssertElementPresent(
+				key_columnNumber = "1",
+				key_productName = "Black T-Shirt",
+				key_value = "png",
+				locator1 = "CommerceEntry#TABLE_SEARCH_BY_NAME_AND_COLUMN_CONTENT");
+		}
+
+		task ("But if the contentType is empty the extension will be automatically selected") {
+			Click(
+				key_value = "Black T-Shirt",
+				locator1 = "CommerceEntry#BODY_VERTICAL_ELLIPSIS");
+
+			CommerceEntry.clickNoError(menuItem = "Delete");
+
+			AssertElementNotPresent(
+				key_entryName = "Black T-Shirt",
+				locator1 = "CommerceEntry#TABLE_LIST_TITLE");
+
+			CommerceJSONProductsAPI._patchCommerceProductImageUsingERC(
+				attachment = "${attachment}",
+				imageTitle = "Black T-Shirt.test",
+				productERC = "MIN93015minium-initializer");
+
+			Refresh();
+
+			takeScreenshot();
+
+			AssertElementPresent(
+				key_entryName = "Black T-Shirt.test",
+				locator1 = "CommerceEntry#TABLE_LIST_TITLE");
+
+			AssertElementPresent(
+				key_columnNumber = "1",
+				key_productName = "Black T-Shirt",
+				key_value = "jpg",
+				locator1 = "CommerceEntry#TABLE_SEARCH_BY_NAME_AND_COLUMN_CONTENT");
+		}
 	}
 
 	@description = "This is a test for bug COMMERCE-9448. Verify a product image can be uploaded via headless API."
@@ -1220,6 +1303,151 @@ definition {
 				key_entryName = "icon",
 				locator1 = "CommerceEntry#TABLE_LIST_TITLE");
 		}
+	}
+
+	@description = "This is a test for bug COMMERCE-9999. Verify a product image can be uploaded via headless API with CDN."
+	@priority = "3"
+	test CanUploadProductImageViaAPIUsingCDN {
+		property custom.properties = "jsonws.web.service.paths.excludes=${line.separator}company.security.strangers.verify=false";
+		property portal.acceptance = "false";
+
+		task ("Given a Minium Site is created") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+		}
+
+		task ("Given a buyer user associated with the Commerce Account") {
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("When for the product ABS Sensor is uploaded an image using the CDN with API") {
+			CommerceJSONProductsAPI._patchCommerceProductImageUsingERC(
+				cdnEnabled = "true",
+				cdnURL = "http://mirrors.lax.liferay.com/github.com/liferay/liferay-portal/portal-web/test/functional/com/liferay/portalweb/dependencies/Commerce_Black.jpg",
+				imageTitle = "title2",
+				productERC = "MIN93015minium-initializer");
+		}
+
+		task ("Then there is no error in the logs") {
+			AssertConsoleTextNotPresent(value1 = "java.lang.NullPointerException");
+		}
+
+		task ("And the image is uploaded successfully") {
+			CommerceProducts.openProductsAdmin();
+
+			AppBuilderAdmin.searchByItem(itemName = "ABS Sensor");
+
+			takeScreenshot();
+
+			CommerceNavigator.gotoEntry(entryName = "ABS Sensor");
+
+			CommerceEntry.gotoMenuTab(menuTab = "Media");
+
+			takeScreenshot();
+
+			AssertElementPresent(
+				key_entryName = "title2",
+				locator1 = "CommerceEntry#TABLE_LIST_TITLE");
+
+			AssertElementPresent(
+				key_src = "Commerce_Black.jpg",
+				locator1 = "CommerceEntry#PRODUCT_ENTRY_IMAGE");
+
+			var adminImage = CommerceProductImages.getProductMediaSrc(imagePath = "//img[(@class='sticker-img') and contains(@alt,'title2')]");
+		}
+
+		task ("And when the buyer login on Minium") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+		}
+
+		task ("Then i can see the product image on Catalog, Product Details, Minicart") {
+			WaitForElementPresent(
+				key_productName = "abs-sensor",
+				locator1 = "CommerceFrontStore#PRODUCT_CARD_CATALOG_IMAGE");
+
+			var miniumImage = CommerceProductImages.getProductMediaSrc(imagePath = "//a[contains(@href,'abs-sensor')]//img[contains(@class,'card-picture')]");
+
+			TestUtils.assertEquals(
+				actual = "${adminImage}",
+				expected = "${miniumImage}");
+
+			FrontStore.addInitializerProductToCart(
+				productName = "ABS Sensor",
+				productQuantity = "1");
+
+			Click(
+				key_productName = "abs-sensor",
+				locator1 = "CommerceFrontStore#PRODUCT_CARD_IMAGE");
+
+			FrontStore.assertProductDetails(productImage = "Commerce_Black.jpg");
+
+			CommerceNavigator.gotoMiniCart();
+
+			AssertElementPresent(
+				key_image = "Commerce_Black.jpg",
+				key_productName = "abs-sensor",
+				locator1 = "CommerceFrontStore#PRODUCT_CARD_IMAGE_SPECIFIC");
+		}
+	}
+
+	@description = "This is a test for bug COMMERCE-9503. Verify a product image can be uploaded via headless API with default workflow enabled"
+	@priority = "3"
+	test CanUploadProductImageViaAPIWithWorkflowEnabled {
+		property portal.acceptance = "false";
+
+		task ("When the default workflow is enabled for Commerce Product") {
+			CommerceProducts.enableProductSingleApproverWorkflow();
+		}
+
+		task ("And a new product is created with an image using the API") {
+			CommerceJSONProductsAPI._addCommerceProductImage(
+				catalogName = "Master",
+				imageTitle = "Image Title",
+				productStatus = "2",
+				productTitle = "Simple Product",
+				productType = "simple");
+		}
+
+		task ("Then the new product is created with an image") {
+			CommerceProducts.openProductsAdmin();
+
+			AssertElementPresent(
+				key_src = "account",
+				locator1 = "CommerceEntry#PRODUCT_ENTRY_IMAGE");
+
+			CommerceNavigator.gotoEntry(entryName = "Simple Product");
+
+			CommerceEntry.gotoMenuTab(menuTab = "Media");
+
+			AssertElementPresent(
+				key_src = "account",
+				locator1 = "CommerceEntry#PRODUCT_ENTRY_IMAGE");
+
+			AssertElementPresent(
+				key_entryName = "Image Title",
+				locator1 = "CommerceEntry#TABLE_LIST_TITLE");
+
+			AssertElementPresent(
+				key_status = "Approved",
+				locator1 = "Questions#WORKFLOW_STATUS");
+		}
+
+		CommerceProducts.disableProductSingleApproverWorkflow();
 	}
 
 	@description = "This is a test for COMMERCE-6747. ConfigureGroupedProduct"
@@ -1584,21 +1812,12 @@ definition {
 
 			CommerceNavigator.gotoEntry(entryName = "ABS Sensor");
 
-			Click(
-				key_itemName = "",
-				locator1 = "CommerceEntry#SPECIFIC_MENU_ITEM");
-
-			Click(
-				key_optionValue = "Duplicate",
-				locator1 = "CommerceFrontStore#FS_PRODUCT_OPTION");
-
-			CommerceEntry.addProductsEntry(
+			CommerceProducts.duplicateProduct(
+				checkProductFields = "true",
+				compileDescription = "false",
 				productCatalog = "Minium",
-				productFullDescription = "",
-				productName = "Copy of ABS Sensor",
-				productShortDescription = "");
-
-			Button.clickPublish();
+				productName = "ABS Sensor",
+				publishProduct = "true");
 		}
 
 		task ("And if I change the SKU price of the original product") {

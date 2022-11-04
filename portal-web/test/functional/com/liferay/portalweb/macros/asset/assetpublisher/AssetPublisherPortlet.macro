@@ -719,10 +719,6 @@ definition {
 				locator1 = "APConfigurationSites#SITES_TABLE_NAME",
 				value1 = "${siteName}");
 
-			AssertTextEquals(
-				locator1 = "APConfigurationSites#SITES_TABLE_TYPE",
-				value1 = "${siteScopeType}");
-
 			Click(locator1 = "SitesSelectSite#SITES_TABLE_CHOOSE_SITE_LINK");
 
 			Alert.viewSuccessMessage();
@@ -1133,6 +1129,12 @@ definition {
 			AssertTextEquals.assertPartialText(
 				locator1 = "AP#ASSET_ABSTRACT_DETAIL_CONTENT",
 				value1 = "${assetContent}");
+
+			if (isSet(imageThumbnailName)) {
+				AssertVisible(
+					key_thumbnailName = "${imageThumbnailName}",
+					locator1 = "AP#ASSET_ABSTRACT_DETAIL_IMAGE_THUMBNAIL");
+			}
 		}
 	}
 
@@ -1335,10 +1337,6 @@ definition {
 			AssertTextEquals(
 				locator1 = "APConfigurationSites#SITES_TABLE_NAME",
 				value1 = "${liferaySiteName}");
-
-			AssertTextEquals(
-				locator1 = "APConfigurationSites#SITES_TABLE_TYPE",
-				value1 = "${liferaySiteType}");
 
 			AssertElementPresent(locator1 = "SitesSelectSite#SITES_TABLE_CHOOSE_SITE_LINK");
 		}

@@ -27,7 +27,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Eudaldo Alonso
  */
 @Component(
-	immediate = true,
 	property = {
 		"panel.app.order:Integer=100",
 		"panel.category.key=" + PanelCategoryKeys.SITE_ADMINISTRATION_MEMBERS
@@ -37,17 +36,18 @@ import org.osgi.service.component.annotations.Reference;
 public class SiteMembershipsPanelApp extends BasePanelApp {
 
 	@Override
+	public Portlet getPortlet() {
+		return _portlet;
+	}
+
+	@Override
 	public String getPortletId() {
 		return SiteMembershipsPortletKeys.SITE_MEMBERSHIPS_ADMIN;
 	}
 
-	@Override
 	@Reference(
-		target = "(javax.portlet.name=" + SiteMembershipsPortletKeys.SITE_MEMBERSHIPS_ADMIN + ")",
-		unbind = "-"
+		target = "(javax.portlet.name=" + SiteMembershipsPortletKeys.SITE_MEMBERSHIPS_ADMIN + ")"
 	)
-	public void setPortlet(Portlet portlet) {
-		super.setPortlet(portlet);
-	}
+	private Portlet _portlet;
 
 }

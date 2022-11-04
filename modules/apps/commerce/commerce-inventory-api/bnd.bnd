@@ -1,6 +1,6 @@
 Bundle-Name: Liferay Commerce Inventory API
 Bundle-SymbolicName: com.liferay.commerce.inventory.api
-Bundle-Version: 17.0.1
+Bundle-Version: 17.0.3
 Export-Package:\
 	com.liferay.commerce.inventory.constants,\
 	com.liferay.commerce.inventory.engine,\
@@ -12,4 +12,3 @@ Export-Package:\
 	com.liferay.commerce.inventory.type,\
 	com.liferay.commerce.inventory.type.constants,\
 	com.liferay.commerce.inventory.util.comparator
-Liferay-Enterprise-App: product.id=9a473157-06a6-44b6-b017-a360ffaf5f38

@@ -50,14 +50,12 @@ public class FolderFacetPortletSharedSearchContributor
 
 		folderFacetSearchContributor.contribute(
 			portletSharedSearchSettings.getSearchRequestBuilder(),
-			siteFacetBuilder -> siteFacetBuilder.aggregationName(
+			folderFacetBuilder -> folderFacetBuilder.aggregationName(
 				portletSharedSearchSettings.getPortletId()
 			).frequencyThreshold(
 				folderFacetPortletPreferences.getFrequencyThreshold()
 			).maxTerms(
 				folderFacetPortletPreferences.getMaxTerms()
-			).order(
-				folderFacetPortletPreferences.getOrder()
 			).selectedFolderIds(
 				_toLongArray(
 					portletSharedSearchSettings.getParameterValues(

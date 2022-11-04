@@ -249,6 +249,7 @@ definition {
 		}
 
 		Portlet.gotoPortletOptions(
+			portletIndex = "${portletIndex}",
 			portletName = "${portletName}",
 			portletOption = "Configuration");
 
@@ -355,6 +356,7 @@ definition {
 	macro selectWebContent {
 		WebContentDisplayPortlet.gotoSelectWebContent(
 			depotName = "${depotName}",
+			portletIndex = "${portletIndex}",
 			portletName = "${portletName}");
 
 		if (isSet(depotName)) {
@@ -379,7 +381,7 @@ definition {
 
 			Click(
 				key_listEntry = "${webContentTitle}",
-				locator1 = "LexiconList#LIST_ENTRY_TITLE_LINK");
+				locator1 = "LexiconList#LIST_ENTRY_TITLE");
 
 			SelectFrame(value1 = "relative=top");
 

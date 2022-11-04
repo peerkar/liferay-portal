@@ -42,7 +42,7 @@ import com.liferay.portal.kernel.transaction.TransactionInvokerUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.LocalizationUtil;
+import com.liferay.portal.kernel.util.Localization;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
@@ -78,7 +78,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Eudaldo Alonso
  */
 @Component(
-	immediate = true,
 	property = {
 		"javax.portlet.name=" + SiteAdminPortletKeys.SITE_ADMIN,
 		"mvc.command.name=/site_admin/add_group"
@@ -199,10 +198,10 @@ public class AddGroupMVCActionCommand extends BaseMVCActionCommand {
 		ServiceContextThreadLocal.pushServiceContext(serviceContext);
 
 		String name = ParamUtil.getString(actionRequest, "name");
-		Map<Locale, String> nameMap = LocalizationUtil.getLocalizationMap(
+		Map<Locale, String> nameMap = _localization.getLocalizationMap(
 			actionRequest, "name");
-		Map<Locale, String> descriptionMap =
-			LocalizationUtil.getLocalizationMap(actionRequest, "description");
+		Map<Locale, String> descriptionMap = _localization.getLocalizationMap(
+			actionRequest, "description");
 		int type = ParamUtil.getInteger(
 			actionRequest, "type", GroupConstants.TYPE_SITE_OPEN);
 		String friendlyURL = ParamUtil.getString(
@@ -229,7 +228,7 @@ public class AddGroupMVCActionCommand extends BaseMVCActionCommand {
 		boolean openGraphEnabled = ParamUtil.getBoolean(
 			actionRequest, "openGraphEnabled", true);
 		Map<Locale, String> openGraphImageAltMap =
-			LocalizationUtil.getLocalizationMap(
+			_localization.getLocalizationMap(
 				actionRequest, "openGraphImageAlt");
 		long openGraphImageFileEntryId = ParamUtil.getLong(
 			actionRequest, "openGraphImageFileEntryId");
@@ -520,6 +519,9 @@ public class AddGroupMVCActionCommand extends BaseMVCActionCommand {
 
 	@Reference
 	private LayoutSetService _layoutSetService;
+
+	@Reference
+	private Localization _localization;
 
 	@Reference
 	private Portal _portal;

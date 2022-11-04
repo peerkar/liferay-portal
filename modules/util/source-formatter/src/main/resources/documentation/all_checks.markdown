@@ -2,6 +2,7 @@
 
 Check | Category | File Extensions | Description
 ----- | -------- | --------------- | -----------
+AccessModifierCheck | [Bug Prevention](bug_prevention_checks.markdown#bug-prevention-checks) | .java | Checks for cases where visibility of methods can be decreased. |
 [AnnotationUseStyleCheck](https://checkstyle.sourceforge.io/config_annotation.html#AnnotationUseStyle) | [Styling](styling_checks.markdown#styling-checks) | .java | Checks the style of elements in annotations. |
 [AnonymousClassCheck](check/anonymous_class_check.markdown#anonymousclasscheck) | [Bug Prevention](bug_prevention_checks.markdown#bug-prevention-checks) | .java | Checks for serialization issue when using anonymous class. |
 AppendCheck | [Styling](styling_checks.markdown#styling-checks) | .java, .jsp, .jspf, .jspx, .tag, .tpl or .vm | Checks instances where literal Strings are appended. |
@@ -120,7 +121,6 @@ JSONNamingCheck | [Naming Conventions](naming_conventions_checks.markdown#naming
 JSONPackageJSONBNDVersionCheck | [Bug Prevention](bug_prevention_checks.markdown#bug-prevention-checks) | .ipynb, .json or .npmbridgerc | Checks the version for dependencies in `package.json` files. |
 JSONPackageJSONCheck | [Bug Prevention](bug_prevention_checks.markdown#bug-prevention-checks) | .ipynb, .json or .npmbridgerc | Checks content of `package.json` files. |
 JSONPackageJSONDependencyVersionCheck | [Bug Prevention](bug_prevention_checks.markdown#bug-prevention-checks) | .ipynb, .json or .npmbridgerc | Checks the version for dependencies in `package.json` files. |
-JSONPackageJSONRedundantDependenciesCheck | [Performance](performance_checks.markdown#performance-checks) | .ipynb, .json or .npmbridgerc | Checks for preventing internal dependencies from being added to `package.json`. |
 JSONStylingCheck | [Styling](styling_checks.markdown#styling-checks) | .ipynb, .json or .npmbridgerc | Applies rules to enforce consistency in code style. |
 [JSONUtilCheck](check/json_util_check.markdown#jsonutilcheck) | [Styling](styling_checks.markdown#styling-checks) | .java, .jsp, .jspf, .jspx, .tag, .tpl or .vm | Checks for utilization of class `JSONUtil`. |
 [JSONValidationCheck](check/json_validation_check.markdown#jsonvalidationcheck) | [Bug Prevention](bug_prevention_checks.markdown#bug-prevention-checks) | .ipynb, .json or .npmbridgerc | Validates content of `.json` files. |

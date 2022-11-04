@@ -264,7 +264,7 @@ $sidebar-divider-color: #8b8db2;
 		color: $color-black;
 	}
 
-	&.in-progress {
+	&.inprogress {
 		background-color: $color-gray-light;
 		border-color: $color-gray-light;
 		color: $color-black;
@@ -368,4 +368,8 @@ $sidebar-divider-color: #8b8db2;
 
 .label-tonal-success {
 	background-color: #edf7eb;
+}
+
+.text-gray {
+	color: $color-gray;
 }

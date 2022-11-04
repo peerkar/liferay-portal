@@ -77,7 +77,14 @@ public class RescoreSerDes {
 
 			sb.append("\"queryWeight\": ");
 
-			sb.append(rescore.getQueryWeight());
+			if (rescore.getQueryWeight() instanceof String) {
+				sb.append("\"");
+				sb.append((String)rescore.getQueryWeight());
+				sb.append("\"");
+			}
+			else {
+				sb.append(rescore.getQueryWeight());
+			}
 		}
 
 		if (rescore.getRescoreQueryWeight() != null) {
@@ -87,7 +94,14 @@ public class RescoreSerDes {
 
 			sb.append("\"rescoreQueryWeight\": ");
 
-			sb.append(rescore.getRescoreQueryWeight());
+			if (rescore.getRescoreQueryWeight() instanceof String) {
+				sb.append("\"");
+				sb.append((String)rescore.getRescoreQueryWeight());
+				sb.append("\"");
+			}
+			else {
+				sb.append(rescore.getRescoreQueryWeight());
+			}
 		}
 
 		if (rescore.getScoreMode() != null) {
@@ -111,7 +125,14 @@ public class RescoreSerDes {
 
 			sb.append("\"windowSize\": ");
 
-			sb.append(rescore.getWindowSize());
+			if (rescore.getWindowSize() instanceof String) {
+				sb.append("\"");
+				sb.append((String)rescore.getWindowSize());
+				sb.append("\"");
+			}
+			else {
+				sb.append(rescore.getWindowSize());
+			}
 		}
 
 		sb.append("}");
@@ -196,16 +217,14 @@ public class RescoreSerDes {
 			}
 			else if (Objects.equals(jsonParserFieldName, "queryWeight")) {
 				if (jsonParserFieldValue != null) {
-					rescore.setQueryWeight(
-						Float.valueOf((String)jsonParserFieldValue));
+					rescore.setQueryWeight((Object)jsonParserFieldValue);
 				}
 			}
 			else if (Objects.equals(
 						jsonParserFieldName, "rescoreQueryWeight")) {
 
 				if (jsonParserFieldValue != null) {
-					rescore.setRescoreQueryWeight(
-						Float.valueOf((String)jsonParserFieldValue));
+					rescore.setRescoreQueryWeight((Object)jsonParserFieldValue);
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "scoreMode")) {
@@ -215,8 +234,7 @@ public class RescoreSerDes {
 			}
 			else if (Objects.equals(jsonParserFieldName, "windowSize")) {
 				if (jsonParserFieldValue != null) {
-					rescore.setWindowSize(
-						Integer.valueOf((String)jsonParserFieldValue));
+					rescore.setWindowSize((Object)jsonParserFieldValue);
 				}
 			}
 		}

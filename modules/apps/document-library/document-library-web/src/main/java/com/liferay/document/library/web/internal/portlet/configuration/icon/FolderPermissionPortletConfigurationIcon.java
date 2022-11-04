@@ -60,8 +60,7 @@ public class FolderPermissionPortletConfigurationIcon
 
 	@Override
 	public String getMessage(PortletRequest portletRequest) {
-		return _language.get(
-			getResourceBundle(getLocale(portletRequest)), "permissions");
+		return _language.get(getLocale(portletRequest), "permissions");
 	}
 
 	@Override
@@ -126,11 +125,6 @@ public class FolderPermissionPortletConfigurationIcon
 					themeDisplay.getScopeGroupId(), folder.getFolderId(),
 					ActionKeys.PERMISSIONS);
 			});
-	}
-
-	@Override
-	public boolean isToolTip() {
-		return false;
 	}
 
 	@Override

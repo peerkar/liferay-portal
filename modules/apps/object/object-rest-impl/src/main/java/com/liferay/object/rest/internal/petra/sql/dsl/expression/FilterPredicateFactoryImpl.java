@@ -14,6 +14,7 @@
 
 package com.liferay.object.rest.internal.petra.sql.dsl.expression;
 
+import com.liferay.object.field.business.type.ObjectFieldBusinessTypeTracker;
 import com.liferay.object.rest.internal.odata.filter.expression.PredicateExpressionVisitorImpl;
 import com.liferay.object.rest.odata.entity.v1_0.ObjectEntryEntityModel;
 import com.liferay.object.rest.petra.sql.dsl.expression.FilterPredicateFactory;
@@ -22,6 +23,7 @@ import com.liferay.petra.sql.dsl.expression.Predicate;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.odata.filter.Filter;
 import com.liferay.portal.odata.filter.FilterParser;
 import com.liferay.portal.odata.filter.FilterParserProvider;
@@ -44,10 +46,11 @@ public class FilterPredicateFactoryImpl implements FilterPredicateFactory {
 		}
 
 		try {
+			EntityModel entityModel = new ObjectEntryEntityModel(
+				_objectFieldLocalService.getObjectFields(objectDefinitionId));
+
 			FilterParser filterParser = _filterParserProvider.provide(
-				new ObjectEntryEntityModel(
-					_objectFieldLocalService.getObjectFields(
-						objectDefinitionId)));
+				entityModel);
 
 			Filter oDataFilter = new Filter(filterParser.parse(filterString));
 
@@ -55,7 +58,8 @@ public class FilterPredicateFactoryImpl implements FilterPredicateFactory {
 
 			return (Predicate)expression.accept(
 				new PredicateExpressionVisitorImpl(
-					objectDefinitionId, _objectFieldLocalService));
+					entityModel, objectDefinitionId,
+					_objectFieldBusinessTypeTracker, _objectFieldLocalService));
 		}
 		catch (Exception exception) {
 			_log.error(exception);
@@ -69,6 +73,9 @@ public class FilterPredicateFactoryImpl implements FilterPredicateFactory {
 
 	@Reference
 	private FilterParserProvider _filterParserProvider;
+
+	@Reference
+	private ObjectFieldBusinessTypeTracker _objectFieldBusinessTypeTracker;
 
 	@Reference
 	private ObjectFieldLocalService _objectFieldLocalService;

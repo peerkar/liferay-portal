@@ -24,16 +24,16 @@ import com.liferay.fragment.processor.FragmentEntryProcessorContext;
 import com.liferay.fragment.processor.FragmentEntryProcessorRegistry;
 import com.liferay.fragment.service.FragmentEntryLinkService;
 import com.liferay.layout.content.page.editor.constants.ContentPageEditorPortletKeys;
+import com.liferay.layout.content.page.editor.web.internal.util.ContentUtil;
 import com.liferay.layout.content.page.editor.web.internal.util.FragmentEntryLinkManager;
 import com.liferay.layout.content.page.editor.web.internal.util.layout.structure.LayoutStructureUtil;
 import com.liferay.layout.util.structure.LayoutStructure;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
-import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -41,7 +41,6 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.Iterator;
-import java.util.List;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -53,7 +52,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Eudaldo Alonso
  */
 @Component(
-	immediate = true,
 	property = {
 		"javax.portlet.name=" + ContentPageEditorPortletKeys.CONTENT_PAGE_EDITOR_PORTLET,
 		"mvc.command.name=/layout_content_page_editor/update_configuration_values"
@@ -77,7 +75,7 @@ public class UpdateConfigurationValuesMVCActionCommand
 			JSONObject defaultEditableValuesJSONObject, String editableValues)
 		throws Exception {
 
-		JSONObject editableValuesJSONObject = JSONFactoryUtil.createJSONObject(
+		JSONObject editableValuesJSONObject = _jsonFactory.createJSONObject(
 			editableValues);
 
 		for (String fragmentEntryProcessorKey :
@@ -155,11 +153,9 @@ public class UpdateConfigurationValuesMVCActionCommand
 		fragmentEntryLink = _fragmentEntryLinkService.updateFragmentEntryLink(
 			fragmentEntryLinkId, newEditableValuesJSONObject.toString());
 
-		List<FragmentEntryLinkListener> fragmentEntryLinkListeners =
-			_fragmentEntryLinkListenerTracker.getFragmentEntryLinkListeners();
-
 		for (FragmentEntryLinkListener fragmentEntryLinkListener :
-				fragmentEntryLinkListeners) {
+				_fragmentEntryLinkListenerTracker.
+					getFragmentEntryLinkListeners()) {
 
 			fragmentEntryLinkListener.
 				onUpdateFragmentEntryLinkConfigurationValues(fragmentEntryLink);
@@ -172,14 +168,21 @@ public class UpdateConfigurationValuesMVCActionCommand
 				themeDisplay.getScopeGroupId(), themeDisplay.getPlid(),
 				fragmentEntryLink.getSegmentsExperienceId());
 
-		JSONObject jsonObject = JSONUtil.put(
+		return JSONUtil.put(
 			"fragmentEntryLink",
 			_fragmentEntryLinkManager.getFragmentEntryLinkJSONObject(
 				fragmentEntryLink, _portal.getHttpServletRequest(actionRequest),
+				_portal.getHttpServletResponse(actionResponse), layoutStructure)
+		).put(
+			"layoutData", layoutStructure.toJSONObject()
+		).put(
+			"pageContents",
+			ContentUtil.getPageContentsJSONArray(
+				_portal.getHttpServletRequest(actionRequest),
 				_portal.getHttpServletResponse(actionResponse),
-				layoutStructure));
-
-		return jsonObject.put("layoutData", layoutStructure.toJSONObject());
+				themeDisplay.getPlid(),
+				ParamUtil.getLong(actionRequest, "segmentsExperienceId"))
+		);
 	}
 
 	private static final String[] _FRAGMENT_ENTRY_PROCESSOR_KEYS = {
@@ -201,7 +204,7 @@ public class UpdateConfigurationValuesMVCActionCommand
 	private FragmentEntryProcessorRegistry _fragmentEntryProcessorRegistry;
 
 	@Reference
-	private LayoutLocalService _layoutLocalService;
+	private JSONFactory _jsonFactory;
 
 	@Reference
 	private Portal _portal;

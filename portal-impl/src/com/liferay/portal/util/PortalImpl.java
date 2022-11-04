@@ -1115,17 +1115,9 @@ public class PortalImpl implements Portal {
 		Layout layout = null;
 
 		if (Validator.isNull(friendlyURL)) {
+			layout = _getLayout(groupId, privateLayout);
 
-			// We need to ensure that virtual layouts are merged
-
-			List<Layout> layouts = LayoutLocalServiceUtil.getLayouts(
-				groupId, privateLayout,
-				LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, true, 0, 1);
-
-			if (!layouts.isEmpty()) {
-				layout = layouts.get(0);
-			}
-			else {
+			if (layout == null) {
 				throw new NoSuchLayoutException(
 					StringBundler.concat(
 						"{groupId=", groupId, ", privateLayout=", privateLayout,
@@ -6152,7 +6144,7 @@ public class PortalImpl implements Portal {
 		String fullURL, String groupFriendlyURL, String layoutFriendlyURL) {
 
 		if (fullURL.endsWith(groupFriendlyURL) &&
-			!fullURL.endsWith(groupFriendlyURL.concat(layoutFriendlyURL))) {
+			!fullURL.endsWith(layoutFriendlyURL)) {
 
 			return true;
 		}
@@ -8320,29 +8312,19 @@ public class PortalImpl implements Portal {
 				alternateURL = canonicalURLPrefix.concat(alternateURLSuffix);
 			}
 
-			if (PropsValues.LOCALE_PREPEND_FRIENDLY_URL_STYLE == 2) {
-				alternateURL = canonicalURLPrefix + alternateURLSuffix;
+			String i18NPath = _buildI18NPath(
+				languageId, locale, themeDisplay.getSiteGroup());
 
-				if (siteDefaultLocale.equals(locale)) {
-					alternateURL =
-						canonicalURLPrefix + siteDefaultLocaleI18nPath +
-							alternateURLSuffix;
-				}
+			if (!alternateURLSuffix.startsWith(i18NPath) &&
+				((PropsValues.LOCALE_PREPEND_FRIENDLY_URL_STYLE == 2) ||
+				 ((PropsValues.LOCALE_PREPEND_FRIENDLY_URL_STYLE != 0) &&
+				  !siteDefaultLocale.equals(locale)))) {
 
-				alternateURLs.put(locale, alternateURL);
+				alternateURL =
+					canonicalURLPrefix + i18NPath + alternateURLSuffix;
 			}
-			else if (siteDefaultLocale.equals(locale)) {
-				alternateURLs.put(locale, alternateURL);
-			}
-			else {
-				alternateURLs.put(
-					locale,
-					StringBundler.concat(
-						canonicalURLPrefix,
-						_buildI18NPath(
-							languageId, locale, themeDisplay.getSiteGroup()),
-						alternateURLSuffix));
-			}
+
+			alternateURLs.put(locale, alternateURL);
 		}
 
 		return alternateURLs;
@@ -8356,6 +8338,38 @@ public class PortalImpl implements Portal {
 		}
 
 		return _LOCALHOST;
+	}
+
+	private Layout _getFirstPublishedLayout(
+		long groupId, boolean privateLayout) {
+
+		boolean hasNext = true;
+
+		int start = 1;
+		int end = 0;
+		int interval = 20;
+
+		while (hasNext) {
+			end = start + interval;
+
+			List<Layout> layouts = LayoutLocalServiceUtil.getLayouts(
+				groupId, privateLayout,
+				LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, true, start, end);
+
+			for (Layout layout : layouts) {
+				if (layout.isPublished()) {
+					return layout;
+				}
+			}
+
+			start = start + interval;
+
+			if (layouts.size() < interval) {
+				hasNext = false;
+			}
+		}
+
+		return null;
 	}
 
 	private String _getGroupFriendlyURL(
@@ -8537,6 +8551,32 @@ public class PortalImpl implements Portal {
 		}
 
 		return sb.toString();
+	}
+
+	private Layout _getLayout(long groupId, boolean privateLayout) {
+
+		// We need to ensure that virtual layouts are merged
+
+		List<Layout> layouts = LayoutLocalServiceUtil.getLayouts(
+			groupId, privateLayout, LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
+			true, 0, 1);
+
+		if (layouts.isEmpty()) {
+			return null;
+		}
+
+		Layout layout = layouts.get(0);
+
+		if (!layout.isPublished()) {
+			Layout firstPublishedLayout = _getFirstPublishedLayout(
+				groupId, privateLayout);
+
+			if (firstPublishedLayout != null) {
+				return firstPublishedLayout;
+			}
+		}
+
+		return layout;
 	}
 
 	private String _getPortalURL(

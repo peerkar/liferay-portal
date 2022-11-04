@@ -1137,9 +1137,6 @@ public interface PropsKeys {
 		INDEX_SEARCH_COLLATED_SPELL_CHECK_RESULT_SCORES_THRESHOLD =
 			"index.search.collated.spell.check.result.scores.threshold";
 
-	public static final String INDEX_SEARCH_ENGINE_ID =
-		"index.search.engine.id";
-
 	public static final String INDEX_SEARCH_HIGHLIGHT_FRAGMENT_SIZE =
 		"index.search.highlight.fragment.size";
 
@@ -1177,9 +1174,6 @@ public interface PropsKeys {
 
 	public static final String INDEX_SEARCH_SPELL_CHECKER_SUPPORTED_LOCALES =
 		"index.search.spell.checker.supported.locales";
-
-	public static final String INDEX_SEARCH_WRITER_MAX_QUEUE_SIZE =
-		"index.search.writer.max.queue.size";
 
 	public static final String INDEX_SORTABLE_TEXT_FIELDS =
 		"index.sortable.text.fields";
@@ -1768,9 +1762,6 @@ public interface PropsKeys {
 	public static final String MODULE_FRAMEWORK_PROPERTIES =
 		"module.framework.properties.";
 
-	public static final String MODULE_FRAMEWORK_SERVICES_IGNORED_INTERFACES =
-		"module.framework.services.ignored.interfaces";
-
 	public static final String MODULE_FRAMEWORK_STATE_DIR =
 		"module.framework.state.dir";
 
@@ -1779,9 +1770,6 @@ public interface PropsKeys {
 
 	public static final String MODULE_FRAMEWORK_STOP_WAIT_TIMEOUT =
 		"module.framework.stop.wait.timeout";
-
-	public static final String MODULE_FRAMEWORK_SYSTEM_PACKAGES_EXTRA =
-		"module.framework.system.packages.extra";
 
 	public static final String MODULE_FRAMEWORK_WAR_DIR =
 		"module.framework.war.dir";

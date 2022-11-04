@@ -529,6 +529,47 @@ definition {
 			locator1 = "CommerceEntry#ENTRY_NAME_BODY_VERTICAL_ELLIPSIS");
 	}
 
+	@description = "This is a test for COMMERCE-6413. Commerce Channel API unable to define Type"
+	@priority = "3"
+	test CanCreateChannelViaAPIAndCheckTabs {
+		property portal.acceptance = "false";
+
+		var wrongChannelType = "Site";
+		var correctChannelType = "site";
+		var channelTabsList = "General,Type,Notification Queue,Notification Templates,Payment Restrictions,Shipping Restrictions";
+		var createChannelResponseWithError = CommerceJSONChannelsAPI._addChannel(
+			channelName = "Test Channel New",
+			channelType = "${wrongChannelType}",
+			currencyCode = "US",
+			externalReferenceCode = "101");
+
+		var createChannelErrorMessage = JSONUtil.getWithJSONPath("${createChannelResponseWithError}", "$");
+
+		TestUtils.assertEquals(
+			actual = "${createChannelErrorMessage}",
+			expected = "{errorDescription=Invalid channel type, message=null, status=400}");
+
+		CommerceNavigator.gotoPortlet(
+			category = "Store Management",
+			portlet = "Channels");
+
+		IsElementPresent(locator1 = "CommerceNavigation#EMPTY_SEARCH_CONTAINER");
+
+		CommerceJSONChannelsAPI._addChannel(
+			channelName = "Test Channel New",
+			channelType = "${correctChannelType}",
+			currencyCode = "US",
+			externalReferenceCode = "101");
+
+		Refresh();
+
+		CommerceNavigator.gotoEntry(entryName = "Test Channel New");
+
+		for (var channelTab : list "${channelTabsList}") {
+			CommerceEntry.gotoMenuTab(menuTab = "${channelTab}");
+		}
+	}
+
 	@description = "This is a test for COMMERCE-9459. CanEditShippingMethodTrackingURL"
 	@priority = "2"
 	test CanEditShippingMethodTrackingURL {
@@ -662,6 +703,76 @@ definition {
 			AssertElementNotPresent(
 				key_title = "Currency",
 				locator1 = "CommerceEntry#CATALOGS_FORM");
+		}
+	}
+
+	@description = "Test for COMMERCE-9432 | Can paginate Payment and Shipping Restrictions pages"
+	@priority = "3"
+	test CanPaginatePaymentAndShippingRestrictions {
+		property test.name.skip.portal.instance = "CPCommerceChannels#CanPaginatePaymentAndShippingRestrictions";
+
+		task ("Given the admin navigates to 'Minium Portal' channel") {
+			CommerceChannels.openChannelsAdmin();
+
+			CommerceNavigator.gotoEntry(entryName = "Minium Portal");
+		}
+
+		task ("When the admin navigates to the Payment/Shipping Restrictions tab") {
+			for (var tab : list "Payment,Shipping") {
+				CommerceEntry.gotoMenuTab(menuTab = "${tab} Restrictions");
+
+				task ("Then the admin can use pagination to change the list of countries shown on the page") {
+					Pagination.changePagination(itemsPerPage = "4 items");
+
+					CommerceEntry.viewPaginationResults(results = "Showing 1 to 4 of 247");
+
+					AssertElementNotPresent(
+						key_rowNumber = "5",
+						locator1 = "CommerceEntry#ENTRY_CONTENT_ROW_NUMBER");
+
+					for (var country : list "Afghanistan,Aland Islands,Albania,Algeria") {
+						AssertElementPresent(
+							key_tableEntry = "${country}",
+							locator1 = "LexiconTable#TABLE_ENTRY");
+					}
+
+					Click(locator1 = "Pagination#NEXT_LINK");
+
+					CommerceEntry.viewPaginationResults(results = "Showing 5 to 8 of 247");
+
+					AssertElementNotPresent(
+						key_rowNumber = "5",
+						locator1 = "CommerceEntry#ENTRY_CONTENT_ROW_NUMBER");
+
+					for (var country : list "Afghanistan,Aland Islands,Albania,Algeria") {
+						AssertElementNotPresent(
+							key_tableEntry = "${country}",
+							locator1 = "LexiconTable#TABLE_ENTRY");
+					}
+
+					Click(locator1 = "Pagination#PREVIOUS_LINK");
+
+					AssertElementNotPresent(
+						key_rowNumber = "5",
+						locator1 = "CommerceEntry#ENTRY_CONTENT_ROW_NUMBER");
+
+					for (var country : list "Afghanistan,Aland Islands,Albania,Algeria") {
+						AssertElementPresent(
+							key_tableEntry = "${country}",
+							locator1 = "LexiconTable#TABLE_ENTRY");
+					}
+
+					Click(
+						key_pageNumber = "4",
+						locator1 = "CommerceNavigation#PAGINATION_ANY_PAGE");
+
+					for (var country : list "Afghanistan,Aland Islands,Albania,Algeria") {
+						AssertElementNotPresent(
+							key_tableEntry = "${country}",
+							locator1 = "LexiconTable#TABLE_ENTRY");
+					}
+				}
+			}
 		}
 	}
 
@@ -2362,15 +2473,8 @@ definition {
 				newAddressCity = "Test City",
 				newAddressCountry = "United States",
 				newAddressName = "Address Name",
-				newAddressZipCode = "Test Zip Code");
-
-			AssertElementNotPresent(
-				key_radioOption = "Standard",
-				locator1 = "CommerceEntry#RADIO_BUTTON");
-
-			AssertElementPresent(
-				key_radioOption = "Expedited",
-				locator1 = "CommerceEntry#RADIO_BUTTON");
+				newAddressZipCode = "Test Zip Code",
+				shippingOption = "Expedited");
 		}
 
 		task ("When the user goes to checkout for the Test Order Type 1 order") {
@@ -2454,12 +2558,12 @@ definition {
 
 		CommerceJSONChannelsAPI._addChannel(
 			channelName = "Test Channel",
-			channelType = "Site",
+			channelType = "site",
 			currencyCode = "USD");
 
 		CommerceJSONChannelsAPI._addChannel(
 			channelName = "Minium",
-			channelType = "Site",
+			channelType = "site",
 			currencyCode = "USD");
 
 		CommerceChannels.openChannelsAdmin();

@@ -235,7 +235,9 @@ for (long groupId : groupIds) {
 	}
 </script>
 
-<aui:script require="frontend-js-web/liferay/delegate/delegate.es as delegateModule">
+<aui:script require="frontend-js-web/index as frontendJsWeb">
+	var {delegate} = frontendJsWeb;
+
 	function selectAssets(assetEntryList) {
 		var assetClassName = '';
 		var assetEntryIds = [];
@@ -255,8 +257,6 @@ for (long groupId : groupIds) {
 			},
 		});
 	}
-
-	var delegate = delegateModule.default;
 
 	var delegateHandler = delegate(
 		document.body,

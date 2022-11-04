@@ -20,13 +20,13 @@ import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
 import com.liferay.info.collection.provider.InfoCollectionProvider;
 import com.liferay.list.type.service.ListTypeEntryLocalService;
 import com.liferay.notification.constants.NotificationTermContributorConstants;
+import com.liferay.notification.handler.NotificationHandler;
 import com.liferay.notification.term.contributor.NotificationTermContributor;
-import com.liferay.notification.type.NotificationType;
 import com.liferay.object.deployer.ObjectDefinitionDeployer;
 import com.liferay.object.internal.info.collection.provider.ObjectEntrySingleFormVariationInfoCollectionProvider;
 import com.liferay.object.internal.language.ObjectResourceBundle;
+import com.liferay.object.internal.notification.handler.ObjectDefinitionNotificationHandler;
 import com.liferay.object.internal.notification.term.contributor.ObjectDefinitionNotificationTermContributor;
-import com.liferay.object.internal.notification.type.ObjectDefinitionNotificationType;
 import com.liferay.object.internal.persistence.ObjectDefinitionTableArgumentsResolver;
 import com.liferay.object.internal.related.models.ObjectEntry1to1ObjectRelatedModelsProviderImpl;
 import com.liferay.object.internal.related.models.ObjectEntry1toMObjectRelatedModelsProviderImpl;
@@ -43,9 +43,11 @@ import com.liferay.object.internal.workflow.ObjectEntryWorkflowHandler;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.related.models.ObjectRelatedModelsProvider;
 import com.liferay.object.rest.context.path.RESTContextPathResolver;
+import com.liferay.object.rest.manager.v1_0.ObjectEntryManagerTracker;
 import com.liferay.object.scope.ObjectScopeProviderRegistry;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
+import com.liferay.object.service.ObjectEntryService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectLayoutLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
@@ -104,6 +106,8 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 		ModelSearchRegistrarHelper modelSearchRegistrarHelper,
 		ObjectDefinitionLocalService objectDefinitionLocalService,
 		ObjectEntryLocalService objectEntryLocalService,
+		ObjectEntryManagerTracker objectEntryManagerTracker,
+		ObjectEntryService objectEntryService,
 		ObjectFieldLocalService objectFieldLocalService,
 		ObjectLayoutLocalService objectLayoutLocalService,
 		ObjectRelationshipLocalService objectRelationshipLocalService,
@@ -125,6 +129,8 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 		_modelSearchRegistrarHelper = modelSearchRegistrarHelper;
 		_objectDefinitionLocalService = objectDefinitionLocalService;
 		_objectEntryLocalService = objectEntryLocalService;
+		_objectEntryManagerTracker = objectEntryManagerTracker;
+		_objectEntryService = objectEntryService;
 		_objectFieldLocalService = objectFieldLocalService;
 		_objectLayoutLocalService = objectLayoutLocalService;
 		_objectRelationshipLocalService = objectRelationshipLocalService;
@@ -235,32 +241,27 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 					"notification.type.key", objectDefinition.getClassName()
 				).build()),
 			_bundleContext.registerService(
-				NotificationType.class,
-				new ObjectDefinitionNotificationType(objectDefinition),
+				NotificationHandler.class,
+				new ObjectDefinitionNotificationHandler(objectDefinition),
 				HashMapDictionaryBuilder.<String, Object>put(
-
-					// TODO Will commerce order need more than one notification
-					// type? Should we rename "notification.type.key" to
-					// "object.definition.class.name"?
-
-					"notification.type.key", objectDefinition.getClassName()
+					"class.name", objectDefinition.getClassName()
 				).build()),
 			_bundleContext.registerService(
 				ObjectRelatedModelsProvider.class,
 				new ObjectEntry1to1ObjectRelatedModelsProviderImpl(
-					objectDefinition, _objectEntryLocalService,
+					objectDefinition, _objectEntryService,
 					_objectFieldLocalService, _objectRelationshipLocalService),
 				null),
 			_bundleContext.registerService(
 				ObjectRelatedModelsProvider.class,
 				new ObjectEntry1toMObjectRelatedModelsProviderImpl(
-					objectDefinition, _objectEntryLocalService,
+					objectDefinition, _objectEntryService,
 					_objectFieldLocalService, _objectRelationshipLocalService),
 				null),
 			_bundleContext.registerService(
 				ObjectRelatedModelsProvider.class,
 				new ObjectEntryMtoMObjectRelatedModelsProviderImpl(
-					objectDefinition, _objectEntryLocalService,
+					objectDefinition, _objectEntryService,
 					_objectRelationshipLocalService),
 				null),
 			_bundleContext.registerService(
@@ -296,21 +297,20 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 						objectEntryModelSummaryContributor);
 				}));
 
-		if (objectDefinition.isDefaultStorageType()) {
-			_bundleContext.registerService(
-				InfoCollectionProvider.class,
-				new ObjectEntrySingleFormVariationInfoCollectionProvider(
-					_assetCategoryLocalService, _assetTagLocalService,
-					_assetVocabularyLocalService, _groupLocalService,
-					_listTypeEntryLocalService, objectDefinition,
-					_objectEntryLocalService, _objectFieldLocalService,
-					_objectLayoutLocalService, _objectScopeProviderRegistry),
-				HashMapDictionaryBuilder.<String, Object>put(
-					"company.id", objectDefinition.getCompanyId()
-				).put(
-					"item.class.name", objectDefinition.getClassName()
-				).build());
-		}
+		_bundleContext.registerService(
+			InfoCollectionProvider.class,
+			new ObjectEntrySingleFormVariationInfoCollectionProvider(
+				_assetCategoryLocalService, _assetTagLocalService,
+				_assetVocabularyLocalService, _groupLocalService,
+				_listTypeEntryLocalService, objectDefinition,
+				_objectEntryLocalService, _objectEntryManagerTracker,
+				_objectFieldLocalService, _objectLayoutLocalService,
+				_objectScopeProviderRegistry),
+			HashMapDictionaryBuilder.<String, Object>put(
+				"company.id", objectDefinition.getCompanyId()
+			).put(
+				"item.class.name", objectDefinition.getClassName()
+			).build());
 
 		for (Locale locale : LanguageUtil.getAvailableLocales()) {
 			serviceRegistrations.add(
@@ -394,6 +394,8 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 	private final ModelSearchRegistrarHelper _modelSearchRegistrarHelper;
 	private final ObjectDefinitionLocalService _objectDefinitionLocalService;
 	private final ObjectEntryLocalService _objectEntryLocalService;
+	private final ObjectEntryManagerTracker _objectEntryManagerTracker;
+	private final ObjectEntryService _objectEntryService;
 	private final ObjectFieldLocalService _objectFieldLocalService;
 	private final ObjectLayoutLocalService _objectLayoutLocalService;
 	private final ObjectRelationshipLocalService

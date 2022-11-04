@@ -43,7 +43,6 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.multipart.BinaryFile;
 import com.liferay.portal.vulcan.multipart.MultipartBody;
-import com.liferay.portal.vulcan.util.TransformUtil;
 
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
@@ -521,7 +520,7 @@ public class ImportTaskResourceImpl extends BaseImportTaskResourceImpl {
 					batchEngineImportTask.getExecuteStatus());
 				externalReferenceCode =
 					batchEngineImportTask.getExternalReferenceCode();
-				failedItems = TransformUtil.transformToArray(
+				failedItems = transformToArray(
 					batchEngineImportTask.getBatchEngineImportTaskErrors(),
 					batchEngineImportTaskError -> _toFailedItem(
 						batchEngineImportTaskError),

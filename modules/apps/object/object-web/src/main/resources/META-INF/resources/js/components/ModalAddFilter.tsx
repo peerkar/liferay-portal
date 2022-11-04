@@ -176,26 +176,34 @@ export function ModalAddFilter({
 
 	const setFieldValues = useCallback(
 		(objectField: ObjectField) => {
-			if (objectField?.businessType === 'Picklist') {
+			if (
+				objectField.businessType === 'MultiselectPicklist' ||
+				objectField?.businessType === 'Picklist'
+			) {
 				const makeFetch = async () => {
-					const items = await API.getPickListItems(
-						objectField.listTypeDefinitionId
-					);
+					if (objectField.listTypeDefinitionId) {
+						const items = await API.getPickListItems(
+							objectField.listTypeDefinitionId
+						);
 
-					if (editingFilter) {
-						setItems(
-							getCheckedPickListItems(items, setEditingFilterType)
-						);
-					}
-					else {
-						setItems(
-							items.map((item) => {
-								return {
-									label: item.name,
-									value: item.key,
-								};
-							})
-						);
+						if (editingFilter) {
+							setItems(
+								getCheckedPickListItems(
+									items,
+									setEditingFilterType
+								)
+							);
+						}
+						else {
+							setItems(
+								items.map((item) => {
+									return {
+										label: item.name,
+										value: item.key,
+									};
+								})
+							);
+						}
 					}
 				};
 
@@ -355,6 +363,7 @@ export function ModalAddFilter({
 				selectedFilterBy?.businessType,
 				selectedFilterType?.value,
 				selectedFilterBy?.name === 'status' ||
+					selectedFilterBy?.businessType === 'MultiselectPicklist' ||
 					selectedFilterBy?.businessType === 'Picklist' ||
 					selectedFilterBy?.businessType === 'Relationship'
 					? checkedItems
@@ -370,6 +379,7 @@ export function ModalAddFilter({
 				selectedFilterBy?.businessType,
 				selectedFilterType?.value,
 				selectedFilterBy?.name === 'status' ||
+					selectedFilterBy?.businessType === 'MultiselectPicklist' ||
 					selectedFilterBy?.businessType === 'Picklist' ||
 					selectedFilterBy?.businessType === 'Relationship'
 					? checkedItems
@@ -466,6 +476,8 @@ export function ModalAddFilter({
 
 				{selectedFilterType &&
 					(selectedFilterBy?.name === 'status' ||
+						selectedFilterBy?.businessType ===
+							'MultiselectPicklist' ||
 						selectedFilterBy?.businessType === 'Picklist' ||
 						selectedFilterBy?.businessType === 'Relationship') && (
 						<MultipleSelect

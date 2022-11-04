@@ -32,7 +32,7 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -604,11 +604,9 @@ public class FragmentEntryLinkLocalServiceImpl
 
 		_updateFragmentEntryLinkLayout(fragmentEntryLink);
 
-		List<FragmentEntryLinkListener> fragmentEntryLinkListeners =
-			_fragmentEntryLinkListenerTracker.getFragmentEntryLinkListeners();
-
 		for (FragmentEntryLinkListener fragmentEntryLinkListener :
-				fragmentEntryLinkListeners) {
+				_fragmentEntryLinkListenerTracker.
+					getFragmentEntryLinkListeners()) {
 
 			fragmentEntryLinkListener.
 				onUpdateFragmentEntryLinkConfigurationValues(fragmentEntryLink);
@@ -645,10 +643,10 @@ public class FragmentEntryLinkLocalServiceImpl
 
 		try {
 			JSONObject defaultEditableValuesJSONObject =
-				JSONFactoryUtil.createJSONObject(defaultEditableValues);
+				_jsonFactory.createJSONObject(defaultEditableValues);
 
-			JSONObject editableValuesJSONObject =
-				JSONFactoryUtil.createJSONObject(editableValues);
+			JSONObject editableValuesJSONObject = _jsonFactory.createJSONObject(
+				editableValues);
 
 			for (String fragmentEntryProcessorKey :
 					_FRAGMENT_ENTRY_PROCESSOR_KEYS) {
@@ -789,6 +787,9 @@ public class FragmentEntryLinkLocalServiceImpl
 
 	@Reference
 	private FragmentEntryProcessorRegistry _fragmentEntryProcessorRegistry;
+
+	@Reference
+	private JSONFactory _jsonFactory;
 
 	@Reference
 	private LayoutLocalService _layoutLocalService;

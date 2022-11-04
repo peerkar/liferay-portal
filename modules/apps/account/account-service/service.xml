@@ -3,7 +3,7 @@
 
 <service-builder auto-import-default-references="false" auto-namespace-tables="false" mvcc-enabled="true" package-path="com.liferay.account">
 	<namespace>Account</namespace>
-	<entity external-reference-code="true" local-service="true" name="AccountEntry" remote-service="true" uuid="true">
+	<entity external-reference-code="company" local-service="true" name="AccountEntry" remote-service="true" uuid="true">
 
 		<!-- PK fields -->
 
@@ -28,10 +28,14 @@
 		<column name="emailAddress" type="String" />
 		<column name="logoId" type="long" />
 		<column name="name" type="String" />
+		<column name="restrictMembership" type="boolean" />
 		<column name="taxExemptionCode" type="String" />
 		<column name="taxIdNumber" type="String" />
 		<column name="type" type="String" />
 		<column name="status" type="int" />
+		<column name="statusByUserId" type="long" />
+		<column name="statusByUserName" type="String" />
+		<column name="statusDate" type="Date" />
 
 		<!-- Order -->
 
@@ -109,7 +113,7 @@
 			<finder-column name="accountUserId" />
 		</finder>
 	</entity>
-	<entity external-reference-code="true" local-service="true" name="AccountGroup" remote-service="true" uuid="true">
+	<entity external-reference-code="company" local-service="true" name="AccountGroup" remote-service="true" uuid="true">
 
 		<!-- PK fields -->
 

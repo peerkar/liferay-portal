@@ -503,6 +503,8 @@ definition {
 
 			LexiconEntry.gotoAdd();
 
+			MenuItem.click(menuItem = "Assign Users");
+
 			SelectFrame(
 				key_title = "Assign Users to New Instance Account",
 				locator1 = "IFrame#MODAL_ANY");
@@ -540,6 +542,39 @@ definition {
 				key_rowEntry = "googleUser googleUser",
 				locator1 = "ContentRow#ENTRY_CONTENT_ROW_NUMBER_TD",
 				value1 = "user@google.com");
+		}
+	}
+
+	@description = "This tests activating an inactive account"
+	@priority = "3"
+	test CanActivateAnInactiveAccount {
+		task ("Given a business account that is Inactive") {
+			JSONAccountEntry.addAccountEntry(
+				accountEntryName = "Accounts Name for Test",
+				accountEntryStatus = "Inactive",
+				accountEntryType = "Business");
+		}
+
+		task ("When a user activates it") {
+			Accounts.openAccountsAdmin();
+
+			ManagementBar.setFilterAndOrder(filterBy = "Inactive");
+
+			LexiconEntry.gotoEntryMenuItemNoError(
+				menuItem = "Activate",
+				rowEntry = "Accounts Name for Test");
+
+			Alert.viewSuccessMessage();
+		}
+
+		task ("Then the account is in Active status and can be viewed in the Active filter") {
+			Accounts.openAccountsAdmin();
+
+			LexiconEntry.viewEntryName(rowEntry = "Accounts Name for Test");
+
+			ManagementBar.setFilterAndOrder(filterBy = "Inactive");
+
+			LexiconEntry.viewNoEntry(rowEntry = "Accounts Name for Test");
 		}
 	}
 
@@ -982,6 +1017,8 @@ definition {
 		task ("Open and click into the Assign Users Modal") {
 			LexiconEntry.gotoAdd();
 
+			MenuItem.click(menuItem = "Assign Users");
+
 			WaitForElementPresent(
 				key_title = "Assign Users to Business Account",
 				locator1 = "IFrame#MODAL_ANY");
@@ -1089,45 +1126,6 @@ definition {
 			key_rowEntry = "userfn userln",
 			locator1 = "ContentRow#ENTRY_CONTENT_ROW_NUMBER_TD",
 			value1 = "Account Administrator, Account Specific Role");
-	}
-
-	@description = "This test updates an account's status from Active to Inactive asserts change saves successfully."
-	@priority = "4"
-	test CanChangeAccountStatusToInactiveThenActiveViaEdit {
-		JSONAccountEntry.addAccountEntry(
-			accountEntryName = "Change Account Status",
-			accountEntryType = "Business");
-
-		Accounts.openAccountsAdmin();
-
-		Accounts.editCP(
-			accountName = "Change Account Status",
-			accountNameEdit = "Edited Account Name",
-			accountStatusEdit = "Inactive");
-
-		Accounts.openAccountsAdmin();
-
-		LexiconEntry.viewNoEntry(rowEntry = "Edited Account Name");
-
-		ManagementBar.setFilterAndOrder(filterBy = "Inactive");
-
-		LexiconEntry.viewEntryStatus(
-			rowEntry = "Edited Account Name",
-			rowStatus = "Inactive");
-
-		LexiconEntry.gotoEntry(rowEntry = "Edited Account Name");
-
-		Check.checkToggleSwitch(locator1 = "ToggleSwitch#ACCOUNT_STATUS");
-
-		Button.clickSave();
-
-		Alert.viewSuccessMessage();
-
-		Accounts.openAccountsAdmin();
-
-		LexiconEntry.viewEntryStatus(
-			rowEntry = "Edited Account Name",
-			rowStatus = "Active");
 	}
 
 	@description = "This test asserts that address type can be changed from Billing to Shipping and vice versa."
@@ -1394,6 +1392,8 @@ definition {
 				rowEntry = "Business Account");
 
 			LexiconEntry.gotoAdd();
+
+			MenuItem.click(menuItem = "Assign Users");
 
 			WaitForElementPresent(
 				key_title = "Assign Users to Business Account",
@@ -1947,21 +1947,24 @@ definition {
 	@description = "This is a use case for LPS-101315. Deleting an inactive account will navigate you back to inactive filter."
 	@priority = "3"
 	test CanDeleteAnInactiveAccount {
-		Accounts.openAccountsAdmin();
+		task ("Given a business account that is Inactive") {
+			JSONAccountEntry.addAccountEntry(
+				accountEntryName = "Accounts Name for Test",
+				accountEntryStatus = "Inactive",
+				accountEntryType = "Business");
+		}
 
-		Accounts.addInactiveBusinessAccount(
-			accountDescription = "Accounts Name Description for Test",
-			accountName = "Accounts Name for Test");
+		task ("When a user deletes it") {
+			Accounts.openAccountsAdmin();
 
-		Accounts.openAccountsAdmin();
+			ManagementBar.setFilterAndOrder(filterBy = "Inactive");
 
-		ManagementBar.setFilterAndOrder(filterBy = "Inactive");
+			Accounts.deleteAccount(accountName = "Accounts Name for Test");
+		}
 
-		Accounts.deleteAccount(accountName = "Accounts Name for Test");
-
-		ManagementBar.viewFilterAndOrder(menuItem = "Inactive");
-
-		LexiconEntry.viewNoEntry(rowEntry = "Accounts Name for Test");
+		task ("Then the inactive account is successfully deleted") {
+			LexiconEntry.viewNoEntry(rowEntry = "Accounts Name for Test");
+		}
 	}
 
 	@description = "This test adds a custom field for an account entry and asserts field can be updated."
@@ -2264,6 +2267,8 @@ definition {
 
 			LexiconEntry.gotoAdd();
 
+			MenuItem.click(menuItem = "Assign Users");
+
 			WaitForElementPresent(
 				key_title = "Assign Users to Business Account",
 				locator1 = "IFrame#MODAL_ANY");
@@ -2343,6 +2348,69 @@ definition {
 				key_rowNumber = "4",
 				locator1 = "ContentRow#ENTRY_CONTENT_ROW_NUMBER",
 				value1 = "z-ea@liferay.com");
+		}
+	}
+
+	@description = "This tests that an admin can invite a new user with the same domain."
+	@priority = "5"
+	test CanInviteNewUserToAccount {
+		property test.smtp.server.enabled = "true";
+
+		task ("Given an account with a domain set") {
+			AccountConfiguration.enableAccountEmailDomain();
+
+			Accounts.openAccountsAdmin();
+
+			Accounts.addAccountWithDomain(
+				accountName = "Acme Inc.",
+				domainNames = "liferay.com");
+		}
+
+		task ("When admin invites a user with the same domain") {
+			Accounts.inviteUser(
+				accountName = "Acme Inc.",
+				userEmailAddress = "userea@liferay.com");
+
+			User.logoutPG();
+		}
+
+		task ("Then the user receives an email to create an account") {
+			MockMock.viewMail(
+				asset = "Test Test has invited you to join Acme Inc.",
+				content = "Test Test has invited you to join Acme Inc.",
+				recipient = "userea@liferay.com",
+				sender = "Test Test",
+				subject = "Test Test has invited you to join Acme Inc.");
+
+			MockMock.openMockMock();
+
+			MockMock.clickBodyLink(
+				asset = "Test Test has invited you to join Acme Inc.",
+				bodyLink = "Create Account",
+				recipient = "userea@liferay.com");
+		}
+
+		task ("When the user creates an account") {
+			Accounts.createAccount(
+				newPassword = "test",
+				userEmailAddress = "userea@liferay.com",
+				userFirstName = "userfn",
+				userLastName = "userln",
+				userScreenName = "usersn");
+		}
+
+		task ("Then the user is successfully added to the business account") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "Test Test");
+
+			Accounts.openAccountsAdmin();
+
+			LexiconEntry.gotoEntryMenuItem(
+				menuItem = "Manage Users",
+				rowEntry = "Acme Inc.");
+
+			LexiconEntry.viewEntryName(rowEntry = "userfn userln");
 		}
 	}
 
@@ -2555,6 +2623,34 @@ definition {
 				rowEntry = "AM Account");
 
 			LexiconEntry.viewNoEntry(rowEntry = "userfn userln");
+		}
+	}
+
+	@description = "This tests that a user cannot invite a user with a different domain"
+	@priority = "4"
+	test CannotInviteUserWithDifferentDomain {
+		task ("Given an account with a domain set") {
+			AccountConfiguration.enableAccountEmailDomain();
+
+			Accounts.openAccountsAdmin();
+
+			Accounts.addAccountWithDomain(
+				accountName = "S Auto Service",
+				domainNames = "liferay.com");
+		}
+
+		task ("When admin invites a user with a different domain") {
+			Accounts._goToInviteUsers(accountName = "S Auto Service");
+
+			Type(
+				locator1 = "TextInput#EMAIL_ADDRESS",
+				value1 = "john.doe@liferay1.com");
+
+			Button.click(button = "Invite");
+		}
+
+		task ("Then the user is not invited") {
+			AssertElementNotPresent(locator1 = "Message#SUCCESS_DISMISSIBLE");
 		}
 	}
 
@@ -3139,6 +3235,8 @@ definition {
 
 			LexiconEntry.gotoAdd();
 
+			MenuItem.click(menuItem = "Assign Users");
+
 			SelectFrame(
 				key_title = "Assign Users to Account Name",
 				locator1 = "IFrame#MODAL_ANY");
@@ -3575,6 +3673,8 @@ definition {
 
 		LexiconEntry.gotoAdd();
 
+		MenuItem.click(menuItem = "Assign Users");
+
 		SelectFrame(
 			key_title = "Assign Users to Business Account",
 			locator1 = "IFrame#MODAL_ANY");
@@ -3816,9 +3916,7 @@ definition {
 
 			Button.clickSave();
 
-			AssertElementPresent(
-				key_fieldFieldLabel = "Account Name",
-				locator1 = "Message#ERROR_FIELD_REQUIRED");
+			Alert.viewSpecificRequiredField(fieldFieldLabel = "Account Name");
 		}
 	}
 
@@ -4109,6 +4207,8 @@ definition {
 			rowEntry = "Account with Domain");
 
 		LexiconEntry.gotoAdd();
+
+		MenuItem.click(menuItem = "Assign Users");
 
 		SelectFrame(
 			key_title = "Assign Users to Account with Domain",

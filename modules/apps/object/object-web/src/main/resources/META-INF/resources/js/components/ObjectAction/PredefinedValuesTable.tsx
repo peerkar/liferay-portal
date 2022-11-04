@@ -15,12 +15,18 @@
 import {ClayCheckbox} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
 import {ClayTooltipProvider} from '@clayui/tooltip';
+
+// @ts-ignore
+
 import {FrontendDataSet} from '@liferay/frontend-data-set-web';
 import {
 	Card,
 	ExpressionBuilder,
 	onActionDropdownItemClick,
 	openToast,
+
+	// @ts-ignore
+
 } from '@liferay/object-js-components-web';
 import React, {useEffect, useMemo} from 'react';
 

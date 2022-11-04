@@ -83,7 +83,7 @@ public class CommerceShipmentItemLocalServiceImpl
 				commerceOrderItemId);
 
 		if (validateInventory) {
-			validate(
+			_validate(
 				commerceOrderItem,
 				_commerceShipmentLocalService.getCommerceShipment(
 					commerceShipmentId),
@@ -355,7 +355,7 @@ public class CommerceShipmentItemLocalServiceImpl
 		int originalQuantity = commerceShipmentItem.getQuantity();
 
 		if (validateInventory) {
-			validate(
+			_validate(
 				commerceOrderItem, commerceShipmentItem.getCommerceShipment(),
 				commerceInventoryWarehouseId, originalQuantity, quantity);
 		}
@@ -417,59 +417,6 @@ public class CommerceShipmentItemLocalServiceImpl
 		commerceShipmentItem.setExternalReferenceCode(externalReferenceCode);
 
 		return commerceShipmentItemPersistence.update(commerceShipmentItem);
-	}
-
-	protected void validate(
-			CommerceOrderItem commerceOrderItem,
-			CommerceShipment commerceShipment,
-			long commerceInventoryWarehouseId, int quantity, int newQuantity)
-		throws PortalException {
-
-		if ((commerceShipment != null) &&
-			(commerceShipment.getStatus() !=
-				CommerceShipmentConstants.SHIPMENT_STATUS_PROCESSING)) {
-
-			throw new CommerceShipmentStatusException();
-		}
-
-		if (commerceInventoryWarehouseId <= 0) {
-			return;
-		}
-
-		CommerceInventoryWarehouse commerceInventoryWarehouse =
-			_commerceInventoryWarehouseLocalService.
-				getCommerceInventoryWarehouse(commerceInventoryWarehouseId);
-
-		if (!commerceInventoryWarehouse.isActive()) {
-			throw new CommerceShipmentInactiveWarehouseException();
-		}
-
-		int availableQuantity =
-			commerceOrderItem.getQuantity() -
-				commerceOrderItem.getShippedQuantity();
-
-		CommerceShipmentItem commerceShipmentItem =
-			commerceShipmentItemPersistence.fetchByC_C_C(
-				commerceShipment.getCommerceShipmentId(),
-				commerceOrderItem.getCommerceOrderItemId(),
-				commerceInventoryWarehouseId);
-
-		if (commerceShipmentItem != null) {
-			availableQuantity =
-				availableQuantity + commerceShipmentItem.getQuantity();
-		}
-
-		int commerceInventoryWarehouseQuantity =
-			_commerceOrderItemLocalService.
-				getCommerceInventoryWarehouseItemQuantity(
-					commerceOrderItem.getCommerceOrderItemId(),
-					commerceInventoryWarehouseId);
-
-		if (((newQuantity > quantity) && (newQuantity > availableQuantity)) ||
-			(newQuantity > commerceInventoryWarehouseQuantity)) {
-
-			throw new CommerceShipmentItemQuantityException();
-		}
 	}
 
 	private CommerceInventoryWarehouseItem _fetchCommerceInventoryWarehouseItem(
@@ -551,6 +498,59 @@ public class CommerceShipmentItemLocalServiceImpl
 				CommerceInventoryAuditTypeConstants.SHIPMENT_ITEM_ID,
 				String.valueOf(commerceShipmentItemId)
 			).build());
+	}
+
+	private void _validate(
+			CommerceOrderItem commerceOrderItem,
+			CommerceShipment commerceShipment,
+			long commerceInventoryWarehouseId, int quantity, int newQuantity)
+		throws PortalException {
+
+		if ((commerceShipment != null) &&
+			(commerceShipment.getStatus() !=
+				CommerceShipmentConstants.SHIPMENT_STATUS_PROCESSING)) {
+
+			throw new CommerceShipmentStatusException();
+		}
+
+		if (commerceInventoryWarehouseId <= 0) {
+			return;
+		}
+
+		CommerceInventoryWarehouse commerceInventoryWarehouse =
+			_commerceInventoryWarehouseLocalService.
+				getCommerceInventoryWarehouse(commerceInventoryWarehouseId);
+
+		if (!commerceInventoryWarehouse.isActive()) {
+			throw new CommerceShipmentInactiveWarehouseException();
+		}
+
+		int availableQuantity =
+			commerceOrderItem.getQuantity() -
+				commerceOrderItem.getShippedQuantity();
+
+		CommerceShipmentItem commerceShipmentItem =
+			commerceShipmentItemPersistence.fetchByC_C_C(
+				commerceShipment.getCommerceShipmentId(),
+				commerceOrderItem.getCommerceOrderItemId(),
+				commerceInventoryWarehouseId);
+
+		if (commerceShipmentItem != null) {
+			availableQuantity =
+				availableQuantity + commerceShipmentItem.getQuantity();
+		}
+
+		int commerceInventoryWarehouseQuantity =
+			_commerceOrderItemLocalService.
+				getCommerceInventoryWarehouseItemQuantity(
+					commerceOrderItem.getCommerceOrderItemId(),
+					commerceInventoryWarehouseId);
+
+		if (((newQuantity > quantity) && (newQuantity > availableQuantity)) ||
+			(newQuantity > commerceInventoryWarehouseQuantity)) {
+
+			throw new CommerceShipmentItemQuantityException();
+		}
 	}
 
 	private void _validateExternalReferenceCode(

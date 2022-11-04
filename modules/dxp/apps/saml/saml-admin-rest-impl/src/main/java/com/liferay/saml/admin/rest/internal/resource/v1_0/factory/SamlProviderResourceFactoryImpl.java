@@ -32,6 +32,7 @@ import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.odata.filter.ExpressionConvert;
 import com.liferay.portal.odata.filter.FilterParserProvider;
+import com.liferay.portal.odata.sort.SortParserProvider;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.saml.admin.rest.internal.security.permission.LiberalPermissionChecker;
 import com.liferay.saml.admin.rest.resource.v1_0.SamlProviderResource;
@@ -52,9 +53,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.ComponentServiceObjects;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceScope;
 
@@ -62,7 +61,10 @@ import org.osgi.service.component.annotations.ReferenceScope;
  * @author Stian Sigvartsen
  * @generated
  */
-@Component(immediate = true, service = SamlProviderResource.Factory.class)
+@Component(
+	property = "resource.locator.key=/saml-admin/v1.0/SamlProvider",
+	service = SamlProviderResource.Factory.class
+)
 @Generated("")
 public class SamlProviderResourceFactoryImpl
 	implements SamlProviderResource.Factory {
@@ -134,16 +136,6 @@ public class SamlProviderResourceFactoryImpl
 			private User _user;
 
 		};
-	}
-
-	@Activate
-	protected void activate() {
-		SamlProviderResource.FactoryHolder.factory = this;
-	}
-
-	@Deactivate
-	protected void deactivate() {
-		SamlProviderResource.FactoryHolder.factory = null;
 	}
 
 	private static Function<InvocationHandler, SamlProviderResource>
@@ -218,6 +210,7 @@ public class SamlProviderResourceFactoryImpl
 		samlProviderResource.setResourcePermissionLocalService(
 			_resourcePermissionLocalService);
 		samlProviderResource.setRoleLocalService(_roleLocalService);
+		samlProviderResource.setSortParserProvider(_sortParserProvider);
 
 		try {
 			return method.invoke(samlProviderResource, arguments);
@@ -267,6 +260,9 @@ public class SamlProviderResourceFactoryImpl
 
 	@Reference
 	private RoleLocalService _roleLocalService;
+
+	@Reference
+	private SortParserProvider _sortParserProvider;
 
 	@Reference
 	private UserLocalService _userLocalService;

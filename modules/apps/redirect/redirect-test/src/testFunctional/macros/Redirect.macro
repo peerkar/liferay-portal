@@ -46,7 +46,9 @@ definition {
 		Button.click(button = "Create");
 
 		if ("${redirectURLVariation}" == "Null") {
-			Alert.viewRequiredField();
+			AssertTextEquals.assertPartialText(
+				locator1 = "TextInput#REQUIRED_ALERT",
+				value1 = "field is required.");
 		}
 		else if ("${sourceURLVariation}" == "Duplicate") {
 			AssertTextEquals.assertPartialText(
@@ -220,6 +222,8 @@ definition {
 		}
 
 		if (isSet(toolTip)) {
+			MouseOver(locator1 = "UserBar#USER_AVATAR_IN_CONTROL_MENU");
+
 			MouseOver(locator1 = "Icon#TOOLTIP");
 
 			AssertTextEquals.assertPartialText(
@@ -452,9 +456,17 @@ definition {
 			key_rowEntry = "${redirectURL}",
 			locator1 = "ContentRow#ENTRY_CONTENT_ENTRY_NAME");
 
-		AssertElementPresent(
-			key_redirectURL = "${redirectURL}",
-			locator1 = "Redirect#FLOATING_TOOLTIP_URL");
+		if (IsElementNotPresent(key_redirectURL = "${redirectURL}", locator1 = "Redirect#FLOATING_TOOLTIP_URL")) {
+			MouseOver(locator1 = "UserBar#USER_AVATAR_IN_CONTROL_MENU");
+
+			MouseOver(
+				key_rowEntry = "${redirectURL}",
+				locator1 = "ContentRow#ENTRY_CONTENT_ENTRY_NAME");
+
+			AssertElementPresent(
+				key_redirectURL = "${redirectURL}",
+				locator1 = "Redirect#FLOATING_TOOLTIP_URL");
+		}
 	}
 
 	macro viewEntryInfo {

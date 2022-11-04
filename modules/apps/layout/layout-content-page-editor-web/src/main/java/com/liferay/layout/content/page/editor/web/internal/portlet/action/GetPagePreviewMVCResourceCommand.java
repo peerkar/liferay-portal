@@ -21,7 +21,6 @@ import com.liferay.info.item.provider.InfoItemDetailsProvider;
 import com.liferay.info.item.provider.InfoItemFieldValuesProvider;
 import com.liferay.info.item.provider.InfoItemObjectProvider;
 import com.liferay.layout.content.page.editor.constants.ContentPageEditorPortletKeys;
-import com.liferay.layout.display.page.LayoutDisplayPageProviderTracker;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.Layout;
@@ -45,6 +44,7 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.segments.constants.SegmentsWebKeys;
+import com.liferay.segments.service.SegmentsExperienceLocalService;
 
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
@@ -64,7 +64,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Pavel Savinov
  */
 @Component(
-	immediate = true,
 	property = {
 		"javax.portlet.name=" + ContentPageEditorPortletKeys.CONTENT_PAGE_EDITOR_PORTLET,
 		"mvc.command.name=/layout_content_page_editor/get_page_preview"
@@ -116,7 +115,9 @@ public class GetPagePreviewMVCResourceCommand extends BaseMVCResourceCommand {
 
 		try {
 			long segmentsExperienceId = ParamUtil.getLong(
-				resourceRequest, "segmentsExperienceId");
+				resourceRequest, "segmentsExperienceId",
+				_segmentsExperienceLocalService.
+					fetchDefaultSegmentsExperienceId(selPlid));
 
 			resourceRequest.setAttribute(
 				SegmentsWebKeys.SEGMENTS_EXPERIENCE_IDS,
@@ -206,8 +207,17 @@ public class GetPagePreviewMVCResourceCommand extends BaseMVCResourceCommand {
 			_infoItemServiceTracker.getFirstInfoItemService(
 				InfoItemObjectProvider.class, className);
 
+		ClassPKInfoItemIdentifier infoItemIdentifier =
+			new ClassPKInfoItemIdentifier(classPK);
+
+		String version = ParamUtil.getString(httpServletRequest, "version");
+
+		if (Validator.isNull(version)) {
+			infoItemIdentifier.setVersion(version);
+		}
+
 		Object infoItem = infoItemObjectProvider.getInfoItem(
-			new ClassPKInfoItemIdentifier(classPK));
+			infoItemIdentifier);
 
 		httpServletRequest.setAttribute(InfoDisplayWebKeys.INFO_ITEM, infoItem);
 
@@ -229,13 +239,13 @@ public class GetPagePreviewMVCResourceCommand extends BaseMVCResourceCommand {
 	private InfoItemServiceTracker _infoItemServiceTracker;
 
 	@Reference
-	private LayoutDisplayPageProviderTracker _layoutDisplayPageProviderTracker;
-
-	@Reference
 	private LayoutLocalService _layoutLocalService;
 
 	@Reference
 	private Portal _portal;
+
+	@Reference
+	private SegmentsExperienceLocalService _segmentsExperienceLocalService;
 
 	@Reference
 	private UserLocalService _userLocalService;

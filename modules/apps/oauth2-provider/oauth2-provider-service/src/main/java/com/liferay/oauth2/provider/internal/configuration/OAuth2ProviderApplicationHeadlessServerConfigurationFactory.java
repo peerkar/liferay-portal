@@ -58,8 +58,10 @@ public class OAuth2ProviderApplicationHeadlessServerConfigurationFactory
 			_log.debug("Activate " + properties);
 		}
 
-		Company company = getCompany(properties);
-		String externalReferenceCode = getExternalReferenceCode(properties);
+		long companyId = ConfigurableUtil.getCompanyId(
+			companyLocalService, properties);
+		String externalReferenceCode =
+			ConfigurableUtil.getExternalReferenceCode(properties);
 
 		OAuth2ProviderApplicationHeadlessServerConfiguration
 			oAuth2ProviderApplicationHeadlessServerConfiguration =
@@ -71,13 +73,15 @@ public class OAuth2ProviderApplicationHeadlessServerConfigurationFactory
 			oAuth2ProviderApplicationHeadlessServerConfiguration.scopes());
 
 		oAuth2Application = _addOrUpdateOAuth2Application(
-			company.getCompanyId(), externalReferenceCode,
+			companyId, externalReferenceCode,
 			oAuth2ProviderApplicationHeadlessServerConfiguration,
 			scopeAliasesList);
 
 		if (_log.isDebugEnabled()) {
 			_log.debug("OAuth 2 application " + oAuth2Application);
 		}
+
+		Company company = companyLocalService.getCompanyById(companyId);
 
 		String serviceAddress = getServiceAddress(company);
 
@@ -98,6 +102,9 @@ public class OAuth2ProviderApplicationHeadlessServerConfigurationFactory
 			).put(
 				externalReferenceCode + ".oauth2.introspection.uri",
 				serviceAddress.concat("/o/oauth2/introspect")
+			).put(
+				externalReferenceCode + ".oauth2.jwks.uri",
+				serviceAddress.concat("/o/oauth2/jwks")
 			).put(
 				externalReferenceCode + ".oauth2.token.uri",
 				serviceAddress.concat("/o/oauth2/token")

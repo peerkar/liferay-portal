@@ -36,8 +36,7 @@ public class EditGuestPortletConfigurationIcon
 
 	@Override
 	public String getMessage(PortletRequest portletRequest) {
-		return _language.get(
-			getResourceBundle(getLocale(portletRequest)), "guest-preferences");
+		return _language.get(getLocale(portletRequest), "guest-preferences");
 	}
 
 	@Override
@@ -65,11 +64,6 @@ public class EditGuestPortletConfigurationIcon
 		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
 
 		return portletDisplay.isShowEditGuestIcon();
-	}
-
-	@Override
-	public boolean isToolTip() {
-		return false;
 	}
 
 	@Reference

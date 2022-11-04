@@ -56,14 +56,18 @@ public class OAuth2ProviderApplicationUserAgentConfigurationFactory
 			_log.debug("Activate " + properties);
 		}
 
-		Company company = getCompany(properties);
-		String externalReferenceCode = getExternalReferenceCode(properties);
+		long companyId = ConfigurableUtil.getCompanyId(
+			companyLocalService, properties);
+		String externalReferenceCode =
+			ConfigurableUtil.getExternalReferenceCode(properties);
 
 		OAuth2ProviderApplicationUserAgentConfiguration
 			oAuth2ProviderApplicationUserAgentConfiguration =
 				ConfigurableUtil.createConfigurable(
 					OAuth2ProviderApplicationUserAgentConfiguration.class,
 					properties);
+
+		Company company = companyLocalService.getCompanyById(companyId);
 
 		String serviceAddress = getServiceAddress(company);
 
@@ -74,7 +78,7 @@ public class OAuth2ProviderApplicationUserAgentConfigurationFactory
 			oAuth2ProviderApplicationUserAgentConfiguration.scopes());
 
 		oAuth2Application = _addOrUpdateOAuth2Application(
-			company.getCompanyId(), externalReferenceCode,
+			companyId, externalReferenceCode,
 			oAuth2ProviderApplicationUserAgentConfiguration, redirectURIsList,
 			scopeAliasesList);
 
@@ -90,6 +94,9 @@ public class OAuth2ProviderApplicationUserAgentConfigurationFactory
 			).put(
 				externalReferenceCode + ".oauth2.introspection.uri",
 				serviceAddress.concat("/o/oauth2/introspect")
+			).put(
+				externalReferenceCode + ".oauth2.jwks.uri",
+				serviceAddress.concat("/o/oauth2/jwks")
 			).put(
 				externalReferenceCode + ".oauth2.redirect.uris",
 				StringUtil.merge(redirectURIsList, StringPool.NEW_LINE)

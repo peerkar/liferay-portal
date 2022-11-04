@@ -29,7 +29,7 @@ import '../css/ApplicationsMenu.scss';
 
 const getOpenMenuTooltip = (keyLabel) => (
 	<>
-		<div>{Liferay.Language.get('open-menu')}</div>
+		<div>{Liferay.Language.get('open-applications-menu')}</div>
 		<kbd className="c-kbd c-kbd-dark">
 			<kbd className="c-kbd">{keyLabel}</kbd>
 
@@ -262,7 +262,7 @@ const AppsPanel = ({
 
 			<div className="applications-menu-bg applications-menu-border-top applications-menu-content">
 				<ClayLayout.ContainerFluid>
-					<ClayLayout.Row>
+					<ClayLayout.Row className="flex-nowrap">
 						<ClayLayout.Col lg="9" md="8">
 							<ClayTabs.Content activeIndex={activeTab}>
 								{categories.map(({childCategories}, index) => (
@@ -351,7 +351,7 @@ const AppsPanel = ({
 					<ClayLayout.Row>
 						<ClayLayout.Col lg="9" md="8">
 							<ClayLayout.ContentRow
-								className="applications-menu-border-top c-py-3"
+								className="applications-menu-border-top bg-white c-py-3"
 								verticalAlign="center"
 							>
 								<ClayLayout.ContentCol expand>
@@ -494,7 +494,7 @@ const ApplicationsMenu = ({
 			)}
 
 			<ClayButtonWithIcon
-				aria-label={Liferay.Language.get('open-menu')}
+				aria-label={Liferay.Language.get('open-applications-menu')}
 				className="dropdown-toggle lfr-portal-tooltip"
 				data-qa-id="applicationsMenu"
 				data-title-set-as-html

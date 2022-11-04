@@ -40,8 +40,7 @@ public class HelpPortletConfigurationIcon extends BasePortletConfigurationIcon {
 
 	@Override
 	public String getMessage(PortletRequest portletRequest) {
-		return _language.get(
-			getResourceBundle(getLocale(portletRequest)), "help");
+		return _language.get(getLocale(portletRequest), "help");
 	}
 
 	@Override
@@ -69,11 +68,6 @@ public class HelpPortletConfigurationIcon extends BasePortletConfigurationIcon {
 		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
 
 		return portletDisplay.isShowHelpIcon();
-	}
-
-	@Override
-	public boolean isToolTip() {
-		return false;
 	}
 
 	@Reference

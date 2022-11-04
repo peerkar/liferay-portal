@@ -38,10 +38,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Marco Leo
  * @author Brian Wing Shun Chan
  */
-@Component(
-	enabled = false, immediate = true,
-	service = SystemObjectDefinitionMetadata.class
-)
+@Component(immediate = true, service = SystemObjectDefinitionMetadata.class)
 public class CommerceOrderSystemObjectDefinitionMetadata
 	extends BaseSystemObjectDefinitionMetadata {
 
@@ -51,6 +48,26 @@ public class CommerceOrderSystemObjectDefinitionMetadata
 
 		return _commerceOrderLocalService.deleteCommerceOrder(
 			(CommerceOrder)baseModel);
+	}
+
+	@Override
+	public BaseModel<?> getBaseModelByExternalReferenceCode(
+			String externalReferenceCode, long companyId)
+		throws PortalException {
+
+		return _commerceOrderLocalService.
+			getCommerceOrderByExternalReferenceCode(
+				companyId, externalReferenceCode);
+	}
+
+	@Override
+	public String getExternalReferenceCode(long primaryKey)
+		throws PortalException {
+
+		CommerceOrder commerceOrder =
+			_commerceOrderLocalService.getCommerceOrder(primaryKey);
+
+		return commerceOrder.getExternalReferenceCode();
 	}
 
 	@Override

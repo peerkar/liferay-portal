@@ -34,12 +34,13 @@ if (classPK > 0) {
 
 		<%
 		for (EmailAddress emailAddress : emailAddresses) {
+			ListType listType = emailAddress.getListType();
 		%>
 
 			<li class="<%= (emailAddress.isPrimary() && !emailAddresses.isEmpty()) ? "icon-star" : StringPool.BLANK %>">
 				<a href="mailto:<%= emailAddress.getAddress() %>"><%= emailAddress.getAddress() %></a>
 
-				<liferay-ui:message key="<%= emailAddress.getType().getName() %>" />
+				<liferay-ui:message key="<%= listType.getName() %>" />
 			</li>
 
 		<%

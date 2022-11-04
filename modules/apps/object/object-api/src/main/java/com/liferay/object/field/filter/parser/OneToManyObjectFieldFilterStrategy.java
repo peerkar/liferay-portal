@@ -117,7 +117,7 @@ public class OneToManyObjectFieldFilterStrategy
 
 		return new OneToManyAutocompleteFDSFilter(
 			parse(), restContextPath, titleObjectField.getLabel(locale),
-			_objectField.getDBColumnName(), titleObjectField.getName());
+			_objectField.getName(), titleObjectField.getName());
 	}
 
 	@Override
@@ -132,8 +132,8 @@ public class OneToManyObjectFieldFilterStrategy
 					HashMapBuilder.<String, Object>put(
 						"label",
 						_objectEntryLocalService.getTitleValue(
-							GetterUtil.getLong(jsonArray.get(i)),
-							_objectDefinition1.getObjectDefinitionId())
+							_objectDefinition1.getObjectDefinitionId(),
+							GetterUtil.getLong(jsonArray.get(i)))
 					).put(
 						"value", jsonArray.getLong(i)
 					).build());
@@ -143,9 +143,13 @@ public class OneToManyObjectFieldFilterStrategy
 		}
 
 		for (int i = 0; i < jsonArray.length(); i++) {
-			ObjectEntry objectEntry = _objectEntryLocalService.getObjectEntry(
+			ObjectEntry objectEntry = _objectEntryLocalService.fetchObjectEntry(
 				(String)jsonArray.get(i),
 				_objectDefinition1.getObjectDefinitionId());
+
+			if (objectEntry == null) {
+				continue;
+			}
 
 			itemsValues.add(
 				HashMapBuilder.<String, Object>put(
@@ -192,7 +196,7 @@ public class OneToManyObjectFieldFilterStrategy
 		else {
 			for (int i = 0; i < jsonArray.length(); i++) {
 				if (Validator.isNull(
-						_objectEntryLocalService.getObjectEntry(
+						_objectEntryLocalService.fetchObjectEntry(
 							(String)jsonArray.get(i),
 							_objectDefinition1.getObjectDefinitionId()))) {
 

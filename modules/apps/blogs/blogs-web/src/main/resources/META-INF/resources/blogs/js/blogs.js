@@ -378,6 +378,9 @@ export default class Blogs {
 
 				const allowPingbacks = this._getElementById('allowPingbacks');
 				const allowTrackbacks = this._getElementById('allowTrackbacks');
+				const inputPermissionsViewRole = this._getElementById(
+					'inputPermissionsViewRole'
+				).value;
 
 				const bodyData = addNamespace(
 					{
@@ -411,6 +414,7 @@ export default class Blogs {
 						displayDateYear: this._getElementById('displayDateYear')
 							.value,
 						entryId: this._getElementById('entryId').value,
+						inputPermissionsViewRole,
 						referringPortletResource: this._getElementById(
 							'referringPortletResource'
 						).value,

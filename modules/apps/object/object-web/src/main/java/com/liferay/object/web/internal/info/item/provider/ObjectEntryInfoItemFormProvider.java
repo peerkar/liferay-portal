@@ -261,13 +261,19 @@ public class ObjectEntryInfoItemFormProvider
 	private InfoFieldSet _getBasicInformationInfoFieldSet() {
 		return InfoFieldSet.builder(
 		).infoFieldSetEntry(
+			ObjectEntryInfoItemFields.authorInfoField
+		).infoFieldSetEntry(
 			ObjectEntryInfoItemFields.createDateInfoField
+		).infoFieldSetEntry(
+			ObjectEntryInfoItemFields.externalReferenceCodeInfoField
 		).infoFieldSetEntry(
 			ObjectEntryInfoItemFields.modifiedDateInfoField
 		).infoFieldSetEntry(
+			ObjectEntryInfoItemFields.objectEntryIdInfoField
+		).infoFieldSetEntry(
 			ObjectEntryInfoItemFields.publishDateInfoField
 		).infoFieldSetEntry(
-			ObjectEntryInfoItemFields.userNameInfoField
+			ObjectEntryInfoItemFields.statusInfoField
 		).infoFieldSetEntry(
 			ObjectEntryInfoItemFields.userProfileImageInfoField
 		).labelInfoLocalizedValue(
@@ -478,6 +484,8 @@ public class ObjectEntryInfoItemFormProvider
 		for (ListTypeEntry listTypeEntry : listTypeEntries) {
 			options.add(
 				new SelectInfoFieldType.Option(
+					Objects.equals(
+						objectField.getDefaultValue(), listTypeEntry.getKey()),
 					new FunctionInfoLocalizedValue<>(listTypeEntry::getName),
 					listTypeEntry.getKey()));
 		}

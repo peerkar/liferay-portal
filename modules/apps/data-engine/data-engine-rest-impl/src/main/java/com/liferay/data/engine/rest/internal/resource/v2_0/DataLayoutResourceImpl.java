@@ -57,7 +57,7 @@ import com.liferay.portal.events.ThemeServicePreAction;
 import com.liferay.portal.kernel.change.tracking.CTAware;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.frontend.icons.FrontendIconsUtil;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.search.Field;
@@ -80,7 +80,6 @@ import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.util.SearchUtil;
-import com.liferay.portal.vulcan.util.TransformUtil;
 
 import java.util.Collections;
 import java.util.List;
@@ -290,7 +289,7 @@ public class DataLayoutResourceImpl extends BaseDataLayoutResourceImpl {
 		ddmFormTemplateContext.remove("fieldTypes");
 
 		return Response.ok(
-			JSONFactoryUtil.looseSerializeDeep(ddmFormTemplateContext)
+			_jsonFactory.looseSerializeDeep(ddmFormTemplateContext)
 		).build();
 	}
 
@@ -445,7 +444,7 @@ public class DataLayoutResourceImpl extends BaseDataLayoutResourceImpl {
 
 		if (Validator.isNull(keywords)) {
 			return Page.of(
-				TransformUtil.transform(
+				transform(
 					_ddmStructureLayoutLocalService.getStructureLayouts(
 						ddmStructure.getGroupId(),
 						ddmStructure.getClassNameId(),
@@ -615,7 +614,7 @@ public class DataLayoutResourceImpl extends BaseDataLayoutResourceImpl {
 			String content, String definitionSchemaVersion)
 		throws Exception {
 
-		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(content);
+		JSONObject jsonObject = _jsonFactory.createJSONObject(content);
 
 		jsonObject.put("definitionSchemaVersion", definitionSchemaVersion);
 
@@ -717,6 +716,9 @@ public class DataLayoutResourceImpl extends BaseDataLayoutResourceImpl {
 	@Reference
 	private DEDataDefinitionFieldLinkLocalService
 		_deDataDefinitionFieldLinkLocalService;
+
+	@Reference
+	private JSONFactory _jsonFactory;
 
 	@Reference
 	private Language _language;

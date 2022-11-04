@@ -1,5 +1,29 @@
 definition {
 
+	macro _goToAssignUsers {
+		Accounts.gotoAssigneeTab(assigneeTab = "Users");
+
+		LexiconEntry.gotoAdd();
+
+		MenuItem.click(menuItem = "Assign Users");
+
+		SelectFrame(
+			key_title = "Assign Users to ${accountName}",
+			locator1 = "IFrame#MODAL_ANY");
+	}
+
+	macro _goToInviteUsers {
+		Accounts.gotoAssigneeTab(assigneeTab = "Users");
+
+		LexiconEntry.gotoAdd();
+
+		MenuItem.click(menuItem = "Invite Users");
+
+		SelectFrame(
+			key_title = "Invite Users to ${accountName}",
+			locator1 = "IFrame#MODAL_ANY");
+	}
+
 	macro _inputAddressDetails {
 		PortletEntry.inputName(name = "${addressName}");
 
@@ -350,30 +374,8 @@ definition {
 		SelectFrameTop();
 	}
 
-	macro addInactiveBusinessAccount {
-		LexiconEntry.gotoAdd();
-
-		PortletEntry.inputName(name = "${accountName}");
-
-		if (isSet(accountDescription)) {
-			PortletEntry.inputDescription(description = "${accountDescription}");
-		}
-
-		Uncheck.uncheckToggleSwitch(locator1 = "ToggleSwitch#ACCOUNT_STATUS");
-
-		Button.clickSave();
-
-		Alert.viewSuccessMessage();
-	}
-
 	macro addNewUserToBusinessAccount {
-		Accounts.gotoAssigneeTab(assigneeTab = "Users");
-
-		LexiconEntry.gotoAdd();
-
-		SelectFrame(
-			key_title = "Assign Users to ${accountName}",
-			locator1 = "IFrame#MODAL_ANY");
+		Accounts._goToAssignUsers(accountName = "${accountName}");
 
 		LexiconEntry.gotoAdd();
 
@@ -453,13 +455,7 @@ definition {
 	}
 
 	macro addNewUserWithSameDomain {
-		Accounts.gotoAssigneeTab(assigneeTab = "Users");
-
-		LexiconEntry.gotoAdd();
-
-		SelectFrame(
-			key_title = "Assign Users to ${accountName}",
-			locator1 = "IFrame#MODAL_ANY");
+		Accounts._goToAssignUsers(accountName = "${accountName}");
 
 		LexiconEntry.gotoAdd();
 
@@ -611,13 +607,7 @@ definition {
 	}
 
 	macro assignUsers {
-		Accounts.gotoAssigneeTab(assigneeTab = "Users");
-
-		LexiconEntry.gotoAdd();
-
-		SelectFrame(
-			key_title = "Assign Users to ${accountName}",
-			locator1 = "IFrame#MODAL_ANY");
+		Accounts._goToAssignUsers(accountName = "${accountName}");
 
 		Check(
 			key_tableEntry = "${assigneeName}",
@@ -672,6 +662,40 @@ definition {
 			value1 = "Save");
 
 		Alert.viewSuccessMessage();
+	}
+
+	macro createAccount {
+		AssertElementPresent(
+			key_title = "Create Account",
+			locator1 = "Header#H2_TITLE");
+
+		Type(
+			locator1 = "TextInput#SCREEN_NAME",
+			value1 = "${userScreenName}");
+
+		var key_userEmailAddress = "${userEmailAddress}";
+
+		AssertElementPresent(locator1 = "UsersAndOrganizationsEditUser#CREATE_ACCOUNT_EMAIL_ADDRESS");
+
+		Type(
+			locator1 = "TextInput#FIRST_NAME",
+			value1 = "${userFirstName}");
+
+		Type(
+			locator1 = "TextInput#LAST_NAME",
+			value1 = "${userLastName}");
+
+		Type(
+			locator1 = "TextInput#PASSWORD",
+			value1 = "${newPassword}");
+
+		Type(
+			locator1 = "TextInput#ENTER_AGAIN",
+			value1 = "${newPassword}");
+
+		Button.clickSave();
+
+		Alert.viewSuccessMessageText(successMessage = "Thank you for creating an account. Use your password to log in.");
 	}
 
 	macro deactivateAccount {
@@ -779,6 +803,17 @@ definition {
 		LexiconEntry.viewNoEntry(rowEntry = "${accountName}");
 	}
 
+	macro deleteDefaultSetting {
+		Click(
+			key_currentDefault = "${currentDefault}",
+			key_settingHeader = "${settingHeader}",
+			locator1 = "Account#DEFAULT_SETTINGS_TABLE_ACTION_BUTTON");
+
+		MenuItem.click(menuItem = "Delete");
+
+		Alert.viewSuccessMessage();
+	}
+
 	macro deleteOwnedAccountRole {
 		Accounts.gotoAssigneeTab(assigneeTab = "Roles");
 
@@ -863,6 +898,38 @@ definition {
 		Alert.viewSuccessMessage();
 	}
 
+	@summary = "This macro edits the default Commerce settings. Variables required are currentDefault, newDefault, settingHeader, and settingLabel found in the modal."
+	macro editCommerceDefaultSetting {
+		Click(
+			key_currentDefault = "${currentDefault}",
+			key_settingHeader = "${settingHeader}",
+			locator1 = "Account#DEFAULT_SETTINGS_TABLE_ACTION_BUTTON");
+
+		MenuItem.click(menuItem = "Edit");
+
+		SelectFrame(locator1 = "IFrame#MODAL_BODY");
+
+		if (isSet(channelEntry) && ("${channelEntry}" != "")) {
+			Select(
+				key_fieldLabel = "Channel",
+				locator1 = "CommerceEntry#LABEL_GENERIC_SELECT",
+				value1 = "${channelEntry}");
+		}
+
+		if (isSet(override) && ("${override}" == "true")) {
+			Check.checkToggleSwitch(
+				key_toggleSwitchLabel = "Override Eligibility",
+				locator1 = "ToggleSwitch#ANY_TOGGLE_SWITCH");
+		}
+
+		Select(
+			key_fieldLabel = "${settingLabel}",
+			locator1 = "CommerceEntry#LABEL_GENERIC_SELECT",
+			value1 = "${newDefault}");
+
+		Button.clickSave();
+	}
+
 	macro editCP {
 		Accounts.gotoEdit(accountName = "${accountName}");
 
@@ -874,13 +941,6 @@ definition {
 
 		if (isSet(accountLogoEdit)) {
 			User.changeProfileImage(imageName = "${accountLogoEdit}");
-		}
-
-		if ("${accountStatusEdit}" == "Inactive") {
-			Uncheck.uncheckToggleSwitch(locator1 = "ToggleSwitch#ACCOUNT_STATUS");
-		}
-		else if ("${accountStatusEdit}" == "Active") {
-			Check.checkToggleSwitch(locator1 = "ToggleSwitch#ACCOUNT_STATUS");
 		}
 
 		if (isSet(customFieldText)) {
@@ -940,13 +1000,6 @@ definition {
 			User.changeProfileImage(imageName = "${accountLogoEdit}");
 		}
 
-		if ("${accountStatusEdit}" == "Inactive") {
-			Uncheck.uncheckToggleSwitch(locator1 = "ToggleSwitch#ACCOUNT_STATUS");
-		}
-		else if ("${accountStatusEdit}" == "Active") {
-			Check.checkToggleSwitch(locator1 = "ToggleSwitch#ACCOUNT_STATUS");
-		}
-
 		if (isSet(customFieldText)) {
 			Type(
 				locator1 = "TextInput#CUSTOM_FIELD",
@@ -986,13 +1039,7 @@ definition {
 	}
 
 	macro viewErrorWhenAddingUserWithBlockedDomain {
-		Accounts.gotoAssigneeTab(assigneeTab = "Users");
-
-		LexiconEntry.gotoAdd();
-
-		SelectFrame(
-			key_title = "Assign Users to ${accountName}",
-			locator1 = "IFrame#MODAL_ANY");
+		Accounts._goToAssignUsers(accountName = "${accountName}");
 
 		LexiconEntry.gotoAdd();
 
@@ -1034,6 +1081,18 @@ definition {
 			locator1 = "Icon#ROW_VERTICAL_ELLIPSIS");
 
 		MenuItem.clickNoError(menuItem = "${menuItem}");
+	}
+
+	macro inviteUser {
+		Accounts._goToInviteUsers(accountName = "${accountName}");
+
+		Type(
+			locator1 = "TextInput#EMAIL_ADDRESS",
+			value1 = "${userEmailAddress}");
+
+		Button.click(button = "Invite");
+
+		Alert.viewSuccessMessage();
 	}
 
 	macro openAccountsAdmin {
@@ -1257,6 +1316,43 @@ definition {
 			value1 = "Save");
 
 		Alert.viewSuccessMessage();
+	}
+
+	macro setDefaultCurrency {
+		WaitForElementPresent(
+			key_title = "Add Default Currency",
+			locator1 = "Button#ANY_TITLE");
+
+		Click.javaScriptClick(
+			key_title = "Add Default Currency",
+			locator1 = "Button#ANY_TITLE");
+
+		SelectFrame(locator1 = "IFrame#MODAL_BODY");
+
+		if (isSet(channelEntry) && ("${channelEntry}" != "")) {
+			Select(
+				key_fieldLabel = "Channel",
+				locator1 = "CommerceEntry#LABEL_GENERIC_SELECT",
+				value1 = "${channelEntry}");
+		}
+
+		if (isSet(allOtherChannels) && ("${channelEntry}" == "true")) {
+			AssertTextPresent(
+				locator1 = "CommerceEntry#LABEL_GENERIC_SELECT",
+				value1 = "All Other Channels");
+
+			Select(
+				key_fieldLabel = "Channel",
+				locator1 = "CommerceEntry#LABEL_GENERIC_SELECT",
+				value1 = "All Other Channels");
+		}
+
+		Select(
+			key_fieldLabel = "Currency",
+			locator1 = "CommerceEntry#LABEL_GENERIC_SELECT",
+			value1 = "${currencyName}");
+
+		Button.clickSave();
 	}
 
 	macro setDefaultDiscount {
@@ -1589,13 +1685,7 @@ definition {
 	}
 
 	macro viewErrorWhenAddingUserWithInvalidDomain {
-		Accounts.gotoAssigneeTab(assigneeTab = "Users");
-
-		LexiconEntry.gotoAdd();
-
-		SelectFrame(
-			key_title = "Assign Users to ${accountName}",
-			locator1 = "IFrame#MODAL_ANY");
+		Accounts._goToAssignUsers(accountName = "${accountName}");
 
 		LexiconEntry.gotoAdd();
 

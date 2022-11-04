@@ -145,6 +145,8 @@ definition {
 	@description = "LPS-144474 - Verify that, when updating an existing validation, this validation must only affect the entries updated after the validation update"
 	@priority = "4"
 	test CanAffectOnlyEntriesUpdateWhenUpdateValidationWithEntries {
+		property portal.upstream = "quarantine";
+
 		ObjectAdmin.addObjectViaAPI(
 			labelName = "Custom Object 153560",
 			objectName = "CustomObject153560",
@@ -1952,6 +1954,8 @@ definition {
 	@description = "LPS-144474 - Verify that, when editing an entry in an Object, the user only is able to update the entry successfully if it passes for all validations from that Object"
 	@priority = "4"
 	test CanUpdateWhenPassesForAllValidations {
+		property portal.upstream = "quarantine";
+
 		ObjectAdmin.addObjectViaAPI(
 			labelName = "Custom Object 153558",
 			objectName = "CustomObject153558",
@@ -2305,8 +2309,6 @@ definition {
 	@description = "LPS-152735 - Verify that it's possible to validate Groovy syntax when creating Actions"
 	@priority = "4"
 	test CanValidateGroovyAction {
-		property portal.upstream = "quarantine";
-
 		task ("Create Custom Object and Custom Field") {
 			ObjectAdmin.addObjectViaAPI(
 				labelName = "Custom Object 161912",
@@ -2345,7 +2347,7 @@ definition {
 		task ("Assert that there is Custom Action") {
 			ObjectAdmin.assertObjectActions(
 				actionActive = "Yes",
-				actionName = "Action Name",
+				actionName = "Custom Action",
 				status = "Never Ran");
 		}
 
@@ -2372,7 +2374,7 @@ definition {
 
 			ObjectAdmin.assertObjectActions(
 				actionActive = "Yes",
-				actionName = "Action Name",
+				actionName = "Custom Action",
 				status = "Success");
 		}
 	}
@@ -2588,7 +2590,7 @@ definition {
 
 		ObjectCustomValidation.gotoTab(tabName = "Conditions");
 
-		ObjectCustomValidation.insertScriptOnValidation(scriptValidation = "invalidFields = (customField == &quot;Invalid Entry&quot;)");
+		ObjectCustomValidation.insertScriptOnValidation(scriptValidation = "invalidFields = (customField == \"Invalid Entry\")");
 
 		ObjectCustomValidation.addErrorMessage(errorMessage = "This entry is not possible.");
 
@@ -2695,7 +2697,7 @@ definition {
 
 		ObjectCustomValidation.gotoTab(tabName = "Conditions");
 
-		ObjectCustomValidation.insertScriptOnValidation(scriptValidation = "invalidFields = (customField == &quot;Invalid Entry&quot;)");
+		ObjectCustomValidation.insertScriptOnValidation(scriptValidation = "invalidFields = (customField == \"Invalid Entry\")");
 
 		Button.clickSave();
 

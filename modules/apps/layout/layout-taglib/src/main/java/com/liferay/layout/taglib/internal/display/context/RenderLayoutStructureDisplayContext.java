@@ -25,6 +25,7 @@ import com.liferay.info.constants.InfoDisplayWebKeys;
 import com.liferay.info.exception.InfoFormException;
 import com.liferay.info.exception.InfoFormValidationException;
 import com.liferay.info.exception.NoSuchFormVariationException;
+import com.liferay.info.exception.NoSuchInfoItemException;
 import com.liferay.info.field.InfoField;
 import com.liferay.info.field.InfoFieldValue;
 import com.liferay.info.form.InfoForm;
@@ -37,6 +38,7 @@ import com.liferay.info.item.provider.InfoItemFieldValuesProvider;
 import com.liferay.info.item.provider.InfoItemFormProvider;
 import com.liferay.info.item.provider.InfoItemObjectProvider;
 import com.liferay.info.type.WebImage;
+import com.liferay.layout.taglib.internal.info.search.InfoSearchClassMapperTrackerUtil;
 import com.liferay.layout.taglib.internal.servlet.ServletContextUtil;
 import com.liferay.layout.util.constants.LayoutDataItemTypeConstants;
 import com.liferay.layout.util.structure.ContainerStyledLayoutStructureItem;
@@ -57,11 +59,9 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.ClassedModel;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.model.Theme;
-import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -289,11 +289,10 @@ public class RenderLayoutStructureDisplayContext {
 			"collectionFieldId");
 
 		if (Validator.isNotNull(collectionFieldId)) {
-			Object displayObject = _httpServletRequest.getAttribute(
-				InfoDisplayWebKeys.INFO_LIST_DISPLAY_OBJECT);
-
 			String mappedCollectionValue = _getMappedCollectionValue(
-				collectionFieldId, displayObject);
+				collectionFieldId,
+				(InfoItemReference)_httpServletRequest.getAttribute(
+					InfoDisplayWebKeys.INFO_ITEM_REFERENCE));
 
 			if (Validator.isNotNull(mappedCollectionValue)) {
 				return mappedCollectionValue;
@@ -356,9 +355,9 @@ public class RenderLayoutStructureDisplayContext {
 		DefaultFragmentRendererContext defaultFragmentRendererContext =
 			new DefaultFragmentRendererContext(fragmentEntryLink);
 
-		defaultFragmentRendererContext.setDisplayObject(
-			_httpServletRequest.getAttribute(
-				InfoDisplayWebKeys.INFO_LIST_DISPLAY_OBJECT));
+		defaultFragmentRendererContext.setContextInfoItemReference(
+			(InfoItemReference)_httpServletRequest.getAttribute(
+				InfoDisplayWebKeys.INFO_ITEM_REFERENCE));
 		defaultFragmentRendererContext.setLocale(_themeDisplay.getLocale());
 
 		Layout layout = _themeDisplay.getLayout();
@@ -538,8 +537,8 @@ public class RenderLayoutStructureDisplayContext {
 				ServletContextUtil.getFragmentEntryProcessorHelper();
 
 			fileEntryId = fragmentEntryProcessorHelper.getFileEntryId(
-				_httpServletRequest.getAttribute(
-					InfoDisplayWebKeys.INFO_LIST_DISPLAY_OBJECT),
+				(InfoItemReference)_httpServletRequest.getAttribute(
+					InfoDisplayWebKeys.INFO_ITEM_REFERENCE),
 				backgroundImageJSONObject.getString("collectionFieldId"),
 				LocaleUtil.fromLanguageId(_themeDisplay.getLanguageId()));
 		}
@@ -682,11 +681,10 @@ public class RenderLayoutStructureDisplayContext {
 		String collectionFieldId = jsonObject.getString("collectionFieldId");
 
 		if (Validator.isNotNull(collectionFieldId)) {
-			Object displayObject = _httpServletRequest.getAttribute(
-				InfoDisplayWebKeys.INFO_LIST_DISPLAY_OBJECT);
-
 			mappedCollectionValue = _getMappedCollectionValue(
-				collectionFieldId, displayObject);
+				collectionFieldId,
+				(InfoItemReference)_httpServletRequest.getAttribute(
+					InfoDisplayWebKeys.INFO_ITEM_REFERENCE));
 		}
 
 		if (Validator.isNotNull(mappedCollectionValue)) {
@@ -956,6 +954,34 @@ public class RenderLayoutStructureDisplayContext {
 		return redirect;
 	}
 
+	private Object _getInfoItem(InfoItemReference infoItemReference) {
+		if (infoItemReference == null) {
+			return null;
+		}
+
+		InfoItemIdentifier infoItemIdentifier =
+			infoItemReference.getInfoItemIdentifier();
+
+		InfoItemServiceTracker infoItemServiceTracker =
+			ServletContextUtil.getInfoItemServiceTracker();
+
+		InfoItemObjectProvider<Object> infoItemObjectProvider =
+			infoItemServiceTracker.getFirstInfoItemService(
+				InfoItemObjectProvider.class, infoItemReference.getClassName(),
+				infoItemIdentifier.getInfoItemServiceFilter());
+
+		try {
+			return infoItemObjectProvider.getInfoItem(infoItemIdentifier);
+		}
+		catch (NoSuchInfoItemException noSuchInfoItemException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(noSuchInfoItemException);
+			}
+		}
+
+		return null;
+	}
+
 	private String _getMainItemId() {
 		if (Validator.isNotNull(_mainItemId)) {
 			return _mainItemId;
@@ -965,21 +991,10 @@ public class RenderLayoutStructureDisplayContext {
 	}
 
 	private String _getMappedCollectionValue(
-		String collectionFieldId, Object displayObject) {
+		String collectionFieldId, InfoItemReference infoItemReference) {
 
-		if (!(displayObject instanceof ClassedModel)) {
-			return StringPool.BLANK;
-		}
-
-		ClassedModel classedModel = (ClassedModel)displayObject;
-
-		// LPS-111037
-
-		String className = classedModel.getModelClassName();
-
-		if (classedModel instanceof FileEntry) {
-			className = FileEntry.class.getName();
-		}
+		String className = InfoSearchClassMapperTrackerUtil.getClassName(
+			infoItemReference.getClassName());
 
 		InfoItemServiceTracker infoItemServiceTracker =
 			ServletContextUtil.getInfoItemServiceTracker();
@@ -1000,7 +1015,7 @@ public class RenderLayoutStructureDisplayContext {
 
 		InfoFieldValue<Object> infoFieldValue =
 			infoItemFieldValuesProvider.getInfoFieldValue(
-				displayObject, collectionFieldId);
+				_getInfoItem(infoItemReference), collectionFieldId);
 
 		if (infoFieldValue == null) {
 			return StringPool.BLANK;

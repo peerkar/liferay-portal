@@ -220,12 +220,14 @@ export const deleteMessageBoardThreadQuery = `
 export const getTagsOrderByDateCreatedQuery = `
 	query keywords(
 		$page: Int!
+		$filter: String
 		$pageSize: Int!
 		$search: String
 		$siteKey: String!
 	) {
 		keywords(
 			page: $page
+			filter: $filter
 			pageSize: $pageSize
 			search: $search
 			siteKey: $siteKey
@@ -453,14 +455,20 @@ export const hasListPermissionsQuery = `
 
 export const getSectionThreadsQuery = `
 	query messageBoardSectionMessageBoardThreads(
+		$filter: String
 		$messageBoardSectionId: Long!
 		$page: Int!
 		$pageSize: Int!
+		$search: String
+		$sort: String
 	) {
 		messageBoardSectionMessageBoardThreads(
+			filter: $filter
 			messageBoardSectionId: $messageBoardSectionId
 			page: $page
 			pageSize: $pageSize
+			search: $search
+			sort: $sort
 		) {
 			items {
 				aggregateRating {
@@ -501,12 +509,12 @@ export const getSectionThreadsQuery = `
 
 export const getThreadsQuery = `
 	query messageBoardThreads(
-		$filter: String!
+		$filter: String
 		$page: Int!
 		$pageSize: Int!
-		$search: String!
+		$search: String
 		$siteKey: String!
-		$sort: String!
+		$sort: String
 	) {
 		messageBoardThreads(
 			filter: $filter
@@ -529,6 +537,7 @@ export const getThreadsQuery = `
 					image
 					name
 				}
+				dateCreated
 				dateModified
 				friendlyUrlPath
 				hasValidAnswer

@@ -1602,6 +1602,7 @@ app.server.type=@{app.server.type}]]></echo>
 	<macrodef name="run-functional-test">
 		<attribute name="app.server.type" />
 		<attribute default="${app.server.@{app.server.type}.version}" name="app.server.version" />
+		<attribute default="${browser.type}" name="browser.type" />
 		<attribute name="database.type" />
 		<attribute default="${database.@{database.type}.version}" name="database.version" />
 		<attribute default="poshi" name="functional.test.type" />
@@ -1631,6 +1632,7 @@ app.server.type=@{app.server.type}]]></echo>
 		<sequential>
 			<var name="app.server.type" value="@{app.server.type}" />
 			<var name="app.server.version" value="@{app.server.version}" />
+			<var name="browser.type" value="@{browser.type}" />
 			<var name="database.type" value="@{database.type}" />
 
 			<condition else="${run.test.case.method.group}_${axis.variable}" property="test.class" value="${axis.variable}">
@@ -1668,6 +1670,7 @@ app.server.type=@{app.server.type}]]></echo>
 											<property name="liferay.portal.bundle" value="@{test.portal.bundle.version}" />
 											<property name="test.build.plugins.war.zip.url" value="@{test.plugins.war.zip.url}" />
 											<property name="test.class" value="${test.class}" />
+											<property name="test.portal.log.assert" value="@{test.portal.log.assert}" />
 										</ant>
 
 										<if>
@@ -1713,6 +1716,8 @@ app.server.type=@{app.server.type}]]></echo>
 					</test-action>
 
 					<test-set-up>
+						<delete failonerror="false" file="${project.dir}/test.generated.properties" />
+
 						<antcall target="record-test-generated-properties" />
 
 						<if>
@@ -3316,6 +3321,10 @@ log.sanitizer.enabled=false</echo>
 		<run-functional-test app.server.type="tomcat" database.type="mysql" database.version="5.7" test.portal.log.assert="true" />
 	</target>
 
+	<target name="functional-amazonlinux2022-tomcat90-mysql57-jdk8">
+		<run-functional-test app.server.type="tomcat" database.type="mysql" database.version="5.7" test.portal.log.assert="true" />
+	</target>
+
 	<target name="functional-bundle-alpine310-tomcat90-mysql57-jdk8">
 		<set-tomcat-version-number liferay.portal.bundle="${test.portal.bundle.version}" />
 
@@ -3338,6 +3347,27 @@ log.sanitizer.enabled=false</echo>
 	</target>
 
 	<target name="functional-bundle-amazonlinux2-tomcat90-mysql57-jdk8">
+		<set-tomcat-version-number liferay.portal.bundle="${test.portal.bundle.version}" />
+
+		<run-functional-test
+			app.server.type="tomcat"
+			database.type="mysql"
+			database.version="5.7"
+			setup.proxy="false"
+			test.build.fix.pack.zip.url="${test.build.fix.pack.zip.url}"
+			test.fix.pack.base.url="${test.fix.pack.base.url}"
+			test.license.xml.url="${test.license.xml.url}"
+			test.plugin.zip.url="${test.plugin.zip.url}"
+			test.plugins.war.zip.url="${test.plugins.war.zip.url}"
+			test.portal.bundle.version="${test.portal.bundle.version}"
+			test.portal.bundle.zip.url="${test.portal.bundle.zip.url}"
+			test.portal.log.assert="true"
+			test.portal.lpkg.name="${test.portal.lpkg.name}"
+			test.sql.zip.url="${test.sql.zip.url}"
+		/>
+	</target>
+
+	<target name="functional-bundle-amazonlinux2022-tomcat90-mysql57-jdk8">
 		<set-tomcat-version-number liferay.portal.bundle="${test.portal.bundle.version}" />
 
 		<run-functional-test
@@ -4684,6 +4714,10 @@ log.sanitizer.enabled=false</echo>
 		<run-functional-test app.server.type="tomcat" database.type="mariadb" test.portal.log.assert="true" />
 	</target>
 
+	<target name="functional-smoke-tomcat90-mysql57-chrome100-jdk8">
+		<run-functional-test app.server.type="tomcat" browser.type="chrome" database.type="mysql" database.version="5.7" test.portal.log.assert="true" />
+	</target>
+
 	<target name="functional-smoke-tomcat90-mysql57-jdk8">
 		<run-functional-test app.server.type="tomcat" database.type="mysql" database.version="5.7" test.portal.log.assert="true" />
 	</target>
@@ -4882,6 +4916,10 @@ log.sanitizer.enabled=false</echo>
 
 	<target name="functional-tomcat90-mariadb106-jdk11_open">
 		<run-functional-test app.server.type="tomcat" database.type="mariadb" />
+	</target>
+
+	<target name="functional-tomcat90-mysql57-chrome100-jdk8">
+		<run-functional-test app.server.type="tomcat" browser.type="chrome" database.type="mysql" database.version="5.7" />
 	</target>
 
 	<target name="functional-tomcat90-mysql57-jdk8">

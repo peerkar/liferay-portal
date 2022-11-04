@@ -16,11 +16,13 @@ package com.liferay.object.rest.internal.vulcan.openapi.contributor;
 
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectRelationship;
+import com.liferay.object.rest.internal.vulcan.openapi.contributor.util.OpenAPIContributorUtil;
 import com.liferay.object.rest.openapi.v1_0.ObjectEntryOpenAPIResource;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.system.SystemObjectDefinitionMetadata;
 import com.liferay.object.system.SystemObjectDefinitionMetadataTracker;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -29,9 +31,7 @@ import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.openapi.contributor.OpenAPIContributor;
-import com.liferay.portal.vulcan.util.TransformUtil;
 
-import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
@@ -48,10 +48,8 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.osgi.service.component.annotations.Component;
@@ -122,12 +120,12 @@ public class RelatedObjectEntryOpenAPIContributor
 		ObjectDefinition objectDefinition = _getRelatedObjectDefinition(
 			systemObjectDefinitionMetadata, systemObjectRelationship);
 
-		OpenAPI objectEntryOpenAPI = _getObjectEntryOpenAPI(objectDefinition);
+		OpenAPI objectEntryOpenAPI =
+			OpenAPIContributorUtil.getObjectEntryOpenAPI(
+				objectDefinition, _objectEntryOpenAPIResource);
 
-		_copySchema(
-			_getPageSchemaName(objectDefinition), objectEntryOpenAPI, openAPI);
-		_copySchema(
-			_getSchemaName(objectDefinition), objectEntryOpenAPI, openAPI);
+		OpenAPIContributorUtil.copySchemas(
+			objectDefinition, objectEntryOpenAPI, openAPI);
 
 		Paths paths = openAPI.getPaths();
 
@@ -155,6 +153,10 @@ public class RelatedObjectEntryOpenAPIContributor
 				_getIdParameterTemplate(objectDefinition.getShortName())),
 			new PathItem() {
 				{
+					delete(
+						_getDeleteOperation(
+							objectDefinition, systemObjectRelationship,
+							systemObjectDefinitionMetadata));
 					put(
 						_getPutOperation(
 							objectDefinition, systemObjectRelationship,
@@ -163,26 +165,18 @@ public class RelatedObjectEntryOpenAPIContributor
 			});
 	}
 
-	private OpenAPI _copySchema(
-		String schemaName, OpenAPI sourceOpenAPI, OpenAPI targetOpenAPI) {
-
-		Components components = sourceOpenAPI.getComponents();
-
-		Map<String, Schema> schemas = components.getSchemas();
-
-		return targetOpenAPI.schema(schemaName, schemas.get(schemaName));
-	}
-
 	private Content _getContent(String schemaName) {
 		Content content = new Content();
 
 		MediaType mediaType = new MediaType();
 
-		Schema schema = new Schema();
+		if (schemaName != null) {
+			Schema schema = new Schema();
 
-		schema.set$ref(schemaName);
+			schema.set$ref(schemaName);
 
-		mediaType.setSchema(schema);
+			mediaType.setSchema(schema);
+		}
 
 		content.addMediaType("application/json", mediaType);
 		content.addMediaType("application/xml", mediaType);
@@ -199,21 +193,74 @@ public class RelatedObjectEntryOpenAPIContributor
 		return dtoConverter.getContentType();
 	}
 
+	private Operation _getDeleteOperation(
+		ObjectDefinition objectDefinition,
+		ObjectRelationship objectRelationship,
+		SystemObjectDefinitionMetadata systemObjectDefinitionMetadata) {
+
+		DTOConverter<?, ?> dtoConverter = _dtoConverterRegistry.getDTOConverter(
+			systemObjectDefinitionMetadata.getModelClassName());
+
+		return new Operation() {
+			{
+				operationId(
+					_getOperationId(
+						"delete", objectRelationship.getName(),
+						dtoConverter.getContentType()));
+				parameters(
+					Arrays.asList(
+						new Parameter() {
+							{
+								in("path");
+								name(
+									_getIdParameterName(
+										dtoConverter.getContentType()));
+								required(true);
+							}
+						},
+						new Parameter() {
+							{
+								in("path");
+								name(
+									_getIdParameterName(
+										objectDefinition.getShortName()));
+								required(true);
+							}
+						}));
+				responses(
+					new ApiResponses() {
+						{
+							setDefault(
+								new ApiResponse() {
+									{
+										setContent(_getContent(null));
+									}
+								});
+						}
+					});
+				tags(
+					Collections.singletonList(
+						_getContentType(systemObjectDefinitionMetadata)));
+			}
+		};
+	}
+
 	private Operation _getGetOperation(
 		ObjectDefinition objectDefinition,
 		ObjectRelationship objectRelationship,
 		SystemObjectDefinitionMetadata systemObjectDefinitionMetadata) {
 
+		DTOConverter<?, ?> dtoConverter = _dtoConverterRegistry.getDTOConverter(
+			systemObjectDefinitionMetadata.getModelClassName());
 		String parameterName = _getIdParameterName(
 			_getContentType(systemObjectDefinitionMetadata));
 
 		return new Operation() {
 			{
 				operationId(
-					StringBundler.concat(
-						"get", systemObjectDefinitionMetadata.getName(),
-						StringUtil.upperCaseFirstLetter(
-							objectRelationship.getName())));
+					_getOperationId(
+						"get", objectRelationship.getName(),
+						dtoConverter.getContentType()));
 				parameters(
 					Collections.singletonList(
 						new Parameter() {
@@ -231,8 +278,9 @@ public class RelatedObjectEntryOpenAPIContributor
 									{
 										setContent(
 											_getContent(
-												_getPageSchemaName(
-													objectDefinition)));
+												OpenAPIContributorUtil.
+													getPageSchemaName(
+														objectDefinition)));
 									}
 								});
 						}
@@ -259,17 +307,13 @@ public class RelatedObjectEntryOpenAPIContributor
 		return path.split(StringPool.SLASH)[0];
 	}
 
-	private OpenAPI _getObjectEntryOpenAPI(ObjectDefinition objectDefinition)
-		throws Exception {
+	private String _getOperationId(
+		String method, String objectRelationshipName,
+		String systemObjectDefinitionName) {
 
-		Response response = _objectEntryOpenAPIResource.getOpenAPI(
-			objectDefinition.getObjectDefinitionId(), "json", null);
-
-		return (OpenAPI)response.getEntity();
-	}
-
-	private String _getPageSchemaName(ObjectDefinition objectDefinition) {
-		return "Page" + _getSchemaName(objectDefinition);
+		return StringBundler.concat(
+			method, systemObjectDefinitionName,
+			StringUtil.upperCaseFirstLetter(objectRelationshipName));
 	}
 
 	private Operation _getPutOperation(
@@ -277,15 +321,15 @@ public class RelatedObjectEntryOpenAPIContributor
 		ObjectRelationship objectRelationship,
 		SystemObjectDefinitionMetadata systemObjectDefinitionMetadata) {
 
-		String upperCaseFirstLetterObjectRelationshipName =
-			StringUtil.upperCaseFirstLetter(objectRelationship.getName());
-
 		DTOConverter<?, ?> dtoConverter = _dtoConverterRegistry.getDTOConverter(
 			systemObjectDefinitionMetadata.getModelClassName());
 
 		return new Operation() {
 			{
-				operationId("put" + upperCaseFirstLetterObjectRelationshipName);
+				operationId(
+					_getOperationId(
+						"put", objectRelationship.getName(),
+						dtoConverter.getContentType()));
 				parameters(
 					Arrays.asList(
 						new Parameter() {
@@ -314,8 +358,9 @@ public class RelatedObjectEntryOpenAPIContributor
 									{
 										setContent(
 											_getContent(
-												_getSchemaName(
-													objectDefinition)));
+												OpenAPIContributorUtil.
+													getSchemaName(
+														objectDefinition)));
 									}
 								});
 						}
@@ -346,10 +391,6 @@ public class RelatedObjectEntryOpenAPIContributor
 
 		return _objectDefinitionLocalService.getObjectDefinition(
 			objectRelationship.getObjectDefinitionId2());
-	}
-
-	private String _getSchemaName(ObjectDefinition objectDefinition) {
-		return objectDefinition.getShortName();
 	}
 
 	private String _getSystemObjectBasePath(

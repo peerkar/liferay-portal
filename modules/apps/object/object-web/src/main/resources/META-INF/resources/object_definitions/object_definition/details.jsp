@@ -75,15 +75,8 @@ renderResponse.setTitle(LanguageUtil.format(request, "edit-x", objectDefinition.
 					<clay:col
 						md="11"
 					>
-						<c:choose>
-							<c:when test='<%= GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-155914")) %>'>
-								<aui:input name="externalReferenceCode" type="hidden" />
-								<aui:input name="objectDefinitionId" type="hidden" />
-							</c:when>
-							<c:otherwise>
-								<aui:input cssClass="disabled" label="object-definition-id" name="objectDefinitionId" readonly="true" type="text" />
-							</c:otherwise>
-						</c:choose>
+						<aui:input name="externalReferenceCode" type="hidden" />
+						<aui:input name="objectDefinitionId" type="hidden" />
 
 						<aui:input disabled="<%= objectDefinition.isApproved() || !objectDefinitionsDetailsDisplayContext.hasUpdateObjectDefinitionPermission() %>" label="name" name="shortName" required="<%= true %>" type="text" value="<%= objectDefinition.getShortName() %>" />
 
@@ -237,21 +230,14 @@ renderResponse.setTitle(LanguageUtil.format(request, "edit-x", objectDefinition.
 
 			<clay:sheet-section>
 				<h3 class="sheet-subtitle">
-					<c:choose>
-						<c:when test='<%= GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-158672")) %>'>
-							<liferay-ui:message key="configuration" />
-						</c:when>
-						<c:otherwise>
-							<liferay-ui:message key="display" />
-						</c:otherwise>
-					</c:choose>
+					<liferay-ui:message key="configuration" />
 				</h3>
 
 				<aui:field-wrapper cssClass="form-group lfr-input-text-container">
 					<aui:input disabled="<%= objectDefinition.isSystem() || !objectDefinitionsDetailsDisplayContext.hasUpdateObjectDefinitionPermission() %>" label="" labelOff="show-widget" labelOn="show-widget" name="portlet" type="toggle-switch" value="<%= objectDefinition.isPortlet() %>" />
 				</aui:field-wrapper>
 
-				<c:if test='<%= GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-158672")) && objectDefinition.isDefaultStorageType() %>'>
+				<c:if test="<%= objectDefinition.isDefaultStorageType() %>">
 					<aui:field-wrapper cssClass="form-group lfr-input-text-container">
 						<aui:input disabled="<%= objectDefinition.isSystem() || !objectDefinitionsDetailsDisplayContext.hasUpdateObjectDefinitionPermission() %>" label="" labelOff="enable-categorization" labelOn="enable-categorization" name="enableCategorization" type="toggle-switch" value="<%= objectDefinition.isEnableCategorization() %>" />
 					</aui:field-wrapper>
@@ -259,9 +245,7 @@ renderResponse.setTitle(LanguageUtil.format(request, "edit-x", objectDefinition.
 					<aui:field-wrapper cssClass="form-group lfr-input-text-container">
 						<aui:input disabled="<%= objectDefinition.isEnableComments() || objectDefinition.isSystem() || !objectDefinitionsDetailsDisplayContext.hasUpdateObjectDefinitionPermission() %>" label="" labelOff="enable-comments" labelOn="enable-comments" name="enableComments" type="toggle-switch" value="<%= objectDefinition.isEnableComments() %>" />
 					</aui:field-wrapper>
-				</c:if>
 
-				<c:if test='<%= GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-158473")) && objectDefinition.isDefaultStorageType() %>'>
 					<aui:field-wrapper cssClass="form-group lfr-input-text-container">
 						<aui:input disabled="<%= objectDefinition.isApproved() || objectDefinition.isSystem() %>" label="" labelOff="enable-entry-history" labelOn="enable-entry-history" name="enableObjectEntryHistory" type="toggle-switch" value="<%= objectDefinition.isEnableObjectEntryHistory() %>" />
 					</aui:field-wrapper>
@@ -278,10 +262,6 @@ renderResponse.setTitle(LanguageUtil.format(request, "edit-x", objectDefinition.
 						<clay:col
 							md="11"
 						>
-							<c:if test='<%= !GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-155914")) %>'>
-								<aui:input name="externalReferenceCode" type="text" value="<%= objectDefinition.getExternalReferenceCode() %>" />
-							</c:if>
-
 							<aui:select disabled="<%= true %>" name="storageType" showEmptyOption="<%= false %>">
 								<aui:option label="<%= LanguageUtil.get(request, objectDefinition.getStorageType()) %>" selected="<%= true %>" value="" />
 							</aui:select>
@@ -291,18 +271,6 @@ renderResponse.setTitle(LanguageUtil.format(request, "edit-x", objectDefinition.
 			</c:if>
 		</liferay-frontend:fieldset-group>
 	</liferay-frontend:edit-form-body>
-
-	<c:if test='<%= !GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-155914")) %>'>
-		<liferay-frontend:edit-form-footer>
-			<aui:button disabled="<%= !objectDefinitionsDetailsDisplayContext.hasUpdateObjectDefinitionPermission() %>" name="save" onClick='<%= "event.preventDefault(); " + liferayPortletResponse.getNamespace() + "submitObjectDefinition(true);" %>' value="save" />
-
-			<c:if test="<%= !objectDefinition.isApproved() %>">
-				<aui:button disabled="<%= !objectDefinitionsDetailsDisplayContext.hasPublishObjectPermission() %>" name="publish" onClick='<%= "event.preventDefault(); " + liferayPortletResponse.getNamespace() + "submitObjectDefinition(false);" %>' type="submit" value="publish" />
-			</c:if>
-
-			<aui:button href="<%= backURL %>" type="cancel" />
-		</liferay-frontend:edit-form-footer>
-	</c:if>
 </liferay-frontend:edit-form>
 
 <script>
@@ -341,17 +309,5 @@ renderResponse.setTitle(LanguageUtil.format(request, "edit-x", objectDefinition.
 		else {
 			window.location.href = url;
 		}
-	}
-
-	function <portlet:namespace />submitObjectDefinition(draft) {
-		var form = document.getElementById('<portlet:namespace />fm');
-
-		var cmd = form.querySelector('#<portlet:namespace /><%= Constants.CMD %>');
-
-		if (!draft) {
-			cmd.setAttribute('value', '<%= Constants.PUBLISH %>');
-		}
-
-		submitForm(form);
 	}
 </script>

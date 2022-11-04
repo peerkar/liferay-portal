@@ -22,9 +22,12 @@ LayoutUtilityPageEntryDisplayContext layoutUtilityPageEntryDisplayContext = new 
 
 <clay:management-toolbar
 	managementToolbarDisplayContext="<%= new LayoutUtilityPageEntryManagementToolbarDisplayContext(request, layoutUtilityPageEntryDisplayContext, liferayPortletRequest, liferayPortletResponse) %>"
+	propsTransformer="js/LayoutUtilityPageEntriesManagementToolbarPropsTransformer"
 />
 
 <aui:form cssClass="container-fluid container-fluid-max-xl container-view" name="fm">
+	<liferay-ui:success key="layoutUtilityPageDeleted" message='<%= GetterUtil.getString(MultiSessionMessages.get(renderRequest, "layoutUtilityPageDeleted")) %>' />
+
 	<liferay-ui:search-container
 		id="entries"
 		searchContainer="<%= layoutUtilityPageEntryDisplayContext.getLayoutUtilityPageEntrySearchContainer() %>"
@@ -37,7 +40,7 @@ LayoutUtilityPageEntryDisplayContext layoutUtilityPageEntryDisplayContext = new 
 			<liferay-ui:search-container-column-text>
 				<clay:vertical-card
 					propsTransformer="js/LayoutUtilityPageEntryDropdownPropsTransformer"
-					verticalCard="<%= new LayoutUtilityPageEntryVerticalCard(layoutUtilityPageEntry, renderRequest, renderResponse) %>"
+					verticalCard="<%= new LayoutUtilityPageEntryVerticalCard(layoutUtilityPageEntry, renderRequest, renderResponse, searchContainer.getRowChecker()) %>"
 				/>
 			</liferay-ui:search-container-column-text>
 		</liferay-ui:search-container-row>

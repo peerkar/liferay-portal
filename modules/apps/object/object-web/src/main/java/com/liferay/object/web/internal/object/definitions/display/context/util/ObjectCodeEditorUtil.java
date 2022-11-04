@@ -16,12 +16,14 @@ package com.liferay.object.web.internal.object.definitions.display.context.util;
 
 import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.service.ObjectFieldLocalService;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.vulcan.util.TransformUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,7 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -41,7 +42,9 @@ import org.osgi.service.component.annotations.Reference;
 public class ObjectCodeEditorUtil {
 
 	public static List<Map<String, Object>> getCodeEditorElements(
-		boolean includeDDMExpressionBuilderElements, Locale locale,
+		boolean includeAggregationObjectField,
+		boolean includeDDMExpressionBuilderElements,
+		boolean includeFormulaObjectField, Locale locale,
 		long objectDefinitionId) {
 
 		List<Map<String, Object>> codeEditorElements = new ArrayList<>();
@@ -52,13 +55,16 @@ public class ObjectCodeEditorUtil {
 					ListUtil.filter(
 						_objectFieldLocalService.getObjectFields(
 							objectDefinitionId),
-						objectField -> !Objects.equals(
-							objectField.getBusinessType(),
-							ObjectFieldConstants.BUSINESS_TYPE_AGGREGATION)),
+						objectField ->
+							(includeAggregationObjectField ||
+							 !objectField.compareBusinessType(
+								 ObjectFieldConstants.
+									 BUSINESS_TYPE_AGGREGATION)) &&
+							(includeFormulaObjectField ||
+							 !objectField.compareBusinessType(
+								 ObjectFieldConstants.BUSINESS_TYPE_FORMULA))),
 					objectField -> HashMapBuilder.put(
-						"content",
-						StringUtil.removeSubstring(
-							objectField.getDBColumnName(), StringPool.UNDERLINE)
+						"content", objectField.getDBColumnName()
 					).put(
 						"helpText", StringPool.BLANK
 					).put(
@@ -186,6 +192,9 @@ public class ObjectCodeEditorUtil {
 			"pastDates(field_name, parameter)",
 			"check-if-a-date-fields-value-is-in-the-past-and-return-a-boolean",
 			"past-dates"),
+		POW(
+			"pow(field_name, parameter)",
+			"raise-a-number-to-a-power-of-a-specified-number", "power"),
 		RANGE(
 			"futureDates(field_name, parameter) AND pastDates(" +
 				"field_name, parameter)",
@@ -202,6 +211,13 @@ public class ObjectCodeEditorUtil {
 			List<HashMap<String, String>> values = new ArrayList<>();
 
 			for (DDMExpressionFunction ddmExpressionFunction : values()) {
+				if (StringUtil.equals(ddmExpressionFunction._key, "power") &&
+					!GetterUtil.getBoolean(
+						PropsUtil.get("feature.flag.LPS-164948"))) {
+
+					continue;
+				}
+
 				values.add(
 					HashMapBuilder.put(
 						"content", ddmExpressionFunction._content

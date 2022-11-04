@@ -5009,6 +5009,32 @@ components:
                     description:
                         The localized submission of URL type.
             type: object
+        UtilityPageTemplate:
+            description:
+                Represents a Utility Page Template.
+            properties:
+                defaultTemplate:
+                    # @review
+                    description:
+                        Specifies if the utility page template should be the default for the given type.
+                    type: boolean
+                externalReferenceCode:
+                    # @review
+                    description:
+                        The utility page template external reference code.
+                    type: string
+                name:
+                    # @review
+                    description:
+                        The utility page template name.
+                    type: string
+                type:
+                    # @review
+                    description:
+                        The utility page template type.
+                    enum: [Error, TermsOfUse]
+                    type: string
+            type: object
         WidgetInstance:
             # @review
             description:
@@ -5319,7 +5345,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.headless.delivery.client', and version '4.0.40'."
+        'com.liferay.headless.delivery.client', and version '4.0.42'."
     license:
         name: "Apache 2.0"
         url: "http://www.apache.org/licenses/LICENSE-2.0.html"
@@ -6840,10 +6866,6 @@ paths:
                   schema:
                       type: string
                 - in: query
-                  name: nestedFields
-                  schema:
-                      type: string
-                - in: query
                   name: restrictFields
                   schema:
                       type: string
@@ -8004,10 +8026,6 @@ paths:
                   schema:
                       type: string
                 - in: query
-                  name: nestedFields
-                  schema:
-                      type: string
-                - in: query
                   name: restrictFields
                   schema:
                       type: string
@@ -8376,10 +8394,6 @@ paths:
                       type: integer
                 - in: query
                   name: fields
-                  schema:
-                      type: string
-                - in: query
-                  name: nestedFields
                   schema:
                       type: string
                 - in: query
@@ -9278,10 +9292,6 @@ paths:
                       type: integer
                 - in: query
                   name: fields
-                  schema:
-                      type: string
-                - in: query
-                  name: nestedFields
                   schema:
                       type: string
                 - in: query
@@ -10273,10 +10283,6 @@ paths:
                       type: integer
                 - in: query
                   name: fields
-                  schema:
-                      type: string
-                - in: query
-                  name: nestedFields
                   schema:
                       type: string
                 - in: query
@@ -11500,6 +11506,10 @@ paths:
                       type: string
                 - in: query
                   name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
                   schema:
                       type: string
                 - in: query
@@ -14624,6 +14634,14 @@ paths:
                   required: true
                   schema:
                       type: string
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
             responses:
                 200:
                     content:
@@ -15268,10 +15286,6 @@ paths:
                       type: integer
                 - in: query
                   name: fields
-                  schema:
-                      type: string
-                - in: query
-                  name: nestedFields
                   schema:
                       type: string
                 - in: query

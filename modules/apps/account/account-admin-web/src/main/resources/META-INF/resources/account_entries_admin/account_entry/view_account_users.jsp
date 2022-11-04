@@ -29,26 +29,10 @@ portletDisplay.setURLBack(ParamUtil.getString(request, "backURL", String.valueOf
 renderResponse.setTitle(accountEntryDisplay.getName());
 %>
 
-<portlet:actionURL name="/account_admin/assign_account_users" var="assignAccountUsersURL">
-	<portlet:param name="redirect" value="<%= currentURL %>" />
-</portlet:actionURL>
-
-<portlet:renderURL var="selectAccountUsersURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
-	<portlet:param name="mvcPath" value="/account_entries_admin/select_account_users.jsp" />
-	<portlet:param name="redirect" value="<%= currentURL %>" />
-	<portlet:param name="accountEntryId" value="<%= String.valueOf(accountEntryDisplay.getAccountEntryId()) %>" />
-	<portlet:param name="openModalOnRedirect" value="<%= Boolean.TRUE.toString() %>" />
-	<portlet:param name="showCreateButton" value="<%= Boolean.TRUE.toString() %>" />
-</portlet:renderURL>
-
 <clay:management-toolbar
 	additionalProps='<%=
 		HashMapBuilder.<String, Object>put(
 			"accountEntryName", accountEntryDisplay.getName()
-		).put(
-			"assignAccountUsersURL", assignAccountUsersURL
-		).put(
-			"selectAccountUsersURL", selectAccountUsersURL
 		).build()
 	%>'
 	managementToolbarDisplayContext="<%= viewAccountUsersManagementToolbarDisplayContext %>"
@@ -57,8 +41,11 @@ renderResponse.setTitle(accountEntryDisplay.getName());
 
 <clay:container-fluid>
 	<aui:form method="post" name="fm">
+		<aui:input name="redirect" type="hidden" value="<%= currentURL %>" />
 		<aui:input name="accountEntryId" type="hidden" value="<%= accountEntryDisplay.getAccountEntryId() %>" />
 		<aui:input name="accountUserIds" type="hidden" />
+
+		<liferay-ui:error exception="<%= UserEmailAddressException.MustHaveValidDomain.class %>" message="one-or-more-of-the-selected-users-have-invalid-email-address-domains" />
 
 		<liferay-ui:search-container
 			searchContainer="<%= accountUserDisplaySearchContainer %>"
@@ -74,7 +61,7 @@ renderResponse.setTitle(accountEntryDisplay.getName());
 
 				AccountUserActionDropdownItemsProvider accountUserActionDropdownItemsProvider = new AccountUserActionDropdownItemsProvider(accountEntryDisplay, accountUser, permissionChecker, renderRequest, renderResponse);
 
-				if (AccountUserPermission.hasEditUserPermission(permissionChecker, portletName, accountEntryDisplay.getAccountEntry(), accountUser.getUser())) {
+				if (AccountUserPermission.hasEditUserPermission(permissionChecker, portletName, accountEntryDisplay, accountUser.getUser())) {
 					rowURL = accountUserActionDropdownItemsProvider.getEditAccountUserURL();
 				}
 				%>
@@ -109,6 +96,7 @@ renderResponse.setTitle(accountEntryDisplay.getName());
 
 				<liferay-ui:search-container-column-text>
 					<clay:dropdown-actions
+						aria-label='<%= LanguageUtil.get(request, "show-actions") %>'
 						dropdownItems="<%= accountUserActionDropdownItemsProvider.getActionDropdownItems() %>"
 						propsTransformer="account_entries_admin/js/AccountUserDropdownDefaultPropsTransformer"
 					/>

@@ -44,7 +44,7 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.change.tracking.CTAware;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
@@ -66,10 +66,8 @@ import com.liferay.portal.odata.entity.EntityField;
 import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.odata.entity.StringEntityField;
 import com.liferay.portal.search.legacy.searcher.SearchRequestBuilderFactory;
-import com.liferay.portal.search.query.Queries;
 import com.liferay.portal.search.sort.FieldSort;
 import com.liferay.portal.search.sort.SortOrder;
-import com.liferay.portal.search.sort.Sorts;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.util.SearchUtil;
@@ -408,11 +406,11 @@ public class DataRecordResourceImpl extends BaseDataRecordResourceImpl {
 		DEDataListView deDataListView =
 			_deDataListViewLocalService.getDEDataListView(dataListViewId);
 
-		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
+		JSONObject jsonObject = _jsonFactory.createJSONObject(
 			deDataListView.getAppliedFilters());
 
 		String[] fieldNames = JSONUtil.toStringArray(
-			JSONFactoryUtil.createJSONArray(deDataListView.getFieldNames()));
+			_jsonFactory.createJSONArray(deDataListView.getFieldNames()));
 
 		for (String fieldName : fieldNames) {
 			JSONArray jsonArray = (JSONArray)jsonObject.get(fieldName);
@@ -564,19 +562,16 @@ public class DataRecordResourceImpl extends BaseDataRecordResourceImpl {
 	private DEDataListViewLocalService _deDataListViewLocalService;
 
 	@Reference
+	private JSONFactory _jsonFactory;
+
+	@Reference
 	private Language _language;
 
 	@Reference
 	private Portal _portal;
 
 	@Reference
-	private Queries _queries;
-
-	@Reference
 	private SearchRequestBuilderFactory _searchRequestBuilderFactory;
-
-	@Reference
-	private Sorts _sorts;
 
 	@Reference
 	private SPIDDMFormRuleConverter _spiDDMFormRuleConverter;

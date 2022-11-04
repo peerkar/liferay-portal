@@ -45,7 +45,7 @@ import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.service.UserNotificationEventLocalService;
 import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService;
 import com.liferay.portal.kernel.util.HttpComponentsUtil;
-import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -122,7 +122,7 @@ public class MemberRequestLocalServiceImpl
 		// Email
 
 		try {
-			sendEmail(receiverEmailAddress, memberRequest, serviceContext);
+			_sendEmail(receiverEmailAddress, memberRequest, serviceContext);
 		}
 		catch (Exception exception) {
 			throw new SystemException(exception);
@@ -131,7 +131,7 @@ public class MemberRequestLocalServiceImpl
 		// Notifications
 
 		if (receiverUserId > 0) {
-			sendNotificationEvent(memberRequest);
+			_sendNotificationEvent(memberRequest);
 		}
 
 		return memberRequest;
@@ -231,7 +231,7 @@ public class MemberRequestLocalServiceImpl
 		MemberRequest memberRequest = memberRequestPersistence.findByPrimaryKey(
 			memberRequestId);
 
-		validate(memberRequest, userId);
+		_validate(memberRequest, userId);
 
 		memberRequest.setModifiedDate(new Date());
 		memberRequest.setStatus(status);
@@ -266,7 +266,7 @@ public class MemberRequestLocalServiceImpl
 
 		MemberRequest memberRequest = memberRequestPersistence.findByKey(key);
 
-		validate(memberRequest, 0);
+		_validate(memberRequest, 0);
 
 		memberRequest.setModifiedDate(new Date());
 		memberRequest.setReceiverUserId(receiverUserId);
@@ -274,28 +274,28 @@ public class MemberRequestLocalServiceImpl
 		memberRequest = memberRequestPersistence.update(memberRequest);
 
 		if (receiverUserId > 0) {
-			sendNotificationEvent(memberRequest);
+			_sendNotificationEvent(memberRequest);
 		}
 
 		return memberRequest;
 	}
 
-	protected static String addParameterWithPortletNamespace(
+	private String _addParameterWithPortletNamespace(
 		String url, String name, String value) {
 
 		String portletId = HttpComponentsUtil.getParameter(
 			url, "p_p_id", false);
 
 		if (Validator.isNotNull(portletId)) {
-			name = PortalUtil.getPortletNamespace(portletId) + name;
+			name = _portal.getPortletNamespace(portletId) + name;
 		}
 
 		return HttpComponentsUtil.addParameter(url, name, value);
 	}
 
-	protected String getCreateAccountURL(
+	private String _getCreateAccountURL(
 			MemberRequest memberRequest, ServiceContext serviceContext)
-		throws PortalException {
+		throws Exception {
 
 		String createAccountURL = (String)serviceContext.getAttribute(
 			"createAccountURL");
@@ -308,21 +308,21 @@ public class MemberRequestLocalServiceImpl
 				memberRequest.getCompanyId(),
 				WorkflowConstants.DEFAULT_GROUP_ID, User.class.getName(), 0)) {
 
-			String redirectURL = getRedirectURL(serviceContext);
+			String redirectURL = _getRedirectURL(serviceContext);
 
-			redirectURL = addParameterWithPortletNamespace(
+			redirectURL = _addParameterWithPortletNamespace(
 				redirectURL, "actionRequired", StringPool.TRUE);
-			redirectURL = addParameterWithPortletNamespace(
+			redirectURL = _addParameterWithPortletNamespace(
 				redirectURL, "key", memberRequest.getKey());
 
-			createAccountURL = addParameterWithPortletNamespace(
+			createAccountURL = _addParameterWithPortletNamespace(
 				createAccountURL, "redirect", redirectURL);
 		}
 
 		return createAccountURL;
 	}
 
-	protected String getLoginURL(
+	private String _getLoginURL(
 		MemberRequest memberRequest, ServiceContext serviceContext) {
 
 		String loginURL = (String)serviceContext.getAttribute("loginURL");
@@ -331,18 +331,18 @@ public class MemberRequestLocalServiceImpl
 			loginURL = serviceContext.getPortalURL();
 		}
 
-		String redirectURL = getRedirectURL(serviceContext);
+		String redirectURL = _getRedirectURL(serviceContext);
 
-		redirectURL = addParameterWithPortletNamespace(
+		redirectURL = _addParameterWithPortletNamespace(
 			redirectURL, "actionRequired", StringPool.TRUE);
-		redirectURL = addParameterWithPortletNamespace(
+		redirectURL = _addParameterWithPortletNamespace(
 			redirectURL, "key", memberRequest.getKey());
 
 		return HttpComponentsUtil.addParameter(
 			loginURL, "redirect", redirectURL);
 	}
 
-	protected String getRedirectURL(ServiceContext serviceContext) {
+	private String _getRedirectURL(ServiceContext serviceContext) {
 		String redirectURL = (String)serviceContext.getAttribute("redirectURL");
 
 		if (Validator.isNull(redirectURL)) {
@@ -352,7 +352,7 @@ public class MemberRequestLocalServiceImpl
 		return redirectURL;
 	}
 
-	protected void sendEmail(
+	private void _sendEmail(
 			String emailAddress, MemberRequest memberRequest,
 			ServiceContext serviceContext)
 		throws Exception {
@@ -421,9 +421,9 @@ public class MemberRequestLocalServiceImpl
 			},
 			new String[] {
 				fromAddress, fromName,
-				getCreateAccountURL(memberRequest, serviceContext),
+				_getCreateAccountURL(memberRequest, serviceContext),
 				group.getDescriptiveName(serviceContext.getLocale()),
-				getLoginURL(memberRequest, serviceContext), user.getFullName()
+				_getLoginURL(memberRequest, serviceContext), user.getFullName()
 			});
 
 		InternetAddress from = new InternetAddress(fromAddress, fromName);
@@ -436,7 +436,7 @@ public class MemberRequestLocalServiceImpl
 		_mailService.sendEmail(mailMessage);
 	}
 
-	protected void sendNotificationEvent(MemberRequest memberRequest)
+	private void _sendNotificationEvent(MemberRequest memberRequest)
 		throws PortalException {
 
 		String portletId = PortletProviderUtil.getPortletId(
@@ -466,7 +466,7 @@ public class MemberRequestLocalServiceImpl
 		}
 	}
 
-	protected void validate(MemberRequest memberRequest, long userId)
+	private void _validate(MemberRequest memberRequest, long userId)
 		throws PortalException {
 
 		if (memberRequest.getStatus() !=
@@ -487,6 +487,9 @@ public class MemberRequestLocalServiceImpl
 
 	@Reference
 	private MailService _mailService;
+
+	@Reference
+	private Portal _portal;
 
 	@Reference
 	private PortalUUID _portalUUID;

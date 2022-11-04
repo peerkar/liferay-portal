@@ -24,8 +24,8 @@ import com.liferay.info.list.renderer.InfoListRendererTracker;
 import com.liferay.layout.adaptive.media.LayoutAdaptiveMediaProcessor;
 import com.liferay.layout.display.page.LayoutDisplayPageProviderTracker;
 import com.liferay.layout.helper.CollectionPaginationHelper;
-import com.liferay.layout.list.retriever.LayoutListRetrieverTracker;
-import com.liferay.layout.list.retriever.ListObjectReferenceFactoryTracker;
+import com.liferay.layout.list.retriever.LayoutListRetrieverRegistry;
+import com.liferay.layout.list.retriever.ListObjectReferenceFactoryRegistry;
 import com.liferay.layout.util.LayoutClassedModelUsageRecorder;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -47,7 +47,7 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
 /**
  * @author Chema Balsas
  */
-@Component(immediate = true, service = {})
+@Component(service = {})
 public class ServletContextUtil {
 
 	public static CollectionPaginationHelper getCollectionPaginationHelper() {
@@ -106,14 +106,14 @@ public class ServletContextUtil {
 		return _layoutDisplayPageProviderTracker;
 	}
 
-	public static LayoutListRetrieverTracker getLayoutListRetrieverTracker() {
-		return _layoutListRetrieverTracker;
+	public static LayoutListRetrieverRegistry getLayoutListRetrieverRegistry() {
+		return _layoutListRetrieverRegistry;
 	}
 
-	public static ListObjectReferenceFactoryTracker
-		getListObjectReferenceFactoryTracker() {
+	public static ListObjectReferenceFactoryRegistry
+		getListObjectReferenceFactoryRegistry() {
 
-		return _listObjectReferenceFactoryTracker;
+		return _listObjectReferenceFactoryRegistry;
 	}
 
 	public static RequestContextMapper getRequestContextMapper() {
@@ -239,17 +239,18 @@ public class ServletContextUtil {
 	}
 
 	@Reference(unbind = "-")
-	protected void setLayoutListRetrieverTracker(
-		LayoutListRetrieverTracker layoutListRetrieverTracker) {
+	protected void setLayoutListRetrieverRegistry(
+		LayoutListRetrieverRegistry layoutListRetrieverRegistry) {
 
-		_layoutListRetrieverTracker = layoutListRetrieverTracker;
+		_layoutListRetrieverRegistry = layoutListRetrieverRegistry;
 	}
 
 	@Reference(unbind = "-")
-	protected void setListObjectReferenceFactoryTracker(
-		ListObjectReferenceFactoryTracker listObjectReferenceFactoryTracker) {
+	protected void setListObjectReferenceFactoryRegistry(
+		ListObjectReferenceFactoryRegistry listObjectReferenceFactoryRegistry) {
 
-		_listObjectReferenceFactoryTracker = listObjectReferenceFactoryTracker;
+		_listObjectReferenceFactoryRegistry =
+			listObjectReferenceFactoryRegistry;
 	}
 
 	@Reference(unbind = "-")
@@ -296,9 +297,9 @@ public class ServletContextUtil {
 		_layoutClassedModelUsageRecorders = new ConcurrentHashMap<>();
 	private static LayoutDisplayPageProviderTracker
 		_layoutDisplayPageProviderTracker;
-	private static LayoutListRetrieverTracker _layoutListRetrieverTracker;
-	private static ListObjectReferenceFactoryTracker
-		_listObjectReferenceFactoryTracker;
+	private static LayoutListRetrieverRegistry _layoutListRetrieverRegistry;
+	private static ListObjectReferenceFactoryRegistry
+		_listObjectReferenceFactoryRegistry;
 	private static RequestContextMapper _requestContextMapper;
 	private static SegmentsEntryRetriever _segmentsEntryRetriever;
 	private static SegmentsExperienceLocalService

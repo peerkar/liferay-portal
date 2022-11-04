@@ -42,6 +42,9 @@ components:
                     type: string
                 triggerBy:
                     type: string
+                type:
+                    readOnly: true
+                    type: string
             type: object
         NotificationTemplate:
             properties:
@@ -106,13 +109,12 @@ components:
                         type: string
                     type: object
                 type:
-                    enum: [email, userNotification]
                     type: string
             type: object
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.notification.rest.client', and version '1.0.8'."
+        'com.liferay.notification.rest.client', and version '1.0.10'."
     license:
         name: "Apache 2.0"
         url: "http://www.apache.org/licenses/LICENSE-2.0.html"
@@ -360,6 +362,26 @@ paths:
                     application/xml:
                         schema:
                             $ref: "#/components/schemas/NotificationTemplate"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/NotificationTemplate"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/NotificationTemplate"
+            tags: ["NotificationTemplate"]
+    "/notification-templates/{notificationTemplateId}/copy":
+        post:
+            operationId: postNotificationTemplateCopy
+            parameters:
+                - in: path
+                  name: notificationTemplateId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
             responses:
                 200:
                     content:

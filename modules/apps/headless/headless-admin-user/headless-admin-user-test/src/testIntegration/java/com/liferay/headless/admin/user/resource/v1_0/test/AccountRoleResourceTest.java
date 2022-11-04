@@ -32,6 +32,7 @@ import com.liferay.headless.admin.user.client.pagination.Pagination;
 import com.liferay.headless.admin.user.client.resource.v1_0.AccountResource;
 import com.liferay.headless.admin.user.client.resource.v1_0.UserAccountResource;
 import com.liferay.petra.function.UnsafeTriConsumer;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.UserGroupRole;
 import com.liferay.portal.kernel.service.UserGroupRoleLocalService;
@@ -44,7 +45,6 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.odata.entity.EntityField;
 import com.liferay.portal.test.rule.Inject;
-import com.liferay.portal.vulcan.util.TransformUtil;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -512,6 +512,8 @@ public class AccountRoleResourceTest extends BaseAccountRoleResourceTestCase {
 			testDeleteAccountByExternalReferenceCodeAccountRoleUserAccountByEmailAddress_addAccountRole()
 		throws Exception {
 
+		_userAccount = _addAccountUserAccount(_account);
+
 		return _addAccountAccountRole(_account);
 	}
 
@@ -520,7 +522,7 @@ public class AccountRoleResourceTest extends BaseAccountRoleResourceTestCase {
 			testDeleteAccountByExternalReferenceCodeAccountRoleUserAccountByEmailAddress_getEmailAddress()
 		throws Exception {
 
-		return null;
+		return _userAccount.getEmailAddress();
 	}
 
 	@Override
@@ -528,7 +530,7 @@ public class AccountRoleResourceTest extends BaseAccountRoleResourceTestCase {
 			testDeleteAccountByExternalReferenceCodeAccountRoleUserAccountByEmailAddress_getExternalReferenceCode()
 		throws Exception {
 
-		return null;
+		return _account.getExternalReferenceCode();
 	}
 
 	@Override
@@ -1000,6 +1002,7 @@ public class AccountRoleResourceTest extends BaseAccountRoleResourceTestCase {
 	private AccountRoleLocalService _accountRoleLocalService;
 
 	private List<AccountRole> _sharedAccountRoles;
+	private UserAccount _userAccount;
 	private UserAccountResource _userAccountResource;
 
 	@Inject

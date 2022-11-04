@@ -68,7 +68,9 @@ import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.web.internal.constants.ObjectWebKeys;
 import com.liferay.object.web.internal.display.context.helper.ObjectRequestHelper;
 import com.liferay.object.web.internal.util.ObjectDefinitionPermissionUtil;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -90,12 +92,12 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
-import com.liferay.portal.vulcan.util.TransformUtil;
 import com.liferay.taglib.servlet.PipingServletResponseFactory;
 
 import java.text.DecimalFormat;
@@ -620,9 +622,10 @@ public class ObjectEntryDisplayContext {
 					continue;
 				}
 
-				if (Objects.equals(
-						objectField.getBusinessType(),
-						ObjectFieldConstants.BUSINESS_TYPE_AGGREGATION)) {
+				if (objectField.compareBusinessType(
+						ObjectFieldConstants.BUSINESS_TYPE_AGGREGATION) ||
+					objectField.compareBusinessType(
+						ObjectFieldConstants.BUSINESS_TYPE_FORMULA)) {
 
 					ddmForm.addDDMFormField(
 						_getDDMFormField(objectField, true));
@@ -675,6 +678,9 @@ public class ObjectEntryDisplayContext {
 
 		properties.forEach(
 			(key, value) -> ddmFormField.setProperty(key, value));
+
+		ddmFormField.setProperty(
+			"objectFieldId", String.valueOf(objectField.getObjectFieldId()));
 
 		if (Validator.isNotNull(objectField.getRelationshipType())) {
 			ObjectRelationship objectRelationship =
@@ -820,23 +826,8 @@ public class ObjectEntryDisplayContext {
 							ddmFormField.getType(),
 							DDMFormFieldTypeConstants.FIELDSET)) {
 
-						long value = GetterUtil.getLong(
-							values.get(ddmFormField.getName()));
-
-						if (StringUtil.equals(
-								ddmFormField.getType(),
-								"object-relationship") &&
-							(value == 0)) {
-
-							_setDDMFormFieldValueValue(
-								ddmFormField.getName(), ddmFormFieldValue,
-								Collections.emptyMap());
-						}
-						else {
-							_setDDMFormFieldValueValue(
-								ddmFormField.getName(), ddmFormFieldValue,
-								values);
-						}
+						_setDDMFormFieldValueValue(
+							ddmFormField, ddmFormFieldValue, values);
 					}
 
 					return ddmFormFieldValue;
@@ -935,9 +926,10 @@ public class ObjectEntryDisplayContext {
 						objectLayoutColumn.getObjectFieldId(),
 						objectField.getName());
 
-					if (Objects.equals(
-							objectField.getBusinessType(),
-							ObjectFieldConstants.BUSINESS_TYPE_AGGREGATION)) {
+					if (objectField.compareBusinessType(
+							ObjectFieldConstants.BUSINESS_TYPE_AGGREGATION) ||
+						objectField.compareBusinessType(
+							ObjectFieldConstants.BUSINESS_TYPE_FORMULA)) {
 
 						nestedDDMFormFields.add(
 							_getDDMFormField(objectField, true));
@@ -964,7 +956,7 @@ public class ObjectEntryDisplayContext {
 				ddmFormFieldValue.setName(ddmFormField.getName());
 
 				_setDDMFormFieldValueValue(
-					ddmFormField.getName(), ddmFormFieldValue, values);
+					ddmFormField, ddmFormFieldValue, values);
 
 				return ddmFormFieldValue;
 			});
@@ -996,6 +988,45 @@ public class ObjectEntryDisplayContext {
 		}
 
 		return rowsJSONArray.toString();
+	}
+
+	private Object _getValue(
+		DDMFormField ddmFormField, Map<String, Object> values) {
+
+		if (!GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-164801"))) {
+			if (StringUtil.equals(
+					ddmFormField.getType(), "object-relationship")) {
+
+				long value = GetterUtil.getLong(
+					values.get(ddmFormField.getName()));
+
+				if (value == 0) {
+					return null;
+				}
+
+				return value;
+			}
+
+			return values.get(ddmFormField.getName());
+		}
+
+		try {
+			ObjectField objectField = _objectFieldLocalService.getObjectField(
+				GetterUtil.getLong(ddmFormField.getProperty("objectFieldId")));
+
+			ObjectFieldBusinessType objectFieldBusinessType =
+				_objectFieldBusinessTypeTracker.getObjectFieldBusinessType(
+					objectField.getBusinessType());
+
+			return objectFieldBusinessType.getValue(objectField, values);
+		}
+		catch (PortalException portalException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(portalException);
+			}
+
+			return null;
+		}
 	}
 
 	private boolean _isActive(ObjectField objectField) throws PortalException {
@@ -1047,14 +1078,25 @@ public class ObjectEntryDisplayContext {
 	}
 
 	private void _setDDMFormFieldValueValue(
-		String ddmFormFieldName, DDMFormFieldValue ddmFormFieldValue,
+		DDMFormField ddmFormField, DDMFormFieldValue ddmFormFieldValue,
 		Map<String, Object> values) {
 
-		Object value = values.get(ddmFormFieldName);
+		Object value = _getValue(ddmFormField, values);
 
 		if (value == null) {
 			ddmFormFieldValue.setValue(
 				new UnlocalizedValue(GetterUtil.DEFAULT_STRING));
+		}
+		else if (value instanceof ArrayList) {
+			ddmFormFieldValue.setValue(
+				new UnlocalizedValue(
+					StringBundler.concat(
+						StringPool.OPEN_BRACKET,
+						StringUtil.merge(
+							ListUtil.toList(
+								(List<ListEntry>)value, ListEntry::getKey),
+							StringPool.COMMA_AND_SPACE),
+						StringPool.CLOSE_BRACKET)));
 		}
 		else if (value instanceof FileEntry) {
 			FileEntry fileEntry = (FileEntry)value;

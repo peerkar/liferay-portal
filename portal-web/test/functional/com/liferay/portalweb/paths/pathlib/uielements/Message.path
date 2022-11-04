@@ -146,6 +146,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>ERROR_DISMISSIBLE_LINK</td>
+	<td>//div[contains(@class,'alert-danger')][contains(@class,'alert-dismissible')]/a</td>
+	<td></td>
+</tr>
+<tr>
 	<td>ERROR_3_LINK</td>
 	<td>xpath=(//div[contains(@class,'alert') and (contains(@class,'alert-warning'))]/a)</td>
 	<td></td>
@@ -197,7 +202,7 @@
 </tr>
 <tr>
 	<td>ERROR_FIELD_REQUIRED</td>
-	<td>//label[contains(.,'${key_fieldFieldLabel}')]/..//div[@role='alert' and contains(.,'This field is required')]</td>
+	<td>//label[contains(.,'${key_fieldFieldLabel}')]/..//div[@role='alert' and contains(.,'The ${key_fieldFieldLabel} field is required')]</td>
 	<td></td>
 </tr>
 <tr>

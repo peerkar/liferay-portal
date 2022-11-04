@@ -56,7 +56,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Riccardo Alberti
  */
 @Component(
-	enabled = false,
 	property = "model.class.name=com.liferay.commerce.qualifier.model.CommerceQualifierEntry",
 	service = AopService.class
 )
@@ -94,7 +93,7 @@ public class CommerceQualifierEntryLocalServiceImpl
 		commerceQualifierEntry = commerceQualifierEntryPersistence.update(
 			commerceQualifierEntry);
 
-		reindexSource(sourceClassName, sourceClassPK);
+		_reindexSource(sourceClassName, sourceClassPK);
 
 		return commerceQualifierEntry;
 	}
@@ -107,7 +106,7 @@ public class CommerceQualifierEntryLocalServiceImpl
 
 		commerceQualifierEntryPersistence.remove(commerceQualifierEntry);
 
-		reindexSource(
+		_reindexSource(
 			commerceQualifierEntry.getSourceClassNameId(),
 			commerceQualifierEntry.getSourceClassPK());
 
@@ -348,24 +347,6 @@ public class CommerceQualifierEntryLocalServiceImpl
 				sourceCommerceQualifierMetadata.getKeywordsColumn()));
 	}
 
-	protected void reindexSource(long sourceClassNameId, long sourceClassPK)
-		throws PortalException {
-
-		ClassName sourceClassName = _classNameLocalService.getClassName(
-			sourceClassNameId);
-
-		reindexSource(sourceClassName.getClassName(), sourceClassPK);
-	}
-
-	protected void reindexSource(String sourceClassName, long sourceClassPK)
-		throws PortalException {
-
-		Indexer<?> indexer = IndexerRegistryUtil.nullSafeGetIndexer(
-			sourceClassName);
-
-		indexer.reindex(sourceClassName, sourceClassPK);
-	}
-
 	private GroupByStep _getGroupByStep(
 		long companyId, FromStep fromStep,
 		CommerceQualifierMetadata sourceCommerceQualifierMetadata,
@@ -590,6 +571,24 @@ public class CommerceQualifierEntryLocalServiceImpl
 		).or(
 			primaryKeyColumn.isNull()
 		).withParentheses();
+	}
+
+	private void _reindexSource(long sourceClassNameId, long sourceClassPK)
+		throws PortalException {
+
+		ClassName sourceClassName = _classNameLocalService.getClassName(
+			sourceClassNameId);
+
+		_reindexSource(sourceClassName.getClassName(), sourceClassPK);
+	}
+
+	private void _reindexSource(String sourceClassName, long sourceClassPK)
+		throws PortalException {
+
+		Indexer<?> indexer = IndexerRegistryUtil.nullSafeGetIndexer(
+			sourceClassName);
+
+		indexer.reindex(sourceClassName, sourceClassPK);
 	}
 
 	@Reference

@@ -34,6 +34,7 @@ import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.odata.filter.ExpressionConvert;
 import com.liferay.portal.odata.filter.FilterParserProvider;
+import com.liferay.portal.odata.sort.SortParserProvider;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 
 import java.lang.reflect.Constructor;
@@ -52,9 +53,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.ComponentServiceObjects;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceScope;
 
@@ -62,7 +61,10 @@ import org.osgi.service.component.annotations.ReferenceScope;
  * @author Ivica Cardic
  * @generated
  */
-@Component(immediate = true, service = ExportTaskResource.Factory.class)
+@Component(
+	property = "resource.locator.key=/headless-batch-engine/v1.0/ExportTask",
+	service = ExportTaskResource.Factory.class
+)
 @Generated("")
 public class ExportTaskResourceFactoryImpl
 	implements ExportTaskResource.Factory {
@@ -134,16 +136,6 @@ public class ExportTaskResourceFactoryImpl
 			private User _user;
 
 		};
-	}
-
-	@Activate
-	protected void activate() {
-		ExportTaskResource.FactoryHolder.factory = this;
-	}
-
-	@Deactivate
-	protected void deactivate() {
-		ExportTaskResource.FactoryHolder.factory = null;
 	}
 
 	private static Function<InvocationHandler, ExportTaskResource>
@@ -218,6 +210,7 @@ public class ExportTaskResourceFactoryImpl
 		exportTaskResource.setResourcePermissionLocalService(
 			_resourcePermissionLocalService);
 		exportTaskResource.setRoleLocalService(_roleLocalService);
+		exportTaskResource.setSortParserProvider(_sortParserProvider);
 
 		try {
 			return method.invoke(exportTaskResource, arguments);
@@ -266,6 +259,9 @@ public class ExportTaskResourceFactoryImpl
 
 	@Reference
 	private RoleLocalService _roleLocalService;
+
+	@Reference
+	private SortParserProvider _sortParserProvider;
 
 	@Reference
 	private UserLocalService _userLocalService;

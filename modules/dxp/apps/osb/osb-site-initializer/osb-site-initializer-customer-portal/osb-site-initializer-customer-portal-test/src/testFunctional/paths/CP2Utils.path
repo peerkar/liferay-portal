@@ -30,6 +30,41 @@
 	<td>//select[contains(@class, 'form-control')]</td>
 	<td></td>
 </tr>
+<tr>
+	<td>DROPDOWN_OPTIONS</td>
+	<td>//select/option[text()='${key_option}']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SVG_DROPDOWN</td>
+	<td>//div[@class="lfr-tooltip-scope"]//div//*[contains(@class, ' lexicon-icon-caret-bottom')] | //div[@class="lfr-tooltip-scope"]/descendant::span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SVG_DROPDOWN_LIST</td>
+	<td>//*[contains(@class, 'cp-project-breadcrumbs')]//*[contains(@class, 'dropdown-item') and contains(text(),'${key_project}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PROJECT_TITLE</td>
+	<td>//*[contains(@class, 'cp-project-breadcrumbs')]/../child::button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PROJECT_SEARCH</td>
+	<td>//*[contains(@class, 'cp-project-breadcrumbs-menu')]//*[@placeholder="Search"]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>DESCRIPTION_DEVELOPER_KEYS</td>
+	<td>//*[contains(@class, 'cp-activation-key-container')]/following::p[contains(text(),'download a developer key.')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CAPTION_ABOVE_MENU</td>
+	<td>//div[contains(@class, 'cp-activation-key-container')]/following::div//p[contains(text(),'your developer key to download.')]</td>
+	<td></td>
+</tr>
 </tbody>
 </table>
 </body>

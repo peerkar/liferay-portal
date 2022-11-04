@@ -25,9 +25,9 @@ import {
 	FLUSH_INTERVAL,
 	QUEUE_PRIORITY_DEFAULT,
 	QUEUE_PRIORITY_IDENTITY,
+	STORAGE_KEY_CHANNEL_ID,
 	STORAGE_KEY_EVENTS,
 	STORAGE_KEY_IDENTITY,
-	STORAGE_KEY_IDENTITY_LAST_UPDATED_DATE,
 	STORAGE_KEY_MESSAGES,
 	STORAGE_KEY_MESSAGE_IDENTITY,
 	STORAGE_KEY_USER_ID,
@@ -35,7 +35,6 @@ import {
 	VALIDATION_CONTEXT_VALUE_MAXIMUM_LENGTH,
 } from './utils/constants';
 import {getContexts, setContexts} from './utils/contexts';
-import {isExpired} from './utils/date';
 import {normalizeEvent} from './utils/events';
 import hash from './utils/hash';
 import {getItem, setItem} from './utils/storage';
@@ -130,6 +129,9 @@ class Analytics {
 		ENV.Analytics.create = Analytics.create;
 		ENV.Analytics.dispose = Analytics.dispose;
 
+		let email = '';
+		let name = '';
+
 		if (
 			Liferay &&
 			Liferay.ThemeDisplay &&
@@ -138,11 +140,14 @@ class Analytics {
 			Liferay.ThemeDisplay.getUserName &&
 			!!Liferay.ThemeDisplay.getUserName().length
 		) {
-			self.setIdentity({
-				email: Liferay.ThemeDisplay.getUserEmailAddress(),
-				name: Liferay.ThemeDisplay.getUserName(),
-			});
+			email = Liferay.ThemeDisplay.getUserEmailAddress();
+			name = Liferay.ThemeDisplay.getUserName();
 		}
+
+		self.setIdentity({
+			email,
+			name,
+		});
 
 		return self;
 	}
@@ -281,14 +286,10 @@ class Analytics {
 			return;
 		}
 
-		if (!identity.email) {
-			return console.error(
-				'Unable to send identity message due invalid email'
-			);
-		}
-
 		const hashedIdentity = {
-			emailAddressHashed: hash(identity.email.toLowerCase()),
+			emailAddressHashed: identity.email
+				? hash(identity.email.toLowerCase())
+				: '',
 		};
 
 		this.config.identity = hashedIdentity;
@@ -367,11 +368,9 @@ class Analytics {
 	 * @returns {Promise} A promise resolved with the stored or generated userId
 	 */
 	_getUserId() {
-		const newUserIdRequired = this._isNewUserIdRequired();
-
 		let userId = getItem(STORAGE_KEY_USER_ID);
 
-		if (newUserIdRequired) {
+		if (!userId) {
 			userId = this._generateUserId();
 		}
 
@@ -395,36 +394,6 @@ class Analytics {
 		return userId;
 	}
 
-	_isNewUserIdRequired() {
-		const storedUserId = getItem(STORAGE_KEY_USER_ID);
-
-		// We force a new userid token if it is not already stored.
-
-		if (!storedUserId) {
-			return true;
-		}
-
-		const {dataSourceId, identity} = this.config;
-		const storedIdentityHash = getItem(STORAGE_KEY_IDENTITY);
-
-		// After logout or session expiration, it is not guaranteed a new user ID
-		// is generated. The login/logout process can redirect the user to page
-		// where the analytics.js is not loaded. In such cases, we must verify
-		// the identity hashes match and generate a new user ID token otherwise.
-
-		if (
-			storedUserId &&
-			identity &&
-			storedIdentityHash &&
-			storedIdentityHash !==
-				this._getIdentityHash(dataSourceId, identity, storedUserId)
-		) {
-			return true;
-		}
-
-		return false;
-	}
-
 	_isTrackingDisabled() {
 		return (
 			ENV.ac_client_disable_tracking ||
@@ -441,42 +410,33 @@ class Analytics {
 	 */
 	_sendIdentity(identity, userId) {
 		const {dataSourceId} = this.config;
+		const {channelId} = this._getContext();
 
-		const newIdentityHash = this._getIdentityHash(
+		const identityHash = this._getIdentityHash(
 			dataSourceId,
 			identity,
 			userId
 		);
 		const storedIdentityHash = getItem(STORAGE_KEY_IDENTITY);
-		const identityLastUpdatedDate = getItem(
-			STORAGE_KEY_IDENTITY_LAST_UPDATED_DATE
-		);
-
-		let identityHash = Promise.resolve(storedIdentityHash);
+		const storedChannelId = getItem(STORAGE_KEY_CHANNEL_ID);
 
 		if (
-			!identityLastUpdatedDate ||
-			isExpired(Number(identityLastUpdatedDate)) ||
-			newIdentityHash !== storedIdentityHash
+			identityHash !== storedIdentityHash ||
+			channelId !== storedChannelId
 		) {
-			const {channelId} = this._getContext();
 			const {emailAddressHashed} = identity;
 
-			setItem(STORAGE_KEY_IDENTITY, newIdentityHash);
-			setItem(STORAGE_KEY_IDENTITY_LAST_UPDATED_DATE, Date.now());
+			setItem(STORAGE_KEY_CHANNEL_ID, channelId);
+			setItem(STORAGE_KEY_IDENTITY, identityHash);
 
 			instance[STORAGE_KEY_MESSAGE_IDENTITY].addItem({
 				channelId,
 				dataSourceId,
 				emailAddressHashed,
-				id: newIdentityHash,
+				id: identityHash,
 				userId,
 			});
-
-			identityHash = newIdentityHash;
 		}
-
-		return identityHash;
 	}
 
 	/**
@@ -484,11 +444,19 @@ class Analytics {
 	 * @protected
 	 */
 	_setCookie(key, data) {
-		const expirationDate = new Date();
+		const expires = new Date();
 
-		expirationDate.setDate(expirationDate.getDate() + 365);
+		expires.setDate(expires.getDate() + 365);
 
-		document.cookie = `${key}=${data}; expires=${expirationDate.toUTCString()}; path=/; Secure`;
+		return Liferay.Util.Cookie.set(
+			key,
+			data,
+			Liferay.Util.Cookie.TYPES.PERSONALIZATION,
+			{
+				expires,
+				secure: true,
+			}
+		);
 	}
 
 	/**

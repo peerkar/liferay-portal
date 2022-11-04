@@ -34,6 +34,7 @@ import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.odata.filter.ExpressionConvert;
 import com.liferay.portal.odata.filter.FilterParserProvider;
+import com.liferay.portal.odata.sort.SortParserProvider;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 
 import java.lang.reflect.Constructor;
@@ -52,9 +53,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.ComponentServiceObjects;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceScope;
 
@@ -62,7 +61,10 @@ import org.osgi.service.component.annotations.ReferenceScope;
  * @author Javier Gamarra
  * @generated
  */
-@Component(immediate = true, service = ObjectRelationshipResource.Factory.class)
+@Component(
+	property = "resource.locator.key=/object-admin/v1.0/ObjectRelationship",
+	service = ObjectRelationshipResource.Factory.class
+)
 @Generated("")
 public class ObjectRelationshipResourceFactoryImpl
 	implements ObjectRelationshipResource.Factory {
@@ -134,16 +136,6 @@ public class ObjectRelationshipResourceFactoryImpl
 			private User _user;
 
 		};
-	}
-
-	@Activate
-	protected void activate() {
-		ObjectRelationshipResource.FactoryHolder.factory = this;
-	}
-
-	@Deactivate
-	protected void deactivate() {
-		ObjectRelationshipResource.FactoryHolder.factory = null;
 	}
 
 	private static Function<InvocationHandler, ObjectRelationshipResource>
@@ -221,6 +213,7 @@ public class ObjectRelationshipResourceFactoryImpl
 		objectRelationshipResource.setResourcePermissionLocalService(
 			_resourcePermissionLocalService);
 		objectRelationshipResource.setRoleLocalService(_roleLocalService);
+		objectRelationshipResource.setSortParserProvider(_sortParserProvider);
 
 		try {
 			return method.invoke(objectRelationshipResource, arguments);
@@ -270,6 +263,9 @@ public class ObjectRelationshipResourceFactoryImpl
 
 	@Reference
 	private RoleLocalService _roleLocalService;
+
+	@Reference
+	private SortParserProvider _sortParserProvider;
 
 	@Reference
 	private UserLocalService _userLocalService;

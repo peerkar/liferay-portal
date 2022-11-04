@@ -23,7 +23,7 @@ import com.liferay.content.dashboard.web.internal.item.ContentDashboardItemFacto
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -90,14 +90,10 @@ public class GetContentDashboardItemVersionsMVCResourceCommand
 	}
 
 	private JSONArray _getContentDashboardItemVersionsJSONArray(
-		int displayVersions, HttpServletRequest httpServletRequest,
-		VersionableContentDashboardItem versionableContentDashboardItem) {
+		List<ContentDashboardItemVersion> contentDashboardItemVersions,
+		int displayVersions) {
 
-		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
-
-		List<ContentDashboardItemVersion> contentDashboardItemVersions =
-			versionableContentDashboardItem.getAllContentDashboardItemVersions(
-				httpServletRequest);
+		JSONArray jsonArray = _jsonFactory.createJSONArray();
 
 		if (ListUtil.isEmpty(contentDashboardItemVersions)) {
 			return jsonArray;
@@ -126,7 +122,7 @@ public class GetContentDashboardItemVersionsMVCResourceCommand
 				className);
 
 		if (contentDashboardItemFactory == null) {
-			return JSONFactoryUtil.createJSONObject();
+			return _jsonFactory.createJSONObject();
 		}
 
 		long classPK = GetterUtil.getLong(
@@ -139,7 +135,7 @@ public class GetContentDashboardItemVersionsMVCResourceCommand
 			!(contentDashboardItem instanceof
 				VersionableContentDashboardItem)) {
 
-			return JSONFactoryUtil.createJSONObject();
+			return _jsonFactory.createJSONObject();
 		}
 
 		HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(
@@ -158,8 +154,7 @@ public class GetContentDashboardItemVersionsMVCResourceCommand
 		return JSONUtil.put(
 			"versions",
 			_getContentDashboardItemVersionsJSONArray(
-				displayVersions, httpServletRequest,
-				versionableContentDashboardItem)
+				contentDashboardItemVersions, displayVersions)
 		).put(
 			"viewVersionsURL",
 			() -> {
@@ -181,6 +176,9 @@ public class GetContentDashboardItemVersionsMVCResourceCommand
 	@Reference
 	private ContentDashboardItemFactoryTracker
 		_contentDashboardItemFactoryTracker;
+
+	@Reference
+	private JSONFactory _jsonFactory;
 
 	@Reference
 	private Portal _portal;

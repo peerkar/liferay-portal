@@ -43,6 +43,7 @@ const deserializeUtil = new DeserializeUtil();
 
 export default function DiagramBuilder() {
 	const {
+		clientExtensions,
 		currentEditor,
 		definitionId,
 		deserialize,
@@ -319,7 +320,7 @@ export default function DiagramBuilder() {
 
 			deserializeUtil.updateXMLDefinition(xmlDefinition);
 
-			const elements = deserializeUtil.getElements(xmlDefinition);
+			const elements = deserializeUtil.getElements();
 
 			const metadata = deserializeUtil.getMetadata();
 
@@ -357,14 +358,16 @@ export default function DiagramBuilder() {
 							totalModifications: version,
 						});
 
-						deserializeUtil.updateXMLDefinition(content);
+						deserializeUtil.updateXMLDefinition(
+							encodeURIComponent(content)
+						);
 
 						const metadata = deserializeUtil.getMetadata();
 
 						setDefinitionDescription(metadata.description);
 						setDefinitionName(metadata.name);
 
-						const elements = deserializeUtil.getElements(content);
+						const elements = deserializeUtil.getElements();
 
 						setElements(elements);
 
@@ -378,6 +381,7 @@ export default function DiagramBuilder() {
 	}, [definitionId, version]);
 
 	const contextProps = {
+		clientExtensions,
 		collidingElements,
 		elementRectangle,
 		selectedItem,

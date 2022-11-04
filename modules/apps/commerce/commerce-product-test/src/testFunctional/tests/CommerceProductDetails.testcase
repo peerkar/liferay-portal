@@ -564,6 +564,317 @@ definition {
 		}
 	}
 
+	@description = "COMMERCE-10082 | As a buyer user, I want to be able to only add to cart quantities that are allowed when adding to cart a multiple Skus product"
+	@priority = "4"
+	test CanAssertMultipleSkusProductInvalidAllowedOrderQuantity {
+		var productName = "Brake Fluid";
+
+		task ("Given a Minium site") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+		}
+
+		task ("And a Business Account with a buyer user") {
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And Allowed Order Quantity is set to '1,3,5' for a multiple Skus product(Brake Fluid)") {
+			CommerceJSONProductsAPI._patchCommerceProductConfiguration(
+				allowedOrderQuantities = "1,3,5",
+				productName = "${productName}");
+		}
+
+		task ("When the buyer navigates to the product detail page") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+
+			CommerceAcceleratorsInitializer.changeProductsSorting(sortingType = "Name Ascending");
+
+			CommerceNavigator.gotoProductDetails(productName = "${productName}");
+		}
+
+		task ("Then inputs not allowed values -> add to cart -> an error is thrown") {
+			for (var quantity : list "2,4,6") {
+				Type(
+					key_productName = "${productName}",
+					locator1 = "CommerceFrontStore#PRODUCT_DETAILS_QUANTITY_SELECTOR",
+					value1 = "${quantity}");
+
+				AssertTextEquals(
+					key_productName = "${productName}",
+					locator1 = "CommerceFrontStore#PRODUCT_DETAILS_QUANTITY_SELECTOR",
+					value1 = "${quantity}");
+
+				Click(locator1 = "CommerceAccelerators#ADD_TO_CART_BUTTON_PRODUCT_DETAILS_PAGE");
+
+				Alert.viewErrorMessage(errorMessage = "Unable to add product to the cart.");
+			}
+		}
+
+		task ("And inputs allowed values -> add to cart -> product is successfully added to cart") {
+			for (var quantity : list "1,3,5") {
+				Type(
+					key_productName = "${productName}",
+					locator1 = "CommerceFrontStore#PRODUCT_DETAILS_QUANTITY_SELECTOR",
+					value1 = "${quantity}");
+
+				AssertTextEquals(
+					key_productName = "${productName}",
+					locator1 = "CommerceFrontStore#PRODUCT_DETAILS_QUANTITY_SELECTOR",
+					value1 = "${quantity}");
+
+				Click(locator1 = "CommerceAccelerators#ADD_TO_CART_BUTTON_PRODUCT_DETAILS_PAGE");
+
+				AssertElementPresent(
+					key_itemCount = "1",
+					locator1 = "CommerceAccelerators#MINI_CART_BUTTON_DATA_BADGE_COUNT");
+
+				CommerceAcceleratorsInitializer.createNewOrderFromAccountSelectorDropdown();
+
+				Navigator.openWithAppendToBaseURL(urlAppend = "web/minium/p/brake-fluid");
+
+				WaitForPageLoad();
+			}
+		}
+	}
+
+	@description = "COMMERCE-10081 | As a buyer user, I want to be able to only add to cart quantities that are multiples of a given value when adding to cart a multiple Skus product"
+	@priority = "4"
+	test CanAssertMultipleSkusProductInvalidMultipleOrderQuantity {
+		var productName = "Brake Fluid";
+
+		task ("Given a Minium site") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+		}
+
+		task ("And a Business Account with a buyer user") {
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And Multiple Order Quantity is set to '3' for a multiple Skus product(Brake Fluid)") {
+			CommerceJSONProductsAPI._patchCommerceProductConfiguration(
+				multipleOrderQuantity = "3",
+				productName = "${productName}");
+		}
+
+		task ("When the buyer navigates to the product detail page") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+
+			CommerceAcceleratorsInitializer.changeProductsSorting(sortingType = "Name Ascending");
+
+			CommerceNavigator.gotoProductDetails(productName = "${productName}");
+		}
+
+		task ("Then inputs invalid values -> add to cart -> an error is thrown") {
+			for (var quantity : list "1,2,4,5") {
+				Type(
+					key_productName = "${productName}",
+					locator1 = "CommerceFrontStore#PRODUCT_DETAILS_QUANTITY_SELECTOR",
+					value1 = "${quantity}");
+
+				AssertTextEquals(
+					key_productName = "${productName}",
+					locator1 = "CommerceFrontStore#PRODUCT_DETAILS_QUANTITY_SELECTOR",
+					value1 = "${quantity}");
+
+				Click(locator1 = "CommerceAccelerators#ADD_TO_CART_BUTTON_PRODUCT_DETAILS_PAGE");
+
+				Alert.viewErrorMessage(errorMessage = "Unable to add product to the cart.");
+			}
+		}
+
+		task ("And inputs valid values -> add to cart -> product is successfully added to cart") {
+			for (var quantity : list "3,6") {
+				Type(
+					key_productName = "${productName}",
+					locator1 = "CommerceFrontStore#PRODUCT_DETAILS_QUANTITY_SELECTOR",
+					value1 = "${quantity}");
+
+				AssertTextEquals(
+					key_productName = "${productName}",
+					locator1 = "CommerceFrontStore#PRODUCT_DETAILS_QUANTITY_SELECTOR",
+					value1 = "${quantity}");
+
+				Click(locator1 = "CommerceAccelerators#ADD_TO_CART_BUTTON_PRODUCT_DETAILS_PAGE");
+
+				AssertElementPresent(
+					key_itemCount = "1",
+					locator1 = "CommerceAccelerators#MINI_CART_BUTTON_DATA_BADGE_COUNT");
+
+				CommerceAcceleratorsInitializer.createNewOrderFromAccountSelectorDropdown();
+
+				Navigator.openWithAppendToBaseURL(urlAppend = "web/minium/p/brake-fluid");
+
+				WaitForPageLoad();
+			}
+		}
+	}
+
+	@description = "COMMERCE-10197. Users cannot view and download owner limited products' attachments"
+	@priority = "3"
+	test CanAssertOwnerLimitedFileAttacchmentNotVisibleForBuyer {
+		property portal.acceptance = "false";
+
+		var fileName1 = "commerce.pdf";
+		var fileName2 = "Minium_InstallationGuide.pdf";
+
+		task ("Given a Minium site is created") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+		}
+
+		task ("And a Business Account with a buyer user") {
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And an admin user") {
+			JSONUser.addUserWithRole(
+				roleTitle = "Administrator",
+				userEmailAddress = "administrator@liferay.com",
+				userFirstName = "Admin",
+				userLastName = "User",
+				userScreenName = "administrator");
+		}
+
+		task ("And the administrator user is set as a buyer for the account") {
+			Refresh();
+
+			Accounts.assignUsers(
+				accountName = "Commerce Account",
+				assigneeName = "Admin User");
+
+			Accounts.addAssigneeToRoleViaUsersTab(
+				accountRoleTitle = "Buyer",
+				accountUserName = "administrator@liferay.com");
+		}
+
+		task ("And the administrator user logs in") {
+			User.logoutPG();
+
+			User.loginPG(
+				password = "test",
+				userEmailAddress = "administrator@liferay.com");
+		}
+
+		task ("And in the global site, in Documents and Media, a file visible to Owner only is uploaded(e.g. a pdf file)") {
+			DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "global");
+
+			DMNavigator.gotoAddDocumentTypeCP(dmDocumentTypeName = "File Upload");
+
+			UploadDependencyFile.uploadFile(fileName = "${fileName1}");
+
+			PortletEntry.inputTitle(title = "${fileName1}");
+
+			Panel.expandPanel(panel = "Permissions");
+
+			Select(
+				locator1 = "Select#PERMISSIONS",
+				value1 = "Owner");
+
+			PortletEntry.publish();
+		}
+
+		task ("And on a product (e.g. Brake Pads), add the previously uploaded file as a product's attachment") {
+			ApplicationsMenu.gotoPortlet(
+				category = "Product Management",
+				panel = "Commerce",
+				portlet = "Products");
+
+			CommerceProducts.searchAndGoToProductEntry(entryProductName = "Brake Pads");
+
+			CommerceEntry.gotoMenuTab(menuTab = "Media");
+
+			CommerceProductImages.addAttachments(
+				alreadyUploaded = "true",
+				fileNames = "${fileName1}");
+		}
+
+		task ("When the admin user navigates into Brake Pad product details") {
+			Navigator.openWithAppendToBaseURL(urlAppend = "web/minium/catalog");
+
+			CommerceNavigator.searchCatalog(productName = "Brake Pads");
+
+			CommerceAcceleratorsInitializer.gotoMiniumProductDetailsPage(productName = "Brake Pads");
+		}
+
+		task ("Then the admin user can see the attachment in the 'attachments' tab") {
+			AssertElementPresent(
+				key_text = "Attachments",
+				locator1 = "Button#ANY");
+
+			for (var fileName : list "${fileName1},${fileName2}") {
+				FrontStore.viewProductAttachment(attachmentName = "${fileName}");
+			}
+		}
+
+		task ("When the buyer user logs in -> Minium -> Brake Pads") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+
+			CommerceNavigator.searchCatalog(productName = "Brake Pads");
+
+			CommerceNavigator.gotoProductDetails(productName = "Brake Pads");
+		}
+
+		task ("Then the buyer user cannot see the attachment") {
+			Click(
+				key_text = "Attachments",
+				locator1 = "Button#ANY");
+
+			AssertElementPresent(
+				key_entryName = "${fileName2}",
+				locator1 = "CommerceFrontStore#PRODUCT_DETAILS_ATTACHMENTS_NAME");
+
+			AssertElementNotPresent(
+				key_entryName = "${fileName1}",
+				locator1 = "CommerceFrontStore#PRODUCT_DETAILS_ATTACHMENTS_NAME");
+		}
+	}
+
 	@description = "COMMERCE-9675. Users can view and download a product's attachments"
 	@priority = "3"
 	test CanDownloadProductAttachments {

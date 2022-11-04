@@ -87,7 +87,6 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	configurationPid = "com.liferay.analytics.settings.configuration.AnalyticsConfiguration",
-	immediate = true,
 	property = Constants.SERVICE_PID + "=com.liferay.analytics.settings.configuration.AnalyticsConfiguration.scoped",
 	service = {AnalyticsConfigurationTracker.class, ManagedServiceFactory.class}
 )
@@ -794,7 +793,7 @@ public class AnalyticsConfigurationTrackerImpl
 		).put(
 			"portraitId", "Integer"
 		).put(
-			"prefixId", "Integer"
+			"prefixListTypeId", "Integer"
 		).put(
 			"screenName", "Text"
 		).put(
@@ -804,7 +803,7 @@ public class AnalyticsConfigurationTrackerImpl
 		).put(
 			"status", "Integer"
 		).put(
-			"suffixId", "Integer"
+			"suffixListTypeId", "Integer"
 		).put(
 			"timeZoneId", "Text"
 		).put(

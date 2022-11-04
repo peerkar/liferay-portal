@@ -178,8 +178,7 @@ public class KBArticleIndexer extends BaseIndexer<KBArticle> {
 	@Override
 	protected void doReindex(KBArticle kbArticle) throws Exception {
 		indexWriterHelper.updateDocument(
-			getSearchEngineId(), kbArticle.getCompanyId(),
-			getDocument(kbArticle), isCommitImmediately());
+			kbArticle.getCompanyId(), getDocument(kbArticle));
 
 		_reindexAttachments(kbArticle);
 	}
@@ -260,8 +259,7 @@ public class KBArticleIndexer extends BaseIndexer<KBArticle> {
 		}
 
 		indexWriterHelper.updateDocuments(
-			getSearchEngineId(), kbArticle.getCompanyId(), documents,
-			isCommitImmediately());
+			kbArticle.getCompanyId(), documents, isCommitImmediately());
 	}
 
 	private void _reindexKBArticles(long companyId) throws Exception {
@@ -291,7 +289,6 @@ public class KBArticleIndexer extends BaseIndexer<KBArticle> {
 					}
 				}
 			});
-		indexableActionableDynamicQuery.setSearchEngineId(getSearchEngineId());
 
 		indexableActionableDynamicQuery.performActions();
 	}

@@ -136,10 +136,12 @@ if (emailAddresses.isEmpty()) {
 			<%
 			for (int i = 0; i < emailAddresses.size(); i++) {
 				EmailAddress emailAddress = emailAddresses.get(i);
+
+				ListType listType = emailAddress.getListType();
 			%>
 
 				<li class="<%= emailAddress.isPrimary() ? "primary" : "" %>">
-					<span class="property-type"><liferay-ui:message key="<%= emailAddress.getType().getName() %>" /></span>
+					<span class="property-type"><liferay-ui:message key="<%= listType.getName() %>" /></span>
 					<span class="property"><a href="mailto:<%= emailAddress.getAddress() %>"><%= emailAddress.getAddress() %></a></span>
 				</li>
 
@@ -287,7 +289,7 @@ if (websites.isEmpty()) {
 			%>
 
 				<li class="<%= website.isPrimary() ? "primary" : "" %>">
-					<span class="property-type"><liferay-ui:message key="<%= website.getType().getName() %>" /></span>
+					<span class="property-type"><liferay-ui:message key="<%= website.getListType().getName() %>" /></span>
 
 					<span class="property"><a href="<%= website.getUrl() %>"><%= website.getUrl() %></a></span>
 				</li>

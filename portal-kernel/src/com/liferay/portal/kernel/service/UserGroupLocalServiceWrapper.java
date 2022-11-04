@@ -137,25 +137,44 @@ public class UserGroupLocalServiceWrapper
 		return _userGroupLocalService.addUserGroup(userGroup);
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
-	public void addUserUserGroup(long userId, long userGroupId) {
+	public void addUserUserGroup(long userId, long userGroupId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
 		_userGroupLocalService.addUserUserGroup(userId, userGroupId);
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
-	public void addUserUserGroup(long userId, UserGroup userGroup) {
+	public void addUserUserGroup(long userId, UserGroup userGroup)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
 		_userGroupLocalService.addUserUserGroup(userId, userGroup);
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public void addUserUserGroups(
-		long userId, java.util.List<UserGroup> userGroups) {
+			long userId, java.util.List<UserGroup> userGroups)
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		_userGroupLocalService.addUserUserGroups(userId, userGroups);
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
-	public void addUserUserGroups(long userId, long[] userGroupIds) {
+	public void addUserUserGroups(long userId, long[] userGroupIds)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
 		_userGroupLocalService.addUserUserGroups(userId, userGroupIds);
 	}
 

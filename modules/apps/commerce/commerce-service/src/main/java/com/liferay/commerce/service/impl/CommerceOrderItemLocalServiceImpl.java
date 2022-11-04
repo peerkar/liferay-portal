@@ -131,7 +131,7 @@ public class CommerceOrderItemLocalServiceImpl
 		CPInstance cpInstance = _cpInstanceLocalService.getCPInstance(
 			cpInstanceId);
 
-		updateWorkflow(commerceOrder, serviceContext);
+		_updateWorkflow(commerceOrder, serviceContext);
 
 		User user = _userLocalService.getUser(serviceContext.getUserId());
 
@@ -255,7 +255,7 @@ public class CommerceOrderItemLocalServiceImpl
 			CommerceOrderItem commerceOrderItem)
 		throws PortalException {
 
-		validateParentCommerceOrderId(commerceOrderItem);
+		_validateParentCommerceOrderId(commerceOrderItem);
 
 		return _deleteCommerceOrderItem(commerceOrderItem);
 	}
@@ -509,7 +509,7 @@ public class CommerceOrderItemLocalServiceImpl
 		CPInstance cpInstance = _cpInstanceLocalService.getCPInstance(
 			cpInstanceId);
 
-		updateWorkflow(commerceOrder, serviceContext);
+		_updateWorkflow(commerceOrder, serviceContext);
 
 		User user = _userLocalService.getUser(serviceContext.getUserId());
 
@@ -574,12 +574,12 @@ public class CommerceOrderItemLocalServiceImpl
 			String keywords, int start, int end, Sort sort)
 		throws PortalException {
 
-		SearchContext searchContext = buildSearchContext(
+		SearchContext searchContext = _buildSearchContext(
 			commerceOrderId, parentCommerceOrderItemId, start, end, sort);
 
 		searchContext.setKeywords(keywords);
 
-		return searchCommerceOrderItems(searchContext);
+		return _searchCommerceOrderItems(searchContext);
 	}
 
 	@Override
@@ -588,12 +588,12 @@ public class CommerceOrderItemLocalServiceImpl
 			Sort sort)
 		throws PortalException {
 
-		SearchContext searchContext = buildSearchContext(
+		SearchContext searchContext = _buildSearchContext(
 			commerceOrderId, null, start, end, sort);
 
 		searchContext.setKeywords(keywords);
 
-		return searchCommerceOrderItems(searchContext);
+		return _searchCommerceOrderItems(searchContext);
 	}
 
 	@Override
@@ -602,14 +602,14 @@ public class CommerceOrderItemLocalServiceImpl
 			int start, int end, Sort sort)
 		throws PortalException {
 
-		SearchContext searchContext = buildSearchContext(
+		SearchContext searchContext = _buildSearchContext(
 			commerceOrderId, null, start, end, sort);
 
 		searchContext.setAndSearch(andOperator);
 		searchContext.setAttribute(CommerceOrderItemIndexer.FIELD_SKU, sku);
 		searchContext.setAttribute(Field.NAME, name);
 
-		return searchCommerceOrderItems(searchContext);
+		return _searchCommerceOrderItems(searchContext);
 	}
 
 	@Override
@@ -689,7 +689,7 @@ public class CommerceOrderItemLocalServiceImpl
 		CommerceOrderItem commerceOrderItem =
 			commerceOrderItemPersistence.findByPrimaryKey(commerceOrderItemId);
 
-		validateParentCommerceOrderId(commerceOrderItem);
+		_validateParentCommerceOrderId(commerceOrderItem);
 
 		List<CommerceOrderItem> childCommerceOrderItems =
 			commerceOrderItemPersistence.findByParentCommerceOrderItemId(
@@ -758,7 +758,7 @@ public class CommerceOrderItemLocalServiceImpl
 		CommerceOrderItem commerceOrderItem =
 			commerceOrderItemPersistence.findByPrimaryKey(commerceOrderItemId);
 
-		validateParentCommerceOrderId(commerceOrderItem);
+		_validateParentCommerceOrderId(commerceOrderItem);
 
 		List<CommerceOrderItem> childCommerceOrderItems =
 			commerceOrderItemPersistence.findByParentCommerceOrderItemId(
@@ -946,7 +946,7 @@ public class CommerceOrderItemLocalServiceImpl
 		CommerceOrderItem commerceOrderItem =
 			commerceOrderItemPersistence.findByPrimaryKey(commerceOrderItemId);
 
-		validateParentCommerceOrderId(commerceOrderItem);
+		_validateParentCommerceOrderId(commerceOrderItem);
 
 		boolean discountChanged = _isDiscountChanged(
 			discountAmount, commerceOrderItem);
@@ -1184,7 +1184,7 @@ public class CommerceOrderItemLocalServiceImpl
 		return commerceOrderItemPersistence.update(commerceOrderItem);
 	}
 
-	protected SearchContext buildSearchContext(
+	private SearchContext _buildSearchContext(
 			long commerceOrderId, Long parentCommerceOrderItemId, int start,
 			int end, Sort sort)
 		throws PortalException {
@@ -1220,129 +1220,6 @@ public class CommerceOrderItemLocalServiceImpl
 		return searchContext;
 	}
 
-	protected List<CommerceOrderItem> getCommerceOrderItems(Hits hits)
-		throws PortalException {
-
-		List<Document> documents = hits.toList();
-
-		List<CommerceOrderItem> commerceOrderItems = new ArrayList<>(
-			documents.size());
-
-		for (Document document : documents) {
-			long commerceOrderItemId = GetterUtil.getLong(
-				document.get(Field.ENTRY_CLASS_PK));
-
-			CommerceOrderItem commerceOrderItem = fetchCommerceOrderItem(
-				commerceOrderItemId);
-
-			if (commerceOrderItem == null) {
-				commerceOrderItems = null;
-			}
-			else if (commerceOrderItems != null) {
-				commerceOrderItems.add(commerceOrderItem);
-			}
-		}
-
-		return commerceOrderItems;
-	}
-
-	protected BaseModelSearchResult<CommerceOrderItem> searchCommerceOrderItems(
-			SearchContext searchContext)
-		throws PortalException {
-
-		Indexer<CommerceOrderItem> indexer =
-			IndexerRegistryUtil.nullSafeGetIndexer(CommerceOrderItem.class);
-
-		for (int i = 0; i < 10; i++) {
-			Hits hits = indexer.search(searchContext, _SELECTED_FIELD_NAMES);
-
-			List<CommerceOrderItem> commerceOrderItems = getCommerceOrderItems(
-				hits);
-
-			if (commerceOrderItems != null) {
-				return new BaseModelSearchResult<>(
-					commerceOrderItems, hits.getLength());
-			}
-		}
-
-		throw new SearchException(
-			"Unable to fix the search index after 10 attempts");
-	}
-
-	protected CommerceOrder updateWorkflow(
-			CommerceOrder commerceOrder, ServiceContext serviceContext)
-		throws PortalException {
-
-		WorkflowDefinitionLink workflowDefinitionLink =
-			_workflowDefinitionLinkLocalService.fetchWorkflowDefinitionLink(
-				commerceOrder.getCompanyId(), commerceOrder.getGroupId(),
-				CommerceOrder.class.getName(), 0,
-				CommerceOrderConstants.TYPE_PK_APPROVAL, true);
-
-		if ((workflowDefinitionLink != null) && commerceOrder.isApproved()) {
-			return _commerceOrderLocalService.updateStatus(
-				serviceContext.getUserId(), commerceOrder.getCommerceOrderId(),
-				WorkflowConstants.STATUS_DRAFT, serviceContext,
-				Collections.emptyMap());
-		}
-
-		return commerceOrder;
-	}
-
-	protected void validate(
-			Locale locale, CommerceOrder commerceOrder,
-			CPDefinition cpDefinition, CPInstance cpInstance, int quantity,
-			boolean validateOrder)
-		throws PortalException {
-
-		if (commerceOrder.getUserId() == 0) {
-			int count = commerceOrderItemPersistence.countByCommerceOrderId(
-				commerceOrder.getCommerceOrderId());
-
-			if (count >=
-					_commerceOrderConfiguration.guestCartItemMaxAllowed()) {
-
-				throw new GuestCartItemMaxAllowedException();
-			}
-		}
-
-		if ((cpDefinition != null) && (cpInstance != null) &&
-			(cpDefinition.getCPDefinitionId() !=
-				cpInstance.getCPDefinitionId())) {
-
-			throw new NoSuchCPInstanceException(
-				StringBundler.concat(
-					"CPInstance ", cpInstance.getCPInstanceId(),
-					" belongs to a different CPDefinition than ",
-					cpDefinition.getCPDefinitionId()));
-		}
-
-		if (!ExportImportThreadLocal.isImportInProcess() && validateOrder) {
-			List<CommerceOrderValidatorResult> commerceCartValidatorResults =
-				_commerceOrderValidatorRegistry.validate(
-					locale, commerceOrder, cpInstance, quantity);
-
-			if (!commerceCartValidatorResults.isEmpty()) {
-				throw new CommerceOrderValidatorException(
-					commerceCartValidatorResults);
-			}
-		}
-	}
-
-	protected void validateParentCommerceOrderId(
-			CommerceOrderItem commerceOrderItem)
-		throws PortalException {
-
-		if (commerceOrderItem.getParentCommerceOrderItemId() != 0) {
-			throw new ProductBundleException(
-				StringBundler.concat(
-					"Operation not allowed on an item ",
-					commerceOrderItem.getCommerceOrderItemId(),
-					" because it is a child commerce order item ",
-					commerceOrderItem.getParentCommerceOrderItemId()));
-		}
-	}
-
 	private CommerceOrderItem _createCommerceOrderItem(
 			long groupId, User user, CommerceOrder commerceOrder,
 			CPInstance cpInstance, long parentCommerceOrderItemId, String json,
@@ -1353,7 +1230,7 @@ public class CommerceOrderItemLocalServiceImpl
 		CPDefinition cpDefinition = _cpDefinitionLocalService.getCPDefinition(
 			cpInstance.getCPDefinitionId());
 
-		validate(
+		_validate(
 			serviceContext.getLocale(), commerceOrder, cpDefinition, cpInstance,
 			quantity,
 			GetterUtil.getBoolean(
@@ -1465,11 +1342,37 @@ public class CommerceOrderItemLocalServiceImpl
 		_expandoRowLocalService.deleteRows(
 			commerceOrderItem.getCommerceOrderItemId());
 
-		updateWorkflow(
+		_updateWorkflow(
 			commerceOrderItem.getCommerceOrder(),
 			ServiceContextThreadLocal.getServiceContext());
 
 		return commerceOrderItem;
+	}
+
+	private List<CommerceOrderItem> _getCommerceOrderItems(Hits hits)
+		throws PortalException {
+
+		List<Document> documents = hits.toList();
+
+		List<CommerceOrderItem> commerceOrderItems = new ArrayList<>(
+			documents.size());
+
+		for (Document document : documents) {
+			long commerceOrderItemId = GetterUtil.getLong(
+				document.get(Field.ENTRY_CLASS_PK));
+
+			CommerceOrderItem commerceOrderItem = fetchCommerceOrderItem(
+				commerceOrderItemId);
+
+			if (commerceOrderItem == null) {
+				commerceOrderItems = null;
+			}
+			else if (commerceOrderItems != null) {
+				commerceOrderItems.add(commerceOrderItem);
+			}
+		}
+
+		return commerceOrderItems;
 	}
 
 	private CommerceProductPrice _getCommerceProductPrice(
@@ -1865,6 +1768,29 @@ public class CommerceOrderItemLocalServiceImpl
 		return false;
 	}
 
+	private BaseModelSearchResult<CommerceOrderItem> _searchCommerceOrderItems(
+			SearchContext searchContext)
+		throws PortalException {
+
+		Indexer<CommerceOrderItem> indexer =
+			IndexerRegistryUtil.nullSafeGetIndexer(CommerceOrderItem.class);
+
+		for (int i = 0; i < 10; i++) {
+			Hits hits = indexer.search(searchContext, _SELECTED_FIELD_NAMES);
+
+			List<CommerceOrderItem> commerceOrderItems = _getCommerceOrderItems(
+				hits);
+
+			if (commerceOrderItems != null) {
+				return new BaseModelSearchResult<>(
+					commerceOrderItems, hits.getLength());
+			}
+		}
+
+		throw new SearchException(
+			"Unable to fix the search index after 10 attempts");
+	}
+
 	private void _setCommerceOrderItemDiscountValue(
 		CommerceOrderItem commerceOrderItem,
 		CommerceDiscountValue commerceDiscountValue, boolean includeTax) {
@@ -2137,7 +2063,7 @@ public class CommerceOrderItemLocalServiceImpl
 		CPDefinition cpDefinition = _cpDefinitionLocalService.getCPDefinition(
 			cpInstance.getCPDefinitionId());
 
-		validate(
+		_validate(
 			serviceContext.getLocale(), commerceOrder, cpDefinition, cpInstance,
 			quantity,
 			GetterUtil.getBoolean(
@@ -2203,7 +2129,7 @@ public class CommerceOrderItemLocalServiceImpl
 
 		CommerceOrder commerceOrder = commerceOrderItem.getCommerceOrder();
 
-		validate(
+		_validate(
 			serviceContext.getLocale(), commerceOrder,
 			commerceOrderItem.getCPDefinition(),
 			commerceOrderItem.fetchCPInstance(), quantity,
@@ -2215,7 +2141,7 @@ public class CommerceOrderItemLocalServiceImpl
 			commerceOrderItem.getBookedQuantityId(), quantity,
 			commerceOrderItem.getQuantity());
 
-		commerceOrder = updateWorkflow(commerceOrder, serviceContext);
+		commerceOrder = _updateWorkflow(commerceOrder, serviceContext);
 
 		commerceOrderItem.setJson(json);
 		commerceOrderItem.setQuantity(quantity);
@@ -2262,7 +2188,7 @@ public class CommerceOrderItemLocalServiceImpl
 
 		CommerceOrder commerceOrder = commerceOrderItem.getCommerceOrder();
 
-		validate(
+		_validate(
 			serviceContext.getLocale(), commerceOrder,
 			commerceOrderItem.getCPDefinition(),
 			commerceOrderItem.fetchCPInstance(), quantity,
@@ -2274,13 +2200,87 @@ public class CommerceOrderItemLocalServiceImpl
 			commerceOrderItem.getBookedQuantityId(), quantity,
 			commerceOrderItem.getQuantity());
 
-		updateWorkflow(commerceOrder, serviceContext);
+		_updateWorkflow(commerceOrder, serviceContext);
 
 		commerceOrderItem.setJson(json);
 		commerceOrderItem.setQuantity(quantity);
 		commerceOrderItem.setExpandoBridgeAttributes(serviceContext);
 
 		return commerceOrderItemPersistence.update(commerceOrderItem);
+	}
+
+	private CommerceOrder _updateWorkflow(
+			CommerceOrder commerceOrder, ServiceContext serviceContext)
+		throws PortalException {
+
+		WorkflowDefinitionLink workflowDefinitionLink =
+			_workflowDefinitionLinkLocalService.fetchWorkflowDefinitionLink(
+				commerceOrder.getCompanyId(), commerceOrder.getGroupId(),
+				CommerceOrder.class.getName(), 0,
+				CommerceOrderConstants.TYPE_PK_APPROVAL, true);
+
+		if ((workflowDefinitionLink != null) && commerceOrder.isApproved()) {
+			return _commerceOrderLocalService.updateStatus(
+				serviceContext.getUserId(), commerceOrder.getCommerceOrderId(),
+				WorkflowConstants.STATUS_DRAFT, serviceContext,
+				Collections.emptyMap());
+		}
+
+		return commerceOrder;
+	}
+
+	private void _validate(
+			Locale locale, CommerceOrder commerceOrder,
+			CPDefinition cpDefinition, CPInstance cpInstance, int quantity,
+			boolean validateOrder)
+		throws PortalException {
+
+		if (commerceOrder.getUserId() == 0) {
+			int count = commerceOrderItemPersistence.countByCommerceOrderId(
+				commerceOrder.getCommerceOrderId());
+
+			if (count >=
+					_commerceOrderConfiguration.guestCartItemMaxAllowed()) {
+
+				throw new GuestCartItemMaxAllowedException();
+			}
+		}
+
+		if ((cpDefinition != null) && (cpInstance != null) &&
+			(cpDefinition.getCPDefinitionId() !=
+				cpInstance.getCPDefinitionId())) {
+
+			throw new NoSuchCPInstanceException(
+				StringBundler.concat(
+					"CPInstance ", cpInstance.getCPInstanceId(),
+					" belongs to a different CPDefinition than ",
+					cpDefinition.getCPDefinitionId()));
+		}
+
+		if (!ExportImportThreadLocal.isImportInProcess() && validateOrder) {
+			List<CommerceOrderValidatorResult> commerceCartValidatorResults =
+				_commerceOrderValidatorRegistry.validate(
+					locale, commerceOrder, cpInstance, quantity);
+
+			if (!commerceCartValidatorResults.isEmpty()) {
+				throw new CommerceOrderValidatorException(
+					commerceCartValidatorResults);
+			}
+		}
+	}
+
+	private void _validateParentCommerceOrderId(
+			CommerceOrderItem commerceOrderItem)
+		throws PortalException {
+
+		if (commerceOrderItem.getParentCommerceOrderItemId() != 0) {
+			throw new ProductBundleException(
+				StringBundler.concat(
+					"Operation not allowed on an item ",
+					commerceOrderItem.getCommerceOrderItemId(),
+					" because it is a child commerce order item ",
+					commerceOrderItem.getParentCommerceOrderItemId()));
+		}
 	}
 
 	private static final String[] _SELECTED_FIELD_NAMES = {

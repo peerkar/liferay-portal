@@ -18,17 +18,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
-import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapListener;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.NoSuchModelException;
-import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.service.GroupLocalService;
-import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
@@ -37,7 +34,6 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.TextFormatter;
-import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.graphql.annotation.GraphQLField;
 import com.liferay.portal.vulcan.graphql.annotation.GraphQLName;
 import com.liferay.portal.vulcan.graphql.annotation.GraphQLTypeExtension;
@@ -63,8 +59,6 @@ import graphql.TypeResolutionEnvironment;
 
 import graphql.annotations.annotationTypes.GraphQLTypeResolver;
 import graphql.annotations.annotationTypes.GraphQLUnion;
-import graphql.annotations.directives.DirectiveWirer;
-import graphql.annotations.directives.DirectiveWiringMapRetriever;
 import graphql.annotations.processor.ProcessingElementsContainer;
 import graphql.annotations.processor.exceptions.CannotCastMemberException;
 import graphql.annotations.processor.exceptions.GraphQLAnnotationsException;
@@ -98,6 +92,15 @@ import graphql.execution.DataFetcherExceptionHandlerParameters;
 import graphql.execution.DataFetcherExceptionHandlerResult;
 import graphql.execution.ExecutionStrategy;
 
+import graphql.kickstart.execution.GraphQLObjectMapper;
+import graphql.kickstart.execution.GraphQLQueryInvoker;
+import graphql.kickstart.execution.config.DefaultExecutionStrategyProvider;
+import graphql.kickstart.execution.config.ExecutionStrategyProvider;
+import graphql.kickstart.execution.error.GraphQLErrorHandler;
+import graphql.kickstart.servlet.GraphQLConfiguration;
+import graphql.kickstart.servlet.GraphQLHttpServlet;
+import graphql.kickstart.servlet.apollo.ApolloScalars;
+
 import graphql.language.ArrayValue;
 import graphql.language.BooleanValue;
 import graphql.language.EnumValue;
@@ -109,6 +112,8 @@ import graphql.language.ObjectValue;
 import graphql.language.StringValue;
 import graphql.language.Value;
 
+import graphql.scalars.ExtendedScalars;
+
 import graphql.schema.Coercing;
 import graphql.schema.CoercingParseLiteralException;
 import graphql.schema.CoercingParseValueException;
@@ -119,7 +124,6 @@ import graphql.schema.DataFetchingEnvironmentImpl;
 import graphql.schema.FieldCoordinates;
 import graphql.schema.GraphQLArgument;
 import graphql.schema.GraphQLCodeRegistry;
-import graphql.schema.GraphQLDirectiveContainer;
 import graphql.schema.GraphQLFieldDefinition;
 import graphql.schema.GraphQLFieldsContainer;
 import graphql.schema.GraphQLInputObjectField;
@@ -127,24 +131,23 @@ import graphql.schema.GraphQLInputObjectType;
 import graphql.schema.GraphQLInputType;
 import graphql.schema.GraphQLInterfaceType;
 import graphql.schema.GraphQLList;
+import graphql.schema.GraphQLNamedType;
 import graphql.schema.GraphQLNonNull;
 import graphql.schema.GraphQLObjectType;
 import graphql.schema.GraphQLOutputType;
 import graphql.schema.GraphQLScalarType;
 import graphql.schema.GraphQLSchema;
+import graphql.schema.GraphQLSchemaElement;
 import graphql.schema.GraphQLType;
 import graphql.schema.GraphQLTypeReference;
+import graphql.schema.GraphQLTypeUtil;
+import graphql.schema.GraphQLTypeVisitorStub;
 import graphql.schema.PropertyDataFetcher;
+import graphql.schema.SchemaTransformer;
 import graphql.schema.TypeResolver;
 
-import graphql.servlet.ApolloScalars;
-import graphql.servlet.DefaultExecutionStrategyProvider;
-import graphql.servlet.ExecutionStrategyProvider;
-import graphql.servlet.GraphQLConfiguration;
-import graphql.servlet.GraphQLErrorHandler;
-import graphql.servlet.GraphQLHttpServlet;
-import graphql.servlet.GraphQLObjectMapper;
-import graphql.servlet.GraphQLQueryInvoker;
+import graphql.util.TraversalControl;
+import graphql.util.TraverserContext;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.AnnotatedElement;
@@ -181,6 +184,7 @@ import java.util.stream.Stream;
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -376,9 +380,12 @@ public class GraphQLServletExtender {
 					}
 				}
 
-				if (!StringUtil.equals(graphQLType.getName(), typeName)) {
+				if (!StringUtil.equals(
+						GraphQLTypeUtil.simplePrint(graphQLType), typeName)) {
+
 					if (!_equals(
-							graphQLTypes.get(graphQLType.getName()),
+							graphQLTypes.get(
+								GraphQLTypeUtil.simplePrint(graphQLType)),
 							graphQLType)) {
 
 						try {
@@ -399,22 +406,13 @@ public class GraphQLServletExtender {
 						}
 					}
 					else {
-						graphQLType = graphQLTypes.get(graphQLType.getName());
+						graphQLType = graphQLTypes.get(
+							GraphQLTypeUtil.simplePrint(graphQLType));
 					}
 				}
 
-				DirectiveWirer directiveWirer = new DirectiveWirer();
-
-				DirectiveWiringMapRetriever directiveWiringMapRetriever =
-					new DirectiveWiringMapRetriever();
-
-				graphQLType = directiveWirer.wire(
-					(GraphQLDirectiveContainer)graphQLType,
-					directiveWiringMapRetriever.getDirectiveWiringMap(
-						clazz, processingElementsContainer),
-					processingElementsContainer.getCodeRegistryBuilder(), null);
-
-				graphQLTypes.put(graphQLType.getName(), graphQLType);
+				graphQLTypes.put(
+					GraphQLTypeUtil.simplePrint(graphQLType), graphQLType);
 
 				processingStack.pop();
 
@@ -422,21 +420,30 @@ public class GraphQLServletExtender {
 			}
 
 			private boolean _equals(
-				GraphQLType graphQLType1, GraphQLType graphQLType2) {
+				GraphQLSchemaElement graphQLSchemaElement1,
+				GraphQLSchemaElement graphQLSchemaElement2) {
 
-				List<GraphQLType> childrenGraphQLType1 =
-					graphQLType1.getChildren();
-				List<GraphQLType> childrenGraphQLType2 =
-					graphQLType2.getChildren();
+				List<GraphQLSchemaElement> childrenGraphQLSchemaElement1 =
+					graphQLSchemaElement1.getChildren();
+				List<GraphQLSchemaElement> childrenGraphQLSchemaElement2 =
+					graphQLSchemaElement2.getChildren();
 
-				for (GraphQLType childGraphQLType1 : childrenGraphQLType1) {
+				for (GraphQLSchemaElement childGraphQLSchemaElement1 :
+						childrenGraphQLSchemaElement1) {
+
 					boolean found = false;
 
-					for (GraphQLType childGraphQLType2 : childrenGraphQLType2) {
+					for (GraphQLSchemaElement childGraphQLSchemaElement2 :
+							childrenGraphQLSchemaElement2) {
+
 						if (StringUtil.equals(
-								childGraphQLType1.getName(),
-								childGraphQLType2.getName()) &&
-							_equals(childGraphQLType1, childGraphQLType2)) {
+								GraphQLTypeUtil.simplePrint(
+									childGraphQLSchemaElement1),
+								GraphQLTypeUtil.simplePrint(
+									childGraphQLSchemaElement2)) &&
+							_equals(
+								childGraphQLSchemaElement1,
+								childGraphQLSchemaElement2)) {
 
 							found = true;
 
@@ -449,8 +456,8 @@ public class GraphQLServletExtender {
 					}
 				}
 
-				if (childrenGraphQLType1.size() ==
-						childrenGraphQLType2.size()) {
+				if (childrenGraphQLSchemaElement1.size() ==
+						childrenGraphQLSchemaElement2.size()) {
 
 					return true;
 				}
@@ -605,6 +612,19 @@ public class GraphQLServletExtender {
 							return null;
 						}
 
+						HttpServletRequest httpServletRequest =
+							(HttpServletRequest)arguments[0];
+
+						arguments[0] = new HttpServletRequestWrapper(
+							httpServletRequest) {
+
+							@Override
+							public boolean isAsyncSupported() {
+								return false;
+							}
+
+						};
+
 						Servlet servlet = _createServlet(
 							_portal.getCompanyId(
 								(HttpServletRequest)arguments[0]));
@@ -751,14 +771,14 @@ public class GraphQLServletExtender {
 		return _addField(
 			graphQLOutputType, "graphQLNode",
 			_addGraphQLArgument(Scalars.GraphQLString, "dataType"),
-			_addGraphQLArgument(Scalars.GraphQLLong, "id"));
+			_addGraphQLArgument(ExtendedScalars.GraphQLLong, "id"));
 	}
 
 	private GraphQLInterfaceType _createNodeGraphQLInterfaceType() {
 		GraphQLInterfaceType.Builder interfaceBuilder =
 			GraphQLInterfaceType.newInterface();
 
-		interfaceBuilder.field(_addField(Scalars.GraphQLLong, "id"));
+		interfaceBuilder.field(_addField(ExtendedScalars.GraphQLLong, "id"));
 		interfaceBuilder.name("GraphQLNode");
 
 		return interfaceBuilder.build();
@@ -844,9 +864,11 @@ public class GraphQLServletExtender {
 				companyId, graphQLSchemaBuilder, processingElementsContainer,
 				mutationGraphQLObjectTypeBuilder,
 				queryGraphQLObjectTypeBuilder);
-			_registerInterfaces(
+
+			GraphQLInterfaceType graphQLInterfaceType = _registerInterfaces(
 				graphQLSchemaBuilder, processingElementsContainer,
 				queryGraphQLObjectTypeBuilder);
+
 			_registerNamespace(
 				ServletData::getMutation, mutationGraphQLObjectTypeBuilder,
 				graphQLSchemaBuilder, true, processingElementsContainer,
@@ -861,7 +883,10 @@ public class GraphQLServletExtender {
 			graphQLSchemaBuilder.query(queryGraphQLObjectTypeBuilder.build());
 
 			GraphQLConfiguration.Builder graphQLConfigurationBuilder =
-				GraphQLConfiguration.with(graphQLSchemaBuilder.build());
+				GraphQLConfiguration.with(
+					SchemaTransformer.transformSchema(
+						graphQLSchemaBuilder.build(),
+						new LiferayGraphQLTypeVisitor(graphQLInterfaceType)));
 
 			ExecutionStrategy executionStrategy = new AsyncExecutionStrategy(
 				new SanitizedDataFetcherExceptionHandler());
@@ -909,19 +934,6 @@ public class GraphQLServletExtender {
 		}
 	}
 
-	private Field _getFieldDefinitionsByNameField(
-			GraphQLObjectType graphQLObjectType)
-		throws Exception {
-
-		Class<? extends GraphQLObjectType> clazz = graphQLObjectType.getClass();
-
-		Field field = clazz.getDeclaredField("fieldDefinitionsByName");
-
-		field.setAccessible(true);
-
-		return field;
-	}
-
 	private GraphQLInputObjectType _getGraphQLInputObjectType(
 		GraphQLDTOContributor<?, ?> graphQLDTOContributor,
 		Map<String, GraphQLType> graphQLTypes) {
@@ -960,7 +972,9 @@ public class GraphQLServletExtender {
 			new GraphQLObjectType.Builder();
 
 		graphQLObjectTypeBuilder.field(
-			_addField(Scalars.GraphQLLong, graphQLDTOContributor.getIdName()));
+			_addField(
+				ExtendedScalars.GraphQLLong,
+				graphQLDTOContributor.getIdName()));
 		graphQLObjectTypeBuilder.name(graphQLDTOContributor.getTypeName());
 
 		for (GraphQLDTOProperty graphQLDTOProperty :
@@ -1015,12 +1029,13 @@ public class GraphQLServletExtender {
 		graphQLObjectTypeBuilder.field(
 			_addField(GraphQLList.list(objectGraphQLType), "items"));
 		graphQLObjectTypeBuilder.field(
-			_addField(Scalars.GraphQLLong, "lastPage"));
-		graphQLObjectTypeBuilder.field(_addField(Scalars.GraphQLLong, "page"));
+			_addField(ExtendedScalars.GraphQLLong, "lastPage"));
 		graphQLObjectTypeBuilder.field(
-			_addField(Scalars.GraphQLLong, "pageSize"));
+			_addField(ExtendedScalars.GraphQLLong, "page"));
 		graphQLObjectTypeBuilder.field(
-			_addField(Scalars.GraphQLLong, "totalCount"));
+			_addField(ExtendedScalars.GraphQLLong, "pageSize"));
+		graphQLObjectTypeBuilder.field(
+			_addField(ExtendedScalars.GraphQLLong, "totalCount"));
 		graphQLObjectTypeBuilder.name(name + "Page");
 
 		return graphQLObjectTypeBuilder.build();
@@ -1092,7 +1107,7 @@ public class GraphQLServletExtender {
 			).field(
 				_addField(Scalars.GraphQLString, "familyName")
 			).field(
-				_addField(Scalars.GraphQLLong, "id")
+				_addField(ExtendedScalars.GraphQLLong, "id")
 			).field(
 				_addField(Scalars.GraphQLString, "image")
 			).field(
@@ -1108,7 +1123,7 @@ public class GraphQLServletExtender {
 			graphQLObjectTypeBuilder.name(
 				"FileEntry"
 			).field(
-				_addField(Scalars.GraphQLLong, "id")
+				_addField(ExtendedScalars.GraphQLLong, "id")
 			).field(
 				_addField(Scalars.GraphQLString, "name")
 			).build());
@@ -1203,7 +1218,7 @@ public class GraphQLServletExtender {
 		mutationGraphQLObjectTypeBuilder.field(
 			_addField(
 				Scalars.GraphQLBoolean, deleteName,
-				_addGraphQLArgument(Scalars.GraphQLLong, idName)));
+				_addGraphQLArgument(ExtendedScalars.GraphQLLong, idName)));
 
 		graphQLSchemaBuilder.codeRegistry(
 			graphQLCodeRegistryBuilder.dataFetcher(
@@ -1221,7 +1236,7 @@ public class GraphQLServletExtender {
 		queryGraphQLObjectTypeBuilder.field(
 			_addField(
 				graphQLObjectType, getName,
-				_addGraphQLArgument(Scalars.GraphQLLong, idName)));
+				_addGraphQLArgument(ExtendedScalars.GraphQLLong, idName)));
 		graphQLSchemaBuilder.codeRegistry(
 			graphQLCodeRegistryBuilder.dataFetcher(
 				FieldCoordinates.coordinates(namespace, getName),
@@ -1274,7 +1289,7 @@ public class GraphQLServletExtender {
 			_addField(
 				graphQLObjectType, updateName,
 				_addGraphQLArgument(graphQLInputType, resourceName),
-				_addGraphQLArgument(Scalars.GraphQLLong, idName)));
+				_addGraphQLArgument(ExtendedScalars.GraphQLLong, idName)));
 
 		graphQLSchemaBuilder.codeRegistry(
 			graphQLCodeRegistryBuilder.dataFetcher(
@@ -1345,7 +1360,7 @@ public class GraphQLServletExtender {
 			).build());
 	}
 
-	private void _registerInterfaces(
+	private GraphQLInterfaceType _registerInterfaces(
 		GraphQLSchema.Builder graphQLSchemaBuilder,
 		ProcessingElementsContainer processingElementsContainer,
 		GraphQLObjectType.Builder queryGraphQLObjectTypeBuilder) {
@@ -1373,33 +1388,7 @@ public class GraphQLServletExtender {
 					"GraphQLNode", new GraphQLNodeTypeResolver()
 				).build());
 
-			for (Map.Entry<String, GraphQLType> entry :
-					graphQLTypes.entrySet()) {
-
-				GraphQLType graphQLType = entry.getValue();
-
-				if (graphQLType instanceof GraphQLObjectType) {
-					GraphQLObjectType graphQLObjectType =
-						(GraphQLObjectType)graphQLType;
-
-					GraphQLFieldDefinition graphQLFieldDefinition =
-						graphQLObjectType.getFieldDefinition("id");
-
-					if ((graphQLFieldDefinition == null) ||
-						(graphQLFieldDefinition.getType() !=
-							Scalars.GraphQLLong)) {
-
-						continue;
-					}
-
-					_replaceFieldDefinition(
-						graphQLInterfaceType, graphQLObjectType);
-					_replaceFieldNodes(
-						graphQLCodeRegistryBuilder, graphQLInterfaceType,
-						graphQLObjectType, graphQLSchemaBuilder);
-					_replaceInterface(graphQLInterfaceType, graphQLObjectType);
-				}
-			}
+			return graphQLInterfaceType;
 		}
 		catch (Exception exception) {
 			throw new RuntimeException(exception);
@@ -1420,6 +1409,24 @@ public class GraphQLServletExtender {
 				continue;
 			}
 
+			Object query = function.apply(servletData);
+
+			Class<?> clazz = query.getClass();
+
+			List<Method> methods = TransformUtil.transformToList(
+				clazz.getMethods(),
+				method -> {
+					if (_isMethodEnabled(method, servletData.getPath())) {
+						return method;
+					}
+
+					return null;
+				});
+
+			if (ListUtil.isEmpty(methods)) {
+				continue;
+			}
+
 			GraphQLObjectType.Builder builder = new GraphQLObjectType.Builder();
 
 			String prefix = "";
@@ -1434,17 +1441,7 @@ public class GraphQLServletExtender {
 			GraphQLCodeRegistry.Builder graphQLCodeRegistryBuilder =
 				processingElementsContainer.getCodeRegistryBuilder();
 
-			Object query = function.apply(servletData);
-
-			Class<?> clazz = query.getClass();
-
-			Method[] methods = clazz.getMethods();
-
 			for (Method method : methods) {
-				if (!_isMethodEnabled(method, servletData.getPath())) {
-					continue;
-				}
-
 				builder.field(
 					_graphQLFieldRetriever.getField(
 						clazz.getSimpleName(), method,
@@ -1477,14 +1474,9 @@ public class GraphQLServletExtender {
 	}
 
 	private void _replaceFieldDefinition(
-			GraphQLInterfaceType graphQLInterfaceType,
-			GraphQLObjectType graphQLObjectType)
-		throws Exception {
-
-		Field field = _getFieldDefinitionsByNameField(graphQLObjectType);
-
-		Map<String, GraphQLFieldDefinition> graphQLFieldDefinitions =
-			(Map<String, GraphQLFieldDefinition>)field.get(graphQLObjectType);
+		GraphQLInterfaceType graphQLInterfaceType,
+		GraphQLObjectType graphQLObjectType,
+		GraphQLObjectType.Builder graphQLObjectTypeBuilder) {
 
 		for (GraphQLFieldDefinition graphQLFieldDefinition :
 				graphQLObjectType.getFieldDefinitions()) {
@@ -1492,35 +1484,29 @@ public class GraphQLServletExtender {
 			GraphQLOutputType graphQLOutputType =
 				graphQLFieldDefinition.getType();
 
-			String typeName = graphQLOutputType.getName();
+			String typeName = GraphQLTypeUtil.simplePrint(graphQLOutputType);
 
 			if ((typeName != null) && typeName.equals("Object") &&
 				StringUtil.endsWith(graphQLFieldDefinition.getName(), "Id")) {
 
-				Class<? extends GraphQLFieldDefinition> fieldClass =
-					graphQLFieldDefinition.getClass();
+				GraphQLFieldDefinition.Builder
+					newGraphQLFieldDefinitionBuilder =
+						GraphQLFieldDefinition.newFieldDefinition(
+							graphQLFieldDefinition);
 
-				Method method = fieldClass.getDeclaredMethod(
-					"replaceType", GraphQLOutputType.class);
-
-				method.setAccessible(true);
-
-				method.invoke(graphQLFieldDefinition, graphQLInterfaceType);
-
-				graphQLFieldDefinitions.put(
-					graphQLFieldDefinition.getName(), graphQLFieldDefinition);
+				graphQLObjectTypeBuilder.field(
+					newGraphQLFieldDefinitionBuilder.type(
+						graphQLInterfaceType
+					).build());
 			}
 		}
-
-		field.set(graphQLObjectType, graphQLFieldDefinitions);
 	}
 
 	private void _replaceFieldNodes(
-			GraphQLCodeRegistry.Builder graphQLCodeRegistryBuilder,
-			GraphQLInterfaceType graphQLInterfaceType,
-			GraphQLObjectType graphQLObjectType,
-			GraphQLSchema.Builder graphQLSchemaBuilder)
-		throws Exception {
+		GraphQLCodeRegistry.Builder graphQLCodeRegistryBuilder,
+		GraphQLInterfaceType graphQLInterfaceType,
+		GraphQLObjectType graphQLObjectType,
+		GraphQLObjectType.Builder graphQLObjectTypeBuilder) {
 
 		GraphQLFieldDefinition graphQLFieldDefinition =
 			graphQLObjectType.getFieldDefinition("contentType");
@@ -1529,40 +1515,23 @@ public class GraphQLServletExtender {
 			return;
 		}
 
-		Field field = _getFieldDefinitionsByNameField(graphQLObjectType);
+		GraphQLFieldDefinition.Builder graphQLFieldDefinitionBuilder =
+			GraphQLFieldDefinition.newFieldDefinition(
+			).name(
+				"graphQLNode"
+			).type(
+				graphQLInterfaceType
+			);
 
-		Map<String, GraphQLFieldDefinition> graphQLFieldDefinitions =
-			(Map<String, GraphQLFieldDefinition>)field.get(graphQLObjectType);
+		graphQLObjectTypeBuilder.field(graphQLFieldDefinitionBuilder.build());
 
-		graphQLFieldDefinitions.put(
-			"graphQLNode", _addField(graphQLInterfaceType, "graphQLNode"));
-
-		graphQLSchemaBuilder.codeRegistry(
-			graphQLCodeRegistryBuilder.dataFetcher(
-				FieldCoordinates.coordinates(
-					graphQLObjectType.getName(), "graphQLNode"),
-				new GraphQLNodePropertyDataFetcher()
-			).typeResolver(
-				"GraphQLNode", new GraphQLNodeTypeResolver()
-			).build());
-
-		field.set(graphQLObjectType, graphQLFieldDefinitions);
-	}
-
-	private void _replaceInterface(
-			GraphQLInterfaceType graphQLInterfaceType,
-			GraphQLObjectType graphQLObjectType)
-		throws Exception {
-
-		Class<? extends GraphQLObjectType> clazz = graphQLObjectType.getClass();
-
-		Method method = clazz.getDeclaredMethod(
-			"replaceInterfaces", List.class);
-
-		method.setAccessible(true);
-
-		method.invoke(
-			graphQLObjectType, Collections.singletonList(graphQLInterfaceType));
+		graphQLCodeRegistryBuilder.dataFetcher(
+			FieldCoordinates.coordinates(
+				graphQLObjectType.getName(), "graphQLNode"),
+			new GraphQLNodePropertyDataFetcher()
+		).typeResolver(
+			"GraphQLNode", new GraphQLNodeTypeResolver()
+		).build();
 	}
 
 	private GraphQLType _toGraphQLType(
@@ -1578,7 +1547,7 @@ public class GraphQLServletExtender {
 			return Scalars.GraphQLInt;
 		}
 		else if (Long.class.equals(clazz)) {
-			return Scalars.GraphQLLong;
+			return ExtendedScalars.GraphQLLong;
 		}
 		else if (Map.class.equals(clazz)) {
 			return _mapGraphQLScalarType;
@@ -1803,24 +1772,12 @@ public class GraphQLServletExtender {
 	private DefaultTypeFunction _defaultTypeFunction;
 
 	@Reference
-	private DepotEntryLocalService _depotEntryLocalService;
-
-	@Reference
-	private DTOConverterRegistry _dtoConverterRegistry;
-
-	@Reference
 	private GraphQLDTOContributorDataFetchingProcessor
 		_graphQLDTOContributorDataFetchingProcessor;
 
 	private ServiceTrackerMap<String, GraphQLDTOContributor>
 		_graphQLDTOContributorServiceTrackerMap;
 	private GraphQLFieldRetriever _graphQLFieldRetriever;
-
-	@Reference
-	private GroupLocalService _groupLocalService;
-
-	@Reference
-	private Language _language;
 
 	@Reference
 	private LiferayMethodDataFetchingProcessor
@@ -1830,10 +1787,6 @@ public class GraphQLServletExtender {
 	private Portal _portal;
 
 	private final Map<String, String> _registeredClassNames = new HashMap<>();
-
-	@Reference
-	private RoleLocalService _roleLocalService;
-
 	private ServiceRegistration<ServletContextHelper>
 		_servletContextHelperServiceRegistration;
 	private final List<ServletData> _servletDataList = new ArrayList<>();
@@ -1877,7 +1830,8 @@ public class GraphQLServletExtender {
 			GraphQLCodeRegistry graphQLCodeRegistry =
 				graphQLSchema.getCodeRegistry();
 
-			Map<String, GraphQLType> graphQLTypes = graphQLSchema.getTypeMap();
+			Map<String, GraphQLNamedType> graphQLNamedTypes =
+				graphQLSchema.getTypeMap();
 
 			Object source = dataFetchingEnvironment.getSource();
 
@@ -1892,7 +1846,7 @@ public class GraphQLServletExtender {
 				dataFetchingEnvironment.getFieldDefinition();
 
 			DataFetcher<?> dataFetcher = graphQLCodeRegistry.getDataFetcher(
-				(GraphQLFieldsContainer)graphQLTypes.get("query"),
+				(GraphQLFieldsContainer)graphQLNamedTypes.get("query"),
 				_addField(graphQLFieldDefinition.getType(), fieldName));
 
 			DataFetchingEnvironmentImpl.Builder dataFetchingEnvironmentBuilder =
@@ -1928,12 +1882,13 @@ public class GraphQLServletExtender {
 
 			GraphQLSchema graphQLSchema = typeResolutionEnvironment.getSchema();
 
-			Map<String, GraphQLType> graphQLTypes = graphQLSchema.getTypeMap();
+			Map<String, GraphQLNamedType> graphQLNamedTypes =
+				graphQLSchema.getTypeMap();
 
-			GraphQLType graphQLType = graphQLTypes.get(
+			GraphQLNamedType graphQLNamedType = graphQLNamedTypes.get(
 				_getClassName(typeResolutionEnvironment.getObject()));
 
-			return (GraphQLObjectType)graphQLType;
+			return (GraphQLObjectType)graphQLNamedType;
 		}
 
 		private String _getClassName(Object object) {
@@ -2005,8 +1960,6 @@ public class GraphQLServletExtender {
 				Parameter parameter, GraphQLInputType graphQLInputType)
 			throws GraphQLAnnotationsException {
 
-			DirectiveWirer directiveWirer = new DirectiveWirer();
-
 			GraphQLArgument.Builder graphQLArgumentBuilder =
 				GraphQLArgument.newArgument();
 
@@ -2028,15 +1981,7 @@ public class GraphQLServletExtender {
 
 			graphQLArgumentBuilder.withDirectives(directivesBuilder.build());
 
-			DirectiveWiringMapRetriever directiveWiringMapRetriever =
-				new DirectiveWiringMapRetriever();
-
-			return (GraphQLArgument)directiveWirer.wire(
-				graphQLArgumentBuilder.build(),
-				directiveWiringMapRetriever.getDirectiveWiringMap(
-					parameter, _processingElementsContainer),
-				_processingElementsContainer.getCodeRegistryBuilder(),
-				graphQLInputType.getName());
+			return graphQLArgumentBuilder.build();
 		}
 
 		private final Method _method;
@@ -2248,12 +2193,13 @@ public class GraphQLServletExtender {
 			DataFetchingEnvironment dataFetchingEnvironment,
 			GraphQLSchema graphQLSchema) {
 
-			Map<String, GraphQLType> graphQLTypes = graphQLSchema.getTypeMap();
+			Map<String, GraphQLNamedType> graphQLNamedTypes =
+				graphQLSchema.getTypeMap();
 
-			GraphQLType graphQLType = graphQLTypes.get(
+			GraphQLNamedType graphQLNamedType = graphQLNamedTypes.get(
 				dataFetchingEnvironment.getArgument("dataType"));
 
-			return StringUtil.lowerCaseFirstLetter(graphQLType.getName());
+			return StringUtil.lowerCaseFirstLetter(graphQLNamedType.getName());
 		}
 
 	}
@@ -2388,6 +2334,51 @@ public class GraphQLServletExtender {
 
 			return graphQLFieldDefinitionBuilder.build();
 		}
+
+	}
+
+	private class LiferayGraphQLTypeVisitor extends GraphQLTypeVisitorStub {
+
+		public LiferayGraphQLTypeVisitor(
+			GraphQLInterfaceType graphQLInterfaceType) {
+
+			_graphQLInterfaceType = graphQLInterfaceType;
+		}
+
+		@Override
+		public TraversalControl visitGraphQLObjectType(
+			GraphQLObjectType graphQLObjectType,
+			TraverserContext<GraphQLSchemaElement> traverserContext) {
+
+			GraphQLFieldDefinition idGraphQLFieldDefinition =
+				graphQLObjectType.getFieldDefinition("id");
+
+			if ((idGraphQLFieldDefinition == null) ||
+				(idGraphQLFieldDefinition.getType() !=
+					ExtendedScalars.GraphQLLong)) {
+
+				return TraversalControl.CONTINUE;
+			}
+
+			return changeNode(
+				traverserContext,
+				graphQLObjectType.transform(
+					graphQLObjectTypeBuilder -> {
+						_replaceFieldDefinition(
+							_graphQLInterfaceType, graphQLObjectType,
+							graphQLObjectTypeBuilder);
+						_replaceFieldNodes(
+							traverserContext.getVarFromParents(
+								GraphQLCodeRegistry.Builder.class),
+							_graphQLInterfaceType, graphQLObjectType,
+							graphQLObjectTypeBuilder);
+
+						graphQLObjectTypeBuilder.withInterface(
+							_graphQLInterfaceType);
+					}));
+		}
+
+		private final GraphQLInterfaceType _graphQLInterfaceType;
 
 	}
 

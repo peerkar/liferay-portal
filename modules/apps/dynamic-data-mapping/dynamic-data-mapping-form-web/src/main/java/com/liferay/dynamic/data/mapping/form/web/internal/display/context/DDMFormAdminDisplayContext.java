@@ -564,13 +564,17 @@ public class DDMFormAdminDisplayContext {
 	public String getDefaultLanguageId() {
 		String defaultLanguageId = _getFormBuilderContextDefaultLanguageId();
 
-		if (defaultLanguageId != null) {
+		if ((defaultLanguageId != null) &&
+			LanguageUtil.isAvailableLocale(defaultLanguageId)) {
+
 			return defaultLanguageId;
 		}
 
 		defaultLanguageId = _getFormDefaultLanguageId();
 
-		if (defaultLanguageId != null) {
+		if ((defaultLanguageId != null) &&
+			LanguageUtil.isAvailableLocale(defaultLanguageId)) {
+
 			return defaultLanguageId;
 		}
 
@@ -1274,6 +1278,19 @@ public class DDMFormAdminDisplayContext {
 		}
 
 		return true;
+	}
+
+	public boolean isDisplayChartAsTable() throws PortalException {
+		DDMFormInstance ddmFormInstance = getDDMFormInstance();
+
+		if (ddmFormInstance == null) {
+			return false;
+		}
+
+		DDMFormInstanceSettings ddmFormInstanceSettings =
+			ddmFormInstance.getSettingsModel();
+
+		return ddmFormInstanceSettings.displayChartAsTable();
 	}
 
 	public boolean isFormPublished() throws PortalException {

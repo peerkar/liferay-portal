@@ -19,8 +19,6 @@
 <%
 AccountEntryDisplay accountEntryDisplay = (AccountEntryDisplay)request.getAttribute(AccountWebKeys.ACCOUNT_ENTRY_DISPLAY);
 
-List<String> domains = accountEntryDisplay.getDomains();
-
 boolean allowUpdateDomains = AccountEntryPermission.contains(permissionChecker, accountEntryDisplay.getAccountEntryId(), AccountActionKeys.MANAGE_DOMAINS);
 %>
 
@@ -67,7 +65,7 @@ boolean allowUpdateDomains = AccountEntryPermission.contains(permissionChecker, 
 		</c:if>
 	</clay:content-row>
 
-	<aui:input name="domains" type="hidden" value="<%= StringUtil.merge(domains) %>" />
+	<aui:input name="domains" type="hidden" value="<%= accountEntryDisplay.getDomains() %>" />
 
 	<liferay-ui:search-container
 		compactEmptyResultsMessage="<%= true %>"
@@ -75,11 +73,11 @@ boolean allowUpdateDomains = AccountEntryPermission.contains(permissionChecker, 
 		headerNames="title,null"
 		id="accountDomainsSearchContainer"
 		iteratorURL="<%= currentURLObj %>"
-		total="<%= domains.size() %>"
+		total="<%= ArrayUtil.getLength(accountEntryDisplay.getDomainsArray()) %>"
 	>
 		<liferay-ui:search-container-results
 			calculateStartAndEnd="<%= true %>"
-			results="<%= domains %>"
+			results="<%= ListUtil.fromArray(accountEntryDisplay.getDomainsArray()) %>"
 		/>
 
 		<liferay-ui:search-container-row
@@ -103,6 +101,12 @@ boolean allowUpdateDomains = AccountEntryPermission.contains(permissionChecker, 
 			markupView="lexicon"
 		/>
 	</liferay-ui:search-container>
+
+	<c:if test="<%= allowUpdateDomains %>">
+		<aui:field-wrapper cssClass="form-group lfr-input-text-container">
+			<aui:input label="restrict-membership-to-domains" labelOff="not-restricted" labelOn="restricted" name="restrictMembership" type="toggle-switch" value="<%= accountEntryDisplay.isRestrictMembership() %>" />
+		</aui:field-wrapper>
+	</c:if>
 </clay:sheet-section>
 
 <c:if test="<%= allowUpdateDomains %>">

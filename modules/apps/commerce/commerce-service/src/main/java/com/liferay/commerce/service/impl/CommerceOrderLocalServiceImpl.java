@@ -31,15 +31,9 @@ import com.liferay.commerce.discount.service.CommerceDiscountLocalService;
 import com.liferay.commerce.discount.service.CommerceDiscountUsageEntryLocalService;
 import com.liferay.commerce.discount.validator.helper.CommerceDiscountValidatorHelper;
 import com.liferay.commerce.exception.CommerceOrderAccountLimitException;
-import com.liferay.commerce.exception.CommerceOrderBillingAddressException;
 import com.liferay.commerce.exception.CommerceOrderDateException;
-import com.liferay.commerce.exception.CommerceOrderPaymentMethodException;
 import com.liferay.commerce.exception.CommerceOrderPurchaseOrderNumberException;
 import com.liferay.commerce.exception.CommerceOrderRequestedDeliveryDateException;
-import com.liferay.commerce.exception.CommerceOrderShippingAddressException;
-import com.liferay.commerce.exception.CommerceOrderShippingMethodException;
-import com.liferay.commerce.exception.CommerceOrderStatusException;
-import com.liferay.commerce.exception.CommercePaymentEngineException;
 import com.liferay.commerce.exception.GuestCartMaxAllowedException;
 import com.liferay.commerce.internal.order.comparator.CommerceOrderModifiedDateComparator;
 import com.liferay.commerce.model.CommerceAddress;
@@ -54,7 +48,6 @@ import com.liferay.commerce.price.CommerceOrderPriceCalculation;
 import com.liferay.commerce.product.model.CommerceChannel;
 import com.liferay.commerce.product.service.CommerceChannelLocalService;
 import com.liferay.commerce.product.util.JsonHelper;
-import com.liferay.commerce.search.facet.NegatableMultiValueFacet;
 import com.liferay.commerce.service.CommerceAddressLocalService;
 import com.liferay.commerce.service.CommerceOrderItemLocalService;
 import com.liferay.commerce.service.CommerceOrderNoteLocalService;
@@ -110,8 +103,6 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.StackTraceUtil;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
@@ -209,7 +200,7 @@ public class CommerceOrderLocalServiceImpl
 
 		// Check approval workflow
 
-		if (hasWorkflowDefinition(
+		if (_hasWorkflowDefinition(
 				groupId, CommerceOrderConstants.TYPE_PK_APPROVAL)) {
 
 			serviceContext.setWorkflowAction(
@@ -220,8 +211,8 @@ public class CommerceOrderLocalServiceImpl
 
 		// Commerce order
 
-		validateAccountOrdersLimit(groupId, commerceAccountId);
-		validateGuestOrders();
+		_validateAccountOrdersLimit(groupId, commerceAccountId);
+		_validateGuestOrders();
 
 		if (commerceCurrencyId <= 0) {
 			CommerceCurrency commerceCurrency =
@@ -649,7 +640,7 @@ public class CommerceOrderLocalServiceImpl
 			int start, int end)
 		throws PortalException {
 
-		SearchContext searchContext = buildSearchContext(
+		SearchContext searchContext = _buildSearchContext(
 			companyId, groupId, commerceAccountIds, keywords,
 			excludeOrderStatus, orderStatuses, start, end);
 
@@ -708,7 +699,7 @@ public class CommerceOrderLocalServiceImpl
 			String keywords, int[] orderStatuses, boolean excludeOrderStatus)
 		throws PortalException {
 
-		SearchContext searchContext = buildSearchContext(
+		SearchContext searchContext = _buildSearchContext(
 			companyId, groupId, commerceAccountIds, keywords,
 			excludeOrderStatus, orderStatuses, QueryUtil.ALL_POS,
 			QueryUtil.ALL_POS);
@@ -932,7 +923,7 @@ public class CommerceOrderLocalServiceImpl
 		long billingAddressId = 0;
 		long shippingAddressId = 0;
 
-		CommerceAddress billingAddress = getNewCommerceAddress(
+		CommerceAddress billingAddress = _getNewCommerceAddress(
 			commerceOrder, commerceOrder.getBillingAddress(), serviceContext);
 
 		CommerceAddress shippingAddress = billingAddress;
@@ -940,7 +931,7 @@ public class CommerceOrderLocalServiceImpl
 		if (commerceOrder.getBillingAddressId() !=
 				commerceOrder.getShippingAddressId()) {
 
-			shippingAddress = getNewCommerceAddress(
+			shippingAddress = _getNewCommerceAddress(
 				commerceOrder, commerceOrder.getShippingAddress(),
 				serviceContext);
 		}
@@ -1061,7 +1052,7 @@ public class CommerceOrderLocalServiceImpl
 		for (int i = 0; i < 10; i++) {
 			Hits hits = indexer.search(searchContext);
 
-			List<CommerceOrder> commerceOrders = getCommerceOrders(hits);
+			List<CommerceOrder> commerceOrders = _getCommerceOrders(hits);
 
 			if (commerceOrders != null) {
 				return new BaseModelSearchResult<>(
@@ -1124,7 +1115,7 @@ public class CommerceOrderLocalServiceImpl
 			ServiceContext serviceContext)
 		throws PortalException {
 
-		return updateAddress(
+		return _updateAddress(
 			commerceOrderId, name, description, street1, street2, street3, city,
 			zip, regionId, countryId, phoneNumber,
 			CommerceOrder::getBillingAddressId,
@@ -1560,7 +1551,7 @@ public class CommerceOrderLocalServiceImpl
 
 		// Messaging
 
-		sendPaymentStatusMessage(commerceOrder, previousPaymentStatus);
+		_sendPaymentStatusMessage(commerceOrder, previousPaymentStatus);
 
 		return commerceOrder;
 	}
@@ -1588,7 +1579,7 @@ public class CommerceOrderLocalServiceImpl
 		CommerceOrder commerceOrder = commerceOrderPersistence.findByPrimaryKey(
 			commerceOrderId);
 
-		validatePurchaseOrderNumber(purchaseOrderNumber);
+		_validatePurchaseOrderNumber(purchaseOrderNumber);
 
 		commerceOrder.setPurchaseOrderNumber(purchaseOrderNumber);
 
@@ -1618,7 +1609,7 @@ public class CommerceOrderLocalServiceImpl
 			ServiceContext serviceContext)
 		throws PortalException {
 
-		return updateAddress(
+		return _updateAddress(
 			commerceOrderId, name, description, street1, street2, street3, city,
 			zip, regionId, countryId, phoneNumber,
 			CommerceOrder::getShippingAddressId,
@@ -1755,26 +1746,7 @@ public class CommerceOrderLocalServiceImpl
 		return commerceOrderPersistence.update(commerceOrder);
 	}
 
-	protected SearchContext addFacetOrderStatus(
-		boolean negated, int[] orderStatuses, SearchContext searchContext) {
-
-		NegatableMultiValueFacet negatableMultiValueFacet =
-			new NegatableMultiValueFacet(searchContext);
-
-		negatableMultiValueFacet.setFieldName("orderStatus");
-
-		searchContext.addFacet(negatableMultiValueFacet);
-
-		negatableMultiValueFacet.setNegated(negated);
-
-		searchContext.setAttribute(
-			negatableMultiValueFacet.getFieldId(),
-			StringUtil.merge(orderStatuses));
-
-		return searchContext;
-	}
-
-	protected SearchContext buildSearchContext(
+	private SearchContext _buildSearchContext(
 			long companyId, long commerceChannelGroupId,
 			long[] commerceAccountIds, String keywords, boolean negated,
 			int[] orderStatuses, int start, int end)
@@ -1810,13 +1782,7 @@ public class CommerceOrderLocalServiceImpl
 		return searchContext;
 	}
 
-	protected String getCommerceOrderPaymentContent(
-		CommercePaymentEngineException commercePaymentEngineException) {
-
-		return StackTraceUtil.getStackTrace(commercePaymentEngineException);
-	}
-
-	protected List<CommerceOrder> getCommerceOrders(Hits hits)
+	private List<CommerceOrder> _getCommerceOrders(Hits hits)
 		throws PortalException {
 
 		List<Document> documents = hits.toList();
@@ -1848,7 +1814,7 @@ public class CommerceOrderLocalServiceImpl
 		return commerceOrders;
 	}
 
-	protected CommerceAddress getNewCommerceAddress(
+	private CommerceAddress _getNewCommerceAddress(
 			CommerceOrder commerceOrder, CommerceAddress commerceAddress,
 			ServiceContext serviceContext)
 		throws PortalException {
@@ -1874,7 +1840,7 @@ public class CommerceOrderLocalServiceImpl
 			serviceContext);
 	}
 
-	protected boolean hasWorkflowDefinition(long groupId, long typePK)
+	private boolean _hasWorkflowDefinition(long groupId, long typePK)
 		throws PortalException {
 
 		Group group = _groupLocalService.fetchGroup(groupId);
@@ -1888,7 +1854,7 @@ public class CommerceOrderLocalServiceImpl
 			CommerceOrder.class.getName(), 0, typePK);
 	}
 
-	protected void sendPaymentStatusMessage(
+	private void _sendPaymentStatusMessage(
 		CommerceOrder commerceOrder, int previousPaymentStatus) {
 
 		TransactionCommitCallbackUtil.registerCallback(
@@ -1925,141 +1891,6 @@ public class CommerceOrderLocalServiceImpl
 
 				return null;
 			});
-	}
-
-	protected CommerceOrder updateAddress(
-			long commerceOrderId, String name, String description,
-			String street1, String street2, String street3, String city,
-			String zip, long regionId, long countryId, String phoneNumber,
-			Function<CommerceOrder, Long> commerceAddressIdGetter,
-			BiConsumer<CommerceOrder, Long> commerceAddressIdSetter,
-			ServiceContext serviceContext)
-		throws PortalException {
-
-		CommerceOrder commerceOrder = commerceOrderPersistence.findByPrimaryKey(
-			commerceOrderId);
-
-		CommerceAddress commerceAddress = null;
-
-		long commerceAddressId = commerceAddressIdGetter.apply(commerceOrder);
-
-		if (commerceAddressId > 0) {
-			commerceAddress =
-				_commerceAddressLocalService.updateCommerceAddress(
-					commerceAddressId, name, description, street1, street2,
-					street3, city, zip, regionId, countryId, phoneNumber, false,
-					false, serviceContext);
-		}
-		else {
-			commerceAddress = _commerceAddressLocalService.addCommerceAddress(
-				commerceOrder.getModelClassName(),
-				commerceOrder.getCommerceOrderId(), name, description, street1,
-				street2, street3, city, zip, regionId, countryId, phoneNumber,
-				false, false, serviceContext);
-		}
-
-		commerceAddressIdSetter.accept(
-			commerceOrder, commerceAddress.getCommerceAddressId());
-
-		return commerceOrderPersistence.update(commerceOrder);
-	}
-
-	protected void validateAccountOrdersLimit(
-			long commerceChannelGroupId, long commerceAccountId)
-		throws PortalException {
-
-		Group group = _groupLocalService.getGroup(commerceChannelGroupId);
-
-		int pendingCommerceOrdersCount =
-			(int)commerceOrderLocalService.getCommerceOrdersCount(
-				group.getCompanyId(), commerceChannelGroupId,
-				new long[] {commerceAccountId}, StringPool.BLANK,
-				new int[] {CommerceOrderConstants.ORDER_STATUS_OPEN}, false);
-
-		CommerceOrderFieldsConfiguration commerceOrderFieldsConfiguration =
-			_configurationProvider.getConfiguration(
-				CommerceOrderFieldsConfiguration.class,
-				new GroupServiceSettingsLocator(
-					commerceChannelGroupId,
-					CommerceConstants.SERVICE_NAME_COMMERCE_ORDER_FIELDS));
-
-		if ((commerceOrderFieldsConfiguration.accountCartMaxAllowed() > 0) &&
-			(pendingCommerceOrdersCount >=
-				commerceOrderFieldsConfiguration.accountCartMaxAllowed())) {
-
-			throw new CommerceOrderAccountLimitException(
-				"The account carts limit was reached");
-		}
-	}
-
-	protected void validateCheckout(CommerceOrder commerceOrder)
-		throws PortalException {
-
-		if (commerceOrder.isDraft() ||
-			(!commerceOrder.isOpen() && !commerceOrder.isSubscription())) {
-
-			throw new CommerceOrderStatusException();
-		}
-
-		if (commerceOrder.isB2B() &&
-			(commerceOrder.getBillingAddressId() <= 0)) {
-
-			throw new CommerceOrderBillingAddressException();
-		}
-
-		CommerceShippingMethod commerceShippingMethod = null;
-
-		long commerceShippingMethodId =
-			commerceOrder.getCommerceShippingMethodId();
-
-		if (commerceShippingMethodId > 0) {
-			commerceShippingMethod =
-				_commerceShippingMethodLocalService.getCommerceShippingMethod(
-					commerceShippingMethodId);
-
-			if (!commerceShippingMethod.isActive()) {
-				commerceShippingMethod = null;
-			}
-			else if (commerceOrder.getShippingAddressId() <= 0) {
-				throw new CommerceOrderShippingAddressException();
-			}
-		}
-
-		int count =
-			_commerceShippingMethodLocalService.getCommerceShippingMethodsCount(
-				commerceOrder.getGroupId(), true);
-
-		if ((commerceShippingMethod == null) && (count > 0) &&
-			_commerceShippingHelper.isShippable(commerceOrder)) {
-
-			throw new CommerceOrderShippingMethodException();
-		}
-
-		BigDecimal subtotal = commerceOrder.getSubtotal();
-
-		if (commerceOrder.isSubscriptionOrder() &&
-			Validator.isNull(commerceOrder.getCommercePaymentMethodKey()) &&
-			(subtotal.compareTo(BigDecimal.ZERO) > 0)) {
-
-			throw new CommerceOrderPaymentMethodException();
-		}
-	}
-
-	protected void validateGuestOrders() throws PortalException {
-		int count = commerceOrderPersistence.countByUserId(
-			UserConstants.USER_ID_DEFAULT);
-
-		if (count >= _commerceOrderConfiguration.guestCartMaxAllowed()) {
-			throw new GuestCartMaxAllowedException();
-		}
-	}
-
-	protected void validatePurchaseOrderNumber(String purchaseOrderNumber)
-		throws PortalException {
-
-		if (Validator.isNull(purchaseOrderNumber)) {
-			throw new CommerceOrderPurchaseOrderNumberException();
-		}
 	}
 
 	private void _setCommerceOrderPrices(
@@ -2282,6 +2113,43 @@ public class CommerceOrderLocalServiceImpl
 		}
 	}
 
+	private CommerceOrder _updateAddress(
+			long commerceOrderId, String name, String description,
+			String street1, String street2, String street3, String city,
+			String zip, long regionId, long countryId, String phoneNumber,
+			Function<CommerceOrder, Long> commerceAddressIdGetter,
+			BiConsumer<CommerceOrder, Long> commerceAddressIdSetter,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		CommerceOrder commerceOrder = commerceOrderPersistence.findByPrimaryKey(
+			commerceOrderId);
+
+		CommerceAddress commerceAddress = null;
+
+		long commerceAddressId = commerceAddressIdGetter.apply(commerceOrder);
+
+		if (commerceAddressId > 0) {
+			commerceAddress =
+				_commerceAddressLocalService.updateCommerceAddress(
+					commerceAddressId, name, description, street1, street2,
+					street3, city, zip, regionId, countryId, phoneNumber, false,
+					false, serviceContext);
+		}
+		else {
+			commerceAddress = _commerceAddressLocalService.addCommerceAddress(
+				commerceOrder.getModelClassName(),
+				commerceOrder.getCommerceOrderId(), name, description, street1,
+				street2, street3, city, zip, regionId, countryId, phoneNumber,
+				false, false, serviceContext);
+		}
+
+		commerceAddressIdSetter.accept(
+			commerceOrder, commerceAddress.getCommerceAddressId());
+
+		return commerceOrderPersistence.update(commerceOrder);
+	}
+
 	private void _updateCommerceOrderAddresses(
 			List<CommerceOrder> commerceOrders, long addressId)
 		throws PortalException {
@@ -2315,6 +2183,51 @@ public class CommerceOrderLocalServiceImpl
 				commerceOrder.getPurchaseOrderNumber(), shippingPrice,
 				shippingOptionName, commerceOrder.getSubtotal(),
 				commerceOrder.getTotal(), null);
+		}
+	}
+
+	private void _validateAccountOrdersLimit(
+			long commerceChannelGroupId, long commerceAccountId)
+		throws PortalException {
+
+		Group group = _groupLocalService.getGroup(commerceChannelGroupId);
+
+		int pendingCommerceOrdersCount =
+			(int)commerceOrderLocalService.getCommerceOrdersCount(
+				group.getCompanyId(), commerceChannelGroupId,
+				new long[] {commerceAccountId}, StringPool.BLANK,
+				new int[] {CommerceOrderConstants.ORDER_STATUS_OPEN}, false);
+
+		CommerceOrderFieldsConfiguration commerceOrderFieldsConfiguration =
+			_configurationProvider.getConfiguration(
+				CommerceOrderFieldsConfiguration.class,
+				new GroupServiceSettingsLocator(
+					commerceChannelGroupId,
+					CommerceConstants.SERVICE_NAME_COMMERCE_ORDER_FIELDS));
+
+		if ((commerceOrderFieldsConfiguration.accountCartMaxAllowed() > 0) &&
+			(pendingCommerceOrdersCount >=
+				commerceOrderFieldsConfiguration.accountCartMaxAllowed())) {
+
+			throw new CommerceOrderAccountLimitException(
+				"The account carts limit was reached");
+		}
+	}
+
+	private void _validateGuestOrders() throws PortalException {
+		int count = commerceOrderPersistence.countByUserId(
+			UserConstants.USER_ID_DEFAULT);
+
+		if (count >= _commerceOrderConfiguration.guestCartMaxAllowed()) {
+			throw new GuestCartMaxAllowedException();
+		}
+	}
+
+	private void _validatePurchaseOrderNumber(String purchaseOrderNumber)
+		throws PortalException {
+
+		if (Validator.isNull(purchaseOrderNumber)) {
+			throw new CommerceOrderPurchaseOrderNumberException();
 		}
 	}
 

@@ -26,7 +26,6 @@ import com.liferay.fragment.renderer.FragmentRenderer;
 import com.liferay.fragment.renderer.FragmentRendererController;
 import com.liferay.fragment.renderer.FragmentRendererTracker;
 import com.liferay.fragment.renderer.constants.FragmentRendererConstants;
-import com.liferay.fragment.service.FragmentEntryLinkLocalService;
 import com.liferay.fragment.service.FragmentEntryLocalService;
 import com.liferay.fragment.util.configuration.FragmentEntryConfigurationParser;
 import com.liferay.info.exception.NoSuchFormVariationException;
@@ -35,7 +34,6 @@ import com.liferay.info.item.InfoItemServiceTracker;
 import com.liferay.info.item.provider.InfoItemFormProvider;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.layout.content.page.editor.web.internal.comment.CommentUtil;
-import com.liferay.layout.service.LayoutClassedModelUsageLocalService;
 import com.liferay.layout.util.constants.LayoutDataItemTypeConstants;
 import com.liferay.layout.util.structure.FormStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.FragmentStyledLayoutStructureItem;
@@ -48,7 +46,7 @@ import com.liferay.portal.kernel.comment.CommentManager;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -75,7 +73,7 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Eudaldo Alonso
  */
-@Component(immediate = true, service = FragmentEntryLinkManager.class)
+@Component(service = FragmentEntryLinkManager.class)
 public class FragmentEntryLinkManager {
 
 	public FragmentEntry getFragmentEntry(
@@ -127,9 +125,8 @@ public class FragmentEntryLinkManager {
 				defaultFragmentRendererContext, httpServletRequest,
 				httpServletResponse);
 
-			JSONObject editableValuesJSONObject =
-				JSONFactoryUtil.createJSONObject(
-					fragmentEntryLink.getEditableValues());
+			JSONObject editableValuesJSONObject = _jsonFactory.createJSONObject(
+				fragmentEntryLink.getEditableValues());
 
 			if (fragmentEntryLink.isTypePortlet()) {
 				String portletId = editableValuesJSONObject.getString(
@@ -140,7 +137,7 @@ public class FragmentEntryLinkManager {
 					_getFragmentEntryLinkCommentsJSONArray(
 						fragmentEntryLink, httpServletRequest)
 				).put(
-					"configuration", JSONFactoryUtil.createJSONObject()
+					"configuration", _jsonFactory.createJSONObject()
 				).put(
 					"content", content
 				).put(
@@ -154,17 +151,21 @@ public class FragmentEntryLinkManager {
 											fragmentEntryLink.
 												getFragmentEntryLinkId());
 
-						return fragmentStyledLayoutStructureItem.
-							getFragmentEntryLinkCssClass(fragmentEntryLink);
+						if (fragmentStyledLayoutStructureItem != null) {
+							return fragmentStyledLayoutStructureItem.
+								getFragmentEntryLinkCssClass(fragmentEntryLink);
+						}
+
+						return null;
 					}
 				).put(
 					"defaultConfigurationValues",
-					JSONFactoryUtil.createJSONObject()
+					_jsonFactory.createJSONObject()
 				).put(
 					"editableTypes", Collections.emptyMap()
 				).put(
 					"editableValues",
-					JSONFactoryUtil.createJSONObject(
+					_jsonFactory.createJSONObject(
 						fragmentEntryLink.getEditableValues())
 				).put(
 					"fragmentEntryId", 0
@@ -193,8 +194,8 @@ public class FragmentEntryLinkManager {
 			String configuration = _fragmentRendererController.getConfiguration(
 				defaultFragmentRendererContext);
 
-			JSONObject configurationJSONObject =
-				JSONFactoryUtil.createJSONObject(configuration);
+			JSONObject configurationJSONObject = _jsonFactory.createJSONObject(
+				configuration);
 
 			FragmentEntryLinkItemSelectorUtil.
 				addFragmentEntryLinkFieldsSelectorURL(
@@ -222,8 +223,12 @@ public class FragmentEntryLinkManager {
 										fragmentEntryLink.
 											getFragmentEntryLinkId());
 
-					return fragmentStyledLayoutStructureItem.
-						getFragmentEntryLinkCssClass(fragmentEntryLink);
+					if (fragmentStyledLayoutStructureItem != null) {
+						return fragmentStyledLayoutStructureItem.
+							getFragmentEntryLinkCssClass(fragmentEntryLink);
+					}
+
+					return null;
 				}
 			).put(
 				"defaultConfigurationValues",
@@ -344,7 +349,7 @@ public class FragmentEntryLinkManager {
 		FragmentEntryLink fragmentEntryLink,
 		HttpServletRequest httpServletRequest) {
 
-		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+		JSONArray jsonArray = _jsonFactory.createJSONArray();
 
 		try {
 			if (!_commentManager.hasDiscussion(
@@ -370,7 +375,7 @@ public class FragmentEntryLinkManager {
 					QueryUtil.ALL_POS);
 
 				JSONArray childCommentsJSONArray =
-					JSONFactoryUtil.createJSONArray();
+					_jsonFactory.createJSONArray();
 
 				for (Comment childComment : childComments) {
 					childCommentsJSONArray.put(
@@ -468,9 +473,6 @@ public class FragmentEntryLinkManager {
 	private FragmentEntryLinkHelper _fragmentEntryLinkHelper;
 
 	@Reference
-	private FragmentEntryLinkLocalService _fragmentEntryLinkLocalService;
-
-	@Reference
 	private FragmentEntryLocalService _fragmentEntryLocalService;
 
 	@Reference
@@ -486,8 +488,7 @@ public class FragmentEntryLinkManager {
 	private ItemSelector _itemSelector;
 
 	@Reference
-	private LayoutClassedModelUsageLocalService
-		_layoutClassedModelUsageLocalService;
+	private JSONFactory _jsonFactory;
 
 	@Reference
 	private Portal _portal;

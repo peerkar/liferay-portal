@@ -19,14 +19,13 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import com.liferay.commerce.context.CommerceContextFactory;
 import com.liferay.commerce.country.CommerceCountryManager;
 import com.liferay.commerce.frontend.internal.address.model.CountryModel;
 import com.liferay.commerce.frontend.internal.address.model.RegionModel;
 import com.liferay.commerce.model.CommerceAddress;
 import com.liferay.commerce.service.CommerceAddressService;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Country;
@@ -53,7 +52,7 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Alessio Antonio Rendina
  */
-@Component(enabled = false, service = AddressResource.class)
+@Component(service = AddressResource.class)
 public class AddressResource {
 
 	@GET
@@ -68,7 +67,7 @@ public class AddressResource {
 
 			if (commerceAddress != null) {
 				String json = _OBJECT_MAPPER.writeValueAsString(
-					JSONFactoryUtil.looseSerialize(commerceAddress));
+					_jsonFactory.looseSerialize(commerceAddress));
 
 				return Response.ok(
 					json, MediaType.APPLICATION_JSON
@@ -196,13 +195,13 @@ public class AddressResource {
 	private CommerceAddressService _commerceAddressService;
 
 	@Reference
-	private CommerceContextFactory _commerceContextFactory;
-
-	@Reference
 	private CommerceCountryManager _commerceCountryManager;
 
 	@Reference
 	private CountryService _countryService;
+
+	@Reference
+	private JSONFactory _jsonFactory;
 
 	@Reference
 	private RegionService _regionService;

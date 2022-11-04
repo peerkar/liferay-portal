@@ -24,6 +24,7 @@ import com.liferay.headless.admin.user.dto.v1_0.UserAccount;
 import com.liferay.headless.admin.user.internal.dto.v1_0.converter.AccountResourceDTOConverter;
 import com.liferay.headless.admin.user.internal.dto.v1_0.converter.OrganizationResourceDTOConverter;
 import com.liferay.headless.admin.user.internal.dto.v1_0.converter.UserResourceDTOConverter;
+import com.liferay.headless.admin.user.internal.dto.v1_0.util.CustomFieldsUtil;
 import com.liferay.headless.admin.user.internal.dto.v1_0.util.ServiceBuilderAddressUtil;
 import com.liferay.headless.admin.user.internal.dto.v1_0.util.ServiceBuilderCountryUtil;
 import com.liferay.headless.admin.user.internal.dto.v1_0.util.ServiceBuilderEmailAddressUtil;
@@ -329,7 +330,7 @@ public class OrganizationResourceImpl
 				organization.getComment(), false, _getAddresses(organization),
 				_getEmailAddresses(organization), _getOrgLabors(organization),
 				_getPhones(organization), _getWebsites(organization),
-				ServiceContextFactory.getInstance(contextHttpServletRequest));
+				_createServiceContext(organization));
 
 		return _organizationResourceDTOConverter.toDTO(
 			_getDTOConverterContext(
@@ -420,12 +421,12 @@ public class OrganizationResourceImpl
 				_getDefaultParentOrganizationId(organization),
 				organization.getName(), serviceBuilderOrganization.getType(),
 				_getRegionId(organization, countryId), countryId,
-				serviceBuilderOrganization.getStatusId(),
+				serviceBuilderOrganization.getStatusListTypeId(),
 				organization.getComment(), false, null, group.isSite(),
 				_getAddresses(organization), _getEmailAddresses(organization),
 				_getOrgLabors(organization), _getPhones(organization),
 				_getWebsites(organization),
-				ServiceContextFactory.getInstance(contextHttpServletRequest)));
+				_createServiceContext(organization)));
 	}
 
 	@Override
@@ -446,11 +447,11 @@ public class OrganizationResourceImpl
 
 		long countryId = _getCountryId(organization);
 
-		long statusId = ListTypeConstants.ORGANIZATION_STATUS_DEFAULT;
+		long statusListTypeId = ListTypeConstants.ORGANIZATION_STATUS_DEFAULT;
 		boolean site = false;
 
 		if (serviceBuilderOrganization != null) {
-			statusId = serviceBuilderOrganization.getStatusId();
+			statusListTypeId = serviceBuilderOrganization.getStatusListTypeId();
 
 			Group group = serviceBuilderOrganization.getGroup();
 
@@ -462,12 +463,12 @@ public class OrganizationResourceImpl
 				externalReferenceCode,
 				_getDefaultParentOrganizationId(organization),
 				organization.getName(), type,
-				_getRegionId(organization, countryId), countryId, statusId,
-				organization.getComment(), false, null, site,
+				_getRegionId(organization, countryId), countryId,
+				statusListTypeId, organization.getComment(), false, null, site,
 				_getAddresses(organization), _getEmailAddresses(organization),
 				_getOrgLabors(organization), _getPhones(organization),
 				_getWebsites(organization),
-				ServiceContextFactory.getInstance(contextHttpServletRequest));
+				_createServiceContext(organization));
 
 		return _organizationResourceDTOConverter.toDTO(
 			_getDTOConverterContext(
@@ -525,6 +526,21 @@ public class OrganizationResourceImpl
 		if (organization.getServices() != null) {
 			existingOrganization.setServices(organization.getServices());
 		}
+	}
+
+	private ServiceContext _createServiceContext(Organization organization)
+		throws Exception {
+
+		ServiceContext serviceContext = ServiceContextFactory.getInstance(
+			contextHttpServletRequest);
+
+		serviceContext.setExpandoBridgeAttributes(
+			CustomFieldsUtil.toMap(
+				com.liferay.portal.kernel.model.Organization.class.getName(),
+				contextCompany.getCompanyId(), organization.getCustomFields(),
+				contextAcceptLanguage.getPreferredLocale()));
+
+		return serviceContext;
 	}
 
 	private List<Address> _getAddresses(Organization organization) {

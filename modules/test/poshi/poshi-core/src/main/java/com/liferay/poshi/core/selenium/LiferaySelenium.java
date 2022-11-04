@@ -60,6 +60,8 @@ public interface LiferaySelenium {
 
 	public void assertEditable(String locator) throws Exception;
 
+	public void assertElementAccessible(String locator) throws Exception;
+
 	public void assertElementNotPresent(String locator) throws Exception;
 
 	public void assertElementPresent(String locator) throws Exception;
@@ -491,8 +493,6 @@ public interface LiferaySelenium {
 	public void typeAceEditor(String locator, String value);
 
 	public void typeAlert(String value);
-
-	public void typeAlloyEditor(String locator, String value);
 
 	public void typeCKEditor(String locator, String value);
 

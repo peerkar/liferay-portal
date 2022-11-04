@@ -160,11 +160,22 @@ PortletURL itemSelectorURL = PortletURLBuilder.create(
 
 			opener.Liferay.Util.openSelectionModal({
 				id: '<%= eventName %>' + event.currentTarget.id,
-				onSelect: function (event) {
+				onSelect: function (selectedItem) {
+					var groupId = 0;
+
+					if (selectedItem.value) {
+						var itemValue = JSON.parse(selectedItem.value);
+
+						groupId = itemValue.groupId;
+					}
+					else {
+						groupId = selectedItem.groupid;
+					}
+
 					Liferay.Util.postForm(form, {
 						data: {
 							cmd: 'add-scope',
-							groupId: event.groupid,
+							groupId,
 						},
 					});
 				},

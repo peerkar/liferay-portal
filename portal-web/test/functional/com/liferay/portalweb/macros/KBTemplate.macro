@@ -28,7 +28,7 @@ definition {
 				key_rowEntry = "${kbTemplateTitle}",
 				locator1 = "Icon#ROW_VERTICAL_ELLIPSIS");
 
-			MenuItem.click(menuItem = "Delete");
+			MenuItem.clickNoError(menuItem = "Delete");
 		}
 
 		AssertConfirm(value1 = "Are you sure you want to delete this? It will be deleted immediately.");
@@ -59,14 +59,6 @@ definition {
 		PortletEntry.publish();
 	}
 
-	macro gotoCP {
-		Navigator.gotoNavItem(navItem = "Templates");
-
-		LexiconEntry.gotoEntryMenuItem(
-			menuItem = "View",
-			rowEntry = "${kbTemplateTitle}");
-	}
-
 	macro gotoTemplateMenuItemThroughPageTreePanel {
 		MouseOver(
 			key_itemLinkName = "${kbTemplateTitle}",
@@ -84,6 +76,29 @@ definition {
 		else {
 			MenuItem.click(menuItem = "${menuItem}");
 		}
+	}
+
+	macro previewTemplate {
+		if (isSet(pageTreePanel)) {
+			KBTemplate.gotoTemplateMenuItemThroughPageTreePanel(
+				kbTemplateTitle = "${kbTemplateTitle}",
+				menuItem = "View");
+		}
+		else {
+			Click(
+				key_rowEntry = "${kbTemplateTitle}",
+				locator1 = "Icon#ROW_VERTICAL_ELLIPSIS");
+
+			MenuItem.click(menuItem = "View");
+		}
+
+		AssertTextEquals.assertPartialText(
+			locator1 = "KnowledgeBaseTemplate#TEMPLATE_TITLE",
+			value1 = "${kbTemplateTitle}");
+
+		AssertTextEquals.assertPartialText(
+			locator1 = "KnowledgeBaseTemplate#TEMPLATE_CONTENT",
+			value1 = "${kbTemplateContent}");
 	}
 
 	macro tearDownCP {
@@ -108,18 +123,6 @@ definition {
 		}
 	}
 
-	macro viewCP {
-		KBTemplate.gotoCP(kbTemplateTitle = "${kbTemplateTitle}");
-
-		AssertTextEquals(
-			locator1 = "KnowledgeBaseTemplate#TEMPLATE_TITLE",
-			value1 = "${kbTemplateTitle}");
-
-		AssertTextEquals.assertPartialText(
-			locator1 = "KnowledgeBaseTemplate#TEMPLATE_CONTENT",
-			value1 = "${kbTemplateContent}");
-	}
-
 	macro viewCPViaAddTemplate {
 		LexiconEntry.gotoAddMenuItem(menuItem = "${kbTemplateTitle}");
 
@@ -139,10 +142,6 @@ definition {
 	macro viewNoTemplates {
 		AssertTextEquals.assertPartialText(
 			locator1 = "Message#EMPTY_INFO_TAGLIB_TITLE",
-			value1 = "There are no article templates.");
-
-		AssertTextEquals.assertPartialText(
-			locator1 = "Message#EMPTY_STATE_INFO",
 			value1 = "There are no article templates.");
 	}
 

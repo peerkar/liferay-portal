@@ -1,0 +1,175 @@
+{
+	"description_i18n": {
+		"en_US": "Rescore the results of the original query using the text embedding value. This element is effective only if the sentence transformer is enabled and configured to operate on specific content types and languages. See the Search Experiences entry in System Settings."
+	},
+	"elementDefinition": {
+		"category": "semantic search",
+		"configuration": {
+			"queryConfiguration": {
+				"queryEntries": [
+					{
+						"condition": {
+							"exists": {
+								"parameterName": "keywords"
+							}
+						},
+						"rescores": [
+							{
+								"query": {
+									"script_score": {
+										"boost": "${configuration.boost}",
+										"min_score": "${configuration.min_score}",
+										"query": {
+											"bool": {
+												"filter": [
+													{
+														"exists": {
+															"field": "text_embedding_${ml.keyword_vector_dimensions}_${context.language_id}"
+														}
+													}
+												],
+												"must": [
+													{
+														"match_all": {
+														}
+													}
+												]
+											}
+										},
+										"script": {
+											"params": {
+												"query_vector": "${ml.keyword_vectors}"
+											},
+											"source": "${configuration.vector_field_function}(params.query_vector, 'text_embedding_${ml.keyword_vector_dimensions}_${context.language_id}') + 1"
+										}
+									}
+								},
+								"queryWeight": "${configuration.query_weight}",
+								"rescoreQueryWeight": "${configuration.rescore_query_weight}",
+								"scoreMode": "${configuration.score_mode}",
+								"windowSize": "${configuration.window_size}"
+							}
+						]
+					}
+				]
+			}
+		},
+		"icon": "custom-field",
+		"uiConfiguration": {
+			"fieldSets": [
+				{
+					"fields": [
+						{
+							"defaultValue": 10,
+							"label": "Boost",
+							"name": "boost",
+							"type": "number",
+							"typeOptions": {
+								"min": 0
+							}
+						},
+						{
+							"defaultValue": "cosineSimilarity",
+							"helpText": "Vector functions measure similarity between search keywords and target document text embeddings. Check model documentation for suitability.",
+							"label": "Vector Field Function",
+							"name": "vector_field_function",
+							"type": "select",
+							"typeOptions": {
+								"nullable": false,
+								"options": [
+									{
+										"label": "Cosine Similarity",
+										"value": "cosineSimilarity"
+									},
+									{
+										"label": "Dot Product",
+										"value": "dotProduct"
+									}
+								]
+							}
+						},
+						{
+							"defaultValue": 1,
+							"helpText": "Only items above this score will be rescored.",
+							"label": "Min Score",
+							"name": "min_score",
+							"type": "number",
+							"typeOptions": {
+								"min": 0
+							}
+						},
+						{
+							"defaultValue": 0.01,
+							"helpText": "Weight of the original query score in the final score calculation.",
+							"label": "Query Weight",
+							"name": "query_weight",
+							"type": "slider",
+							"typeOptions": {
+								"min": 0.01,
+								"step": 0.1
+							}
+						},
+						{
+							"defaultValue": 10,
+							"helpText": "Weight of the rescore query score in the final score calculation.",
+							"label": "Rescore Query Weight",
+							"name": "rescore_query_weight",
+							"type": "slider",
+							"typeOptions": {
+								"min": 0.01,
+								"step": 0.1
+							}
+						},
+						{
+							"defaultValue": "avg",
+							"helpText": "How to combine the scores of original and rescorer queries.",
+							"label": "Score Mode",
+							"name": "score_mode",
+							"type": "select",
+							"typeOptions": {
+								"nullable": false,
+								"options": [
+									{
+										"label": "Average",
+										"value": "avg"
+									},
+									{
+										"label": "Max",
+										"value": "max"
+									},
+									{
+										"label": "Min",
+										"value": "min"
+									},
+									{
+										"label": "Multiply",
+										"value": "multiply"
+									},
+									{
+										"label": "Total",
+										"value": "total"
+									}
+								]
+							}
+						},
+						{
+							"defaultValue": 50,
+							"helpText": "Number of top hits to be rescored.",
+							"label": "Rescorer Window Size",
+							"name": "window_size",
+							"type": "number",
+							"typeOptions": {
+								"min": 1
+							}
+						}
+					]
+				}
+			]
+		}
+	},
+	"externalReferenceCode": "RESCORE_BY_TEXT_EMBEDDING",
+	"title_i18n": {
+		"en_US": "Rescore by Text Embedding"
+	},
+	"type": 0
+}

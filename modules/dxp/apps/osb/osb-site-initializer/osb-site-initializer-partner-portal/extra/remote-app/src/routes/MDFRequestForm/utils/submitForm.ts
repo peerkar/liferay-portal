@@ -17,7 +17,10 @@ import MDFRequest from '../../../common/interfaces/mdfRequest';
 import {Liferay} from '../../../common/services/liferay';
 import createMDFRequestActivities from '../../../common/services/liferay/object/activity/createMDFRequestActivities';
 import createMDFRequestActivityBudgets from '../../../common/services/liferay/object/budgets/createMDFRequestActivityBudgets';
+import {ResourceName} from '../../../common/services/liferay/object/enum/resourceName';
 import createMDFRequest from '../../../common/services/liferay/object/mdf-requests/createMDFRequest';
+import createMDFRequestActivitiesProxyAPI from './createMDFRequestActivitiesProxyAPI';
+import createMDFRequestProxyAPI from './createMDFRequestProxyAPI';
 
 export default async function submitForm(
 	values: MDFRequest,
@@ -26,24 +29,38 @@ export default async function submitForm(
 	currentRequestStatus?: RequestStatus
 ) {
 	formikHelpers.setSubmitting(true);
-
 	if (currentRequestStatus) {
 		values.requestStatus = currentRequestStatus;
 	}
 
-	const dtoMDFRequest = await createMDFRequest(values);
+	const dtoMDFRequest = Liferay.FeatureFlags['LPS-164528']
+		? await createMDFRequestProxyAPI(values)
+		: await createMDFRequest(ResourceName.MDF_REQUEST_DXP, values);
 
 	if (values.activities.length && dtoMDFRequest?.id) {
-		const dtoMDFRequestActivities = await createMDFRequestActivities(
-			dtoMDFRequest.id,
-			values.activities
+		const dtoMDFRequestActivities = await Promise.all(
+			values.activities.map((activity) =>
+				Liferay.FeatureFlags['LPS-164528']
+					? createMDFRequestActivitiesProxyAPI(
+							activity,
+							values.company,
+							dtoMDFRequest.id,
+							dtoMDFRequest.externalReferenceCodeSF
+					  )
+					: createMDFRequestActivities(
+							ResourceName.ACTIVITY_DXP,
+							activity,
+							values.company,
+							dtoMDFRequest.id,
+							dtoMDFRequest.externalReferenceCodeSF
+					  )
+			)
 		);
 
 		if (dtoMDFRequestActivities?.length) {
 			await Promise.all(
 				values.activities.map(async (activity, index) => {
 					const dtoActivity = dtoMDFRequestActivities[index];
-
 					if (activity.budgets?.length && dtoActivity?.id) {
 						return await createMDFRequestActivityBudgets(
 							dtoActivity.id,

@@ -20,6 +20,7 @@ import com.liferay.account.manager.CurrentAccountEntryManager;
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.account.settings.AccountEntryGroupSettings;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -34,8 +35,8 @@ import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
+import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -46,7 +47,7 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
  * @author Pei-Jung Lan
  * @author Drew Brokke
  */
-@Component(immediate = true, service = CurrentAccountEntryManager.class)
+@Component(service = CurrentAccountEntryManager.class)
 public class CurrentAccountEntryManagerImpl
 	implements CurrentAccountEntryManager {
 
@@ -92,9 +93,10 @@ public class CurrentAccountEntryManagerImpl
 			return accountEntry;
 		}
 
-		accountEntry = _getDefaultAccountEntry(allowedTypes, userId);
+		accountEntry = _getDefaultAccountEntry(
+			allowedTypes, permissionChecker, userId);
 
-		if (_isValid(accountEntry, allowedTypes, permissionChecker)) {
+		if (accountEntry != null) {
 			setCurrentAccountEntry(
 				accountEntry.getAccountEntryId(), groupId, userId);
 
@@ -139,16 +141,25 @@ public class CurrentAccountEntryManagerImpl
 	}
 
 	private AccountEntry _getDefaultAccountEntry(
-			String[] allowedTypes, long userId)
+			String[] allowedTypes, PermissionChecker permissionChecker,
+			long userId)
 		throws PortalException {
 
 		List<AccountEntry> accountEntries =
 			_accountEntryLocalService.getUserAccountEntries(
 				userId, AccountConstants.PARENT_ACCOUNT_ENTRY_ID_DEFAULT, null,
-				allowedTypes, 0, 1);
+				allowedTypes, WorkflowConstants.STATUS_APPROVED,
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
-		if (accountEntries.size() == 1) {
-			return accountEntries.get(0);
+		accountEntries.sort(Comparator.comparing(AccountEntry::getName));
+
+		for (AccountEntry accountEntry : accountEntries) {
+			if (_accountEntryModelResourcePermission.contains(
+					permissionChecker, accountEntry.getAccountEntryId(),
+					ActionKeys.VIEW)) {
+
+				return accountEntry;
+			}
 		}
 
 		return null;
@@ -159,10 +170,7 @@ public class CurrentAccountEntryManagerImpl
 		PermissionChecker permissionChecker) {
 
 		try {
-			if ((accountEntry != null) &&
-				Objects.equals(
-					WorkflowConstants.STATUS_APPROVED,
-					accountEntry.getStatus()) &&
+			if ((accountEntry != null) && accountEntry.isApproved() &&
 				((accountEntry.getAccountEntryId() ==
 					AccountConstants.ACCOUNT_ENTRY_ID_GUEST) ||
 				 ArrayUtil.contains(allowedTypes, accountEntry.getType())) &&

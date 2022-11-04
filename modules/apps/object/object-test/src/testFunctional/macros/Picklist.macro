@@ -5,10 +5,10 @@ definition {
 
 		Picklist.assertPicklistDetails(title = "Basic Info");
 
-		PortletEntry.changeLocale(locale = "${newlanguage}");
+		ObjectAdmin.changeLabelLanguage(newLanguage = "${newLanguage}");
 
 		Type(
-			locator1 = "Picklist#EDIT_ITEM_NAME",
+			locator1 = "Picklist#UPDATE_PICKLIST_NAME",
 			value1 = "${itemName}");
 
 		WaitForSPARefresh();
@@ -17,9 +17,11 @@ definition {
 	macro addLanguageOnPicklistItem {
 		SelectFrameTop();
 
-		IFrame.selectModalFrame();
+		if (IsElementPresent(locator1 = "IFrame#MODAL_IFRAME")) {
+			IFrame.selectModalFrame();
+		}
 
-		PortletEntry.changeLocale(locale = "${newlanguage}");
+		ObjectAdmin.changeLabelLanguage(newLanguage = "${newLanguage}");
 
 		Type(
 			locator1 = "Picklist#EDIT_ITEM_NAME",
@@ -107,7 +109,7 @@ definition {
 	}
 
 	macro assertDisabledPicklistItem {
-		Picklist.assertDisableKey();
+		Picklist.assertDisableKey(keyName = "${keyName}");
 
 		AssertElementPresent(locator1 = "Picklist#DISABLED_PICKLIST_NAME");
 	}
@@ -123,11 +125,11 @@ definition {
 	}
 
 	macro assertDisableKey {
-		IFrame.selectTopFrame();
-
 		SelectFrame(locator1 = "Picklist#IFRAME_PICKLIST_ITEM_MODAL");
 
-		AssertElementPresent(locator1 = "Picklist#DISABLE_PICKLIST_KEY");
+		AssertElementPresent(
+			key_keyName = "${keyName}",
+			locator1 = "Picklist#DISABLE_PICKLIST_KEY");
 	}
 
 	macro assertEmptyStateMessageDisplayed {
@@ -187,7 +189,9 @@ definition {
 	}
 
 	macro assertPicklistItem {
-		SelectFrame(locator1 = "Picklist#IFRAME_PICKLIST_MODAL");
+		if (IsElementPresent(locator1 = "Picklist#IFRAME_PICKLIST_MODAL")) {
+			SelectFrame(locator1 = "Picklist#IFRAME_PICKLIST_MODAL");
+		}
 
 		var key_picklistItemName = "${picklistItemName}";
 		var key_picklistItemKey = "${picklistItemKey}";
@@ -202,9 +206,11 @@ definition {
 	macro assertPicklistItemByLanguage {
 		SelectFrameTop();
 
-		IFrame.selectModalFrame();
+		if (IsElementPresent(locator1 = "IFrame#MODAL_IFRAME")) {
+			IFrame.selectModalFrame();
+		}
 
-		PortletEntry.changeLocale(locale = "${language}");
+		ObjectAdmin.changeLabelLanguage(newLanguage = "${newLanguage}");
 
 		AssertTextEquals(
 			locator1 = "Picklist#EDIT_ITEM_NAME",
@@ -246,10 +252,10 @@ definition {
 
 		Picklist.assertPicklistDetails(title = "Basic Info");
 
-		PortletEntry.changeLocale(locale = "${language}");
+		ObjectAdmin.changeLabelLanguage(newLanguage = "${newLanguage}");
 
 		AssertTextEquals(
-			locator1 = "Picklist#EDIT_ITEM_NAME",
+			locator1 = "Picklist#UPDATE_PICKLIST_NAME",
 			value1 = "${nameItem}");
 	}
 
@@ -271,10 +277,6 @@ definition {
 
 	macro cancelPicklistButton {
 		Click(locator1 = "Picklist#CANCEL_PICKLIST");
-	}
-
-	macro cancelUpdatePicklist {
-		Click.javaScriptClick(locator1 = "Picklist#CANCEL_UPDATE_PICKLIST");
 	}
 
 	macro clickSaveButton {

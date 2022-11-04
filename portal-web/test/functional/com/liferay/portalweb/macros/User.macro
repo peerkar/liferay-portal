@@ -334,7 +334,9 @@ definition {
 				value1 = "Please enter a valid email address.");
 		}
 		else if ("${userEmailAddressVariation}" == "Null") {
-			Alert.viewRequiredField();
+			AssertTextEquals.assertPartialText(
+				locator1 = "TextInput#REQUIRED_ALERT",
+				value1 = "The Email Address field is required.");
 		}
 		else if ("${userEmailAddressVariation}" == "Root") {
 			Alert.viewRequestFailedToComplete();
@@ -1138,7 +1140,7 @@ definition {
 
 			Button.clickSave();
 
-			Alert.viewRequiredField();
+			Alert.viewSpecificRequiredField(fieldFieldLabel = "Current Password");
 
 			User.logoutPG();
 
@@ -1957,18 +1959,6 @@ definition {
 		LexiconEntry.gotoEntryMenuItem(
 			menuItem = "Manage Pages",
 			rowEntry = "${userName}");
-	}
-
-	macro gotoEditCP {
-		var key_userScreenName = "${userScreenName}";
-
-		AssertClick(
-			locator1 = "UsersAndOrganizations#USER_TABLE_SCREEN_NAME",
-			value1 = "${userScreenName}");
-
-		AssertTextEquals.assertPartialText(
-			locator1 = "Portlet#HEADER",
-			value1 = "Edit User");
 	}
 
 	macro impersonateCP {

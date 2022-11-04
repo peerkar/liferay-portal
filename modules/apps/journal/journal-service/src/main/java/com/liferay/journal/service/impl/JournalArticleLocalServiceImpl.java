@@ -120,7 +120,7 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
@@ -2450,7 +2450,9 @@ public class JournalArticleLocalServiceImpl
 		JournalArticle article = journalArticlePersistence.findByG_A_V(
 			groupId, articleId, version);
 
-		if (article.isExpired()) {
+		boolean preview = Objects.equals(viewMode, Constants.PREVIEW);
+
+		if (article.isExpired() && !preview) {
 			Date expirationDate = article.getExpirationDate();
 
 			if ((expirationDate != null) && expirationDate.before(date)) {
@@ -2460,9 +2462,7 @@ public class JournalArticleLocalServiceImpl
 
 		Date displayDate = article.getDisplayDate();
 
-		if ((displayDate != null) && displayDate.after(date) &&
-			!Objects.equals(viewMode, Constants.PREVIEW)) {
-
+		if ((displayDate != null) && displayDate.after(date) && !preview) {
 			return null;
 		}
 
@@ -7003,7 +7003,7 @@ public class JournalArticleLocalServiceImpl
 					continue;
 				}
 
-				JSONObject jsonObject = JSONFactoryUtil.createJSONObject(value);
+				JSONObject jsonObject = _jsonFactory.createJSONObject(value);
 
 				if (!jsonObject.has("groupId") || !jsonObject.has("uuid")) {
 					continue;
@@ -7046,7 +7046,7 @@ public class JournalArticleLocalServiceImpl
 					}
 				}
 
-				JSONObject cdataJSONObject = JSONFactoryUtil.createJSONObject(
+				JSONObject cdataJSONObject = _jsonFactory.createJSONObject(
 					dynamicContentElement.getText());
 
 				cdataJSONObject.put(
@@ -7253,12 +7253,6 @@ public class JournalArticleLocalServiceImpl
 						indexer.getDocument(article));
 				}
 			});
-
-		if (indexer != null) {
-			indexableActionableDynamicQuery.setSearchEngineId(
-				indexer.getSearchEngineId());
-		}
-
 		indexableActionableDynamicQuery.setTransactionConfig(
 			DefaultActionableDynamicQuery.REQUIRES_NEW_TRANSACTION_CONFIG);
 
@@ -9483,6 +9477,9 @@ public class JournalArticleLocalServiceImpl
 
 	@Reference
 	private JournalHelper _journalHelper;
+
+	@Reference
+	private JSONFactory _jsonFactory;
 
 	@Reference
 	private Language _language;

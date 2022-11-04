@@ -21,7 +21,6 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.configuration.icon.BasePortletConfigurationIcon;
 import com.liferay.portal.kernel.portlet.configuration.icon.PortletConfigurationIcon;
-import com.liferay.portal.kernel.service.permission.PortalPermission;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.language.override.service.PLOEntryService;
 import com.liferay.portal.language.override.web.internal.constants.PLOPortletKeys;
@@ -52,8 +51,7 @@ public class ExportPLOEntriesPortletConfigurationIcon
 	@Override
 	public String getMessage(PortletRequest portletRequest) {
 		return _language.get(
-			getResourceBundle(getLocale(portletRequest)),
-			"export-overridden-translations");
+			getLocale(portletRequest), "export-overridden-translations");
 	}
 
 	@Override
@@ -105,8 +103,5 @@ public class ExportPLOEntriesPortletConfigurationIcon
 
 	@Reference
 	private Portal _portal;
-
-	@Reference
-	private PortalPermission _portalPermission;
 
 }

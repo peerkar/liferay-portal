@@ -71,13 +71,17 @@ public class LPKGDeployerRegistrar {
 			return;
 		}
 
-		Map<Long, App> apps = new HashMap<>();
+		Map<AppKey, App> apps = new HashMap<>();
 
 		for (App app :
 				_appLocalService.getApps(
 					QueryUtil.ALL_POS, QueryUtil.ALL_POS)) {
 
-			apps.put(app.getRemoteAppId(), app);
+			apps.put(
+				new AppKey(
+					app.getTitle(), app.getDescription(), app.getCategory(),
+					app.getIconURL(), app.isRequired()),
+				app);
 		}
 
 		Map<Long, List<Module>> modules = new HashMap<>();
@@ -103,7 +107,7 @@ public class LPKGDeployerRegistrar {
 	}
 
 	private void _doRegister(
-			Bundle lpkgBundle, Map<Long, App> apps,
+			Bundle lpkgBundle, Map<AppKey, App> apps,
 			Map<Long, List<Module>> modules)
 		throws Exception {
 
@@ -137,20 +141,19 @@ public class LPKGDeployerRegistrar {
 			app = _appLocalService.fetchRemoteApp(remoteAppId);
 		}
 		else {
-			app = apps.get(remoteAppId);
+			app = apps.get(
+				new AppKey(title, description, category, iconURL, required));
 		}
 
-		if ((app != null) &&
-			(!Objects.equals(title, app.getTitle()) ||
-			 !Objects.equals(description, app.getDescription()) ||
-			 !Objects.equals(category, app.getCategory()) ||
-			 !Objects.equals(iconURL, app.getIconURL()) ||
-			 (required != app.isRequired()))) {
+		if ((app != null) && (app.getRemoteAppId() != remoteAppId)) {
+			_appLocalService.uninstallApp(app.getRemoteAppId());
 
-			app = null;
+			app.setRemoteAppId(remoteAppId);
+			app.setVersion(version);
+
+			app = _appLocalService.updateApp(app);
 		}
-
-		if (app == null) {
+		else if (app == null) {
 			app = _appLocalService.updateApp(
 				0, remoteAppId, title, description, category, iconURL, version,
 				required, null);
@@ -221,7 +224,7 @@ public class LPKGDeployerRegistrar {
 	}
 
 	private void _register(
-		Bundle lpkgBundle, Map<Long, App> apps,
+		Bundle lpkgBundle, Map<AppKey, App> apps,
 		Map<Long, List<Module>> modules) {
 
 		try {
@@ -263,6 +266,54 @@ public class LPKGDeployerRegistrar {
 		target = "(&(release.bundle.symbolic.name=com.liferay.marketplace.service)(release.schema.version=2.0.3))"
 	)
 	private Release _release;
+
+	private static class AppKey {
+
+		@Override
+		public boolean equals(Object object) {
+			AppKey appKey = (AppKey)object;
+
+			if (Objects.equals(appKey._title, _title) &&
+				Objects.equals(appKey._description, _description) &&
+				Objects.equals(appKey._category, _category) &&
+				Objects.equals(appKey._iconURL, _iconURL) &&
+				(appKey._required == _required)) {
+
+				return true;
+			}
+
+			return false;
+		}
+
+		@Override
+		public int hashCode() {
+			int hashCode = HashUtil.hash(0, _title);
+
+			hashCode = HashUtil.hash(hashCode, _description);
+			hashCode = HashUtil.hash(hashCode, _category);
+			hashCode = HashUtil.hash(hashCode, _iconURL);
+
+			return HashUtil.hash(hashCode, _required);
+		}
+
+		private AppKey(
+			String title, String description, String category, String iconURL,
+			boolean required) {
+
+			_title = title;
+			_description = description;
+			_category = category;
+			_iconURL = iconURL;
+			_required = required;
+		}
+
+		private final String _category;
+		private final String _description;
+		private final String _iconURL;
+		private final boolean _required;
+		private final String _title;
+
+	}
 
 	private static class Tuple {
 

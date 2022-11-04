@@ -30,15 +30,15 @@ import com.liferay.fragment.renderer.constants.FragmentRendererConstants;
 import com.liferay.fragment.service.FragmentEntryLocalService;
 import com.liferay.fragment.util.configuration.FragmentEntryConfigurationParser;
 import com.liferay.info.form.InfoForm;
+import com.liferay.info.item.InfoItemReference;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.petra.io.unsync.UnsyncStringWriter;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
-import com.liferay.petra.string.StringUtil;
 import com.liferay.portal.kernel.cache.MultiVMPool;
 import com.liferay.portal.kernel.cache.PortalCache;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.model.Layout;
@@ -251,9 +251,11 @@ public class FragmentEntryFragmentRenderer implements FragmentRenderer {
 		sb.append(html);
 		sb.append("</div>");
 
+		FragmentEntryLink fragmentEntryLink =
+			fragmentRendererContext.getFragmentEntryLink();
+
 		if (Validator.isNotNull(css)) {
-			String outputKey =
-				fragmentRendererContext.getFragmentElementId() + "_CSS";
+			String outputKey = fragmentEntryLink.getFragmentEntryId() + "_CSS";
 
 			OutputData outputData = (OutputData)httpServletRequest.getAttribute(
 				WebKeys.OUTPUT_DATA);
@@ -294,9 +296,6 @@ public class FragmentEntryFragmentRenderer implements FragmentRenderer {
 					WebKeys.OUTPUT_DATA, outputData);
 			}
 		}
-
-		FragmentEntryLink fragmentEntryLink =
-			fragmentRendererContext.getFragmentEntryLink();
 
 		if (Validator.isNotNull(fragmentEntryLink.getJs())) {
 			sb.append("<script>(function() {");
@@ -347,21 +346,18 @@ public class FragmentEntryFragmentRenderer implements FragmentRenderer {
 		FragmentEntryLink fragmentEntryLink = _getFragmentEntryLink(
 			fragmentRendererContext);
 
-		StringBundler cacheKeySB = new StringBundler(5);
+		StringBundler portalCacheKeySB = new StringBundler(5);
 
-		cacheKeySB.append(fragmentEntryLink.getFragmentEntryLinkId());
-		cacheKeySB.append(StringPool.DASH);
-		cacheKeySB.append(fragmentRendererContext.getLocale());
-		cacheKeySB.append(StringPool.DASH);
-		cacheKeySB.append(
-			StringUtil.merge(
-				fragmentRendererContext.getSegmentsEntryIds(),
-				StringPool.SEMICOLON));
+		portalCacheKeySB.append(fragmentEntryLink.getFragmentEntryLinkId());
+		portalCacheKeySB.append(StringPool.DASH);
+		portalCacheKeySB.append(fragmentRendererContext.getLocale());
+		portalCacheKeySB.append(StringPool.DASH);
+		portalCacheKeySB.append(fragmentEntryLink.getSegmentsExperienceId());
 
 		String content = StringPool.BLANK;
 
 		if (_isCacheable(fragmentEntryLink, fragmentRendererContext)) {
-			content = portalCache.get(cacheKeySB.toString());
+			content = portalCache.get(portalCacheKeySB.toString());
 
 			if (Validator.isNotNull(content)) {
 				return content;
@@ -375,11 +371,11 @@ public class FragmentEntryFragmentRenderer implements FragmentRenderer {
 					fragmentRendererContext.getMode(),
 					fragmentRendererContext.getLocale());
 
-		Optional<Object> displayObjectOptional =
-			fragmentRendererContext.getDisplayObjectOptional();
+		Optional<InfoItemReference> contextInfoItemReferenceOptional =
+			fragmentRendererContext.getContextInfoItemReferenceOptional();
 
-		defaultFragmentEntryProcessorContext.setDisplayObject(
-			displayObjectOptional.orElse(null));
+		defaultFragmentEntryProcessorContext.setContextInfoItemReference(
+			contextInfoItemReferenceOptional.orElse(null));
 
 		defaultFragmentEntryProcessorContext.setFragmentElementId(
 			fragmentRendererContext.getFragmentElementId());
@@ -426,13 +422,12 @@ public class FragmentEntryFragmentRenderer implements FragmentRenderer {
 				httpServletResponse);
 		}
 
-		JSONObject configurationJSONObject = JSONFactoryUtil.createJSONObject();
+		JSONObject configurationJSONObject = _jsonFactory.createJSONObject();
 
 		if (Validator.isNotNull(fragmentEntryLink.getConfiguration())) {
 			configurationJSONObject =
 				_fragmentEntryConfigurationParser.getConfigurationJSONObject(
 					fragmentEntryLink.getConfiguration(),
-					displayObjectOptional.orElse(null),
 					fragmentEntryLink.getEditableValues(),
 					fragmentRendererContext.getLocale());
 		}
@@ -442,7 +437,7 @@ public class FragmentEntryFragmentRenderer implements FragmentRenderer {
 			html, httpServletRequest);
 
 		if (_isCacheable(fragmentEntryLink, fragmentRendererContext)) {
-			portalCache.put(cacheKeySB.toString(), content);
+			portalCache.put(portalCacheKeySB.toString(), content);
 		}
 
 		return content;
@@ -483,6 +478,9 @@ public class FragmentEntryFragmentRenderer implements FragmentRenderer {
 
 	@Reference
 	private ItemSelector _itemSelector;
+
+	@Reference
+	private JSONFactory _jsonFactory;
 
 	@Reference
 	private LayoutLocalService _layoutLocalService;

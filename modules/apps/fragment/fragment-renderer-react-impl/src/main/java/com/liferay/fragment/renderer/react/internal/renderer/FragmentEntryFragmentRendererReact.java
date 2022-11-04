@@ -28,7 +28,7 @@ import com.liferay.frontend.js.loader.modules.extender.npm.NPMResolver;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.servlet.taglib.util.OutputData;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -46,7 +46,6 @@ import java.io.Writer;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -103,17 +102,13 @@ public class FragmentEntryFragmentRendererReact implements FragmentRenderer {
 				fragmentRendererContext);
 
 			JSONObject configurationJSONObject =
-				JSONFactoryUtil.createJSONObject();
+				_jsonFactory.createJSONObject();
 
 			if (Validator.isNotNull(fragmentEntryLink.getConfiguration())) {
-				Optional<Object> displayObjectOptional =
-					fragmentRendererContext.getDisplayObjectOptional();
-
 				configurationJSONObject =
 					_fragmentEntryConfigurationParser.
 						getConfigurationJSONObject(
 							fragmentEntryLink.getConfiguration(),
-							displayObjectOptional.orElse(null),
 							fragmentEntryLink.getEditableValues(),
 							LocaleUtil.getMostRelevantLocale());
 			}
@@ -244,6 +239,9 @@ public class FragmentEntryFragmentRendererReact implements FragmentRenderer {
 
 	@Reference
 	private FragmentEntryConfigurationParser _fragmentEntryConfigurationParser;
+
+	@Reference
+	private JSONFactory _jsonFactory;
 
 	private JSPackage _jsPackage;
 

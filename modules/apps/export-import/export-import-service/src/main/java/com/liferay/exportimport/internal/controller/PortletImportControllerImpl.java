@@ -15,8 +15,6 @@
 package com.liferay.exportimport.internal.controller;
 
 import com.liferay.asset.kernel.model.adapter.StagedAssetLink;
-import com.liferay.asset.kernel.service.AssetEntryLocalService;
-import com.liferay.asset.kernel.service.AssetLinkLocalService;
 import com.liferay.expando.kernel.exception.NoSuchTableException;
 import com.liferay.expando.kernel.model.ExpandoColumn;
 import com.liferay.expando.kernel.model.ExpandoTable;
@@ -602,13 +600,9 @@ public class PortletImportControllerImpl implements PortletImportController {
 						}
 					}
 
-					if (portletDataContext.getGroupId() ==
-							portletDataContext.getScopeGroupId()) {
-
-						exportImportPortletPreferencesProcessor.
-							processImportPortletPreferences(
-								portletDataContext, jxPortletPreferences);
-					}
+					exportImportPortletPreferencesProcessor.
+						processImportPortletPreferences(
+							portletDataContext, jxPortletPreferences);
 				}
 			}
 			finally {
@@ -1501,12 +1495,6 @@ public class PortletImportControllerImpl implements PortletImportController {
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		PortletImportControllerImpl.class);
-
-	@Reference
-	private AssetEntryLocalService _assetEntryLocalService;
-
-	@Reference
-	private AssetLinkLocalService _assetLinkLocalService;
 
 	@Reference
 	private ConfigurationProvider _configurationProvider;

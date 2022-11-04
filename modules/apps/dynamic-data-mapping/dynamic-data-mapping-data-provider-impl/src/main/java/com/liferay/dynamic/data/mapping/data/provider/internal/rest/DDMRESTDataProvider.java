@@ -36,7 +36,6 @@ import com.liferay.portal.json.web.service.client.JSONWebServiceClientFactory;
 import com.liferay.portal.json.web.service.client.JSONWebServiceException;
 import com.liferay.portal.kernel.cache.MultiVMPool;
 import com.liferay.portal.kernel.cache.PortalCache;
-import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -85,8 +84,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	configurationPid = "com.liferay.dynamic.data.mapping.data.provider.configuration.DDMDataProviderConfiguration",
-	immediate = true, property = "ddm.data.provider.type=rest",
-	service = DDMDataProvider.class
+	property = "ddm.data.provider.type=rest", service = DDMDataProvider.class
 )
 public class DDMRESTDataProvider implements DDMDataProvider {
 
@@ -301,24 +299,6 @@ public class DDMRESTDataProvider implements DDMDataProvider {
 			ArrayList::addAll);
 	}
 
-	private String _getCacheKey(
-		String ddmDataProviderId, List<KeyValuePair> keyValuePairs,
-		String url) {
-
-		Stream<KeyValuePair> stream = keyValuePairs.stream();
-
-		return StringBundler.concat(
-			ddmDataProviderId, StringPool.AT, url, StringPool.QUESTION,
-			stream.sorted(
-			).map(
-				keyValuePair -> StringBundler.concat(
-					keyValuePair.getKey(), StringPool.EQUAL,
-					keyValuePair.getValue())
-			).collect(
-				Collectors.joining(StringPool.AMPERSAND)
-			));
-	}
-
 	private DDMDataProviderResponse _getData(
 			DDMDataProviderRequest ddmDataProviderRequest,
 			DDMRESTDataProviderSettings ddmRESTDataProviderSettings)
@@ -348,12 +328,12 @@ public class DDMRESTDataProvider implements DDMDataProvider {
 
 		String absoluteURL = _getAbsoluteURL(uri.getQuery(), url);
 
-		String cacheKey = _getCacheKey(
+		String portalCacheKey = _getPortalCacheKey(
 			ddmDataProviderRequest.getDDMDataProviderId(), allParameters,
 			absoluteURL);
 
 		DDMDataProviderResponse ddmDataProviderResponse = _portalCache.get(
-			cacheKey);
+			portalCacheKey);
 
 		if ((ddmDataProviderResponse != null) &&
 			ddmRESTDataProviderSettings.cacheable()) {
@@ -402,7 +382,7 @@ public class DDMRESTDataProvider implements DDMDataProvider {
 			DDMDataProviderResponseStatus.OK, ddmRESTDataProviderSettings);
 
 		if (ddmRESTDataProviderSettings.cacheable()) {
-			_portalCache.put(cacheKey, ddmDataProviderResponse);
+			_portalCache.put(portalCacheKey, ddmDataProviderResponse);
 		}
 
 		return ddmDataProviderResponse;
@@ -537,6 +517,24 @@ public class DDMRESTDataProvider implements DDMDataProvider {
 		return pathInputParametersMap;
 	}
 
+	private String _getPortalCacheKey(
+		String ddmDataProviderId, List<KeyValuePair> keyValuePairs,
+		String url) {
+
+		Stream<KeyValuePair> stream = keyValuePairs.stream();
+
+		return StringBundler.concat(
+			ddmDataProviderId, StringPool.AT, url, StringPool.QUESTION,
+			stream.sorted(
+			).map(
+				keyValuePair -> StringBundler.concat(
+					keyValuePair.getKey(), StringPool.EQUAL,
+					keyValuePair.getValue())
+			).collect(
+				Collectors.joining(StringPool.AMPERSAND)
+			));
+	}
+
 	private Map<String, Object> _getProxySettingsMap() {
 		Map<String, Object> proxySettingsMap = new HashMap<>();
 
@@ -637,9 +635,6 @@ public class DDMRESTDataProvider implements DDMDataProvider {
 
 	@Reference(target = "(ddm.data.provider.type=rest)")
 	private DDMDataProviderSettingsProvider _ddmDataProviderSettingsProvider;
-
-	@Reference
-	private JSONFactory _jsonFactory;
 
 	@Reference
 	private JSONWebServiceClientFactory _jsonWebServiceClientFactory;

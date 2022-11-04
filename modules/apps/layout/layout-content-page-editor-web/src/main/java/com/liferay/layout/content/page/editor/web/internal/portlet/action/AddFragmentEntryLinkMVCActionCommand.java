@@ -31,7 +31,7 @@ import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
@@ -44,8 +44,6 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
 
-import java.util.List;
-
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 
@@ -56,7 +54,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Víctor Galán
  */
 @Component(
-	immediate = true,
 	property = {
 		"javax.portlet.name=" + ContentPageEditorPortletKeys.CONTENT_PAGE_EDITOR_PORTLET,
 		"mvc.command.name=/layout_content_page_editor/add_fragment_entry_link"
@@ -170,7 +167,7 @@ public class AddFragmentEntryLinkMVCActionCommand
 			actionRequest, "parentItemId");
 		int position = ParamUtil.getInteger(actionRequest, "position");
 
-		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+		JSONObject jsonObject = _jsonFactory.createJSONObject();
 
 		LayoutStructureUtil.updateLayoutPageTemplateData(
 			themeDisplay.getScopeGroupId(), segmentsExperienceId,
@@ -184,11 +181,9 @@ public class AddFragmentEntryLinkMVCActionCommand
 				jsonObject.put("addedItemId", layoutStructureItem.getItemId());
 			});
 
-		List<FragmentEntryLinkListener> fragmentEntryLinkListeners =
-			_fragmentEntryLinkListenerTracker.getFragmentEntryLinkListeners();
-
 		for (FragmentEntryLinkListener fragmentEntryLinkListener :
-				fragmentEntryLinkListeners) {
+				_fragmentEntryLinkListenerTracker.
+					getFragmentEntryLinkListeners()) {
 
 			fragmentEntryLinkListener.onAddFragmentEntryLink(fragmentEntryLink);
 		}
@@ -219,6 +214,9 @@ public class AddFragmentEntryLinkMVCActionCommand
 
 	@Reference
 	private FragmentRendererTracker _fragmentRendererTracker;
+
+	@Reference
+	private JSONFactory _jsonFactory;
 
 	@Reference
 	private Language _language;

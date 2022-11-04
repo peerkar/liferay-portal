@@ -228,6 +228,8 @@ definition {
 
 	@priority = "5"
 	test SchedulePublishToLiveWithEventAndResource {
+		property portal.upstream = "quarantine";
+
 		Navigator.openSiteURL(siteName = "Site Name");
 
 		JSONStaging.enableLocalStaging(groupName = "Site Name");

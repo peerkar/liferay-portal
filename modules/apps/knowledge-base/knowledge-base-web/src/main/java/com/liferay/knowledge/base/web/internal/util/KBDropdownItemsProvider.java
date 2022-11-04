@@ -17,6 +17,7 @@ package com.liferay.knowledge.base.web.internal.util;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemListBuilder;
 import com.liferay.knowledge.base.constants.KBActionKeys;
+import com.liferay.knowledge.base.constants.KBArticleConstants;
 import com.liferay.knowledge.base.constants.KBCommentConstants;
 import com.liferay.knowledge.base.constants.KBConstants;
 import com.liferay.knowledge.base.constants.KBFolderConstants;
@@ -26,6 +27,7 @@ import com.liferay.knowledge.base.model.KBComment;
 import com.liferay.knowledge.base.model.KBFolder;
 import com.liferay.knowledge.base.model.KBTemplate;
 import com.liferay.knowledge.base.web.internal.KBUtil;
+import com.liferay.knowledge.base.web.internal.constants.KBWebKeys;
 import com.liferay.knowledge.base.web.internal.security.permission.resource.AdminPermission;
 import com.liferay.knowledge.base.web.internal.security.permission.resource.DisplayPermission;
 import com.liferay.knowledge.base.web.internal.security.permission.resource.KBArticlePermission;
@@ -43,6 +45,8 @@ import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
 import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.Constants;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.subscription.service.SubscriptionLocalServiceUtil;
@@ -72,6 +76,12 @@ public class KBDropdownItemsProvider {
 	}
 
 	public List<DropdownItem> getKBArticleDropdownItems(KBArticle kbArticle) {
+		return getKBArticleDropdownItems(kbArticle, null);
+	}
+
+	public List<DropdownItem> getKBArticleDropdownItems(
+		KBArticle kbArticle, List<Long> selectedItemAncestorIds) {
+
 		return DropdownItemListBuilder.add(
 			() -> _hasUpdatePermission(kbArticle),
 			dropdownItem -> {
@@ -151,6 +161,56 @@ public class KBDropdownItemsProvider {
 						"subscribe"));
 			}
 		).add(
+			() -> _hasHistoryPermission(kbArticle),
+			dropdownItem -> {
+				dropdownItem.setHref(
+					PortletURLBuilder.createRenderURL(
+						_liferayPortletResponse
+					).setMVCPath(
+						"/admin/common/kb_history.jsp"
+					).setRedirect(
+						_currentURL
+					).setParameter(
+						"resourceClassNameId", kbArticle.getClassNameId()
+					).setParameter(
+						"resourcePrimKey", kbArticle.getResourcePrimKey()
+					).setParameter(
+						"status",
+						_liferayPortletRequest.getAttribute(
+							KBWebKeys.KNOWLEDGE_BASE_STATUS)
+					).buildRenderURL());
+				dropdownItem.setIcon("date-time");
+				dropdownItem.setLabel(
+					LanguageUtil.get(
+						_liferayPortletRequest.getHttpServletRequest(),
+						"history"));
+			}
+		).add(
+			this::_hasPrintPermission,
+			dropdownItem -> {
+				dropdownItem.putData("action", "print");
+				dropdownItem.putData(
+					"printURL",
+					PortletURLBuilder.createRenderURL(
+						_liferayPortletResponse
+					).setMVCPath(
+						"/admin/common/print_kb_article.jsp"
+					).setParameter(
+						"resourceClassNameId", kbArticle.getClassNameId()
+					).setParameter(
+						"resourcePrimKey", kbArticle.getResourcePrimKey()
+					).setParameter(
+						"viewMode", Constants.PRINT
+					).setWindowState(
+						LiferayWindowState.POP_UP
+					).buildString());
+				dropdownItem.setIcon("print");
+				dropdownItem.setLabel(
+					LanguageUtil.get(
+						_liferayPortletRequest.getHttpServletRequest(),
+						"print"));
+			}
+		).add(
 			() -> _hasMovePermission(kbArticle),
 			dropdownItem -> {
 				dropdownItem.setHref(
@@ -206,7 +266,18 @@ public class KBDropdownItemsProvider {
 					).setActionName(
 						"/knowledge_base/delete_kb_article"
 					).setRedirect(
-						_currentURL
+						() -> {
+							if (((selectedItemAncestorIds == null) &&
+								 _isKBArticleSelected(kbArticle)) ||
+								((selectedItemAncestorIds != null) &&
+								 selectedItemAncestorIds.contains(
+									 kbArticle.getResourcePrimKey()))) {
+
+								return _getParentNodeURL(kbArticle);
+							}
+
+							return _currentURL;
+						}
 					).setParameter(
 						"resourcePrimKey", kbArticle.getResourcePrimKey()
 					).buildString());
@@ -297,6 +368,12 @@ public class KBDropdownItemsProvider {
 	}
 
 	public List<DropdownItem> getKBFolderDropdownItems(KBFolder kbFolder) {
+		return getKBFolderDropdownItems(kbFolder, null);
+	}
+
+	public List<DropdownItem> getKBFolderDropdownItems(
+		KBFolder kbFolder, List<Long> selectedItemAncestorIds) {
+
 		return DropdownItemListBuilder.add(
 			() -> _hasUpdatePermission(kbFolder),
 			dropdownItem -> {
@@ -426,7 +503,19 @@ public class KBDropdownItemsProvider {
 					).setActionName(
 						"/knowledge_base/delete_kb_folder"
 					).setRedirect(
-						_currentURL
+						() -> {
+							if (((selectedItemAncestorIds == null) &&
+								 _isKBFolderSelected(kbFolder)) ||
+								((selectedItemAncestorIds != null) &&
+								 selectedItemAncestorIds.contains(
+									 kbFolder.getKbFolderId()))) {
+
+								return _createKBFolderRenderURL(
+									kbFolder.getParentKBFolderId());
+							}
+
+							return _currentURL;
+						}
 					).setParameter(
 						"kbFolderId", kbFolder.getKbFolderId()
 					).buildString());
@@ -450,8 +539,12 @@ public class KBDropdownItemsProvider {
 						_liferayPortletResponse
 					).setMVCPath(
 						"/admin/view_kb_template.jsp"
+					).setRedirect(
+						_currentURL
 					).setParameter(
 						"kbTemplateId", kbTemplate.getKbTemplateId()
+					).setParameter(
+						"selectedItemId", kbTemplate.getPrimaryKey()
 					).buildRenderURL());
 				dropdownItem.setIcon("view");
 				dropdownItem.setLabel(
@@ -518,6 +611,47 @@ public class KBDropdownItemsProvider {
 						"delete"));
 			}
 		).build();
+	}
+
+	private String _createKBArticleRenderURL(KBArticle kbArticle) {
+		return PortletURLBuilder.createRenderURL(
+			_liferayPortletResponse
+		).setMVCPath(
+			"/admin/view_kb_article.jsp"
+		).setParameter(
+			"resourceClassNameId", kbArticle.getClassNameId()
+		).setParameter(
+			"resourcePrimKey", kbArticle.getResourcePrimKey()
+		).setParameter(
+			"selectedItemId", kbArticle.getResourcePrimKey()
+		).buildString();
+	}
+
+	private String _createKBFolderRenderURL(long kbFolderId) {
+		return PortletURLBuilder.createRenderURL(
+			_liferayPortletResponse
+		).setMVCPath(
+			"/admin/view_kb_folders.jsp"
+		).setParameter(
+			"parentResourceClassNameId",
+			PortalUtil.getClassNameId(KBFolderConstants.getClassName())
+		).setParameter(
+			"parentResourcePrimKey", kbFolderId
+		).setParameter(
+			"selectedItemId", kbFolderId
+		).buildString();
+	}
+
+	private String _getParentNodeURL(KBArticle kbArticle)
+		throws PortalException {
+
+		KBArticle parentKBArticle = kbArticle.getParentKBArticle();
+
+		if (parentKBArticle != null) {
+			return _createKBArticleRenderURL(parentKBArticle);
+		}
+
+		return _createKBFolderRenderURL(kbArticle.getKbFolderId());
 	}
 
 	private String _getPermissionsURL(KBFolder kbFolder) throws Exception {
@@ -611,6 +745,14 @@ public class KBDropdownItemsProvider {
 				_themeDisplay.getPermissionChecker(), kbTemplate,
 				KBActionKeys.DELETE)) {
 
+			return true;
+		}
+
+		return false;
+	}
+
+	private Boolean _hasHistoryPermission(KBArticle kbArticle) {
+		if (kbArticle.isApproved() || !kbArticle.isFirstVersion()) {
 			return true;
 		}
 
@@ -718,6 +860,10 @@ public class KBDropdownItemsProvider {
 		return false;
 	}
 
+	private Boolean _hasPrintPermission() {
+		return true;
+	}
+
 	private boolean _hasSubscription() {
 		if (SubscriptionLocalServiceUtil.isSubscribed(
 				_themeDisplay.getCompanyId(), _themeDisplay.getUserId(),
@@ -796,6 +942,44 @@ public class KBDropdownItemsProvider {
 				_themeDisplay.getPermissionChecker(), kbTemplate,
 				KBActionKeys.VIEW)) {
 
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean _isKBArticleSelected(KBArticle kbArticle) {
+		long resourceClassNameId = ParamUtil.getLong(
+			_liferayPortletRequest, "resourceClassNameId");
+
+		if (resourceClassNameId != kbArticle.getClassNameId()) {
+			return false;
+		}
+
+		long resourcePrimaryKey = ParamUtil.getLong(
+			_liferayPortletRequest, "resourcePrimKey",
+			KBArticleConstants.DEFAULT_PARENT_RESOURCE_PRIM_KEY);
+
+		if (resourcePrimaryKey == kbArticle.getResourcePrimKey()) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean _isKBFolderSelected(KBFolder kbFolder) {
+		long parentResourceClassNameId = ParamUtil.getLong(
+			_liferayPortletRequest, "parentResourceClassNameId");
+
+		if (parentResourceClassNameId != kbFolder.getClassNameId()) {
+			return false;
+		}
+
+		long parentResourcePrimaryKey = ParamUtil.getLong(
+			_liferayPortletRequest, "parentResourcePrimKey",
+			KBFolderConstants.DEFAULT_PARENT_FOLDER_ID);
+
+		if (parentResourcePrimaryKey == kbFolder.getKbFolderId()) {
 			return true;
 		}
 

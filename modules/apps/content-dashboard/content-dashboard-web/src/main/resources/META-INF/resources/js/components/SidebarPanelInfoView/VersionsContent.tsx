@@ -103,7 +103,7 @@ const VersionsContent = ({
 								version,
 							}) => (
 								<li
-									className="list-group-item list-group-item-flex"
+									className="list-group-item list-group-item-flex p-0"
 									key={version}
 								>
 									<ClayLayout.ContentCol expand>
@@ -136,9 +136,11 @@ const VersionsContent = ({
 										</div>
 									</ClayLayout.ContentCol>
 
-									{actions && !!actions.length && (
-										<VersionActions actions={actions} />
-									)}
+									{Liferay.FeatureFlags['LPS-162924'] &&
+										actions &&
+										!!actions.length && (
+											<VersionActions actions={actions} />
+										)}
 								</li>
 							)
 						)}

@@ -845,7 +845,7 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 
 	private String _getSystemPackagesExtra(String exportedPackages) {
 		String[] systemPackagesExtra =
-			PropsValues.MODULE_FRAMEWORK_SYSTEM_PACKAGES_EXTRA;
+			ModuleFrameworkPropsValues.MODULE_FRAMEWORK_SYSTEM_PACKAGES_EXTRA;
 
 		StringBundler sb = new StringBundler();
 
@@ -1260,7 +1260,8 @@ public class ModuleFrameworkImpl implements ModuleFramework {
 
 		Set<String> names = OSGiBeanProperties.Service.interfaceNames(
 			bean, osgiBeanProperties,
-			PropsValues.MODULE_FRAMEWORK_SERVICES_IGNORED_INTERFACES);
+			ModuleFrameworkPropsValues.
+				MODULE_FRAMEWORK_SERVICES_IGNORED_INTERFACES);
 
 		if (names.isEmpty()) {
 			return null;

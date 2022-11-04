@@ -40,7 +40,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Rafael Praxedes
  */
 @Component(
-	immediate = true,
 	property = {
 		"javax.portlet.name=" + DDLPortletKeys.DYNAMIC_DATA_LISTS,
 		"path=/view_record_set.jsp"
@@ -57,8 +56,7 @@ public class ExportDDLRecordSetPortletConfigurationIcon
 
 	@Override
 	public String getMessage(PortletRequest portletRequest) {
-		return _language.get(
-			getResourceBundle(getLocale(portletRequest)), "export");
+		return _language.get(getLocale(portletRequest), "export");
 	}
 
 	@Override
@@ -105,11 +103,6 @@ public class ExportDDLRecordSetPortletConfigurationIcon
 
 			return false;
 		}
-	}
-
-	@Override
-	public boolean isToolTip() {
-		return false;
 	}
 
 	@Override

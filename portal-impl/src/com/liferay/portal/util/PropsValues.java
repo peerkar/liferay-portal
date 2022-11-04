@@ -1441,10 +1441,6 @@ public class PropsValues {
 	public static final String MODULE_FRAMEWORK_PORTAL_DIR = PropsUtil.get(
 		PropsKeys.MODULE_FRAMEWORK_PORTAL_DIR);
 
-	public static final String[] MODULE_FRAMEWORK_SERVICES_IGNORED_INTERFACES =
-		PropsUtil.getArray(
-			PropsKeys.MODULE_FRAMEWORK_SERVICES_IGNORED_INTERFACES);
-
 	public static final String MODULE_FRAMEWORK_STATE_DIR = PropsUtil.get(
 		PropsKeys.MODULE_FRAMEWORK_STATE_DIR);
 
@@ -1454,9 +1450,6 @@ public class PropsValues {
 	public static final long MODULE_FRAMEWORK_STOP_WAIT_TIMEOUT =
 		GetterUtil.getLong(
 			PropsUtil.get(PropsKeys.MODULE_FRAMEWORK_STOP_WAIT_TIMEOUT));
-
-	public static final String[] MODULE_FRAMEWORK_SYSTEM_PACKAGES_EXTRA =
-		PropsUtil.getArray(PropsKeys.MODULE_FRAMEWORK_SYSTEM_PACKAGES_EXTRA);
 
 	public static final String MODULE_FRAMEWORK_WAR_DIR = PropsUtil.get(
 		PropsKeys.MODULE_FRAMEWORK_WAR_DIR);

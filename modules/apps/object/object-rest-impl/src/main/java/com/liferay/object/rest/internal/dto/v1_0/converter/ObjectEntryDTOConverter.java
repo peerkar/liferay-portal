@@ -21,6 +21,7 @@ import com.liferay.document.library.util.DLURLHelper;
 import com.liferay.list.type.model.ListTypeEntry;
 import com.liferay.list.type.service.ListTypeEntryLocalService;
 import com.liferay.object.constants.ObjectFieldConstants;
+import com.liferay.object.constants.ObjectFieldSettingConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
@@ -38,6 +39,8 @@ import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.util.ObjectEntryFieldValueUtil;
+import com.liferay.object.util.ObjectFieldSettingValueUtil;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -51,6 +54,7 @@ import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.language.LanguageResources;
@@ -59,10 +63,10 @@ import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
-import com.liferay.portal.vulcan.util.TransformUtil;
 
 import java.io.Serializable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -121,6 +125,30 @@ public class ObjectEntryDTOConverter
 			objectEntry);
 	}
 
+	private void _addNestedFields(
+		Map<String, Object> map, String nestedFields, String objectFieldName,
+		ObjectRelationship objectRelationship, Object value) {
+
+		String objectFieldNameNestedField = StringUtil.replaceLast(
+			objectFieldName.substring(
+				objectFieldName.lastIndexOf(StringPool.UNDERLINE) + 1),
+			"Id", "");
+
+		for (String nestedField : nestedFields.split(",")) {
+			if (nestedField.contains(objectFieldNameNestedField)) {
+				map.put(
+					StringUtil.replaceLast(objectFieldName, "Id", ""), value);
+			}
+
+			if (GetterUtil.getBoolean(
+					PropsUtil.get("feature.flag.LPS-161364")) &&
+				nestedField.equals(objectRelationship.getName())) {
+
+				map.put(nestedField, value);
+			}
+		}
+	}
+
 	private DTOConverterContext _getDTOConverterContext(
 		DTOConverterContext dtoConverterContext, long objectEntryId) {
 
@@ -135,6 +163,29 @@ public class ObjectEntryDTOConverter
 			dtoConverterContext.getHttpServletRequest(), objectEntryId,
 			dtoConverterContext.getLocale(), uriInfo,
 			dtoConverterContext.getUser());
+	}
+
+	private ListEntry _getListEntry(
+		DTOConverterContext dtoConverterContext, String key,
+		long listTypeDefinitionId) {
+
+		ListTypeEntry listTypeEntry =
+			_listTypeEntryLocalService.fetchListTypeEntry(
+				listTypeDefinitionId, key);
+
+		if (listTypeEntry == null) {
+			return null;
+		}
+
+		return new ListEntry() {
+			{
+				key = listTypeEntry.getKey();
+				name = listTypeEntry.getName(dtoConverterContext.getLocale());
+				name_i18n = LocalizedMapUtil.getI18nMap(
+					dtoConverterContext.isAcceptAllLanguages(),
+					listTypeEntry.getNameMap());
+			}
+		};
 	}
 
 	private ObjectEntry[] _getManyToManyRelationshipObjectEntries(
@@ -309,26 +360,38 @@ public class ObjectEntryDTOConverter
 			Serializable serializable = values.get(objectFieldName);
 
 			if (listTypeDefinitionId != 0) {
-				ListTypeEntry listTypeEntry =
-					_listTypeEntryLocalService.fetchListTypeEntry(
-						listTypeDefinitionId, (String)serializable);
+				if (StringUtil.equals(
+						objectField.getBusinessType(),
+						ObjectFieldConstants.
+							BUSINESS_TYPE_MULTISELECT_PICKLIST)) {
 
-				if (listTypeEntry == null) {
+					List<ListEntry> listEntries = new ArrayList<>();
+
+					for (String key :
+							StringUtil.split(
+								(String)serializable,
+								StringPool.COMMA_AND_SPACE)) {
+
+						listEntries.add(
+							_getListEntry(
+								dtoConverterContext, key,
+								listTypeDefinitionId));
+					}
+
+					map.put(objectFieldName, listEntries);
+
 					continue;
 				}
 
-				map.put(
-					objectFieldName,
-					new ListEntry() {
-						{
-							key = listTypeEntry.getKey();
-							name = listTypeEntry.getName(
-								dtoConverterContext.getLocale());
-							name_i18n = LocalizedMapUtil.getI18nMap(
-								dtoConverterContext.isAcceptAllLanguages(),
-								listTypeEntry.getNameMap());
-						}
-					});
+				ListEntry listEntry = _getListEntry(
+					dtoConverterContext, (String)serializable,
+					listTypeDefinitionId);
+
+				if (listEntry == null) {
+					continue;
+				}
+
+				map.put(objectFieldName, listEntry);
 			}
 			else if (Objects.equals(
 						objectField.getBusinessType(),
@@ -395,6 +458,11 @@ public class ObjectEntryDTOConverter
 
 				long objectEntryId = 0;
 
+				ObjectRelationship objectRelationship =
+					_objectRelationshipLocalService.
+						fetchObjectRelationshipByObjectFieldId2(
+							objectField.getObjectFieldId());
+
 				if (serializable != null) {
 					if (GetterUtil.getLong(serializable) > 0) {
 						objectEntryId = (long)serializable;
@@ -403,47 +471,33 @@ public class ObjectEntryDTOConverter
 					Optional<UriInfo> uriInfoOptional =
 						dtoConverterContext.getUriInfoOptional();
 
-					int underlineLastIndex = objectFieldName.lastIndexOf(
-						StringPool.UNDERLINE);
+					Optional<String> nestedFieldsOptional = uriInfoOptional.map(
+						UriInfo::getQueryParameters
+					).map(
+						queryParameters -> queryParameters.getFirst(
+							"nestedFields")
+					);
 
 					if ((objectEntryId != 0) &&
-						uriInfoOptional.map(
-							UriInfo::getQueryParameters
-						).map(
-							queryParameters -> queryParameters.getFirst(
-								"nestedFields")
-						).map(
-							nestedFields -> nestedFields.contains(
-								StringUtil.replaceLast(
-									objectFieldName.substring(
-										underlineLastIndex + 1),
-									"Id", ""))
-						).orElse(
-							false
-						)) {
-
-						ObjectRelationship objectRelationship =
-							_objectRelationshipLocalService.
-								fetchObjectRelationshipByObjectFieldId2(
-									objectField.getObjectFieldId());
+						nestedFieldsOptional.isPresent()) {
 
 						ObjectDefinition relatedObjectDefinition =
 							_objectDefinitionLocalService.getObjectDefinition(
 								objectRelationship.getObjectDefinitionId1());
 
 						if (relatedObjectDefinition.isSystem()) {
-							map.put(
-								StringUtil.replaceLast(
-									objectFieldName, "Id", ""),
+							_addNestedFields(
+								map, nestedFieldsOptional.get(),
+								objectFieldName, objectRelationship,
 								_objectEntryLocalService.
 									getSystemModelAttributes(
 										relatedObjectDefinition,
 										objectEntryId));
 						}
 						else {
-							map.put(
-								StringUtil.replaceLast(
-									objectFieldName, "Id", ""),
+							_addNestedFields(
+								map, nestedFieldsOptional.get(),
+								objectFieldName, objectRelationship,
 								_toDTO(
 									_getDTOConverterContext(
 										dtoConverterContext, objectEntryId),
@@ -454,7 +508,30 @@ public class ObjectEntryDTOConverter
 					}
 				}
 
-				map.put(objectFieldName, objectEntryId);
+				if (GetterUtil.getBoolean(
+						PropsUtil.get("feature.flag.LPS-161364")) &&
+					(map.get(objectRelationship.getName()) == null)) {
+
+					map.put(objectRelationship.getName() + "Id", objectEntryId);
+				}
+
+				if (!GetterUtil.getBoolean(
+						PropsUtil.get("feature.flag.LPS-164801"))) {
+
+					map.put(objectFieldName, objectEntryId);
+				}
+				else {
+					String objectRelationshipERCFieldName =
+						ObjectFieldSettingValueUtil.getObjectFieldSettingValue(
+							objectField,
+							ObjectFieldSettingConstants.
+								NAME_OBJECT_RELATIONSHIP_ERC_FIELD_NAME);
+
+					map.put(
+						objectRelationshipERCFieldName,
+						GetterUtil.getString(
+							values.get(objectRelationshipERCFieldName)));
+				}
 			}
 			else {
 				map.put(objectFieldName, serializable);

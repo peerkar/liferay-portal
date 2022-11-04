@@ -87,7 +87,8 @@ const VisibleSelectInput = forwardRef(
 			<div
 				className={classNames(
 					className,
-					'form-builder-select-field input-group-container'
+					'form-builder-select-field input-group-container',
+					'lfr__ddm-select-input-trigger'
 				)}
 				onClick={onClick}
 				onKeyDown={onKeyDown}
@@ -111,26 +112,28 @@ const VisibleSelectInput = forwardRef(
 							label={selectedLabel()}
 						/>
 					) : (
-						value.map((item) => {
-							const option = options.find(
-								(option) => option.value === item
-							);
+						<ul className="ddm-multiple-select-list">
+							{value.map((item) => {
+								const option = options.find(
+									(option) => option.value === item
+								);
 
-							return (
-								<>
-									{option && (
-										<LabelOptionListItem
-											key={`${option.value}-${option.label}`}
-											onCloseButtonClicked={
-												onCloseButtonClicked
-											}
-											option={option}
-											readOnly={readOnly}
-										/>
-									)}
-								</>
-							);
-						})
+								return (
+									<>
+										{option && (
+											<LabelOptionListItem
+												key={`${option.value}-${option.label}`}
+												onCloseButtonClicked={
+													onCloseButtonClicked
+												}
+												option={option}
+												readOnly={readOnly}
+											/>
+										)}
+									</>
+								);
+							})}
+						</ul>
 					)}
 
 					<a className="select-arrow-down-container">

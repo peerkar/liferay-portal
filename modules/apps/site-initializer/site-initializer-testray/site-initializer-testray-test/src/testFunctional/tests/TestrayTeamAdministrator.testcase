@@ -118,7 +118,6 @@ definition {
 	}
 
 	@description = "This is a test for LPS-162501 - Verify if as an Administrator I should not be able to add a duplicate Teams"
-	@ignore = "Test Stub"
 	@priority = "5"
 	test AdminCanNotAddDuplicateTeams {
 		task ("Go to Testray and Create Project") {
@@ -141,12 +140,12 @@ definition {
 
 			Click(locator1 = "TestrayManage#CLOSE_MODAL");
 
-			TestrayManage.specificVersion(
-				caseName = "Teams_2 Team",
+			TestrayManage.createTeam(
 				manageOption = "Manage Teams",
-				nameOptions = "Projects_1 Project");
+				nameOptions = "Projects_1 Project",
+				version = "Teams_2 Team");
 
-			Alert.viewErrorMessage(errorMessage = "An unexpected error ocurred");
+			Alert.viewErrorMessage(errorMessage = "The Team name already exists");
 		}
 	}
 
@@ -166,15 +165,14 @@ definition {
 				numberItems = "20",
 				valuePagination = "150");
 
-			TestrayManage.specificVersion(
-				caseName = "",
+			TestrayManage.createTeam(
 				manageOption = "Manage Teams",
-				nameOptions = "Projects_1 Project");
+				nameOptions = "Projects_1 Project",
+				version = "");
 
-			AssertElementPresent(
-				key_fieldLabel = "Name",
-				key_warningMessage = "name is a required field",
-				locator1 = "Testray#FIELD_REQUIRED_MESSAGE");
+			Testray.viewErrorMessage(
+				fieldLabel = "Name",
+				warningMessage = "name is a required field");
 		}
 	}
 

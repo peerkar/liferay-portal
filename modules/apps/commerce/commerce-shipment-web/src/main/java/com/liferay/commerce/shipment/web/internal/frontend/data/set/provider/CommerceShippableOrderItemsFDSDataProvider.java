@@ -43,7 +43,6 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.ArrayList;
@@ -58,7 +57,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Alec Sloan
  */
 @Component(
-	enabled = false, immediate = true,
+	immediate = true,
 	property = "fds.data.provider.key=" + CommerceShipmentFDSNames.SHIPPABLE_ORDER_ITEMS,
 	service = FDSDataProvider.class
 )
@@ -235,8 +234,5 @@ public class CommerceShippableOrderItemsFDSDataProvider
 
 	@Reference
 	private CommerceShippingEngineRegistry _commerceShippingEngineRegistry;
-
-	@Reference
-	private Portal _portal;
 
 }

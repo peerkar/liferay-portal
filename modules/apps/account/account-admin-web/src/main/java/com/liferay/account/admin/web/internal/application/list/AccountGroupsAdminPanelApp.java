@@ -27,7 +27,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Albert Lee
  */
 @Component(
-	immediate = true,
 	property = {
 		"panel.app.order:Integer=300",
 		"panel.category.key=" + AccountPanelCategoryKeys.CONTROL_PANEL_ACCOUNT_ENTRIES_ADMIN
@@ -37,17 +36,18 @@ import org.osgi.service.component.annotations.Reference;
 public class AccountGroupsAdminPanelApp extends BasePanelApp {
 
 	@Override
+	public Portlet getPortlet() {
+		return _portlet;
+	}
+
+	@Override
 	public String getPortletId() {
 		return AccountPortletKeys.ACCOUNT_GROUPS_ADMIN;
 	}
 
-	@Override
 	@Reference(
-		target = "(javax.portlet.name=" + AccountPortletKeys.ACCOUNT_GROUPS_ADMIN + ")",
-		unbind = "-"
+		target = "(javax.portlet.name=" + AccountPortletKeys.ACCOUNT_GROUPS_ADMIN + ")"
 	)
-	public void setPortlet(Portlet portlet) {
-		super.setPortlet(portlet);
-	}
+	private Portlet _portlet;
 
 }

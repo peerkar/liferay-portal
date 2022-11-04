@@ -19,7 +19,7 @@ import com.liferay.blogs.service.BlogsEntryLocalService;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
@@ -42,7 +42,7 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Steven Smith
  */
-@Component(enabled = false, service = BlogsImporter.class)
+@Component(service = BlogsImporter.class)
 public class BlogsImporter {
 
 	public void importBlogsEntries(
@@ -72,7 +72,7 @@ public class BlogsImporter {
 		throws PortalException {
 
 		if (jsonArray == null) {
-			jsonArray = JSONFactoryUtil.createJSONArray(
+			jsonArray = _jsonFactory.createJSONArray(
 				"[{\"actionIds\": [\"VIEW\"], \"roleName\": \"Site Member\"," +
 					"\"scope\": 4}]");
 		}
@@ -164,6 +164,9 @@ public class BlogsImporter {
 
 	@Reference
 	private BlogsEntryLocalService _blogsEntryLocalService;
+
+	@Reference
+	private JSONFactory _jsonFactory;
 
 	@Reference
 	private ResourcePermissionLocalService _resourcePermissionLocalService;

@@ -94,6 +94,7 @@ List<LayoutPageTemplateCollection> layoutPageTemplateCollections = layoutPageTem
 															"viewLayoutPageTemplateCollectionURL", viewLayoutPageTemplateCollectionURL.toString()
 														).build()
 													%>'
+													aria-label='<%= LanguageUtil.get(request, "show-actions") %>'
 													dropdownItems="<%= layoutPageTemplateDisplayContext.getCollectionsDropdownItems() %>"
 													propsTransformer="js/ActionsComponentPropsTransformer"
 												/>
@@ -165,10 +166,8 @@ List<LayoutPageTemplateCollection> layoutPageTemplateCollections = layoutPageTem
 						<clay:content-row
 							verticalAlign="center"
 						>
-							<clay:content-col
-								expand="<%= true %>"
-							>
-								<span class="text-uppercase">
+							<clay:content-col>
+								<span>
 									<%= HtmlUtil.escape(layoutPageTemplateCollection.getName()) %>
 								</span>
 							</clay:content-col>
@@ -183,6 +182,7 @@ List<LayoutPageTemplateCollection> layoutPageTemplateCollections = layoutPageTem
 								%>
 
 								<clay:dropdown-actions
+									aria-label='<%= LanguageUtil.get(request, "show-actions") %>'
 									dropdownItems="<%= layoutPageTemplateCollectionActionDropdownItem.getActionDropdownItems(layoutPageTemplateCollection) %>"
 									propsTransformer="js/propsTransformers/LayoutPageTemplateCollectionPropsTransformer"
 								/>

@@ -27,6 +27,7 @@ import updateEditableValues from '../../../../../../app/thunks/updateEditableVal
 import isMapped from '../../../../../../app/utils/editable-value/isMapped';
 import MappingSelector from '../../../../../../common/components/MappingSelector';
 import {getEditableItemPropTypes} from '../../../../../../prop-types/index';
+import DateEditableFormatInput from './DateEditableFormatInput';
 
 export function MappingPanel({item}) {
 	const collectionConfig = useCollectionConfig();
@@ -51,14 +52,31 @@ export function MappingPanel({item}) {
 	);
 
 	const updateEditableValue = (nextEditableValue) => {
+		let nextEditableConfig = {...editableValue.config};
+
+		if (
+			type === EDITABLE_TYPES['date-time'] &&
+			!isMapped(nextEditableValue)
+		) {
+			nextEditableConfig = {};
+		}
+		else if (
+			type === EDITABLE_TYPES.image &&
+			isMapped(nextEditableValue)
+		) {
+			nextEditableConfig = {
+				...editableValue.config,
+				alt: '',
+				imageTitle: '',
+			};
+		}
+
 		const nextEditableValues = {
 			...fragmentEntryLink.editableValues,
 			[processoryKey]: {
 				...fragmentEntryLink.editableValues[processoryKey],
 				[editableId]: {
-					config: isMapped(nextEditableValue)
-						? {...editableValue.config, alt: '', imageTitle: ''}
-						: editableValue.config,
+					config: nextEditableConfig,
 					defaultValue: editableValue.defaultValue,
 					...nextEditableValue,
 				},
@@ -86,6 +104,16 @@ export function MappingPanel({item}) {
 				mappedItem={editableValue}
 				onMappingSelect={updateEditableValue}
 			/>
+
+			{type === EDITABLE_TYPES['date-time'] &&
+				isMapped(editableValue) && (
+					<DateEditableFormatInput
+						editableId={editableId}
+						editableValueNamespace={item.editableValueNamespace}
+						editableValues={fragmentEntryLink.editableValues}
+						fragmentEntryLinkId={item.fragmentEntryLinkId}
+					/>
+				)}
 		</>
 	);
 }

@@ -23,11 +23,14 @@ interface NotificationTemplate {
 	id: number;
 	name: string;
 	objectDefinitionId: number | null;
+	recipientType: RecipientType;
 	subject: LocalizedValue<string>;
 	to: LocalizedValue<string>;
-	type: string;
+	type: NotificationTemplateType;
 }
 declare type ObjectRelationshipType = 'manyToMany' | 'oneToMany' | 'oneToOne';
+declare type RecipientType = 'role' | 'term' | 'user';
+declare type NotificationTemplateType = 'email' | 'userNotification';
 interface ObjectRelationship {
 	deletionType: string;
 	id: number;
@@ -49,6 +52,7 @@ interface PickListItem {
 }
 interface PickList {
 	actions: Actions;
+	externalReferenceCode?: string;
 	id: number;
 	listTypeEntries: PickListItem[];
 	name: string;
@@ -108,9 +112,10 @@ export declare function getRelationship<T>(
 	objectRelationshipId: number
 ): Promise<T>;
 export declare function updatePickList({
+	externalReferenceCode,
 	id,
 	name_i18n,
-}: Partial<PickListItem>): Promise<void>;
+}: Partial<PickList>): Promise<void>;
 export declare function deletePickList(pickListId: number): Promise<void>;
 export declare function addPickListItem({
 	id,

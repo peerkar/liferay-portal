@@ -17,7 +17,6 @@ package com.liferay.portal.workflow.kaleo.forms.web.internal.portlet;
 import com.liferay.dynamic.data.lists.exporter.DDLExporter;
 import com.liferay.dynamic.data.lists.exporter.DDLExporterFactory;
 import com.liferay.dynamic.data.lists.service.DDLRecordLocalService;
-import com.liferay.dynamic.data.mapping.io.DDMFormDeserializerTracker;
 import com.liferay.dynamic.data.mapping.storage.StorageEngine;
 import com.liferay.dynamic.data.mapping.util.DDMDisplayRegistry;
 import com.liferay.petra.string.CharPool;
@@ -31,7 +30,6 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
-import com.liferay.portal.kernel.service.WorkflowInstanceLinkLocalService;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HtmlParser;
@@ -445,9 +443,6 @@ public class KaleoFormsAdminPortlet extends MVCPortlet {
 	private DDMDisplayRegistry _ddmDisplayRegistry;
 
 	@Reference
-	private DDMFormDeserializerTracker _ddmFormDeserializerTracker;
-
-	@Reference
 	private HtmlParser _htmlParser;
 
 	@Reference
@@ -463,8 +458,5 @@ public class KaleoFormsAdminPortlet extends MVCPortlet {
 	private Language _language;
 
 	private final List<String> _parameterNames;
-
-	@Reference
-	private WorkflowInstanceLinkLocalService _workflowInstanceLinkLocalService;
 
 }

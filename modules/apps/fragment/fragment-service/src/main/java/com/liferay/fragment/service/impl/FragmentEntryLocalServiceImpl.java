@@ -113,13 +113,13 @@ public class FragmentEntryLocalServiceImpl
 
 		fragmentEntryKey = _getFragmentEntryKey(fragmentEntryKey);
 
-		validate(name);
-		validateFragmentEntryKey(groupId, fragmentEntryKey);
+		_validate(name);
+		_validateFragmentEntryKey(groupId, fragmentEntryKey);
 
 		if (WorkflowConstants.STATUS_APPROVED == status) {
 			_fragmentEntryValidator.validateConfiguration(configuration);
 			_fragmentEntryValidator.validateTypeOptions(type, typeOptions);
-			validateContent(html, configuration);
+			_validateContent(html, configuration);
 		}
 
 		FragmentEntry draftFragmentEntry = create();
@@ -533,14 +533,14 @@ public class FragmentEntryLocalServiceImpl
 				publishedFragmentEntry.getPreviewFileEntryId());
 		}
 		else {
-			validate(draftFragmentEntry.getName());
+			_validate(draftFragmentEntry.getName());
 		}
 
 		_fragmentEntryValidator.validateConfiguration(
 			draftFragmentEntry.getConfiguration());
 		_fragmentEntryValidator.validateTypeOptions(
 			draftFragmentEntry.getType(), draftFragmentEntry.getTypeOptions());
-		validateContent(
+		_validateContent(
 			draftFragmentEntry.getHtml(),
 			draftFragmentEntry.getConfiguration());
 
@@ -634,14 +634,14 @@ public class FragmentEntryLocalServiceImpl
 		FragmentEntry fragmentEntry = fragmentEntryPersistence.findByPrimaryKey(
 			fragmentEntryId);
 
-		validate(name);
+		_validate(name);
 
 		if (WorkflowConstants.STATUS_APPROVED == status) {
 			_fragmentEntryValidator.validateConfiguration(configuration);
 			_fragmentEntryValidator.validateTypeOptions(
 				fragmentEntry.getType(), typeOptions);
 
-			validateContent(html, configuration);
+			_validateContent(html, configuration);
 		}
 
 		User user = _userLocalService.getUser(userId);
@@ -695,53 +695,11 @@ public class FragmentEntryLocalServiceImpl
 			return fragmentEntry;
 		}
 
-		validate(name);
+		_validate(name);
 
 		fragmentEntry.setName(name);
 
 		return fragmentEntryPersistence.update(fragmentEntry);
-	}
-
-	protected void validate(String name) throws PortalException {
-		if (Validator.isNull(name)) {
-			throw new FragmentEntryNameException("Name must not be null");
-		}
-
-		if (name.contains(StringPool.PERIOD) ||
-			name.contains(StringPool.SLASH)) {
-
-			throw new FragmentEntryNameException(
-				"Name contains invalid characters");
-		}
-
-		int nameMaxLength = ModelHintsUtil.getMaxLength(
-			FragmentEntry.class.getName(), "name");
-
-		if (name.length() > nameMaxLength) {
-			throw new FragmentEntryNameException(
-				"Maximum length of name exceeded");
-		}
-	}
-
-	protected void validateContent(String html, String configuration)
-		throws PortalException {
-
-		_fragmentEntryProcessorRegistry.validateFragmentEntryHTML(
-			html, configuration);
-	}
-
-	protected void validateFragmentEntryKey(
-			long groupId, String fragmentEntryKey)
-		throws PortalException {
-
-		fragmentEntryKey = _getFragmentEntryKey(fragmentEntryKey);
-
-		FragmentEntry fragmentEntry = fetchFragmentEntry(
-			groupId, fragmentEntryKey);
-
-		if (fragmentEntry != null) {
-			throw new DuplicateFragmentEntryKeyException();
-		}
 	}
 
 	private void _copyFragmentEntryPreviewFileEntry(
@@ -893,6 +851,48 @@ public class FragmentEntryLocalServiceImpl
 					fragmentEntryLink.getFragmentEntryLinkId()));
 
 		actionableDynamicQuery.performActions();
+	}
+
+	private void _validate(String name) throws PortalException {
+		if (Validator.isNull(name)) {
+			throw new FragmentEntryNameException("Name must not be null");
+		}
+
+		if (name.contains(StringPool.PERIOD) ||
+			name.contains(StringPool.SLASH)) {
+
+			throw new FragmentEntryNameException(
+				"Name contains invalid characters");
+		}
+
+		int nameMaxLength = ModelHintsUtil.getMaxLength(
+			FragmentEntry.class.getName(), "name");
+
+		if (name.length() > nameMaxLength) {
+			throw new FragmentEntryNameException(
+				"Maximum length of name exceeded");
+		}
+	}
+
+	private void _validateContent(String html, String configuration)
+		throws PortalException {
+
+		_fragmentEntryProcessorRegistry.validateFragmentEntryHTML(
+			html, configuration);
+	}
+
+	private void _validateFragmentEntryKey(
+			long groupId, String fragmentEntryKey)
+		throws PortalException {
+
+		fragmentEntryKey = _getFragmentEntryKey(fragmentEntryKey);
+
+		FragmentEntry fragmentEntry = fetchFragmentEntry(
+			groupId, fragmentEntryKey);
+
+		if (fragmentEntry != null) {
+			throw new DuplicateFragmentEntryKeyException();
+		}
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

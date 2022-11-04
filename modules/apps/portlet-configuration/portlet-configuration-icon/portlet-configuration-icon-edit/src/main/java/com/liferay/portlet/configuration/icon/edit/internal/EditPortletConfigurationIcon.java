@@ -35,8 +35,7 @@ public class EditPortletConfigurationIcon extends BasePortletConfigurationIcon {
 
 	@Override
 	public String getMessage(PortletRequest portletRequest) {
-		return _language.get(
-			getResourceBundle(getLocale(portletRequest)), "preferences");
+		return _language.get(getLocale(portletRequest), "preferences");
 	}
 
 	@Override
@@ -64,11 +63,6 @@ public class EditPortletConfigurationIcon extends BasePortletConfigurationIcon {
 		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
 
 		return portletDisplay.isShowEditIcon();
-	}
-
-	@Override
-	public boolean isToolTip() {
-		return false;
 	}
 
 	@Reference

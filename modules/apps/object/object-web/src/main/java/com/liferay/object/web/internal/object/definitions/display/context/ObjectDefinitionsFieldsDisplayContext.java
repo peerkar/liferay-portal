@@ -16,6 +16,7 @@ package com.liferay.object.web.internal.object.definitions.display.context;
 
 import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
+import com.liferay.list.type.service.ListTypeDefinitionService;
 import com.liferay.object.admin.rest.dto.v1_0.util.ObjectFieldUtil;
 import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.field.business.type.ObjectFieldBusinessType;
@@ -24,6 +25,7 @@ import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.ObjectRelationship;
 import com.liferay.object.service.ObjectRelationshipLocalService;
+import com.liferay.object.web.internal.object.definitions.display.context.util.ObjectCodeEditorUtil;
 import com.liferay.object.web.internal.util.ObjectFieldBusinessTypeUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -32,9 +34,9 @@ import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeFormatter;
-import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.util.PropsValues;
 
 import java.util.ArrayList;
@@ -56,6 +58,7 @@ public class ObjectDefinitionsFieldsDisplayContext
 
 	public ObjectDefinitionsFieldsDisplayContext(
 		HttpServletRequest httpServletRequest,
+		ListTypeDefinitionService listTypeDefinitionService,
 		ModelResourcePermission<ObjectDefinition>
 			objectDefinitionModelResourcePermission,
 		ObjectFieldBusinessTypeTracker objectFieldBusinessTypeTracker,
@@ -63,6 +66,7 @@ public class ObjectDefinitionsFieldsDisplayContext
 
 		super(httpServletRequest, objectDefinitionModelResourcePermission);
 
+		_listTypeDefinitionService = listTypeDefinitionService;
 		_objectFieldBusinessTypeTracker = objectFieldBusinessTypeTracker;
 		_objectRelationshipLocalService = objectRelationshipLocalService;
 	}
@@ -72,10 +76,7 @@ public class ObjectDefinitionsFieldsDisplayContext
 
 		CreationMenu creationMenu = new CreationMenu();
 
-		if ((!GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-135404")) &&
-			 objectDefinition.isSystem()) ||
-			!hasUpdateObjectDefinitionPermission()) {
-
+		if (!hasUpdateObjectDefinitionPermission()) {
 			return creationMenu;
 		}
 
@@ -156,13 +157,23 @@ public class ObjectDefinitionsFieldsDisplayContext
 			));
 	}
 
+	public List<Map<String, Object>> getObjectFieldCodeEditorElements() {
+		if (GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-164948"))) {
+			return ObjectCodeEditorUtil.getCodeEditorElements(
+				true, true, false, objectRequestHelper.getLocale(),
+				getObjectDefinitionId());
+		}
+
+		return null;
+	}
+
 	public JSONObject getObjectFieldJSONObject(ObjectField objectField) {
-		return ObjectFieldUtil.toJSONObject(objectField);
+		return ObjectFieldUtil.toJSONObject(
+			_listTypeDefinitionService, objectField);
 	}
 
 	public Long getObjectRelationshipId(ObjectField objectField) {
-		if (GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-158962")) &&
-			StringUtil.equals(
+		if (StringUtil.equals(
 				objectField.getBusinessType(),
 				ObjectFieldConstants.BUSINESS_TYPE_RELATIONSHIP)) {
 
@@ -182,6 +193,7 @@ public class ObjectDefinitionsFieldsDisplayContext
 		return "/object-fields";
 	}
 
+	private final ListTypeDefinitionService _listTypeDefinitionService;
 	private final ObjectFieldBusinessTypeTracker
 		_objectFieldBusinessTypeTracker;
 	private final ObjectRelationshipLocalService

@@ -17,13 +17,13 @@ package com.liferay.object.rest.internal.manager.v1_0;
 import com.liferay.account.constants.AccountConstants;
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalService;
-import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.object.constants.ObjectConstants;
 import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.exception.NoSuchObjectEntryException;
+import com.liferay.object.field.business.type.ObjectFieldBusinessTypeTracker;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.ObjectRelationship;
@@ -33,6 +33,7 @@ import com.liferay.object.rest.dto.v1_0.ObjectEntry;
 import com.liferay.object.rest.internal.dto.v1_0.converter.ObjectEntryDTOConverter;
 import com.liferay.object.rest.internal.petra.sql.dsl.expression.OrderByExpressionUtil;
 import com.liferay.object.rest.internal.resource.v1_0.ObjectEntryResourceImpl;
+import com.liferay.object.rest.internal.util.ObjectEntryValuesUtil;
 import com.liferay.object.rest.manager.v1_0.BaseObjectEntryManager;
 import com.liferay.object.rest.manager.v1_0.ObjectEntryManager;
 import com.liferay.object.rest.petra.sql.dsl.expression.FilterPredicateFactory;
@@ -44,6 +45,7 @@ import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.service.ObjectRelationshipService;
 import com.liferay.object.system.SystemObjectDefinitionMetadata;
 import com.liferay.object.system.SystemObjectDefinitionMetadataTracker;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.sql.dsl.expression.Predicate;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -51,6 +53,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.model.GroupedModel;
+import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -61,6 +65,8 @@ import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.search.filter.TermFilter;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.service.PersistedModelLocalService;
+import com.liferay.portal.kernel.service.PersistedModelLocalServiceRegistry;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -88,7 +94,6 @@ import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.util.ActionUtil;
 import com.liferay.portal.vulcan.util.SearchUtil;
-import com.liferay.portal.vulcan.util.TransformUtil;
 
 import java.io.Serializable;
 
@@ -135,7 +140,8 @@ public class DefaultObjectEntryManagerImpl
 			_objectEntryService.addObjectEntry(
 				groupId, objectDefinition.getObjectDefinitionId(),
 				_toObjectValues(
-					groupId, objectDefinition, 0L, objectEntry.getProperties(),
+					groupId, dtoConverterContext.getUserId(), objectDefinition,
+					0L, objectEntry.getProperties(),
 					dtoConverterContext.getLocale()),
 				_createServiceContext(
 					objectEntry.getProperties(),
@@ -185,7 +191,8 @@ public class DefaultObjectEntryManagerImpl
 				externalReferenceCode, groupId,
 				objectDefinition.getObjectDefinitionId(),
 				_toObjectValues(
-					groupId, objectDefinition, 0L, objectEntry.getProperties(),
+					groupId, dtoConverterContext.getUserId(), objectDefinition,
+					0L, objectEntry.getProperties(),
 					dtoConverterContext.getLocale()),
 				serviceContext));
 	}
@@ -594,7 +601,8 @@ public class DefaultObjectEntryManagerImpl
 			_objectEntryService.updateObjectEntry(
 				objectEntryId,
 				_toObjectValues(
-					serviceBuilderObjectEntry.getGroupId(), objectDefinition,
+					serviceBuilderObjectEntry.getGroupId(),
+					dtoConverterContext.getUserId(), objectDefinition,
 					serviceBuilderObjectEntry.getObjectEntryId(),
 					objectEntry.getProperties(),
 					dtoConverterContext.getLocale()),
@@ -695,14 +703,21 @@ public class DefaultObjectEntryManagerImpl
 			_systemObjectDefinitionMetadataTracker.
 				getSystemObjectDefinitionMetadata(objectDefinition.getName());
 
-		AssetEntry assetEntry = _assetEntryLocalService.getEntry(
-			systemObjectDefinitionMetadata.getModelClassName(), objectEntryId);
+		PersistedModelLocalService persistedModelLocalService =
+			_persistedModelLocalServiceRegistry.getPersistedModelLocalService(
+				systemObjectDefinitionMetadata.getModelClassName());
+
+		PersistedModel persistedModel =
+			persistedModelLocalService.getPersistedModel(objectEntryId);
 
 		if (Objects.equals(
 				systemObjectDefinitionMetadata.getScope(),
-				ObjectDefinitionConstants.SCOPE_SITE)) {
+				ObjectDefinitionConstants.SCOPE_SITE) &&
+			(persistedModel instanceof GroupedModel)) {
 
-			groupId = assetEntry.getGroupId();
+			GroupedModel groupedModel = (GroupedModel)persistedModel;
+
+			groupId = groupedModel.getGroupId();
 		}
 
 		return Page.of(
@@ -711,7 +726,7 @@ public class DefaultObjectEntryManagerImpl
 				dtoConverterContext,
 				objectRelatedModelsProvider.getRelatedModels(
 					groupId, objectRelationship.getObjectRelationshipId(),
-					assetEntry.getClassPK(), pagination.getStartPosition(),
+					objectEntryId, pagination.getStartPosition(),
 					pagination.getEndPosition())));
 	}
 
@@ -902,7 +917,17 @@ public class DefaultObjectEntryManagerImpl
 				"permissions",
 				ActionUtil.addAction(
 					ActionKeys.PERMISSIONS, ObjectEntryResourceImpl.class,
-					objectEntry.getObjectEntryId(), "patchObjectEntry", null,
+					objectEntry.getObjectEntryId(),
+					"getObjectEntryPermissionsPage", null,
+					objectEntry.getUserId(),
+					_getObjectEntryPermissionName(
+						objectEntry.getObjectDefinitionId()),
+					objectEntry.getGroupId(), dtoConverterContext.getUriInfo())
+			).put(
+				"replace",
+				ActionUtil.addAction(
+					ActionKeys.UPDATE, ObjectEntryResourceImpl.class,
+					objectEntry.getObjectEntryId(), "putObjectEntry", null,
 					objectEntry.getUserId(),
 					_getObjectEntryPermissionName(
 						objectEntry.getObjectDefinitionId()),
@@ -911,7 +936,7 @@ public class DefaultObjectEntryManagerImpl
 				"update",
 				ActionUtil.addAction(
 					ActionKeys.UPDATE, ObjectEntryResourceImpl.class,
-					objectEntry.getObjectEntryId(), "putObjectEntry", null,
+					objectEntry.getObjectEntryId(), "patchObjectEntry", null,
 					objectEntry.getUserId(),
 					_getObjectEntryPermissionName(
 						objectEntry.getObjectDefinitionId()),
@@ -936,22 +961,22 @@ public class DefaultObjectEntryManagerImpl
 	}
 
 	private Map<String, Serializable> _toObjectValues(
-			long groupId, ObjectDefinition objectDefinition, long objectEntryId,
-			Map<String, Object> properties, Locale locale)
+			long groupId, long userId, ObjectDefinition objectDefinition,
+			long objectEntryId, Map<String, Object> properties, Locale locale)
 		throws Exception {
-
-		List<ObjectField> objectFields =
-			_objectFieldLocalService.getObjectFields(
-				objectDefinition.getObjectDefinitionId());
 
 		Map<String, Serializable> values = new HashMap<>();
 
-		for (ObjectField objectField : objectFields) {
-			String name = objectField.getName();
+		for (ObjectField objectField :
+				_objectFieldLocalService.getObjectFields(
+					objectDefinition.getObjectDefinitionId())) {
 
-			Object object = properties.get(name);
+			Object value = ObjectEntryValuesUtil.getValue(
+				_objectDefinitionLocalService, _objectEntryLocalService,
+				objectField, _objectFieldBusinessTypeTracker, userId,
+				properties);
 
-			if ((object == null) && !objectField.isRequired()) {
+			if ((value == null) && !objectField.isRequired()) {
 				continue;
 			}
 
@@ -960,37 +985,32 @@ public class DefaultObjectEntryManagerImpl
 					objectField.getBusinessType())) {
 
 				values.put(
-					name,
+					objectField.getName(),
 					SanitizerUtil.sanitize(
 						objectField.getCompanyId(), groupId,
 						objectField.getUserId(),
 						objectDefinition.getClassName(), objectEntryId,
 						ContentTypes.TEXT_HTML, Sanitizer.MODE_ALL,
-						String.valueOf(object), null));
-
-				continue;
+						String.valueOf(value), null));
 			}
+			else if (Objects.equals(
+						objectField.getDBType(),
+						ObjectFieldConstants.DB_TYPE_DATE)) {
 
-			if (Objects.equals(
-					objectField.getDBType(),
-					ObjectFieldConstants.DB_TYPE_DATE)) {
-
-				values.put(name, _toDate(locale, String.valueOf(object)));
-
-				continue;
+				values.put(
+					objectField.getName(),
+					_toDate(locale, String.valueOf(value)));
 			}
+			else if ((objectField.getListTypeDefinitionId() != 0) &&
+					 (value instanceof Map)) {
 
-			if ((objectField.getListTypeDefinitionId() != 0) &&
-				(object instanceof Map)) {
+				Map<String, String> map = (HashMap<String, String>)value;
 
-				Map<String, String> map = (HashMap<String, String>)object;
-
-				values.put(name, map.get("key"));
-
-				continue;
+				values.put(objectField.getName(), map.get("key"));
 			}
-
-			values.put(name, (Serializable)object);
+			else {
+				values.put(objectField.getName(), (Serializable)value);
+			}
 		}
 
 		return values;
@@ -1029,6 +1049,9 @@ public class DefaultObjectEntryManagerImpl
 	private ObjectEntryService _objectEntryService;
 
 	@Reference
+	private ObjectFieldBusinessTypeTracker _objectFieldBusinessTypeTracker;
+
+	@Reference
 	private ObjectFieldLocalService _objectFieldLocalService;
 
 	@Reference
@@ -1040,6 +1063,10 @@ public class DefaultObjectEntryManagerImpl
 
 	@Reference
 	private ObjectRelationshipService _objectRelationshipService;
+
+	@Reference
+	private PersistedModelLocalServiceRegistry
+		_persistedModelLocalServiceRegistry;
 
 	@Reference
 	private Queries _queries;

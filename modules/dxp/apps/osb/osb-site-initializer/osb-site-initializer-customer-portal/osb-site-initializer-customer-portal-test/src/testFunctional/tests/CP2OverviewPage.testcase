@@ -45,104 +45,124 @@ definition {
 	@description = "Automtion ID: LPS-144412 | Test Summary: Verify if the user can open the drop-down filter and select Active Status"
 	@priority = "4"
 	test CanUserSelectActiveStatus {
-		task ("Go to CP2.0 and join a project") {
+		task ("Go to Customer Portal 2.0") {
 			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
+		}
+
+		task ("Given I go to the test account") {
+			CustomerPortal.search(searchItem = "${testAccount}");
 
 			CustomerPortal.enterOnProject(title = "${testAccount}");
 		}
 
 		task ("Open the drop-down and assert the active status") {
-			CP2NavigationMenu.clickOnStatusButton(
-				status = "Active",
+			Click(
+				locator1 = "CP2NavigationMenu#STATUS_BUTTON",
 				title = "All");
 
-			AssertElementPresent(
-				locator1 = "CP2NavigationMenu#STATUS_BUTTON",
-				title = "Active");
+			AssertVisible(
+				locator1 = "CP2NavigationMenu#STATUS_OPTIONS",
+				status = "Active");
 		}
 	}
 
 	@description = "Automation ID: LPS-144413 | Test Summary: Verify if the user can open the drop-down filter and select Expired Status"
 	@priority = "4"
 	test CanUserSelectExpiredStatus {
-		task ("Go to CP2.0 and join a project") {
+		task ("Go to Customer Portal 2.0") {
 			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
+		}
+
+		task ("Given I go to the test account") {
+			CustomerPortal.search(searchItem = "${testAccount}");
 
 			CustomerPortal.enterOnProject(title = "${testAccount}");
 		}
 
 		task ("Open the drop-down and assert the expired status") {
-			CP2NavigationMenu.clickOnStatusButton(
-				status = "Expired",
+			Click(
+				locator1 = "CP2NavigationMenu#STATUS_BUTTON",
 				title = "All");
 
-			AssertElementPresent(
-				locator1 = "CP2NavigationMenu#STATUS_BUTTON",
-				title = "Expired");
+			AssertVisible(
+				locator1 = "CP2NavigationMenu#STATUS_OPTIONS",
+				status = "Expired");
 		}
 	}
 
 	@description = "Automation ID: LPS-144414 | Test Summary: Verify if the user can open the drop-down filter and select Future Status"
 	@priority = "4"
 	test CanUserSelectFutureStatus {
-		task ("Go to CP2.0 and join a project") {
+		task ("Go to Customer Portal 2.0") {
 			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
+		}
+
+		task ("Given I go to the test account") {
+			CustomerPortal.search(searchItem = "${testAccount}");
 
 			CustomerPortal.enterOnProject(title = "${testAccount}");
 		}
 
 		task ("Open the drop-down and assert the future status") {
-			CP2NavigationMenu.clickOnStatusButton(
-				status = "Future",
+			Click(
+				locator1 = "CP2NavigationMenu#STATUS_BUTTON",
 				title = "All");
 
-			AssertElementPresent(
-				locator1 = "CP2NavigationMenu#STATUS_BUTTON",
-				title = "Future");
+			AssertVisible(
+				locator1 = "CP2NavigationMenu#STATUS_OPTIONS",
+				status = "Future");
 		}
 	}
 
 	@description = "Automation ID: LPS-144416 | Test Summary: Verify if the user can open the drop-down filter and select three statuses"
 	@priority = "3"
 	test CanUserSelectThreeStatuses {
-		task ("Go to CP2.0 and join a project") {
+		task ("Go to Customer Portal 2.0") {
 			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
+		}
+
+		task ("Given I go to the test account") {
+			CustomerPortal.search(searchItem = "${testAccount}");
 
 			CustomerPortal.enterOnProject(title = "${testAccount}");
 		}
 
 		task ("Open the drop-down and assert the all status") {
-			CP2NavigationMenu.clickOnStatusButton(
-				status = "All",
-				title = "All");
+			var options = "Active,Expired,Future";
 
-			AssertElementPresent(
-				locator1 = "CP2NavigationMenu#STATUS_BUTTON",
-				title = "All");
+			CP2NavigationMenu.assertStatusOptions(statusList = "${options}");
 		}
 	}
 
 	@description = "Automation ID: LPS-144419 | Test Summary: Verify if the value of the filter when transitioning between subscription types is kept and only reset when the user leaves the page"
 	@priority = "4"
 	test ValueIsKeptOnTransition {
-		task ("Go to CP2.0 and join a project") {
+		task ("Go to Customer Portal 2.0") {
 			ApplicationsMenu.gotoSite(key_site = "${testSiteName}");
+		}
+
+		task ("Given I go to the test account") {
+			CustomerPortal.search(searchItem = "${testAccount}");
 
 			CustomerPortal.enterOnProject(title = "${testAccount}");
 		}
 
 		task ("Select a status and open a subscription card") {
-			CP2NavigationMenu.clickOnStatusButton(
-				status = "Active",
+			AssertVisible(
+				locator1 = "CP2NavigationMenu#STATUS_BUTTON",
 				title = "All");
 
-			CustomerPortal.enterOnSubscription();
+			CustomerPortal.enterOnSubscription(modalTitle = "LXC - SM Non-Production");
 		}
 
 		task ("Assert that the subscription status is active") {
-			AssertElementPresent(
+			Click(
 				locator1 = "CP2NavigationMenu#STATUS_BUTTON",
-				title = "Active");
+				title = "All");
+
+			AssertVisible(
+				locator1 = "CP2NavigationMenu#STATUS_OPTIONS",
+				status = "Active");
 		}
 
 		task ("Go back to Homepage and join a project again") {

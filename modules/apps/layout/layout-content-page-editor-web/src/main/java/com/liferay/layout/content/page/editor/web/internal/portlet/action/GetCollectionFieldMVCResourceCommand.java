@@ -20,16 +20,14 @@ import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.asset.list.model.AssetListEntry;
 import com.liferay.asset.list.model.AssetListEntryModel;
 import com.liferay.asset.list.service.AssetListEntryLocalService;
-import com.liferay.document.library.kernel.model.DLFileEntryConstants;
 import com.liferay.fragment.entry.processor.helper.FragmentEntryProcessorHelper;
 import com.liferay.info.collection.provider.item.selector.criterion.InfoCollectionProviderItemSelectorCriterion;
 import com.liferay.info.collection.provider.item.selector.criterion.RelatedInfoItemCollectionProviderItemSelectorCriterion;
 import com.liferay.info.exception.NoSuchInfoItemException;
 import com.liferay.info.field.InfoField;
-import com.liferay.info.field.InfoFieldValue;
+import com.liferay.info.form.InfoForm;
 import com.liferay.info.item.ClassPKInfoItemIdentifier;
 import com.liferay.info.item.InfoItemFieldValues;
-import com.liferay.info.item.InfoItemIdentifier;
 import com.liferay.info.item.InfoItemReference;
 import com.liferay.info.item.InfoItemServiceTracker;
 import com.liferay.info.item.provider.InfoItemFieldValuesProvider;
@@ -40,7 +38,6 @@ import com.liferay.info.list.renderer.DefaultInfoListRendererContext;
 import com.liferay.info.list.renderer.InfoListRenderer;
 import com.liferay.info.list.renderer.InfoListRendererTracker;
 import com.liferay.info.search.InfoSearchClassMapperTracker;
-import com.liferay.info.type.WebImage;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.item.selector.criteria.InfoListItemSelectorReturnType;
 import com.liferay.item.selector.criteria.info.item.criterion.InfoListItemSelectorCriterion;
@@ -50,15 +47,15 @@ import com.liferay.layout.helper.CollectionPaginationHelper;
 import com.liferay.layout.list.retriever.ClassedModelListObjectReference;
 import com.liferay.layout.list.retriever.DefaultLayoutListRetrieverContext;
 import com.liferay.layout.list.retriever.LayoutListRetriever;
-import com.liferay.layout.list.retriever.LayoutListRetrieverTracker;
+import com.liferay.layout.list.retriever.LayoutListRetrieverRegistry;
 import com.liferay.layout.list.retriever.ListObjectReference;
 import com.liferay.layout.list.retriever.ListObjectReferenceFactory;
-import com.liferay.layout.list.retriever.ListObjectReferenceFactoryTracker;
+import com.liferay.layout.list.retriever.ListObjectReferenceFactoryRegistry;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
 import com.liferay.portal.kernel.json.JSONArray;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
@@ -67,7 +64,6 @@ import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCResourceCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
-import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.servlet.PipingServletResponse;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -80,7 +76,6 @@ import com.liferay.segments.context.RequestContextMapper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Optional;
 
 import javax.portlet.PortletURL;
@@ -97,7 +92,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Eudaldo Alonso
  */
 @Component(
-	immediate = true,
 	property = {
 		"javax.portlet.name=" + ContentPageEditorPortletKeys.CONTENT_PAGE_EDITOR_PORTLET,
 		"mvc.command.name=/layout_content_page_editor/get_collection_field"
@@ -112,7 +106,7 @@ public class GetCollectionFieldMVCResourceCommand
 			ResourceRequest resourceRequest, ResourceResponse resourceResponse)
 		throws Exception {
 
-		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+		JSONObject jsonObject = _jsonFactorys.createJSONObject();
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)resourceRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
@@ -197,23 +191,23 @@ public class GetCollectionFieldMVCResourceCommand
 			String templateKey)
 		throws PortalException {
 
-		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+		JSONObject jsonObject = _jsonFactorys.createJSONObject();
 
 		JSONObject layoutObjectReferenceJSONObject =
-			JSONFactoryUtil.createJSONObject(layoutObjectReference);
+			_jsonFactorys.createJSONObject(layoutObjectReference);
 
 		String type = layoutObjectReferenceJSONObject.getString("type");
 
 		LayoutListRetriever<?, ListObjectReference> layoutListRetriever =
 			(LayoutListRetriever<?, ListObjectReference>)
-				_layoutListRetrieverTracker.getLayoutListRetriever(type);
+				_layoutListRetrieverRegistry.getLayoutListRetriever(type);
 
 		if (layoutListRetriever == null) {
 			return jsonObject;
 		}
 
 		ListObjectReferenceFactory<?> listObjectReferenceFactory =
-			_listObjectReferenceFactoryTracker.getListObjectReference(type);
+			_listObjectReferenceFactoryRegistry.getListObjectReference(type);
 
 		if (listObjectReferenceFactory == null) {
 			return jsonObject;
@@ -254,8 +248,6 @@ public class GetCollectionFieldMVCResourceCommand
 				_portal.getUserId(httpServletRequest),
 				_requestContextMapper.map(httpServletRequest)));
 
-		// LPS-111037
-
 		Optional<AssetListEntry> assetListEntryOptional =
 			_getAssetListEntryOptional(listObjectReference);
 
@@ -280,10 +272,10 @@ public class GetCollectionFieldMVCResourceCommand
 						itemType);
 			}
 
-			return JSONFactoryUtil.createJSONObject();
+			return _jsonFactorys.createJSONObject();
 		}
 
-		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+		JSONArray jsonArray = _jsonFactorys.createJSONArray();
 
 		List<Object> list = layoutListRetriever.getList(
 			listObjectReference, defaultLayoutListRetrieverContext);
@@ -291,7 +283,7 @@ public class GetCollectionFieldMVCResourceCommand
 		for (Object object : list) {
 			jsonArray.put(
 				_getDisplayObjectJSONObject(
-					infoItemFieldValuesProvider, object,
+					infoItemFieldValuesProvider, itemType, object,
 					LocaleUtil.fromLanguageId(languageId)));
 		}
 
@@ -357,8 +349,10 @@ public class GetCollectionFieldMVCResourceCommand
 
 		infoListItemSelectorCriterion.setDesiredItemSelectorReturnTypes(
 			new InfoListItemSelectorReturnType());
-		infoListItemSelectorCriterion.setItemTypes(
-			_getInfoItemFormProviderClassNames());
+
+		List<String> itemTypes = _getInfoItemFormProviderSearchClassNames();
+
+		infoListItemSelectorCriterion.setItemTypes(itemTypes);
 
 		InfoCollectionProviderItemSelectorCriterion
 			infoCollectionProviderItemSelectorCriterion =
@@ -367,8 +361,7 @@ public class GetCollectionFieldMVCResourceCommand
 		infoCollectionProviderItemSelectorCriterion.
 			setDesiredItemSelectorReturnTypes(
 				new InfoListProviderItemSelectorReturnType());
-		infoCollectionProviderItemSelectorCriterion.setItemTypes(
-			_getInfoItemFormProviderClassNames());
+		infoCollectionProviderItemSelectorCriterion.setItemTypes(itemTypes);
 
 		RelatedInfoItemCollectionProviderItemSelectorCriterion
 			relatedInfoItemCollectionProviderItemSelectorCriterion =
@@ -411,38 +404,21 @@ public class GetCollectionFieldMVCResourceCommand
 
 	private JSONObject _getDisplayObjectJSONObject(
 		InfoItemFieldValuesProvider<Object> infoItemFieldValuesProvider,
-		Object object, Locale locale) {
+		String itemType, Object object, Locale locale) {
 
-		JSONObject displayObjectJSONObject = JSONFactoryUtil.createJSONObject();
+		JSONObject displayObjectJSONObject = _jsonFactorys.createJSONObject();
 
-		InfoItemFieldValues infoItemFieldValues =
-			infoItemFieldValuesProvider.getInfoItemFieldValues(object);
+		InfoItemFormProvider<?> infoItemFormProvider =
+			_infoItemServiceTracker.getFirstInfoItemService(
+				InfoItemFormProvider.class, itemType);
 
-		for (InfoFieldValue<Object> infoFieldValue :
-				infoItemFieldValues.getInfoFieldValues()) {
+		InfoForm infoForm = infoItemFormProvider.getInfoForm();
 
-			Object value = infoFieldValue.getValue(locale);
-
-			if (value instanceof WebImage) {
-				WebImage webImage = (WebImage)value;
-
-				value = webImage.toJSONObject();
-
-				long fileEntryId = _getFileEntryId(webImage);
-
-				if (fileEntryId != 0) {
-					JSONObject valueJSONObject = (JSONObject)value;
-
-					valueJSONObject.put(
-						"fileEntryId", String.valueOf(fileEntryId));
-				}
-			}
-			else {
-				value = _fragmentEntryProcessorHelper.formatMappedValue(
-					value, locale);
-			}
-
-			InfoField infoField = infoFieldValue.getInfoField();
+		for (InfoField<?> infoField : infoForm.getAllInfoFields()) {
+			Object value =
+				_fragmentEntryProcessorHelper.getMappedInfoItemFieldValue(
+					infoField.getName(), infoItemFieldValuesProvider, locale,
+					object);
 
 			displayObjectJSONObject.put(
 				infoField.getName(), value
@@ -450,6 +426,9 @@ public class GetCollectionFieldMVCResourceCommand
 				infoField.getUniqueId(), value
 			);
 		}
+
+		InfoItemFieldValues infoItemFieldValues =
+			infoItemFieldValuesProvider.getInfoItemFieldValues(object);
 
 		InfoItemReference infoItemReference =
 			infoItemFieldValues.getInfoItemReference();
@@ -466,31 +445,6 @@ public class GetCollectionFieldMVCResourceCommand
 		}
 
 		return displayObjectJSONObject;
-	}
-
-	private long _getFileEntryId(WebImage webImage) {
-		InfoItemReference infoItemReference = webImage.getInfoItemReference();
-
-		if ((infoItemReference == null) ||
-			!Objects.equals(
-				infoItemReference.getClassName(), FileEntry.class.getName())) {
-
-			return 0;
-		}
-
-		InfoItemIdentifier fileEntryInfoItemIdentifier =
-			infoItemReference.getInfoItemIdentifier();
-
-		if (!(fileEntryInfoItemIdentifier instanceof
-				ClassPKInfoItemIdentifier)) {
-
-			return 0;
-		}
-
-		ClassPKInfoItemIdentifier classPKInfoItemIdentifier =
-			(ClassPKInfoItemIdentifier)fileEntryInfoItemIdentifier;
-
-		return classPKInfoItemIdentifier.getClassPK();
 	}
 
 	private Object _getInfoItem(HttpServletRequest httpServletRequest) {
@@ -527,14 +481,15 @@ public class GetCollectionFieldMVCResourceCommand
 		return null;
 	}
 
-	private List<String> _getInfoItemFormProviderClassNames() {
-		List<String> infoItemClassNames =
-			_infoItemServiceTracker.getInfoItemClassNames(
-				InfoItemFormProvider.class);
+	private List<String> _getInfoItemFormProviderSearchClassNames() {
+		List<String> infoItemClassNames = new ArrayList<>();
 
-		if (infoItemClassNames.contains(FileEntry.class.getName())) {
-			infoItemClassNames.add(DLFileEntryConstants.getClassName());
-			infoItemClassNames.remove(FileEntry.class.getName());
+		for (String className :
+				_infoItemServiceTracker.getInfoItemClassNames(
+					InfoItemFormProvider.class)) {
+
+			infoItemClassNames.add(
+				_infoSearchClassMapperTracker.getSearchClassName(className));
 		}
 
 		return infoItemClassNames;
@@ -565,14 +520,17 @@ public class GetCollectionFieldMVCResourceCommand
 	private ItemSelector _itemSelector;
 
 	@Reference
+	private JSONFactory _jsonFactorys;
+
+	@Reference
 	private Language _language;
 
 	@Reference
-	private LayoutListRetrieverTracker _layoutListRetrieverTracker;
+	private LayoutListRetrieverRegistry _layoutListRetrieverRegistry;
 
 	@Reference
-	private ListObjectReferenceFactoryTracker
-		_listObjectReferenceFactoryTracker;
+	private ListObjectReferenceFactoryRegistry
+		_listObjectReferenceFactoryRegistry;
 
 	@Reference
 	private Portal _portal;

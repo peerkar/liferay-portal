@@ -27,6 +27,7 @@ import com.liferay.info.collection.provider.InfoCollectionProvider;
 import com.liferay.info.collection.provider.SingleFormVariationInfoCollectionProvider;
 import com.liferay.info.item.InfoItemServiceTracker;
 import com.liferay.info.list.provider.item.selector.criterion.InfoListProviderItemSelectorReturnType;
+import com.liferay.info.search.InfoSearchClassMapperTracker;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.item.selector.criteria.InfoListItemSelectorReturnType;
 import com.liferay.layout.content.page.editor.sidebar.panel.ContentPageEditorSidebarPanel;
@@ -39,6 +40,8 @@ import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructureRel;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalServiceUtil;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureRelLocalServiceUtil;
+import com.liferay.learn.LearnMessage;
+import com.liferay.learn.LearnMessageUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -101,6 +104,7 @@ public class ContentPageLayoutEditorDisplayContext
 		FrontendTokenDefinitionRegistry frontendTokenDefinitionRegistry,
 		HttpServletRequest httpServletRequest,
 		InfoItemServiceTracker infoItemServiceTracker,
+		InfoSearchClassMapperTracker infoSearchClassMapperTracker,
 		ItemSelector itemSelector,
 		PageEditorConfiguration pageEditorConfiguration,
 		PortletRequest portletRequest, RenderResponse renderResponse,
@@ -111,10 +115,10 @@ public class ContentPageLayoutEditorDisplayContext
 		super(
 			contentPageEditorSidebarPanels, fragmentCollectionManager,
 			fragmentEntryLinkManager, frontendTokenDefinitionRegistry,
-			httpServletRequest, infoItemServiceTracker, itemSelector,
-			pageEditorConfiguration, portletRequest, renderResponse,
-			segmentsConfigurationProvider, segmentsExperienceManager,
-			stagingGroupHelper);
+			httpServletRequest, infoItemServiceTracker,
+			infoSearchClassMapperTracker, itemSelector, pageEditorConfiguration,
+			portletRequest, renderResponse, segmentsConfigurationProvider,
+			segmentsExperienceManager, stagingGroupHelper);
 	}
 
 	@Override
@@ -142,6 +146,15 @@ public class ContentPageLayoutEditorDisplayContext
 				themeDisplay.getScopeGroupId()));
 		configContext.put(
 			"availableSegmentsEntries", _getAvailableSegmentsEntries());
+
+		LearnMessage learnMessage = LearnMessageUtil.getLearnMessage(
+			"content-page-personalization",
+			LanguageUtil.getLanguageId(httpServletRequest),
+			"layout-content-page-editor-web");
+
+		configContext.put(
+			"contentPagePersonalizationLearnURL", learnMessage.getURL());
+
 		configContext.put(
 			"defaultSegmentsEntryId", SegmentsEntryConstants.ID_DEFAULT);
 		configContext.put(

@@ -15,14 +15,17 @@
 package com.liferay.portal.search.web.internal.facet.display.context;
 
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProviderUtil;
 import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.search.configuration.CategoryFacetFieldConfiguration;
 import com.liferay.portal.search.web.internal.category.facet.configuration.CategoryFacetPortletInstanceConfiguration;
 
 import java.io.Serializable;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -46,6 +49,13 @@ public class AssetCategoriesSearchFacetDisplayContext implements Serializable {
 		_categoryFacetPortletInstanceConfiguration =
 			portletDisplay.getPortletInstanceConfiguration(
 				CategoryFacetPortletInstanceConfiguration.class);
+
+		CategoryFacetFieldConfiguration categoryFacetFieldConfiguration =
+			ConfigurationProviderUtil.getSystemConfiguration(
+				CategoryFacetFieldConfiguration.class);
+
+		_legacyFieldSelected = _isLegacyFieldSelected(
+			categoryFacetFieldConfiguration.categoryFacetField());
 	}
 
 	public CategoryFacetPortletInstanceConfiguration
@@ -92,11 +102,26 @@ public class AssetCategoriesSearchFacetDisplayContext implements Serializable {
 	public List<AssetCategoriesSearchFacetTermDisplayContext>
 		getTermDisplayContexts() {
 
-		return _assetCategoriesSearchFacetTermDisplayContext;
+		return _assetCategoriesSearchFacetTermDisplayContexts;
+	}
+
+	public List<AssetCategoriesSearchFacetTermDisplayContext>
+		getTermDisplayContexts(String vocabularyName) {
+
+		return _assetCategoriesSearchFacetTermDisplayContextMap.get(
+			vocabularyName);
+	}
+
+	public List<String> getVocabularyNames() {
+		return _vocabularyNames;
 	}
 
 	public boolean isCloud() {
 		return _cloud;
+	}
+
+	public boolean isLegacyFieldSelected() {
+		return _legacyFieldSelected;
 	}
 
 	public boolean isNothingSelected() {
@@ -139,24 +164,48 @@ public class AssetCategoriesSearchFacetDisplayContext implements Serializable {
 
 	public void setTermDisplayContexts(
 		List<AssetCategoriesSearchFacetTermDisplayContext>
-			assetCategoriesSearchFacetTermDisplayContext) {
+			assetCategoriesSearchFacetTermDisplayContexts) {
 
-		_assetCategoriesSearchFacetTermDisplayContext =
-			assetCategoriesSearchFacetTermDisplayContext;
+		_assetCategoriesSearchFacetTermDisplayContexts =
+			assetCategoriesSearchFacetTermDisplayContexts;
 	}
 
+	public void setTermDisplayContextsMap(
+		Map<String, List<AssetCategoriesSearchFacetTermDisplayContext>>
+			assetCategoriesSearchFacetTermDisplayContextMap) {
+
+		_assetCategoriesSearchFacetTermDisplayContextMap =
+			assetCategoriesSearchFacetTermDisplayContextMap;
+	}
+
+	public void setVocabularyNames(List<String> vocabularyNames) {
+		_vocabularyNames = vocabularyNames;
+	}
+
+	private boolean _isLegacyFieldSelected(String fieldName) {
+		if (fieldName.equals("assetCategoryIds")) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private Map<String, List<AssetCategoriesSearchFacetTermDisplayContext>>
+		_assetCategoriesSearchFacetTermDisplayContextMap;
 	private List<AssetCategoriesSearchFacetTermDisplayContext>
-		_assetCategoriesSearchFacetTermDisplayContext;
+		_assetCategoriesSearchFacetTermDisplayContexts;
 	private final CategoryFacetPortletInstanceConfiguration
 		_categoryFacetPortletInstanceConfiguration;
 	private boolean _cloud;
 	private long _displayStyleGroupId;
 	private final HttpServletRequest _httpServletRequest;
+	private final boolean _legacyFieldSelected;
 	private boolean _nothingSelected;
 	private String _paginationStartParameterName;
 	private String _parameterName;
 	private String _parameterValue;
 	private List<String> _parameterValues;
 	private boolean _renderNothing;
+	private List<String> _vocabularyNames;
 
 }

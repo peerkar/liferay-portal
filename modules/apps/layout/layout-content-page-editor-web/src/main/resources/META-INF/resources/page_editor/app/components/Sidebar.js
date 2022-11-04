@@ -21,6 +21,7 @@ import {
 	useStateSafe,
 } from '@liferay/frontend-js-react-web';
 import classNames from 'classnames';
+import {sub} from 'frontend-js-web';
 import React, {useRef} from 'react';
 
 import {useId} from '../../core/hooks/useId';
@@ -94,6 +95,8 @@ export default function Sidebar() {
 
 	const sidebarWidthRef = useRef(sidebarWidth);
 	sidebarWidthRef.current = sidebarWidth;
+
+	const sidebarContentRef = useRef();
 
 	const panels = useSelector(selectAvailablePanels(config.panels));
 	const sidebarHidden = store.sidebar.hidden;
@@ -287,6 +290,10 @@ export default function Sidebar() {
 				sidebarPanelId: panel.sidebarPanelId,
 			})
 		);
+
+		if (open) {
+			sidebarContentRef.current?.focus();
+		}
 	};
 
 	const handleSeparatorKeyDown = (event) => {
@@ -397,6 +404,7 @@ export default function Sidebar() {
 								<ClayButtonWithIcon
 									aria-pressed={active}
 									className={classNames({active})}
+									data-panel-id={panel.sidebarPanelId}
 									data-tooltip-align="left"
 									displayType="unstyled"
 									id={`${sidebarId}${panel.sidebarPanelId}`}
@@ -426,6 +434,10 @@ export default function Sidebar() {
 				</div>
 
 				<div
+					aria-label={sub(
+						Liferay.Language.get('x-panel'),
+						panel.label
+					)}
 					className={classNames({
 						'page-editor__sidebar__content': true,
 						'page-editor__sidebar__content--open': sidebarOpen,
@@ -436,6 +448,9 @@ export default function Sidebar() {
 					})}
 					id={sidebarContentId}
 					onClick={deselectItem}
+					ref={sidebarContentRef}
+					role="region"
+					tabIndex="-1"
 				>
 					{hasError ? (
 						<div>

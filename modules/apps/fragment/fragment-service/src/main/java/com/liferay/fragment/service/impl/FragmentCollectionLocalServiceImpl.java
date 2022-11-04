@@ -87,7 +87,7 @@ public class FragmentCollectionLocalServiceImpl
 			serviceContext = new ServiceContext();
 		}
 
-		validate(name);
+		_validate(name);
 
 		if (Validator.isNull(fragmentCollectionKey)) {
 			fragmentCollectionKey = generateFragmentCollectionKey(
@@ -97,7 +97,7 @@ public class FragmentCollectionLocalServiceImpl
 		fragmentCollectionKey = _getFragmentCollectionKey(
 			fragmentCollectionKey);
 
-		validateFragmentCollectionKey(groupId, fragmentCollectionKey);
+		_validateFragmentCollectionKey(groupId, fragmentCollectionKey);
 
 		long fragmentCollectionId = counterLocalService.increment();
 
@@ -264,7 +264,7 @@ public class FragmentCollectionLocalServiceImpl
 			fragmentCollectionPersistence.findByPrimaryKey(
 				fragmentCollectionId);
 
-		validate(name);
+		_validate(name);
 
 		fragmentCollection.setModifiedDate(new Date());
 		fragmentCollection.setName(name);
@@ -273,7 +273,17 @@ public class FragmentCollectionLocalServiceImpl
 		return fragmentCollectionPersistence.update(fragmentCollection);
 	}
 
-	protected void validate(String name) throws PortalException {
+	private String _getFragmentCollectionKey(String fragmentCollectionKey) {
+		if (fragmentCollectionKey != null) {
+			fragmentCollectionKey = fragmentCollectionKey.trim();
+
+			return StringUtil.toLowerCase(fragmentCollectionKey);
+		}
+
+		return StringPool.BLANK;
+	}
+
+	private void _validate(String name) throws PortalException {
 		if (Validator.isNull(name)) {
 			throw new FragmentCollectionNameException("Name must not be null");
 		}
@@ -286,7 +296,7 @@ public class FragmentCollectionLocalServiceImpl
 		}
 	}
 
-	protected void validateFragmentCollectionKey(
+	private void _validateFragmentCollectionKey(
 			long groupId, String fragmentCollectionKey)
 		throws PortalException {
 
@@ -300,16 +310,6 @@ public class FragmentCollectionLocalServiceImpl
 		if (fragmentCollection != null) {
 			throw new DuplicateFragmentCollectionKeyException();
 		}
-	}
-
-	private String _getFragmentCollectionKey(String fragmentCollectionKey) {
-		if (fragmentCollectionKey != null) {
-			fragmentCollectionKey = fragmentCollectionKey.trim();
-
-			return StringUtil.toLowerCase(fragmentCollectionKey);
-		}
-
-		return StringPool.BLANK;
 	}
 
 	@Reference

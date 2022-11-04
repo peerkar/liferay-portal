@@ -3,7 +3,7 @@ definition {
 
 	property custom.properties = "jsonws.web.service.paths.excludes=";
 	property osgi.module.configuration.file.names = "com.liferay.portal.security.sso.token.configuration.TokenConfiguration.config";
-	property osgi.module.configurations = "enabled=&quot;true&quot;${line.separator}tokenLocation=&quot;REQUEST&quot;";
+	property osgi.module.configurations = "enabled=\"true\"${line.separator}tokenLocation=\"REQUEST\"";
 	property portal.release = "true";
 	property portal.upstream = "true";
 	property testray.main.component.name = "Segmentation";
@@ -453,28 +453,15 @@ definition {
 		property portal.acceptance = "true";
 
 		task ("Add a Organization via JSONWS") {
-			JSONOrganization.addOrganization(organizationName = "organization Name");
+			JSONOrganization.addOrganization(
+				organizationCountry = "China",
+				organizationName = "organization Name");
 		}
 
 		task ("Assign user to organization created") {
 			JSONOrganization.assignUserToOrganization(
 				organizationName = "organization Name",
 				userEmailAddress = "userea1@liferay.com");
-		}
-
-		task ("Set a countryu for the organization created") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Users",
-				panel = "Control Panel",
-				portlet = "Users and Organizations");
-
-			Organization.editOrganizationCP(orgName = "organization Name");
-
-			Select(
-				locator1 = "Select#COUNTRY",
-				value1 = "China");
-
-			PortletEntry.save();
 		}
 
 		task ("Create a segment with a country criteria") {
@@ -672,7 +659,7 @@ definition {
 
 			Segmentation.changeCriterionInput(criterionInputOption = "Equals");
 
-			Segmentation.fillProperty(propertyField = "organization Name");
+			Segmentation.fillProperty(criterionValue = "organization Name");
 
 			Button.clickSave();
 		}
@@ -764,7 +751,7 @@ definition {
 
 			Segmentation.changeCriterionInput(criterionInputOption = "Equals");
 
-			Segmentation.fillProperty(propertyField = "organization Name");
+			Segmentation.fillProperty(criterionValue = "organization Name");
 
 			Button.clickSave();
 		}
@@ -1033,32 +1020,16 @@ definition {
 		property portal.acceptance = "true";
 
 		task ("Add a Organization via JSONWS") {
-			JSONOrganization.addOrganization(organizationName = "organization Name");
+			JSONOrganization.addOrganization(
+				organizationCountry = "United States",
+				organizationName = "organization Name",
+				organizationRegion = "Utah");
 		}
 
 		task ("Assign user to organization created") {
 			JSONOrganization.assignUserToOrganization(
 				organizationName = "organization Name",
 				userEmailAddress = "userea1@liferay.com");
-		}
-
-		task ("Add country and region for organization created") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Users",
-				panel = "Control Panel",
-				portlet = "Users and Organizations");
-
-			Organization.editOrganizationCP(orgName = "organization Name");
-
-			Select(
-				locator1 = "Select#COUNTRY",
-				value1 = "United States");
-
-			Select(
-				locator1 = "Select#REGION",
-				value1 = "Utah");
-
-			PortletEntry.save();
 		}
 
 		task ("Add an organization Segment") {
@@ -1159,12 +1130,9 @@ definition {
 		}
 
 		task ("Add a tag for created organization") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Users",
-				panel = "Control Panel",
-				portlet = "Users and Organizations");
+			Organization.openOrganizationsAdmin();
 
-			Organization.editOrganizationCP(orgName = "organization Name");
+			Organization.gotoEdit(orgName = "organization Name");
 
 			AssetCategorization.addTag(tagName = "tagName");
 
@@ -1305,7 +1273,7 @@ definition {
 
 			Segmentation.changeCriterionInput(criterionInputOption = "Contains");
 
-			Segmentation.fillProperty(propertyField = "t");
+			Segmentation.fillProperty(criterionValue = "t");
 
 			Button.clickSave();
 		}
@@ -1864,7 +1832,7 @@ definition {
 
 			Segmentation.changeCriterionInput(criterionInputOption = "Contains");
 
-			Segmentation.fillProperty(propertyField = "www.able.com");
+			Segmentation.fillProperty(criterionValue = "www.able.com");
 
 			Button.clickSave();
 		}
@@ -4133,7 +4101,7 @@ definition {
 		}
 
 		task ("Assert the experience is 'Active'") {
-			PageEditor.viewExperienceActive(experienceName = "Segment Name Experience");
+			PageEditor.viewExperienceActiveInEditMode(experienceName = "Segment Name Experience");
 		}
 
 		task ("Depriorize experience") {
@@ -4141,7 +4109,7 @@ definition {
 		}
 
 		task ("Assert the experience is not 'Active'") {
-			PageEditor.viewExperienceNotActive(experienceName = "Segment Name Experience");
+			PageEditor.viewExperienceNotActiveInEditMode(experienceName = "Segment Name Experience");
 		}
 	}
 
@@ -4232,7 +4200,7 @@ definition {
 		}
 
 		task ("Assert that Default Segment is active and at the bottom") {
-			PageEditor.viewExperienceActive(experienceName = "Default");
+			PageEditor.viewExperienceActiveInEditMode(experienceName = "Default");
 
 			PageEditor.openExperienceMenu();
 
@@ -4285,7 +4253,7 @@ definition {
 
 			PageEditor.viewFragment(fragmentName = "Container");
 
-			Click(locator1 = "PageEditor#EXPERIENCE_LABEL");
+			PageEditor.openExperienceMenu();
 
 			AssertElementNotPresent(
 				key_experienceName = "New Experience",
@@ -4332,7 +4300,7 @@ definition {
 
 			PageEditor.viewFragment(fragmentName = "Heading");
 
-			Click(locator1 = "PageEditor#EXPERIENCE_LABEL");
+			PageEditor.openExperienceMenu();
 
 			AssertElementNotPresent(
 				key_experienceName = "New Experience",
@@ -5493,7 +5461,7 @@ definition {
 		}
 
 		task ("Priorize experience and publish page") {
-			Click(locator1 = "PageEditor#EXPERIENCE_LABEL");
+			PageEditor.openExperienceMenu();
 
 			PageEditor.prioritizeExperience(experienceName = "Segment Name Experience");
 
@@ -5563,7 +5531,7 @@ definition {
 		}
 
 		task ("Priorize experience and publish page") {
-			Click(locator1 = "PageEditor#EXPERIENCE_LABEL");
+			PageEditor.openExperienceMenu();
 
 			PageEditor.prioritizeExperience(experienceName = "Segment Name Experience");
 

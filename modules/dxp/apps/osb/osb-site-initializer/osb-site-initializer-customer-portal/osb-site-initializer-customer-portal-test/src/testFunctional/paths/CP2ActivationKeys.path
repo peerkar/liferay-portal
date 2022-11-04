@@ -101,6 +101,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>PAGINATION_CONTROLS</td>
+	<td>//div[contains(@class,'pagination-bar') and not (contains(@class, 'cp-hide-pagination-activation-keys'))]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>KEYS_TABLE_ROWS</td>
 	<td>xpath=(//tbody/tr)[${key_rowCount}]</td>
 	<td></td>
@@ -144,6 +149,11 @@
 <!--GENERATE_NEW_KEY-->
 
 <tr>
+	<td>CLUSTER_NODES</td>
+	<td>//select[contains(@name, 'maxClusterNodes')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>ENABLED_PRODUCT</td>
 	<td>//*[contains(.,'Product')]//*[contains(@class, 'cp-select-card')]</td>
 	<td></td>
@@ -154,8 +164,23 @@
 	<td></td>
 </tr>
 <tr>
+	<td>GENERATE_KEY_BUTTON_DISABLED</td>
+	<td>//button[contains(@class, 'btn btn-primary') and @disabled]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>GENERATE_KEY_BUTTON_ENABLED</td>
+	<td>//button[contains(@class, 'btn btn-primary') and contains(., 'Generate Cluster (${key_number} Keys)')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>KEY_COMPONENT_OPTION</td>
-	<td>//*[label[contains(.,'${key_label}')]]//*[@class='position-relative']/*[contains(@class, 'form-control')]</td>
+	<td>//*[@for='basicInput' and text()='${key_label}']/following-sibling::*//*[contains(@class, 'form-control')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SIGNATURE_PERIOD_TEXT</td>
+	<td>xpath=(//*[contains(@class, 'text-success') and not(contains(@class, 'text-danger'))]/preceding-sibling::*//*[contains(@class, 'cp-radio-card-label')]//*)[${key_index}]</td>
 	<td></td>
 </tr>
 <tr>
@@ -165,7 +190,7 @@
 </tr>
 <tr>
 	<td>SUBSCRIPTION_KEY_AVAILABLE</td>
-	<td>//div[contains(@class, 'cp-radio-card')]//*[contains(@class, 'text-success') and not (contains(@class, 'text-danger'))]</td>
+	<td>xpath=(//div[contains(@class, 'cp-radio-card')]//*[contains(@class, 'text-success') and not (contains(@class, 'text-danger'))])[${key_index}]</td>
 	<td></td>
 </tr>
 <tr>
@@ -178,9 +203,19 @@
 	<td>//div[contains(@class, 'cp-radio-card')][${key_position}]//label[contains(@class, 'cp-radio-card-label')]</td>
 	<td></td>
 </tr>
+<tr>
+	<td>GENERATE_ACTIVATIONS_KEYS_TEXT_FIELD</td>
+	<td>xpath=(//*[contains(text(),'${key_label}')]//*[contains(@class, 'form-control') and @type='text'])[${key_index}]</td>
+	<td></td>
+</tr>
 
 <!--ACTIVATION_KEY_DETAILS_MODAL -->
 
+<tr>
+	<td>ENVIRONMENT_DETAILS</td>
+	<td>//div[contains(@class, 'cp-input-generate-label')]//*[contains(@name, '${key_environmentDetails}')]</td>
+	<td></td>
+</tr>
 <tr>
 	<td>KEY_DETAILS_MODAL</td>
 	<td>//div[contains(@class, 'modal-content') and contains(.,'Activation Key Details') and contains (.,'${key_environmentName}')]</td>
@@ -189,6 +224,11 @@
 <tr>
 	<td>KEY_DETAILS_ELEMENT_VALUES</td>
 	<td>//div[contains(@class, 'modal-content')]//div[contains(.,'${key_group}')]//*[contains(.,'${key_label}') and contains(.,'${key_value}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>INFO_NEW_KEY_CARD</td>
+	<td>//*[contains(@class, 'text-truncate')]//*[contains(., '${key_label}') and contains(., '${key_value}')]</td>
 	<td></td>
 </tr>
 <tr>

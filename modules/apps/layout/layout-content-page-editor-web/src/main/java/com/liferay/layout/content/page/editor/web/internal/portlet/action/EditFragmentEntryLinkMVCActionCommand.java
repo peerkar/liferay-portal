@@ -19,9 +19,11 @@ import com.liferay.fragment.listener.FragmentEntryLinkListenerTracker;
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.service.FragmentEntryLinkService;
 import com.liferay.layout.content.page.editor.constants.ContentPageEditorPortletKeys;
+import com.liferay.layout.content.page.editor.web.internal.util.ContentUtil;
 import com.liferay.layout.content.page.editor.web.internal.util.FragmentEntryLinkManager;
 import com.liferay.layout.content.page.editor.web.internal.util.layout.structure.LayoutStructureUtil;
 import com.liferay.layout.util.structure.LayoutStructure;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
@@ -29,8 +31,6 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
-
-import java.util.List;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -42,7 +42,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Jürgen Kappler
  */
 @Component(
-	immediate = true,
 	property = {
 		"javax.portlet.name=" + ContentPageEditorPortletKeys.CONTENT_PAGE_EDITOR_PORTLET,
 		"mvc.command.name=/layout_content_page_editor/edit_fragment_entry_link"
@@ -70,11 +69,9 @@ public class EditFragmentEntryLinkMVCActionCommand
 			_fragmentEntryLinkService.updateFragmentEntryLink(
 				fragmentEntryLinkId, editableValues);
 
-		List<FragmentEntryLinkListener> fragmentEntryLinkListeners =
-			_fragmentEntryLinkListenerTracker.getFragmentEntryLinkListeners();
-
 		for (FragmentEntryLinkListener fragmentEntryLinkListener :
-				fragmentEntryLinkListeners) {
+				_fragmentEntryLinkListenerTracker.
+					getFragmentEntryLinkListeners()) {
 
 			fragmentEntryLinkListener.onUpdateFragmentEntryLink(
 				fragmentEntryLink);
@@ -89,10 +86,21 @@ public class EditFragmentEntryLinkMVCActionCommand
 
 		JSONPortletResponseUtil.writeJSON(
 			actionRequest, actionResponse,
-			_fragmentEntryLinkManager.getFragmentEntryLinkJSONObject(
-				fragmentEntryLink, _portal.getHttpServletRequest(actionRequest),
-				_portal.getHttpServletResponse(actionResponse),
-				layoutStructure));
+			JSONUtil.put(
+				"fragmentEntryLink",
+				_fragmentEntryLinkManager.getFragmentEntryLinkJSONObject(
+					fragmentEntryLink,
+					_portal.getHttpServletRequest(actionRequest),
+					_portal.getHttpServletResponse(actionResponse),
+					layoutStructure)
+			).put(
+				"pageContents",
+				ContentUtil.getPageContentsJSONArray(
+					_portal.getHttpServletRequest(actionRequest),
+					_portal.getHttpServletResponse(actionResponse),
+					themeDisplay.getPlid(),
+					ParamUtil.getLong(actionRequest, "segmentsExperienceId"))
+			));
 	}
 
 	@Reference

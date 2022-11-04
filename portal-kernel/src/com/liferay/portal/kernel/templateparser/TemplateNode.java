@@ -129,6 +129,10 @@ public class TemplateNode extends LinkedHashMap<String, Object> {
 			templateNode.appendSibling(siblingTemplateNode);
 		}
 
+		for (Map.Entry<String, Object> entry : entrySet()) {
+			templateNode.put(entry.getKey(), entry.getValue());
+		}
+
 		return templateNode;
 	}
 

@@ -25,7 +25,6 @@ definition {
 	@priority = "5"
 	test CanActivateOrDeactivateAction {
 		property portal.acceptance = "true";
-		property portal.upstream = "quarantine";
 
 		task ("Add an object, field, action, and check if an action is active") {
 			ObjectAdmin.addObjectViaAPI(
@@ -58,7 +57,9 @@ definition {
 				thenAction = "Add an Object Entry",
 				whenAction = "On After Add");
 
-			ObjectAdmin.assertObjectActions(actionActive = "Yes");
+			ObjectAdmin.assertObjectActions(
+				actionActive = "Yes",
+				actionName = "Custom Action");
 		}
 
 		task ("Add an Entry and check if the action is works") {
@@ -147,6 +148,8 @@ definition {
 		ObjectAdmin.goToActionDetails(viewEntry = "Action Name");
 
 		ObjectAdmin.viewDetails();
+
+		SelectFrame(locator1 = "IFrame#IFRAME");
 
 		ObjectAdmin.fillObjectAction(
 			actionName = "Update Action Name",
@@ -266,8 +269,6 @@ definition {
 	@description = "LPS-145665 - Verify that you can edit the Action name"
 	@priority = "4"
 	test CanEditActionName {
-		property portal.upstream = "quarantine";
-
 		ObjectAdmin.addObjectViaAPI(
 			labelName = "Custom Object 145",
 			objectName = "CustomObject145",
@@ -286,18 +287,18 @@ definition {
 			urlAction = "www.liferay.com",
 			whenAction = "On After Add");
 
-		ObjectAdmin.assertObjectActions(actionActive = "Custom Action");
-
-		ObjectAdmin.assertObjectActions(actionActive = "Yes");
+		ObjectAdmin.assertObjectActions(
+			actionActive = "Yes",
+			actionName = "Custom Action");
 
 		ObjectAdmin.editObjectAction(
 			actionName = "New Action Update",
 			active = "false",
 			viewEntry = "Custom Action");
 
-		ObjectAdmin.assertObjectActions(actionActive = "No");
-
-		ObjectAdmin.assertObjectActions(actionActive = "New Action Update");
+		ObjectAdmin.assertObjectActions(
+			actionActive = "No",
+			actionName = "New Action Update");
 	}
 
 	@description = "LPS-145665 - Verify that the user can edit a previously saved expression"
@@ -412,9 +413,9 @@ definition {
 				thenAction = "Add an Object Entry",
 				whenAction = "On After Add");
 
-			ObjectAdmin.assertObjectActions(actionActive = "Custom Action");
-
-			ObjectAdmin.assertObjectActions(actionActive = "Yes");
+			ObjectAdmin.assertObjectActions(
+				actionActive = "Yes",
+				actionName = "Custom Action");
 		}
 
 		task ("Add entry and assert that condition it's works") {
@@ -441,9 +442,9 @@ definition {
 
 			ObjectAdmin.disableCondition();
 
-			ObjectAdmin.assertObjectActions(actionActive = "Custom Action");
-
-			ObjectAdmin.assertObjectActions(actionActive = "Yes");
+			ObjectAdmin.assertObjectActions(
+				actionActive = "Yes",
+				actionName = "Custom Action");
 		}
 	}
 
@@ -658,8 +659,6 @@ definition {
 	@description = "LPS-139008 - Verify it is possible to search for an Action"
 	@priority = "4"
 	test CanSearchAction {
-		property portal.upstream = "quarantine";
-
 		ObjectAdmin.addObjectViaAPI(
 			labelName = "Custom Object 191",
 			objectName = "CustomObject191",
@@ -717,6 +716,112 @@ definition {
 		ObjectAdmin.assertObjectActions(
 			actionActive = "Yes",
 			actionName = "Update Action Name");
+	}
+
+	@description = "LPS-156346 - Verify that the expression works with Groovy Script."
+	@priority = "5"
+	test CanUseExpressionWithGroovyScript {
+		property portal.acceptance = "true";
+
+		task ("Given an object with a field is created") {
+			ObjectAdmin.addObjectViaAPI(
+				labelName = "Custom Object 198",
+				objectName = "CustomObject198",
+				pluralLabelName = "Custom Objects 198");
+
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldBusinessType = "Integer",
+				fieldLabelName = "Custom Integer",
+				fieldName = "customInteger",
+				fieldType = "Integer",
+				isRequired = "false",
+				objectName = "CustomObject198");
+
+			ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject198");
+		}
+
+		task ("When an action is created with an Expression using Groovy Script") {
+			ObjectAdmin.openObjectAdmin();
+
+			ObjectPortlet.selectCustomObject(label = "Custom Object 198");
+
+			ObjectAdmin.goToActionsTab();
+
+			ObjectAdmin.addObjectActionViaUI(
+				actionName = "Action Name",
+				active = "true",
+				inputExpression = "customInteger == 5",
+				scriptValidation = "println 'Success'",
+				thenAction = "Groovy Script",
+				whenAction = "On After Add");
+		}
+
+		task ("Then the action will resolve when the condition is met") {
+			ObjectAdmin.addObjectSingleFieldEntryViaAPI(
+				fieldName = "customInteger",
+				objectName = "CustomObject198",
+				value = "5");
+
+			Refresh();
+
+			ObjectAdmin.assertObjectActions(
+				actionActive = "Yes",
+				actionName = "Action Name",
+				status = "Success");
+		}
+	}
+
+	@description = "LPS-156347 - Verify that the expression works with Webhooks"
+	@priority = "3"
+	test CanUseExpressionWithWebhook {
+		property test.name.skip.portal.instance = "ObjectActions#CanUseExpressionWithWebhook";
+
+		task ("Given an object with a field is created") {
+			ObjectAdmin.addObjectViaAPI(
+				labelName = "Custom Object 185",
+				objectName = "CustomObject185",
+				pluralLabelName = "Custom Objects 185");
+
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldBusinessType = "Text",
+				fieldLabelName = "Custom Field",
+				fieldName = "customObjectField",
+				fieldType = "String",
+				isRequired = "false",
+				objectName = "CustomObject185");
+
+			ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject185");
+		}
+
+		task ("When an action is created with an Expression using Webhooks") {
+			ObjectAdmin.openObjectAdmin();
+
+			ObjectPortlet.selectCustomObject(label = "Custom Object 185");
+
+			ObjectAdmin.goToActionsTab();
+
+			ObjectAdmin.addObjectActionViaUI(
+				actionName = "Action Name",
+				active = "true",
+				inputExpression = "customObjectField == 'Entry Test'",
+				thenAction = "Webhook",
+				urlAction = "http://localhost:8080",
+				whenAction = "On After Add");
+		}
+
+		task ("Then the action will resolve when the condition is met") {
+			ObjectAdmin.addObjectSingleFieldEntryViaAPI(
+				fieldName = "customObjectField",
+				objectName = "CustomObject185",
+				value = "Entry Test");
+
+			Refresh();
+
+			ObjectAdmin.assertObjectActions(
+				actionActive = "Yes",
+				actionName = "Action Name",
+				status = "Success");
+		}
 	}
 
 	@description = "LPS-146871 - Verify that the Action name is required"

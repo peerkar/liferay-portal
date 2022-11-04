@@ -132,6 +132,7 @@ RedirectEntriesManagementToolbarDisplayContext redirectEntriesManagementToolbarD
 					<liferay-ui:search-container-column-text>
 						<c:if test="<%= ListUtil.isNotEmpty(dropdownItems) %>">
 							<clay:dropdown-actions
+								aria-label='<%= LanguageUtil.get(request, "show-actions") %>'
 								dropdownItems="<%= dropdownItems %>"
 							/>
 						</c:if>
@@ -147,8 +148,8 @@ RedirectEntriesManagementToolbarDisplayContext redirectEntriesManagementToolbarD
 	</clay:container-fluid>
 </div>
 
-<aui:script require="frontend-js-web/liferay/delegate/delegate.es as delegateModule">
-	var delegate = delegateModule.default;
+<aui:script require="frontend-js-web/index as frontendJsWeb">
+	var {delegate} = frontendJsWeb;
 
 	delegate(
 		document.querySelector('#<portlet:namespace />fm'),

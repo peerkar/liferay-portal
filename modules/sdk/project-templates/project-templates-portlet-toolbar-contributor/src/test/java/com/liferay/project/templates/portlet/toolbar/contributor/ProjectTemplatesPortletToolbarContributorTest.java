@@ -50,7 +50,8 @@ public class ProjectTemplatesPortletToolbarContributorTest
 	public static Iterable<Object[]> data() {
 		return Arrays.asList(
 			new Object[][] {
-				{"7.0.6-2"}, {"7.1.3-1"}, {"7.2.1-1"}, {"7.3.7"}, {"7.4.3.36"}
+				{"7.0.6-2", "dxp"}, {"7.1.3-1", "dxp"}, {"7.2.1-1", "dxp"},
+				{"7.3.7", "portal"}, {"7.4.3.36", "portal"}
 			});
 	}
 
@@ -71,9 +72,10 @@ public class ProjectTemplatesPortletToolbarContributorTest
 	}
 
 	public ProjectTemplatesPortletToolbarContributorTest(
-		String liferayVersion) {
+		String liferayVersion, String product) {
 
 		_liferayVersion = liferayVersion;
+		_product = product;
 	}
 
 	@Test
@@ -91,15 +93,14 @@ public class ProjectTemplatesPortletToolbarContributorTest
 
 		File gradleProjectDir = buildTemplateWithGradle(
 			gradleWorkspaceModulesDir, template, name, "--liferay-version",
-			_liferayVersion, "--package-name", packageName);
+			_liferayVersion, "--package-name", packageName, "--product",
+			_product);
 
 		testExists(gradleProjectDir, "bnd.bnd");
 
 		if (VersionUtil.getMinorVersion(_liferayVersion) < 3) {
 			testContains(
-				gradleProjectDir, "build.gradle", DEPENDENCY_PORTAL_KERNEL,
-				DEPENDENCY_JAVAX_PORTLET_API, DEPENDENCY_JAVAX_SERVLET_API,
-				DEPENDENCY_ORG_OSGI_ANNOTATIONS);
+				gradleProjectDir, "build.gradle", DEPENDENCY_RELEASE_DXP_API);
 		}
 		else {
 			testContains(
@@ -125,7 +126,8 @@ public class ProjectTemplatesPortletToolbarContributorTest
 		File mavenProjectDir = buildTemplateWithMaven(
 			mavenModulesDir, mavenModulesDir, template, name, "com.test",
 			mavenExecutor, "-DclassName=Toolbartest",
-			"-Dpackage=" + packageName, "-DliferayVersion=" + _liferayVersion);
+			"-DliferayVersion=" + _liferayVersion, "-Dpackage=" + packageName,
+			"-Dproduct=" + _product);
 
 		if (!_liferayVersion.startsWith("7.0")) {
 			testContains(
@@ -150,5 +152,6 @@ public class ProjectTemplatesPortletToolbarContributorTest
 	private static URI _gradleDistribution;
 
 	private final String _liferayVersion;
+	private final String _product;
 
 }

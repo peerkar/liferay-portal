@@ -383,6 +383,10 @@ definition {
 			ContentConfiguration.checkContentNameList(checkContentNameList = "${checkContentNameList}");
 		}
 
+		if (isSet(uncheckChildPagesNameList)) {
+			ContentConfiguration.uncheckChildPagesNameList(uncheckChildPagesNameList = "${uncheckChildPagesNameList}");
+		}
+
 		if (isSet(uncheckContentNameList)) {
 			ContentConfiguration.uncheckContentNameList(uncheckContentNameList = "${uncheckContentNameList}");
 		}
@@ -775,7 +779,7 @@ definition {
 		LexiconEntry.gotoHeaderMenuItem(menuItem = "Staging Configuration");
 
 		if (isSet(enableOnPublicPages)) {
-			Click(locator1 = "Checkbox#ENABLED_ON_PUBLIC_PAGES");
+			AssertNotChecked.assertNotCheckedNotVisible(locator1 = "Checkbox#ENABLED_ON_PUBLIC_PAGES");
 
 			AssertClickNoError(
 				locator1 = "Button#SAVE",
@@ -783,7 +787,7 @@ definition {
 		}
 
 		if (isSet(enableOnPrivatePages)) {
-			Click(locator1 = "Checkbox#ENABLED_ON_PRIVATE_PAGES");
+			AssertNotChecked.assertNotCheckedNotVisible(locator1 = "Checkbox#ENABLED_ON_PRIVATE_PAGES");
 
 			AssertClickNoError(
 				locator1 = "Button#SAVE",
@@ -833,7 +837,7 @@ definition {
 		if ("${rangeAll}" == "true") {
 			Click(locator1 = "Radio#CHOOSE_CONTENT_ALL_CHANGE");
 
-			Click(locator1 = "Link#REFRESH_COUNTS");
+			ClickNoError(locator1 = "Link#REFRESH_COUNTS");
 		}
 
 		if (isSet(checkContentNameList)) {
@@ -991,9 +995,7 @@ definition {
 
 		var key_contentName = "${contentName}";
 
-		Uncheck(locator1 = "Staging#STAGING_CONTENT_CHECKBOX");
-
-		AssertNotChecked(locator1 = "Staging#STAGING_CONTENT_CHECKBOX");
+		AssertNotChecked.assertNotCheckedNotVisible(locator1 = "Staging#STAGING_CONTENT_CHECKBOX");
 
 		AssertClickNoError(
 			locator1 = "Staging#STAGING_PUBLISH_TO_REMOTE_LIVE_BUTTON",
@@ -1295,7 +1297,7 @@ definition {
 		for (var configurationName : list "${configurationNameList}") {
 			var key_checkboxName = "${configurationName}";
 
-			AssertChecked(locator1 = "StagingPublishToLive#STAGING_CONFIGURATION_CHECKBOX");
+			AssertChecked.assertCheckedNotVisible(locator1 = "StagingPublishToLive#STAGING_CONFIGURATION_CHECKBOX");
 		}
 	}
 
@@ -1542,7 +1544,7 @@ definition {
 				value1 = "${publishTemplateName}");
 
 			for (var contentName : list "${uncheckContentNameList}") {
-				AssertNotChecked(
+				AssertNotChecked.assertNotCheckedNotVisible(
 					key_contentName = "${contentName}",
 					locator1 = "PagesConfiguration#CONTENT_CHOOSE_CONTENT_CONTENT_CHECKBOX");
 			}
@@ -1630,7 +1632,7 @@ definition {
 		LexiconEntry.gotoHeaderMenuItem(menuItem = "Staging Configuration");
 
 		for (var contentName : list "${uncheckContentNameList}") {
-			AssertNotChecked(
+			AssertNotChecked.assertNotCheckedNotVisible(
 				key_contentName = "${contentName}",
 				locator1 = "PagesConfiguration#CONTENT_CHOOSE_CONTENT_CONTENT_CHECKBOX");
 		}

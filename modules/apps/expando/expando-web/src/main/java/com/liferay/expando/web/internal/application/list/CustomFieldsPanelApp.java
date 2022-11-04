@@ -27,7 +27,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Eudaldo Alonso
  */
 @Component(
-	immediate = true,
 	property = {
 		"panel.app.order:Integer=700",
 		"panel.category.key=" + PanelCategoryKeys.CONTROL_PANEL_CONFIGURATION
@@ -37,17 +36,18 @@ import org.osgi.service.component.annotations.Reference;
 public class CustomFieldsPanelApp extends BasePanelApp {
 
 	@Override
+	public Portlet getPortlet() {
+		return _portlet;
+	}
+
+	@Override
 	public String getPortletId() {
 		return ExpandoPortletKeys.EXPANDO;
 	}
 
-	@Override
 	@Reference(
-		target = "(javax.portlet.name=" + ExpandoPortletKeys.EXPANDO + ")",
-		unbind = "-"
+		target = "(javax.portlet.name=" + ExpandoPortletKeys.EXPANDO + ")"
 	)
-	public void setPortlet(Portlet portlet) {
-		super.setPortlet(portlet);
-	}
+	private Portlet _portlet;
 
 }

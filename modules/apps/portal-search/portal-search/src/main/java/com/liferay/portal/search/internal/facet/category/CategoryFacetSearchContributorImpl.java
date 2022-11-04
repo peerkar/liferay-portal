@@ -14,6 +14,10 @@
 
 package com.liferay.portal.search.internal.facet.category;
 
+import com.liferay.asset.kernel.model.AssetCategory;
+import com.liferay.asset.kernel.service.AssetCategoryLocalService;
+import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
@@ -55,6 +59,9 @@ public class CategoryFacetSearchContributorImpl
 	}
 
 	@Reference
+	private AssetCategoryLocalService _assetCategoryLocalService;
+
+	@Reference
 	private CategoryFacetFactory _categoryFacetFactory;
 
 	private class CategoryFacetBuilderImpl implements CategoryFacetBuilder {
@@ -77,7 +84,14 @@ public class CategoryFacetSearchContributorImpl
 			facet.setFacetConfiguration(buildFacetConfiguration(facet));
 
 			if (_selectedCategoryIds != null) {
-				facet.select(ArrayUtil.toStringArray(_selectedCategoryIds));
+				String fieldName = facet.getFieldName();
+
+				if (fieldName.equals("assetVocabularyCategoryIds")) {
+					facet.select(_getSelections(_selectedCategoryIds));
+				}
+				else {
+					facet.select(ArrayUtil.toStringArray(_selectedCategoryIds));
+				}
 			}
 
 			return facet;
@@ -106,6 +120,13 @@ public class CategoryFacetSearchContributorImpl
 			return this;
 		}
 
+		@Override
+		public CategoryFacetBuilder vocabularyIds(String[] vocabularyIds) {
+			_vocabularyIds = vocabularyIds;
+
+			return this;
+		}
+
 		protected FacetConfiguration buildFacetConfiguration(Facet facet) {
 			FacetConfiguration facetConfiguration = new FacetConfiguration();
 
@@ -120,10 +141,54 @@ public class CategoryFacetSearchContributorImpl
 			jsonObject.put(
 				"frequencyThreshold", _frequencyThreshold
 			).put(
+				"include", _getIncludeRegexString(facet.getFieldName())
+			).put(
 				"maxTerms", _maxTerms
 			);
 
 			return facetConfiguration;
+		}
+
+		private String _getIncludeRegexString(String fieldName) {
+			if (ArrayUtil.isEmpty(_vocabularyIds) ||
+				fieldName.equals("assetCategoryIds")) {
+
+				return null;
+			}
+
+			StringBundler sb = new StringBundler(_vocabularyIds.length * 5);
+
+			for (String vocabularyId : _vocabularyIds) {
+				sb.append(vocabularyId);
+				sb.append(StringPool.DASH);
+				sb.append(StringPool.PERIOD);
+				sb.append(StringPool.STAR);
+				sb.append(StringPool.PIPE);
+			}
+
+			if (sb.index() > 0) {
+				sb.setIndex(sb.index() - 1);
+
+				return sb.toString();
+			}
+
+			return null;
+		}
+
+		private String[] _getSelections(long[] selectedCategoryIds) {
+			String[] selections = new String[selectedCategoryIds.length];
+
+			for (int i = 0; i < selectedCategoryIds.length; i++) {
+				AssetCategory assetCategory =
+					_assetCategoryLocalService.fetchAssetCategory(
+						selectedCategoryIds[i]);
+
+				selections[i] =
+					assetCategory.getVocabularyId() + StringPool.DASH +
+						assetCategory.getCategoryId();
+			}
+
+			return selections;
 		}
 
 		private String _aggregationName;
@@ -131,6 +196,7 @@ public class CategoryFacetSearchContributorImpl
 		private int _maxTerms;
 		private final SearchContext _searchContext;
 		private long[] _selectedCategoryIds;
+		private String[] _vocabularyIds;
 
 	}
 

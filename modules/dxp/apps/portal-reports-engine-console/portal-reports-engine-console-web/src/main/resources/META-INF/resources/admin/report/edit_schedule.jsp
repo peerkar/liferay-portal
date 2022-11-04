@@ -152,16 +152,16 @@ renderResponse.setTitle(LanguageUtil.get(request, "new-report-entry"));
 											var A = AUI();
 
 											var type = A.one(
-												'#<%= liferayPortletResponse.getNamespace() + "useVariable" + HtmlUtil.escapeJS(key) %>'
+												'#<%= liferayPortletResponse.getNamespace() %>useVariable<%= HtmlUtil.escapeJS(key) %>'
 											).get('value');
 											var day = A.one(
-												'#<%= liferayPortletResponse.getNamespace() + HtmlUtil.escapeJS(key) + "Day" %>'
+												'#<%= liferayPortletResponse.getNamespace() + HtmlUtil.escapeJS(key) %>Day'
 											);
 											var month = A.one(
-												'#<%= liferayPortletResponse.getNamespace() + HtmlUtil.escapeJS(key) + "Month" %>'
+												'#<%= liferayPortletResponse.getNamespace() + HtmlUtil.escapeJS(key) %>Month'
 											);
 											var year = A.one(
-												'#<%= liferayPortletResponse.getNamespace() + HtmlUtil.escapeJS(key) + "Year" %>'
+												'#<%= liferayPortletResponse.getNamespace() + HtmlUtil.escapeJS(key) %>Year'
 											);
 
 											if (type == 'startDate' || type == 'endDate') {
@@ -194,7 +194,7 @@ renderResponse.setTitle(LanguageUtil.get(request, "new-report-entry"));
 									md="9"
 								>
 									<span class="field field-text" id="aui_3_2_0_1428">
-										<input class="form-control" name="<portlet:namespace /><%= "parameterValue" + HtmlUtil.escapeAttribute(key) %>" type="text" value="<%= HtmlUtil.escapeAttribute(value) %>" /><br />
+										<input class="form-control" name="<portlet:namespace />parameterValue<%= HtmlUtil.escapeAttribute(key) %>" type="text" value="<%= HtmlUtil.escapeAttribute(value) %>" /><br />
 									</span>
 								</clay:col>
 							</c:otherwise>

@@ -39,11 +39,13 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HtmlParser;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -169,22 +171,43 @@ public class DDMFormPagesTemplateContextFactory {
 		List<Object> columnsTemplateContext = new ArrayList<>();
 
 		for (DDMFormLayoutColumn ddmFormLayoutColumn : ddmFormLayoutColumns) {
+			List<String> ddmFormFieldNames =
+				ddmFormLayoutColumn.getDDMFormFieldNames();
+
+			if (!GetterUtil.getBoolean(
+					PropsUtil.get("feature.flag.LPS-164998")) &&
+				ddmFormFieldNames.contains("limitToOneSubmissionPerUser")) {
+
+				ddmFormFieldNames = new ArrayList<>(ddmFormFieldNames);
+
+				ddmFormFieldNames.remove("limitToOneSubmissionPerUserBody");
+				ddmFormFieldNames.remove("limitToOneSubmissionPerUserHeader");
+			}
+
+			if (!GetterUtil.getBoolean(
+					PropsUtil.get("feature.flag.LPS-164999")) &&
+				ddmFormFieldNames.contains("displayChartAsTable")) {
+
+				ddmFormFieldNames = new ArrayList<>(ddmFormFieldNames);
+
+				ddmFormFieldNames.remove("displayChartAsTable");
+			}
+
 			columnsTemplateContext.add(
-				_createColumnTemplateContext(ddmFormLayoutColumn));
+				_createColumnTemplateContext(
+					ddmFormFieldNames, ddmFormLayoutColumn.getSize()));
 		}
 
 		return columnsTemplateContext;
 	}
 
 	private Map<String, Object> _createColumnTemplateContext(
-		DDMFormLayoutColumn ddmFormLayoutColumn) {
+		List<String> ddmFormFiledNames, int size) {
 
 		return HashMapBuilder.<String, Object>put(
-			"fields",
-			_createFieldsTemplateContext(
-				ddmFormLayoutColumn.getDDMFormFieldNames())
+			"fields", _createFieldsTemplateContext(ddmFormFiledNames)
 		).put(
-			"size", ddmFormLayoutColumn.getSize()
+			"size", size
 		).build();
 	}
 

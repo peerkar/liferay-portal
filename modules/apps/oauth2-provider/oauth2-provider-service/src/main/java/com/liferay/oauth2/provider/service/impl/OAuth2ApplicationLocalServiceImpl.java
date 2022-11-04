@@ -143,10 +143,10 @@ public class OAuth2ApplicationLocalServiceImpl
 			redirectURIsList = new ArrayList<>();
 		}
 
-		validate(
+		_validate(
 			companyId, allowedGrantTypesList, clientAuthenticationMethod,
-			clientId, clientProfile, clientSecret, homePageURL, jwks, name,
-			privacyPolicyURL, redirectURIsList);
+			clientId, clientSecret, homePageURL, jwks, name, privacyPolicyURL,
+			redirectURIsList);
 
 		long oAuth2ApplicationId = counterLocalService.increment(
 			OAuth2Application.class.getName());
@@ -241,10 +241,10 @@ public class OAuth2ApplicationLocalServiceImpl
 			scopeAliasesList = new ArrayList<>();
 		}
 
-		validate(
+		_validate(
 			companyId, allowedGrantTypesList, clientAuthenticationMethod,
-			clientId, clientProfile, clientSecret, homePageURL, jwks, name,
-			privacyPolicyURL, redirectURIsList);
+			clientId, clientSecret, homePageURL, jwks, name, privacyPolicyURL,
+			redirectURIsList);
 
 		long oAuth2ApplicationId = counterLocalService.increment(
 			OAuth2Application.class.getName());
@@ -642,11 +642,11 @@ public class OAuth2ApplicationLocalServiceImpl
 			redirectURIsList = new ArrayList<>();
 		}
 
-		validate(
+		_validate(
 			oAuth2Application.getCompanyId(), oAuth2ApplicationId,
 			allowedGrantTypesList, clientAuthenticationMethod, clientId,
-			clientProfile, clientSecret, homePageURL, jwks, name,
-			privacyPolicyURL, redirectURIsList);
+			clientSecret, homePageURL, jwks, name, privacyPolicyURL,
+			redirectURIsList);
 
 		User user = _userLocalService.getUser(clientCredentialUserId);
 
@@ -713,27 +713,60 @@ public class OAuth2ApplicationLocalServiceImpl
 		}
 	}
 
-	protected void validate(
-			long companyId, List<GrantType> allowedGrantTypesList,
-			String clientAuthenticationMethod, String clientId,
-			int clientProfile, String clientSecret, String homePageURL,
-			String jwks, String name, String privacyPolicyURL,
-			List<String> redirectURIsList)
+	private long _getOAuth2ApplicationScopeAliasesId(
+			long companyId, long userId, String userName,
+			long oAuth2ApplicationId, List<String> scopeAliasesList)
 		throws PortalException {
 
-		validate(
-			companyId, 0, allowedGrantTypesList, clientAuthenticationMethod,
-			clientId, clientProfile, clientSecret, homePageURL, jwks, name,
-			privacyPolicyURL, redirectURIsList);
+		if (ListUtil.isEmpty(scopeAliasesList)) {
+			return 0;
+		}
+
+		OAuth2ApplicationScopeAliases oAuth2ApplicationScopeAliases =
+			_oAuth2ApplicationScopeAliasesLocalService.
+				fetchOAuth2ApplicationScopeAliases(
+					oAuth2ApplicationId, scopeAliasesList);
+
+		if (oAuth2ApplicationScopeAliases != null) {
+			oAuth2ApplicationScopeAliases.setUserId(userId);
+			oAuth2ApplicationScopeAliases.setUserName(userName);
+
+			oAuth2ApplicationScopeAliases =
+				_oAuth2ApplicationScopeAliasesLocalService.
+					updateOAuth2ApplicationScopeAliases(
+						oAuth2ApplicationScopeAliases);
+		}
+		else {
+			oAuth2ApplicationScopeAliases =
+				_oAuth2ApplicationScopeAliasesLocalService.
+					addOAuth2ApplicationScopeAliases(
+						companyId, userId, userName, oAuth2ApplicationId,
+						scopeAliasesList);
+		}
+
+		return oAuth2ApplicationScopeAliases.
+			getOAuth2ApplicationScopeAliasesId();
 	}
 
-	protected void validate(
+	private void _validate(
+			long companyId, List<GrantType> allowedGrantTypesList,
+			String clientAuthenticationMethod, String clientId,
+			String clientSecret, String homePageURL, String jwks, String name,
+			String privacyPolicyURL, List<String> redirectURIsList)
+		throws PortalException {
+
+		_validate(
+			companyId, 0, allowedGrantTypesList, clientAuthenticationMethod,
+			clientId, clientSecret, homePageURL, jwks, name, privacyPolicyURL,
+			redirectURIsList);
+	}
+
+	private void _validate(
 			long companyId, long oAuth2ApplicationId,
 			List<GrantType> allowedGrantTypesList,
 			String clientAuthenticationMethod, String clientId,
-			int clientProfile, String clientSecret, String homePageURL,
-			String jwks, String name, String privacyPolicyURL,
-			List<String> redirectURIsList)
+			String clientSecret, String homePageURL, String jwks, String name,
+			String privacyPolicyURL, List<String> redirectURIsList)
 		throws PortalException {
 
 		if (clientAuthenticationMethod.equals(
@@ -877,41 +910,6 @@ public class OAuth2ApplicationLocalServiceImpl
 					redirectURI, uriSyntaxException);
 			}
 		}
-	}
-
-	private long _getOAuth2ApplicationScopeAliasesId(
-			long companyId, long userId, String userName,
-			long oAuth2ApplicationId, List<String> scopeAliasesList)
-		throws PortalException {
-
-		if (ListUtil.isEmpty(scopeAliasesList)) {
-			return 0;
-		}
-
-		OAuth2ApplicationScopeAliases oAuth2ApplicationScopeAliases =
-			_oAuth2ApplicationScopeAliasesLocalService.
-				fetchOAuth2ApplicationScopeAliases(
-					oAuth2ApplicationId, scopeAliasesList);
-
-		if (oAuth2ApplicationScopeAliases != null) {
-			oAuth2ApplicationScopeAliases.setUserId(userId);
-			oAuth2ApplicationScopeAliases.setUserName(userName);
-
-			oAuth2ApplicationScopeAliases =
-				_oAuth2ApplicationScopeAliasesLocalService.
-					updateOAuth2ApplicationScopeAliases(
-						oAuth2ApplicationScopeAliases);
-		}
-		else {
-			oAuth2ApplicationScopeAliases =
-				_oAuth2ApplicationScopeAliasesLocalService.
-					addOAuth2ApplicationScopeAliases(
-						companyId, userId, userName, oAuth2ApplicationId,
-						scopeAliasesList);
-		}
-
-		return oAuth2ApplicationScopeAliases.
-			getOAuth2ApplicationScopeAliasesId();
 	}
 
 	private void _validateExternalReferenceCode(

@@ -18,7 +18,6 @@ import com.liferay.application.list.BasePanelApp;
 import com.liferay.application.list.PanelApp;
 import com.liferay.application.list.constants.PanelCategoryKeys;
 import com.liferay.change.tracking.constants.CTPortletKeys;
-import com.liferay.change.tracking.service.CTPreferencesLocalService;
 import com.liferay.change.tracking.web.internal.configuration.helper.CTSettingsConfigurationHelper;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
@@ -40,7 +39,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Máté Thurzó
  */
 @Component(
-	immediate = true,
 	property = {
 		"panel.app.order:Integer=200",
 		"panel.category.key=" + PanelCategoryKeys.APPLICATIONS_MENU_APPLICATIONS_PUBLICATIONS
@@ -48,6 +46,11 @@ import org.osgi.service.component.annotations.Reference;
 	service = PanelApp.class
 )
 public class PublicationsPanelApp extends BasePanelApp {
+
+	@Override
+	public Portlet getPortlet() {
+		return _portlet;
+	}
 
 	@Override
 	public String getPortletId() {
@@ -92,20 +95,13 @@ public class PublicationsPanelApp extends BasePanelApp {
 		return false;
 	}
 
-	@Override
-	@Reference(
-		target = "(javax.portlet.name=" + CTPortletKeys.PUBLICATIONS + ")",
-		unbind = "-"
-	)
-	public void setPortlet(Portlet portlet) {
-		super.setPortlet(portlet);
-	}
-
-	@Reference
-	private CTPreferencesLocalService _ctPreferencesLocalService;
-
 	@Reference
 	private CTSettingsConfigurationHelper _ctSettingsConfigurationHelper;
+
+	@Reference(
+		target = "(javax.portlet.name=" + CTPortletKeys.PUBLICATIONS + ")"
+	)
+	private Portlet _portlet;
 
 	@Reference
 	private PortletPermission _portletPermission;

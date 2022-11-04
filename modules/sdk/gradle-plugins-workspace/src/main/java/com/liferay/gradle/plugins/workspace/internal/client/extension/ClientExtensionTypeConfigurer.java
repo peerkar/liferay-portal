@@ -14,9 +14,11 @@
 
 package com.liferay.gradle.plugins.workspace.internal.client.extension;
 
+import java.util.Optional;
+
 import org.gradle.api.Project;
+import org.gradle.api.tasks.Copy;
 import org.gradle.api.tasks.TaskProvider;
-import org.gradle.api.tasks.bundling.Zip;
 
 /**
  * @author Gregory Amerson
@@ -24,7 +26,7 @@ import org.gradle.api.tasks.bundling.Zip;
 public interface ClientExtensionTypeConfigurer {
 
 	public void apply(
-		Project project, ClientExtension clientExtension,
-		TaskProvider<Zip> zipTaskProvider);
+		Project project, Optional<ClientExtension> clientExtensionOptional,
+		TaskProvider<Copy> assembleClientExtensionTaskProvider);
 
 }
