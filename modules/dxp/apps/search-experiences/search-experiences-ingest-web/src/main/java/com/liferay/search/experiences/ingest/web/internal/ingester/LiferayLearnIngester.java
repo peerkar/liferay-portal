@@ -86,7 +86,9 @@ public class LiferayLearnIngester implements Ingester {
 	private void _crawlHomePage(
 		int levelsToCrawl, JournalArticleImporter journalArticleImporter) {
 
-		Document document = _getDocument(_ROOT_URL);
+		List<String> visitedPages = new ArrayList<>();
+
+		Document document = _getDocument(_ROOT_URL, visitedPages);
 
 		if (document == null) {
 			_log.error("Unable to retrieve homepage");
@@ -95,48 +97,39 @@ public class LiferayLearnIngester implements Ingester {
 		}
 
 		for (Element link : document.select(".products a[href]")) {
-			if (_isValidLink(link.attr("href"))) {
-				_crawlTopic(
-					journalArticleImporter, levelsToCrawl, link.absUrl("href"),
-					new ArrayList<String>());
-			}
+			_crawlTopic(
+				journalArticleImporter, levelsToCrawl, link, visitedPages);
 		}
 	}
 
 	private void _crawlTopic(
 		JournalArticleImporter journalArticleImporter, int levelsToCrawl,
-		String url, List<String> visitedPages) {
+		Element link, List<String> visitedPages) {
 
-		visitedPages.add(url);
-
-		Document document = _getDocument(url);
+		Document document = _getDocument(link, visitedPages);
 
 		if (document == null) {
 			return;
 		}
 
-		for (Element link :
+		for (Element element :
 				document.select(".doc-nav .toctree-l1 a.reference.internal")) {
 
-			if (_isValidLink(link.attr("href"))) {
-				_crawlTopicChildren(
-					journalArticleImporter, 2, levelsToCrawl,
-					link.absUrl("href"), visitedPages);
-			}
+			_crawlTopicChildren(
+				journalArticleImporter, 2, levelsToCrawl, element,
+				visitedPages);
 		}
 	}
 
 	private void _crawlTopicChildren(
 		JournalArticleImporter journalArticleImporter, int level,
-		int levelsToCrawl, String url, List<String> visitedPages) {
+		int levelsToCrawl, Element link, List<String> visitedPages) {
 
-		if (visitedPages.contains(url) || (level > levelsToCrawl)) {
+		if (level > levelsToCrawl) {
 			return;
 		}
 
-		visitedPages.add(url);
-
-		Document document = _getDocument(url);
+		Document document = _getDocument(link, visitedPages);
 
 		if (document == null) {
 			return;
@@ -146,24 +139,22 @@ public class LiferayLearnIngester implements Ingester {
 
 		if (!Validator.isBlank(content)) {
 			journalArticleImporter.addJournalArticle(
-				_getAssetTagNames(url), content, _getTitle(document));
+				_getAssetTagNames(link), content, _getTitle(document));
 		}
 
-		for (Element link :
+		for (Element element :
 				document.select(
 					".doc-nav .toctree-l" + level + " a.reference.internal")) {
 
-			String href = link.attr("href");
-
-			if (_isValidLink(href)) {
-				_crawlTopicChildren(
-					journalArticleImporter, level + 1, levelsToCrawl,
-					link.absUrl("href"), visitedPages);
-			}
+			_crawlTopicChildren(
+				journalArticleImporter, level + 1, levelsToCrawl, element,
+				visitedPages);
 		}
 	}
 
-	private String[] _getAssetTagNames(String url) {
+	private String[] _getAssetTagNames(Element link) {
+		String url = link.absUrl("href");
+
 		return new String[] {"Liferay Learn", _getProductTag(url)};
 	}
 
@@ -176,7 +167,21 @@ public class LiferayLearnIngester implements Ingester {
 		return StringUtil.trim(elements.html());
 	}
 
-	private Document _getDocument(String url) {
+	private Document _getDocument(Element link, List<String> visitedPages) {
+		if (link == null) {
+			return null;
+		}
+
+		return _getDocument(link.absUrl("href"), visitedPages);
+	}
+
+	private Document _getDocument(String url, List<String> visitedPages) {
+		if (!_isValidUrl(url) || visitedPages.contains(url)) {
+			return null;
+		}
+
+		visitedPages.add(url);
+
 		try {
 			Connection connection = Jsoup.connect(url);
 
@@ -189,7 +194,7 @@ public class LiferayLearnIngester implements Ingester {
 			}
 		}
 		catch (IOException ioException) {
-			_log.error(ioException);
+			_log.error("Error fetching url " + url, ioException);
 		}
 
 		return null;
@@ -211,9 +216,11 @@ public class LiferayLearnIngester implements Ingester {
 		return elements.html();
 	}
 
-	private boolean _isValidLink(String link) {
-		if (!_excludedLinks.contains(link) &&
-			!_excludedLinkPrefixes.contains(link)) {
+	private boolean _isValidUrl(String url) {
+		if ((!Validator.isBlank(url) && !url.startsWith("javascript")) ||
+			!url.startsWith("#") ||
+			(!_excludedLinks.contains(url) &&
+			 !_excludedLinkPrefixes.contains(url))) {
 
 			return true;
 		}
