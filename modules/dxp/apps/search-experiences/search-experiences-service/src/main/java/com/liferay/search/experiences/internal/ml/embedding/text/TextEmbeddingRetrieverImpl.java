@@ -55,17 +55,17 @@ public class TextEmbeddingRetrieverImpl implements TextEmbeddingRetriever {
 
 	@Override
 	public EmbeddingProviderStatus getEmbeddingProviderStatus(
-		String configurationJSON) {
+		String text) {
 
 		if (!GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-163688"))) {
 			return null;
 		}
 
-		EmbeddingProviderConfiguration embeddingProviderConfiguration;
+		EmbeddingProviderConfiguration embeddingProviderConfiguration = null;
 
 		try {
 			embeddingProviderConfiguration =
-				EmbeddingProviderConfiguration.unsafeToDTO(configurationJSON);
+				EmbeddingProviderConfiguration.unsafeToDTO(text);
 		}
 		catch (Exception exception) {
 			return new EmbeddingProviderStatus.EmbeddingProviderStatusBuilder(
