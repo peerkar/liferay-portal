@@ -49,12 +49,6 @@ public class EmbeddingProviderValidationResultResourceImpl
 			return null;
 		}
 
-		return _validate(embeddingProviderConfiguration);
-	}
-
-	private EmbeddingProviderValidationResult _validate(
-		EmbeddingProviderConfiguration embeddingProviderConfiguration) {
-
 		try {
 			EmbeddingProviderStatus embeddingProviderStatus =
 				_textEmbeddingRetriever.getEmbeddingProviderStatus(
