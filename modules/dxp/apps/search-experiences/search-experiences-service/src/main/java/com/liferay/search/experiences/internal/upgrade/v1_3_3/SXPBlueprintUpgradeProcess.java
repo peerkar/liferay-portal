@@ -24,8 +24,6 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
-import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.search.experiences.internal.model.listener.CompanyModelListener;
@@ -35,16 +33,20 @@ import com.liferay.search.experiences.rest.dto.v1_0.FieldSet;
 import com.liferay.search.experiences.rest.dto.v1_0.SXPElement;
 import com.liferay.search.experiences.rest.dto.v1_0.UiConfiguration;
 import com.liferay.search.experiences.rest.dto.v1_0.util.SXPElementUtil;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
 
 import java.io.IOException;
+
 import java.net.URL;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * @author Felipe Lorenz
@@ -59,6 +61,10 @@ public class SXPBlueprintUpgradeProcess extends UpgradeProcess {
 	}
 
 	private Map<String, SXPElement> _createSXPElements() {
+		if (_sxpElements != null) {
+			return _sxpElements;
+		}
+
 		Bundle bundle = FrameworkUtil.getBundle(CompanyModelListener.class);
 
 		Package pkg = CompanyModelListener.class.getPackage();
@@ -66,7 +72,7 @@ public class SXPBlueprintUpgradeProcess extends UpgradeProcess {
 		String path = StringUtil.replace(
 			pkg.getName(), CharPool.PERIOD, CharPool.SLASH);
 
-		Map<String, SXPElement> sxpElements = new HashMap<>();
+		_sxpElements = new HashMap<>();
 
 		Enumeration<URL> enumeration = bundle.findEntries(
 			path.concat("/dependencies"), "*.json", false);
@@ -78,7 +84,7 @@ public class SXPBlueprintUpgradeProcess extends UpgradeProcess {
 				SXPElement sxpElement = SXPElementUtil.toSXPElement(
 					StreamUtil.toString(url.openStream()));
 
-				sxpElements.put(
+				_sxpElements.put(
 					sxpElement.getExternalReferenceCode(), sxpElement);
 			}
 		}
@@ -86,7 +92,7 @@ public class SXPBlueprintUpgradeProcess extends UpgradeProcess {
 			_log.error(ioException);
 		}
 
-		return sxpElements;
+		return _sxpElements;
 	}
 
 	private String _upgradeElementInstancesJSON(String elementInstancesJSON)
@@ -101,12 +107,25 @@ public class SXPBlueprintUpgradeProcess extends UpgradeProcess {
 			JSONObject sxpElementJSONObject = jsonObject1.getJSONObject(
 				"sxpElement");
 
-			SXPElement sxpElement = _sxpElements.get(
+			Map<String, SXPElement> sxpElements = _createSXPElements();
+
+			SXPElement sxpElement = sxpElements.get(
 				sxpElementJSONObject.getString("externalReferenceCode"));
 
 			if (sxpElement == null) {
 				continue;
 			}
+
+			JSONObject elementDefinitionJSONObject =
+				sxpElementJSONObject.getJSONObject(
+					"elementDefinition");
+
+			JSONObject uiConfigurationJSONObject =
+				elementDefinitionJSONObject.getJSONObject(
+					"uiConfiguration");
+
+			JSONArray fieldSetsJSONObject =
+				uiConfigurationJSONObject.getJSONArray("fieldSets");
 
 			ElementDefinition elementDefinition =
 				sxpElement.getElementDefinition();
@@ -119,33 +138,57 @@ public class SXPBlueprintUpgradeProcess extends UpgradeProcess {
 			for (FieldSet fieldSet : fieldSets) {
 				Field[] fields = fieldSet.getFields();
 
-				for (Field field : fields) {
+				//the function getCorrectHelpText will come here like -> String correctHelpText = getCorrectHelpText...
+				//the function getIncorrectHelpText will come here -> JSONObject wrongJSONObject = getIncorrectHelpText..
 
-					if (!Validator.isBlank(field.getHelpText())) {
-						sxpElementJSONObject.put(
-							"helpText",
-							field.getHelpText()
-						).put(
-							"helpTextLocalized",
-							JSONFactoryUtil.createJSONObject(field.getHelpTextLocalized())
-						);
-					}
+				wrongJSONObject.put( //we will have the JSON object who contains the helpText that we want to change
+					"helpText", correctHelpText); //we will have the correct helpText value
 
-					if (Validator.isBlank(field.getLabel())) {
-						sxpElementJSONObject.put(
-							"label",
-							field.getLabel()
-						).put(
-							"labelLocalized",
-							JSONFactoryUtil.createJSONObject(field.getLabelLocalized())
-						);
-					}
+				wrongJSONObject.put(
+					"label", correctLabel);// we will have the correct label value (like the help text, create a function to get the correct labelValue)
+			}
+		}
+		return jsonArray.toString();
+	}
+
+	private String getCorrectHelpText (int indexFieldSet, int index, UiConfiguration uiConfiguration){
+
+		FieldSet[] fieldSets = uiConfiguration.getFieldSets();
+
+		FieldSet fieldSet = fieldSets[indexFieldSet];
+
+			for (Field field : fields) {
+
+				if (!Validator.isBlank(field.getHelpText())){
+
+					return field.getHelpText();
 				}
+			}
+		return "";
+	}
+
+	private JSONObject getIncorrectHelpText(int indexFieldSet, int indexField, JSONArray fieldSetsJSONObject){
+
+		JSONObject jsonObject3 = null;
+
+		for (int y = 0; y < fieldSetsJSONObject.length(); y++) {
+			JSONObject jsonObject2 =
+				fieldSetsJSONObject.getJSONObject(y);
+
+			JSONArray fieldsJSONObject =
+				jsonObject2.getJSONArray("fields");
+
+			for (int f = 0; f < fieldsJSONObject.length(); f++) {
+
+				jsonObject3 =
+					fieldsJSONObject.getJSONObject(f);
+
 			}
 		}
 
-		return jsonArray.toString();
+		return jsonObject3;
 	}
+
 
 	private void _upgradeSXPBlueprints() throws Exception {
 		try (PreparedStatement preparedStatement1 = connection.prepareStatement(
@@ -199,7 +242,9 @@ public class SXPBlueprintUpgradeProcess extends UpgradeProcess {
 						continue;
 					}
 
-					SXPElement sxpElement = _sxpElements.get(
+					Map<String, SXPElement> sxpElements = _createSXPElements();
+
+					SXPElement sxpElement = sxpElements.get(
 						resultSet.getString("externalReferenceCode"));
 
 					if (sxpElement == null) {
@@ -223,6 +268,6 @@ public class SXPBlueprintUpgradeProcess extends UpgradeProcess {
 	private static final Log _log = LogFactoryUtil.getLog(
 		SXPBlueprintUpgradeProcess.class);
 
-	private final Map<String, SXPElement> _sxpElements = _createSXPElements();
+	private Map<String, SXPElement> _sxpElements;
 
 }
