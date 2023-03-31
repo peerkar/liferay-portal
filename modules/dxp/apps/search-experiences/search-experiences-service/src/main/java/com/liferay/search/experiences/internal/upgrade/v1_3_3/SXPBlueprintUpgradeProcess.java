@@ -17,6 +17,7 @@ package com.liferay.search.experiences.internal.upgrade.v1_3_3;
 import com.liferay.petra.io.StreamUtil;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.jdbc.AutoBatchPreparedStatementUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -60,7 +61,27 @@ public class SXPBlueprintUpgradeProcess extends UpgradeProcess {
 		_upgradeSXPElements();
 	}
 
-	private Map<String, SXPElement> _createSXPElements() {
+	private String _getFieldHelpText(Field[] fields, String name) {
+		for (Field field : fields) {
+			if (name.equals(field.getName())) {
+				return field.getHelpText();
+			}
+		}
+
+		return StringPool.BLANK;
+	}
+
+	private String _getFieldLabel(Field[] fields, String name) {
+		for (Field field : fields) {
+			if (name.equals(field.getName())) {
+				return field.getLabel();
+			}
+		}
+
+		return StringPool.BLANK;
+	}
+
+	private Map<String, SXPElement> _getSXPElements() {
 		if (_sxpElements != null) {
 			return _sxpElements;
 		}
@@ -95,6 +116,69 @@ public class SXPBlueprintUpgradeProcess extends UpgradeProcess {
 		return _sxpElements;
 	}
 
+	private void _upgradeElementInstanceFieldSetJSONObject(
+		FieldSet fieldSet, JSONObject fieldSetJSONObject) {
+
+		JSONArray fieldsJSONArray = fieldSetJSONObject.getJSONArray("fields");
+
+		if (fieldsJSONArray == null) {
+			return;
+		}
+
+		Field[] fields = fieldSet.getFields();
+
+		for (int i = 0; i < fieldsJSONArray.length(); i++) {
+			JSONObject fieldJSONObject = fieldsJSONArray.getJSONObject(i);
+
+			if (fieldJSONObject.has("helpText")) {
+				String upgradedHelpText = _getFieldHelpText(
+					fields, fieldJSONObject.getString("name"));
+
+				if (!Validator.isBlank(upgradedHelpText)) {
+					fieldJSONObject.put("helpText", upgradedHelpText);
+				}
+			}
+
+			if (fieldJSONObject.has("label")) {
+				String upgradedHelpText = _getFieldLabel(
+					fields, fieldJSONObject.getString("label"));
+
+				if (!Validator.isBlank(upgradedHelpText)) {
+					fieldJSONObject.put("label", upgradedHelpText);
+				}
+			}
+		}
+	}
+
+	private void _upgradeElementInstanceJSONObject(
+		SXPElement sxpElement, JSONObject sxpElementJSONObject) {
+
+		JSONObject elementDefinitionJSONObject =
+			sxpElementJSONObject.getJSONObject("elementDefinition");
+
+		JSONObject uiConfigurationJSONObject =
+			elementDefinitionJSONObject.getJSONObject("uiConfiguration");
+
+		JSONArray fieldSetsJSONArray = uiConfigurationJSONObject.getJSONArray(
+			"fieldSets");
+
+		if (fieldSetsJSONArray == null) {
+			return;
+		}
+
+		ElementDefinition elementDefinition = sxpElement.getElementDefinition();
+
+		UiConfiguration uiConfiguration =
+			elementDefinition.getUiConfiguration();
+
+		FieldSet[] fieldSets = uiConfiguration.getFieldSets();
+
+		for (int i = 0; i < fieldSetsJSONArray.length(); i++) {
+			_upgradeElementInstanceFieldSetJSONObject(
+				fieldSets[i], fieldSetsJSONArray.getJSONObject(i));
+		}
+	}
+
 	private String _upgradeElementInstancesJSON(String elementInstancesJSON)
 		throws Exception {
 
@@ -102,12 +186,12 @@ public class SXPBlueprintUpgradeProcess extends UpgradeProcess {
 			elementInstancesJSON);
 
 		for (int i = 0; i < jsonArray.length(); i++) {
-			JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+			JSONObject elementInstanceJSONObject = jsonArray.getJSONObject(i);
 
-			JSONObject sxpElementJSONObject = jsonObject1.getJSONObject(
-				"sxpElement");
+			JSONObject sxpElementJSONObject =
+				elementInstanceJSONObject.getJSONObject("sxpElement");
 
-			Map<String, SXPElement> sxpElements = _createSXPElements();
+			Map<String, SXPElement> sxpElements = _getSXPElements();
 
 			SXPElement sxpElement = sxpElements.get(
 				sxpElementJSONObject.getString("externalReferenceCode"));
@@ -116,79 +200,11 @@ public class SXPBlueprintUpgradeProcess extends UpgradeProcess {
 				continue;
 			}
 
-			JSONObject elementDefinitionJSONObject =
-				sxpElementJSONObject.getJSONObject(
-					"elementDefinition");
-
-			JSONObject uiConfigurationJSONObject =
-				elementDefinitionJSONObject.getJSONObject(
-					"uiConfiguration");
-
-			JSONArray fieldSetsJSONObject =
-				uiConfigurationJSONObject.getJSONArray("fieldSets");
-
-			ElementDefinition elementDefinition =
-				sxpElement.getElementDefinition();
-
-			UiConfiguration uiConfiguration =
-				elementDefinition.getUiConfiguration();
-
-			FieldSet[] fieldSets = uiConfiguration.getFieldSets();
-
-			for (FieldSet fieldSet : fieldSets) {
-				Field[] fields = fieldSet.getFields();
-
-				//the function getCorrectHelpText will come here like -> String correctHelpText = getCorrectHelpText...
-				//the function getIncorrectHelpText will come here -> JSONObject wrongJSONObject = getIncorrectHelpText..
-
-				wrongJSONObject.put( //we will have the JSON object who contains the helpText that we want to change
-					"helpText", correctHelpText); //we will have the correct helpText value
-
-				wrongJSONObject.put(
-					"label", correctLabel);// we will have the correct label value (like the help text, create a function to get the correct labelValue)
-			}
+			_upgradeElementInstanceJSONObject(sxpElement, sxpElementJSONObject);
 		}
+
 		return jsonArray.toString();
 	}
-
-	private String getCorrectHelpText (int indexFieldSet, int index, UiConfiguration uiConfiguration){
-
-		FieldSet[] fieldSets = uiConfiguration.getFieldSets();
-
-		FieldSet fieldSet = fieldSets[indexFieldSet];
-
-			for (Field field : fields) {
-
-				if (!Validator.isBlank(field.getHelpText())){
-
-					return field.getHelpText();
-				}
-			}
-		return "";
-	}
-
-	private JSONObject getIncorrectHelpText(int indexFieldSet, int indexField, JSONArray fieldSetsJSONObject){
-
-		JSONObject jsonObject3 = null;
-
-		for (int y = 0; y < fieldSetsJSONObject.length(); y++) {
-			JSONObject jsonObject2 =
-				fieldSetsJSONObject.getJSONObject(y);
-
-			JSONArray fieldsJSONObject =
-				jsonObject2.getJSONArray("fields");
-
-			for (int f = 0; f < fieldsJSONObject.length(); f++) {
-
-				jsonObject3 =
-					fieldsJSONObject.getJSONObject(f);
-
-			}
-		}
-
-		return jsonObject3;
-	}
-
 
 	private void _upgradeSXPBlueprints() throws Exception {
 		try (PreparedStatement preparedStatement1 = connection.prepareStatement(
@@ -234,7 +250,7 @@ public class SXPBlueprintUpgradeProcess extends UpgradeProcess {
 				AutoBatchPreparedStatementUtil.concurrentAutoBatch(
 					connection,
 					"update SXPElement set elementDefinitionJSON = ? where " +
-					"externalReferenceCode = ?")) {
+						"externalReferenceCode = ?")) {
 
 			try (ResultSet resultSet = preparedStatement1.executeQuery()) {
 				while (resultSet.next()) {
@@ -242,7 +258,7 @@ public class SXPBlueprintUpgradeProcess extends UpgradeProcess {
 						continue;
 					}
 
-					Map<String, SXPElement> sxpElements = _createSXPElements();
+					Map<String, SXPElement> sxpElements = _getSXPElements();
 
 					SXPElement sxpElement = sxpElements.get(
 						resultSet.getString("externalReferenceCode"));
