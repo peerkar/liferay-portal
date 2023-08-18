@@ -126,6 +126,20 @@ public class SiteSerDes {
 			sb.append(_toJSON(site.getDescriptiveName_i18n()));
 		}
 
+		if (site.getExternalReferenceCode() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"externalReferenceCode\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(site.getExternalReferenceCode()));
+
+			sb.append("\"");
+		}
+
 		if (site.getFriendlyUrlPath() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -298,6 +312,15 @@ public class SiteSerDes {
 				String.valueOf(site.getDescriptiveName_i18n()));
 		}
 
+		if (site.getExternalReferenceCode() == null) {
+			map.put("externalReferenceCode", null);
+		}
+		else {
+			map.put(
+				"externalReferenceCode",
+				String.valueOf(site.getExternalReferenceCode()));
+		}
+
 		if (site.getFriendlyUrlPath() == null) {
 			map.put("friendlyUrlPath", null);
 		}
@@ -409,6 +432,13 @@ public class SiteSerDes {
 				if (jsonParserFieldValue != null) {
 					site.setDescriptiveName_i18n(
 						(Map)SiteSerDes.toMap((String)jsonParserFieldValue));
+				}
+			}
+			else if (Objects.equals(
+						jsonParserFieldName, "externalReferenceCode")) {
+
+				if (jsonParserFieldValue != null) {
+					site.setExternalReferenceCode((String)jsonParserFieldValue);
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "friendlyUrlPath")) {

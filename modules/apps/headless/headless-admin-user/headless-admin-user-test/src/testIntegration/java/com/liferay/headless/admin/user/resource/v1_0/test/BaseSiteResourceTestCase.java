@@ -173,6 +173,7 @@ public abstract class BaseSiteResourceTestCase {
 
 		site.setDescription(regex);
 		site.setDescriptiveName(regex);
+		site.setExternalReferenceCode(regex);
 		site.setFriendlyUrlPath(regex);
 		site.setKey(regex);
 		site.setMembershipType(regex);
@@ -186,6 +187,7 @@ public abstract class BaseSiteResourceTestCase {
 
 		Assert.assertEquals(regex, site.getDescription());
 		Assert.assertEquals(regex, site.getDescriptiveName());
+		Assert.assertEquals(regex, site.getExternalReferenceCode());
 		Assert.assertEquals(regex, site.getFriendlyUrlPath());
 		Assert.assertEquals(regex, site.getKey());
 		Assert.assertEquals(regex, site.getMembershipType());
@@ -518,6 +520,16 @@ public abstract class BaseSiteResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals(
+					"externalReferenceCode", additionalAssertFieldName)) {
+
+				if (site.getExternalReferenceCode() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("friendlyUrlPath", additionalAssertFieldName)) {
 				if (site.getFriendlyUrlPath() == null) {
 					valid = false;
@@ -750,6 +762,19 @@ public abstract class BaseSiteResourceTestCase {
 				if (!equals(
 						(Map)site1.getDescriptiveName_i18n(),
 						(Map)site2.getDescriptiveName_i18n())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"externalReferenceCode", additionalAssertFieldName)) {
+
+				if (!Objects.deepEquals(
+						site1.getExternalReferenceCode(),
+						site2.getExternalReferenceCode())) {
 
 					return false;
 				}
@@ -1045,6 +1070,52 @@ public abstract class BaseSiteResourceTestCase {
 				"Invalid entity field " + entityFieldName);
 		}
 
+		if (entityFieldName.equals("externalReferenceCode")) {
+			Object object = site.getExternalReferenceCode();
+
+			String value = String.valueOf(object);
+
+			if (operator.equals("contains")) {
+				sb = new StringBundler();
+
+				sb.append("contains(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 2)) {
+					sb.append(value.substring(1, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else if (operator.equals("startswith")) {
+				sb = new StringBundler();
+
+				sb.append("startswith(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 1)) {
+					sb.append(value.substring(0, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else {
+				sb.append("'");
+				sb.append(value);
+				sb.append("'");
+			}
+
+			return sb.toString();
+		}
+
 		if (entityFieldName.equals("friendlyUrlPath")) {
 			Object object = site.getFriendlyUrlPath();
 
@@ -1296,6 +1367,8 @@ public abstract class BaseSiteResourceTestCase {
 				description = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
 				descriptiveName = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
+				externalReferenceCode = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
 				friendlyUrlPath = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
