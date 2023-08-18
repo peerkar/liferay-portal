@@ -94,6 +94,7 @@ public class SiteResourceImpl extends BaseSiteResourceImpl {
 					group.getDescriptionMap());
 				descriptiveName = group.getDescriptiveName(
 					contextAcceptLanguage.getPreferredLocale());
+				externalReferenceCode = group.getExternalReferenceCode();
 				friendlyUrlPath = group.getFriendlyURL();
 				id = group.getGroupId();
 				key = group.getGroupKey();
