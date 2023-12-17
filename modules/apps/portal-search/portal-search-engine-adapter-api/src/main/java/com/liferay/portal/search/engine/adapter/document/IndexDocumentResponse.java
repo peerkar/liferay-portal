@@ -13,10 +13,22 @@ public class IndexDocumentResponse implements DocumentResponse {
 	public IndexDocumentResponse(int status, String uid) {
 		_status = status;
 		_uid = uid;
+
+		_statusString = null;
+	}
+
+	public IndexDocumentResponse(int status, String statusString, String uid) {
+		_status = status;
+		_statusString = statusString;
+		_uid = uid;
 	}
 
 	public int getStatus() {
 		return _status;
+	}
+
+	public String getStatusString() {
+		return _statusString;
 	}
 
 	public String getUid() {
@@ -24,6 +36,7 @@ public class IndexDocumentResponse implements DocumentResponse {
 	}
 
 	private final int _status;
+	private final String _statusString;
 	private final String _uid;
 
 }

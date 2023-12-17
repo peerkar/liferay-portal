@@ -1,0 +1,228 @@
+/**
+ * SPDX-FileCopyrightText: (c) 2023 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
+
+package com.liferay.portal.search.opensearch2.internal.search.engine.adapter.document;
+
+import com.liferay.portal.kernel.search.Document;
+import com.liferay.portal.kernel.search.DocumentImpl;
+import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.test.ReflectionTestUtil;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.search.engine.adapter.document.DeleteDocumentRequest;
+import com.liferay.portal.search.engine.adapter.document.IndexDocumentRequest;
+import com.liferay.portal.search.engine.adapter.document.UpdateDocumentRequest;
+import com.liferay.portal.search.opensearch2.internal.connection.OpenSearchFixture;
+import com.liferay.portal.search.opensearch2.internal.document.OpenSearchDocumentFactory;
+import com.liferay.portal.search.opensearch2.internal.document.OpenSearchDocumentFactoryImpl;
+import com.liferay.portal.search.test.util.indexing.DocumentFixture;
+import com.liferay.portal.test.rule.LiferayUnitTestRule;
+
+import java.util.List;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Test;
+
+import org.opensearch.client.opensearch.core.BulkRequest;
+import org.opensearch.client.opensearch.core.bulk.BulkOperation;
+import org.opensearch.client.opensearch.core.bulk.DeleteOperation;
+import org.opensearch.client.opensearch.core.bulk.IndexOperation;
+import org.opensearch.client.opensearch.core.bulk.UpdateOperation;
+
+/**
+ * @author Michael C. Han
+ */
+public class OpenSearchBulkableDocumentRequestTranslatorTest {
+
+	@ClassRule
+	public static LiferayUnitTestRule liferayUnitTestRule =
+		LiferayUnitTestRule.INSTANCE;
+
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+		_openSearchFixture = new OpenSearchFixture(
+			OpenSearchBulkableDocumentRequestTranslatorTest.class);
+
+		_openSearchFixture.setUp();
+	}
+
+	@AfterClass
+	public static void tearDownClass() throws Exception {
+		_openSearchFixture.tearDown();
+	}
+
+	@Before
+	public void setUp() throws Exception {
+		OpenSearchDocumentFactory openSearchDocumentFactory =
+			_createOpenSearchDocumentFactory();
+
+		OpenSearchBulkableDocumentRequestTranslator
+			openSearchBulkableDocumentRequestTranslator =
+				_createOpenSearchBulkableDocumentRequestTranslator(
+					openSearchDocumentFactory);
+
+		_openSearchBulkableDocumentRequestTranslator =
+			openSearchBulkableDocumentRequestTranslator;
+
+		_openSearchDocumentFactory = openSearchDocumentFactory;
+
+		_documentFixture.setUp();
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		_documentFixture.tearDown();
+	}
+
+	@Test
+	public void testDeleteDocumentRequestTranslation() {
+		_testDeleteDocumentRequestTranslation();
+	}
+
+	@Test
+	public void testIndexDocumentRequestTranslation() throws Exception {
+		_testIndexDocumentRequestTranslation("1");
+	}
+
+	@Test
+	public void testIndexDocumentRequestTranslationWithNoId() throws Exception {
+		_testIndexDocumentRequestTranslation(null);
+	}
+
+	@Test
+	public void testUpdateDocumentRequestTranslation() throws Exception {
+		_testUpdateDocumentRequestTranslation("1");
+	}
+
+	@Test
+	public void testUpdateDocumentRequestTranslationWithNoId()
+		throws Exception {
+
+		_testUpdateDocumentRequestTranslation(null);
+	}
+
+	private OpenSearchBulkableDocumentRequestTranslator
+		_createOpenSearchBulkableDocumentRequestTranslator(
+			OpenSearchDocumentFactory openSearchDocumentFactory) {
+
+		OpenSearchBulkableDocumentRequestTranslator
+			openSearchBulkableDocumentRequestTranslator =
+				new OpenSearchBulkableDocumentRequestTranslatorImpl();
+
+		ReflectionTestUtil.setFieldValue(
+			openSearchBulkableDocumentRequestTranslator,
+			"_openSearchDocumentFactory", openSearchDocumentFactory);
+
+		return openSearchBulkableDocumentRequestTranslator;
+	}
+
+	private OpenSearchDocumentFactory _createOpenSearchDocumentFactory() {
+		return new OpenSearchDocumentFactoryImpl();
+	}
+
+	private void _setUid(Document document, String uid) {
+		if (!Validator.isBlank(uid)) {
+			document.addKeyword(Field.UID, uid);
+		}
+	}
+
+	private void _testDeleteDocumentRequestTranslation() {
+		String id = "1";
+
+		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest(
+			_INDEX_NAME, id);
+
+		DeleteOperation deleteOperation =
+			_openSearchBulkableDocumentRequestTranslator.translate(
+				deleteDocumentRequest);
+
+		Assert.assertEquals(_INDEX_NAME, deleteOperation.index());
+		Assert.assertEquals(id, deleteOperation.id());
+
+		BulkRequest bulkRequest = BulkRequest.of(
+			openSearchBulkRequest -> openSearchBulkRequest.operations(
+				new BulkOperation(
+					_openSearchBulkableDocumentRequestTranslator.translate(
+						deleteDocumentRequest))));
+
+		List<BulkOperation> bulkOperations = bulkRequest.operations();
+
+		Assert.assertEquals(1, bulkOperations.size());
+	}
+
+	private void _testIndexDocumentRequestTranslation(String id)
+		throws Exception {
+
+		Document document = new DocumentImpl();
+
+		_setUid(document, id);
+
+		IndexDocumentRequest indexDocumentRequest = new IndexDocumentRequest(
+			_INDEX_NAME, document);
+
+		IndexOperation indexOperation =
+			_openSearchBulkableDocumentRequestTranslator.translate(
+				indexDocumentRequest);
+
+		Assert.assertEquals(_INDEX_NAME, indexOperation.index());
+		Assert.assertEquals(id, indexOperation.id());
+
+		Assert.assertEquals(
+			_openSearchDocumentFactory.getOpenSearchDocument(document),
+			indexOperation.document());
+
+		BulkRequest bulkRequest = BulkRequest.of(
+			openSearchBulkRequest -> openSearchBulkRequest.operations(
+				new BulkOperation(
+					_openSearchBulkableDocumentRequestTranslator.translate(
+						indexDocumentRequest))));
+
+		List<BulkOperation> bulkOperations = bulkRequest.operations();
+
+		Assert.assertEquals(1, bulkOperations.size());
+	}
+
+	private void _testUpdateDocumentRequestTranslation(String id)
+		throws Exception {
+
+		Document document = new DocumentImpl();
+
+		_setUid(document, id);
+
+		UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest(
+			_INDEX_NAME, id, document);
+
+		UpdateOperation updateOperation =
+			_openSearchBulkableDocumentRequestTranslator.translate(
+				updateDocumentRequest);
+
+		Assert.assertEquals(_INDEX_NAME, updateOperation.index());
+		Assert.assertEquals(id, updateOperation.id());
+
+		BulkRequest bulkRequest = BulkRequest.of(
+			openSearchBulkRequest -> openSearchBulkRequest.operations(
+				new BulkOperation(
+					_openSearchBulkableDocumentRequestTranslator.translate(
+						updateDocumentRequest))));
+
+		List<BulkOperation> bulkOperations = bulkRequest.operations();
+
+		Assert.assertEquals(1, bulkOperations.size());
+	}
+
+	private static final String _INDEX_NAME = "test_request_index";
+
+	private static OpenSearchFixture _openSearchFixture;
+
+	private final DocumentFixture _documentFixture = new DocumentFixture();
+	private OpenSearchBulkableDocumentRequestTranslator
+		_openSearchBulkableDocumentRequestTranslator;
+	private OpenSearchDocumentFactory _openSearchDocumentFactory;
+
+}

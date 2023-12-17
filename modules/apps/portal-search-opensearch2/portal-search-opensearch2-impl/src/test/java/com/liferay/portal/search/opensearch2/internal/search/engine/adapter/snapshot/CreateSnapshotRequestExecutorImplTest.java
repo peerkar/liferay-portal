@@ -1,0 +1,79 @@
+/**
+ * SPDX-FileCopyrightText: (c) 2023 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
+
+package com.liferay.portal.search.opensearch2.internal.search.engine.adapter.snapshot;
+
+import com.liferay.portal.kernel.test.ReflectionTestUtil;
+import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.search.engine.adapter.snapshot.CreateSnapshotRequest;
+import com.liferay.portal.search.opensearch2.internal.connection.OpenSearchFixture;
+import com.liferay.portal.search.opensearch2.internal.search.engine.adapter.index.AnalyzeIndexRequestExecutorTest;
+import com.liferay.portal.test.rule.LiferayUnitTestRule;
+
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Test;
+
+/**
+ * @author Michael C. Han
+ */
+public class CreateSnapshotRequestExecutorImplTest {
+
+	@ClassRule
+	public static LiferayUnitTestRule liferayUnitTestRule =
+		LiferayUnitTestRule.INSTANCE;
+
+	@Before
+	public void setUp() throws Exception {
+		_openSearchFixture = new OpenSearchFixture(
+			AnalyzeIndexRequestExecutorTest.class.getSimpleName());
+
+		_openSearchFixture.setUp();
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		_openSearchFixture.tearDown();
+	}
+
+	@Test
+	public void testCreatePutRepositoryRequest() {
+		CreateSnapshotRequest createSnapshotRequest = new CreateSnapshotRequest(
+			"name", "location");
+
+		createSnapshotRequest.setIndexNames("index1", "index2");
+		createSnapshotRequest.setWaitForCompletion(true);
+
+		CreateSnapshotRequestExecutorImpl createSnapshotRequestExecutorImpl =
+			new CreateSnapshotRequestExecutorImpl();
+
+		ReflectionTestUtil.setFieldValue(
+			createSnapshotRequestExecutorImpl, "_openSearchConnectionManager",
+			_openSearchFixture);
+
+		org.opensearch.client.opensearch.snapshot.CreateSnapshotRequest
+			openSearchCreateSnapshotRequest =
+				createSnapshotRequestExecutorImpl.createCreateSnapshotRequest(
+					createSnapshotRequest);
+
+		Assert.assertArrayEquals(
+			createSnapshotRequest.getIndexNames(),
+			ArrayUtil.toStringArray(openSearchCreateSnapshotRequest.indices()));
+		Assert.assertEquals(
+			createSnapshotRequest.getRepositoryName(),
+			openSearchCreateSnapshotRequest.repository());
+		Assert.assertEquals(
+			createSnapshotRequest.getSnapshotName(),
+			openSearchCreateSnapshotRequest.snapshot());
+		Assert.assertEquals(
+			createSnapshotRequest.isWaitForCompletion(),
+			openSearchCreateSnapshotRequest.waitForCompletion());
+	}
+
+	private OpenSearchFixture _openSearchFixture;
+
+}
