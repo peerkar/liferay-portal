@@ -18,6 +18,9 @@ import com.liferay.portal.kernel.model.CompanyConstants;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.IndexerRegistry;
+import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.PortletLocalService;
@@ -192,6 +195,8 @@ public class PanelAppRegistry {
 							_portletLocalService);
 					}
 
+					_reindexPanelApp(panelApp);
+
 					return panelApp;
 				}
 
@@ -199,12 +204,16 @@ public class PanelAppRegistry {
 				public void modifiedService(
 					ServiceReference<PanelApp> serviceReference,
 					PanelApp panelApp) {
+
+					_reindexPanelApp(panelApp);
 				}
 
 				@Override
 				public void removedService(
 					ServiceReference<PanelApp> serviceReference,
 					PanelApp panelApp) {
+
+					_deletePanelAppFromIndex(panelApp);
 
 					bundleContext.ungetService(serviceReference);
 				}
@@ -220,11 +229,38 @@ public class PanelAppRegistry {
 		_serviceTrackerMap.close();
 	}
 
+	private void _deletePanelAppFromIndex(PanelApp panelApp) {
+		try {
+			Indexer<PanelApp> indexer = _indexerRegistry.nullSafeGetIndexer(
+				PanelApp.class);
+
+			indexer.delete(panelApp);
+		}
+		catch (SearchException searchException) {
+			_log.error(searchException);
+		}
+	}
+
+	private void _reindexPanelApp(PanelApp panelApp) {
+		try {
+			Indexer<PanelApp> indexer = _indexerRegistry.nullSafeGetIndexer(
+				PanelApp.class);
+
+			indexer.reindex(panelApp);
+		}
+		catch (SearchException searchException) {
+			_log.error(searchException);
+		}
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		PanelAppRegistry.class);
 
 	@Reference
 	private GroupProvider _groupProvider;
+
+	@Reference
+	private IndexerRegistry _indexerRegistry;
 
 	@Reference
 	private PortletLocalService _portletLocalService;
