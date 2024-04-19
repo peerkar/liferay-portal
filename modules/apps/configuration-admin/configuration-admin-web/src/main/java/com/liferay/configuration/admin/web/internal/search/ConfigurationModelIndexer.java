@@ -6,6 +6,7 @@
 package com.liferay.configuration.admin.web.internal.search;
 
 import com.liferay.configuration.admin.category.ConfigurationCategory;
+import com.liferay.configuration.admin.constants.ConfigurationAdminFieldNames;
 import com.liferay.configuration.admin.constants.ConfigurationAdminPortletKeys;
 import com.liferay.configuration.admin.web.internal.model.ConfigurationModel;
 import com.liferay.configuration.admin.web.internal.util.ConfigurationEntryRetriever;
@@ -173,10 +174,11 @@ public class ConfigurationModelIndexer
 		setDefaultSelectedFieldNames(
 			Field.COMPANY_ID, Field.DESCRIPTION, Field.ENTRY_CLASS_NAME,
 			Field.TITLE, Field.UID,
-			FieldNames.CONFIGURATION_MODEL_ATTRIBUTE_DESCRIPTION,
-			FieldNames.CONFIGURATION_MODEL_ATTRIBUTE_NAME,
-			FieldNames.CONFIGURATION_MODEL_FACTORY_PID,
-			FieldNames.CONFIGURATION_MODEL_ID);
+			ConfigurationAdminFieldNames.
+				CONFIGURATION_MODEL_ATTRIBUTE_DESCRIPTION,
+			ConfigurationAdminFieldNames.CONFIGURATION_MODEL_ATTRIBUTE_NAME,
+			ConfigurationAdminFieldNames.CONFIGURATION_MODEL_FACTORY_PID,
+			ConfigurationAdminFieldNames.CONFIGURATION_MODEL_ID);
 		setFilterSearch(false);
 		setPermissionAware(false);
 		setSelectAllLocales(false);
@@ -204,23 +206,27 @@ public class ConfigurationModelIndexer
 		BooleanQuery searchQuery = new BooleanQueryImpl();
 
 		addSearchLocalizedTerm(
-			searchQuery, searchContext, FieldNames.CONFIGURATION_CATEGORY,
-			false);
+			searchQuery, searchContext,
+			ConfigurationAdminFieldNames.CONFIGURATION_CATEGORY, false);
 		addSearchLocalizedTerm(
 			searchQuery, searchContext, Field.DESCRIPTION, false);
 		addSearchLocalizedTerm(searchQuery, searchContext, Field.TITLE, false);
 		addSearchLocalizedTerm(
 			searchQuery, searchContext,
-			FieldNames.CONFIGURATION_MODEL_ATTRIBUTE_DESCRIPTION, false);
+			ConfigurationAdminFieldNames.
+				CONFIGURATION_MODEL_ATTRIBUTE_DESCRIPTION,
+			false);
 		addSearchLocalizedTerm(
 			searchQuery, searchContext,
-			FieldNames.CONFIGURATION_MODEL_ATTRIBUTE_NAME, false);
+			ConfigurationAdminFieldNames.CONFIGURATION_MODEL_ATTRIBUTE_NAME,
+			false);
 		addSearchTerm(
 			searchQuery, searchContext,
-			FieldNames.CONFIGURATION_MODEL_FACTORY_PID, false);
-		addSearchTerm(
-			searchQuery, searchContext, FieldNames.CONFIGURATION_MODEL_ID,
+			ConfigurationAdminFieldNames.CONFIGURATION_MODEL_FACTORY_PID,
 			false);
+		addSearchTerm(
+			searchQuery, searchContext,
+			ConfigurationAdminFieldNames.CONFIGURATION_MODEL_ID, false);
 
 		BooleanQuery fullBooleanQuery = new BooleanQueryImpl();
 
@@ -263,10 +269,15 @@ public class ConfigurationModelIndexer
 		_setUID(document, configurationModel);
 
 		document.addKeyword(
-			FieldNames.CONFIGURATION_MODEL_FACTORY_PID,
+			ConfigurationAdminFieldNames.CONFIGURATION_MODEL_FACTORY_PID,
 			configurationModel.getFactoryPid());
 		document.addKeyword(
-			FieldNames.CONFIGURATION_MODEL_ID, configurationModel.getID());
+			ConfigurationAdminFieldNames.CONFIGURATION_MODEL_ID,
+			configurationModel.getID());
+		document.addKeyword(
+			ConfigurationAdminFieldNames.CONFIGURATION_MODEL_SCOPE,
+			configurationModel.getScope());
+
 		document.addKeyword(Field.COMPANY_ID, CompanyConstants.SYSTEM);
 
 		document.addKeyword(Field.ENTRY_CLASS_NAME, getClassName());
@@ -301,15 +312,16 @@ public class ConfigurationModelIndexer
 				attributeDescriptions, resourceBundleLoader, locale);
 
 			document.addText(
-				FieldNames.CONFIGURATION_MODEL_ATTRIBUTE_DESCRIPTION +
-					fieldNameSuffix,
+				ConfigurationAdminFieldNames.
+					CONFIGURATION_MODEL_ATTRIBUTE_DESCRIPTION + fieldNameSuffix,
 				descriptionValues.toArray(new String[0]));
 
 			List<String> nameValues = _getLocalizedValues(
 				attributeNames, resourceBundleLoader, locale);
 
 			document.addKeyword(
-				FieldNames.CONFIGURATION_MODEL_ATTRIBUTE_NAME + fieldNameSuffix,
+				ConfigurationAdminFieldNames.
+					CONFIGURATION_MODEL_ATTRIBUTE_NAME + fieldNameSuffix,
 				nameValues.toArray(new String[0]));
 		}
 
@@ -323,7 +335,7 @@ public class ConfigurationModelIndexer
 			translationHelpers.add(
 				new TranslationHelper(
 					"category." + configurationModel.getCategory(),
-					FieldNames.CONFIGURATION_CATEGORY));
+					ConfigurationAdminFieldNames.CONFIGURATION_CATEGORY));
 		}
 
 		translationHelpers.add(
