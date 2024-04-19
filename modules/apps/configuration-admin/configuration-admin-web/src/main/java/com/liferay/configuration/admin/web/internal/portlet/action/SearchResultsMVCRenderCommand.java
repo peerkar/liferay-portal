@@ -5,6 +5,7 @@
 
 package com.liferay.configuration.admin.web.internal.portlet.action;
 
+import com.liferay.configuration.admin.constants.ConfigurationAdminFieldNames;
 import com.liferay.configuration.admin.constants.ConfigurationAdminPortletKeys;
 import com.liferay.configuration.admin.display.ConfigurationScreen;
 import com.liferay.configuration.admin.web.internal.constants.ConfigurationAdminWebKeys;
@@ -14,7 +15,6 @@ import com.liferay.configuration.admin.web.internal.display.ConfigurationScreenC
 import com.liferay.configuration.admin.web.internal.display.context.ConfigurationScopeDisplayContext;
 import com.liferay.configuration.admin.web.internal.display.context.ConfigurationScopeDisplayContextFactory;
 import com.liferay.configuration.admin.web.internal.model.ConfigurationModel;
-import com.liferay.configuration.admin.web.internal.search.FieldNames;
 import com.liferay.configuration.admin.web.internal.util.ConfigurationEntryIterator;
 import com.liferay.configuration.admin.web.internal.util.ConfigurationEntryRetriever;
 import com.liferay.configuration.admin.web.internal.util.ConfigurationModelRetriever;
@@ -99,14 +99,15 @@ public class SearchResultsMVCRenderCommand implements MVCRenderCommand {
 
 			for (Document document : documents) {
 				String configurationModelId = document.get(
-					FieldNames.CONFIGURATION_MODEL_ID);
+					ConfigurationAdminFieldNames.CONFIGURATION_MODEL_ID);
 
 				ConfigurationModel configurationModel = configurationModels.get(
 					configurationModelId);
 
 				if (configurationModel == null) {
 					String configurationModelFactoryId = document.get(
-						FieldNames.CONFIGURATION_MODEL_FACTORY_PID);
+						ConfigurationAdminFieldNames.
+							CONFIGURATION_MODEL_FACTORY_PID);
 
 					configurationModel = configurationModels.get(
 						configurationModelFactoryId);

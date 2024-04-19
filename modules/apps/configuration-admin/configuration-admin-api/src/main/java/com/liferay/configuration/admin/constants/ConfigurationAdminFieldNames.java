@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-package com.liferay.configuration.admin.web.internal.search;
+package com.liferay.configuration.admin.constants;
 
 /**
  * @author Michael C. Han
  */
-public class FieldNames {
+public class ConfigurationAdminFieldNames {
 
 	public static final String CONFIGURATION_CATEGORY = "configurationCategory";
 
@@ -22,5 +22,8 @@ public class FieldNames {
 		"configurationModelFactoryPid";
 
 	public static final String CONFIGURATION_MODEL_ID = "configurationModelId";
+
+	public static final String CONFIGURATION_MODEL_SCOPE =
+		"configurationModelScope";
 
 }
