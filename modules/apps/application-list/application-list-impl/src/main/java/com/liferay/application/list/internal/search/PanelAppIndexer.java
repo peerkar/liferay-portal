@@ -193,9 +193,13 @@ public class PanelAppIndexer extends BaseIndexer<PanelApp> {
 
 	@Override
 	protected Document doGetDocument(PanelApp panelApp) throws Exception {
-		Document document = newDocument();
-
 		Portlet portlet = panelApp.getPortlet();
+
+		if (portlet == null) {
+			return null;
+		}
+
+		Document document = newDocument();
 
 		document.addUID(panelApp.getPortletId(), panelApp.getKey());
 
@@ -252,8 +256,17 @@ public class PanelAppIndexer extends BaseIndexer<PanelApp> {
 
 	@Override
 	protected void doReindex(PanelApp panelApp) throws Exception {
-		_indexWriterHelper.updateDocument(
-			CompanyConstants.SYSTEM, getDocument(panelApp));
+		Document document = getDocument(panelApp);
+
+		if (document != null) {
+			_indexWriterHelper.updateDocument(
+				CompanyConstants.SYSTEM, getDocument(panelApp));
+		}
+		else {
+			if (_log.isWarnEnabled()) {
+				_log.warn("Failed to reindex panel app " + panelApp.getKey());
+			}
+		}
 	}
 
 	@Override
