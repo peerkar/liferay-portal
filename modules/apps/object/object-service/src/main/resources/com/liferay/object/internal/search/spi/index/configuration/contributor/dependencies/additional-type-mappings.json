@@ -1,11 +1,11 @@
 {
 	"properties": {
 		"objectFolderExternalReferenceCode": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"rootObjectDefinitionExternalReferenceCode": {
-			"store": true,
+
 			"type": "keyword"
 		}
 	}

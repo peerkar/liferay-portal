@@ -1,7 +1,7 @@
 {
 	"properties": {
 		"index": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"synonyms": {
@@ -10,15 +10,15 @@
 					"type": "keyword"
 				}
 			},
-			"store": true,
+
 			"type": "text"
 		},
 		"timestamp": {
-			"store": true,
+
 			"type": "date"
 		},
 		"uid": {
-			"store": true,
+
 			"type": "keyword"
 		}
 	}

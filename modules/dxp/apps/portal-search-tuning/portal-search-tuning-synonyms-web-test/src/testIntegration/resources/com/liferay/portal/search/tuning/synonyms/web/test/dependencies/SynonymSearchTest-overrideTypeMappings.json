@@ -5,7 +5,7 @@
 			"template_ddmFieldArray_ddmFieldValue_Number_sortable": {
 				"mapping": {
 					"scaling_factor": 1000,
-					"store": true,
+
 					"type": "scaled_float"
 				},
 				"path_match": "ddmFieldArray.ddmFieldValue*Number_sortable"
@@ -14,7 +14,7 @@
 		{
 			"template_long_sortable": {
 				"mapping": {
-					"store": true,
+
 					"type": "long"
 				},
 				"match": "*_sortable",
@@ -24,7 +24,7 @@
 		{
 			"template_string_sortable": {
 				"mapping": {
-					"store": true,
+
 					"type": "keyword"
 				},
 				"match": "*_sortable",
@@ -36,11 +36,11 @@
 				"mapping": {
 					"fields": {
 						"geopoint": {
-							"store": true,
+
 							"type": "keyword"
 						}
 					},
-					"store": true,
+
 					"type": "geo_point"
 				},
 				"match": "*_geolocation"
@@ -49,7 +49,7 @@
 		{
 			"template_ddmFieldArray_ddmFieldValueKeyword": {
 				"mapping": {
-					"store": true,
+
 					"type": "keyword"
 				},
 				"match_mapping_type": "string",
@@ -59,7 +59,7 @@
 		{
 			"template_ddm_keyword": {
 				"mapping": {
-					"store": true,
+
 					"type": "keyword"
 				},
 				"match": "ddm__keyword__*",
@@ -75,7 +75,7 @@
 							"type": "keyword"
 						}
 					},
-					"store": true,
+
 					"type": "text"
 				},
 				"match": "expando__keyword__*",
@@ -87,7 +87,7 @@
 				"mapping": {
 					"analyzer": "arabic",
 					"search_analyzer": "liferay_analyzer_ar",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -100,7 +100,7 @@
 			"template_bg": {
 				"mapping": {
 					"analyzer": "bulgarian",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -114,7 +114,7 @@
 				"mapping": {
 					"analyzer": "catalan",
 					"search_analyzer": "liferay_analyzer_ca",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -127,7 +127,7 @@
 			"template_cs": {
 				"mapping": {
 					"analyzer": "czech",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -140,7 +140,7 @@
 			"template_da": {
 				"mapping": {
 					"analyzer": "danish",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -154,7 +154,7 @@
 				"mapping": {
 					"analyzer": "german",
 					"search_analyzer": "liferay_analyzer_de",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -167,7 +167,7 @@
 			"template_el": {
 				"mapping": {
 					"analyzer": "greek",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -181,7 +181,7 @@
 				"mapping": {
 					"analyzer": "english",
 					"search_analyzer": "liferay_analyzer_en",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -195,7 +195,7 @@
 				"mapping": {
 					"analyzer": "spanish",
 					"search_analyzer": "liferay_analyzer_es",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -208,7 +208,7 @@
 			"template_eu": {
 				"mapping": {
 					"analyzer": "basque",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -222,7 +222,7 @@
 				"mapping": {
 					"analyzer": "finnish",
 					"search_analyzer": "liferay_analyzer_fi",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -236,7 +236,7 @@
 				"mapping": {
 					"analyzer": "french",
 					"search_analyzer": "liferay_analyzer_fr",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -249,7 +249,7 @@
 			"template_hi": {
 				"mapping": {
 					"analyzer": "hindi",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -263,7 +263,7 @@
 				"mapping": {
 					"analyzer": "hungarian",
 					"search_analyzer": "liferay_analyzer_hu",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -276,7 +276,7 @@
 			"template_hy": {
 				"mapping": {
 					"analyzer": "armenian",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -289,7 +289,7 @@
 			"template_id": {
 				"mapping": {
 					"analyzer": "indonesian",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -303,7 +303,7 @@
 				"mapping": {
 					"analyzer": "italian",
 					"search_analyzer": "liferay_analyzer_it",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -316,7 +316,7 @@
 			"template_ja": {
 				"mapping": {
 					"analyzer": "kuromoji",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -329,7 +329,7 @@
 			"template_ko": {
 				"mapping": {
 					"analyzer": "cjk",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -343,7 +343,7 @@
 				"mapping": {
 					"analyzer": "dutch",
 					"search_analyzer": "liferay_analyzer_nl",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -356,7 +356,7 @@
 			"template_no": {
 				"mapping": {
 					"analyzer": "norwegian",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -369,7 +369,7 @@
 			"template_pl": {
 				"mapping": {
 					"analyzer": "polish",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -383,7 +383,7 @@
 				"mapping": {
 					"analyzer": "portuguese",
 					"search_analyzer": "liferay_analyzer_pt_PT",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -397,7 +397,7 @@
 				"mapping": {
 					"analyzer": "brazilian",
 					"search_analyzer": "liferay_analyzer_pt_BR",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -409,7 +409,7 @@
 			"template_ro": {
 				"mapping": {
 					"analyzer": "romanian",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -422,7 +422,7 @@
 			"template_ru": {
 				"mapping": {
 					"analyzer": "russian",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -436,7 +436,7 @@
 				"mapping": {
 					"analyzer": "swedish",
 					"search_analyzer": "liferay_analyzer_sv",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -449,7 +449,7 @@
 			"template_th": {
 				"mapping": {
 					"analyzer": "thai",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -462,7 +462,7 @@
 			"template_tr": {
 				"mapping": {
 					"analyzer": "turkish",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -475,7 +475,7 @@
 			"template_zh": {
 				"mapping": {
 					"analyzer": "smartcn",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -487,7 +487,7 @@
 		{
 			"template_ddmFieldArray_ddmFieldValueText": {
 				"mapping": {
-					"store": true,
+
 					"type": "text"
 				},
 				"match_mapping_type": "string",
@@ -497,7 +497,7 @@
 		{
 			"template_ddm": {
 				"mapping": {
-					"store": true,
+
 					"type": "text"
 				},
 				"match": "ddm__*",
@@ -507,7 +507,7 @@
 		{
 			"template_expando": {
 				"mapping": {
-					"store": true,
+
 					"type": "text"
 				},
 				"match": "expando__*",
@@ -517,44 +517,44 @@
 	],
 	"properties": {
 		"ancestorOrganizationIds": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"articleId": {
 			"analyzer": "keyword_lowercase",
-			"store": true,
+
 			"type": "text"
 		},
 		"assetCategoryId": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"assetCategoryIds": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"assetInternalCategoryId": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"assetInternalCategoryIds": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"assetInternalCategoryTitles": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"assetInternalVocabularyIds": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"assetTagId": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"assetTagIds": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"assetTagNames": {
@@ -563,54 +563,54 @@
 					"type": "keyword"
 				}
 			},
-			"store": true,
+
 			"term_vector": "with_positions_offsets",
 			"type": "text"
 		},
 		"assetVocabularyId": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"assetVocabularyIds": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"classTypeId": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"companyId": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"configurationModelAttributeName": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"configurationModelFactoryPid": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"configurationModelId": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"content": {
-			"store": true,
+
 			"term_vector": "with_positions_offsets",
 			"type": "text"
 		},
 		"createDate": {
 			"format": "yyyyMMddHHmmss",
-			"store": true,
+
 			"type": "date"
 		},
 		"dataRepositoryId": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"ddmContent": {
-			"store": true,
+
 			"term_vector": "with_positions_offsets",
 			"type": "text"
 		},
@@ -626,182 +626,182 @@
 			"type": "nested"
 		},
 		"ddmStructureKey": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"ddmTemplateKey": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"defaultLanguageId": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"description": {
-			"store": true,
+
 			"term_vector": "with_positions_offsets",
 			"type": "text"
 		},
 		"discussion": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"displayDate": {
 			"format": "yyyyMMddHHmmss",
-			"store": true,
+
 			"type": "date"
 		},
 		"emailAddress": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"emailAddressDomain": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"endTime": {
-			"store": true,
+
 			"type": "long"
 		},
 		"entryClassName": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"entryClassPK": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"expirationDate": {
 			"format": "yyyyMMddHHmmss",
-			"store": true,
+
 			"type": "date"
 		},
 		"extension": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"externalReferenceCode": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"fileEntryTypeId": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"fileExtension": {
-			"store": true,
+
 			"type": "text"
 		},
 		"folderId": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"geoLocation": {
 			"fields": {
 				"geopoint": {
-					"store": true,
+
 					"type": "keyword"
 				}
 			},
-			"store": true,
+
 			"type": "geo_point"
 		},
 		"groupExternalReferenceCode": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"groupId": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"groupIds": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"groupRoleId": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"head": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"hidden": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"id": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"languageId": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"layoutUuid": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"leftOrganizationId": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"mimeType": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"modified": {
 			"format": "yyyyMMddHHmmss",
-			"store": true,
+
 			"type": "date"
 		},
 		"nodeId": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"organizationId": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"organizationIds": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"parentCategoryId": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"parentCategoryIds": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"parentOrganizationId": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"path": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"priority": {
-			"store": true,
+
 			"type": "double"
 		},
 		"properties": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"publishDate": {
 			"format": "yyyyMMddHHmmss",
-			"store": true,
+
 			"type": "date"
 		},
 		"readCount": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"recordSetId": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"removedByUser": {
@@ -809,40 +809,40 @@
 		},
 		"removedDate": {
 			"format": "yyyyMMddHHmmss",
-			"store": true,
+
 			"type": "date"
 		},
 		"reviewDate": {
 			"format": "yyyyMMddHHmmss",
-			"store": true,
+
 			"type": "date"
 		},
 		"rightOrganizationId": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"roleId": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"roleIds": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"rootEntryClassName": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"rootEntryClassPK": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"scopeGroupExternalReferenceCode": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"scopeGroupId": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"screenName": {
@@ -851,80 +851,80 @@
 					"type": "text"
 				}
 			},
-			"store": true,
+
 			"type": "keyword"
 		},
 		"size": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"status": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"statusByUserExternalReferenceCode": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"statusByUserId": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"subtitle": {
-			"store": true,
+
 			"type": "text"
 		},
 		"teamIds": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"threadId": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"title": {
-			"store": true,
+
 			"term_vector": "with_positions_offsets",
 			"type": "text"
 		},
 		"treePath": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"type": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"uid": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"userExternalReferenceCode": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"userGroupId": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"userGroupIds": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"userId": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"userName": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"version": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"visible": {
-			"store": true,
+
 			"type": "keyword"
 		}
 	}

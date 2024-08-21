@@ -4,7 +4,7 @@
 			"template_ja": {
 				"mapping": {
 					"analyzer": "kuromoji_liferay_custom",
-					"store": true,
+
 					"term_vector": "with_positions_offsets",
 					"type": "text"
 				},
@@ -16,7 +16,7 @@
 		{
 			"template_additional_mapping": {
 				"mapping": {
-					"store": true,
+
 					"type": "keyword"
 				},
 				"match": "*_additional_mapping",
@@ -26,11 +26,11 @@
 	],
 	"properties": {
 		"orderStatus": {
-			"store": true,
+
 			"type": "keyword"
 		},
 		"productDescription": {
-			"store": true,
+
 			"type": "text"
 		}
 	}
