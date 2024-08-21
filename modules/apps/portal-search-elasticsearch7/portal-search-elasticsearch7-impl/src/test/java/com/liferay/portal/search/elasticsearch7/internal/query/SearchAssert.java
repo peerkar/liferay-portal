@@ -5,7 +5,7 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.query;
 
-import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.search.test.util.IdempotentRetryAssert;
 
 import java.io.IOException;
@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
@@ -22,7 +23,6 @@ import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.document.DocumentField;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
@@ -83,9 +83,14 @@ public class SearchAssert {
 		List<String> values = new ArrayList<>();
 
 		for (SearchHit searchHit : searchHits.getHits()) {
-			DocumentField documentField = searchHit.field(field);
 
-			values.add(documentField.getValue());
+			// DocumentField documentField = searchHit.field(field);
+
+			// values.add(documentField.getValue());
+
+			Map<String, Object> map = searchHit.getSourceAsMap();
+
+			values.add(GetterUtil.getString(map.get(field)));
 		}
 
 		return values;
@@ -106,7 +111,8 @@ public class SearchAssert {
 		RestHighLevelClient restHighLevelClient,
 		SearchSourceBuilder searchSourceBuilder, SearchRequest searchRequest) {
 
-		searchSourceBuilder.storedField(StringPool.STAR);
+		//searchSourceBuilder.storedField(StringPool.STAR);
+		searchSourceBuilder.fetchSource(true);
 
 		searchRequest.source(searchSourceBuilder);
 

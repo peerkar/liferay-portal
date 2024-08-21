@@ -5,6 +5,8 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.document;
 
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.document.DocumentBuilder;
@@ -87,7 +89,16 @@ public class DocumentFieldsTranslator {
 	protected void translate(
 		String name, Object value, DocumentBuilder documentBuilder) {
 
-		if (name.endsWith(_GEOPOINT_SUFFIX)) {
+		if (name.endsWith("geolocation")) {
+			JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
+				(Map)value);
+
+			documentBuilder.setGeoLocationPoint(
+				name,
+				_geoBuilders.geoLocationPoint(
+					jsonObject.getDouble("lat"), jsonObject.getDouble("lon")));
+		}
+		else if (name.endsWith(_GEOPOINT_SUFFIX)) {
 			documentBuilder.setGeoLocationPoint(
 				name, _geoBuilders.geoLocationPoint((String)value));
 		}

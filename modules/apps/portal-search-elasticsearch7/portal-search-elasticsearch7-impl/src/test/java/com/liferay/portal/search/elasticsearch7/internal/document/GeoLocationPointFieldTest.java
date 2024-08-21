@@ -73,7 +73,9 @@ public class GeoLocationPointFieldTest extends BaseIndexingTestCase {
 		double latitude = 33.99772698059678;
 		double longitude = -117.814457193017;
 
-		String expected = "(33.99772698059678,-117.814457193017)";
+		// String expected = "(33.99772698059678,-117.814457193017)";
+
+		String expected = "{lon=-117.814457193017, lat=33.99772698059678}";
 
 		addDocument(
 			DocumentCreationHelpers.singleGeoLocation(
@@ -117,8 +119,8 @@ public class GeoLocationPointFieldTest extends BaseIndexingTestCase {
 
 			String source = StringBundler.concat(
 				"{ \"properties\": { \"", _CUSTOM_FIELD, "\" : { \"fields\": ",
-				"{ \"geopoint\" : { \"store\": true, \"type\": \"keyword\" } ",
-				"}, \"store\": true, \"type\": \"geo_point\" } } }");
+				"{ \"geopoint\" : {  \"type\": \"keyword\" } ",
+				"}, \"type\": \"geo_point\" } } }");
 
 			putMappingRequest.source(source, XContentType.JSON);
 

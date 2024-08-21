@@ -140,7 +140,7 @@ public class ElasticsearchSortFieldTranslatorTest
 
 		_assertOrder(
 			new Sort[] {geoDistanceSort}, fieldName,
-			"[lat: 90.0, lon: 98.0, lat: 40.0, lon: 20.0, lat: 3.0, lon: 9.0]",
+			"[{lon=98.0, lat=90.0}, {lon=20.0, lat=40.0}, {lon=9.0, lat=3.0}]",
 			null);
 	}
 

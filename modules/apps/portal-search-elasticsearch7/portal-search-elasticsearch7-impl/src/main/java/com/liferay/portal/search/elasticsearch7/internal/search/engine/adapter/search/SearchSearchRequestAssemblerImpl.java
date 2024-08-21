@@ -5,7 +5,6 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.search.engine.adapter.search;
 
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.search.GroupBy;
 import com.liferay.portal.kernel.search.Stats;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -292,11 +291,15 @@ public class SearchSearchRequestAssemblerImpl
 			searchSearchRequest.getSelectedFieldNames();
 
 		if (!ArrayUtil.isEmpty(selectedFieldNames)) {
-			searchSourceBuilder.storedFields(
-				ListUtil.fromArray(selectedFieldNames));
+
+			// searchSourceBuilder.storedFields(
+
+			//	ListUtil.fromArray(selectedFieldNames));
+			searchSourceBuilder.fetchSource(selectedFieldNames, new String[0]);
 		}
 		else {
-			searchSourceBuilder.storedField(StringPool.STAR);
+			//searchSourceBuilder.storedField(StringPool.STAR);
+			searchSourceBuilder.fetchSource(true);
 		}
 	}
 

@@ -68,6 +68,10 @@ public class ElasticsearchBulkableDocumentRequestTranslatorImpl
 		getRequest.id(getDocumentRequest.getId());
 		getRequest.index(getDocumentRequest.getIndexName());
 		getRequest.refresh(getDocumentRequest.isRefresh());
+
+		//getRequest.storedFields(getDocumentRequest.getStoredFields());
+		getRequest.fetchSourceContext(new FetchSourceContext(true));
+
 		getRequest.storedFields(getDocumentRequest.getStoredFields());
 		getRequest.type(_getType(getDocumentRequest.getType()));
 

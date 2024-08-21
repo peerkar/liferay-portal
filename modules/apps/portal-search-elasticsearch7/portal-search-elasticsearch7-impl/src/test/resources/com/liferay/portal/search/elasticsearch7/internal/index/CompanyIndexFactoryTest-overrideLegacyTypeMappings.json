@@ -19,7 +19,6 @@
 		"properties": {
 			"title": {
 				"analyzer": "kuromoji_liferay_custom",
-				"store": true,
 				"term_vector": "with_positions_offsets",
 				"type": "text"
 			}
