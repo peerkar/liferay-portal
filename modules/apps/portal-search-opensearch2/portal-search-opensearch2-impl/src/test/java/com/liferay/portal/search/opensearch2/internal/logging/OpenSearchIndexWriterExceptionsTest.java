@@ -14,6 +14,7 @@ import com.liferay.portal.kernel.search.IndexWriter;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.search.opensearch2.internal.OpenSearchIndexWriter;
 import com.liferay.portal.search.opensearch2.internal.OpenSearchTestRule;
 import com.liferay.portal.search.opensearch2.internal.indexing.LiferayOpenSearchIndexingFixtureFactory;
@@ -184,9 +185,18 @@ public class OpenSearchIndexWriterExceptionsTest extends BaseIndexingTestCase {
 
 		IndexWriter indexWriter = getIndexWriter();
 
+		SearchContext searchContext = createSearchContext();
+
 		try {
-			indexWriter.partiallyUpdateDocument(
-				createSearchContext(), document);
+			indexWriter.addDocument(searchContext, document);
+
+			Document updateDocument = new DocumentImpl();
+
+			updateDocument.addKeyword(Field.UID, "1");
+			updateDocument.addText(
+				RandomTestUtil.randomString(), RandomTestUtil.randomString());
+
+			indexWriter.partiallyUpdateDocument(searchContext, updateDocument);
 		}
 		catch (SearchException searchException) {
 			if (_log.isDebugEnabled()) {
@@ -203,11 +213,21 @@ public class OpenSearchIndexWriterExceptionsTest extends BaseIndexingTestCase {
 
 		document.addKeyword(Field.UID, "1");
 
-		documents.add(document);
-
 		IndexWriter indexWriter = getIndexWriter();
 
+		SearchContext searchContext = createSearchContext();
+
 		try {
+			indexWriter.addDocument(searchContext, document);
+
+			Document updateDocument = new DocumentImpl();
+
+			updateDocument.addKeyword(Field.UID, "1");
+			updateDocument.addText(
+				RandomTestUtil.randomString(), RandomTestUtil.randomString());
+
+			documents.add(updateDocument);
+
 			indexWriter.partiallyUpdateDocuments(
 				createSearchContext(), documents);
 		}
