@@ -40,7 +40,7 @@ public class ModifiedFacetPortletSharedSearchContributorTest {
 
 		List<String> selectedRangeStrings =
 			testModifiedFacetPortletSharedSearchContributor.
-				getSelectedRangeStrings(
+				getSelectedDateRangeStrings(
 					_PARAMETER_NAME, portletSharedSearchSettings,
 					JSONUtil.put(
 						JSONUtil.put(
@@ -77,12 +77,12 @@ public class ModifiedFacetPortletSharedSearchContributorTest {
 		extends ModifiedFacetPortletSharedSearchContributor {
 
 		@Override
-		public List<String> getSelectedRangeStrings(
+		public List<String> getSelectedDateRangeStrings(
 			String parameterName,
 			PortletSharedSearchSettings portletSharedSearchSettings,
 			JSONArray rangesJSONArray) {
 
-			return super.getSelectedRangeStrings(
+			return super.getSelectedDateRangeStrings(
 				parameterName, portletSharedSearchSettings, rangesJSONArray);
 		}
 
