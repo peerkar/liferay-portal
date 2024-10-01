@@ -184,6 +184,14 @@ public class CustomFacetDisplayContextBuilder {
 		return this;
 	}
 
+	public CustomFacetDisplayContextBuilder setShowInputRange(
+		boolean showInputRange) {
+
+		_showInputRange = showInputRange;
+
+		return this;
+	}
+
 	public CustomFacetDisplayContextBuilder setToParameterValue(String to) {
 		_to = to;
 
@@ -564,6 +572,7 @@ public class CustomFacetDisplayContextBuilder {
 	private String _paginationStartParameterName;
 	private String _parameterName;
 	private List<String> _parameterValues = Collections.emptyList();
+	private boolean _showInputRange;
 	private final ThemeDisplay _themeDisplay;
 	private final TimeZone _timeZone;
 	private String _to;

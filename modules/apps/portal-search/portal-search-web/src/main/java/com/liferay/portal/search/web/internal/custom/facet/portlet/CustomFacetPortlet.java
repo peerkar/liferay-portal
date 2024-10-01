@@ -134,6 +134,8 @@ public class CustomFacetPortlet extends MVCPortlet {
 			).setParameterValues(
 				portletSharedSearchResponse.getParameterValues(
 					parameterName, renderRequest)
+			).setShowInputRange(
+				customFacetPortletPreferences.isShowInputRange()
 			).setToParameterValue(
 				portletSharedSearchResponse.getParameter(
 					parameterName + "To", renderRequest)

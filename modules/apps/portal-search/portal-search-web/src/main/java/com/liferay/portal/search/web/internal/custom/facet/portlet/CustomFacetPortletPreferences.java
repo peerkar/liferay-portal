@@ -37,6 +37,9 @@ public interface CustomFacetPortletPreferences {
 
 	public static final String PREFERENCE_KEY_RANGES = "ranges";
 
+	public static final String PREFERENCE_KEY_SHOW_INPUT_RANGE =
+		"showInputRange";
+
 	public String getAggregationField();
 
 	public String getAggregationType();
@@ -58,5 +61,7 @@ public interface CustomFacetPortletPreferences {
 	public String getRangesString();
 
 	public boolean isFrequenciesVisible();
+
+	public boolean isShowInputRange();
 
 }

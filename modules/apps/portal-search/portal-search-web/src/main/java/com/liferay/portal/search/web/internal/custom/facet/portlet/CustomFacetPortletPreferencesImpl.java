@@ -119,6 +119,13 @@ public class CustomFacetPortletPreferencesImpl
 			true);
 	}
 
+	@Override
+	public boolean isShowInputRange() {
+		return getBoolean(
+			CustomFacetPortletPreferences.PREFERENCE_KEY_SHOW_INPUT_RANGE,
+			false);
+	}
+
 	private JSONArray _getDefaultDateRangesJSONArray() {
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
