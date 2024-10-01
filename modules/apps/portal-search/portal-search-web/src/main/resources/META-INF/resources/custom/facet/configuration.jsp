@@ -84,12 +84,6 @@ JSONArray rangesJSONArray = customFacetPortletPreferences.getRangesJSONArray();
 					collapsible="<%= true %>"
 					label="advanced-configuration"
 				>
-					<aui:select helpMessage="aggregation-type-help" label="aggregation-type" name="<%= PortletPreferencesJspUtil.getInputName(CustomFacetPortletPreferences.PREFERENCE_KEY_AGGREGATION_TYPE) %>" value="<%= customFacetPortletPreferences.getAggregationType() %>">
-						<aui:option label="terms" value="terms" />
-						<aui:option label="date-range" value="dateRange" />
-						<aui:option label="range" value="range" />
-					</aui:select>
-
 					<div class="form-group">
 						<aui:input helpMessage="aggregation-field-help" label="aggregation-field" name="<%= PortletPreferencesJspUtil.getInputName(CustomFacetPortletPreferences.PREFERENCE_KEY_AGGREGATION_FIELD) %>" required="<%= true %>" value="<%= customFacetPortletPreferences.getAggregationField() %>" wrapperCssClass="c-mb-0" />
 
