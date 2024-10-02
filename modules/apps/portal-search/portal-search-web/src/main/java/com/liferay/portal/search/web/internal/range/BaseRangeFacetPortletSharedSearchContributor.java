@@ -5,6 +5,7 @@
 
 package com.liferay.portal.search.web.internal.range;
 
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
@@ -55,7 +56,7 @@ public abstract class BaseRangeFacetPortletSharedSearchContributor {
 	}
 
 	protected String getSelectedCustomRangeString(
-		String parameterName,
+		String aggregationType, String parameterName,
 		PortletSharedSearchSettings portletSharedSearchSettings) {
 
 		String customRangeFrom = portletSharedSearchSettings.getParameter(
@@ -64,9 +65,13 @@ public abstract class BaseRangeFacetPortletSharedSearchContributor {
 		String customRangeTo = portletSharedSearchSettings.getParameter(
 			parameterName + "To");
 
-		if (!Validator.isBlank(customRangeFrom) &&
-			!Validator.isBlank(customRangeTo)) {
+		if (Validator.isBlank(customRangeFrom) ||
+			Validator.isBlank(customRangeTo)) {
 
+			return null;
+		}
+
+		if (aggregationType.equals("dateRange")) {
 			SearchContext searchContext =
 				portletSharedSearchSettings.getSearchContext();
 
@@ -74,7 +79,8 @@ public abstract class BaseRangeFacetPortletSharedSearchContributor {
 				customRangeFrom, customRangeTo, searchContext.getTimeZone());
 		}
 
-		return null;
+		return StringBundler.concat(
+			"[", customRangeFrom, " TO ", customRangeTo, "]");
 	}
 
 	protected List<String> getSelectedDateRangeStrings(
