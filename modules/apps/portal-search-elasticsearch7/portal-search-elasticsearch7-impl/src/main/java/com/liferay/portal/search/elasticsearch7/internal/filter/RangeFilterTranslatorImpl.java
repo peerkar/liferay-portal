@@ -5,6 +5,8 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.filter;
 
+import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.filter.RangeFilter;
 
 import org.elasticsearch.index.query.QueryBuilder;
@@ -28,7 +30,13 @@ public class RangeFilterTranslatorImpl implements RangeFilterTranslator {
 			rangeQueryBuilder.format(rangeFilter.getFormat());
 		}
 
-		rangeQueryBuilder.from(rangeFilter.getFrom());
+		if (StringUtil.equals(rangeFilter.getFrom(), StringPool.STAR)) {
+			rangeQueryBuilder.from(null);
+		}
+		else {
+			rangeQueryBuilder.from(rangeFilter.getFrom());
+		}
+
 		rangeQueryBuilder.includeLower(rangeFilter.isIncludeLower());
 		rangeQueryBuilder.includeUpper(rangeFilter.isIncludeUpper());
 
@@ -36,7 +44,12 @@ public class RangeFilterTranslatorImpl implements RangeFilterTranslator {
 			rangeQueryBuilder.timeZone(rangeFilter.getTimeZoneId());
 		}
 
-		rangeQueryBuilder.to(rangeFilter.getTo());
+		if (StringUtil.equals(rangeFilter.getTo(), StringPool.STAR)) {
+			rangeQueryBuilder.to(null);
+		}
+		else {
+			rangeQueryBuilder.to(rangeFilter.getTo());
+		}
 
 		return rangeQueryBuilder;
 	}
