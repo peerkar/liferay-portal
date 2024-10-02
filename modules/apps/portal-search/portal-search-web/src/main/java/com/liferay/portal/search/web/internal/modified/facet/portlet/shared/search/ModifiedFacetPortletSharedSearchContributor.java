@@ -55,7 +55,7 @@ public class ModifiedFacetPortletSharedSearchContributor
 			portletSharedSearchSettings, rangesJSONArray);
 
 		String selectedCustomRangeString = getSelectedCustomRangeString(
-			modifiedFacetPortletPreferences.getParameterName(),
+			"dateRange", modifiedFacetPortletPreferences.getParameterName(),
 			portletSharedSearchSettings);
 
 		if (!Validator.isBlank(selectedCustomRangeString)) {

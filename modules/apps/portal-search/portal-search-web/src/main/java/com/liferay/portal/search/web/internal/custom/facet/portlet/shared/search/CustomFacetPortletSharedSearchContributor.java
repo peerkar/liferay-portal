@@ -91,11 +91,13 @@ public class CustomFacetPortletSharedSearchContributor
 	}
 
 	private void _addCustomRange(
+		String aggregationType,
 		CustomFacetPortletPreferences customFacetPortletPreferences,
 		PortletSharedSearchSettings portletSharedSearchSettings,
 		JSONArray rangesJSONArray, List<String> selectedRanges) {
 
 		String selectedCustomRangeString = getSelectedCustomRangeString(
+			aggregationType,
 			CustomFacetUtil.getParameterName(customFacetPortletPreferences),
 			portletSharedSearchSettings);
 
@@ -165,8 +167,8 @@ public class CustomFacetPortletSharedSearchContributor
 			portletSharedSearchSettings, rangesJSONArray);
 
 		_addCustomRange(
-			customFacetPortletPreferences, portletSharedSearchSettings,
-			rangesJSONArray, selectedRanges);
+			aggregationType, customFacetPortletPreferences,
+			portletSharedSearchSettings, rangesJSONArray, selectedRanges);
 
 		_contribute(
 			aggregationField, aggregationType, customFacetPortletPreferences,
