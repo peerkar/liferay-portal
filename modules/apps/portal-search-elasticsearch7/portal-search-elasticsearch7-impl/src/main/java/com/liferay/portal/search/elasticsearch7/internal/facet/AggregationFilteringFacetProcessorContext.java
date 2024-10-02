@@ -5,10 +5,12 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.facet;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.RangeFacet;
 import com.liferay.portal.kernel.search.facet.util.RangeParserUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.aggregation.Aggregation;
 import com.liferay.portal.search.aggregation.bucket.DateRangeAggregation;
@@ -178,10 +180,22 @@ public class AggregationFilteringFacetProcessorContext
 			rangeQueryBuilder.format(format);
 		}
 
-		rangeQueryBuilder.from(rangeParts[0]);
+		if (StringUtil.equals(rangeParts[0], StringPool.STAR)) {
+			rangeQueryBuilder.from(null);
+		}
+		else {
+			rangeQueryBuilder.from(rangeParts[0]);
+		}
+
 		rangeQueryBuilder.includeLower(true);
 		rangeQueryBuilder.includeUpper(true);
-		rangeQueryBuilder.to(rangeParts[1]);
+
+		if (StringUtil.equals(rangeParts[1], StringPool.STAR)) {
+			rangeQueryBuilder.to(null);
+		}
+		else {
+			rangeQueryBuilder.to(rangeParts[1]);
+		}
 
 		return rangeQueryBuilder;
 	}
