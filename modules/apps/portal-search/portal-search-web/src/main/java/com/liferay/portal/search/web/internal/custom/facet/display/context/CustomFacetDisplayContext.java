@@ -28,7 +28,7 @@ public class CustomFacetDisplayContext implements FacetDisplayContext {
 		boolean nothingSelected, String paginationStartParameterName,
 		String parameterName, String parameterValue,
 		List<String> parameterValues, boolean renderNothing,
-		boolean showInputRange) {
+		boolean showInputRange, String from, String to) {
 
 		_aggregationType = aggregationType;
 		_bucketDisplayContexts = bucketDisplayContexts;
@@ -45,6 +45,8 @@ public class CustomFacetDisplayContext implements FacetDisplayContext {
 		_parameterValues = parameterValues;
 		_renderNothing = renderNothing;
 		_showInputRange = showInputRange;
+		_from = from;
+		_to = to;
 	}
 
 	public String getAggregationType() {
@@ -81,6 +83,10 @@ public class CustomFacetDisplayContext implements FacetDisplayContext {
 		return _displayStyleGroupId;
 	}
 
+	public String getFromParameterValue() {
+		return _from;
+	}
+
 	@Override
 	public String getPaginationStartParameterName() {
 		return _paginationStartParameterName;
@@ -99,6 +105,10 @@ public class CustomFacetDisplayContext implements FacetDisplayContext {
 	@Override
 	public List<String> getParameterValues() {
 		return _parameterValues;
+	}
+
+	public String getToParameterValue() {
+		return _to;
 	}
 
 	@Override
@@ -124,6 +134,7 @@ public class CustomFacetDisplayContext implements FacetDisplayContext {
 	private final BucketDisplayContext _customRangeBucketDisplayContext;
 	private final String _displayCaption;
 	private final long _displayStyleGroupId;
+	private final String _from;
 	private final boolean _nothingSelected;
 	private final String _paginationStartParameterName;
 	private final String _parameterName;
@@ -131,5 +142,6 @@ public class CustomFacetDisplayContext implements FacetDisplayContext {
 	private final List<String> _parameterValues;
 	private final boolean _renderNothing;
 	private final boolean _showInputRange;
+	private final String _to;
 
 }

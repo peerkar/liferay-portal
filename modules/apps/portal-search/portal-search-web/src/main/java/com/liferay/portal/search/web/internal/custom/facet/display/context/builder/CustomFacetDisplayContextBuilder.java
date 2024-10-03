@@ -81,7 +81,15 @@ public class CustomFacetDisplayContextBuilder {
 			getDisplayCaption(), _getDisplayStyleGroupId(), isNothingSelected(),
 			_paginationStartParameterName, _parameterName,
 			_getFirstParameterValue(), _parameterValues, isRenderNothing(),
-			_showInputRange);
+			_showInputRange, _from, _to);
+	}
+
+	public String getFromParameterValue() {
+		return _from;
+	}
+
+	public String getToParameterValue() {
+		return _to;
 	}
 
 	public CustomFacetDisplayContextBuilder setAggregationField(
@@ -382,7 +390,7 @@ public class CustomFacetDisplayContextBuilder {
 			_buildCustomRangeBucketDisplayContext(), getDisplayCaption(),
 			_getDisplayStyleGroupId(), isNothingSelected(),
 			_paginationStartParameterName, _parameterName, null, null,
-			isRenderNothing(), _showInputRange);
+			isRenderNothing(), _showInputRange, _from, _to);
 	}
 
 	private BucketDisplayContext _buildTermsAggregationBucketDisplayContext(
