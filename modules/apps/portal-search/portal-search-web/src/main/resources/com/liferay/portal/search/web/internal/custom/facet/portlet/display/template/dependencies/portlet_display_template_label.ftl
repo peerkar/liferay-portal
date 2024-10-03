@@ -80,6 +80,7 @@
 								label="from"
 								id="fromInput"
 								name="fromInput"
+								value=customFacetDisplayContext.getFromParameterValue()
 							/>
 						</@>
 					</div>
@@ -90,6 +91,7 @@
 								label="to"
 								id="toInput"
 								name="toInput"
+								value=customFacetDisplayContext.getToParameterValue()
 							/>
 						</@>
 					</div>
