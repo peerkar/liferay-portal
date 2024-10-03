@@ -16,6 +16,8 @@ import com.liferay.portal.search.aggregation.bucket.DateRangeAggregation;
 import com.liferay.portal.search.aggregation.bucket.RangeAggregation;
 import com.liferay.portal.search.facet.nested.NestedFacet;
 import com.liferay.portal.search.opensearch2.internal.util.ConversionUtil;
+import com.liferay.portal.search.opensearch2.internal.util.QueryUtil;
+import com.liferay.portal.search.opensearch2.internal.util.SetterUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.opensearch.client.json.JsonData;
 import org.opensearch.client.opensearch._types.aggregations.Aggregation.Builder;
 import org.opensearch.client.opensearch._types.query_dsl.BoolQuery;
 import org.opensearch.client.opensearch._types.query_dsl.ChildScoreMode;
@@ -104,12 +105,10 @@ public class AggregationFilteringFacetProcessorContext
 		RangeQuery.Builder builder = new RangeQuery.Builder();
 
 		builder.field(fieldName);
-		builder.gte(JsonData.of(rangeParts[0]));
-		builder.lte(JsonData.of(rangeParts[1]));
 
-		if (!Validator.isBlank(format)) {
-			builder.format(format);
-		}
+		SetterUtil.setNotBlankString(builder::format, format);
+
+		QueryUtil.setRanges(builder, true, true, rangeParts[0], rangeParts[1]);
 
 		return new Query(builder.build());
 	}

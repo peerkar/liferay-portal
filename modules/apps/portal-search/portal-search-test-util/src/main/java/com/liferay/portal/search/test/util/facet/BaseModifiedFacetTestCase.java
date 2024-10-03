@@ -78,6 +78,33 @@ public abstract class BaseModifiedFacetTestCase extends BaseFacetTestCase {
 			});
 	}
 
+	@Test
+	public void testWildcardRanges() throws Exception {
+		addDocument("20170102000000");
+
+		String[] configRanges = {
+			"[* TO 22220202020202]",
+			"[* TO *]",
+			"[11110101010101 TO *]"
+		};
+
+		List<String> expectedRanges = Arrays.asList(
+			"[* TO 22220202020202]=1",
+			"[* TO *]=1",
+			"[11110101010101 TO *]=1");
+
+		assertSearchFacet(
+			helper -> {
+				Facet facet = helper.addFacet(this::createFacet);
+
+				setConfigurationRanges(facet, configRanges);
+
+				helper.search();
+
+				helper.assertFrequencies(facet, expectedRanges);
+			});
+	}
+
 	protected Facet createFacet(SearchContext searchContext) {
 		ModifiedFacetFactory modifiedFacetFactory =
 			new ModifiedFacetFactoryImpl() {

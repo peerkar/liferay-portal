@@ -24,11 +24,11 @@ public class CustomFacetDisplayContext implements FacetDisplayContext {
 		CustomFacetPortletInstanceConfiguration
 			customFacetPortletInstanceConfiguration,
 		BucketDisplayContext customRangeBucketDisplayContext,
-		String displayCaption, long displayStyleGroupId,
+		String displayCaption, long displayStyleGroupId, String from,
 		boolean nothingSelected, String paginationStartParameterName,
 		String parameterName, String parameterValue,
 		List<String> parameterValues, boolean renderNothing,
-		boolean showInputRange, String from, String to) {
+		boolean showInputRange, String to) {
 
 		_aggregationType = aggregationType;
 		_bucketDisplayContexts = bucketDisplayContexts;
@@ -38,6 +38,7 @@ public class CustomFacetDisplayContext implements FacetDisplayContext {
 		_customRangeBucketDisplayContext = customRangeBucketDisplayContext;
 		_displayCaption = displayCaption;
 		_displayStyleGroupId = displayStyleGroupId;
+		_from = from;
 		_nothingSelected = nothingSelected;
 		_paginationStartParameterName = paginationStartParameterName;
 		_parameterName = parameterName;
@@ -45,7 +46,6 @@ public class CustomFacetDisplayContext implements FacetDisplayContext {
 		_parameterValues = parameterValues;
 		_renderNothing = renderNothing;
 		_showInputRange = showInputRange;
-		_from = from;
 		_to = to;
 	}
 

@@ -78,10 +78,10 @@ public class CustomFacetDisplayContextBuilder {
 			_buildTermsAggregationBucketDisplayContexts(
 				getTermsAggregationTermCollectors()),
 			null, _customFacetPortletInstanceConfiguration, null,
-			getDisplayCaption(), _getDisplayStyleGroupId(), isNothingSelected(),
-			_paginationStartParameterName, _parameterName,
+			getDisplayCaption(), _getDisplayStyleGroupId(), _from,
+			isNothingSelected(), _paginationStartParameterName, _parameterName,
 			_getFirstParameterValue(), _parameterValues, isRenderNothing(),
-			_showInputRange, _from, _to);
+			_showInputRange, _to);
 	}
 
 	public String getFromParameterValue() {
@@ -388,9 +388,9 @@ public class CustomFacetDisplayContextBuilder {
 			_buildCalendarDisplayContext(),
 			_customFacetPortletInstanceConfiguration,
 			_buildCustomRangeBucketDisplayContext(), getDisplayCaption(),
-			_getDisplayStyleGroupId(), isNothingSelected(),
+			_getDisplayStyleGroupId(), _from, isNothingSelected(),
 			_paginationStartParameterName, _parameterName, null, null,
-			isRenderNothing(), _showInputRange, _from, _to);
+			isRenderNothing(), _showInputRange, _to);
 	}
 
 	private BucketDisplayContext _buildTermsAggregationBucketDisplayContext(

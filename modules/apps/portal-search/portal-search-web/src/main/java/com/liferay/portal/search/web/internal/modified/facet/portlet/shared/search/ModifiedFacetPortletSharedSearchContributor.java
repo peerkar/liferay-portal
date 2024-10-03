@@ -47,10 +47,11 @@ public class ModifiedFacetPortletSharedSearchContributor
 				portletSharedSearchSettings.getPortletPreferences());
 
 		JSONArray rangesJSONArray = getDateRangesJSONArray(
-			CalendarFactoryUtil.getCalendar(),
+			false, CalendarFactoryUtil.getCalendar(),
 			modifiedFacetPortletPreferences.getRangesJSONArray());
 
-		List<String> selectedRangeStrings = getSelectedDateRangeStrings(
+		List<String> selectedRangeStrings = getSelectedRangeStrings(
+			false, "dateRange",
 			modifiedFacetPortletPreferences.getParameterName(),
 			portletSharedSearchSettings, rangesJSONArray);
 

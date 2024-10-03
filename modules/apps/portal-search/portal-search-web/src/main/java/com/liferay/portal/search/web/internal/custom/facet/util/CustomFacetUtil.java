@@ -48,6 +48,10 @@ public class CustomFacetUtil {
 	}
 
 	public static boolean isRangeAggregation(String aggregationType) {
+		if (Validator.isBlank(aggregationType)) {
+			return false;
+		}
+
 		if (aggregationType.equals("dateRange") ||
 			aggregationType.equals("range")) {
 

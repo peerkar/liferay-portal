@@ -5,16 +5,15 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.facet;
 
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.RangeFacet;
 import com.liferay.portal.kernel.search.facet.util.RangeParserUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.aggregation.Aggregation;
 import com.liferay.portal.search.aggregation.bucket.DateRangeAggregation;
 import com.liferay.portal.search.aggregation.bucket.RangeAggregation;
+import com.liferay.portal.search.elasticsearch7.internal.filter.util.RangeUtil;
 import com.liferay.portal.search.facet.nested.NestedFacet;
 
 import java.util.ArrayList;
@@ -176,26 +175,14 @@ public class AggregationFilteringFacetProcessorContext
 		RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery(
 			fieldName);
 
+		RangeUtil.addRange(rangeParts[0], rangeQueryBuilder, rangeParts[1]);
+
 		if (!Validator.isBlank(format)) {
 			rangeQueryBuilder.format(format);
 		}
 
-		if (StringUtil.equals(rangeParts[0], StringPool.STAR)) {
-			rangeQueryBuilder.from(null);
-		}
-		else {
-			rangeQueryBuilder.from(rangeParts[0]);
-		}
-
 		rangeQueryBuilder.includeLower(true);
 		rangeQueryBuilder.includeUpper(true);
-
-		if (StringUtil.equals(rangeParts[1], StringPool.STAR)) {
-			rangeQueryBuilder.to(null);
-		}
-		else {
-			rangeQueryBuilder.to(rangeParts[1]);
-		}
 
 		return rangeQueryBuilder;
 	}

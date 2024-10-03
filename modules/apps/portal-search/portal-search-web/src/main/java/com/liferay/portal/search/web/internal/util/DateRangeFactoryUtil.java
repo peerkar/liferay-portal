@@ -33,10 +33,12 @@ import java.util.TimeZone;
  */
 public class DateRangeFactoryUtil {
 
-	public static JSONArray getDefaultRangesJSONArray(Calendar calendar) {
+	public static JSONArray getDefaultRangesJSONArray(
+		boolean acceptWildcards, Calendar calendar) {
+
 		JSONArray rangesJSONArray = JSONFactoryUtil.createJSONArray();
 
-		Map<String, String> map = getRangeStrings(calendar);
+		Map<String, String> map = getRangeStrings(acceptWildcards, calendar);
 
 		map.forEach(
 			(key, value) -> rangesJSONArray.put(
@@ -49,8 +51,10 @@ public class DateRangeFactoryUtil {
 		return rangesJSONArray;
 	}
 
-	public static String getRangeString(String label, Calendar calendar) {
-		return replaceAliases(_rangeMap.get(label), calendar);
+	public static String getRangeString(
+		boolean acceptWildcards, String label, Calendar calendar) {
+
+		return replaceAliases(acceptWildcards, _rangeMap.get(label), calendar);
 	}
 
 	public static String getRangeString(
@@ -78,18 +82,20 @@ public class DateRangeFactoryUtil {
 		}
 	}
 
-	public static Map<String, String> getRangeStrings(Calendar calendar) {
+	public static Map<String, String> getRangeStrings(
+		boolean acceptWildcards, Calendar calendar) {
+
 		Map<String, String> map = new LinkedHashMap<>();
 
 		for (String label : _rangeMap.keySet()) {
-			map.put(label, getRangeString(label, calendar));
+			map.put(label, getRangeString(acceptWildcards, label, calendar));
 		}
 
 		return map;
 	}
 
 	public static JSONArray replaceAliases(
-		JSONArray rangesJSONArray, Calendar calendar) {
+		boolean acceptWildcards, JSONArray rangesJSONArray, Calendar calendar) {
 
 		JSONArray normalizedRangesJSONArray = JSONFactoryUtil.createJSONArray();
 
@@ -101,14 +107,18 @@ public class DateRangeFactoryUtil {
 					"label", rangeJSONObject.getString("label")
 				).put(
 					"range",
-					replaceAliases(rangeJSONObject.getString("range"), calendar)
+					replaceAliases(
+						acceptWildcards, rangeJSONObject.getString("range"),
+						calendar)
 				));
 		}
 
 		return normalizedRangesJSONArray;
 	}
 
-	public static String replaceAliases(String rangeString, Calendar calendar) {
+	public static String replaceAliases(
+		boolean acceptWildcards, String rangeString, Calendar calendar) {
+
 		if (Validator.isNull(rangeString)) {
 			return StringPool.BLANK;
 		}
@@ -139,6 +149,12 @@ public class DateRangeFactoryUtil {
 		DateFormat dateFormat = DateFormatFactoryUtil.getSimpleDateFormat(
 			"yyyyMMddHHmmss");
 
+		String wildcardAlias = StringPool.STAR;
+
+		if (!acceptWildcards) {
+			wildcardAlias = dateFormat.format(now.getTime());
+		}
+
 		return StringUtil.replace(
 			rangeString, _ALIASES,
 			new String[] {
@@ -146,8 +162,7 @@ public class DateRangeFactoryUtil {
 				dateFormat.format(past24Hours.getTime()),
 				dateFormat.format(pastWeek.getTime()),
 				dateFormat.format(pastMonth.getTime()),
-				dateFormat.format(pastYear.getTime()),
-				dateFormat.format(now.getTime())
+				dateFormat.format(pastYear.getTime()), wildcardAlias
 			});
 	}
 

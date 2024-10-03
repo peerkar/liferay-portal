@@ -5,12 +5,14 @@
 
 package com.liferay.portal.search.opensearch2.internal.facet;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
 import com.liferay.portal.kernel.search.facet.util.RangeParserUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 
 import org.opensearch.client.opensearch._types.aggregations.Aggregation;
 import org.opensearch.client.opensearch._types.aggregations.AggregationBuilders;
@@ -86,10 +88,18 @@ public class RangeFacetProcessor
 			aggregationRange -> aggregationRange.key(
 				range
 			).from(
-				rangeParts[0]
+				_toRangeValue(rangeParts[0])
 			).to(
-				rangeParts[1]
+				_toRangeValue(rangeParts[1])
 			));
+	}
+
+	private String _toRangeValue(String value) {
+		if (StringUtil.equals(value, StringPool.STAR)) {
+			return null;
+		}
+
+		return value;
 	}
 
 }

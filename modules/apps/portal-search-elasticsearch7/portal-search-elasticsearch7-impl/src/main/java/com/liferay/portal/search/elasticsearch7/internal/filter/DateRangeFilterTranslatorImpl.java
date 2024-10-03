@@ -5,6 +5,7 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.filter;
 
+import com.liferay.portal.search.elasticsearch7.internal.filter.util.RangeUtil;
 import com.liferay.portal.search.filter.DateRangeFilter;
 
 import org.elasticsearch.index.query.QueryBuilder;
@@ -26,19 +27,20 @@ public class DateRangeFilterTranslatorImpl
 		RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery(
 			dateRangeFilter.getFieldName());
 
+		RangeUtil.addRange(
+			dateRangeFilter.getFrom(), rangeQueryBuilder,
+			dateRangeFilter.getTo());
+
 		if (dateRangeFilter.getFormat() != null) {
 			rangeQueryBuilder.format(dateRangeFilter.getFormat());
 		}
 
-		rangeQueryBuilder.from(dateRangeFilter.getFrom());
 		rangeQueryBuilder.includeLower(dateRangeFilter.isIncludeLower());
 		rangeQueryBuilder.includeUpper(dateRangeFilter.isIncludeUpper());
 
 		if (dateRangeFilter.getTimeZoneId() != null) {
 			rangeQueryBuilder.timeZone(dateRangeFilter.getTimeZoneId());
 		}
-
-		rangeQueryBuilder.to(dateRangeFilter.getTo());
 
 		return rangeQueryBuilder;
 	}

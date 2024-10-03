@@ -12,6 +12,7 @@ import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
 import com.liferay.portal.kernel.search.facet.util.RangeParserUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import org.elasticsearch.action.search.SearchRequestBuilder;
@@ -99,11 +100,9 @@ public class RangeFacetProcessor
 	}
 
 	private String _toRangeValue(String value) {
-		if (Validator.isBlank(value) || !value.equals(StringPool.STAR)) {
-			return value;
+		if (StringUtil.equals(value, StringPool.STAR)) {
+			return null;
 		}
-
-		return null;
+		return value;
 	}
-
 }

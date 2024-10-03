@@ -22,7 +22,7 @@ public class OpenSearchTestRule implements TestRule {
 
 			@Override
 			public void evaluate() throws Throwable {
-				if (isUnitTestEnabled()) {
+				if (true) {
 					base.evaluate();
 				}
 			}

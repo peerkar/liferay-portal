@@ -42,14 +42,16 @@ public abstract class BaseRangeFacetPortletSharedSearchContributor {
 	}
 
 	protected JSONArray getDateRangesJSONArray(
-		Calendar calendar, JSONArray rangesJSONArray) {
+		boolean acceptWildcards, Calendar calendar, JSONArray rangesJSONArray) {
 
 		JSONArray unAliasedRangesJSONArray =
 			DateRangeFactoryUtil.replaceAliases(
-				rangesJSONArray, CalendarFactoryUtil.getCalendar());
+				acceptWildcards, rangesJSONArray,
+				CalendarFactoryUtil.getCalendar());
 
 		if (unAliasedRangesJSONArray == null) {
-			return DateRangeFactoryUtil.getDefaultRangesJSONArray(calendar);
+			return DateRangeFactoryUtil.getDefaultRangesJSONArray(
+				acceptWildcards, calendar);
 		}
 
 		return unAliasedRangesJSONArray;
@@ -83,8 +85,8 @@ public abstract class BaseRangeFacetPortletSharedSearchContributor {
 			"[", customRangeFrom, " TO ", customRangeTo, "]");
 	}
 
-	protected List<String> getSelectedDateRangeStrings(
-		String parameterName,
+	protected List<String> getSelectedRangeStrings(
+		boolean acceptWildcards, String aggregationType, String parameterName,
 		PortletSharedSearchSettings portletSharedSearchSettings,
 		JSONArray rangesJSONArray) {
 
@@ -103,38 +105,14 @@ public abstract class BaseRangeFacetPortletSharedSearchContributor {
 			if (rangesMap.containsKey(selectedRange)) {
 				selectedRangeStrings.add(rangesMap.get(selectedRange));
 			}
-			else {
+			else if (aggregationType.equals("dateRange")) {
 				String rangeString = DateRangeFactoryUtil.getRangeString(
-					selectedRange, CalendarFactoryUtil.getCalendar());
+					acceptWildcards, selectedRange,
+					CalendarFactoryUtil.getCalendar());
 
 				if (!Validator.isBlank(rangeString)) {
 					selectedRangeStrings.add(rangeString);
 				}
-			}
-		}
-
-		return selectedRangeStrings;
-	}
-
-	protected List<String> getSelectedRangeStrings(
-		String parameterName,
-		PortletSharedSearchSettings portletSharedSearchSettings,
-		JSONArray rangesJSONArray) {
-
-		List<String> selectedRangeStrings = new ArrayList<>();
-
-		String[] selectedRanges =
-			portletSharedSearchSettings.getParameterValues(parameterName);
-
-		if (ArrayUtil.isEmpty(selectedRanges)) {
-			return selectedRangeStrings;
-		}
-
-		Map<String, String> rangesMap = _getRangesMap(rangesJSONArray);
-
-		for (String selectedRange : selectedRanges) {
-			if (rangesMap.containsKey(selectedRange)) {
-				selectedRangeStrings.add(rangesMap.get(selectedRange));
 			}
 		}
 

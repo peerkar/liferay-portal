@@ -5,6 +5,7 @@
 
 package com.liferay.portal.search.opensearch2.internal.util;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 
@@ -55,7 +56,7 @@ public class QueryUtil {
 		RangeQuery.Builder builder, boolean includesLower,
 		boolean includesUpper, Object lowerTerm, Object upperTerm) {
 
-		if (lowerTerm != null) {
+		if ((lowerTerm != null) && !lowerTerm.equals(StringPool.STAR)) {
 			if (includesLower) {
 				builder.gte(JsonData.of(lowerTerm));
 			}
@@ -64,7 +65,7 @@ public class QueryUtil {
 			}
 		}
 
-		if (upperTerm != null) {
+		if ((upperTerm != null) && !upperTerm.equals(StringPool.STAR)) {
 			if (includesUpper) {
 				builder.lte(JsonData.of(upperTerm));
 			}

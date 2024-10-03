@@ -40,8 +40,9 @@ public class ModifiedFacetPortletSharedSearchContributorTest {
 
 		List<String> selectedRangeStrings =
 			testModifiedFacetPortletSharedSearchContributor.
-				getSelectedDateRangeStrings(
-					_PARAMETER_NAME, portletSharedSearchSettings,
+				getSelectedRangeStrings(
+					false, "dateRange", _PARAMETER_NAME,
+					portletSharedSearchSettings,
 					JSONUtil.put(
 						JSONUtil.put(
 							"label", "past-hour"
@@ -77,13 +78,15 @@ public class ModifiedFacetPortletSharedSearchContributorTest {
 		extends ModifiedFacetPortletSharedSearchContributor {
 
 		@Override
-		public List<String> getSelectedDateRangeStrings(
+		public List<String> getSelectedRangeStrings(
+			boolean acceptWildcards, String aggregationType,
 			String parameterName,
 			PortletSharedSearchSettings portletSharedSearchSettings,
 			JSONArray rangesJSONArray) {
 
-			return super.getSelectedDateRangeStrings(
-				parameterName, portletSharedSearchSettings, rangesJSONArray);
+			return super.getSelectedRangeStrings(
+				acceptWildcards, aggregationType, parameterName,
+				portletSharedSearchSettings, rangesJSONArray);
 		}
 
 	}

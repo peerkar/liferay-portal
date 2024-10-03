@@ -555,7 +555,7 @@ public class CustomFacetPortletSharedSearchContributor
 
 		if (aggregationType.equals("dateRange")) {
 			return getDateRangesJSONArray(
-				CalendarFactoryUtil.getCalendar(),
+				true, CalendarFactoryUtil.getCalendar(),
 				customFacetPortletPreferences.getRangesJSONArray());
 		}
 
@@ -568,13 +568,8 @@ public class CustomFacetPortletSharedSearchContributor
 		PortletSharedSearchSettings portletSharedSearchSettings,
 		JSONArray rangesJSONArray) {
 
-		if (aggregationType.equals("dateRange")) {
-			return getSelectedDateRangeStrings(
-				CustomFacetUtil.getParameterName(customFacetPortletPreferences),
-				portletSharedSearchSettings, rangesJSONArray);
-		}
-
 		return getSelectedRangeStrings(
+			true, aggregationType,
 			CustomFacetUtil.getParameterName(customFacetPortletPreferences),
 			portletSharedSearchSettings, rangesJSONArray);
 	}

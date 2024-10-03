@@ -61,10 +61,11 @@ public class DateRangeFactoryUtilTest {
 
 		Assert.assertEquals(
 			"[20180301153042 TO 20180301163042]",
-			DateRangeFactoryUtil.getRangeString("past-hour", calendar));
+			DateRangeFactoryUtil.getRangeString(false, "past-hour", calendar));
 		Assert.assertEquals(
 			"[20180228163042 TO 20180301163042]",
-			DateRangeFactoryUtil.getRangeString("past-24-hours", calendar));
+			DateRangeFactoryUtil.getRangeString(
+				false, "past-24-hours", calendar));
 	}
 
 	@Test
@@ -75,7 +76,7 @@ public class DateRangeFactoryUtilTest {
 		Assert.assertEquals(
 			"[20180514235959 TO 20180515225959]",
 			DateRangeFactoryUtil.replaceAliases(
-				"[past-24-hours TO past-hour]", calendar));
+				false, "[past-24-hours TO past-hour]", calendar));
 	}
 
 	@Test
@@ -85,7 +86,8 @@ public class DateRangeFactoryUtilTest {
 
 		Assert.assertEquals(
 			"[20180515225959 TO 20180515235959]",
-			DateRangeFactoryUtil.replaceAliases("[past-hour TO *]", calendar));
+			DateRangeFactoryUtil.replaceAliases(
+				false, "[past-hour TO *]", calendar));
 	}
 
 	@Test
@@ -96,7 +98,7 @@ public class DateRangeFactoryUtilTest {
 		Assert.assertEquals(
 			"[20180415235959 TO 20180508235959]",
 			DateRangeFactoryUtil.replaceAliases(
-				"[past-month TO past-week]", calendar));
+				false, "[past-month TO past-week]", calendar));
 	}
 
 	@Test
@@ -107,7 +109,7 @@ public class DateRangeFactoryUtilTest {
 		Assert.assertEquals(
 			"[20180508235959 TO 20180514235959]",
 			DateRangeFactoryUtil.replaceAliases(
-				"[past-week TO past-24-hours]", calendar));
+				false, "[past-week TO past-24-hours]", calendar));
 	}
 
 	@Test
@@ -118,7 +120,7 @@ public class DateRangeFactoryUtilTest {
 		Assert.assertEquals(
 			"[20170515235959 TO 20180415235959]",
 			DateRangeFactoryUtil.replaceAliases(
-				"[past-year TO past-month]", calendar));
+				false, "[past-year TO past-month]", calendar));
 	}
 
 }
