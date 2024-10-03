@@ -10,10 +10,15 @@
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
+taglib uri="http://liferay.com/tld/clay" prefix="clay" %><%@
 taglib uri="http://liferay.com/tld/ddm" prefix="liferay-ddm" %><%@
-taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %>
+taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
+taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
-<%@ page import="com.liferay.portal.kernel.util.HashMapBuilder" %><%@
+<%@ page import="com.liferay.petra.string.StringPool" %><%@
+page import="com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil" %><%@
+page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
+page import="com.liferay.portal.kernel.util.HashMapBuilder" %><%@
 page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
 page import="com.liferay.portal.kernel.util.WebKeys" %><%@
 page import="com.liferay.portal.search.web.internal.custom.facet.configuration.CustomFacetPortletInstanceConfiguration" %><%@
@@ -61,7 +66,194 @@ String aggregationType = customFacetDisplayContext.getAggregationType();
 				displayStyle="<%= customFacetPortletInstanceConfiguration.displayStyle() %>"
 				displayStyleGroupId="<%= customFacetDisplayContext.getDisplayStyleGroupId() %>"
 				entries="<%= customFacetDisplayContext.getBucketDisplayContexts() %>"
-			/>
+			>
+				<liferay-ui:panel-container
+					extended="<%= true %>"
+					id='<%= liferayPortletResponse.getNamespace() + "facetCustomPanelContainer" %>'
+					markupView="lexicon"
+					persistState="<%= true %>"
+				>
+					<liferay-ui:panel
+						collapsible="<%= true %>"
+						cssClass="search-facet"
+						id='<%= liferayPortletResponse.getNamespace() + "facetCustomPanel" %>'
+						markupView="lexicon"
+						persistState="<%= true %>"
+						title="<%= customFacetDisplayContext.getDisplayCaption() %>"
+					>
+						<c:if test="<%= !customFacetDisplayContext.isNothingSelected() %>">
+							<clay:button
+								cssClass="btn-unstyled c-mb-4 facet-clear-btn"
+								displayType="link"
+								id='<%= liferayPortletResponse.getNamespace() + "facetCustomClear" %>'
+								onClick="Liferay.Search.FacetUtil.clearSelections(event);"
+							>
+								<strong><liferay-ui:message key="clear" /></strong>
+							</clay:button>
+						</c:if>
+
+						<ul class="list-unstyled">
+
+							<%
+							int i = 0;
+
+							for (BucketDisplayContext bucketDisplayContext : customFacetDisplayContext.getBucketDisplayContexts()) {
+								i++;
+							%>
+
+								<li class="facet-value">
+									<div class="custom-checkbox custom-control">
+										<label class="facet-checkbox-label" for="<portlet:namespace />term_<%= i %>">
+											<input class="custom-control-input facet-term" data-term-id="<%= HtmlUtil.escapeAttribute(bucketDisplayContext.getBucketText()) %>" disabled id="<portlet:namespace />term_<%= i %>" name="<portlet:namespace />term_<%= i %>" onChange="Liferay.Search.FacetUtil.changeSelection(event);" type="checkbox" <%= bucketDisplayContext.isSelected() ? "checked" : StringPool.BLANK %> />
+
+											<span class="custom-control-label term-name <%= bucketDisplayContext.isSelected() ? "facet-term-selected" : "facet-term-unselected" %>">
+												<span class="custom-control-label-text">
+													<c:choose>
+														<c:when test="<%= bucketDisplayContext.isSelected() %>">
+															<strong><liferay-ui:message key="<%= HtmlUtil.escape(bucketDisplayContext.getBucketText()) %>" /></strong>
+														</c:when>
+														<c:otherwise>
+															<liferay-ui:message key="<%= HtmlUtil.escape(bucketDisplayContext.getBucketText()) %>" />
+														</c:otherwise>
+													</c:choose>
+												</span>
+											</span>
+
+											<c:if test="<%= bucketDisplayContext.isFrequencyVisible() %>">
+												<small class="term-count">
+													(<%= bucketDisplayContext.getFrequency() %>)
+												</small>
+											</c:if>
+										</label>
+									</div>
+								</li>
+
+							<%
+							}
+							%>
+
+							<c:if test="<%= customFacetDisplayContext.isShowInputRange() %>">
+								<c:if test='<%= aggregationType.equals("range") || aggregationType.equals("dateRange") %>'>
+									<li class="facet-value">
+										<div class="custom-checkbox custom-control">
+											<label class="facet-checkbox-label" for="<portlet:namespace /><%= customRangeBucketDisplayContext.getBucketText() %>">
+												<input
+													class="custom-control-input facet-term"
+													data-term-id="<%= HtmlUtil.escapeAttribute(customRangeBucketDisplayContext.getBucketText()) %>"
+													disabled
+													id="<portlet:namespace /><%= customRangeBucketDisplayContext.getBucketText() %>"
+													name="<portlet:namespace /><%= customRangeBucketDisplayContext.getBucketText() %>"
+													onChange='Liferay.Search.FacetUtil.changeSelection(event);'
+													type="checkbox"
+													<%= customRangeBucketDisplayContext.isSelected() ? "checked" : StringPool.BLANK %>
+												/>
+
+												<span class="custom-control-label term-name <%= customRangeBucketDisplayContext.isSelected() ? "facet-term-selected" : "facet-term-unselected" %>">
+													<span class="custom-control-label-text">
+														<c:choose>
+															<c:when test="<%= customRangeBucketDisplayContext.isSelected() %>">
+																<strong><liferay-ui:message key="<%= HtmlUtil.escape(customRangeBucketDisplayContext.getBucketText()) %>" /></strong>
+															</c:when>
+															<c:otherwise>
+																<liferay-ui:message key="<%= HtmlUtil.escape(customRangeBucketDisplayContext.getBucketText()) %>" />
+															</c:otherwise>
+														</c:choose>
+													</span>
+												</span>
+
+												<c:if test="<%= customRangeBucketDisplayContext.isSelected() %>">
+													<small class="term-count">
+														(<%= customRangeBucketDisplayContext.getFrequency() %>)
+													</small>
+												</c:if>
+											</label>
+										</div>
+									</li>
+								</c:if>
+
+								<c:if test='<%= aggregationType.equals("range") %>'>
+									<div class="<%= !customRangeBucketDisplayContext.isSelected() ? "hide" : StringPool.BLANK %> date-custom-range" id="<portlet:namespace />customRange">
+										<div class="col-md-6" id="<portlet:namespace />customRangeFrom">
+											<aui:field-wrapper>
+												<aui:input id="fromInput" label="from" name="fromInput" value="<%= customFacetDisplayContext.getFromParameterValue() %>" />
+											</aui:field-wrapper>
+										</div>
+
+										<div class="col-md-6" id="<portlet:namespace />customRangeTo">
+											<aui:field-wrapper>
+												<aui:input id="toInput" label="to" name="toInput" value="<%= customFacetDisplayContext.getToParameterValue() %>" />
+											</aui:field-wrapper>
+										</div>
+
+										<clay:button
+											aria-label='<%= LanguageUtil.get(request, "search") %>'
+											cssClass="custom-range-filter-button"
+											displayType="secondary"
+											id='<%= liferayPortletResponse.getNamespace() + "searchCustomRangeButton" %>'
+											label="search"
+											name='<%= liferayPortletResponse.getNamespace() + "searchCustomRangeButton" %>'
+										/>
+									</div>
+								</c:if>
+
+								<c:if test='<%= aggregationType.equals("dateRange") %>'>
+									<div class="<%= !customFacetCalendarDisplayContext.isSelected() ? "hide" : StringPool.BLANK %> date-custom-range" id="<portlet:namespace />customRange">
+										<clay:col
+											id='<%= liferayPortletResponse.getNamespace() + "customRangeFrom" %>'
+											md="6"
+										>
+											<aui:field-wrapper label="from">
+												<liferay-ui:input-date
+													cssClass="custom-range-input-date-from"
+													dayParam="fromDay"
+													dayValue="<%= customFacetCalendarDisplayContext.getFromDayValue() %>"
+													disabled="<%= false %>"
+													firstDayOfWeek="<%= customFacetCalendarDisplayContext.getFromFirstDayOfWeek() %>"
+													monthParam="fromMonth"
+													monthValue="<%= customFacetCalendarDisplayContext.getFromMonthValue() %>"
+													name="fromInput"
+													yearParam="fromYear"
+													yearValue="<%= customFacetCalendarDisplayContext.getFromYearValue() %>"
+												/>
+											</aui:field-wrapper>
+										</clay:col>
+
+										<clay:col
+											id='<%= liferayPortletResponse.getNamespace() + "customRangeTo" %>'
+											md="6"
+										>
+											<aui:field-wrapper label="to">
+												<liferay-ui:input-date
+													cssClass="custom-range-input-date-to"
+													dayParam="toDay"
+													dayValue="<%= customFacetCalendarDisplayContext.getToDayValue() %>"
+													disabled="<%= false %>"
+													firstDayOfWeek="<%= customFacetCalendarDisplayContext.getToFirstDayOfWeek() %>"
+													monthParam="toMonth"
+													monthValue="<%= customFacetCalendarDisplayContext.getToMonthValue() %>"
+													name="toInput"
+													yearParam="toYear"
+													yearValue="<%= customFacetCalendarDisplayContext.getToYearValue() %>"
+												/>
+											</aui:field-wrapper>
+										</clay:col>
+
+										<clay:button
+											aria-label='<%= LanguageUtil.get(request, "search") %>'
+											cssClass="custom-range-filter-button"
+											disabled="<%= customFacetCalendarDisplayContext.isRangeBackwards() %>"
+											displayType="secondary"
+											id='<%= liferayPortletResponse.getNamespace() + "searchCustomRangeButton" %>'
+											label="search"
+											name='<%= liferayPortletResponse.getNamespace() + "searchCustomRangeButton" %>'
+										/>
+									</div>
+								</c:if>
+							</c:if>
+						</ul>
+					</liferay-ui:panel>
+				</liferay-ui:panel-container>
+			</liferay-ddm:template-renderer>
 		</aui:form>
 	</c:otherwise>
 </c:choose>
@@ -75,7 +267,7 @@ String aggregationType = customFacetDisplayContext.getAggregationType();
 	module="{FacetUtil} from portal-search-web"
 />
 
-<c:if test='<%= aggregationType.equals("dateRange") || aggregationType.equals("range") %>'>
+<c:if test='<%= FeatureFlagManagerUtil.isEnabled("LPS-153839") && customFacetDisplayContext.isShowInputRange() && (aggregationType.equals("dateRange") || aggregationType.equals("range")) %>'>
 	<aui:script use="liferay-search-custom-range-facet">
 		new Liferay.Search.CustomRangeFacet({
 			aggregationType: '<%= customFacetDisplayContext.getAggregationType() %>',

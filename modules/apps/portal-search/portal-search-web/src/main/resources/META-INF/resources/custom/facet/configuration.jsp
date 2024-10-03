@@ -18,7 +18,8 @@ taglib uri="http://liferay.com/tld/template" prefix="liferay-template" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
-<%@ page import="com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil" %><%@
+<%@ page import="com.liferay.petra.string.StringPool" %><%@
+page import="com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil" %><%@
 page import="com.liferay.portal.kernel.json.JSONArray" %><%@
 page import="com.liferay.portal.kernel.util.Constants" %><%@
 page import="com.liferay.portal.kernel.util.HashMapBuilder" %><%@
@@ -83,12 +84,6 @@ JSONArray rangesJSONArray = customFacetPortletPreferences.getRangesJSONArray();
 					collapsible="<%= true %>"
 					label="advanced-configuration"
 				>
-					<aui:select helpMessage="aggregation-type-help" label="aggregation-type" name="<%= PortletPreferencesJspUtil.getInputName(CustomFacetPortletPreferences.PREFERENCE_KEY_AGGREGATION_TYPE) %>" value="<%= customFacetPortletPreferences.getAggregationType() %>">
-						<aui:option label="terms" value="terms" />
-						<aui:option label="date-range" value="dateRange" />
-						<aui:option label="range" value="range" />
-					</aui:select>
-
 					<div class="form-group">
 						<aui:input helpMessage="aggregation-field-help" label="aggregation-field" name="<%= PortletPreferencesJspUtil.getInputName(CustomFacetPortletPreferences.PREFERENCE_KEY_AGGREGATION_FIELD) %>" required="<%= true %>" value="<%= customFacetPortletPreferences.getAggregationField() %>" wrapperCssClass="c-mb-0" />
 
@@ -169,7 +164,9 @@ JSONArray rangesJSONArray = customFacetPortletPreferences.getRangesJSONArray();
 
 					<aui:input helpMessage="custom-parameter-name-help" label="custom-parameter-name" name="<%= PortletPreferencesJspUtil.getInputName(CustomFacetPortletPreferences.PREFERENCE_KEY_PARAMETER_NAME) %>" value="<%= customFacetPortletPreferences.getParameterName() %>" />
 
-					<aui:input helpMessage="max-terms-help" label="max-terms" name="<%= PortletPreferencesJspUtil.getInputName(CustomFacetPortletPreferences.PREFERENCE_KEY_MAX_TERMS) %>" value="<%= customFacetPortletPreferences.getMaxTerms() %>" />
+					<div class="<%= StringUtil.equals(customFacetPortletPreferences.getAggregationType(), "terms") ? StringPool.BLANK : "hide" %>" id="<portlet:namespace />maxTermsContainer">
+						<aui:input helpMessage="max-terms-help" label="max-terms" name="<%= PortletPreferencesJspUtil.getInputName(CustomFacetPortletPreferences.PREFERENCE_KEY_MAX_TERMS) %>" value="<%= customFacetPortletPreferences.getMaxTerms() %>" />
+					</div>
 
 					<aui:input label="frequency-threshold" name="<%= PortletPreferencesJspUtil.getInputName(CustomFacetPortletPreferences.PREFERENCE_KEY_FREQUENCY_THRESHOLD) %>" value="<%= customFacetPortletPreferences.getFrequencyThreshold() %>" />
 
@@ -189,7 +186,7 @@ JSONArray rangesJSONArray = customFacetPortletPreferences.getRangesJSONArray();
 
 				<liferay-frontend:fieldset
 					collapsible="<%= true %>"
-					cssClass='<%= StringUtil.equals(customFacetPortletPreferences.getOrder(), "rangesConfiguration") ? "" : "hide" %>'
+					cssClass='<%= StringUtil.equals(customFacetPortletPreferences.getOrder(), "rangesConfiguration") ? StringPool.BLANK : "hide" %>'
 					label="ranges-configuration"
 				>
 					<div class="form-text text-weight-normal">

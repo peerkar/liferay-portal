@@ -27,7 +27,8 @@ public class CustomFacetDisplayContext implements FacetDisplayContext {
 		String displayCaption, long displayStyleGroupId,
 		boolean nothingSelected, String paginationStartParameterName,
 		String parameterName, String parameterValue,
-		List<String> parameterValues, boolean renderNothing) {
+		List<String> parameterValues, boolean renderNothing,
+		boolean showInputRange, String from, String to) {
 
 		_aggregationType = aggregationType;
 		_bucketDisplayContexts = bucketDisplayContexts;
@@ -43,6 +44,9 @@ public class CustomFacetDisplayContext implements FacetDisplayContext {
 		_parameterValue = parameterValue;
 		_parameterValues = parameterValues;
 		_renderNothing = renderNothing;
+		_showInputRange = showInputRange;
+		_from = from;
+		_to = to;
 	}
 
 	public String getAggregationType() {
@@ -79,6 +83,10 @@ public class CustomFacetDisplayContext implements FacetDisplayContext {
 		return _displayStyleGroupId;
 	}
 
+	public String getFromParameterValue() {
+		return _from;
+	}
+
 	@Override
 	public String getPaginationStartParameterName() {
 		return _paginationStartParameterName;
@@ -99,6 +107,10 @@ public class CustomFacetDisplayContext implements FacetDisplayContext {
 		return _parameterValues;
 	}
 
+	public String getToParameterValue() {
+		return _to;
+	}
+
 	@Override
 	public boolean isNothingSelected() {
 		return _nothingSelected;
@@ -107,6 +119,10 @@ public class CustomFacetDisplayContext implements FacetDisplayContext {
 	@Override
 	public boolean isRenderNothing() {
 		return _renderNothing;
+	}
+
+	public boolean isShowInputRange() {
+		return _showInputRange;
 	}
 
 	private final String _aggregationType;
@@ -118,11 +134,14 @@ public class CustomFacetDisplayContext implements FacetDisplayContext {
 	private final BucketDisplayContext _customRangeBucketDisplayContext;
 	private final String _displayCaption;
 	private final long _displayStyleGroupId;
+	private final String _from;
 	private final boolean _nothingSelected;
 	private final String _paginationStartParameterName;
 	private final String _parameterName;
 	private final String _parameterValue;
 	private final List<String> _parameterValues;
 	private final boolean _renderNothing;
+	private final boolean _showInputRange;
+	private final String _to;
 
 }

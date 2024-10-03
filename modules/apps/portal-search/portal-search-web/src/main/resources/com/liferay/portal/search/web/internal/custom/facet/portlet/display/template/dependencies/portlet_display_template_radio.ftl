@@ -27,17 +27,17 @@
 			<#if entries?has_content>
 				<#list entries as entry>
 					<li class="facet-value">
-						<div class="custom-checkbox custom-control">
+						<div class="custom-control custom-radio">
 							<label class="facet-checkbox-label" for="${namespace}${entry.getBucketText()}">
 								<input
 									${(entry.isSelected())?then("checked", "")}
 									class="custom-control-input facet-term"
-									data-term-id="${htmlUtil.escape(entry.getBucketText())}"
 									disabled
 									id="${namespace}${entry.getBucketText()}"
 									name="${namespace}${entry.getBucketText()}"
-									onChange='Liferay.Search.FacetUtil.changeSelection(event);'
-									type="checkbox"
+									onChange='${"window.location.href = \"${entry.getFilterValue()}\";"}'
+									role="radio"
+									type="radio"
 								/>
 
 								<span class="custom-control-label term-name ${(entry.isSelected())?then('facet-term-selected', 'facet-term-unselected')}">
@@ -64,17 +64,17 @@
 			<#if customFacetDisplayContext.isShowInputRange()>
 				<#if (customFacetDisplayContext.getAggregationType() == "range") || (customFacetDisplayContext.getAggregationType() == "dateRange")>
 					<li class="facet-value">
-						<div class="custom-checkbox custom-control">
+						<div class="custom-control custom-radio">
 							<label class="facet-checkbox-label" for="${namespace}${customRangeBucketDisplayContext.getBucketText()}">
 								<input
 									${(customRangeBucketDisplayContext.isSelected())?then("checked", "")}
 									class="custom-control-input facet-term"
-									data-term-id="${htmlUtil.escape(customRangeBucketDisplayContext.getBucketText())}"
 									disabled
 									id="${namespace}${customRangeBucketDisplayContext.getBucketText()}"
 									name="${namespace}${customRangeBucketDisplayContext.getBucketText()}"
-									onChange='Liferay.Search.FacetUtil.changeSelection(event);'
-									type="checkbox"
+									onChange='${"window.location.href = \"${customRangeBucketDisplayContext.getFilterValue()}\";"}'
+									role="radio"
+									type="radio"
 								/>
 
 								<span class="custom-control-label term-name ${(customRangeBucketDisplayContext.isSelected())?then('facet-term-selected', 'facet-term-unselected')}">
@@ -136,7 +136,7 @@
 						<div class="col-md-6" id="${namespace}customRangeFrom">
 							<@liferay_aui["field-wrapper"] label="from">
 								<@liferay_ui["input-date"]
-									cssClass="custom-range-input-date-from"
+									cssClass="date-facet-custom-range-input-date-from"
 									dayParam="fromDay"
 									dayValue=customFacetCalendarDisplayContext.getFromDayValue()
 									disabled=false
@@ -153,7 +153,7 @@
 						<div class="col-md-6" id="${namespace}customRangeTo">
 							<@liferay_aui["field-wrapper"] label="to">
 								<@liferay_ui["input-date"]
-									cssClass="custom-range-input-date-to"
+									cssClass="date-facet-custom-range-input-date-to"
 									dayParam="toDay"
 									dayValue=customFacetCalendarDisplayContext.getToDayValue()
 									disabled=false
@@ -168,7 +168,7 @@
 						</div>
 
 						<@clay["button"]
-							cssClass="custom-range-filter-button"
+							cssClass="date-facet-custom-range-filter-button"
 							disabled=customFacetCalendarDisplayContext.isRangeBackwards()
 							displayType="secondary"
 							id="${namespace + 'searchCustomRangeButton'}"

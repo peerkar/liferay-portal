@@ -123,7 +123,7 @@ public class CustomFacetPortletPreferencesImpl
 	public boolean isShowInputRange() {
 		return getBoolean(
 			CustomFacetPortletPreferences.PREFERENCE_KEY_SHOW_INPUT_RANGE,
-			false);
+			true);
 	}
 
 	private JSONArray _getDefaultDateRangesJSONArray() {
