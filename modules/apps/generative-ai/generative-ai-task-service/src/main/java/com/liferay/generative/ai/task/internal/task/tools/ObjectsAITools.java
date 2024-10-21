@@ -519,11 +519,14 @@ public class ObjectsAITools implements AITools {
 		String type = ObjectRelationshipConstants.TYPE_ONE_TO_MANY;
 		ObjectField objectField = null;
 
+		// Added by Petteri to make this to build
+		boolean edge = true;
+
 		try {
 			ObjectRelationship relationship =
 				ObjectRelationshipLocalServiceUtil.addObjectRelationship(
 					relationshipERC, userId, objectDefinitionAId,
-					objectDefinitionBId, parameterObjectFieldId, deletionType,
+					objectDefinitionBId, parameterObjectFieldId, deletionType, edge,
 					labelMap, name, system, type, objectField);
 
 			return relationship.getObjectRelationshipId();
@@ -573,11 +576,14 @@ public class ObjectsAITools implements AITools {
 		String type = ObjectRelationshipConstants.TYPE_MANY_TO_MANY;
 		ObjectField objectField = null;
 
+		// Added by Petteri to make this to build
+		boolean edge = true;
+
 		try {
 			ObjectRelationship relationship =
 				ObjectRelationshipLocalServiceUtil.addObjectRelationship(
 					relationshipERC, userId, objectDefinitionAId,
-					objectDefinitionBId, parameterObjectFieldId, deletionType,
+					objectDefinitionBId, parameterObjectFieldId, deletionType, edge,
 					labelMap, name, system, type, objectField);
 
 			return relationship.getObjectRelationshipId();
