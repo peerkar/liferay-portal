@@ -1,0 +1,45 @@
+{
+	"configuration": {
+		"attributes": {
+			"tasks": [
+				{
+					"attributes": {
+						"context_output_parameter_name": "context",
+						"result_field": "content_${language_id}",
+						"sxp_blueprint_external_reference_code": "SET_ME_TO_SOMETHING_OR_I_WILL_MAKE_THE_DEFAULT_KEYWORD_SEARCH",
+						"top_k": 1
+					},
+					"name": "local_document_retrieval"
+				},
+				{
+					"attributes": {
+						"location": "us-central1",
+						"max_output_tokens": 100,
+						"max_retries": 2,
+						"memory_max_messages": 30,
+						"model_name": "gemini-1.5-flash-001",
+						"output_parameter_name": "text",
+						"project": "liferaycloud-development",
+						"prompt_template": "{{text}}",
+						"system_message": "You are an official company assistant. Answer the question only if there's relevant context available. If there's no relevant context, answer 'I don't know'. Base your answer on the following context:\n{{context}}",
+						"temperature": 0.2,
+						"top_k": 4,
+						"top_p": 1,
+						"use_chat_memory": true
+					},
+					"name": "gemini_chat_model"
+				}
+			]
+		},
+		"debug": true,
+		"name": "chain"
+	},
+	"description_i18n": {
+		"en_US": "Searches local Elasticsearch using the given Blueprint and uses the search results as context for the LLM request."
+	},
+	"externalReferenceCode": "1d79bc66-5c82-6f1b-d860-185e4cec436d",
+	"schemaVersion": "1.0",
+	"title_i18n": {
+		"en_US": "Simple RAG"
+	}
+}

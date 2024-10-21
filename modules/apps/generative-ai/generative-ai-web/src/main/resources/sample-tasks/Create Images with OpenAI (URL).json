@@ -1,0 +1,21 @@
+{
+	"configuration": {
+		"attributes": {
+			"api_key": "MY_API_KEY",
+			"model": "dall-e-2",
+			"output_parameter_name": "image",
+			"prompt_template": "{{text}}",
+			"response_format": "url"
+		},
+		"debug": true,
+		"name": "openai_image_model"
+	},
+	"description_i18n": {
+		"en_US": "Generates an image and return an URL to the image"
+	},
+	"externalReferenceCode": "e1007ee4-e2b5-2257-a348-8d63db3c56e7",
+	"schemaVersion": "1.0",
+	"title_i18n": {
+		"en_US": "Create Images with OpenAI (URL)"
+	}
+}

@@ -1,0 +1,44 @@
+{
+	"configuration": {
+		"attributes": {
+			"tasks": [
+				{
+					"attributes": {
+						"context_output_parameter_name": "context",
+						"url": "http://localhost:5678/webhook/306e1492-dddf-427f-a71b-e4cd121182bc"
+					},
+					"name": "webhook"
+				},
+				{
+					"attributes": {
+						"location": "us-central1",
+						"max_output_tokens": 1000,
+						"max_retries": 2,
+						"memory_max_tokens": 500,
+						"model_name": "gemini-1.5-flash-001",
+						"output_parameter_name": "text",
+						"project": "liferaycloud-development",
+						"prompt_template": "Given this result from the task manager:\n{{context}}\n\nUse this to answer the user if it's relevant:\n{{text}}",
+						"system_message": "Only answers what you know. If the user ask to add a new task, you should use the webhook tool with the following URL: http://localhost:5678/webhook/33e6f0e7-61fd-4976-abc4-d50cc6fa5c9c\n\nThe task should be a JSON object with the schema: {title: string}\n\nThe webhook tool should only be used for adding tasks.",
+						"temperature": 0.5,
+						"tools": [
+							"webhook"
+						],
+						"top_k": 1,
+						"top_p": 1
+					},
+					"name": "gemini_chat_model"
+				}
+			]
+		},
+		"debug": true,
+		"name": "chain"
+	},
+	"description_i18n": {
+	},
+	"externalReferenceCode": "48b9c36e-5106-8113-6b43-6cc5274dc92e",
+	"schemaVersion": "1.0",
+	"title_i18n": {
+		"en_US": "Webhook"
+	}
+}

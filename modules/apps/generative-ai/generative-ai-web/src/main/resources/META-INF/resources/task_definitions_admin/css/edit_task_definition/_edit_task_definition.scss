@@ -1,0 +1,140 @@
+.edit-task-definition-root {
+	.layout-section-main {
+		padding-bottom: 32px;
+		padding-top: $pageToolbarHeight;
+
+		.layout-section-main-shift {
+			margin-left: auto;
+			max-width: $layoutSectionMainMaxWidth;
+			transition: margin-right ease 0.2s;
+
+			.configuration-sheet {
+				min-height: calc(100vh - $configurationSheetStart - 40px);
+
+				.sheet-header {
+					align-items: baseline;
+					display: flex;
+					justify-content: space-between;
+					margin-bottom: 1rem;
+
+					.sheet-title {
+						margin-bottom: 0;
+						margin-right: 1rem;
+					}
+
+					.tbar-divider {
+						align-self: center;
+						background-color: $secondary;
+						height: 16px;
+						margin-right: 1rem;
+						width: 1px;
+
+					}
+				}
+
+				.flow-editor-container{
+					width: 1174px;
+					height: 708px;
+				}
+
+				.sheet-header::after {
+					content: none;
+				}
+
+				.task-configuration-label {
+					padding-bottom: 0.5rem;
+				}
+			}
+		}
+
+		.configuration-header {
+			font-weight: bold;
+			margin-bottom: 1.25rem;
+
+			.builder-actions {
+				float: right;
+
+				.collapse-button {
+					color: $secondary;
+					font-size: 0.875rem;
+					margin: 0.125rem 1rem 0 0;
+				}
+			}
+		}
+
+		.help-text + .learn-message {
+			margin-left: 4px;
+		}
+
+		.learn-message {
+			color: $primary;
+		}
+
+		.sheet + .sheet {
+			margin-top: 0;
+		}
+
+		.sheet-text {
+			font-size: 14px;
+		}
+
+		.form-group {
+			label {
+				margin-bottom: 0;
+			}
+
+			.sheet-text {
+				margin-bottom: 0.5rem;
+			}
+		}
+
+		.codemirror-editor-wrapper {
+			.CodeMirror {
+				height: calc(100vh - $configurationSheetStart - 162px);
+			}
+		}
+
+		.has-error {
+			.codemirror-editor-wrapper {
+				border: 1px solid $errorL1;
+
+				.CodeMirror {
+					background-color: $errorL2;
+				}
+
+				.CodeMirror-gutters {
+					background-color: $errorL2;
+				}
+			}
+		}
+	}
+
+	@mixin shifted($width) {
+		margin-right: calc(
+			max(
+				50% - (#{$layoutSectionMainMaxWidth} / 2),
+				#{$width} - (50vw - 50%) + 32px
+			)
+		);
+	}
+
+	@media (min-width: calc(#{$layoutSectionMainMinWidth} + #{$sidebarWidth})) {
+		.open-info {
+			.layout-section-main-shift {
+				@include shifted($sidebarWidth);
+			}
+		}
+	}
+
+	@media (min-width: calc(#{$layoutSectionMainMinWidth} + #{$previewSidebarWidth})) {
+		.open-preview .layout-section-main-shift {
+			@include shifted($previewSidebarWidth);
+		}
+	}
+
+	@media (min-width: calc(#{$layoutSectionMainMinWidth} + #{$clauseContributorsSidebarWidth})) {
+		.open-clause-contributors .layout-section-main-shift {
+			@include shifted($clauseContributorsSidebarWidth);
+		}
+	}
+}

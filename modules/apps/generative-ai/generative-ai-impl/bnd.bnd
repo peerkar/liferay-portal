@@ -1,0 +1,5 @@
+Bundle-Name: Liferay Generative AI Implementation
+Bundle-SymbolicName: com.liferay.generative.ai.impl
+Bundle-Version: 1.0.0
+-dsannotations-options: inherit
+-fixupmessages: Classes found in the wrong directory: ...;is:=ignore

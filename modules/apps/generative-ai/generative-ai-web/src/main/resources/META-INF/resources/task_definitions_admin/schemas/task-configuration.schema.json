@@ -1,0 +1,573 @@
+{
+	"$id": "task-configuration.schema.json",
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"definitions": {
+		"allOfCondition": {
+			"oneOf": [
+				{
+					"$ref": "#/definitions/containsCondition"
+				},
+				{
+					"$ref": "#/definitions/startsWithCondition"
+				},
+				{
+					"$ref": "#/definitions/endsWithCondition"
+				},
+				{
+					"$ref": "#/definitions/equalsCondition"
+				}
+			],
+			"type": "object"
+		},
+		"anyOfCondition": {
+			"oneOf": [
+				{
+					"$ref": "#/definitions/containsCondition"
+				},
+				{
+					"$ref": "#/definitions/startsWithCondition"
+				},
+				{
+					"$ref": "#/definitions/endsWithCondition"
+				},
+				{
+					"$ref": "#/definitions/equalsCondition"
+				}
+			],
+			"type": "object"
+		},
+		"chainTaskAttributes": {
+			"properties": {
+				"tasks": {
+					"items": {
+						"$ref": "#/definitions/task"
+					},
+					"type": "array"
+				}
+			},
+			"type": "object"
+		},
+		"commonTaskAttributes": {
+			"properties": {
+				"context_output_parameter_name": {
+					"description": "The name / key of the context parameter where the output value of the task should be set.",
+					"type": "string"
+				},
+				"output_parameter_name": {
+					"description": "The parameter name / key of the task output in the response.",
+					"type": "string"
+				}
+			}
+		},
+		"containsCondition": {
+			"properties": {
+				"value": {
+					"type": "string"
+				}
+			},
+			"type": "object"
+		},
+		"endsWithCondition": {
+			"properties": {
+				"value": {
+					"type": "string"
+				}
+			},
+			"type": "object"
+		},
+		"equalsCondition": {
+			"properties": {
+				"value": {
+					"type": "string"
+				}
+			},
+			"type": "object"
+		},
+		"geminiChatModelTaskAttributes": {
+			"anyOf": [
+				{
+					"$ref": "#/definitions/commonTaskAttributes"
+				}
+			],
+			"properties": {
+				"location": {
+					"description": "The Google Cloud location to use.",
+					"type": "string"
+				},
+				"max_output_tokens": {
+					"description": "The maximum number of tokens to generate in the output.",
+					"type": "integer"
+				},
+				"max_retries": {
+					"description": "The number of times to retry the request if it fails",
+					"type": "integer"
+				},
+				"memory_max_messages": {
+					"description": "The maximum number of messages to store in the memory.",
+					"type": "integer"
+				},
+				"model_name": {
+					"description": "The name of the Vertex AI model to use.",
+					"enum": [
+						"gemini-1.5-flash-001",
+						"gemini-1.5-pro",
+						"aqa"
+					],
+					"type": "string"
+				},
+				"project": {
+					"description": "The name of the Google Cloud project to use.",
+					"type": "string"
+				},
+				"temperature": {
+					"description": "The temperature is used for sampling during response generation. Values 0-1. Set a lower number for more precision and higher for more creativity.",
+					"type": "number"
+				},
+				"tools": {
+					"type": [
+						"string",
+						"object"
+					]
+				},
+				"top_k": {
+					"description": "The maximum number of tokens to consider when sampling.",
+					"type": "number"
+				},
+				"top_p": {
+					"description": "The maximum cumulative probability of tokens to consider when sampling. Default is 0.95",
+					"type": "number"
+				},
+				"use_cache": {
+					"default": false,
+					"description": "Use cache for the LLM calls",
+					"type": "boolean"
+				},
+				"use_chat_memory": {
+					"default": true,
+					"description": "Use server side chat memory",
+					"type": "boolean"
+				}
+			},
+			"type": "object"
+		},
+		"googleImagenTaskAttributes": {
+			"anyOf": [
+				{
+					"$ref": "#/definitions/commonTaskAttributes"
+				}
+			],
+			"properties": {
+				"endpoint": {
+					"type": "string"
+				},
+				"guidance_scale": {
+					"type": "number"
+				},
+				"language": {
+					"type": "string"
+				},
+				"location": {
+					"description": "The Google Cloud location to use.",
+					"type": "string"
+				},
+				"max_retries": {
+					"description": "The number of times to retry the request if it fails",
+					"type": "number"
+				},
+				"model_name": {
+					"description": "The name of the Vertex AI model to use.",
+					"enum": [
+						"gemini-1.5-flash-001",
+						"gemini-1.5-pro",
+						"aqa"
+					],
+					"type": "string"
+				},
+				"negative_prompt": {
+					"type": "string"
+				},
+				"project": {
+					"description": "The name of the Google Cloud project to use.",
+					"type": "string"
+				},
+				"publisher": {
+					"type": "string"
+				},
+				"sample_image_size": {
+					"type": "number"
+				}
+			},
+			"type": "object"
+		},
+		"localDocumentRetrievalTaskAttributes": {
+			"anyOf": [
+				{
+					"$ref": "#/definitions/commonTaskAttributes"
+				}
+			],
+			"properties": {
+				"result_field": {
+					"description": "The name of the document field to return in the response.",
+					"type": "string"
+				},
+				"sxp_blueprint_external_reference_code": {
+					"description": "The external reference code of the Blueprint. If not defined, the default keywords search is executed.",
+					"type": "string"
+				},
+				"top_k": {
+					"description": "The webhook target URL.",
+					"type": "string"
+				}
+			},
+			"type": "object"
+		},
+		"node": {
+			"description": "A single fork of the task.",
+			"properties": {
+				"condition": {
+					"anyOf": [
+						{
+							"$ref": "#/definitions/containsCondition"
+						},
+						{
+							"$ref": "#/definitions/startsWithCondition"
+						},
+						{
+							"$ref": "#/definitions/endsWithCondition"
+						},
+						{
+							"$ref": "#/definitions/equalsCondition"
+						},
+						{
+							"$ref": "#/definitions/allOfCondition"
+						},
+						{
+							"$ref": "#/definitions/anyOfCondition"
+						},
+						{
+							"$ref": "#/definitions/noneOfCondition"
+						}
+					],
+					"description": "Attributes of the task",
+					"type": "object"
+				},
+				"task": {
+					"$ref": "#/definitions/task"
+				}
+			},
+			"type": "object"
+		},
+		"noneOfCondition": {
+			"oneOf": [
+				{
+					"$ref": "#/definitions/containsCondition"
+				},
+				{
+					"$ref": "#/definitions/startsWithCondition"
+				},
+				{
+					"$ref": "#/definitions/endsWithCondition"
+				},
+				{
+					"$ref": "#/definitions/equalsCondition"
+				}
+			],
+			"type": "object"
+		},
+		"openAIImageModelTaskAttributes": {
+			"anyOf": [
+				{
+					"$ref": "#/definitions/commonTaskAttributes"
+				}
+			],
+			"properties": {
+				"api_key": {
+					"description": "The API key for the OpenAI API.",
+					"type": "string"
+				},
+				"max_retries": {
+					"description": "The number of times to retry the request if it fails.",
+					"type": "integer"
+				},
+				"model_name": {
+					"description": "The name of the OpenAI model to use.",
+					"enum": [
+						"dall-e-2",
+						"dall-e-3"
+					],
+					"type": "string"
+				},
+				"number_of_images": {
+					"description": "The number of images to generate.",
+					"type": "integer"
+				},
+				"prompt": {
+					"description": "The prompt to generate the images. The maximum length is 1000 characters for dall-e-2 and 4000 characters for dall-e-3",
+					"type": "string"
+				},
+				"quality": {
+					"description": "The quality of the images to generate.",
+					"enum": [
+						"standard",
+						"hd"
+					],
+					"type": "string"
+				},
+				"response_format": {
+					"description": "The format of the response to return.",
+					"enum": [
+						"b64_json",
+						"url"
+					],
+					"type": "string"
+				},
+				"size": {
+					"description": "The size of the images to generate.  Must be one of 256x256, 512x512, or 1024x1024 for dall-e-2. Must be one of 1024x1024, 1792x1024, or 1024x1792 for dall-e-3 models.",
+					"examples": [
+						"256x256",
+						"512x512",
+						"1024x1024"
+					],
+					"type": "string"
+				},
+				"style": {
+					"description": "The style of the images to generate.",
+					"enum": [
+						"natural",
+						"vivid"
+					],
+					"type": "string"
+				},
+				"user": {
+					"description": "A unique identifier representing your end-user, helping OpenAI to detect abuse.",
+					"type": "string"
+				}
+			},
+			"type": "object"
+		},
+		"startsWithCondition": {
+			"properties": {
+				"value": {
+					"type": "string"
+				}
+			},
+			"type": "object"
+		},
+		"task": {
+			"description": "A single fork of the task.",
+			"properties": {
+				"attributes": {
+					"$ref": "#/definitions/taskAttributes"
+				},
+				"debug": {
+					"default": false,
+					"description": "Include debug information in the response",
+					"type": "boolean"
+				},
+				"label": {
+					"type": "string"
+				},
+				"name": {
+					"default": "gemini_chat_model",
+					"description": "The name of the task",
+					"enum": [
+						"chain",
+						"gemini_chat_model",
+						"google_imagen",
+						"local_document_retrieval",
+						"openai_image_model",
+						"task_context_parameter_agent",
+						"text_input_agent",
+						"webhook"
+					],
+					"type": "string"
+				}
+			},
+			"type": "object"
+		},
+		"taskAttributes": {
+			"description": "Attributes of the task",
+			"allOf": [
+				{
+					"if": {
+						"properties": {
+							"name": {
+								"const": "chain"
+							}
+						}
+					},
+					"then": {
+						"properties": {
+							"attributes": {
+								"$ref": "#/definitions/chainTaskAttributes"
+							}
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"name": {
+								"const": "gemini_chat_model"
+							}
+						}
+					},
+					"then": {
+						"properties": {
+							"attributes": {
+								"$ref": "#/definitions/geminiChatModelTaskAttributes"
+							}
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"name": {
+								"const": "google_imagen"
+							}
+						}
+					},
+					"then": {
+						"properties": {
+							"attributes": {
+								"$ref": "#/definitions/googleImagenTaskAttributes"
+							}
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"name": {
+								"const": "local_document_retrieval"
+							}
+						}
+					},
+					"then": {
+						"properties": {
+							"attributes": {
+								"$ref": "#/definitions/localDocumentRetrievalTaskAttributes"
+							}
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"name": {
+								"const": "openai_image_model"
+							}
+						}
+					},
+					"then": {
+						"properties": {
+							"attributes": {
+								"$ref": "#/definitions/openAIImageModelTaskAttributes"
+							}
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"name": {
+								"const": "task_context_agent"
+							}
+						}
+					},
+					"then": {
+						"properties": {
+							"attributes": {
+								"$ref": "#/definitions/taskContextAgentTaskAttributes"
+							}
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"name": {
+								"const": "text_input_agent"
+							}
+						}
+					},
+					"then": {
+						"properties": {
+							"attributes": {
+								"$ref": "#/definitions/textInputAgentTaskAttributes"
+							}
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"name": {
+								"const": "webhook"
+							}
+						}
+					},
+					"then": {
+						"properties": {
+							"attributes": {
+								"$ref": "#/definitions/webhookTaskAttributes"
+							}
+						}
+					}
+				}
+			],
+			"type": "object"
+		},
+		"taskContextAgentTaskAttributes": {
+			"properties": {
+				"default_task": {
+					"$ref": "#/definitions/task"
+				},
+				"nodes": {
+					"description": "The forks of the agent.",
+					"items": {
+						"$ref": "#/definitions/node"
+					},
+					"type": "array"
+				},
+				"task_context_parameter_name": {
+					"description": "The name / key of the task context parameter to use as the comparison value.",
+					"type": "string"
+				}
+			},
+			"type": "object"
+		},
+		"textInputAgentTaskAttributes": {
+			"properties": {
+				"default_task": {
+					"$ref": "#/definitions/task"
+				},
+				"nodes": {
+					"description": "The forks of the agent.",
+					"items": {
+						"$ref": "#/definitions/node"
+					},
+					"type": "array"
+				}
+			},
+			"type": "object"
+		},
+		"webhookTaskAttributes": {
+			"allOf": [
+				{
+					"$ref": "#/definitions/commonTaskAttributes"
+				}
+			],
+			"properties": {
+				"url": {
+					"description": "The webhook target URL.",
+					"type": "string"
+				}
+			},
+			"type": "object"
+		}
+	},
+	"$ref": "#/definitions/task",
+	"type": "object"
+}

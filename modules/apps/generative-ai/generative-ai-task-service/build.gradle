@@ -1,0 +1,105 @@
+buildService {
+	apiDir = "../generative-ai-task-api/src/main/java"
+	testDir = "../generative-ai-task-test/src/testIntegration/java"
+}
+
+dependencies {
+	api project(":apps:generative-ai:generative-ai-task-api")
+
+	compileInclude group: "com.damnhandy", name: "handy-uri-templates", version: "2.1.7"
+	compileInclude group: "com.github.everit-org.json-schema", name: "org.everit.json.schema", version: "1.11.1"
+	compileInclude group: "com.google.api", name: "api-common", version: "2.31.1"
+	compileInclude group: "com.google.api", name: "gax", version: "2.48.1"
+	compileInclude group: "com.google.api", name: "gax-grpc", version: "2.48.1"
+	compileInclude group: "com.google.api", name: "gax-httpjson", version: "2.48.1"
+	compileInclude group: "com.google.api-client", name: "google-api-client", version: "2.6.0"
+	compileInclude group: "com.google.api.grpc", name: "grpc-google-cloud-vertexai-v1", version: "1.6.0"
+	compileInclude group: "com.google.api.grpc", name: "proto-google-cloud-aiplatform-v1", version: "3.47.0"
+	compileInclude group: "com.google.api.grpc", name: "proto-google-cloud-vertexai-v1", version: "1.6.0"
+	compileInclude group: "com.google.api.grpc", name: "proto-google-common-protos", version: "2.41.0"
+	compileInclude group: "com.google.api.grpc", name: "proto-google-iam-v1", version: "1.36.0"
+	compileInclude group: "com.google.auth", name: "google-auth-library-credentials", version: "1.23.0"
+	compileInclude group: "com.google.auth", name: "google-auth-library-oauth2-http", version: "1.23.0"
+	compileInclude group: "com.google.cloud", name: "google-cloud-aiplatform", version: "3.44.0"
+	compileInclude group: "com.google.cloud", name: "google-cloud-vertexai", version: "1.6.0"
+	compileInclude group: "com.google.code.findbugs", name: "jsr305", version: "3.0.2"
+	compileInclude group: "com.google.code.gson", name: "gson", version: "2.9.0"
+	compileInclude group: "com.google.errorprone", name: "error_prone_annotations", version: "2.27.1"
+	compileInclude group: "com.google.http-client", name: "google-http-client", version: "1.44.2"
+	compileInclude group: "com.google.http-client", name: "google-http-client-apache-v2", version: "1.44.2"
+	compileInclude group: "com.google.http-client", name: "google-http-client-gson", version: "1.44.1"
+	compileInclude group: "com.google.oauth-client", name: "google-oauth-client", version: "1.34.1"
+	compileInclude group: "com.google.protobuf", name: "protobuf-java", version: "3.25.3"
+	compileInclude group: "com.google.protobuf", name: "protobuf-java-util", version: "3.25.3"
+	compileInclude group: "com.google.protobuf.nano", name: "protobuf-javanano", version: "3.2.0rc2"
+	compileInclude group: "com.google.re2j", name: "re2j", version: "1.2"
+	compileInclude group: "com.knuddels", name: "jtokkit", version: "1.0.0"
+	compileInclude group: "com.squareup.okhttp3", name: "okhttp", version: "4.12.0"
+	compileInclude group: "com.squareup.okhttp3", name: "okhttp-sse", version: "4.12.0"
+	compileInclude group: "com.squareup.okio", name: "okio", version: "3.9.0"
+	compileInclude group: "com.squareup.retrofit2", name: "converter-gson", version: "2.11.0"
+	compileInclude group: "com.squareup.retrofit2", name: "retrofit", version: "2.11.0"
+	compileInclude group: "dev.ai4j", name: "openai4j", version: "0.17.0"
+	compileInclude group: "dev.langchain4j", name: "langchain4j", version: "0.32.0"
+	compileInclude group: "dev.langchain4j", name: "langchain4j-core", version: "0.32.0"
+	compileInclude group: "dev.langchain4j", name: "langchain4j-open-ai", version: "0.32.0"
+	compileInclude group: "dev.langchain4j", name: "langchain4j-vertex-ai", version: "0.32.0"
+	compileInclude group: "dev.langchain4j", name: "langchain4j-vertex-ai-gemini", version: "0.32.0"
+	compileInclude group: "io.grpc", name: "grpc-alts", version: "1.62.2"
+	compileInclude group: "io.grpc", name: "grpc-api", version: "1.62.2"
+	compileInclude group: "io.grpc", name: "grpc-auth", version: "1.62.2"
+	compileInclude group: "io.grpc", name: "grpc-core", version: "1.62.2"
+	compileInclude group: "io.grpc", name: "grpc-grpclb", version: "1.62.2"
+	compileInclude group: "io.grpc", name: "grpc-netty", version: "1.62.2"
+	compileInclude group: "io.grpc", name: "grpc-netty-shaded", version: "1.62.2"
+	compileInclude group: "io.grpc", name: "grpc-protobuf", version: "1.62.2"
+	compileInclude group: "io.grpc", name: "grpc-protobuf-lite", version: "1.62.2"
+	compileInclude group: "io.grpc", name: "grpc-stub", version: "1.62.2"
+	compileInclude group: "io.opencensus", name: "opencensus-api", version: "0.31.1"
+	compileInclude group: "io.opencensus", name: "opencensus-contrib-http-util", version: "0.31.1"
+	compileInclude group: "io.opencensus", name: "opencensus-proto", version: "0.2.0"
+	compileInclude group: "io.perfmark", name: "perfmark-api", version: "0.27.0"
+	compileInclude group: "org.conscrypt", name: "conscrypt-openjdk-uber", version: "2.5.2"
+	compileInclude group: "org.eclipse.collections", name: "eclipse-collections", version: "11.1.0"
+	compileInclude group: "org.eclipse.collections", name: "eclipse-collections-api", version: "11.1.0"
+	compileInclude group: "org.jetbrains.kotlin", name: "kotlin-stdlib", version: "1.9.24"
+	compileInclude group: "org.json", name: "json", version: "20231013"
+	compileInclude group: "org.lz4", name: "lz4-java", version: "1.8.0"
+	compileInclude group: "org.mapdb", name: "elsa", version: "3.0.0-M5"
+	compileInclude group: "org.mapdb", name: "mapdb", version: "3.1.0"
+	compileInclude group: "org.openjsse", name: "openjsse", version: "1.1.14"
+	compileInclude group: "org.threeten", name: "threetenbp", version: "1.6.9"
+
+	compileOnly group: "com.liferay", name: "biz.aQute.bnd.annotation", version: "4.2.0.LIFERAY-PATCHED-2"
+	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.impl", version: "default"
+	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "default"
+	compileOnly group: "commons-lang", name: "commons-lang", version: "2.6"
+	compileOnly group: "javax.portlet", name: "portlet-api", version: "3.0.1"
+	compileOnly group: "joda-time", name: "joda-time", version: "2.12.1"
+	compileOnly group: "org.apache.felix", name: "org.apache.felix.http.servlet-api", version: "1.1.2"
+	compileOnly group: "org.joda", name: "joda-convert", version: "2.2.1"
+	compileOnly group: "org.osgi", name: "org.osgi.annotation", version: "6.0.0"
+	compileOnly group: "org.osgi", name: "org.osgi.service.component.annotations", version: "1.4.0"
+	compileOnly group: "org.osgi", name: "osgi.core", version: "6.0.0"
+	compileOnly project(":apps:blogs:blogs-api")
+	compileOnly project(":apps:generative-ai:generative-ai-rest-api")
+	compileOnly project(":apps:list-type:list-type-api")
+	compileOnly project(":apps:object:object-api")
+	compileOnly project(":apps:portal-configuration:portal-configuration-module-configuration-api")
+	compileOnly project(":apps:portal-search:portal-search-api")
+	compileOnly project(":apps:portal-search:portal-search-engine-adapter-api")
+	compileOnly project(":apps:portal-search:portal-search-spi")
+	compileOnly project(":apps:portal-vulcan:portal-vulcan-api")
+	compileOnly project(":apps:portal:portal-aop-api")
+	compileOnly project(":apps:portal:portal-instance-lifecycle-api")
+	compileOnly project(":apps:static:portal-configuration:portal-configuration-metatype-api")
+	compileOnly project(":apps:static:portal:portal-upgrade-api")
+	compileOnly project(":core:osgi-service-tracker-collections")
+	compileOnly project(":core:petra:petra-function")
+	compileOnly project(":core:petra:petra-io")
+	compileOnly project(":core:petra:petra-lang")
+	compileOnly project(":core:petra:petra-reflect")
+	compileOnly project(":core:petra:petra-sql-dsl-api")
+	compileOnly project(":core:petra:petra-sql-dsl-spi")
+	compileOnly project(":core:petra:petra-string")
+}

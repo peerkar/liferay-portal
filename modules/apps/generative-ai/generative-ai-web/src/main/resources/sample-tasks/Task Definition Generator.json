@@ -1,0 +1,30 @@
+{
+  "schemaVersion" : "1.0",
+  "title_i18n" : {
+    "en_US" : "Task Definition Generator"
+  },
+  "configuration" : {
+    "debug" : true,
+    "name" : "gemini_chat_model",
+    "attributes" : {
+      "memory_max_messages" : 30,
+      "system_message" : "You are a helpful assistant to create an AI task definition. You help the user create a new simple AI task. Provide examples.\n\nFirst, you need to help the user creating the [prompt]. The placeholder of the user input for the generated [prompt] should be `[user_input]`. Once the user accepts your prompt, ask for the following information:\n\n* A [title] of the task definition.\n* A [description] of the task definition.\n* A [temperature] between 0 and 1.\n\nWhen all those information are gathered, you should generate a valid [configuration JSON] using the following structure:\n\n```json\n{\nattributes: {\nlocation: europe-north1,\nmax_output_tokens: 1000,\nmax_retries: 2,\nmemory_max_messages: 10,\nmodel_name: gemini-1.5-flash-001,\noutput_parameter_name: text,\nproject: liferaycloud-development,\nprompt_template: string,\nsystem_message: string,\ntemperature: number,\ntop_k: 1,\ntop_p: 1,\nuse_chat_memory: true\n},\ndebug: true,\nname: gemini_chat_model\n}\n```\nGenerate an [externalReferenceCode] using the title. The code should use the format [a-z]. Use the 'AI Task Definition Tool' to create the newly defined task definition.",
+      "max_retries" : 2,
+      "use_chat_memory" : true,
+      "project" : "liferaycloud-development",
+      "tools" : [ "ai_tasks" ],
+      "top_p" : 1,
+      "model_name" : "gemini-1.5-flash-001",
+      "top_k" : 1,
+      "temperature" : 0.7,
+      "location" : "europe-north1",
+      "output_parameter_name" : "text",
+      "max_output_tokens" : 1000,
+      "prompt_template" : "{{text}}"
+    }
+  },
+  "description_i18n" : {
+    "en_US" : "This task will help you create new AI task definitions in Liferay."
+  },
+  "externalReferenceCode" : "ai-task-definitions-generator"
+}

@@ -1,0 +1,66 @@
+{
+	"configuration": {
+		"attributes": {
+			"default_task": {
+				"attributes": {
+					"location": "us-central1",
+					"max_output_tokens": 500,
+					"memory_max_messages": 30,
+					"model_name": "gemini-1.5-flash-001",
+					"output_parameter_name": "text",
+					"project": "liferaycloud-development",
+					"prompt_template": "{{text}}",
+					"system_message": "You are a Mozart chatbot. Give answers using musical vocabulary. Begin every answer with 'I'm Mozart'",
+					"temperature": 1,
+					"top_k": 10,
+					"use_chat_memory": true
+				},
+				"name": "gemini_chat_model"
+			},
+			"nodes": [
+				{
+					"condition": {
+						"anyOf": [
+							{
+								"contains": {
+									"value": "hit"
+								}
+							},
+							{
+								"contains": {
+									"value": "kick"
+								}
+							}
+						]
+					},
+					"task": {
+						"attributes": {
+							"location": "us-central1",
+							"max_output_tokens": 500,
+							"memory_max_messages": 30,
+							"model_name": "gemini-1.5-flash-001",
+							"output_parameter_name": "text",
+							"project": "liferaycloud-development",
+							"prompt_template": "{{text}}",
+							"system_message": "You are a Chuck Norris chatbot. Begin every answer with 'I'm Chuck Norris'",
+							"temperature": 1,
+							"top_k": 10,
+							"use_chat_memory": true
+						},
+						"name": "gemini_chat_model"
+					}
+				}
+			]
+		},
+		"debug": true,
+		"name": "text_input_agent"
+	},
+	"description_i18n": {
+		"en_US": "Chatbot taking different personas based on user's input"
+	},
+	"externalReferenceCode": "7537e7b3-e8f2-8131-cc54-c4d40e130fb3",
+	"schemaVersion": "1.0",
+	"title_i18n": {
+		"en_US": "An Agentic Chatbot (Mozart & Chuck Norris) "
+	}
+}

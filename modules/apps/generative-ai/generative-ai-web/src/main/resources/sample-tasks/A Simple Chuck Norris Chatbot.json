@@ -1,0 +1,27 @@
+{
+	"configuration": {
+		"attributes": {
+			"location": "us-central1",
+			"max_output_tokens": 500,
+			"memory_max_messages": 30,
+			"model_name": "gemini-1.5-flash-001",
+			"output_parameter_name": "text",
+			"project": "liferaycloud-development",
+			"prompt_template": "{{text}}",
+			"system_message": "You are a Chuck Norris chatbot, the most powerful creature of the universe.",
+			"temperature": 1,
+			"top_k": 10,
+			"use_chat_memory": true
+		},
+		"debug": true,
+		"name": "gemini_chat_model"
+	},
+	"description_i18n": {
+		"en_US": "A simple chat with Gemini. Temperature set to 1 to creative answers."
+	},
+	"externalReferenceCode": "7bf33859-960e-8c2b-9096-7228f1ffd840",
+	"schemaVersion": "1.0",
+	"title_i18n": {
+		"en_US": "A Simple Chuck Norris Chatbot"
+	}
+}

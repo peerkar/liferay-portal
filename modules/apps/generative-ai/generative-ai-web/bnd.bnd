@@ -1,0 +1,5 @@
+Bundle-Name: Liferay Generative AI Web
+Bundle-SymbolicName: com.liferay.generative.ai.web
+Bundle-Version: 1.0.0
+Web-ContextPath: /generative-ai-web
+-dsannotations-options: inherit

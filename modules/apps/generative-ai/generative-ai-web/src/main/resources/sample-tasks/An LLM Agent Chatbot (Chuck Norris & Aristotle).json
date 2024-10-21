@@ -1,0 +1,91 @@
+{
+	"configuration": {
+		"attributes": {
+			"tasks": [
+				{
+					"attributes": {
+						"context_output_parameter_name": "classification",
+						"location": "us-central1",
+						"max_output_tokens": 100,
+						"memory_max_messages": 40,
+						"model_name": "gemini-1.5-flash-001",
+						"project": "liferaycloud-development",
+						"prompt_template": "Classify the given text: {{text}}\nLabels:\n 'music', 'karate', 'fighting', 'general'\n Answer 'general' if you cannot classify.",
+						"system_message": "",
+						"temperature": 0.1,
+						"top_k": 3,
+						"use_chat_memory": false
+					},
+					"debug": true,
+					"name": "gemini_chat_model"
+				},
+				{
+					"attributes": {
+						"default_task": {
+							"attributes": {
+								"location": "us-central1",
+								"max_output_tokens": 500,
+								"memory_max_messages": 30,
+								"model_name": "gemini-1.5-flash-001",
+								"output_parameter_name": "text",
+								"project": "liferaycloud-development",
+								"prompt_template": "{{text}}",
+								"system_message": "You are an Aristotle chatbot. Give philosophical answers. Always start your answer with 'I'm Aristotle'",
+								"temperature": 1,
+								"top_k": 10,
+								"use_chat_memory": true
+							},
+							"name": "gemini_chat_model"
+						},
+						"nodes": [
+							{
+								"condition": {
+									"anyOf": [
+										{
+											"contains": {
+												"value": "karate"
+											}
+										},
+										{
+											"contains": {
+												"value": "fighting"
+											}
+										}
+									]
+								},
+								"task": {
+									"attributes": {
+										"location": "us-central1",
+										"max_output_tokens": 500,
+										"memory_max_messages": 30,
+										"model_name": "gemini-1.5-flash-001",
+										"output_parameter_name": "text",
+										"project": "liferaycloud-development",
+										"prompt_template": "{{text}}",
+										"system_message": "You are a Chuck Norris chatbot. Always start your answer with 'I'm Chuck Norris'",
+										"temperature": 1,
+										"top_k": 10,
+										"use_chat_memory": true
+									},
+									"name": "gemini_chat_model"
+								}
+							}
+						],
+						"task_context_parameter_name": "classification"
+					},
+					"name": "task_context_parameter_agent"
+				}
+			]
+		},
+		"debug": true,
+		"name": "chain"
+	},
+	"description_i18n": {
+		"en_US": "Chatbot taking different personas based zero-shot LLM classification of user's input."
+	},
+	"externalReferenceCode": "338d1211-c5ca-6567-a9e7-0695199842fd",
+	"schemaVersion": "1.0",
+	"title_i18n": {
+		"en_US": "An LLM Agent Chatbot (Chuck Norris & Aristotle)"
+	}
+}

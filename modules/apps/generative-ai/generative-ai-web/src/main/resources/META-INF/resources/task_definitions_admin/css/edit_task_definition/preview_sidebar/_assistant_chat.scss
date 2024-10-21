@@ -1,0 +1,87 @@
+@import 'atlas-variables';
+
+// #p_p_id_com_liferay_ray_assistant_web_internal_portlet_RayAssistantPortlet_>nav {
+// 	display: none;
+// }
+
+body,
+html {
+	margin: 0;
+	padding: 0;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	border-left: 1px solid $gray-300;
+}
+
+#rayAssistantRootElement {
+	display: flex;
+	justify-content: center;
+	padding: 20px;
+	width: 100%;
+}
+
+#rayAssistantContainer {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+#rayAssistantChatInput {
+	overflow: hidden;
+	resize: none;
+}
+
+#rayAssistantConversationContainer {
+	align-content: end;
+	flex: 80%;
+	overflow: auto;
+	padding-right: 15px;
+	padding-left: 2px;
+
+	.ai-generated-image-container{
+		overflow: hidden;
+		max-height: 200px;
+		padding: 1rem;
+		display: flex;
+		justify-content: center; /* Add this line */
+		align-items: center; /* Add this line */
+
+		.ai-generated-image {
+		width: 100%;
+		margin-bottom: 1rem;
+	}
+}
+}
+
+#rayAssistantChatInputContainer {
+	flex: 20%;
+	padding-top: 20px;
+}
+
+.ray-assistant__card {
+	height: 100%;
+	min-width: 350px !important;
+	width: 900px;
+}
+
+.ray-assistant__card-body {
+	height: 100%;
+	padding: 2rem !important;
+}
+
+.input-components {
+	height: 100% !important;
+}
+
+#rayAssistantChatInputSubmitButton {
+	height: 40px !important;
+}
+
+.inset-item {
+	align-items: end !important;
+}

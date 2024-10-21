@@ -1,0 +1,92 @@
+/**
+ * SPDX-FileCopyrightText: (c) 2024 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
+
+package com.liferay.generative.ai.web.internal.display.context;
+
+import com.liferay.item.selector.ItemSelector;
+import com.liferay.learn.LearnMessageUtil;
+import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.util.WebKeys;
+
+import java.util.Map;
+
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
+
+/**
+ * @author Petteri Karttunen
+ */
+public class EditTaskDefinitionDisplayContext {
+
+	public EditTaskDefinitionDisplayContext(
+		ItemSelector itemSelector, RenderRequest renderRequest,
+		RenderResponse renderResponse) {
+
+		_itemSelector = itemSelector;
+		_renderRequest = renderRequest;
+		_renderResponse = renderResponse;
+
+		_themeDisplay = (ThemeDisplay)renderRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
+	}
+
+	public Map<String, Object> getProps() {
+		return HashMapBuilder.<String, Object>put(
+			"defaultLocale", LocaleUtil.toLanguageId(LocaleUtil.getDefault())
+		).put(
+			"isCompanyAdmin",
+			() -> {
+				PermissionChecker permissionChecker =
+					_themeDisplay.getPermissionChecker();
+
+				return permissionChecker.isCompanyAdmin();
+			}
+		).put(
+			"learnMessages", LearnMessageUtil.getJSONObject("generative-ai-web")
+		).put(
+			"locale", _themeDisplay.getLanguageId()
+		).put(
+			"namespace", _renderResponse.getNamespace()
+		).put(
+			"redirectURL", getRedirect()
+		).put(
+			"taskDefinitionId",
+			ParamUtil.getLong(_renderRequest, "taskDefinitionId")
+		).build();
+	}
+
+	public String getRedirect() {
+		if (Validator.isNotNull(_redirect)) {
+			return _redirect;
+		}
+
+		String redirect = ParamUtil.getString(_renderRequest, "redirect");
+
+		if (Validator.isNull(redirect)) {
+			redirect = PortletURLBuilder.createRenderURL(
+				_renderResponse
+			).setMVCRenderCommandName(
+				"/task_definitions_admin/view_task_definitions"
+			).buildString();
+		}
+
+		_redirect = redirect;
+
+		return _redirect;
+	}
+
+	private final ItemSelector _itemSelector;
+	private String _redirect;
+	private final RenderRequest _renderRequest;
+	private final RenderResponse _renderResponse;
+	private final ThemeDisplay _themeDisplay;
+
+}

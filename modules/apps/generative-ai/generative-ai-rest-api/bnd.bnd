@@ -1,0 +1,6 @@
+Bundle-Name: Liferay Generative AI REST API
+Bundle-SymbolicName: com.liferay.generative.ai.rest.api
+Bundle-Version: 1.0.0
+Export-Package:\
+	com.liferay.generative.ai.rest.dto.v1_0,\
+	com.liferay.generative.ai.rest.resource.v1_0

@@ -1,0 +1,11 @@
+apiDir: "../generative-ai-rest-api/src/main/java"
+apiPackagePath: "com.liferay.generative.ai.rest"
+application:
+    baseURI: "/generative-ai"
+    className: "GenerativeAIRESTApplication"
+    name: "Liferay.Generative.AI.REST"
+author: "Petteri Karttunen"
+clientDir: "../generative-ai-rest-client/src/main/java"
+compatibilityVersion: 6
+forcePredictableOperationId: true
+testDir: "../generative-ai-rest-test/src/testIntegration/java"

@@ -1,0 +1,21 @@
+{
+	"configuration": {
+		"attributes": {
+			"api_key": "MY_API_KEY",
+			"model": "dall-e-2",
+			"output_parameter_name": "image",
+			"prompt_template": "{{text}}",
+			"response_format": "b64_json"
+		},
+		"debug": true,
+		"name": "openai_image_model"
+	},
+	"description_i18n": {
+		"en_US": "Generates an image as base64 encoded string "
+	},
+	"externalReferenceCode": "dd78b9b3-ef73-d482-639e-cbaa256ccc3f",
+	"schemaVersion": "1.0",
+	"title_i18n": {
+		"en_US": "Create Images with OpenAI (Base 64)"
+	}
+}

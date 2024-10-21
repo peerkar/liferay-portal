@@ -1,0 +1,14 @@
+Bundle-Name: Liferay Generative AI Task API
+Bundle-SymbolicName: com.liferay.generative.ai.task.api
+Bundle-Version: 1.0.0
+Export-Package:\
+	com.liferay.generative.ai.task.configuration,\
+	com.liferay.generative.ai.task.constants,\
+	com.liferay.generative.ai.task.exception,\
+	com.liferay.generative.ai.task.model,\
+	com.liferay.generative.ai.task.service,\
+	com.liferay.generative.ai.task.service.persistence,\
+	com.liferay.generative.ai.task.task,\
+	com.liferay.generative.ai.task.task.context
+-check: EXPORTS
+-includeresource: META-INF/service.xml=../generative-ai-task-service/service.xml

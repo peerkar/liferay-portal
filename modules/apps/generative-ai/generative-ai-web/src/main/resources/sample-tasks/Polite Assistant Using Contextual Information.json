@@ -1,0 +1,29 @@
+{
+	"configuration": {
+		"attributes": {
+			"location": "us-central1",
+			"max_output_tokens": 100,
+			"max_retries": 2,
+			"memory_max_messages": 30,
+			"model_name": "gemini-1.5-flash-001",
+			"output_parameter_name": "text",
+			"project": "liferaycloud-development",
+			"prompt_template": "{{text}}",
+			"system_message": "You are a polite company assistant. When starting the conversation, greet the employee by first name which is {{userFirstName}}. Employees might pose you difficult questions. If you don't know the answer, say 'Dear {{userFirstName}}, I'm terribly sorry, but I don't really know'",
+			"temperature": 0.5,
+			"top_k": 1,
+			"top_p": 0.95,
+			"use_cache": false,
+			"use_chat_memory": true
+		},
+		"debug": true,
+		"name": "gemini_chat_model"
+	},
+	"description_i18n": {
+	},
+	"externalReferenceCode": "simpler",
+	"schemaVersion": "1.0",
+	"title_i18n": {
+		"en_US": "Polite Assistant Using Contextual Information"
+	}
+}

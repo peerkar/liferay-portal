@@ -1,0 +1,26 @@
+{
+	"configuration": {
+		"attributes": {
+			"location": "us-central1",
+			"max_output_tokens": 1000,
+			"model_name": "gemini-1.5-flash-001",
+			"output_parameter_name": "text",
+			"project": "liferaycloud-development",
+			"prompt_template": ": {{text}}",
+			"system_message": "Summarize the given content",
+			"temperature": 0.5,
+			"top_k": 1,
+			"top_p": 1
+		},
+		"debug": true,
+		"name": "gemini_chat_model"
+	},
+	"description_i18n": {
+		"en_US": "Generate a summary for any content."
+	},
+	"externalReferenceCode": "summarize",
+	"schemaVersion": "1.0",
+	"title_i18n": {
+		"en_US": "Summarize"
+	}
+}
