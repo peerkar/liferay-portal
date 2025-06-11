@@ -395,7 +395,7 @@ public class FreeMarkerTool {
 			"_filterBiFunction.apply(" + schemaVarName +
 				"Resource, filterString)"
 		).put(
-			"siteId", "Long.valueOf(siteKey)"
+			"siteId", "siteKey"
 		).put(
 			"sorts",
 			"_sortsBiFunction.apply(" + schemaVarName + "Resource, sortsString)"
@@ -507,7 +507,7 @@ public class FreeMarkerTool {
 			"@GraphQLName(\"assetLibraryId\") java.lang.Long assetLibraryId",
 			"@GraphQLName(\"assetLibraryId\") @NotEmpty String assetLibraryId");
 		parameters = StringUtil.replace(
-			parameters, "@GraphQLName(\"siteId\") java.lang.Long siteId",
+			parameters, "@GraphQLName(\"siteId\") java.lang.String siteId",
 			"@GraphQLName(\"siteKey\") @NotEmpty String siteKey");
 		parameters = StringUtil.replace(
 			parameters, "com.liferay.portal.kernel.search.filter.Filter filter",

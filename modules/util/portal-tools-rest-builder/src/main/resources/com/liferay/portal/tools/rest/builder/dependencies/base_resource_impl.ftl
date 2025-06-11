@@ -67,6 +67,7 @@ import com.liferay.portal.vulcan.permission.ModelPermissionsUtil;
 import com.liferay.portal.vulcan.permission.Permission;
 import com.liferay.portal.vulcan.resource.EntityModelResource;
 import com.liferay.portal.vulcan.util.ActionUtil;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.LocalDateTimeUtil;
 import com.liferay.portal.vulcan.util.UriInfoUtil;
 import ${configYAML.javaEEPackage}.annotation.Generated;
@@ -399,17 +400,19 @@ public abstract class Base${schemaName}ResourceImpl
 				<#if freeMarkerTool.hasParameter(javaMethodSignature, "siteId")>
 					<#assign generateGetPermissionCheckerMethods = true />
 
-					String portletName = getPermissionCheckerPortletName(siteId);
+					Long groupId = GroupUtil.getGroupId(contextCompany.getCompanyId(), siteId, groupLocalService);
 
-					PermissionServiceUtil.checkPermission(siteId, portletName, siteId);
+					String portletName = getPermissionCheckerPortletName(groupId);
+
+					PermissionServiceUtil.checkPermission(groupId, portletName, groupId);
 
 					return toPermissionPage(
 						<@getActions
-							resourceId="siteId"
+							resourceId="groupId"
 							resourceName="portletName"
 							source="Site" + schemaName
 						/>,
-						siteId, portletName, roleNames);
+						groupId, portletName, roleNames);
 				<#else>
 					throw new UnsupportedOperationException("This method needs to be implemented");
 				</#if>
@@ -454,15 +457,17 @@ public abstract class Base${schemaName}ResourceImpl
 				<#if freeMarkerTool.hasParameter(javaMethodSignature, "siteId")>
 					<#assign generateGetPermissionCheckerMethods = true />
 
-					String portletName = getPermissionCheckerPortletName(siteId);
+					Long groupId = GroupUtil.getGroupId(contextCompany.getCompanyId(), siteId, groupLocalService);
+
+					String portletName = getPermissionCheckerPortletName(groupId);
 
 					<@updateResourcePermissions
-						groupId = "siteId"
-						resourceId = "siteId"
+						groupId = "groupId"
+						resourceId = "groupId"
 						resourceName = "portletName"
 					>
 						<@getActions
-							resourceId="siteId"
+							resourceId="groupId"
 							resourceName="portletName"
 							source="Site" + schemaName
 						/>
@@ -760,7 +765,10 @@ public abstract class Base${schemaName}ResourceImpl
 										<#if stringUtil.equals(javaMethodParameter.parameterName, "externalReferenceCode")>
 											${schemaVarName}.get${javaMethodParameter.parameterName?cap_first}()
 										<#elseif getByExternalReferenceCodeBatchJavaMethodSignature.parentSchemaName?? && stringUtil.equals(javaMethodParameter.parameterName, getByExternalReferenceCodeBatchJavaMethodSignature.parentSchemaName!?uncap_first + "Id")>
-											<#if properties?keys?seq_contains(javaMethodParameter.parameterName)>
+											<#if properties?keys?seq_contains("siteId")>
+												${schemaVarName}.get${javaMethodParameter.parameterName?cap_first}() != null ?
+												String.valueOf(${schemaVarName}.get${javaMethodParameter.parameterName?cap_first}()) :
+											<#elseif properties?keys?seq_contains(javaMethodParameter.parameterName)>
 												${schemaVarName}.get${javaMethodParameter.parameterName?cap_first}() != null ?
 												${schemaVarName}.get${javaMethodParameter.parameterName?cap_first}() :
 											</#if>
@@ -943,7 +951,10 @@ public abstract class Base${schemaName}ResourceImpl
 								<#if stringUtil.equals(javaMethodParameter.parameterName, "externalReferenceCode")>
 									${schemaVarName}.get${javaMethodParameter.parameterName?cap_first}()
 								<#elseif putByExternalReferenceCodeBatchJavaMethodSignature.parentSchemaName?? && stringUtil.equals(javaMethodParameter.parameterName, putByExternalReferenceCodeBatchJavaMethodSignature.parentSchemaName!?uncap_first + "Id")>
-									<#if properties?keys?seq_contains(javaMethodParameter.parameterName)>
+									<#if properties?keys?seq_contains("siteId")>
+										${schemaVarName}.get${javaMethodParameter.parameterName?cap_first}() != null ?
+										String.valueOf(${schemaVarName}.get${javaMethodParameter.parameterName?cap_first}()) :
+									<#elseif properties?keys?seq_contains(javaMethodParameter.parameterName)>
 										${schemaVarName}.get${javaMethodParameter.parameterName?cap_first}() != null ?
 										${schemaVarName}.get${javaMethodParameter.parameterName?cap_first}() :
 									</#if>
@@ -1210,6 +1221,8 @@ public abstract class Base${schemaName}ResourceImpl
 						<#elseif stringUtil.equals(javaMethodParameter.parameterName, schemaVarName + "Id") || stringUtil.equals(javaMethodParameter.parameterName, "id")>
 							<#if properties?keys?seq_contains("id")>
 								${schemaVarName}.getId() != null ? ${schemaVarName}.getId() :
+							<#elseif properties?keys?seq_contains("siteId")>
+    							(${schemaVarName}.get${schemaName}() != null) ? String.valueOf(${schemaVarName}.get${schemaName}Id()) :
 							<#elseif properties?keys?seq_contains(schemaVarName + "Id")>
 								(${schemaVarName}.get${schemaName}Id() != null) ? ${schemaVarName}.get${schemaName}Id() :
 							</#if>
@@ -1255,6 +1268,8 @@ public abstract class Base${schemaName}ResourceImpl
 						<#elseif stringUtil.equals(javaMethodParameter.parameterName, schemaVarName + "Id") || stringUtil.equals(javaMethodParameter.parameterName, "id")>
 							<#if properties?keys?seq_contains("id")>
 								${schemaVarName}.getId() != null ? ${schemaVarName}.getId() :
+							<#elseif properties?keys?seq_contains("siteId")>
+								(${schemaVarName}.get${schemaName}() != null) ? String.valueOf(${schemaVarName}.get${schemaName}Id()) :
 							<#elseif properties?keys?seq_contains(schemaVarName + "Id")>
 								(${schemaVarName}.get${schemaName}Id() != null) ? ${schemaVarName}.get${schemaName}Id() :
 							</#if>
@@ -1733,11 +1748,10 @@ public abstract class Base${schemaName}ResourceImpl
 	type
 	value
 >
-	<#if stringUtil.equals(value, "assetLibraryId") || stringUtil.equals(value, "siteId")>
+	<#if stringUtil.equals(value, "assetLibraryId")>
 		(Long)parameters.get("${value}")
 	<#elseif stringUtil.startsWith(type, "[L")>
 		(
-
 		<#if type?contains("java.lang.Boolean")>
 			Boolean[]
 		<#elseif type?contains("java.util.Date")>
