@@ -357,7 +357,7 @@ public class Mutation {
 			blogPostingResource ->
 				blogPostingResource.
 					deleteSiteBlogPostingByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode));
+						siteKey, externalReferenceCode));
 
 		return true;
 	}
@@ -402,7 +402,7 @@ public class Mutation {
 			_blogPostingResourceComponentServiceObjects,
 			this::_populateResourceContext,
 			blogPostingResource -> blogPostingResource.postSiteBlogPosting(
-				Long.valueOf(siteKey), blogPosting));
+				siteKey, blogPosting));
 	}
 
 	@GraphQLField
@@ -416,7 +416,7 @@ public class Mutation {
 			_blogPostingResourceComponentServiceObjects,
 			this::_populateResourceContext,
 			blogPostingResource -> blogPostingResource.postSiteBlogPostingBatch(
-				Long.valueOf(siteKey), callbackURL, object));
+				siteKey, callbackURL, object));
 	}
 
 	@GraphQLField
@@ -435,7 +435,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			blogPostingResource ->
 				blogPostingResource.postSiteBlogPostingsPageExportBatch(
-					Long.valueOf(siteKey), search,
+					siteKey, search,
 					_filterBiFunction.apply(blogPostingResource, filterString),
 					_sortsBiFunction.apply(blogPostingResource, sortsString),
 					callbackURL, contentType, fieldNames));
@@ -519,7 +519,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			blogPostingResource ->
 				blogPostingResource.putSiteBlogPostingByExternalReferenceCode(
-					Long.valueOf(siteKey), externalReferenceCode, blogPosting));
+					siteKey, externalReferenceCode, blogPosting));
 	}
 
 	@GraphQLField
@@ -537,7 +537,7 @@ public class Mutation {
 			blogPostingResource -> {
 				Page paginationPage =
 					blogPostingResource.putSiteBlogPostingPermissionsPage(
-						Long.valueOf(siteKey), permissions);
+						siteKey, permissions);
 
 				return paginationPage.getItems();
 			});
@@ -552,8 +552,7 @@ public class Mutation {
 			_blogPostingResourceComponentServiceObjects,
 			this::_populateResourceContext,
 			blogPostingResource ->
-				blogPostingResource.putSiteBlogPostingSubscribe(
-					Long.valueOf(siteKey)));
+				blogPostingResource.putSiteBlogPostingSubscribe(siteKey));
 
 		return true;
 	}
@@ -567,8 +566,7 @@ public class Mutation {
 			_blogPostingResourceComponentServiceObjects,
 			this::_populateResourceContext,
 			blogPostingResource ->
-				blogPostingResource.putSiteBlogPostingUnsubscribe(
-					Long.valueOf(siteKey)));
+				blogPostingResource.putSiteBlogPostingUnsubscribe(siteKey));
 
 		return true;
 	}
@@ -616,7 +614,7 @@ public class Mutation {
 			blogPostingImageResource ->
 				blogPostingImageResource.
 					deleteSiteBlogPostingImageByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode));
+						siteKey, externalReferenceCode));
 
 		return true;
 	}
@@ -638,7 +636,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			blogPostingImageResource ->
 				blogPostingImageResource.postSiteBlogPostingImage(
-					Long.valueOf(siteKey), multipartBody));
+					siteKey, multipartBody));
 	}
 
 	@GraphQLField
@@ -654,7 +652,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			blogPostingImageResource ->
 				blogPostingImageResource.postSiteBlogPostingImageBatch(
-					Long.valueOf(siteKey), multipartBody, callbackURL, object));
+					siteKey, multipartBody, callbackURL, object));
 	}
 
 	@GraphQLField
@@ -674,7 +672,7 @@ public class Mutation {
 			blogPostingImageResource ->
 				blogPostingImageResource.
 					postSiteBlogPostingImagesPageExportBatch(
-						Long.valueOf(siteKey), search,
+						siteKey, search,
 						_filterBiFunction.apply(
 							blogPostingImageResource, filterString),
 						_sortsBiFunction.apply(
@@ -727,7 +725,7 @@ public class Mutation {
 			commentResource ->
 				commentResource.
 					deleteSiteBlogPostingByExternalReferenceCodeBlogPostingExternalReferenceCodeCommentByExternalReferenceCode(
-						Long.valueOf(siteKey), blogPostingExternalReferenceCode,
+						siteKey, blogPostingExternalReferenceCode,
 						externalReferenceCode));
 
 		return true;
@@ -751,8 +749,7 @@ public class Mutation {
 			commentResource ->
 				commentResource.
 					deleteSiteCommentByExternalReferenceCodeParentCommentExternalReferenceCodeCommentByExternalReferenceCode(
-						Long.valueOf(siteKey),
-						parentCommentExternalReferenceCode,
+						siteKey, parentCommentExternalReferenceCode,
 						externalReferenceCode));
 
 		return true;
@@ -776,7 +773,7 @@ public class Mutation {
 			commentResource ->
 				commentResource.
 					deleteSiteDocumentByExternalReferenceCodeDocumentExternalReferenceCodeCommentByExternalReferenceCode(
-						Long.valueOf(siteKey), documentExternalReferenceCode,
+						siteKey, documentExternalReferenceCode,
 						externalReferenceCode));
 
 		return true;
@@ -800,8 +797,7 @@ public class Mutation {
 			commentResource ->
 				commentResource.
 					deleteSiteStructuredContentByExternalReferenceCodeStructuredContentExternalReferenceCodeCommentByExternalReferenceCode(
-						Long.valueOf(siteKey),
-						structuredContentExternalReferenceCode,
+						siteKey, structuredContentExternalReferenceCode,
 						externalReferenceCode));
 
 		return true;
@@ -1018,7 +1014,7 @@ public class Mutation {
 			commentResource ->
 				commentResource.
 					putSiteBlogPostingByExternalReferenceCodeBlogPostingExternalReferenceCodeCommentByExternalReferenceCode(
-						Long.valueOf(siteKey), blogPostingExternalReferenceCode,
+						siteKey, blogPostingExternalReferenceCode,
 						externalReferenceCode, comment));
 	}
 
@@ -1041,8 +1037,7 @@ public class Mutation {
 			commentResource ->
 				commentResource.
 					putSiteCommentByExternalReferenceCodeParentCommentExternalReferenceCodeCommentByExternalReferenceCode(
-						Long.valueOf(siteKey),
-						parentCommentExternalReferenceCode,
+						siteKey, parentCommentExternalReferenceCode,
 						externalReferenceCode, comment));
 	}
 
@@ -1065,7 +1060,7 @@ public class Mutation {
 			commentResource ->
 				commentResource.
 					putSiteDocumentByExternalReferenceCodeDocumentExternalReferenceCodeCommentByExternalReferenceCode(
-						Long.valueOf(siteKey), documentExternalReferenceCode,
+						siteKey, documentExternalReferenceCode,
 						externalReferenceCode, comment));
 	}
 
@@ -1088,8 +1083,7 @@ public class Mutation {
 			commentResource ->
 				commentResource.
 					putSiteStructuredContentByExternalReferenceCodeStructuredContentExternalReferenceCodeCommentByExternalReferenceCode(
-						Long.valueOf(siteKey),
-						structuredContentExternalReferenceCode,
+						siteKey, structuredContentExternalReferenceCode,
 						externalReferenceCode, comment));
 	}
 
@@ -1134,7 +1128,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			contentElementResource ->
 				contentElementResource.postSiteContentElementsPageExportBatch(
-					Long.valueOf(siteKey), search,
+					siteKey, search,
 					_filterBiFunction.apply(
 						contentElementResource, filterString),
 					_sortsBiFunction.apply(contentElementResource, sortsString),
@@ -1183,7 +1177,7 @@ public class Mutation {
 			contentStructureResource ->
 				contentStructureResource.
 					postSiteContentStructuresPageExportBatch(
-						Long.valueOf(siteKey), search,
+						siteKey, search,
 						_filterBiFunction.apply(
 							contentStructureResource, filterString),
 						_sortsBiFunction.apply(
@@ -1250,7 +1244,7 @@ public class Mutation {
 				Page paginationPage =
 					contentStructureResource.
 						putSiteContentStructurePermissionsPage(
-							Long.valueOf(siteKey), permissions);
+							siteKey, permissions);
 
 				return paginationPage.getItems();
 			});
@@ -1297,7 +1291,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			contentTemplateResource ->
 				contentTemplateResource.postSiteContentTemplatesPageExportBatch(
-					Long.valueOf(siteKey), search,
+					siteKey, search,
 					_filterBiFunction.apply(
 						contentTemplateResource, filterString),
 					_sortsBiFunction.apply(
@@ -1380,7 +1374,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			documentResource ->
 				documentResource.deleteSiteDocumentByExternalReferenceCode(
-					Long.valueOf(siteKey), externalReferenceCode));
+					siteKey, externalReferenceCode));
 
 		return true;
 	}
@@ -1547,7 +1541,7 @@ public class Mutation {
 			_documentResourceComponentServiceObjects,
 			this::_populateResourceContext,
 			documentResource -> documentResource.postSiteDocument(
-				Long.valueOf(siteKey), multipartBody));
+				siteKey, multipartBody));
 	}
 
 	@GraphQLField
@@ -1562,7 +1556,7 @@ public class Mutation {
 			_documentResourceComponentServiceObjects,
 			this::_populateResourceContext,
 			documentResource -> documentResource.postSiteDocumentBatch(
-				Long.valueOf(siteKey), multipartBody, callbackURL, object));
+				siteKey, multipartBody, callbackURL, object));
 	}
 
 	@GraphQLField
@@ -1581,7 +1575,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			documentResource ->
 				documentResource.postSiteDocumentsPageExportBatch(
-					Long.valueOf(siteKey), search,
+					siteKey, search,
 					_filterBiFunction.apply(documentResource, filterString),
 					_sortsBiFunction.apply(documentResource, sortsString),
 					callbackURL, contentType, fieldNames));
@@ -1717,8 +1711,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			documentResource ->
 				documentResource.putSiteDocumentByExternalReferenceCode(
-					Long.valueOf(siteKey), externalReferenceCode,
-					multipartBody));
+					siteKey, externalReferenceCode, multipartBody));
 	}
 
 	@GraphQLField
@@ -1736,7 +1729,7 @@ public class Mutation {
 			documentResource -> {
 				Page paginationPage =
 					documentResource.putSiteDocumentPermissionsPage(
-						Long.valueOf(siteKey), permissions);
+						siteKey, permissions);
 
 				return paginationPage.getItems();
 			});
@@ -1846,7 +1839,7 @@ public class Mutation {
 			documentDataDefinitionTypeResource ->
 				documentDataDefinitionTypeResource.
 					postSiteDocumentDataDefinitionType(
-						Long.valueOf(siteKey), documentDataDefinitionType));
+						siteKey, documentDataDefinitionType));
 	}
 
 	@GraphQLField
@@ -1862,7 +1855,7 @@ public class Mutation {
 			documentDataDefinitionTypeResource ->
 				documentDataDefinitionTypeResource.
 					postSiteDocumentDataDefinitionTypeBatch(
-						Long.valueOf(siteKey), callbackURL, object));
+						siteKey, callbackURL, object));
 	}
 
 	@GraphQLField
@@ -1882,7 +1875,7 @@ public class Mutation {
 			documentDataDefinitionTypeResource ->
 				documentDataDefinitionTypeResource.
 					postSiteDocumentDataDefinitionTypesPageExportBatch(
-						Long.valueOf(siteKey), search,
+						siteKey, search,
 						_filterBiFunction.apply(
 							documentDataDefinitionTypeResource, filterString),
 						_sortsBiFunction.apply(
@@ -1951,7 +1944,7 @@ public class Mutation {
 			documentFolderResource ->
 				documentFolderResource.
 					deleteSiteDocumentsFolderByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode));
+						siteKey, externalReferenceCode));
 
 		return true;
 	}
@@ -2069,7 +2062,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			documentFolderResource ->
 				documentFolderResource.postSiteDocumentFolder(
-					Long.valueOf(siteKey), documentFolder));
+					siteKey, documentFolder));
 	}
 
 	@GraphQLField
@@ -2084,7 +2077,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			documentFolderResource ->
 				documentFolderResource.postSiteDocumentFolderBatch(
-					Long.valueOf(siteKey), callbackURL, object));
+					siteKey, callbackURL, object));
 	}
 
 	@GraphQLField
@@ -2103,7 +2096,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			documentFolderResource ->
 				documentFolderResource.postSiteDocumentFoldersPageExportBatch(
-					Long.valueOf(siteKey), search,
+					siteKey, search,
 					_filterBiFunction.apply(
 						documentFolderResource, filterString),
 					_sortsBiFunction.apply(documentFolderResource, sortsString),
@@ -2243,7 +2236,7 @@ public class Mutation {
 			documentFolderResource -> {
 				Page paginationPage =
 					documentFolderResource.putSiteDocumentFolderPermissionsPage(
-						Long.valueOf(siteKey), permissions);
+						siteKey, permissions);
 
 				return paginationPage.getItems();
 			});
@@ -2264,8 +2257,7 @@ public class Mutation {
 			documentFolderResource ->
 				documentFolderResource.
 					putSiteDocumentsFolderByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode,
-						documentFolder));
+						siteKey, externalReferenceCode, documentFolder));
 	}
 
 	@GraphQLField(
@@ -2332,7 +2324,7 @@ public class Mutation {
 			documentMetadataSetResource ->
 				documentMetadataSetResource.
 					deleteSiteDocumentMetadataSetByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode));
+						siteKey, externalReferenceCode));
 
 		return true;
 	}
@@ -2398,7 +2390,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			documentMetadataSetResource ->
 				documentMetadataSetResource.postSiteDocumentMetadataSet(
-					Long.valueOf(siteKey), documentMetadataSet));
+					siteKey, documentMetadataSet));
 	}
 
 	@GraphQLField
@@ -2413,7 +2405,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			documentMetadataSetResource ->
 				documentMetadataSetResource.postSiteDocumentMetadataSetBatch(
-					Long.valueOf(siteKey), callbackURL, object));
+					siteKey, callbackURL, object));
 	}
 
 	@GraphQLField
@@ -2430,8 +2422,7 @@ public class Mutation {
 			documentMetadataSetResource ->
 				documentMetadataSetResource.
 					postSiteDocumentMetadataSetsPageExportBatch(
-						Long.valueOf(siteKey), callbackURL, contentType,
-						fieldNames));
+						siteKey, callbackURL, contentType, fieldNames));
 	}
 
 	@GraphQLField(
@@ -2474,8 +2465,7 @@ public class Mutation {
 			documentMetadataSetResource ->
 				documentMetadataSetResource.
 					putSiteDocumentMetadataSetByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode,
-						documentMetadataSet));
+						siteKey, externalReferenceCode, documentMetadataSet));
 	}
 
 	@GraphQLField(
@@ -2523,7 +2513,7 @@ public class Mutation {
 			documentShortcutResource ->
 				documentShortcutResource.
 					deleteSiteDocumentShortcutByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode));
+						siteKey, externalReferenceCode));
 
 		return true;
 	}
@@ -2602,7 +2592,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			documentShortcutResource ->
 				documentShortcutResource.postSiteDocumentShortcut(
-					Long.valueOf(siteKey), documentShortcut));
+					siteKey, documentShortcut));
 	}
 
 	@GraphQLField
@@ -2617,7 +2607,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			documentShortcutResource ->
 				documentShortcutResource.postSiteDocumentShortcutBatch(
-					Long.valueOf(siteKey), callbackURL, object));
+					siteKey, callbackURL, object));
 	}
 
 	@GraphQLField
@@ -2634,8 +2624,7 @@ public class Mutation {
 			documentShortcutResource ->
 				documentShortcutResource.
 					postSiteDocumentShortcutsPageExportBatch(
-						Long.valueOf(siteKey), callbackURL, contentType,
-						fieldNames));
+						siteKey, callbackURL, contentType, fieldNames));
 	}
 
 	@GraphQLField(
@@ -2681,8 +2670,7 @@ public class Mutation {
 			documentShortcutResource ->
 				documentShortcutResource.
 					putSiteDocumentShortcutByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode,
-						documentShortcut));
+						siteKey, externalReferenceCode, documentShortcut));
 	}
 
 	@GraphQLField(
@@ -2747,7 +2735,7 @@ public class Mutation {
 			knowledgeBaseArticleResource ->
 				knowledgeBaseArticleResource.
 					deleteSiteKnowledgeBaseArticleByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode));
+						siteKey, externalReferenceCode));
 
 		return true;
 	}
@@ -2877,7 +2865,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			knowledgeBaseArticleResource ->
 				knowledgeBaseArticleResource.postSiteKnowledgeBaseArticle(
-					Long.valueOf(siteKey), knowledgeBaseArticle));
+					siteKey, knowledgeBaseArticle));
 	}
 
 	@GraphQLField
@@ -2892,7 +2880,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			knowledgeBaseArticleResource ->
 				knowledgeBaseArticleResource.postSiteKnowledgeBaseArticleBatch(
-					Long.valueOf(siteKey), callbackURL, object));
+					siteKey, callbackURL, object));
 	}
 
 	@GraphQLField
@@ -2912,7 +2900,7 @@ public class Mutation {
 			knowledgeBaseArticleResource ->
 				knowledgeBaseArticleResource.
 					postSiteKnowledgeBaseArticlesPageExportBatch(
-						Long.valueOf(siteKey), search,
+						siteKey, search,
 						_filterBiFunction.apply(
 							knowledgeBaseArticleResource, filterString),
 						_sortsBiFunction.apply(
@@ -3038,8 +3026,7 @@ public class Mutation {
 			knowledgeBaseArticleResource ->
 				knowledgeBaseArticleResource.
 					putSiteKnowledgeBaseArticleByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode,
-						knowledgeBaseArticle));
+						siteKey, externalReferenceCode, knowledgeBaseArticle));
 	}
 
 	@GraphQLField
@@ -3058,7 +3045,7 @@ public class Mutation {
 				Page paginationPage =
 					knowledgeBaseArticleResource.
 						putSiteKnowledgeBaseArticlePermissionsPage(
-							Long.valueOf(siteKey), permissions);
+							siteKey, permissions);
 
 				return paginationPage.getItems();
 			});
@@ -3074,8 +3061,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			knowledgeBaseArticleResource ->
 				knowledgeBaseArticleResource.
-					putSiteKnowledgeBaseArticleSubscribe(
-						Long.valueOf(siteKey)));
+					putSiteKnowledgeBaseArticleSubscribe(siteKey));
 
 		return true;
 	}
@@ -3090,8 +3076,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			knowledgeBaseArticleResource ->
 				knowledgeBaseArticleResource.
-					putSiteKnowledgeBaseArticleUnsubscribe(
-						Long.valueOf(siteKey)));
+					putSiteKnowledgeBaseArticleUnsubscribe(siteKey));
 
 		return true;
 	}
@@ -3146,8 +3131,7 @@ public class Mutation {
 			knowledgeBaseAttachmentResource ->
 				knowledgeBaseAttachmentResource.
 					deleteSiteKnowledgeBaseArticleByExternalReferenceCodeKnowledgeBaseArticleExternalReferenceCodeKnowledgeBaseAttachmentByExternalReferenceCode(
-						Long.valueOf(siteKey),
-						knowledgeBaseArticleExternalReferenceCode,
+						siteKey, knowledgeBaseArticleExternalReferenceCode,
 						externalReferenceCode));
 
 		return true;
@@ -3259,7 +3243,7 @@ public class Mutation {
 			knowledgeBaseFolderResource ->
 				knowledgeBaseFolderResource.
 					deleteSiteKnowledgeBaseFolderByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode));
+						siteKey, externalReferenceCode));
 
 		return true;
 	}
@@ -3312,7 +3296,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			knowledgeBaseFolderResource ->
 				knowledgeBaseFolderResource.postSiteKnowledgeBaseFolder(
-					Long.valueOf(siteKey), knowledgeBaseFolder));
+					siteKey, knowledgeBaseFolder));
 	}
 
 	@GraphQLField
@@ -3327,7 +3311,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			knowledgeBaseFolderResource ->
 				knowledgeBaseFolderResource.postSiteKnowledgeBaseFolderBatch(
-					Long.valueOf(siteKey), callbackURL, object));
+					siteKey, callbackURL, object));
 	}
 
 	@GraphQLField
@@ -3344,8 +3328,7 @@ public class Mutation {
 			knowledgeBaseFolderResource ->
 				knowledgeBaseFolderResource.
 					postSiteKnowledgeBaseFoldersPageExportBatch(
-						Long.valueOf(siteKey), callbackURL, contentType,
-						fieldNames));
+						siteKey, callbackURL, contentType, fieldNames));
 	}
 
 	@GraphQLField(
@@ -3420,8 +3403,7 @@ public class Mutation {
 			knowledgeBaseFolderResource ->
 				knowledgeBaseFolderResource.
 					putSiteKnowledgeBaseFolderByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode,
-						knowledgeBaseFolder));
+						siteKey, externalReferenceCode, knowledgeBaseFolder));
 	}
 
 	@GraphQLField
@@ -3440,7 +3422,7 @@ public class Mutation {
 				Page paginationPage =
 					knowledgeBaseFolderResource.
 						putSiteKnowledgeBaseFolderPermissionsPage(
-							Long.valueOf(siteKey), permissions);
+							siteKey, permissions);
 
 				return paginationPage.getItems();
 			});
@@ -3476,8 +3458,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			languageResource ->
 				languageResource.postSiteLanguagesPageExportBatch(
-					Long.valueOf(siteKey), callbackURL, contentType,
-					fieldNames));
+					siteKey, callbackURL, contentType, fieldNames));
 	}
 
 	@GraphQLField(
@@ -3530,8 +3511,7 @@ public class Mutation {
 			messageBoardAttachmentResource ->
 				messageBoardAttachmentResource.
 					deleteSiteMessageBoardMessageByExternalReferenceCodeMessageBoardMessageExternalReferenceCodeMessageBoardAttachmentByExternalReferenceCode(
-						Long.valueOf(siteKey),
-						messageBoardMessageExternalReferenceCode,
+						siteKey, messageBoardMessageExternalReferenceCode,
 						externalReferenceCode));
 
 		return true;
@@ -3719,7 +3699,7 @@ public class Mutation {
 			messageBoardMessageResource ->
 				messageBoardMessageResource.
 					deleteSiteMessageBoardMessageByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode));
+						siteKey, externalReferenceCode));
 
 		return true;
 	}
@@ -3852,7 +3832,7 @@ public class Mutation {
 			messageBoardMessageResource ->
 				messageBoardMessageResource.
 					postSiteMessageBoardMessagesPageExportBatch(
-						Long.valueOf(siteKey), search,
+						siteKey, search,
 						_filterBiFunction.apply(
 							messageBoardMessageResource, filterString),
 						_sortsBiFunction.apply(
@@ -4009,8 +3989,7 @@ public class Mutation {
 			messageBoardMessageResource ->
 				messageBoardMessageResource.
 					putSiteMessageBoardMessageByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode,
-						messageBoardMessage));
+						siteKey, externalReferenceCode, messageBoardMessage));
 	}
 
 	@GraphQLField
@@ -4029,7 +4008,7 @@ public class Mutation {
 				Page paginationPage =
 					messageBoardMessageResource.
 						putSiteMessageBoardMessagePermissionsPage(
-							Long.valueOf(siteKey), permissions);
+							siteKey, permissions);
 
 				return paginationPage.getItems();
 			});
@@ -4114,7 +4093,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			messageBoardSectionResource ->
 				messageBoardSectionResource.postSiteMessageBoardSection(
-					Long.valueOf(siteKey), messageBoardSection));
+					siteKey, messageBoardSection));
 	}
 
 	@GraphQLField
@@ -4129,7 +4108,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			messageBoardSectionResource ->
 				messageBoardSectionResource.postSiteMessageBoardSectionBatch(
-					Long.valueOf(siteKey), callbackURL, object));
+					siteKey, callbackURL, object));
 	}
 
 	@GraphQLField
@@ -4149,7 +4128,7 @@ public class Mutation {
 			messageBoardSectionResource ->
 				messageBoardSectionResource.
 					postSiteMessageBoardSectionsPageExportBatch(
-						Long.valueOf(siteKey), search,
+						siteKey, search,
 						_filterBiFunction.apply(
 							messageBoardSectionResource, filterString),
 						_sortsBiFunction.apply(
@@ -4257,7 +4236,7 @@ public class Mutation {
 				Page paginationPage =
 					messageBoardSectionResource.
 						putSiteMessageBoardSectionPermissionsPage(
-							Long.valueOf(siteKey), permissions);
+							siteKey, permissions);
 
 				return paginationPage.getItems();
 			});
@@ -4413,7 +4392,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			messageBoardThreadResource ->
 				messageBoardThreadResource.postSiteMessageBoardThread(
-					Long.valueOf(siteKey), messageBoardThread));
+					siteKey, messageBoardThread));
 	}
 
 	@GraphQLField
@@ -4428,7 +4407,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			messageBoardThreadResource ->
 				messageBoardThreadResource.postSiteMessageBoardThreadBatch(
-					Long.valueOf(siteKey), callbackURL, object));
+					siteKey, callbackURL, object));
 	}
 
 	@GraphQLField
@@ -4448,7 +4427,7 @@ public class Mutation {
 			messageBoardThreadResource ->
 				messageBoardThreadResource.
 					postSiteMessageBoardThreadsPageExportBatch(
-						Long.valueOf(siteKey), search,
+						siteKey, search,
 						_filterBiFunction.apply(
 							messageBoardThreadResource, filterString),
 						_sortsBiFunction.apply(
@@ -4571,7 +4550,7 @@ public class Mutation {
 				Page paginationPage =
 					messageBoardThreadResource.
 						putSiteMessageBoardThreadPermissionsPage(
-							Long.valueOf(siteKey), permissions);
+							siteKey, permissions);
 
 				return paginationPage.getItems();
 			});
@@ -4621,7 +4600,7 @@ public class Mutation {
 			navigationMenuResource ->
 				navigationMenuResource.
 					deleteSiteNavigationMenuByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode));
+						siteKey, externalReferenceCode));
 
 		return true;
 	}
@@ -4637,7 +4616,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			navigationMenuResource ->
 				navigationMenuResource.postSiteNavigationMenu(
-					Long.valueOf(siteKey), navigationMenu));
+					siteKey, navigationMenu));
 	}
 
 	@GraphQLField
@@ -4652,7 +4631,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			navigationMenuResource ->
 				navigationMenuResource.postSiteNavigationMenuBatch(
-					Long.valueOf(siteKey), callbackURL, object));
+					siteKey, callbackURL, object));
 	}
 
 	@GraphQLField
@@ -4671,7 +4650,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			navigationMenuResource ->
 				navigationMenuResource.postSiteNavigationMenusPageExportBatch(
-					Long.valueOf(siteKey), search,
+					siteKey, search,
 					_filterBiFunction.apply(
 						navigationMenuResource, filterString),
 					_sortsBiFunction.apply(navigationMenuResource, sortsString),
@@ -4743,8 +4722,7 @@ public class Mutation {
 			navigationMenuResource ->
 				navigationMenuResource.
 					putSiteNavigationMenuByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode,
-						navigationMenu));
+						siteKey, externalReferenceCode, navigationMenu));
 	}
 
 	@GraphQLField
@@ -4762,7 +4740,7 @@ public class Mutation {
 			navigationMenuResource -> {
 				Page paginationPage =
 					navigationMenuResource.putSiteNavigationMenuPermissionsPage(
-						Long.valueOf(siteKey), permissions);
+						siteKey, permissions);
 
 				return paginationPage.getItems();
 			});
@@ -4778,7 +4756,7 @@ public class Mutation {
 			_sitePageResourceComponentServiceObjects,
 			this::_populateResourceContext,
 			sitePageResource -> sitePageResource.postSiteSitePage(
-				Long.valueOf(siteKey), sitePage));
+				siteKey, sitePage));
 	}
 
 	@GraphQLField
@@ -4792,7 +4770,7 @@ public class Mutation {
 			_sitePageResourceComponentServiceObjects,
 			this::_populateResourceContext,
 			sitePageResource -> sitePageResource.postSiteSitePageBatch(
-				Long.valueOf(siteKey), callbackURL, object));
+				siteKey, callbackURL, object));
 	}
 
 	@GraphQLField
@@ -4811,7 +4789,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			sitePageResource ->
 				sitePageResource.postSiteSitePagesPageExportBatch(
-					Long.valueOf(siteKey), search,
+					siteKey, search,
 					_filterBiFunction.apply(sitePageResource, filterString),
 					_sortsBiFunction.apply(sitePageResource, sortsString),
 					callbackURL, contentType, fieldNames));
@@ -4850,7 +4828,7 @@ public class Mutation {
 			structuredContentResource ->
 				structuredContentResource.
 					deleteSiteStructuredContentByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode));
+						siteKey, externalReferenceCode));
 
 		return true;
 	}
@@ -5013,7 +4991,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			structuredContentResource ->
 				structuredContentResource.postSiteStructuredContent(
-					Long.valueOf(siteKey), structuredContent));
+					siteKey, structuredContent));
 	}
 
 	@GraphQLField
@@ -5028,7 +5006,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			structuredContentResource ->
 				structuredContentResource.postSiteStructuredContentBatch(
-					Long.valueOf(siteKey), callbackURL, object));
+					siteKey, callbackURL, object));
 	}
 
 	@GraphQLField
@@ -5048,7 +5026,7 @@ public class Mutation {
 			structuredContentResource ->
 				structuredContentResource.
 					postSiteStructuredContentsPageExportBatch(
-						Long.valueOf(siteKey), search,
+						siteKey, search,
 						_filterBiFunction.apply(
 							structuredContentResource, filterString),
 						_sortsBiFunction.apply(
@@ -5193,8 +5171,7 @@ public class Mutation {
 			structuredContentResource ->
 				structuredContentResource.
 					putSiteStructuredContentByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode,
-						structuredContent));
+						siteKey, externalReferenceCode, structuredContent));
 	}
 
 	@GraphQLField
@@ -5213,7 +5190,7 @@ public class Mutation {
 				Page paginationPage =
 					structuredContentResource.
 						putSiteStructuredContentPermissionsPage(
-							Long.valueOf(siteKey), permissions);
+							siteKey, permissions);
 
 				return paginationPage.getItems();
 			});
@@ -5351,7 +5328,7 @@ public class Mutation {
 			structuredContentFolderResource ->
 				structuredContentFolderResource.
 					deleteSiteStructuredContentFolderByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode));
+						siteKey, externalReferenceCode));
 
 		return true;
 	}
@@ -5475,7 +5452,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			structuredContentFolderResource ->
 				structuredContentFolderResource.postSiteStructuredContentFolder(
-					Long.valueOf(siteKey), structuredContentFolder));
+					siteKey, structuredContentFolder));
 	}
 
 	@GraphQLField
@@ -5491,7 +5468,7 @@ public class Mutation {
 			structuredContentFolderResource ->
 				structuredContentFolderResource.
 					postSiteStructuredContentFolderBatch(
-						Long.valueOf(siteKey), callbackURL, object));
+						siteKey, callbackURL, object));
 	}
 
 	@GraphQLField
@@ -5511,7 +5488,7 @@ public class Mutation {
 			structuredContentFolderResource ->
 				structuredContentFolderResource.
 					postSiteStructuredContentFoldersPageExportBatch(
-						Long.valueOf(siteKey), search,
+						siteKey, search,
 						_filterBiFunction.apply(
 							structuredContentFolderResource, filterString),
 						_sortsBiFunction.apply(
@@ -5600,7 +5577,7 @@ public class Mutation {
 			structuredContentFolderResource ->
 				structuredContentFolderResource.
 					putSiteStructuredContentFolderByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode,
+						siteKey, externalReferenceCode,
 						structuredContentFolder));
 	}
 
@@ -5620,7 +5597,7 @@ public class Mutation {
 				Page paginationPage =
 					structuredContentFolderResource.
 						putSiteStructuredContentFolderPermissionsPage(
-							Long.valueOf(siteKey), permissions);
+							siteKey, permissions);
 
 				return paginationPage.getItems();
 			});
@@ -5728,7 +5705,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			wikiNodeResource ->
 				wikiNodeResource.deleteSiteWikiNodeByExternalReferenceCode(
-					Long.valueOf(siteKey), externalReferenceCode));
+					siteKey, externalReferenceCode));
 
 		return true;
 	}
@@ -5770,7 +5747,7 @@ public class Mutation {
 			_wikiNodeResourceComponentServiceObjects,
 			this::_populateResourceContext,
 			wikiNodeResource -> wikiNodeResource.postSiteWikiNode(
-				Long.valueOf(siteKey), wikiNode));
+				siteKey, wikiNode));
 	}
 
 	@GraphQLField
@@ -5784,7 +5761,7 @@ public class Mutation {
 			_wikiNodeResourceComponentServiceObjects,
 			this::_populateResourceContext,
 			wikiNodeResource -> wikiNodeResource.postSiteWikiNodeBatch(
-				Long.valueOf(siteKey), callbackURL, object));
+				siteKey, callbackURL, object));
 	}
 
 	@GraphQLField
@@ -5803,7 +5780,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			wikiNodeResource ->
 				wikiNodeResource.postSiteWikiNodesPageExportBatch(
-					Long.valueOf(siteKey), search,
+					siteKey, search,
 					_filterBiFunction.apply(wikiNodeResource, filterString),
 					_sortsBiFunction.apply(wikiNodeResource, sortsString),
 					callbackURL, contentType, fieldNames));
@@ -5823,7 +5800,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			wikiNodeResource ->
 				wikiNodeResource.putSiteWikiNodeByExternalReferenceCode(
-					Long.valueOf(siteKey), externalReferenceCode, wikiNode));
+					siteKey, externalReferenceCode, wikiNode));
 	}
 
 	@GraphQLField
@@ -5841,7 +5818,7 @@ public class Mutation {
 			wikiNodeResource -> {
 				Page paginationPage =
 					wikiNodeResource.putSiteWikiNodePermissionsPage(
-						Long.valueOf(siteKey), permissions);
+						siteKey, permissions);
 
 				return paginationPage.getItems();
 			});
@@ -5937,7 +5914,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			wikiPageResource ->
 				wikiPageResource.deleteSiteWikiPageByExternalReferenceCode(
-					Long.valueOf(siteKey), externalReferenceCode));
+					siteKey, externalReferenceCode));
 
 		return true;
 	}
@@ -6047,7 +6024,7 @@ public class Mutation {
 			this::_populateResourceContext,
 			wikiPageResource ->
 				wikiPageResource.putSiteWikiPageByExternalReferenceCode(
-					Long.valueOf(siteKey), externalReferenceCode, wikiPage));
+					siteKey, externalReferenceCode, wikiPage));
 	}
 
 	@GraphQLField(
@@ -6145,7 +6122,7 @@ public class Mutation {
 			wikiPageAttachmentResource ->
 				wikiPageAttachmentResource.
 					deleteSiteWikiPageByExternalReferenceCodeWikiPageExternalReferenceCodeWikiPageAttachmentByExternalReferenceCode(
-						Long.valueOf(siteKey), wikiPageExternalReferenceCode,
+						siteKey, wikiPageExternalReferenceCode,
 						externalReferenceCode));
 
 		return true;

@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.vulcan.multipart.BinaryFile;
 import com.liferay.portal.vulcan.multipart.MultipartBody;
 import com.liferay.portal.vulcan.pagination.Page;
+import com.liferay.portal.vulcan.util.GroupUtil;
 
 import jakarta.ws.rs.BadRequestException;
 
@@ -50,13 +51,15 @@ public class KnowledgeBaseAttachmentResourceImpl
 	@Override
 	public void
 			deleteSiteKnowledgeBaseArticleByExternalReferenceCodeKnowledgeBaseArticleExternalReferenceCodeKnowledgeBaseAttachmentByExternalReferenceCode(
-				Long siteId, String knowledgeBaseArticleExternalReferenceCode,
+				String siteId, String knowledgeBaseArticleExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception {
 
 		KBArticle kbArticle =
 			_kbArticleService.getLatestKBArticleByExternalReferenceCode(
-				siteId, knowledgeBaseArticleExternalReferenceCode);
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService),
+				knowledgeBaseArticleExternalReferenceCode);
 
 		FileEntry fileEntry =
 			kbArticle.getAttachmentsFileEntryByExternalReferenceCode(
@@ -102,13 +105,15 @@ public class KnowledgeBaseAttachmentResourceImpl
 	@Override
 	public KnowledgeBaseAttachment
 			getSiteKnowledgeBaseArticleByExternalReferenceCodeKnowledgeBaseArticleExternalReferenceCodeKnowledgeBaseAttachmentByExternalReferenceCode(
-				Long siteId, String knowledgeBaseArticleExternalReferenceCode,
+				String siteId, String knowledgeBaseArticleExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception {
 
 		KBArticle kbArticle =
 			_kbArticleService.getLatestKBArticleByExternalReferenceCode(
-				siteId, knowledgeBaseArticleExternalReferenceCode);
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService),
+				knowledgeBaseArticleExternalReferenceCode);
 
 		return _toKnowledgeBaseAttachment(
 			kbArticle.getAttachmentsFileEntryByExternalReferenceCode(

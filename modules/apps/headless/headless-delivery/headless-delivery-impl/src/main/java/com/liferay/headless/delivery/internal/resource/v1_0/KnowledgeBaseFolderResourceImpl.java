@@ -26,6 +26,7 @@ import com.liferay.portal.vulcan.custom.field.CustomFieldsUtil;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.portal.vulcan.util.GroupUtil;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -50,12 +51,14 @@ public class KnowledgeBaseFolderResourceImpl
 
 	@Override
 	public void deleteSiteKnowledgeBaseFolderByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception {
 
 		KBFolder kbFolder =
 			_kbFolderLocalService.getKBFolderByExternalReferenceCode(
-				externalReferenceCode, siteId);
+				externalReferenceCode,
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService));
 
 		_kbFolderService.deleteKBFolder(kbFolder.getKbFolderId());
 	}
@@ -105,31 +108,36 @@ public class KnowledgeBaseFolderResourceImpl
 	@Override
 	public KnowledgeBaseFolder
 			getSiteKnowledgeBaseFolderByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception {
 
 		return _toKnowledgeBaseFolder(
 			_kbFolderService.getKBFolderByExternalReferenceCode(
-				siteId, externalReferenceCode));
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService),
+				externalReferenceCode));
 	}
 
 	@Override
 	public Page<KnowledgeBaseFolder> getSiteKnowledgeBaseFoldersPage(
-			Long siteId, Pagination pagination)
+			String siteId, Pagination pagination)
 		throws Exception {
+
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
 		return Page.of(
 			HashMapBuilder.put(
 				"create",
 				addAction(
 					KBActionKeys.ADD_KB_FOLDER, "postSiteKnowledgeBaseFolder",
-					KBConstants.RESOURCE_NAME_ADMIN, siteId)
+					KBConstants.RESOURCE_NAME_ADMIN, groupId)
 			).put(
 				"createBatch",
 				addAction(
 					KBActionKeys.ADD_KB_FOLDER,
 					"postSiteKnowledgeBaseFolderBatch",
-					KBConstants.RESOURCE_NAME_ADMIN, siteId)
+					KBConstants.RESOURCE_NAME_ADMIN, groupId)
 			).put(
 				"deleteBatch",
 				addAction(
@@ -139,7 +147,7 @@ public class KnowledgeBaseFolderResourceImpl
 				"get",
 				addAction(
 					ActionKeys.VIEW, "getSiteKnowledgeBaseFoldersPage",
-					KBConstants.RESOURCE_NAME_ADMIN, siteId)
+					KBConstants.RESOURCE_NAME_ADMIN, groupId)
 			).put(
 				"updateBatch",
 				addAction(
@@ -148,10 +156,10 @@ public class KnowledgeBaseFolderResourceImpl
 			).build(),
 			transform(
 				_kbFolderService.getKBFolders(
-					siteId, 0, pagination.getStartPosition(),
+					groupId, 0, pagination.getStartPosition(),
 					pagination.getEndPosition()),
 				this::_toKnowledgeBaseFolder),
-			pagination, _kbFolderService.getKBFoldersCount(siteId, 0));
+			pagination, _kbFolderService.getKBFoldersCount(groupId, 0));
 	}
 
 	@Override
@@ -171,12 +179,14 @@ public class KnowledgeBaseFolderResourceImpl
 
 	@Override
 	public KnowledgeBaseFolder postSiteKnowledgeBaseFolder(
-			Long siteId, KnowledgeBaseFolder knowledgeBaseFolder)
+			String siteId, KnowledgeBaseFolder knowledgeBaseFolder)
 		throws Exception {
 
 		return _addKnowledgeBaseFolder(
-			knowledgeBaseFolder.getExternalReferenceCode(), siteId, null,
-			knowledgeBaseFolder);
+			knowledgeBaseFolder.getExternalReferenceCode(),
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService),
+			null, knowledgeBaseFolder);
 	}
 
 	@Override
@@ -192,20 +202,23 @@ public class KnowledgeBaseFolderResourceImpl
 	@Override
 	public KnowledgeBaseFolder
 			putSiteKnowledgeBaseFolderByExternalReferenceCode(
-				Long siteId, String externalReferenceCode,
+				String siteId, String externalReferenceCode,
 				KnowledgeBaseFolder knowledgeBaseFolder)
 		throws Exception {
 
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
+
 		KBFolder kbFolder =
 			_kbFolderLocalService.fetchKBFolderByExternalReferenceCode(
-				externalReferenceCode, siteId);
+				externalReferenceCode, groupId);
 
 		if (kbFolder != null) {
 			return _updateKnowledgeBaseFolder(kbFolder, knowledgeBaseFolder);
 		}
 
 		return _addKnowledgeBaseFolder(
-			externalReferenceCode, siteId,
+			externalReferenceCode, groupId,
 			knowledgeBaseFolder.getParentKnowledgeBaseFolderId(),
 			knowledgeBaseFolder);
 	}

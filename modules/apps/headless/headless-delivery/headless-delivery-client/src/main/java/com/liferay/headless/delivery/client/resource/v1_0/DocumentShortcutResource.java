@@ -49,12 +49,12 @@ public interface DocumentShortcutResource {
 		throws Exception;
 
 	public void deleteSiteDocumentShortcutByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			deleteSiteDocumentShortcutByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public Page<DocumentShortcut> getAssetLibraryDocumentShortcutsPage(
@@ -74,20 +74,20 @@ public interface DocumentShortcutResource {
 		throws Exception;
 
 	public DocumentShortcut getSiteDocumentShortcutByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteDocumentShortcutByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public Page<DocumentShortcut> getSiteDocumentShortcutsPage(
-			Long siteId, Pagination pagination)
+			String siteId, Pagination pagination)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse getSiteDocumentShortcutsPageHttpResponse(
-			Long siteId, Pagination pagination)
+			String siteId, Pagination pagination)
 		throws Exception;
 
 	public DocumentShortcut patchDocumentShortcut(
@@ -128,29 +128,29 @@ public interface DocumentShortcutResource {
 		throws Exception;
 
 	public DocumentShortcut postSiteDocumentShortcut(
-			Long siteId, DocumentShortcut documentShortcut)
+			String siteId, DocumentShortcut documentShortcut)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse postSiteDocumentShortcutHttpResponse(
-			Long siteId, DocumentShortcut documentShortcut)
+			String siteId, DocumentShortcut documentShortcut)
 		throws Exception;
 
 	public void postSiteDocumentShortcutBatch(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse postSiteDocumentShortcutBatchHttpResponse(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public void postSiteDocumentShortcutsPageExportBatch(
-			Long siteId, String callbackURL, String contentType,
+			String siteId, String callbackURL, String contentType,
 			String fieldNames)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			postSiteDocumentShortcutsPageExportBatchHttpResponse(
-				Long siteId, String callbackURL, String contentType,
+				String siteId, String callbackURL, String contentType,
 				String fieldNames)
 		throws Exception;
 
@@ -170,13 +170,13 @@ public interface DocumentShortcutResource {
 		throws Exception;
 
 	public DocumentShortcut putSiteDocumentShortcutByExternalReferenceCode(
-			Long siteId, String externalReferenceCode,
+			String siteId, String externalReferenceCode,
 			DocumentShortcut documentShortcut)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			putSiteDocumentShortcutByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode,
+				String siteId, String externalReferenceCode,
 				DocumentShortcut documentShortcut)
 		throws Exception;
 
@@ -495,7 +495,7 @@ public interface DocumentShortcutResource {
 		}
 
 		public void deleteSiteDocumentShortcutByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -563,7 +563,7 @@ public interface DocumentShortcutResource {
 
 		public HttpInvoker.HttpResponse
 				deleteSiteDocumentShortcutByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode)
+					String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -824,7 +824,7 @@ public interface DocumentShortcutResource {
 		}
 
 		public DocumentShortcut getSiteDocumentShortcutByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -892,7 +892,7 @@ public interface DocumentShortcutResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteDocumentShortcutByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode)
+					String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -933,7 +933,7 @@ public interface DocumentShortcutResource {
 		}
 
 		public Page<DocumentShortcut> getSiteDocumentShortcutsPage(
-				Long siteId, Pagination pagination)
+				String siteId, Pagination pagination)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1000,7 +1000,7 @@ public interface DocumentShortcutResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteDocumentShortcutsPageHttpResponse(
-					Long siteId, Pagination pagination)
+					String siteId, Pagination pagination)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1485,7 +1485,7 @@ public interface DocumentShortcutResource {
 		}
 
 		public DocumentShortcut postSiteDocumentShortcut(
-				Long siteId, DocumentShortcut documentShortcut)
+				String siteId, DocumentShortcut documentShortcut)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1551,7 +1551,7 @@ public interface DocumentShortcutResource {
 		}
 
 		public HttpInvoker.HttpResponse postSiteDocumentShortcutHttpResponse(
-				Long siteId, DocumentShortcut documentShortcut)
+				String siteId, DocumentShortcut documentShortcut)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1593,7 +1593,7 @@ public interface DocumentShortcutResource {
 		}
 
 		public void postSiteDocumentShortcutBatch(
-				Long siteId, String callbackURL, Object object)
+				String siteId, String callbackURL, Object object)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1650,7 +1650,7 @@ public interface DocumentShortcutResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteDocumentShortcutBatchHttpResponse(
-					Long siteId, String callbackURL, Object object)
+					String siteId, String callbackURL, Object object)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1697,7 +1697,7 @@ public interface DocumentShortcutResource {
 		}
 
 		public void postSiteDocumentShortcutsPageExportBatch(
-				Long siteId, String callbackURL, String contentType,
+				String siteId, String callbackURL, String contentType,
 				String fieldNames)
 			throws Exception {
 
@@ -1755,7 +1755,7 @@ public interface DocumentShortcutResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteDocumentShortcutsPageExportBatchHttpResponse(
-					Long siteId, String callbackURL, String contentType,
+					String siteId, String callbackURL, String contentType,
 					String fieldNames)
 			throws Exception {
 
@@ -2020,7 +2020,7 @@ public interface DocumentShortcutResource {
 		}
 
 		public DocumentShortcut putSiteDocumentShortcutByExternalReferenceCode(
-				Long siteId, String externalReferenceCode,
+				String siteId, String externalReferenceCode,
 				DocumentShortcut documentShortcut)
 			throws Exception {
 
@@ -2089,7 +2089,7 @@ public interface DocumentShortcutResource {
 
 		public HttpInvoker.HttpResponse
 				putSiteDocumentShortcutByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode,
+					String siteId, String externalReferenceCode,
 					DocumentShortcut documentShortcut)
 			throws Exception {
 

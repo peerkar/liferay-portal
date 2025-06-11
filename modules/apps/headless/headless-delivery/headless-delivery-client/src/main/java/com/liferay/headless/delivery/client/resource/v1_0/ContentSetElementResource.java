@@ -64,32 +64,32 @@ public interface ContentSetElementResource {
 		throws Exception;
 
 	public Page<ContentSetElement> getSiteContentSetByKeyContentSetElementsPage(
-			Long siteId, String key, Pagination pagination)
+			String siteId, String key, Pagination pagination)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteContentSetByKeyContentSetElementsPageHttpResponse(
-				Long siteId, String key, Pagination pagination)
+				String siteId, String key, Pagination pagination)
 		throws Exception;
 
 	public Page<ContentSetElement>
 			getSiteContentSetByUuidContentSetElementsPage(
-				Long siteId, String uuid, Pagination pagination)
+				String siteId, String uuid, Pagination pagination)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteContentSetByUuidContentSetElementsPageHttpResponse(
-				Long siteId, String uuid, Pagination pagination)
+				String siteId, String uuid, Pagination pagination)
 		throws Exception;
 
 	public Page<ContentSetElement>
 			getSiteContentSetProviderByKeyContentSetElementsPage(
-				Long siteId, String key, Pagination pagination)
+				String siteId, String key, Pagination pagination)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteContentSetProviderByKeyContentSetElementsPageHttpResponse(
-				Long siteId, String key, Pagination pagination)
+				String siteId, String key, Pagination pagination)
 		throws Exception;
 
 	public static class Builder {
@@ -552,7 +552,7 @@ public interface ContentSetElementResource {
 
 		public Page<ContentSetElement>
 				getSiteContentSetByKeyContentSetElementsPage(
-					Long siteId, String key, Pagination pagination)
+					String siteId, String key, Pagination pagination)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -620,7 +620,7 @@ public interface ContentSetElementResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteContentSetByKeyContentSetElementsPageHttpResponse(
-					Long siteId, String key, Pagination pagination)
+					String siteId, String key, Pagination pagination)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -669,7 +669,7 @@ public interface ContentSetElementResource {
 
 		public Page<ContentSetElement>
 				getSiteContentSetByUuidContentSetElementsPage(
-					Long siteId, String uuid, Pagination pagination)
+					String siteId, String uuid, Pagination pagination)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -737,7 +737,7 @@ public interface ContentSetElementResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteContentSetByUuidContentSetElementsPageHttpResponse(
-					Long siteId, String uuid, Pagination pagination)
+					String siteId, String uuid, Pagination pagination)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -786,7 +786,7 @@ public interface ContentSetElementResource {
 
 		public Page<ContentSetElement>
 				getSiteContentSetProviderByKeyContentSetElementsPage(
-					Long siteId, String key, Pagination pagination)
+					String siteId, String key, Pagination pagination)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -854,7 +854,7 @@ public interface ContentSetElementResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteContentSetProviderByKeyContentSetElementsPageHttpResponse(
-					Long siteId, String key, Pagination pagination)
+					String siteId, String key, Pagination pagination)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();

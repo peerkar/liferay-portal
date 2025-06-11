@@ -62,17 +62,17 @@ public interface ContentSetElementResource {
 		throws Exception;
 
 	public Page<ContentSetElement> getSiteContentSetByKeyContentSetElementsPage(
-			Long siteId, String key, Pagination pagination)
+			String siteId, String key, Pagination pagination)
 		throws Exception;
 
 	public Page<ContentSetElement>
 			getSiteContentSetByUuidContentSetElementsPage(
-				Long siteId, String uuid, Pagination pagination)
+				String siteId, String uuid, Pagination pagination)
 		throws Exception;
 
 	public Page<ContentSetElement>
 			getSiteContentSetProviderByKeyContentSetElementsPage(
-				Long siteId, String key, Pagination pagination)
+				String siteId, String key, Pagination pagination)
 		throws Exception;
 
 	public default void setContextAcceptLanguage(

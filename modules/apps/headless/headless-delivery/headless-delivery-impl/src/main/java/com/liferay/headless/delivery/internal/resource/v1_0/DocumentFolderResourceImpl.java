@@ -53,6 +53,7 @@ import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.SearchUtil;
 import com.liferay.portlet.documentlibrary.constants.DLConstants;
 import com.liferay.ratings.kernel.service.RatingsEntryLocalService;
@@ -91,11 +92,13 @@ public class DocumentFolderResourceImpl extends BaseDocumentFolderResourceImpl {
 
 	@Override
 	public void deleteSiteDocumentsFolderByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception {
 
 		Folder folder = _dlAppService.getFolderByExternalReferenceCode(
-			externalReferenceCode, siteId);
+			externalReferenceCode,
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService));
 
 		_dlAppService.deleteFolder(folder.getFolderId());
 	}
@@ -208,12 +211,15 @@ public class DocumentFolderResourceImpl extends BaseDocumentFolderResourceImpl {
 
 	@Override
 	public Page<DocumentFolder> getSiteDocumentFoldersPage(
-			Long siteId, Boolean flatten, String search,
+			String siteId, Boolean flatten, String search,
 			Aggregation aggregation, Filter filter, Pagination pagination,
 			Sort[] sorts)
 		throws Exception {
 
 		Long documentFolderId = null;
+
+		long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
 		if (!GetterUtil.getBoolean(flatten)) {
 			documentFolderId = DLFolderConstants.DEFAULT_PARENT_FOLDER_ID;
@@ -224,12 +230,12 @@ public class DocumentFolderResourceImpl extends BaseDocumentFolderResourceImpl {
 				"create",
 				addAction(
 					ActionKeys.ADD_FOLDER, "postSiteDocumentFolder",
-					DLConstants.RESOURCE_NAME, siteId)
+					DLConstants.RESOURCE_NAME, groupId)
 			).put(
 				"createBatch",
 				addAction(
 					ActionKeys.ADD_FOLDER, "postSiteDocumentFolderBatch",
-					DLConstants.RESOURCE_NAME, siteId)
+					DLConstants.RESOURCE_NAME, groupId)
 			).put(
 				"deleteBatch",
 				addAction(
@@ -239,32 +245,37 @@ public class DocumentFolderResourceImpl extends BaseDocumentFolderResourceImpl {
 				"get",
 				addAction(
 					ActionKeys.VIEW, "getSiteDocumentFoldersPage",
-					DLConstants.RESOURCE_NAME, siteId)
+					DLConstants.RESOURCE_NAME, groupId)
 			).put(
 				"updateBatch",
 				addAction(
 					ActionKeys.UPDATE, "putDocumentFolderBatch",
 					DLConstants.RESOURCE_NAME, null)
 			).build(),
-			documentFolderId, siteId, flatten, search, aggregation, filter,
+			documentFolderId, groupId, flatten, search, aggregation, filter,
 			pagination, sorts);
 	}
 
 	@Override
 	public Page<DocumentFolder> getSiteDocumentFoldersRatedByMePage(
-			Long siteId, Pagination pagination)
+			String siteId, Pagination pagination)
 		throws Exception {
 
-		return _getGroupDocumentFoldersRatedByMePage(siteId, pagination);
+		return _getGroupDocumentFoldersRatedByMePage(
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService),
+			pagination);
 	}
 
 	@Override
 	public DocumentFolder getSiteDocumentsFolderByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception {
 
 		Folder folder = _dlAppService.getFolderByExternalReferenceCode(
-			externalReferenceCode, siteId);
+			externalReferenceCode,
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService));
 
 		return _toDocumentFolder(folder);
 	}
@@ -274,7 +285,9 @@ public class DocumentFolderResourceImpl extends BaseDocumentFolderResourceImpl {
 			Long assetLibraryId, DocumentFolder documentFolder)
 		throws Exception {
 
-		return postSiteDocumentFolder(assetLibraryId, documentFolder);
+		return _addDocumentFolder(
+			documentFolder.getExternalReferenceCode(), assetLibraryId, 0L,
+			documentFolder);
 	}
 
 	@Override
@@ -302,12 +315,14 @@ public class DocumentFolderResourceImpl extends BaseDocumentFolderResourceImpl {
 
 	@Override
 	public DocumentFolder postSiteDocumentFolder(
-			Long siteId, DocumentFolder documentFolder)
+			String siteId, DocumentFolder documentFolder)
 		throws Exception {
 
 		return _addDocumentFolder(
-			documentFolder.getExternalReferenceCode(), siteId, 0L,
-			documentFolder);
+			documentFolder.getExternalReferenceCode(),
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService),
+			0L, documentFolder);
 	}
 
 	@Override
@@ -352,19 +367,22 @@ public class DocumentFolderResourceImpl extends BaseDocumentFolderResourceImpl {
 
 	@Override
 	public DocumentFolder putSiteDocumentsFolderByExternalReferenceCode(
-			Long siteId, String externalReferenceCode,
+			String siteId, String externalReferenceCode,
 			DocumentFolder documentFolder)
 		throws Exception {
 
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
+
 		Folder folder = _dlAppLocalService.fetchFolderByExternalReferenceCode(
-			externalReferenceCode, siteId);
+			externalReferenceCode, groupId);
 
 		if (folder != null) {
 			return _updateDocumentFolder(folder, documentFolder);
 		}
 
 		return _addDocumentFolder(
-			externalReferenceCode, siteId, 0L, documentFolder);
+			externalReferenceCode, groupId, 0L, documentFolder);
 	}
 
 	@Override

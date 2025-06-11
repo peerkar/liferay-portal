@@ -258,7 +258,7 @@ public abstract class BaseWikiNodeResourceTestCase {
 				"-"));
 	}
 
-	protected Long testDeleteSiteWikiNodeByExternalReferenceCode_getSiteId(
+	protected String testDeleteSiteWikiNodeByExternalReferenceCode_getSiteId(
 			WikiNode wikiNode)
 		throws Exception {
 
@@ -418,7 +418,7 @@ public abstract class BaseWikiNodeResourceTestCase {
 		assertValid(getWikiNode);
 	}
 
-	protected Long testGetSiteWikiNodeByExternalReferenceCode_getSiteId(
+	protected String testGetSiteWikiNodeByExternalReferenceCode_getSiteId(
 			WikiNode wikiNode)
 		throws Exception {
 
@@ -502,8 +502,9 @@ public abstract class BaseWikiNodeResourceTestCase {
 						"Object/wikiNodeByExternalReferenceCode"))));
 	}
 
-	protected Long testGraphQLGetSiteWikiNodeByExternalReferenceCode_getSiteId(
-			WikiNode wikiNode)
+	protected String
+			testGraphQLGetSiteWikiNodeByExternalReferenceCode_getSiteId(
+				WikiNode wikiNode)
 		throws Exception {
 
 		return wikiNode.getSiteId();
@@ -587,8 +588,9 @@ public abstract class BaseWikiNodeResourceTestCase {
 
 	@Test
 	public void testGetSiteWikiNodesPage() throws Exception {
-		Long siteId = testGetSiteWikiNodesPage_getSiteId();
-		Long irrelevantSiteId = testGetSiteWikiNodesPage_getIrrelevantSiteId();
+		String siteId = testGetSiteWikiNodesPage_getSiteId();
+		String irrelevantSiteId =
+			testGetSiteWikiNodesPage_getIrrelevantSiteId();
 
 		Page<WikiNode> page = wikiNodeResource.getSiteWikiNodesPage(
 			siteId, null, null, null, Pagination.of(1, 10), null);
@@ -632,7 +634,7 @@ public abstract class BaseWikiNodeResourceTestCase {
 	}
 
 	protected Map<String, Map<String, String>>
-			testGetSiteWikiNodesPage_getExpectedActions(Long siteId)
+			testGetSiteWikiNodesPage_getExpectedActions(String siteId)
 		throws Exception {
 
 		Map<String, Map<String, String>> expectedActions = new HashMap<>();
@@ -660,7 +662,7 @@ public abstract class BaseWikiNodeResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteWikiNodesPage_getSiteId();
+		String siteId = testGetSiteWikiNodesPage_getSiteId();
 
 		WikiNode wikiNode1 = randomWikiNode();
 
@@ -717,7 +719,7 @@ public abstract class BaseWikiNodeResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteWikiNodesPage_getSiteId();
+		String siteId = testGetSiteWikiNodesPage_getSiteId();
 
 		WikiNode wikiNode1 = testGetSiteWikiNodesPage_addWikiNode(
 			siteId, randomWikiNode());
@@ -740,7 +742,7 @@ public abstract class BaseWikiNodeResourceTestCase {
 
 	@Test
 	public void testGetSiteWikiNodesPageWithPagination() throws Exception {
-		Long siteId = testGetSiteWikiNodesPage_getSiteId();
+		String siteId = testGetSiteWikiNodesPage_getSiteId();
 
 		Page<WikiNode> wikiNodesPage = wikiNodeResource.getSiteWikiNodesPage(
 			siteId, null, null, null, null, null);
@@ -914,7 +916,7 @@ public abstract class BaseWikiNodeResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteWikiNodesPage_getSiteId();
+		String siteId = testGetSiteWikiNodesPage_getSiteId();
 
 		WikiNode wikiNode1 = randomWikiNode();
 		WikiNode wikiNode2 = randomWikiNode();
@@ -950,17 +952,17 @@ public abstract class BaseWikiNodeResourceTestCase {
 	}
 
 	protected WikiNode testGetSiteWikiNodesPage_addWikiNode(
-			Long siteId, WikiNode wikiNode)
+			String siteId, WikiNode wikiNode)
 		throws Exception {
 
 		return wikiNodeResource.postSiteWikiNode(siteId, wikiNode);
 	}
 
-	protected Long testGetSiteWikiNodesPage_getSiteId() throws Exception {
+	protected String testGetSiteWikiNodesPage_getSiteId() throws Exception {
 		return testGroup.getGroupId();
 	}
 
-	protected Long testGetSiteWikiNodesPage_getIrrelevantSiteId()
+	protected String testGetSiteWikiNodesPage_getIrrelevantSiteId()
 		throws Exception {
 
 		return irrelevantGroup.getGroupId();
@@ -968,7 +970,7 @@ public abstract class BaseWikiNodeResourceTestCase {
 
 	@Test
 	public void testGraphQLGetSiteWikiNodesPage() throws Exception {
-		Long siteId = testGetSiteWikiNodesPage_getSiteId();
+		String siteId = testGetSiteWikiNodesPage_getSiteId();
 
 		GraphQLField graphQLField = new GraphQLField(
 			"wikiNodes",
@@ -1418,7 +1420,7 @@ public abstract class BaseWikiNodeResourceTestCase {
 			putWikiNode.getExternalReferenceCode());
 	}
 
-	protected Long testPutSiteWikiNodeByExternalReferenceCode_getSiteId(
+	protected String testPutSiteWikiNodeByExternalReferenceCode_getSiteId(
 			WikiNode wikiNode)
 		throws Exception {
 

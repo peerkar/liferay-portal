@@ -74,21 +74,21 @@ public interface ContentStructureResource {
 		throws Exception;
 
 	public Page<Permission> getSiteContentStructurePermissionsPage(
-			Long siteId, String roleNames)
+			String siteId, String roleNames)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteContentStructurePermissionsPageHttpResponse(
-				Long siteId, String roleNames)
+				String siteId, String roleNames)
 		throws Exception;
 
 	public Page<ContentStructure> getSiteContentStructuresPage(
-			Long siteId, String search, List<String> aggregations,
+			String siteId, String search, List<String> aggregations,
 			String filterString, Pagination pagination, String sortString)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse getSiteContentStructuresPageHttpResponse(
-			Long siteId, String search, List<String> aggregations,
+			String siteId, String search, List<String> aggregations,
 			String filterString, Pagination pagination, String sortString)
 		throws Exception;
 
@@ -106,13 +106,14 @@ public interface ContentStructureResource {
 		throws Exception;
 
 	public void postSiteContentStructuresPageExportBatch(
-			Long siteId, String search, String filterString, String sortString,
-			String callbackURL, String contentType, String fieldNames)
+			String siteId, String search, String filterString,
+			String sortString, String callbackURL, String contentType,
+			String fieldNames)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			postSiteContentStructuresPageExportBatchHttpResponse(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				String sortString, String callbackURL, String contentType,
 				String fieldNames)
 		throws Exception;
@@ -136,12 +137,12 @@ public interface ContentStructureResource {
 		throws Exception;
 
 	public Page<Permission> putSiteContentStructurePermissionsPage(
-			Long siteId, Permission[] permissions)
+			String siteId, Permission[] permissions)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			putSiteContentStructurePermissionsPageHttpResponse(
-				Long siteId, Permission[] permissions)
+				String siteId, Permission[] permissions)
 		throws Exception;
 
 	public static class Builder {
@@ -714,7 +715,7 @@ public interface ContentStructureResource {
 		}
 
 		public Page<Permission> getSiteContentStructurePermissionsPage(
-				Long siteId, String roleNames)
+				String siteId, String roleNames)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -782,7 +783,7 @@ public interface ContentStructureResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteContentStructurePermissionsPageHttpResponse(
-					Long siteId, String roleNames)
+					String siteId, String roleNames)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -826,7 +827,7 @@ public interface ContentStructureResource {
 		}
 
 		public Page<ContentStructure> getSiteContentStructuresPage(
-				Long siteId, String search, List<String> aggregations,
+				String siteId, String search, List<String> aggregations,
 				String filterString, Pagination pagination, String sortString)
 			throws Exception {
 
@@ -896,7 +897,7 @@ public interface ContentStructureResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteContentStructuresPageHttpResponse(
-					Long siteId, String search, List<String> aggregations,
+					String siteId, String search, List<String> aggregations,
 					String filterString, Pagination pagination,
 					String sortString)
 			throws Exception {
@@ -1087,7 +1088,7 @@ public interface ContentStructureResource {
 		}
 
 		public void postSiteContentStructuresPageExportBatch(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				String sortString, String callbackURL, String contentType,
 				String fieldNames)
 			throws Exception {
@@ -1147,7 +1148,7 @@ public interface ContentStructureResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteContentStructuresPageExportBatchHttpResponse(
-					Long siteId, String search, String filterString,
+					String siteId, String search, String filterString,
 					String sortString, String callbackURL, String contentType,
 					String fieldNames)
 			throws Exception {
@@ -1449,7 +1450,7 @@ public interface ContentStructureResource {
 		}
 
 		public Page<Permission> putSiteContentStructurePermissionsPage(
-				Long siteId, Permission[] permissions)
+				String siteId, Permission[] permissions)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1517,7 +1518,7 @@ public interface ContentStructureResource {
 
 		public HttpInvoker.HttpResponse
 				putSiteContentStructurePermissionsPageHttpResponse(
-					Long siteId, Permission[] permissions)
+					String siteId, Permission[] permissions)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();

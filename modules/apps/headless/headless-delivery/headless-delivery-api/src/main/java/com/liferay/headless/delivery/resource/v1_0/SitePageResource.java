@@ -48,42 +48,42 @@ import org.osgi.annotation.versioning.ProviderType;
 @ProviderType
 public interface SitePageResource {
 
-	public SitePage getSiteSitePage(Long siteId, String friendlyUrlPath)
+	public SitePage getSiteSitePage(String siteId, String friendlyUrlPath)
 		throws Exception;
 
 	public SitePage getSiteSitePageExperienceExperienceKey(
-			Long siteId, String friendlyUrlPath, String experienceKey)
+			String siteId, String friendlyUrlPath, String experienceKey)
 		throws Exception;
 
 	public String getSiteSitePageExperienceExperienceKeyRenderedPage(
-			Long siteId, String friendlyUrlPath, String experienceKey)
+			String siteId, String friendlyUrlPath, String experienceKey)
 		throws Exception;
 
 	public String getSiteSitePageRenderedPage(
-			Long siteId, String friendlyUrlPath)
+			String siteId, String friendlyUrlPath)
 		throws Exception;
 
 	public Page<SitePage> getSiteSitePagesExperiencesPage(
-			Long siteId, String friendlyUrlPath)
+			String siteId, String friendlyUrlPath)
 		throws Exception;
 
 	public Page<SitePage> getSiteSitePagesPage(
-			Long siteId, String search,
+			String siteId, String search,
 			com.liferay.portal.vulcan.aggregation.Aggregation aggregation,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			Pagination pagination,
 			com.liferay.portal.kernel.search.Sort[] sorts)
 		throws Exception;
 
-	public SitePage postSiteSitePage(Long siteId, SitePage sitePage)
+	public SitePage postSiteSitePage(String siteId, SitePage sitePage)
 		throws Exception;
 
 	public Response postSiteSitePageBatch(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public Response postSiteSitePagesPageExportBatch(
-			Long siteId, String search,
+			String siteId, String search,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			com.liferay.portal.kernel.search.Sort[] sorts, String callbackURL,
 			String contentType, String fieldNames)

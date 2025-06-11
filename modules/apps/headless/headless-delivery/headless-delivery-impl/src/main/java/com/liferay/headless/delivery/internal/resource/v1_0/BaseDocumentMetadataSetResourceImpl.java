@@ -236,7 +236,7 @@ public abstract class BaseDocumentMetadataSetResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("externalReferenceCode")
@@ -456,7 +456,7 @@ public abstract class BaseDocumentMetadataSetResourceImpl
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("siteId")
-				Long siteId,
+				String siteId,
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("externalReferenceCode")
@@ -510,7 +510,7 @@ public abstract class BaseDocumentMetadataSetResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@jakarta.ws.rs.core.Context Pagination pagination)
 		throws Exception {
 
@@ -717,7 +717,7 @@ public abstract class BaseDocumentMetadataSetResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			DocumentMetadataSet documentMetadataSet)
 		throws Exception {
 
@@ -757,7 +757,7 @@ public abstract class BaseDocumentMetadataSetResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.ws.rs.QueryParam("callbackURL")
 			String callbackURL,
@@ -821,7 +821,7 @@ public abstract class BaseDocumentMetadataSetResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.ws.rs.QueryParam("callbackURL")
 			String callbackURL,
@@ -942,7 +942,7 @@ public abstract class BaseDocumentMetadataSetResourceImpl
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("siteId")
-				Long siteId,
+				String siteId,
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("externalReferenceCode")
@@ -976,7 +976,7 @@ public abstract class BaseDocumentMetadataSetResourceImpl
 			else if (parameters.containsKey("siteId")) {
 				documentMetadataSetUnsafeFunction =
 					documentMetadataSet -> postSiteDocumentMetadataSet(
-						(Long)parameters.get("siteId"), documentMetadataSet);
+						(String)parameters.get("siteId"), documentMetadataSet);
 			}
 			else {
 				throw new NotSupportedException(
@@ -992,8 +992,8 @@ public abstract class BaseDocumentMetadataSetResourceImpl
 				documentMetadataSetUnsafeFunction = documentMetadataSet ->
 					putSiteDocumentMetadataSetByExternalReferenceCode(
 						documentMetadataSet.getSiteId() != null ?
-							documentMetadataSet.getSiteId() :
-								(Long)parameters.get("siteId"),
+							String.valueOf(documentMetadataSet.getSiteId()) :
+								(String)parameters.get("siteId"),
 						documentMetadataSet.getExternalReferenceCode(),
 						documentMetadataSet);
 			}
@@ -1097,7 +1097,7 @@ public abstract class BaseDocumentMetadataSetResourceImpl
 		}
 		else if (parameters.containsKey("siteId")) {
 			return getSiteDocumentMetadataSetsPage(
-				(Long)parameters.get("siteId"), pagination);
+				(String)parameters.get("siteId"), pagination);
 		}
 		else {
 			throw new NotSupportedException(

@@ -48,12 +48,12 @@ public interface StructuredContentFolderResource {
 		throws Exception;
 
 	public void deleteSiteStructuredContentFolderByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			deleteSiteStructuredContentFolderByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public void deleteStructuredContentFolder(Long structuredContentFolderId)
@@ -108,32 +108,32 @@ public interface StructuredContentFolderResource {
 
 	public StructuredContentFolder
 			getSiteStructuredContentFolderByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteStructuredContentFolderByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public Page<Permission> getSiteStructuredContentFolderPermissionsPage(
-			Long siteId, String roleNames)
+			String siteId, String roleNames)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteStructuredContentFolderPermissionsPageHttpResponse(
-				Long siteId, String roleNames)
+				String siteId, String roleNames)
 		throws Exception;
 
 	public Page<StructuredContentFolder> getSiteStructuredContentFoldersPage(
-			Long siteId, Boolean flatten, String search,
+			String siteId, Boolean flatten, String search,
 			List<String> aggregations, String filterString,
 			Pagination pagination, String sortString)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteStructuredContentFoldersPageHttpResponse(
-				Long siteId, Boolean flatten, String search,
+				String siteId, Boolean flatten, String search,
 				List<String> aggregations, String filterString,
 				Pagination pagination, String sortString)
 		throws Exception;
@@ -213,30 +213,31 @@ public interface StructuredContentFolderResource {
 		throws Exception;
 
 	public StructuredContentFolder postSiteStructuredContentFolder(
-			Long siteId, StructuredContentFolder structuredContentFolder)
+			String siteId, StructuredContentFolder structuredContentFolder)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse postSiteStructuredContentFolderHttpResponse(
-			Long siteId, StructuredContentFolder structuredContentFolder)
+			String siteId, StructuredContentFolder structuredContentFolder)
 		throws Exception;
 
 	public void postSiteStructuredContentFolderBatch(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			postSiteStructuredContentFolderBatchHttpResponse(
-				Long siteId, String callbackURL, Object object)
+				String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public void postSiteStructuredContentFoldersPageExportBatch(
-			Long siteId, String search, String filterString, String sortString,
-			String callbackURL, String contentType, String fieldNames)
+			String siteId, String search, String filterString,
+			String sortString, String callbackURL, String contentType,
+			String fieldNames)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			postSiteStructuredContentFoldersPageExportBatchHttpResponse(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				String sortString, String callbackURL, String contentType,
 				String fieldNames)
 		throws Exception;
@@ -277,23 +278,23 @@ public interface StructuredContentFolderResource {
 
 	public StructuredContentFolder
 			putSiteStructuredContentFolderByExternalReferenceCode(
-				Long siteId, String externalReferenceCode,
+				String siteId, String externalReferenceCode,
 				StructuredContentFolder structuredContentFolder)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			putSiteStructuredContentFolderByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode,
+				String siteId, String externalReferenceCode,
 				StructuredContentFolder structuredContentFolder)
 		throws Exception;
 
 	public Page<Permission> putSiteStructuredContentFolderPermissionsPage(
-			Long siteId, Permission[] permissions)
+			String siteId, Permission[] permissions)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			putSiteStructuredContentFolderPermissionsPageHttpResponse(
-				Long siteId, Permission[] permissions)
+				String siteId, Permission[] permissions)
 		throws Exception;
 
 	public StructuredContentFolder putStructuredContentFolder(
@@ -561,7 +562,7 @@ public interface StructuredContentFolderResource {
 		}
 
 		public void deleteSiteStructuredContentFolderByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -629,7 +630,7 @@ public interface StructuredContentFolderResource {
 
 		public HttpInvoker.HttpResponse
 				deleteSiteStructuredContentFolderByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode)
+					String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1242,7 +1243,7 @@ public interface StructuredContentFolderResource {
 
 		public StructuredContentFolder
 				getSiteStructuredContentFolderByExternalReferenceCode(
-					Long siteId, String externalReferenceCode)
+					String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1310,7 +1311,7 @@ public interface StructuredContentFolderResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteStructuredContentFolderByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode)
+					String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1351,7 +1352,7 @@ public interface StructuredContentFolderResource {
 		}
 
 		public Page<Permission> getSiteStructuredContentFolderPermissionsPage(
-				Long siteId, String roleNames)
+				String siteId, String roleNames)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1419,7 +1420,7 @@ public interface StructuredContentFolderResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteStructuredContentFolderPermissionsPageHttpResponse(
-					Long siteId, String roleNames)
+					String siteId, String roleNames)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1464,7 +1465,7 @@ public interface StructuredContentFolderResource {
 
 		public Page<StructuredContentFolder>
 				getSiteStructuredContentFoldersPage(
-					Long siteId, Boolean flatten, String search,
+					String siteId, Boolean flatten, String search,
 					List<String> aggregations, String filterString,
 					Pagination pagination, String sortString)
 			throws Exception {
@@ -1535,7 +1536,7 @@ public interface StructuredContentFolderResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteStructuredContentFoldersPageHttpResponse(
-					Long siteId, Boolean flatten, String search,
+					String siteId, Boolean flatten, String search,
 					List<String> aggregations, String filterString,
 					Pagination pagination, String sortString)
 			throws Exception {
@@ -2417,7 +2418,7 @@ public interface StructuredContentFolderResource {
 		}
 
 		public StructuredContentFolder postSiteStructuredContentFolder(
-				Long siteId, StructuredContentFolder structuredContentFolder)
+				String siteId, StructuredContentFolder structuredContentFolder)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -2485,7 +2486,7 @@ public interface StructuredContentFolderResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteStructuredContentFolderHttpResponse(
-					Long siteId,
+					String siteId,
 					StructuredContentFolder structuredContentFolder)
 			throws Exception {
 
@@ -2529,7 +2530,7 @@ public interface StructuredContentFolderResource {
 		}
 
 		public void postSiteStructuredContentFolderBatch(
-				Long siteId, String callbackURL, Object object)
+				String siteId, String callbackURL, Object object)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -2586,7 +2587,7 @@ public interface StructuredContentFolderResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteStructuredContentFolderBatchHttpResponse(
-					Long siteId, String callbackURL, Object object)
+					String siteId, String callbackURL, Object object)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -2633,7 +2634,7 @@ public interface StructuredContentFolderResource {
 		}
 
 		public void postSiteStructuredContentFoldersPageExportBatch(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				String sortString, String callbackURL, String contentType,
 				String fieldNames)
 			throws Exception {
@@ -2693,7 +2694,7 @@ public interface StructuredContentFolderResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteStructuredContentFoldersPageExportBatchHttpResponse(
-					Long siteId, String search, String filterString,
+					String siteId, String search, String filterString,
 					String sortString, String callbackURL, String contentType,
 					String fieldNames)
 			throws Exception {
@@ -3113,7 +3114,7 @@ public interface StructuredContentFolderResource {
 
 		public StructuredContentFolder
 				putSiteStructuredContentFolderByExternalReferenceCode(
-					Long siteId, String externalReferenceCode,
+					String siteId, String externalReferenceCode,
 					StructuredContentFolder structuredContentFolder)
 			throws Exception {
 
@@ -3182,7 +3183,7 @@ public interface StructuredContentFolderResource {
 
 		public HttpInvoker.HttpResponse
 				putSiteStructuredContentFolderByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode,
+					String siteId, String externalReferenceCode,
 					StructuredContentFolder structuredContentFolder)
 			throws Exception {
 
@@ -3227,7 +3228,7 @@ public interface StructuredContentFolderResource {
 		}
 
 		public Page<Permission> putSiteStructuredContentFolderPermissionsPage(
-				Long siteId, Permission[] permissions)
+				String siteId, Permission[] permissions)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -3295,7 +3296,7 @@ public interface StructuredContentFolderResource {
 
 		public HttpInvoker.HttpResponse
 				putSiteStructuredContentFolderPermissionsPageHttpResponse(
-					Long siteId, Permission[] permissions)
+					String siteId, Permission[] permissions)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();

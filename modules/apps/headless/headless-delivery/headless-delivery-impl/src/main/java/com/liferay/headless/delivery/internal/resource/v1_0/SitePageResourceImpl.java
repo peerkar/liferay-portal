@@ -92,6 +92,7 @@ import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.JaxRsLinkUtil;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 import com.liferay.portal.vulcan.util.SearchUtil;
@@ -138,43 +139,65 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 	}
 
 	@Override
-	public SitePage getSiteSitePage(Long siteId, String friendlyUrlPath)
+	public SitePage getSiteSitePage(String siteId, String friendlyUrlPath)
 		throws Exception {
 
-		return _toSitePage(true, _getLayout(siteId, friendlyUrlPath), null);
+		return _toSitePage(
+			true,
+			_getLayout(
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService),
+				friendlyUrlPath),
+			null);
 	}
 
 	@Override
 	public SitePage getSiteSitePageExperienceExperienceKey(
-			Long siteId, String friendlyUrlPath, String experienceKey)
+			String siteId, String friendlyUrlPath, String experienceKey)
 		throws Exception {
 
 		return _toSitePage(
-			true, _getLayout(siteId, friendlyUrlPath), experienceKey);
+			true,
+			_getLayout(
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService),
+				friendlyUrlPath),
+			experienceKey);
 	}
 
 	@Override
 	public String getSiteSitePageExperienceExperienceKeyRenderedPage(
-			Long siteId, String friendlyUrlPath, String experienceKey)
+			String siteId, String friendlyUrlPath, String experienceKey)
 		throws Exception {
 
-		return _toHTML(friendlyUrlPath, siteId, experienceKey);
+		return _toHTML(
+			friendlyUrlPath,
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService),
+			experienceKey);
 	}
 
 	@Override
 	public String getSiteSitePageRenderedPage(
-			Long siteId, String friendlyUrlPath)
+			String siteId, String friendlyUrlPath)
 		throws Exception {
 
-		return _toHTML(friendlyUrlPath, siteId, null);
+		return _toHTML(
+			friendlyUrlPath,
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService),
+			null);
 	}
 
 	@Override
 	public Page<SitePage> getSiteSitePagesExperiencesPage(
-			Long siteId, String friendlyUrlPath)
+			String siteId, String friendlyUrlPath)
 		throws Exception {
 
-		Layout layout = _getLayout(siteId, friendlyUrlPath);
+		Layout layout = _getLayout(
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService),
+			friendlyUrlPath);
 
 		return Page.of(
 			transform(
@@ -186,9 +209,12 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 
 	@Override
 	public Page<SitePage> getSiteSitePagesPage(
-			Long siteId, String search, Aggregation aggregation, Filter filter,
-			Pagination pagination, Sort[] sorts)
+			String siteId, String search, Aggregation aggregation,
+			Filter filter, Pagination pagination, Sort[] sorts)
 		throws Exception {
+
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
 		return SearchUtil.search(
 			HashMapBuilder.<String, Map<String, String>>put(
@@ -197,7 +223,7 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 					"href",
 					JaxRsLinkUtil.getJaxRsLink(
 						"headless-delivery", BaseSitePageResourceImpl.class,
-						"getSiteSitePagesPage", contextUriInfo, siteId)
+						"getSiteSitePagesPage", contextUriInfo, groupId)
 				).put(
 					"method", "GET"
 				).build()
@@ -207,7 +233,7 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 					booleanQuery.getPreBooleanFilter();
 
 				booleanFilter.add(
-					new TermFilter(Field.GROUP_ID, String.valueOf(siteId)),
+					new TermFilter(Field.GROUP_ID, String.valueOf(groupId)),
 					BooleanClauseOccur.MUST);
 			},
 			filter, Layout.class.getName(), search, pagination,
@@ -231,7 +257,7 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 				searchContext.setAttribute(
 					"privateLayout", Boolean.FALSE.toString());
 				searchContext.setCompanyId(contextCompany.getCompanyId());
-				searchContext.setGroupIds(new long[] {siteId});
+				searchContext.setGroupIds(new long[] {groupId});
 				searchContext.setKeywords(search);
 			},
 			sorts,
@@ -246,7 +272,7 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 	}
 
 	@Override
-	public SitePage postSiteSitePage(Long siteId, SitePage sitePage)
+	public SitePage postSiteSitePage(String siteId, SitePage sitePage)
 		throws Exception {
 
 		if (!FeatureFlagManagerUtil.isEnabled("LPS-178052")) {
@@ -258,7 +284,9 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 			sitePage.getTitle_i18n());
 
 		Layout layout = _addLayout(
-			siteId, sitePage, titleMap,
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService),
+			sitePage, titleMap,
 			LocalizedMapUtil.getLocalizedMap(
 				contextAcceptLanguage.getPreferredLocale(),
 				sitePage.getFriendlyUrlPath(),

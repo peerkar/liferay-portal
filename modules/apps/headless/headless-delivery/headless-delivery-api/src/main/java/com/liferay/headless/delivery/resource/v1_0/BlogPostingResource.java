@@ -57,7 +57,7 @@ public interface BlogPostingResource {
 	public void deleteBlogPostingMyRating(Long blogPostingId) throws Exception;
 
 	public void deleteSiteBlogPostingByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public BlogPosting getBlogPosting(Long blogPostingId) throws Exception;
@@ -73,15 +73,15 @@ public interface BlogPostingResource {
 		throws Exception;
 
 	public BlogPosting getSiteBlogPostingByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public Page<com.liferay.portal.vulcan.permission.Permission>
-			getSiteBlogPostingPermissionsPage(Long siteId, String roleNames)
+			getSiteBlogPostingPermissionsPage(String siteId, String roleNames)
 		throws Exception;
 
 	public Page<BlogPosting> getSiteBlogPostingsPage(
-			Long siteId, String search,
+			String siteId, String search,
 			com.liferay.portal.vulcan.aggregation.Aggregation aggregation,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			Pagination pagination,
@@ -95,15 +95,16 @@ public interface BlogPostingResource {
 	public Rating postBlogPostingMyRating(Long blogPostingId, Rating rating)
 		throws Exception;
 
-	public BlogPosting postSiteBlogPosting(Long siteId, BlogPosting blogPosting)
+	public BlogPosting postSiteBlogPosting(
+			String siteId, BlogPosting blogPosting)
 		throws Exception;
 
 	public Response postSiteBlogPostingBatch(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public Response postSiteBlogPostingsPageExportBatch(
-			Long siteId, String search,
+			String siteId, String search,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			com.liferay.portal.kernel.search.Sort[] sorts, String callbackURL,
 			String contentType, String fieldNames)
@@ -126,18 +127,19 @@ public interface BlogPostingResource {
 		throws Exception;
 
 	public BlogPosting putSiteBlogPostingByExternalReferenceCode(
-			Long siteId, String externalReferenceCode, BlogPosting blogPosting)
+			String siteId, String externalReferenceCode,
+			BlogPosting blogPosting)
 		throws Exception;
 
 	public Page<com.liferay.portal.vulcan.permission.Permission>
 			putSiteBlogPostingPermissionsPage(
-				Long siteId,
+				String siteId,
 				com.liferay.portal.vulcan.permission.Permission[] permissions)
 		throws Exception;
 
-	public void putSiteBlogPostingSubscribe(Long siteId) throws Exception;
+	public void putSiteBlogPostingSubscribe(String siteId) throws Exception;
 
-	public void putSiteBlogPostingUnsubscribe(Long siteId) throws Exception;
+	public void putSiteBlogPostingUnsubscribe(String siteId) throws Exception;
 
 	public default void setContextAcceptLanguage(
 		AcceptLanguage contextAcceptLanguage) {

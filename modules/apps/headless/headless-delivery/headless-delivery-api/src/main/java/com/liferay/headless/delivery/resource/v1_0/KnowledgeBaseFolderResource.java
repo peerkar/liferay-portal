@@ -56,7 +56,7 @@ public interface KnowledgeBaseFolderResource {
 		throws Exception;
 
 	public void deleteSiteKnowledgeBaseFolderByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public KnowledgeBaseFolder getKnowledgeBaseFolder(
@@ -75,16 +75,16 @@ public interface KnowledgeBaseFolderResource {
 
 	public KnowledgeBaseFolder
 			getSiteKnowledgeBaseFolderByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public Page<com.liferay.portal.vulcan.permission.Permission>
 			getSiteKnowledgeBaseFolderPermissionsPage(
-				Long siteId, String roleNames)
+				String siteId, String roleNames)
 		throws Exception;
 
 	public Page<KnowledgeBaseFolder> getSiteKnowledgeBaseFoldersPage(
-			Long siteId, Pagination pagination)
+			String siteId, Pagination pagination)
 		throws Exception;
 
 	public KnowledgeBaseFolder patchKnowledgeBaseFolder(
@@ -97,15 +97,15 @@ public interface KnowledgeBaseFolderResource {
 		throws Exception;
 
 	public KnowledgeBaseFolder postSiteKnowledgeBaseFolder(
-			Long siteId, KnowledgeBaseFolder knowledgeBaseFolder)
+			String siteId, KnowledgeBaseFolder knowledgeBaseFolder)
 		throws Exception;
 
 	public Response postSiteKnowledgeBaseFolderBatch(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public Response postSiteKnowledgeBaseFoldersPageExportBatch(
-			Long siteId, String callbackURL, String contentType,
+			String siteId, String callbackURL, String contentType,
 			String fieldNames)
 		throws Exception;
 
@@ -125,13 +125,13 @@ public interface KnowledgeBaseFolderResource {
 
 	public KnowledgeBaseFolder
 			putSiteKnowledgeBaseFolderByExternalReferenceCode(
-				Long siteId, String externalReferenceCode,
+				String siteId, String externalReferenceCode,
 				KnowledgeBaseFolder knowledgeBaseFolder)
 		throws Exception;
 
 	public Page<com.liferay.portal.vulcan.permission.Permission>
 			putSiteKnowledgeBaseFolderPermissionsPage(
-				Long siteId,
+				String siteId,
 				com.liferay.portal.vulcan.permission.Permission[] permissions)
 		throws Exception;
 

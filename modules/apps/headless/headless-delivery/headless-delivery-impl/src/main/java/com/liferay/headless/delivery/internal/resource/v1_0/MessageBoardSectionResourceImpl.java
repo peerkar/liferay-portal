@@ -47,6 +47,7 @@ import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.util.ActionUtil;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.SearchUtil;
 
 import jakarta.ws.rs.core.MultivaluedMap;
@@ -135,31 +136,37 @@ public class MessageBoardSectionResourceImpl
 
 	@Override
 	public MessageBoardSection getSiteMessageBoardSectionByFriendlyUrlPath(
-			Long siteId, String friendlyUrlPath)
+			String siteId, String friendlyUrlPath)
 		throws Exception {
 
 		return _toMessageBoardSection(
-			_mbCategoryService.getMBCategory(siteId, friendlyUrlPath));
+			_mbCategoryService.getMBCategory(
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService),
+				friendlyUrlPath));
 	}
 
 	@Override
 	public Page<MessageBoardSection> getSiteMessageBoardSectionsPage(
-			Long siteId, Boolean flatten, String search,
+			String siteId, Boolean flatten, String search,
 			Aggregation aggregation, Filter filter, Pagination pagination,
 			Sort[] sorts)
 		throws Exception {
+
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
 		return _getMessageBoardSectionsPage(
 			HashMapBuilder.put(
 				"create",
 				addAction(
 					ActionKeys.ADD_CATEGORY, "postSiteMessageBoardSection",
-					MBConstants.RESOURCE_NAME, siteId)
+					MBConstants.RESOURCE_NAME, groupId)
 			).put(
 				"createBatch",
 				addAction(
 					ActionKeys.ADD_CATEGORY, "postSiteMessageBoardSectionBatch",
-					MBConstants.RESOURCE_NAME, siteId)
+					MBConstants.RESOURCE_NAME, groupId)
 			).put(
 				"deleteBatch",
 				addAction(
@@ -169,7 +176,7 @@ public class MessageBoardSectionResourceImpl
 				"get",
 				addAction(
 					ActionKeys.VIEW, "getSiteMessageBoardSectionsPage",
-					MBConstants.RESOURCE_NAME, siteId)
+					MBConstants.RESOURCE_NAME, groupId)
 			).put(
 				"updateBatch",
 				addAction(
@@ -186,7 +193,7 @@ public class MessageBoardSectionResourceImpl
 						BooleanClauseOccur.MUST);
 				}
 			},
-			siteId, search, aggregation, filter, pagination, sorts);
+			groupId, search, aggregation, filter, pagination, sorts);
 	}
 
 	@Override
@@ -205,10 +212,13 @@ public class MessageBoardSectionResourceImpl
 
 	@Override
 	public MessageBoardSection postSiteMessageBoardSection(
-			Long siteId, MessageBoardSection messageBoardSection)
+			String siteId, MessageBoardSection messageBoardSection)
 		throws Exception {
 
-		return _addMessageBoardSection(siteId, 0L, messageBoardSection);
+		return _addMessageBoardSection(
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService),
+			0L, messageBoardSection);
 	}
 
 	@Override

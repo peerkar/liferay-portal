@@ -113,7 +113,7 @@ public abstract class BaseSitePageResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("friendlyUrlPath")
@@ -172,7 +172,7 @@ public abstract class BaseSitePageResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("friendlyUrlPath")
@@ -235,7 +235,7 @@ public abstract class BaseSitePageResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("friendlyUrlPath")
@@ -294,7 +294,7 @@ public abstract class BaseSitePageResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("friendlyUrlPath")
@@ -349,7 +349,7 @@ public abstract class BaseSitePageResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("friendlyUrlPath")
@@ -422,7 +422,7 @@ public abstract class BaseSitePageResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.ws.rs.QueryParam("search")
 			String search,
@@ -466,7 +466,7 @@ public abstract class BaseSitePageResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			SitePage sitePage)
 		throws Exception {
 
@@ -502,7 +502,7 @@ public abstract class BaseSitePageResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.ws.rs.QueryParam("callbackURL")
 			String callbackURL,
@@ -574,7 +574,7 @@ public abstract class BaseSitePageResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.ws.rs.QueryParam("search")
 			String search,
@@ -628,7 +628,7 @@ public abstract class BaseSitePageResourceImpl
 		if (StringUtil.equalsIgnoreCase(createStrategy, "INSERT")) {
 			if (parameters.containsKey("siteId")) {
 				sitePageUnsafeFunction = sitePage -> postSiteSitePage(
-					(Long)parameters.get("siteId"), sitePage);
+					(String)parameters.get("siteId"), sitePage);
 			}
 			else {
 				throw new NotSupportedException(
@@ -708,7 +708,7 @@ public abstract class BaseSitePageResourceImpl
 
 		if (parameters.containsKey("siteId")) {
 			return getSiteSitePagesPage(
-				(Long)parameters.get("siteId"), search, null, filter,
+				(String)parameters.get("siteId"), search, null, filter,
 				pagination, sorts);
 		}
 		else {

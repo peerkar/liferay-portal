@@ -51,6 +51,7 @@ import com.liferay.portal.vulcan.permission.ModelPermissionsUtil;
 import com.liferay.portal.vulcan.permission.Permission;
 import com.liferay.portal.vulcan.resource.EntityModelResource;
 import com.liferay.portal.vulcan.util.ActionUtil;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.UriInfoUtil;
 
 import jakarta.annotation.Generated;
@@ -200,7 +201,7 @@ public abstract class BaseNavigationMenuResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("externalReferenceCode")
@@ -370,7 +371,7 @@ public abstract class BaseNavigationMenuResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("externalReferenceCode")
@@ -422,29 +423,34 @@ public abstract class BaseNavigationMenuResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.ws.rs.QueryParam("roleNames")
 			String roleNames)
 		throws Exception {
 
-		String portletName = getPermissionCheckerPortletName(siteId);
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
-		PermissionServiceUtil.checkPermission(siteId, portletName, siteId);
+		String portletName = getPermissionCheckerPortletName(groupId);
+
+		PermissionServiceUtil.checkPermission(groupId, portletName, groupId);
 
 		return toPermissionPage(
 			HashMapBuilder.put(
 				"get",
 				addAction(
 					ActionKeys.PERMISSIONS,
-					"getSiteNavigationMenuPermissionsPage", portletName, siteId)
+					"getSiteNavigationMenuPermissionsPage", portletName,
+					groupId)
 			).put(
 				"replace",
 				addAction(
 					ActionKeys.PERMISSIONS,
-					"putSiteNavigationMenuPermissionsPage", portletName, siteId)
+					"putSiteNavigationMenuPermissionsPage", portletName,
+					groupId)
 			).build(),
-			siteId, portletName, roleNames);
+			groupId, portletName, roleNames);
 	}
 
 	/**
@@ -505,7 +511,7 @@ public abstract class BaseNavigationMenuResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.ws.rs.QueryParam("search")
 			String search,
@@ -549,7 +555,7 @@ public abstract class BaseNavigationMenuResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			NavigationMenu navigationMenu)
 		throws Exception {
 
@@ -587,7 +593,7 @@ public abstract class BaseNavigationMenuResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.ws.rs.QueryParam("callbackURL")
 			String callbackURL,
@@ -661,7 +667,7 @@ public abstract class BaseNavigationMenuResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.ws.rs.QueryParam("search")
 			String search,
@@ -911,7 +917,7 @@ public abstract class BaseNavigationMenuResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("externalReferenceCode")
@@ -949,19 +955,22 @@ public abstract class BaseNavigationMenuResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			Permission[] permissions)
 		throws Exception {
 
-		String portletName = getPermissionCheckerPortletName(siteId);
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
-		PermissionServiceUtil.checkPermission(siteId, portletName, siteId);
+		String portletName = getPermissionCheckerPortletName(groupId);
+
+		PermissionServiceUtil.checkPermission(groupId, portletName, groupId);
 
 		ModelPermissions modelPermissions =
 			ModelPermissionsUtil.toModelPermissions(
-				contextCompany.getCompanyId(), permissions, siteId, portletName,
-				resourceActionLocalService, resourcePermissionLocalService,
-				roleLocalService);
+				contextCompany.getCompanyId(), permissions, groupId,
+				portletName, resourceActionLocalService,
+				resourcePermissionLocalService, roleLocalService);
 
 		Collection<String> roleNames = modelPermissions.getRoleNames();
 
@@ -969,7 +978,7 @@ public abstract class BaseNavigationMenuResourceImpl
 				resourcePermissionLocalService.getResourcePermissions(
 					contextCompany.getCompanyId(), portletName,
 					ResourceConstants.SCOPE_INDIVIDUAL,
-					String.valueOf(siteId))) {
+					String.valueOf(groupId))) {
 
 			com.liferay.portal.kernel.model.Role role =
 				roleLocalService.fetchRole(resourcePermission.getRoleId());
@@ -984,28 +993,30 @@ public abstract class BaseNavigationMenuResourceImpl
 
 				resourcePermissionLocalService.removeResourcePermission(
 					contextCompany.getCompanyId(), portletName,
-					ResourceConstants.SCOPE_INDIVIDUAL, String.valueOf(siteId),
+					ResourceConstants.SCOPE_INDIVIDUAL, String.valueOf(groupId),
 					role.getRoleId(), resourceAction.getActionId());
 			}
 		}
 
 		resourcePermissionLocalService.updateResourcePermissions(
-			contextCompany.getCompanyId(), siteId, portletName,
-			String.valueOf(siteId), modelPermissions);
+			contextCompany.getCompanyId(), groupId, portletName,
+			String.valueOf(groupId), modelPermissions);
 
 		return toPermissionPage(
 			HashMapBuilder.put(
 				"get",
 				addAction(
 					ActionKeys.PERMISSIONS,
-					"getSiteNavigationMenuPermissionsPage", portletName, siteId)
+					"getSiteNavigationMenuPermissionsPage", portletName,
+					groupId)
 			).put(
 				"replace",
 				addAction(
 					ActionKeys.PERMISSIONS,
-					"putSiteNavigationMenuPermissionsPage", portletName, siteId)
+					"putSiteNavigationMenuPermissionsPage", portletName,
+					groupId)
 			).build(),
-			siteId, portletName, null);
+			groupId, portletName, null);
 	}
 
 	@Override
@@ -1025,7 +1036,7 @@ public abstract class BaseNavigationMenuResourceImpl
 			if (parameters.containsKey("siteId")) {
 				navigationMenuUnsafeFunction =
 					navigationMenu -> postSiteNavigationMenu(
-						(Long)parameters.get("siteId"), navigationMenu);
+						(String)parameters.get("siteId"), navigationMenu);
 			}
 			else {
 				throw new NotSupportedException(
@@ -1042,8 +1053,8 @@ public abstract class BaseNavigationMenuResourceImpl
 					navigationMenu ->
 						putSiteNavigationMenuByExternalReferenceCode(
 							navigationMenu.getSiteId() != null ?
-								navigationMenu.getSiteId() :
-									(Long)parameters.get("siteId"),
+								String.valueOf(navigationMenu.getSiteId()) :
+									(String)parameters.get("siteId"),
 							navigationMenu.getExternalReferenceCode(),
 							navigationMenu);
 			}
@@ -1139,7 +1150,7 @@ public abstract class BaseNavigationMenuResourceImpl
 
 		if (parameters.containsKey("siteId")) {
 			return getSiteNavigationMenusPage(
-				(Long)parameters.get("siteId"), search, filter, pagination,
+				(String)parameters.get("siteId"), search, filter, pagination,
 				sorts);
 		}
 		else {

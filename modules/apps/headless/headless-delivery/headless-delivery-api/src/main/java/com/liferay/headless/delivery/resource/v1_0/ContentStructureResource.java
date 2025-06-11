@@ -71,11 +71,11 @@ public interface ContentStructureResource {
 
 	public Page<com.liferay.portal.vulcan.permission.Permission>
 			getSiteContentStructurePermissionsPage(
-				Long siteId, String roleNames)
+				String siteId, String roleNames)
 		throws Exception;
 
 	public Page<ContentStructure> getSiteContentStructuresPage(
-			Long siteId, String search,
+			String siteId, String search,
 			com.liferay.portal.vulcan.aggregation.Aggregation aggregation,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			Pagination pagination,
@@ -90,7 +90,7 @@ public interface ContentStructureResource {
 		throws Exception;
 
 	public Response postSiteContentStructuresPageExportBatch(
-			Long siteId, String search,
+			String siteId, String search,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			com.liferay.portal.kernel.search.Sort[] sorts, String callbackURL,
 			String contentType, String fieldNames)
@@ -110,7 +110,7 @@ public interface ContentStructureResource {
 
 	public Page<com.liferay.portal.vulcan.permission.Permission>
 			putSiteContentStructurePermissionsPage(
-				Long siteId,
+				String siteId,
 				com.liferay.portal.vulcan.permission.Permission[] permissions)
 		throws Exception;
 

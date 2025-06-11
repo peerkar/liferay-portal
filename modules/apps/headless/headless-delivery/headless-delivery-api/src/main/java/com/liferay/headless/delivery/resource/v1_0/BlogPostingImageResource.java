@@ -57,18 +57,18 @@ public interface BlogPostingImageResource {
 		throws Exception;
 
 	public void deleteSiteBlogPostingImageByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public BlogPostingImage getBlogPostingImage(Long blogPostingImageId)
 		throws Exception;
 
 	public BlogPostingImage getSiteBlogPostingImageByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public Page<BlogPostingImage> getSiteBlogPostingImagesPage(
-			Long siteId, String search,
+			String siteId, String search,
 			com.liferay.portal.vulcan.aggregation.Aggregation aggregation,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			Pagination pagination,
@@ -76,16 +76,16 @@ public interface BlogPostingImageResource {
 		throws Exception;
 
 	public BlogPostingImage postSiteBlogPostingImage(
-			Long siteId, MultipartBody multipartBody)
+			String siteId, MultipartBody multipartBody)
 		throws Exception;
 
 	public Response postSiteBlogPostingImageBatch(
-			Long siteId, MultipartBody multipartBody, String callbackURL,
+			String siteId, MultipartBody multipartBody, String callbackURL,
 			Object object)
 		throws Exception;
 
 	public Response postSiteBlogPostingImagesPageExportBatch(
-			Long siteId, String search,
+			String siteId, String search,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			com.liferay.portal.kernel.search.Sort[] sorts, String callbackURL,
 			String contentType, String fieldNames)

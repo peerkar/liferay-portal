@@ -846,9 +846,9 @@ public abstract class BaseContentSetElementResourceTestCase {
 	public void testGetSiteContentSetByKeyContentSetElementsPage()
 		throws Exception {
 
-		Long siteId =
+		String siteId =
 			testGetSiteContentSetByKeyContentSetElementsPage_getSiteId();
-		Long irrelevantSiteId =
+		String irrelevantSiteId =
 			testGetSiteContentSetByKeyContentSetElementsPage_getIrrelevantSiteId();
 		String key = testGetSiteContentSetByKeyContentSetElementsPage_getKey();
 		String irrelevantKey =
@@ -911,7 +911,7 @@ public abstract class BaseContentSetElementResourceTestCase {
 
 	protected Map<String, Map<String, String>>
 			testGetSiteContentSetByKeyContentSetElementsPage_getExpectedActions(
-				Long siteId, String key)
+				String siteId, String key)
 		throws Exception {
 
 		Map<String, Map<String, String>> expectedActions = new HashMap<>();
@@ -923,7 +923,7 @@ public abstract class BaseContentSetElementResourceTestCase {
 	public void testGetSiteContentSetByKeyContentSetElementsPageWithPagination()
 		throws Exception {
 
-		Long siteId =
+		String siteId =
 			testGetSiteContentSetByKeyContentSetElementsPage_getSiteId();
 		String key = testGetSiteContentSetByKeyContentSetElementsPage_getKey();
 
@@ -1028,20 +1028,21 @@ public abstract class BaseContentSetElementResourceTestCase {
 
 	protected ContentSetElement
 			testGetSiteContentSetByKeyContentSetElementsPage_addContentSetElement(
-				Long siteId, String key, ContentSetElement contentSetElement)
+				String siteId, String key, ContentSetElement contentSetElement)
 		throws Exception {
 
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
 	}
 
-	protected Long testGetSiteContentSetByKeyContentSetElementsPage_getSiteId()
+	protected String
+			testGetSiteContentSetByKeyContentSetElementsPage_getSiteId()
 		throws Exception {
 
 		return testGroup.getGroupId();
 	}
 
-	protected Long
+	protected String
 			testGetSiteContentSetByKeyContentSetElementsPage_getIrrelevantSiteId()
 		throws Exception {
 
@@ -1066,9 +1067,9 @@ public abstract class BaseContentSetElementResourceTestCase {
 	public void testGetSiteContentSetByUuidContentSetElementsPage()
 		throws Exception {
 
-		Long siteId =
+		String siteId =
 			testGetSiteContentSetByUuidContentSetElementsPage_getSiteId();
-		Long irrelevantSiteId =
+		String irrelevantSiteId =
 			testGetSiteContentSetByUuidContentSetElementsPage_getIrrelevantSiteId();
 		String uuid =
 			testGetSiteContentSetByUuidContentSetElementsPage_getUuid();
@@ -1132,7 +1133,7 @@ public abstract class BaseContentSetElementResourceTestCase {
 
 	protected Map<String, Map<String, String>>
 			testGetSiteContentSetByUuidContentSetElementsPage_getExpectedActions(
-				Long siteId, String uuid)
+				String siteId, String uuid)
 		throws Exception {
 
 		Map<String, Map<String, String>> expectedActions = new HashMap<>();
@@ -1144,7 +1145,7 @@ public abstract class BaseContentSetElementResourceTestCase {
 	public void testGetSiteContentSetByUuidContentSetElementsPageWithPagination()
 		throws Exception {
 
-		Long siteId =
+		String siteId =
 			testGetSiteContentSetByUuidContentSetElementsPage_getSiteId();
 		String uuid =
 			testGetSiteContentSetByUuidContentSetElementsPage_getUuid();
@@ -1251,20 +1252,21 @@ public abstract class BaseContentSetElementResourceTestCase {
 
 	protected ContentSetElement
 			testGetSiteContentSetByUuidContentSetElementsPage_addContentSetElement(
-				Long siteId, String uuid, ContentSetElement contentSetElement)
+				String siteId, String uuid, ContentSetElement contentSetElement)
 		throws Exception {
 
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
 	}
 
-	protected Long testGetSiteContentSetByUuidContentSetElementsPage_getSiteId()
+	protected String
+			testGetSiteContentSetByUuidContentSetElementsPage_getSiteId()
 		throws Exception {
 
 		return testGroup.getGroupId();
 	}
 
-	protected Long
+	protected String
 			testGetSiteContentSetByUuidContentSetElementsPage_getIrrelevantSiteId()
 		throws Exception {
 
@@ -1289,9 +1291,9 @@ public abstract class BaseContentSetElementResourceTestCase {
 	public void testGetSiteContentSetProviderByKeyContentSetElementsPage()
 		throws Exception {
 
-		Long siteId =
+		String siteId =
 			testGetSiteContentSetProviderByKeyContentSetElementsPage_getSiteId();
-		Long irrelevantSiteId =
+		String irrelevantSiteId =
 			testGetSiteContentSetProviderByKeyContentSetElementsPage_getIrrelevantSiteId();
 		String key =
 			testGetSiteContentSetProviderByKeyContentSetElementsPage_getKey();
@@ -1355,7 +1357,7 @@ public abstract class BaseContentSetElementResourceTestCase {
 
 	protected Map<String, Map<String, String>>
 			testGetSiteContentSetProviderByKeyContentSetElementsPage_getExpectedActions(
-				Long siteId, String key)
+				String siteId, String key)
 		throws Exception {
 
 		Map<String, Map<String, String>> expectedActions = new HashMap<>();
@@ -1367,7 +1369,7 @@ public abstract class BaseContentSetElementResourceTestCase {
 	public void testGetSiteContentSetProviderByKeyContentSetElementsPageWithPagination()
 		throws Exception {
 
-		Long siteId =
+		String siteId =
 			testGetSiteContentSetProviderByKeyContentSetElementsPage_getSiteId();
 		String key =
 			testGetSiteContentSetProviderByKeyContentSetElementsPage_getKey();
@@ -1474,21 +1476,21 @@ public abstract class BaseContentSetElementResourceTestCase {
 
 	protected ContentSetElement
 			testGetSiteContentSetProviderByKeyContentSetElementsPage_addContentSetElement(
-				Long siteId, String key, ContentSetElement contentSetElement)
+				String siteId, String key, ContentSetElement contentSetElement)
 		throws Exception {
 
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
 	}
 
-	protected Long
+	protected String
 			testGetSiteContentSetProviderByKeyContentSetElementsPage_getSiteId()
 		throws Exception {
 
 		return testGroup.getGroupId();
 	}
 
-	protected Long
+	protected String
 			testGetSiteContentSetProviderByKeyContentSetElementsPage_getIrrelevantSiteId()
 		throws Exception {
 

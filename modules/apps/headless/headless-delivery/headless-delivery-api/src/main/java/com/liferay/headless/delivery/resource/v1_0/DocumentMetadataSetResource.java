@@ -60,7 +60,7 @@ public interface DocumentMetadataSetResource {
 		throws Exception;
 
 	public void deleteSiteDocumentMetadataSetByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public DocumentMetadataSet
@@ -78,11 +78,11 @@ public interface DocumentMetadataSetResource {
 
 	public DocumentMetadataSet
 			getSiteDocumentMetadataSetByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public Page<DocumentMetadataSet> getSiteDocumentMetadataSetsPage(
-			Long siteId, Pagination pagination)
+			String siteId, Pagination pagination)
 		throws Exception;
 
 	public DocumentMetadataSet postAssetLibraryDocumentMetadataSet(
@@ -99,15 +99,15 @@ public interface DocumentMetadataSetResource {
 		throws Exception;
 
 	public DocumentMetadataSet postSiteDocumentMetadataSet(
-			Long siteId, DocumentMetadataSet documentMetadataSet)
+			String siteId, DocumentMetadataSet documentMetadataSet)
 		throws Exception;
 
 	public Response postSiteDocumentMetadataSetBatch(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public Response postSiteDocumentMetadataSetsPageExportBatch(
-			Long siteId, String callbackURL, String contentType,
+			String siteId, String callbackURL, String contentType,
 			String fieldNames)
 		throws Exception;
 
@@ -119,7 +119,7 @@ public interface DocumentMetadataSetResource {
 
 	public DocumentMetadataSet
 			putSiteDocumentMetadataSetByExternalReferenceCode(
-				Long siteId, String externalReferenceCode,
+				String siteId, String externalReferenceCode,
 				DocumentMetadataSet documentMetadataSet)
 		throws Exception;
 

@@ -58,7 +58,7 @@ public interface DocumentFolderResource {
 		throws Exception;
 
 	public void deleteSiteDocumentsFolderByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public Page<com.liferay.portal.vulcan.permission.Permission>
@@ -98,11 +98,12 @@ public interface DocumentFolderResource {
 		throws Exception;
 
 	public Page<com.liferay.portal.vulcan.permission.Permission>
-			getSiteDocumentFolderPermissionsPage(Long siteId, String roleNames)
+			getSiteDocumentFolderPermissionsPage(
+				String siteId, String roleNames)
 		throws Exception;
 
 	public Page<DocumentFolder> getSiteDocumentFoldersPage(
-			Long siteId, Boolean flatten, String search,
+			String siteId, Boolean flatten, String search,
 			com.liferay.portal.vulcan.aggregation.Aggregation aggregation,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			Pagination pagination,
@@ -110,11 +111,11 @@ public interface DocumentFolderResource {
 		throws Exception;
 
 	public Page<DocumentFolder> getSiteDocumentFoldersRatedByMePage(
-			Long siteId, Pagination pagination)
+			String siteId, Pagination pagination)
 		throws Exception;
 
 	public DocumentFolder getSiteDocumentsFolderByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public DocumentFolder patchDocumentFolder(
@@ -145,15 +146,15 @@ public interface DocumentFolderResource {
 		throws Exception;
 
 	public DocumentFolder postSiteDocumentFolder(
-			Long siteId, DocumentFolder documentFolder)
+			String siteId, DocumentFolder documentFolder)
 		throws Exception;
 
 	public Response postSiteDocumentFolderBatch(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public Response postSiteDocumentFoldersPageExportBatch(
-			Long siteId, String search,
+			String siteId, String search,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			com.liferay.portal.kernel.search.Sort[] sorts, String callbackURL,
 			String contentType, String fieldNames)
@@ -190,12 +191,12 @@ public interface DocumentFolderResource {
 
 	public Page<com.liferay.portal.vulcan.permission.Permission>
 			putSiteDocumentFolderPermissionsPage(
-				Long siteId,
+				String siteId,
 				com.liferay.portal.vulcan.permission.Permission[] permissions)
 		throws Exception;
 
 	public DocumentFolder putSiteDocumentsFolderByExternalReferenceCode(
-			Long siteId, String externalReferenceCode,
+			String siteId, String externalReferenceCode,
 			DocumentFolder documentFolder)
 		throws Exception;
 

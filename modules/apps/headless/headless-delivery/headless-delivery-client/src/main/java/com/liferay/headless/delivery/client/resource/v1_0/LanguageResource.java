@@ -40,10 +40,10 @@ public interface LanguageResource {
 			Long assetLibraryId)
 		throws Exception;
 
-	public Page<Language> getSiteLanguagesPage(Long siteId) throws Exception;
+	public Page<Language> getSiteLanguagesPage(String siteId) throws Exception;
 
 	public HttpInvoker.HttpResponse getSiteLanguagesPageHttpResponse(
-			Long siteId)
+			String siteId)
 		throws Exception;
 
 	public void postAssetLibraryLanguagesPageExportBatch(
@@ -58,13 +58,13 @@ public interface LanguageResource {
 		throws Exception;
 
 	public void postSiteLanguagesPageExportBatch(
-			Long siteId, String callbackURL, String contentType,
+			String siteId, String callbackURL, String contentType,
 			String fieldNames)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			postSiteLanguagesPageExportBatchHttpResponse(
-				Long siteId, String callbackURL, String contentType,
+				String siteId, String callbackURL, String contentType,
 				String fieldNames)
 		throws Exception;
 
@@ -281,7 +281,7 @@ public interface LanguageResource {
 			return httpInvoker.invoke();
 		}
 
-		public Page<Language> getSiteLanguagesPage(Long siteId)
+		public Page<Language> getSiteLanguagesPage(String siteId)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -347,7 +347,7 @@ public interface LanguageResource {
 		}
 
 		public HttpInvoker.HttpResponse getSiteLanguagesPageHttpResponse(
-				Long siteId)
+				String siteId)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -502,7 +502,7 @@ public interface LanguageResource {
 		}
 
 		public void postSiteLanguagesPageExportBatch(
-				Long siteId, String callbackURL, String contentType,
+				String siteId, String callbackURL, String contentType,
 				String fieldNames)
 			throws Exception {
 
@@ -560,7 +560,7 @@ public interface LanguageResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteLanguagesPageExportBatchHttpResponse(
-					Long siteId, String callbackURL, String contentType,
+					String siteId, String callbackURL, String contentType,
 					String fieldNames)
 			throws Exception {
 

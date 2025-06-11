@@ -417,7 +417,7 @@ public abstract class BaseKnowledgeBaseFolderResourceTestCase {
 					"-"));
 	}
 
-	protected Long
+	protected String
 			testDeleteSiteKnowledgeBaseFolderByExternalReferenceCode_getSiteId(
 				KnowledgeBaseFolder knowledgeBaseFolder)
 		throws Exception {
@@ -1009,7 +1009,7 @@ public abstract class BaseKnowledgeBaseFolderResourceTestCase {
 		assertValid(getKnowledgeBaseFolder);
 	}
 
-	protected Long
+	protected String
 			testGetSiteKnowledgeBaseFolderByExternalReferenceCode_getSiteId(
 				KnowledgeBaseFolder knowledgeBaseFolder)
 		throws Exception {
@@ -1097,7 +1097,7 @@ public abstract class BaseKnowledgeBaseFolderResourceTestCase {
 						"Object/knowledgeBaseFolderByExternalReferenceCode"))));
 	}
 
-	protected Long
+	protected String
 			testGraphQLGetSiteKnowledgeBaseFolderByExternalReferenceCode_getSiteId(
 				KnowledgeBaseFolder knowledgeBaseFolder)
 		throws Exception {
@@ -1189,8 +1189,8 @@ public abstract class BaseKnowledgeBaseFolderResourceTestCase {
 
 	@Test
 	public void testGetSiteKnowledgeBaseFoldersPage() throws Exception {
-		Long siteId = testGetSiteKnowledgeBaseFoldersPage_getSiteId();
-		Long irrelevantSiteId =
+		String siteId = testGetSiteKnowledgeBaseFoldersPage_getSiteId();
+		String irrelevantSiteId =
 			testGetSiteKnowledgeBaseFoldersPage_getIrrelevantSiteId();
 
 		Page<KnowledgeBaseFolder> page =
@@ -1247,7 +1247,8 @@ public abstract class BaseKnowledgeBaseFolderResourceTestCase {
 	}
 
 	protected Map<String, Map<String, String>>
-			testGetSiteKnowledgeBaseFoldersPage_getExpectedActions(Long siteId)
+			testGetSiteKnowledgeBaseFoldersPage_getExpectedActions(
+				String siteId)
 		throws Exception {
 
 		Map<String, Map<String, String>> expectedActions = new HashMap<>();
@@ -1268,7 +1269,7 @@ public abstract class BaseKnowledgeBaseFolderResourceTestCase {
 	public void testGetSiteKnowledgeBaseFoldersPageWithPagination()
 		throws Exception {
 
-		Long siteId = testGetSiteKnowledgeBaseFoldersPage_getSiteId();
+		String siteId = testGetSiteKnowledgeBaseFoldersPage_getSiteId();
 
 		Page<KnowledgeBaseFolder> knowledgeBaseFoldersPage =
 			knowledgeBaseFolderResource.getSiteKnowledgeBaseFoldersPage(
@@ -1372,20 +1373,20 @@ public abstract class BaseKnowledgeBaseFolderResourceTestCase {
 
 	protected KnowledgeBaseFolder
 			testGetSiteKnowledgeBaseFoldersPage_addKnowledgeBaseFolder(
-				Long siteId, KnowledgeBaseFolder knowledgeBaseFolder)
+				String siteId, KnowledgeBaseFolder knowledgeBaseFolder)
 		throws Exception {
 
 		return knowledgeBaseFolderResource.postSiteKnowledgeBaseFolder(
 			siteId, knowledgeBaseFolder);
 	}
 
-	protected Long testGetSiteKnowledgeBaseFoldersPage_getSiteId()
+	protected String testGetSiteKnowledgeBaseFoldersPage_getSiteId()
 		throws Exception {
 
 		return testGroup.getGroupId();
 	}
 
-	protected Long testGetSiteKnowledgeBaseFoldersPage_getIrrelevantSiteId()
+	protected String testGetSiteKnowledgeBaseFoldersPage_getIrrelevantSiteId()
 		throws Exception {
 
 		return irrelevantGroup.getGroupId();
@@ -1393,7 +1394,7 @@ public abstract class BaseKnowledgeBaseFolderResourceTestCase {
 
 	@Test
 	public void testGraphQLGetSiteKnowledgeBaseFoldersPage() throws Exception {
-		Long siteId = testGetSiteKnowledgeBaseFoldersPage_getSiteId();
+		String siteId = testGetSiteKnowledgeBaseFoldersPage_getSiteId();
 
 		GraphQLField graphQLField = new GraphQLField(
 			"knowledgeBaseFolders",
@@ -1707,7 +1708,7 @@ public abstract class BaseKnowledgeBaseFolderResourceTestCase {
 			putKnowledgeBaseFolder.getExternalReferenceCode());
 	}
 
-	protected Long
+	protected String
 			testPutSiteKnowledgeBaseFolderByExternalReferenceCode_getSiteId(
 				KnowledgeBaseFolder knowledgeBaseFolder)
 		throws Exception {

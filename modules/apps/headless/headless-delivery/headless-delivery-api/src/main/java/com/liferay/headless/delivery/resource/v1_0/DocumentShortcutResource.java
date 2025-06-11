@@ -56,7 +56,7 @@ public interface DocumentShortcutResource {
 		throws Exception;
 
 	public void deleteSiteDocumentShortcutByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public Page<DocumentShortcut> getAssetLibraryDocumentShortcutsPage(
@@ -67,11 +67,11 @@ public interface DocumentShortcutResource {
 		throws Exception;
 
 	public DocumentShortcut getSiteDocumentShortcutByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public Page<DocumentShortcut> getSiteDocumentShortcutsPage(
-			Long siteId, Pagination pagination)
+			String siteId, Pagination pagination)
 		throws Exception;
 
 	public DocumentShortcut patchDocumentShortcut(
@@ -92,15 +92,15 @@ public interface DocumentShortcutResource {
 		throws Exception;
 
 	public DocumentShortcut postSiteDocumentShortcut(
-			Long siteId, DocumentShortcut documentShortcut)
+			String siteId, DocumentShortcut documentShortcut)
 		throws Exception;
 
 	public Response postSiteDocumentShortcutBatch(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public Response postSiteDocumentShortcutsPageExportBatch(
-			Long siteId, String callbackURL, String contentType,
+			String siteId, String callbackURL, String contentType,
 			String fieldNames)
 		throws Exception;
 
@@ -112,7 +112,7 @@ public interface DocumentShortcutResource {
 		throws Exception;
 
 	public DocumentShortcut putSiteDocumentShortcutByExternalReferenceCode(
-			Long siteId, String externalReferenceCode,
+			String siteId, String externalReferenceCode,
 			DocumentShortcut documentShortcut)
 		throws Exception;
 

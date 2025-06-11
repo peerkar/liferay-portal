@@ -1600,7 +1600,7 @@ public abstract class BaseMessageBoardThreadResourceTestCase {
 		assertValid(getMessageBoardThread);
 	}
 
-	protected Long testGetSiteMessageBoardThreadByFriendlyUrlPath_getSiteId(
+	protected String testGetSiteMessageBoardThreadByFriendlyUrlPath_getSiteId(
 			MessageBoardThread messageBoardThread)
 		throws Exception {
 
@@ -1686,7 +1686,7 @@ public abstract class BaseMessageBoardThreadResourceTestCase {
 						"Object/messageBoardThreadByFriendlyUrlPath"))));
 	}
 
-	protected Long
+	protected String
 			testGraphQLGetSiteMessageBoardThreadByFriendlyUrlPath_getSiteId(
 				MessageBoardThread messageBoardThread)
 		throws Exception {
@@ -1777,8 +1777,8 @@ public abstract class BaseMessageBoardThreadResourceTestCase {
 
 	@Test
 	public void testGetSiteMessageBoardThreadsPage() throws Exception {
-		Long siteId = testGetSiteMessageBoardThreadsPage_getSiteId();
-		Long irrelevantSiteId =
+		String siteId = testGetSiteMessageBoardThreadsPage_getSiteId();
+		String irrelevantSiteId =
 			testGetSiteMessageBoardThreadsPage_getIrrelevantSiteId();
 
 		Page<MessageBoardThread> page =
@@ -1836,7 +1836,7 @@ public abstract class BaseMessageBoardThreadResourceTestCase {
 	}
 
 	protected Map<String, Map<String, String>>
-			testGetSiteMessageBoardThreadsPage_getExpectedActions(Long siteId)
+			testGetSiteMessageBoardThreadsPage_getExpectedActions(String siteId)
 		throws Exception {
 
 		Map<String, Map<String, String>> expectedActions = new HashMap<>();
@@ -1864,7 +1864,7 @@ public abstract class BaseMessageBoardThreadResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteMessageBoardThreadsPage_getSiteId();
+		String siteId = testGetSiteMessageBoardThreadsPage_getSiteId();
 
 		MessageBoardThread messageBoardThread1 = randomMessageBoardThread();
 
@@ -1928,7 +1928,7 @@ public abstract class BaseMessageBoardThreadResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteMessageBoardThreadsPage_getSiteId();
+		String siteId = testGetSiteMessageBoardThreadsPage_getSiteId();
 
 		MessageBoardThread messageBoardThread1 =
 			testGetSiteMessageBoardThreadsPage_addMessageBoardThread(
@@ -1956,7 +1956,7 @@ public abstract class BaseMessageBoardThreadResourceTestCase {
 	public void testGetSiteMessageBoardThreadsPageWithPagination()
 		throws Exception {
 
-		Long siteId = testGetSiteMessageBoardThreadsPage_getSiteId();
+		String siteId = testGetSiteMessageBoardThreadsPage_getSiteId();
 
 		Page<MessageBoardThread> messageBoardThreadsPage =
 			messageBoardThreadResource.getSiteMessageBoardThreadsPage(
@@ -2171,7 +2171,7 @@ public abstract class BaseMessageBoardThreadResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteMessageBoardThreadsPage_getSiteId();
+		String siteId = testGetSiteMessageBoardThreadsPage_getSiteId();
 
 		MessageBoardThread messageBoardThread1 = randomMessageBoardThread();
 		MessageBoardThread messageBoardThread2 = randomMessageBoardThread();
@@ -2224,20 +2224,20 @@ public abstract class BaseMessageBoardThreadResourceTestCase {
 
 	protected MessageBoardThread
 			testGetSiteMessageBoardThreadsPage_addMessageBoardThread(
-				Long siteId, MessageBoardThread messageBoardThread)
+				String siteId, MessageBoardThread messageBoardThread)
 		throws Exception {
 
 		return messageBoardThreadResource.postSiteMessageBoardThread(
 			siteId, messageBoardThread);
 	}
 
-	protected Long testGetSiteMessageBoardThreadsPage_getSiteId()
+	protected String testGetSiteMessageBoardThreadsPage_getSiteId()
 		throws Exception {
 
 		return testGroup.getGroupId();
 	}
 
-	protected Long testGetSiteMessageBoardThreadsPage_getIrrelevantSiteId()
+	protected String testGetSiteMessageBoardThreadsPage_getIrrelevantSiteId()
 		throws Exception {
 
 		return irrelevantGroup.getGroupId();
@@ -2245,7 +2245,7 @@ public abstract class BaseMessageBoardThreadResourceTestCase {
 
 	@Test
 	public void testGraphQLGetSiteMessageBoardThreadsPage() throws Exception {
-		Long siteId = testGetSiteMessageBoardThreadsPage_getSiteId();
+		String siteId = testGetSiteMessageBoardThreadsPage_getSiteId();
 
 		GraphQLField graphQLField = new GraphQLField(
 			"messageBoardThreads",

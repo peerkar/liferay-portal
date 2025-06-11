@@ -57,7 +57,7 @@ public interface ContentElementResource {
 		throws Exception;
 
 	public Page<ContentElement> getSiteContentElementsPage(
-			Long siteId, String search,
+			String siteId, String search,
 			com.liferay.portal.vulcan.aggregation.Aggregation aggregation,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			Pagination pagination,
@@ -72,7 +72,7 @@ public interface ContentElementResource {
 		throws Exception;
 
 	public Response postSiteContentElementsPageExportBatch(
-			Long siteId, String search,
+			String siteId, String search,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			com.liferay.portal.kernel.search.Sort[] sorts, String callbackURL,
 			String contentType, String fieldNames)

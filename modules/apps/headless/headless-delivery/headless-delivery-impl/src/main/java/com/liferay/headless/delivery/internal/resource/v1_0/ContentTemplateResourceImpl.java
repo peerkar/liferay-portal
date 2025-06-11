@@ -29,6 +29,7 @@ import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.SearchUtil;
 
 import jakarta.ws.rs.core.MultivaluedMap;
@@ -73,11 +74,13 @@ public class ContentTemplateResourceImpl
 
 	@Override
 	public ContentTemplate getSiteContentTemplate(
-			Long siteId, String contentTemplateId)
+			String siteId, String contentTemplateId)
 		throws Exception {
 
 		DDMTemplate ddmTemplate = _ddmTemplateService.getTemplate(
-			siteId, _classNameLocalService.getClassNameId(DDMStructure.class),
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService),
+			_classNameLocalService.getClassNameId(DDMStructure.class),
 			contentTemplateId);
 
 		return ContentTemplateUtil.toContentTemplate(
@@ -87,17 +90,20 @@ public class ContentTemplateResourceImpl
 
 	@Override
 	public Page<ContentTemplate> getSiteContentTemplatesPage(
-			Long siteId, String search, Aggregation aggregation, Filter filter,
-			Pagination pagination, Sort[] sorts)
+			String siteId, String search, Aggregation aggregation,
+			Filter filter, Pagination pagination, Sort[] sorts)
 		throws Exception {
+
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
 		return _getContentTemplatesPage(
 			Collections.singletonMap(
 				"get",
 				addAction(
 					ActionKeys.MANAGE_LAYOUTS, "getSiteContentTemplatesPage",
-					Group.class.getName(), siteId)),
-			siteId, search, aggregation, filter, pagination, sorts);
+					Group.class.getName(), groupId)),
+			groupId, search, aggregation, filter, pagination, sorts);
 	}
 
 	private Page<ContentTemplate> _getContentTemplatesPage(

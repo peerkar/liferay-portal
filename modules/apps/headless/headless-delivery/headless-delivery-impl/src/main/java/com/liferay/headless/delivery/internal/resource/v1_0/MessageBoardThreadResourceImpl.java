@@ -71,6 +71,7 @@ import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.util.ActionUtil;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.SearchUtil;
 import com.liferay.portal.vulcan.util.UriInfoUtil;
 import com.liferay.ratings.kernel.model.RatingsStats;
@@ -300,11 +301,13 @@ public class MessageBoardThreadResourceImpl
 
 	@Override
 	public MessageBoardThread getSiteMessageBoardThreadByFriendlyUrlPath(
-			Long siteId, String friendlyUrlPath)
+			String siteId, String friendlyUrlPath)
 		throws Exception {
 
 		MBMessage mbMessage = _mbMessageService.fetchMBMessageByUrlSubject(
-			siteId, friendlyUrlPath);
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService),
+			friendlyUrlPath);
 
 		if (mbMessage == null) {
 			throw new NoSuchMessageException(
@@ -330,22 +333,25 @@ public class MessageBoardThreadResourceImpl
 
 	@Override
 	public Page<MessageBoardThread> getSiteMessageBoardThreadsPage(
-			Long siteId, Boolean flatten, String search,
+			String siteId, Boolean flatten, String search,
 			Aggregation aggregation, Filter filter, Pagination pagination,
 			Sort[] sorts)
 		throws Exception {
+
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
 		return _getSiteMessageBoardThreadsPage(
 			HashMapBuilder.put(
 				"create",
 				addAction(
 					ActionKeys.ADD_MESSAGE, "postSiteMessageBoardThread",
-					MBConstants.RESOURCE_NAME, siteId)
+					MBConstants.RESOURCE_NAME, groupId)
 			).put(
 				"createBatch",
 				addAction(
 					ActionKeys.ADD_MESSAGE, "postSiteMessageBoardThreadBatch",
-					MBConstants.RESOURCE_NAME, siteId)
+					MBConstants.RESOURCE_NAME, groupId)
 			).put(
 				"deleteBatch",
 				addAction(
@@ -355,7 +361,7 @@ public class MessageBoardThreadResourceImpl
 				"get",
 				addAction(
 					ActionKeys.VIEW, "getSiteMessageBoardThreadsPage",
-					MBConstants.RESOURCE_NAME, siteId)
+					MBConstants.RESOURCE_NAME, groupId)
 			).put(
 				"updateBatch",
 				addAction(
@@ -376,7 +382,7 @@ public class MessageBoardThreadResourceImpl
 					new TermFilter("parentMessageId", "0"),
 					BooleanClauseOccur.MUST);
 			},
-			siteId, aggregation, filter, search, pagination, sorts);
+			groupId, aggregation, filter, search, pagination, sorts);
 	}
 
 	@Override
@@ -407,7 +413,7 @@ public class MessageBoardThreadResourceImpl
 
 	@Override
 	public MessageBoardThread postSiteMessageBoardThread(
-			Long siteId, MessageBoardThread messageBoardThread)
+			String siteId, MessageBoardThread messageBoardThread)
 		throws Exception {
 
 		Long messageBoardSectionId = 0L;
@@ -418,7 +424,9 @@ public class MessageBoardThreadResourceImpl
 		}
 
 		return _addMessageBoardThread(
-			siteId, messageBoardSectionId, messageBoardThread);
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService),
+			messageBoardSectionId, messageBoardThread);
 	}
 
 	@Override

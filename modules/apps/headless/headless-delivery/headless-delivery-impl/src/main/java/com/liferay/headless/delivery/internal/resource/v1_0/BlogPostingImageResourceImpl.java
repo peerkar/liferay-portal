@@ -28,6 +28,7 @@ import com.liferay.portal.vulcan.multipart.BinaryFile;
 import com.liferay.portal.vulcan.multipart.MultipartBody;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.SearchUtil;
 
 import jakarta.ws.rs.BadRequestException;
@@ -57,7 +58,7 @@ public class BlogPostingImageResourceImpl
 
 	@Override
 	public void deleteSiteBlogPostingImageByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception {
 
 		super.deleteSiteBlogPostingImageByExternalReferenceCode(
@@ -65,7 +66,9 @@ public class BlogPostingImageResourceImpl
 
 		FileEntry fileEntry =
 			_blogsEntryService.getAttachmentFileEntryByExternalReferenceCode(
-				externalReferenceCode, siteId);
+				externalReferenceCode,
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService));
 
 		_blogsEntryService.deleteAttachmentFileEntry(
 			fileEntry.getFileEntryId());
@@ -86,28 +89,33 @@ public class BlogPostingImageResourceImpl
 
 	@Override
 	public BlogPostingImage getSiteBlogPostingImageByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception {
 
 		return _toBlogPostingImage(
 			_blogsEntryService.getAttachmentFileEntryByExternalReferenceCode(
-				externalReferenceCode, siteId));
+				externalReferenceCode,
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService)));
 	}
 
 	@Override
 	public Page<BlogPostingImage> getSiteBlogPostingImagesPage(
-			Long siteId, String search, Aggregation aggregation, Filter filter,
-			Pagination pagination, Sort[] sorts)
+			String siteId, String search, Aggregation aggregation,
+			Filter filter, Pagination pagination, Sort[] sorts)
 		throws Exception {
 
-		Folder folder = _blogsEntryService.addAttachmentsFolder(siteId);
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
+
+		Folder folder = _blogsEntryService.addAttachmentsFolder(groupId);
 
 		return SearchUtil.search(
 			HashMapBuilder.put(
 				"createBatch",
 				addAction(
 					ActionKeys.ADD_ENTRY, "postSiteBlogPostingImageBatch",
-					BlogsConstants.RESOURCE_NAME, siteId)
+					BlogsConstants.RESOURCE_NAME, groupId)
 			).build(),
 			booleanQuery -> {
 			},
@@ -127,7 +135,7 @@ public class BlogPostingImageResourceImpl
 
 	@Override
 	public BlogPostingImage postSiteBlogPostingImage(
-			Long siteId, MultipartBody multipartBody)
+			String siteId, MultipartBody multipartBody)
 		throws Exception {
 
 		BinaryFile binaryFile = multipartBody.getBinaryFile("file");
@@ -154,8 +162,11 @@ public class BlogPostingImageResourceImpl
 
 		return _toBlogPostingImage(
 			_blogsEntryService.addAttachmentFileEntry(
-				externalReferenceCode, siteId, title,
-				binaryFile.getContentType(), binaryFile.getInputStream()));
+				externalReferenceCode,
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService),
+				title, binaryFile.getContentType(),
+				binaryFile.getInputStream()));
 	}
 
 	private BlogPostingImage _toBlogPostingImage(FileEntry fileEntry)

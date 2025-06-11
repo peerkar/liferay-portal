@@ -334,7 +334,7 @@ public abstract class BaseStructuredContentFolderResourceTestCase {
 					"-"));
 	}
 
-	protected Long
+	protected String
 			testDeleteSiteStructuredContentFolderByExternalReferenceCode_getSiteId(
 				StructuredContentFolder structuredContentFolder)
 		throws Exception {
@@ -1237,7 +1237,7 @@ public abstract class BaseStructuredContentFolderResourceTestCase {
 		assertValid(getStructuredContentFolder);
 	}
 
-	protected Long
+	protected String
 			testGetSiteStructuredContentFolderByExternalReferenceCode_getSiteId(
 				StructuredContentFolder structuredContentFolder)
 		throws Exception {
@@ -1325,7 +1325,7 @@ public abstract class BaseStructuredContentFolderResourceTestCase {
 						"Object/structuredContentFolderByExternalReferenceCode"))));
 	}
 
-	protected Long
+	protected String
 			testGraphQLGetSiteStructuredContentFolderByExternalReferenceCode_getSiteId(
 				StructuredContentFolder structuredContentFolder)
 		throws Exception {
@@ -1417,8 +1417,8 @@ public abstract class BaseStructuredContentFolderResourceTestCase {
 
 	@Test
 	public void testGetSiteStructuredContentFoldersPage() throws Exception {
-		Long siteId = testGetSiteStructuredContentFoldersPage_getSiteId();
-		Long irrelevantSiteId =
+		String siteId = testGetSiteStructuredContentFoldersPage_getSiteId();
+		String irrelevantSiteId =
 			testGetSiteStructuredContentFoldersPage_getIrrelevantSiteId();
 
 		Page<StructuredContentFolder> page =
@@ -1483,7 +1483,7 @@ public abstract class BaseStructuredContentFolderResourceTestCase {
 
 	protected Map<String, Map<String, String>>
 			testGetSiteStructuredContentFoldersPage_getExpectedActions(
-				Long siteId)
+				String siteId)
 		throws Exception {
 
 		Map<String, Map<String, String>> expectedActions = new HashMap<>();
@@ -1511,7 +1511,7 @@ public abstract class BaseStructuredContentFolderResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteStructuredContentFoldersPage_getSiteId();
+		String siteId = testGetSiteStructuredContentFoldersPage_getSiteId();
 
 		StructuredContentFolder structuredContentFolder1 =
 			randomStructuredContentFolder();
@@ -1577,7 +1577,7 @@ public abstract class BaseStructuredContentFolderResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteStructuredContentFoldersPage_getSiteId();
+		String siteId = testGetSiteStructuredContentFoldersPage_getSiteId();
 
 		StructuredContentFolder structuredContentFolder1 =
 			testGetSiteStructuredContentFoldersPage_addStructuredContentFolder(
@@ -1607,7 +1607,7 @@ public abstract class BaseStructuredContentFolderResourceTestCase {
 	public void testGetSiteStructuredContentFoldersPageWithPagination()
 		throws Exception {
 
-		Long siteId = testGetSiteStructuredContentFoldersPage_getSiteId();
+		String siteId = testGetSiteStructuredContentFoldersPage_getSiteId();
 
 		Page<StructuredContentFolder> structuredContentFoldersPage =
 			structuredContentFolderResource.getSiteStructuredContentFoldersPage(
@@ -1828,7 +1828,7 @@ public abstract class BaseStructuredContentFolderResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteStructuredContentFoldersPage_getSiteId();
+		String siteId = testGetSiteStructuredContentFoldersPage_getSiteId();
 
 		StructuredContentFolder structuredContentFolder1 =
 			randomStructuredContentFolder();
@@ -1886,20 +1886,21 @@ public abstract class BaseStructuredContentFolderResourceTestCase {
 
 	protected StructuredContentFolder
 			testGetSiteStructuredContentFoldersPage_addStructuredContentFolder(
-				Long siteId, StructuredContentFolder structuredContentFolder)
+				String siteId, StructuredContentFolder structuredContentFolder)
 		throws Exception {
 
 		return structuredContentFolderResource.postSiteStructuredContentFolder(
 			siteId, structuredContentFolder);
 	}
 
-	protected Long testGetSiteStructuredContentFoldersPage_getSiteId()
+	protected String testGetSiteStructuredContentFoldersPage_getSiteId()
 		throws Exception {
 
 		return testGroup.getGroupId();
 	}
 
-	protected Long testGetSiteStructuredContentFoldersPage_getIrrelevantSiteId()
+	protected String
+			testGetSiteStructuredContentFoldersPage_getIrrelevantSiteId()
 		throws Exception {
 
 		return irrelevantGroup.getGroupId();
@@ -1909,7 +1910,7 @@ public abstract class BaseStructuredContentFolderResourceTestCase {
 	public void testGraphQLGetSiteStructuredContentFoldersPage()
 		throws Exception {
 
-		Long siteId = testGetSiteStructuredContentFoldersPage_getSiteId();
+		String siteId = testGetSiteStructuredContentFoldersPage_getSiteId();
 
 		GraphQLField graphQLField = new GraphQLField(
 			"structuredContentFolders",
@@ -3158,7 +3159,7 @@ public abstract class BaseStructuredContentFolderResourceTestCase {
 			putStructuredContentFolder.getExternalReferenceCode());
 	}
 
-	protected Long
+	protected String
 			testPutSiteStructuredContentFolderByExternalReferenceCode_getSiteId(
 				StructuredContentFolder structuredContentFolder)
 		throws Exception {

@@ -47,6 +47,7 @@ import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.SearchUtil;
 
 import jakarta.ws.rs.core.MultivaluedMap;
@@ -83,12 +84,14 @@ public class StructuredContentFolderResourceImpl
 
 	@Override
 	public void deleteSiteStructuredContentFolderByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception {
 
 		JournalFolder journalFolder =
 			_journalFolderService.getFolderByExternalReferenceCode(
-				siteId, externalReferenceCode);
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService),
+				externalReferenceCode);
 
 		_journalFolderService.deleteFolder(journalFolder.getFolderId());
 	}
@@ -172,20 +175,25 @@ public class StructuredContentFolderResourceImpl
 	@Override
 	public StructuredContentFolder
 			getSiteStructuredContentFolderByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception {
 
 		return _toStructuredContentFolder(
 			_journalFolderService.getFolderByExternalReferenceCode(
-				siteId, externalReferenceCode));
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService),
+				externalReferenceCode));
 	}
 
 	@Override
 	public Page<StructuredContentFolder> getSiteStructuredContentFoldersPage(
-			Long siteId, Boolean flatten, String search,
+			String siteId, Boolean flatten, String search,
 			Aggregation aggregation, Filter filter, Pagination pagination,
 			Sort[] sorts)
 		throws Exception {
+
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
 		Long parentStructuredContentFolderId = null;
 
@@ -199,12 +207,12 @@ public class StructuredContentFolderResourceImpl
 				"create",
 				addAction(
 					ActionKeys.UPDATE, "postSiteStructuredContentFolder",
-					JournalConstants.RESOURCE_NAME, siteId)
+					JournalConstants.RESOURCE_NAME, groupId)
 			).put(
 				"createBatch",
 				addAction(
 					ActionKeys.UPDATE, "postSiteStructuredContentFolderBatch",
-					JournalConstants.RESOURCE_NAME, siteId)
+					JournalConstants.RESOURCE_NAME, groupId)
 			).put(
 				"deleteBatch",
 				addAction(
@@ -214,14 +222,14 @@ public class StructuredContentFolderResourceImpl
 				"get",
 				addAction(
 					ActionKeys.VIEW, "getSiteStructuredContentFoldersPage",
-					JournalConstants.RESOURCE_NAME, siteId)
+					JournalConstants.RESOURCE_NAME, groupId)
 			).put(
 				"updateBatch",
 				addAction(
 					ActionKeys.UPDATE, "putStructuredContentFolderBatch",
 					JournalConstants.RESOURCE_NAME, null)
 			).build(),
-			parentStructuredContentFolderId, siteId, search, aggregation,
+			parentStructuredContentFolderId, groupId, search, aggregation,
 			filter, pagination, sorts);
 	}
 
@@ -278,16 +286,18 @@ public class StructuredContentFolderResourceImpl
 		throws Exception {
 
 		return postSiteStructuredContentFolder(
-			assetLibraryId, structuredContentFolder);
+			String.valueOf(assetLibraryId), structuredContentFolder);
 	}
 
 	@Override
 	public StructuredContentFolder postSiteStructuredContentFolder(
-			Long siteId, StructuredContentFolder structuredContentFolder)
+			String siteId, StructuredContentFolder structuredContentFolder)
 		throws Exception {
 
 		return _addStructuredContentFolder(
-			structuredContentFolder.getExternalReferenceCode(), siteId,
+			structuredContentFolder.getExternalReferenceCode(),
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService),
 			JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID,
 			structuredContentFolder);
 	}
@@ -335,23 +345,26 @@ public class StructuredContentFolderResourceImpl
 	@Override
 	public StructuredContentFolder
 			putSiteStructuredContentFolderByExternalReferenceCode(
-				Long siteId, String externalReferenceCode,
+				String siteId, String externalReferenceCode,
 				StructuredContentFolder structuredContentFolder)
 		throws Exception {
+
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
 		JournalFolder journalFolder =
 			_journalFolderLocalService.
 				fetchJournalFolderByExternalReferenceCode(
-					externalReferenceCode, siteId);
+					externalReferenceCode, groupId);
 
 		if (journalFolder != null) {
 			return _updateStructuredContentFolder(
-				siteId, journalFolder.getFolderId(),
+				groupId, journalFolder.getFolderId(),
 				journalFolder.getParentFolderId(), structuredContentFolder);
 		}
 
 		return _addStructuredContentFolder(
-			externalReferenceCode, siteId,
+			externalReferenceCode, groupId,
 			structuredContentFolder.getParentStructuredContentFolderId(),
 			structuredContentFolder);
 	}

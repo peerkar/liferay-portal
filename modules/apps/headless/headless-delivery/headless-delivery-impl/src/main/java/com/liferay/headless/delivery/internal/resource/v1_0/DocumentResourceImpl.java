@@ -90,6 +90,7 @@ import com.liferay.portal.vulcan.multipart.BinaryFile;
 import com.liferay.portal.vulcan.multipart.MultipartBody;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.SearchUtil;
 import com.liferay.portlet.documentlibrary.constants.DLConstants;
 import com.liferay.ratings.kernel.service.RatingsEntryLocalService;
@@ -144,11 +145,13 @@ public class DocumentResourceImpl extends BaseDocumentResourceImpl {
 
 	@Override
 	public void deleteSiteDocumentByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception {
 
 		FileEntry fileEntry = _dlAppService.getFileEntryByExternalReferenceCode(
-			externalReferenceCode, siteId);
+			externalReferenceCode,
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService));
 
 		_dlAppService.deleteFileEntry(fileEntry.getFileEntryId());
 	}
@@ -294,32 +297,37 @@ public class DocumentResourceImpl extends BaseDocumentResourceImpl {
 
 	@Override
 	public Document getSiteDocumentByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception {
 
 		return _toDocument(
 			_dlAppService.getFileEntryByExternalReferenceCode(
-				externalReferenceCode, siteId));
+				externalReferenceCode,
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService)));
 	}
 
 	@Override
 	public Page<Document> getSiteDocumentsPage(
-			Long siteId, Boolean flatten, String search,
+			String siteId, Boolean flatten, String search,
 			Aggregation aggregation, Filter filter, Pagination pagination,
 			Sort[] sorts)
 		throws Exception {
+
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
 		return _getDocumentsPage(
 			HashMapBuilder.put(
 				"create",
 				addAction(
 					ActionKeys.ADD_DOCUMENT, "postSiteDocument",
-					DLConstants.RESOURCE_NAME, siteId)
+					DLConstants.RESOURCE_NAME, groupId)
 			).put(
 				"createBatch",
 				addAction(
 					ActionKeys.ADD_DOCUMENT, "postSiteDocumentBatch",
-					DLConstants.RESOURCE_NAME, siteId)
+					DLConstants.RESOURCE_NAME, groupId)
 			).put(
 				"deleteBatch",
 				addAction(
@@ -329,23 +337,26 @@ public class DocumentResourceImpl extends BaseDocumentResourceImpl {
 				"get",
 				addAction(
 					ActionKeys.VIEW, "getSiteDocumentsPage",
-					DLConstants.RESOURCE_NAME, siteId)
+					DLConstants.RESOURCE_NAME, groupId)
 			).put(
 				"updateBatch",
 				addAction(
 					ActionKeys.UPDATE, "putDocumentBatch",
 					DLConstants.RESOURCE_NAME, null)
 			).build(),
-			_createDocumentsPageBooleanQueryUnsafeConsumer(siteId, flatten),
+			_createDocumentsPageBooleanQueryUnsafeConsumer(groupId, flatten),
 			search, aggregation, filter, pagination, sorts);
 	}
 
 	@Override
 	public Page<Document> getSiteDocumentsRatedByMePage(
-			Long siteId, Pagination pagination)
+			String siteId, Pagination pagination)
 		throws Exception {
 
-		return _getGroupDocumentsRatedByMePage(siteId, pagination);
+		return _getGroupDocumentsRatedByMePage(
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService),
+			pagination);
 	}
 
 	@Override
@@ -428,7 +439,7 @@ public class DocumentResourceImpl extends BaseDocumentResourceImpl {
 			Long assetLibraryId, MultipartBody multipartBody)
 		throws Exception {
 
-		return postSiteDocument(assetLibraryId, multipartBody);
+		return postSiteDocument(String.valueOf(assetLibraryId), multipartBody);
 	}
 
 	@Override
@@ -454,10 +465,13 @@ public class DocumentResourceImpl extends BaseDocumentResourceImpl {
 	}
 
 	@Override
-	public Document postSiteDocument(Long siteId, MultipartBody multipartBody)
+	public Document postSiteDocument(String siteId, MultipartBody multipartBody)
 		throws Exception {
 
-		return _addDocument(null, siteId, siteId, null, multipartBody);
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
+
+		return _addDocument(null, groupId, groupId, null, multipartBody);
 	}
 
 	@Override
@@ -499,20 +513,23 @@ public class DocumentResourceImpl extends BaseDocumentResourceImpl {
 
 	@Override
 	public Document putSiteDocumentByExternalReferenceCode(
-			Long siteId, String externalReferenceCode,
+			String siteId, String externalReferenceCode,
 			MultipartBody multipartBody)
 		throws Exception {
 
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
+
 		FileEntry fileEntry =
 			_dlAppLocalService.fetchFileEntryByExternalReferenceCode(
-				siteId, externalReferenceCode);
+				groupId, externalReferenceCode);
 
 		if (fileEntry != null) {
 			return _updateDocument(fileEntry, multipartBody);
 		}
 
 		return _addDocument(
-			externalReferenceCode, siteId, siteId, null, multipartBody);
+			externalReferenceCode, groupId, groupId, null, multipartBody);
 	}
 
 	@Override

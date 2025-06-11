@@ -408,7 +408,7 @@ public abstract class BaseNavigationMenuResourceTestCase {
 					"-"));
 	}
 
-	protected Long
+	protected String
 			testDeleteSiteNavigationMenuByExternalReferenceCode_getSiteId(
 				NavigationMenu navigationMenu)
 		throws Exception {
@@ -773,7 +773,7 @@ public abstract class BaseNavigationMenuResourceTestCase {
 		assertValid(getNavigationMenu);
 	}
 
-	protected Long testGetSiteNavigationMenuByExternalReferenceCode_getSiteId(
+	protected String testGetSiteNavigationMenuByExternalReferenceCode_getSiteId(
 			NavigationMenu navigationMenu)
 		throws Exception {
 
@@ -858,7 +858,7 @@ public abstract class BaseNavigationMenuResourceTestCase {
 						"Object/navigationMenuByExternalReferenceCode"))));
 	}
 
-	protected Long
+	protected String
 			testGraphQLGetSiteNavigationMenuByExternalReferenceCode_getSiteId(
 				NavigationMenu navigationMenu)
 		throws Exception {
@@ -947,8 +947,8 @@ public abstract class BaseNavigationMenuResourceTestCase {
 
 	@Test
 	public void testGetSiteNavigationMenusPage() throws Exception {
-		Long siteId = testGetSiteNavigationMenusPage_getSiteId();
-		Long irrelevantSiteId =
+		String siteId = testGetSiteNavigationMenusPage_getSiteId();
+		String irrelevantSiteId =
 			testGetSiteNavigationMenusPage_getIrrelevantSiteId();
 
 		Page<NavigationMenu> page =
@@ -1001,7 +1001,7 @@ public abstract class BaseNavigationMenuResourceTestCase {
 	}
 
 	protected Map<String, Map<String, String>>
-			testGetSiteNavigationMenusPage_getExpectedActions(Long siteId)
+			testGetSiteNavigationMenusPage_getExpectedActions(String siteId)
 		throws Exception {
 
 		Map<String, Map<String, String>> expectedActions = new HashMap<>();
@@ -1029,7 +1029,7 @@ public abstract class BaseNavigationMenuResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteNavigationMenusPage_getSiteId();
+		String siteId = testGetSiteNavigationMenusPage_getSiteId();
 
 		NavigationMenu navigationMenu1 = randomNavigationMenu();
 
@@ -1089,7 +1089,7 @@ public abstract class BaseNavigationMenuResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteNavigationMenusPage_getSiteId();
+		String siteId = testGetSiteNavigationMenusPage_getSiteId();
 
 		NavigationMenu navigationMenu1 =
 			testGetSiteNavigationMenusPage_addNavigationMenu(
@@ -1117,7 +1117,7 @@ public abstract class BaseNavigationMenuResourceTestCase {
 	public void testGetSiteNavigationMenusPageWithPagination()
 		throws Exception {
 
-		Long siteId = testGetSiteNavigationMenusPage_getSiteId();
+		String siteId = testGetSiteNavigationMenusPage_getSiteId();
 
 		Page<NavigationMenu> navigationMenusPage =
 			navigationMenuResource.getSiteNavigationMenusPage(
@@ -1323,7 +1323,7 @@ public abstract class BaseNavigationMenuResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteNavigationMenusPage_getSiteId();
+		String siteId = testGetSiteNavigationMenusPage_getSiteId();
 
 		NavigationMenu navigationMenu1 = randomNavigationMenu();
 		NavigationMenu navigationMenu2 = randomNavigationMenu();
@@ -1369,18 +1369,20 @@ public abstract class BaseNavigationMenuResourceTestCase {
 	}
 
 	protected NavigationMenu testGetSiteNavigationMenusPage_addNavigationMenu(
-			Long siteId, NavigationMenu navigationMenu)
+			String siteId, NavigationMenu navigationMenu)
 		throws Exception {
 
 		return navigationMenuResource.postSiteNavigationMenu(
 			siteId, navigationMenu);
 	}
 
-	protected Long testGetSiteNavigationMenusPage_getSiteId() throws Exception {
+	protected String testGetSiteNavigationMenusPage_getSiteId()
+		throws Exception {
+
 		return testGroup.getGroupId();
 	}
 
-	protected Long testGetSiteNavigationMenusPage_getIrrelevantSiteId()
+	protected String testGetSiteNavigationMenusPage_getIrrelevantSiteId()
 		throws Exception {
 
 		return irrelevantGroup.getGroupId();
@@ -1388,7 +1390,7 @@ public abstract class BaseNavigationMenuResourceTestCase {
 
 	@Test
 	public void testGraphQLGetSiteNavigationMenusPage() throws Exception {
-		Long siteId = testGetSiteNavigationMenusPage_getSiteId();
+		String siteId = testGetSiteNavigationMenusPage_getSiteId();
 
 		GraphQLField graphQLField = new GraphQLField(
 			"navigationMenus",
@@ -1620,7 +1622,7 @@ public abstract class BaseNavigationMenuResourceTestCase {
 			putNavigationMenu.getExternalReferenceCode());
 	}
 
-	protected Long testPutSiteNavigationMenuByExternalReferenceCode_getSiteId(
+	protected String testPutSiteNavigationMenuByExternalReferenceCode_getSiteId(
 			NavigationMenu navigationMenu)
 		throws Exception {
 

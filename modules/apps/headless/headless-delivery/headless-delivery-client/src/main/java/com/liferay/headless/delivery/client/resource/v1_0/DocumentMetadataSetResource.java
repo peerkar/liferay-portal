@@ -59,12 +59,12 @@ public interface DocumentMetadataSetResource {
 		throws Exception;
 
 	public void deleteSiteDocumentMetadataSetByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			deleteSiteDocumentMetadataSetByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public DocumentMetadataSet
@@ -96,20 +96,20 @@ public interface DocumentMetadataSetResource {
 
 	public DocumentMetadataSet
 			getSiteDocumentMetadataSetByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteDocumentMetadataSetByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public Page<DocumentMetadataSet> getSiteDocumentMetadataSetsPage(
-			Long siteId, Pagination pagination)
+			String siteId, Pagination pagination)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse getSiteDocumentMetadataSetsPageHttpResponse(
-			Long siteId, Pagination pagination)
+			String siteId, Pagination pagination)
 		throws Exception;
 
 	public DocumentMetadataSet postAssetLibraryDocumentMetadataSet(
@@ -142,30 +142,30 @@ public interface DocumentMetadataSetResource {
 		throws Exception;
 
 	public DocumentMetadataSet postSiteDocumentMetadataSet(
-			Long siteId, DocumentMetadataSet documentMetadataSet)
+			String siteId, DocumentMetadataSet documentMetadataSet)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse postSiteDocumentMetadataSetHttpResponse(
-			Long siteId, DocumentMetadataSet documentMetadataSet)
+			String siteId, DocumentMetadataSet documentMetadataSet)
 		throws Exception;
 
 	public void postSiteDocumentMetadataSetBatch(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			postSiteDocumentMetadataSetBatchHttpResponse(
-				Long siteId, String callbackURL, Object object)
+				String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public void postSiteDocumentMetadataSetsPageExportBatch(
-			Long siteId, String callbackURL, String contentType,
+			String siteId, String callbackURL, String contentType,
 			String fieldNames)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			postSiteDocumentMetadataSetsPageExportBatchHttpResponse(
-				Long siteId, String callbackURL, String contentType,
+				String siteId, String callbackURL, String contentType,
 				String fieldNames)
 		throws Exception;
 
@@ -183,13 +183,13 @@ public interface DocumentMetadataSetResource {
 
 	public DocumentMetadataSet
 			putSiteDocumentMetadataSetByExternalReferenceCode(
-				Long siteId, String externalReferenceCode,
+				String siteId, String externalReferenceCode,
 				DocumentMetadataSet documentMetadataSet)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			putSiteDocumentMetadataSetByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode,
+				String siteId, String externalReferenceCode,
 				DocumentMetadataSet documentMetadataSet)
 		throws Exception;
 
@@ -619,7 +619,7 @@ public interface DocumentMetadataSetResource {
 		}
 
 		public void deleteSiteDocumentMetadataSetByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -687,7 +687,7 @@ public interface DocumentMetadataSetResource {
 
 		public HttpInvoker.HttpResponse
 				deleteSiteDocumentMetadataSetByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode)
+					String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1061,7 +1061,7 @@ public interface DocumentMetadataSetResource {
 
 		public DocumentMetadataSet
 				getSiteDocumentMetadataSetByExternalReferenceCode(
-					Long siteId, String externalReferenceCode)
+					String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1129,7 +1129,7 @@ public interface DocumentMetadataSetResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteDocumentMetadataSetByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode)
+					String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1170,7 +1170,7 @@ public interface DocumentMetadataSetResource {
 		}
 
 		public Page<DocumentMetadataSet> getSiteDocumentMetadataSetsPage(
-				Long siteId, Pagination pagination)
+				String siteId, Pagination pagination)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1237,7 +1237,7 @@ public interface DocumentMetadataSetResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteDocumentMetadataSetsPageHttpResponse(
-					Long siteId, Pagination pagination)
+					String siteId, Pagination pagination)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1615,7 +1615,7 @@ public interface DocumentMetadataSetResource {
 		}
 
 		public DocumentMetadataSet postSiteDocumentMetadataSet(
-				Long siteId, DocumentMetadataSet documentMetadataSet)
+				String siteId, DocumentMetadataSet documentMetadataSet)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1682,7 +1682,7 @@ public interface DocumentMetadataSetResource {
 		}
 
 		public HttpInvoker.HttpResponse postSiteDocumentMetadataSetHttpResponse(
-				Long siteId, DocumentMetadataSet documentMetadataSet)
+				String siteId, DocumentMetadataSet documentMetadataSet)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1725,7 +1725,7 @@ public interface DocumentMetadataSetResource {
 		}
 
 		public void postSiteDocumentMetadataSetBatch(
-				Long siteId, String callbackURL, Object object)
+				String siteId, String callbackURL, Object object)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1782,7 +1782,7 @@ public interface DocumentMetadataSetResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteDocumentMetadataSetBatchHttpResponse(
-					Long siteId, String callbackURL, Object object)
+					String siteId, String callbackURL, Object object)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1829,7 +1829,7 @@ public interface DocumentMetadataSetResource {
 		}
 
 		public void postSiteDocumentMetadataSetsPageExportBatch(
-				Long siteId, String callbackURL, String contentType,
+				String siteId, String callbackURL, String contentType,
 				String fieldNames)
 			throws Exception {
 
@@ -1887,7 +1887,7 @@ public interface DocumentMetadataSetResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteDocumentMetadataSetsPageExportBatchHttpResponse(
-					Long siteId, String callbackURL, String contentType,
+					String siteId, String callbackURL, String contentType,
 					String fieldNames)
 			throws Exception {
 
@@ -2060,7 +2060,7 @@ public interface DocumentMetadataSetResource {
 
 		public DocumentMetadataSet
 				putSiteDocumentMetadataSetByExternalReferenceCode(
-					Long siteId, String externalReferenceCode,
+					String siteId, String externalReferenceCode,
 					DocumentMetadataSet documentMetadataSet)
 			throws Exception {
 
@@ -2129,7 +2129,7 @@ public interface DocumentMetadataSetResource {
 
 		public HttpInvoker.HttpResponse
 				putSiteDocumentMetadataSetByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode,
+					String siteId, String externalReferenceCode,
 					DocumentMetadataSet documentMetadataSet)
 			throws Exception {
 

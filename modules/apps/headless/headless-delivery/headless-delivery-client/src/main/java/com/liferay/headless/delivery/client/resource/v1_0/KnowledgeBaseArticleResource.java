@@ -63,12 +63,12 @@ public interface KnowledgeBaseArticleResource {
 		throws Exception;
 
 	public void deleteSiteKnowledgeBaseArticleByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			deleteSiteKnowledgeBaseArticleByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public KnowledgeBaseArticle getKnowledgeBaseArticle(
@@ -125,32 +125,32 @@ public interface KnowledgeBaseArticleResource {
 
 	public KnowledgeBaseArticle
 			getSiteKnowledgeBaseArticleByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteKnowledgeBaseArticleByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public Page<Permission> getSiteKnowledgeBaseArticlePermissionsPage(
-			Long siteId, String roleNames)
+			String siteId, String roleNames)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteKnowledgeBaseArticlePermissionsPageHttpResponse(
-				Long siteId, String roleNames)
+				String siteId, String roleNames)
 		throws Exception;
 
 	public Page<KnowledgeBaseArticle> getSiteKnowledgeBaseArticlesPage(
-			Long siteId, Boolean flatten, String search,
+			String siteId, Boolean flatten, String search,
 			List<String> aggregations, String filterString,
 			Pagination pagination, String sortString)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteKnowledgeBaseArticlesPageHttpResponse(
-				Long siteId, Boolean flatten, String search,
+				String siteId, Boolean flatten, String search,
 				List<String> aggregations, String filterString,
 				Pagination pagination, String sortString)
 		throws Exception;
@@ -219,30 +219,31 @@ public interface KnowledgeBaseArticleResource {
 		throws Exception;
 
 	public KnowledgeBaseArticle postSiteKnowledgeBaseArticle(
-			Long siteId, KnowledgeBaseArticle knowledgeBaseArticle)
+			String siteId, KnowledgeBaseArticle knowledgeBaseArticle)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse postSiteKnowledgeBaseArticleHttpResponse(
-			Long siteId, KnowledgeBaseArticle knowledgeBaseArticle)
+			String siteId, KnowledgeBaseArticle knowledgeBaseArticle)
 		throws Exception;
 
 	public void postSiteKnowledgeBaseArticleBatch(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			postSiteKnowledgeBaseArticleBatchHttpResponse(
-				Long siteId, String callbackURL, Object object)
+				String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public void postSiteKnowledgeBaseArticlesPageExportBatch(
-			Long siteId, String search, String filterString, String sortString,
-			String callbackURL, String contentType, String fieldNames)
+			String siteId, String search, String filterString,
+			String sortString, String callbackURL, String contentType,
+			String fieldNames)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			postSiteKnowledgeBaseArticlesPageExportBatchHttpResponse(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				String sortString, String callbackURL, String contentType,
 				String fieldNames)
 		throws Exception;
@@ -299,37 +300,37 @@ public interface KnowledgeBaseArticleResource {
 
 	public KnowledgeBaseArticle
 			putSiteKnowledgeBaseArticleByExternalReferenceCode(
-				Long siteId, String externalReferenceCode,
+				String siteId, String externalReferenceCode,
 				KnowledgeBaseArticle knowledgeBaseArticle)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			putSiteKnowledgeBaseArticleByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode,
+				String siteId, String externalReferenceCode,
 				KnowledgeBaseArticle knowledgeBaseArticle)
 		throws Exception;
 
 	public Page<Permission> putSiteKnowledgeBaseArticlePermissionsPage(
-			Long siteId, Permission[] permissions)
+			String siteId, Permission[] permissions)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			putSiteKnowledgeBaseArticlePermissionsPageHttpResponse(
-				Long siteId, Permission[] permissions)
+				String siteId, Permission[] permissions)
 		throws Exception;
 
-	public void putSiteKnowledgeBaseArticleSubscribe(Long siteId)
-		throws Exception;
-
-	public HttpInvoker.HttpResponse
-			putSiteKnowledgeBaseArticleSubscribeHttpResponse(Long siteId)
-		throws Exception;
-
-	public void putSiteKnowledgeBaseArticleUnsubscribe(Long siteId)
+	public void putSiteKnowledgeBaseArticleSubscribe(String siteId)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
-			putSiteKnowledgeBaseArticleUnsubscribeHttpResponse(Long siteId)
+			putSiteKnowledgeBaseArticleSubscribeHttpResponse(String siteId)
+		throws Exception;
+
+	public void putSiteKnowledgeBaseArticleUnsubscribe(String siteId)
+		throws Exception;
+
+	public HttpInvoker.HttpResponse
+			putSiteKnowledgeBaseArticleUnsubscribeHttpResponse(String siteId)
 		throws Exception;
 
 	public static class Builder {
@@ -757,7 +758,7 @@ public interface KnowledgeBaseArticleResource {
 		}
 
 		public void deleteSiteKnowledgeBaseArticleByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -825,7 +826,7 @@ public interface KnowledgeBaseArticleResource {
 
 		public HttpInvoker.HttpResponse
 				deleteSiteKnowledgeBaseArticleByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode)
+					String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1470,7 +1471,7 @@ public interface KnowledgeBaseArticleResource {
 
 		public KnowledgeBaseArticle
 				getSiteKnowledgeBaseArticleByExternalReferenceCode(
-					Long siteId, String externalReferenceCode)
+					String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1538,7 +1539,7 @@ public interface KnowledgeBaseArticleResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteKnowledgeBaseArticleByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode)
+					String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1579,7 +1580,7 @@ public interface KnowledgeBaseArticleResource {
 		}
 
 		public Page<Permission> getSiteKnowledgeBaseArticlePermissionsPage(
-				Long siteId, String roleNames)
+				String siteId, String roleNames)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1647,7 +1648,7 @@ public interface KnowledgeBaseArticleResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteKnowledgeBaseArticlePermissionsPageHttpResponse(
-					Long siteId, String roleNames)
+					String siteId, String roleNames)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1691,7 +1692,7 @@ public interface KnowledgeBaseArticleResource {
 		}
 
 		public Page<KnowledgeBaseArticle> getSiteKnowledgeBaseArticlesPage(
-				Long siteId, Boolean flatten, String search,
+				String siteId, Boolean flatten, String search,
 				List<String> aggregations, String filterString,
 				Pagination pagination, String sortString)
 			throws Exception {
@@ -1762,7 +1763,7 @@ public interface KnowledgeBaseArticleResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteKnowledgeBaseArticlesPageHttpResponse(
-					Long siteId, Boolean flatten, String search,
+					String siteId, Boolean flatten, String search,
 					List<String> aggregations, String filterString,
 					Pagination pagination, String sortString)
 			throws Exception {
@@ -2512,7 +2513,7 @@ public interface KnowledgeBaseArticleResource {
 		}
 
 		public KnowledgeBaseArticle postSiteKnowledgeBaseArticle(
-				Long siteId, KnowledgeBaseArticle knowledgeBaseArticle)
+				String siteId, KnowledgeBaseArticle knowledgeBaseArticle)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -2580,7 +2581,7 @@ public interface KnowledgeBaseArticleResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteKnowledgeBaseArticleHttpResponse(
-					Long siteId, KnowledgeBaseArticle knowledgeBaseArticle)
+					String siteId, KnowledgeBaseArticle knowledgeBaseArticle)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -2623,7 +2624,7 @@ public interface KnowledgeBaseArticleResource {
 		}
 
 		public void postSiteKnowledgeBaseArticleBatch(
-				Long siteId, String callbackURL, Object object)
+				String siteId, String callbackURL, Object object)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -2680,7 +2681,7 @@ public interface KnowledgeBaseArticleResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteKnowledgeBaseArticleBatchHttpResponse(
-					Long siteId, String callbackURL, Object object)
+					String siteId, String callbackURL, Object object)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -2727,7 +2728,7 @@ public interface KnowledgeBaseArticleResource {
 		}
 
 		public void postSiteKnowledgeBaseArticlesPageExportBatch(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				String sortString, String callbackURL, String contentType,
 				String fieldNames)
 			throws Exception {
@@ -2787,7 +2788,7 @@ public interface KnowledgeBaseArticleResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteKnowledgeBaseArticlesPageExportBatchHttpResponse(
-					Long siteId, String search, String filterString,
+					String siteId, String search, String filterString,
 					String sortString, String callbackURL, String contentType,
 					String fieldNames)
 			throws Exception {
@@ -3517,7 +3518,7 @@ public interface KnowledgeBaseArticleResource {
 
 		public KnowledgeBaseArticle
 				putSiteKnowledgeBaseArticleByExternalReferenceCode(
-					Long siteId, String externalReferenceCode,
+					String siteId, String externalReferenceCode,
 					KnowledgeBaseArticle knowledgeBaseArticle)
 			throws Exception {
 
@@ -3586,7 +3587,7 @@ public interface KnowledgeBaseArticleResource {
 
 		public HttpInvoker.HttpResponse
 				putSiteKnowledgeBaseArticleByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode,
+					String siteId, String externalReferenceCode,
 					KnowledgeBaseArticle knowledgeBaseArticle)
 			throws Exception {
 
@@ -3631,7 +3632,7 @@ public interface KnowledgeBaseArticleResource {
 		}
 
 		public Page<Permission> putSiteKnowledgeBaseArticlePermissionsPage(
-				Long siteId, Permission[] permissions)
+				String siteId, Permission[] permissions)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -3699,7 +3700,7 @@ public interface KnowledgeBaseArticleResource {
 
 		public HttpInvoker.HttpResponse
 				putSiteKnowledgeBaseArticlePermissionsPageHttpResponse(
-					Long siteId, Permission[] permissions)
+					String siteId, Permission[] permissions)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -3746,7 +3747,7 @@ public interface KnowledgeBaseArticleResource {
 			return httpInvoker.invoke();
 		}
 
-		public void putSiteKnowledgeBaseArticleSubscribe(Long siteId)
+		public void putSiteKnowledgeBaseArticleSubscribe(String siteId)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -3812,7 +3813,7 @@ public interface KnowledgeBaseArticleResource {
 		}
 
 		public HttpInvoker.HttpResponse
-				putSiteKnowledgeBaseArticleSubscribeHttpResponse(Long siteId)
+				putSiteKnowledgeBaseArticleSubscribeHttpResponse(String siteId)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -3853,7 +3854,7 @@ public interface KnowledgeBaseArticleResource {
 			return httpInvoker.invoke();
 		}
 
-		public void putSiteKnowledgeBaseArticleUnsubscribe(Long siteId)
+		public void putSiteKnowledgeBaseArticleUnsubscribe(String siteId)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -3919,7 +3920,8 @@ public interface KnowledgeBaseArticleResource {
 		}
 
 		public HttpInvoker.HttpResponse
-				putSiteKnowledgeBaseArticleUnsubscribeHttpResponse(Long siteId)
+				putSiteKnowledgeBaseArticleUnsubscribeHttpResponse(
+					String siteId)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();

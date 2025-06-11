@@ -52,12 +52,12 @@ public interface BlogPostingImageResource {
 		throws Exception;
 
 	public void deleteSiteBlogPostingImageByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			deleteSiteBlogPostingImageByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public BlogPostingImage getBlogPostingImage(Long blogPostingImageId)
@@ -68,52 +68,53 @@ public interface BlogPostingImageResource {
 		throws Exception;
 
 	public BlogPostingImage getSiteBlogPostingImageByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteBlogPostingImageByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public Page<BlogPostingImage> getSiteBlogPostingImagesPage(
-			Long siteId, String search, List<String> aggregations,
+			String siteId, String search, List<String> aggregations,
 			String filterString, Pagination pagination, String sortString)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse getSiteBlogPostingImagesPageHttpResponse(
-			Long siteId, String search, List<String> aggregations,
+			String siteId, String search, List<String> aggregations,
 			String filterString, Pagination pagination, String sortString)
 		throws Exception;
 
 	public BlogPostingImage postSiteBlogPostingImage(
-			Long siteId, BlogPostingImage blogPostingImage,
+			String siteId, BlogPostingImage blogPostingImage,
 			Map<String, File> multipartFiles)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse postSiteBlogPostingImageHttpResponse(
-			Long siteId, BlogPostingImage blogPostingImage,
+			String siteId, BlogPostingImage blogPostingImage,
 			Map<String, File> multipartFiles)
 		throws Exception;
 
 	public void postSiteBlogPostingImageBatch(
-			Long siteId, BlogPostingImage blogPostingImage,
+			String siteId, BlogPostingImage blogPostingImage,
 			Map<String, File> multipartFiles, String callbackURL, Object object)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse postSiteBlogPostingImageBatchHttpResponse(
-			Long siteId, BlogPostingImage blogPostingImage,
+			String siteId, BlogPostingImage blogPostingImage,
 			Map<String, File> multipartFiles, String callbackURL, Object object)
 		throws Exception;
 
 	public void postSiteBlogPostingImagesPageExportBatch(
-			Long siteId, String search, String filterString, String sortString,
-			String callbackURL, String contentType, String fieldNames)
+			String siteId, String search, String filterString,
+			String sortString, String callbackURL, String contentType,
+			String fieldNames)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			postSiteBlogPostingImagesPageExportBatchHttpResponse(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				String sortString, String callbackURL, String contentType,
 				String fieldNames)
 		throws Exception;
@@ -433,7 +434,7 @@ public interface BlogPostingImageResource {
 		}
 
 		public void deleteSiteBlogPostingImageByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -501,7 +502,7 @@ public interface BlogPostingImageResource {
 
 		public HttpInvoker.HttpResponse
 				deleteSiteBlogPostingImageByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode)
+					String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -647,7 +648,7 @@ public interface BlogPostingImageResource {
 		}
 
 		public BlogPostingImage getSiteBlogPostingImageByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -715,7 +716,7 @@ public interface BlogPostingImageResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteBlogPostingImageByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode)
+					String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -756,7 +757,7 @@ public interface BlogPostingImageResource {
 		}
 
 		public Page<BlogPostingImage> getSiteBlogPostingImagesPage(
-				Long siteId, String search, List<String> aggregations,
+				String siteId, String search, List<String> aggregations,
 				String filterString, Pagination pagination, String sortString)
 			throws Exception {
 
@@ -826,7 +827,7 @@ public interface BlogPostingImageResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteBlogPostingImagesPageHttpResponse(
-					Long siteId, String search, List<String> aggregations,
+					String siteId, String search, List<String> aggregations,
 					String filterString, Pagination pagination,
 					String sortString)
 			throws Exception {
@@ -887,7 +888,7 @@ public interface BlogPostingImageResource {
 		}
 
 		public BlogPostingImage postSiteBlogPostingImage(
-				Long siteId, BlogPostingImage blogPostingImage,
+				String siteId, BlogPostingImage blogPostingImage,
 				Map<String, File> multipartFiles)
 			throws Exception {
 
@@ -955,7 +956,7 @@ public interface BlogPostingImageResource {
 		}
 
 		public HttpInvoker.HttpResponse postSiteBlogPostingImageHttpResponse(
-				Long siteId, BlogPostingImage blogPostingImage,
+				String siteId, BlogPostingImage blogPostingImage,
 				Map<String, File> multipartFiles)
 			throws Exception {
 
@@ -1006,7 +1007,7 @@ public interface BlogPostingImageResource {
 		}
 
 		public void postSiteBlogPostingImageBatch(
-				Long siteId, BlogPostingImage blogPostingImage,
+				String siteId, BlogPostingImage blogPostingImage,
 				Map<String, File> multipartFiles, String callbackURL,
 				Object object)
 			throws Exception {
@@ -1066,7 +1067,7 @@ public interface BlogPostingImageResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteBlogPostingImageBatchHttpResponse(
-					Long siteId, BlogPostingImage blogPostingImage,
+					String siteId, BlogPostingImage blogPostingImage,
 					Map<String, File> multipartFiles, String callbackURL,
 					Object object)
 			throws Exception {
@@ -1115,7 +1116,7 @@ public interface BlogPostingImageResource {
 		}
 
 		public void postSiteBlogPostingImagesPageExportBatch(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				String sortString, String callbackURL, String contentType,
 				String fieldNames)
 			throws Exception {
@@ -1175,7 +1176,7 @@ public interface BlogPostingImageResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteBlogPostingImagesPageExportBatchHttpResponse(
-					Long siteId, String search, String filterString,
+					String siteId, String search, String filterString,
 					String sortString, String callbackURL, String contentType,
 					String fieldNames)
 			throws Exception {

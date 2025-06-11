@@ -184,7 +184,7 @@ public abstract class BaseCommentResourceImpl
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("siteId")
-				Long siteId,
+				String siteId,
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("blogPostingExternalReferenceCode")
@@ -234,7 +234,7 @@ public abstract class BaseCommentResourceImpl
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("siteId")
-				Long siteId,
+				String siteId,
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("parentCommentExternalReferenceCode")
@@ -284,7 +284,7 @@ public abstract class BaseCommentResourceImpl
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("siteId")
-				Long siteId,
+				String siteId,
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("documentExternalReferenceCode")
@@ -334,7 +334,7 @@ public abstract class BaseCommentResourceImpl
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("siteId")
-				Long siteId,
+				String siteId,
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam(
@@ -680,7 +680,7 @@ public abstract class BaseCommentResourceImpl
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("siteId")
-				Long siteId,
+				String siteId,
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("blogPostingExternalReferenceCode")
@@ -744,7 +744,7 @@ public abstract class BaseCommentResourceImpl
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("siteId")
-				Long siteId,
+				String siteId,
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("parentCommentExternalReferenceCode")
@@ -808,7 +808,7 @@ public abstract class BaseCommentResourceImpl
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("siteId")
-				Long siteId,
+				String siteId,
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("documentExternalReferenceCode")
@@ -872,7 +872,7 @@ public abstract class BaseCommentResourceImpl
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("siteId")
-				Long siteId,
+				String siteId,
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam(
@@ -1646,7 +1646,7 @@ public abstract class BaseCommentResourceImpl
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("siteId")
-				Long siteId,
+				String siteId,
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("blogPostingExternalReferenceCode")
@@ -1700,7 +1700,7 @@ public abstract class BaseCommentResourceImpl
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("siteId")
-				Long siteId,
+				String siteId,
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("parentCommentExternalReferenceCode")
@@ -1754,7 +1754,7 @@ public abstract class BaseCommentResourceImpl
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("siteId")
-				Long siteId,
+				String siteId,
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("documentExternalReferenceCode")
@@ -1808,7 +1808,7 @@ public abstract class BaseCommentResourceImpl
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("siteId")
-				Long siteId,
+				String siteId,
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam(

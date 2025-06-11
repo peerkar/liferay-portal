@@ -331,7 +331,7 @@ public abstract class BaseStructuredContentResourceTestCase {
 					"-"));
 	}
 
-	protected Long
+	protected String
 			testDeleteSiteStructuredContentByExternalReferenceCode_getSiteId(
 				StructuredContent structuredContent)
 		throws Exception {
@@ -1699,7 +1699,7 @@ public abstract class BaseStructuredContentResourceTestCase {
 		assertValid(getStructuredContent);
 	}
 
-	protected Long
+	protected String
 			testGetSiteStructuredContentByExternalReferenceCode_getSiteId(
 				StructuredContent structuredContent)
 		throws Exception {
@@ -1786,7 +1786,7 @@ public abstract class BaseStructuredContentResourceTestCase {
 						"Object/structuredContentByExternalReferenceCode"))));
 	}
 
-	protected Long
+	protected String
 			testGraphQLGetSiteStructuredContentByExternalReferenceCode_getSiteId(
 				StructuredContent structuredContent)
 		throws Exception {
@@ -1871,7 +1871,7 @@ public abstract class BaseStructuredContentResourceTestCase {
 		assertValid(getStructuredContent);
 	}
 
-	protected Long testGetSiteStructuredContentByKey_getSiteId(
+	protected String testGetSiteStructuredContentByKey_getSiteId(
 			StructuredContent structuredContent)
 		throws Exception {
 
@@ -1951,7 +1951,7 @@ public abstract class BaseStructuredContentResourceTestCase {
 						"Object/structuredContentByKey"))));
 	}
 
-	protected Long testGraphQLGetSiteStructuredContentByKey_getSiteId(
+	protected String testGraphQLGetSiteStructuredContentByKey_getSiteId(
 			StructuredContent structuredContent)
 		throws Exception {
 
@@ -2030,7 +2030,7 @@ public abstract class BaseStructuredContentResourceTestCase {
 		assertValid(getStructuredContent);
 	}
 
-	protected Long testGetSiteStructuredContentByUuid_getSiteId(
+	protected String testGetSiteStructuredContentByUuid_getSiteId(
 			StructuredContent structuredContent)
 		throws Exception {
 
@@ -2110,7 +2110,7 @@ public abstract class BaseStructuredContentResourceTestCase {
 						"Object/structuredContentByUuid"))));
 	}
 
-	protected Long testGraphQLGetSiteStructuredContentByUuid_getSiteId(
+	protected String testGraphQLGetSiteStructuredContentByUuid_getSiteId(
 			StructuredContent structuredContent)
 		throws Exception {
 
@@ -2193,8 +2193,8 @@ public abstract class BaseStructuredContentResourceTestCase {
 
 	@Test
 	public void testGetSiteStructuredContentsPage() throws Exception {
-		Long siteId = testGetSiteStructuredContentsPage_getSiteId();
-		Long irrelevantSiteId =
+		String siteId = testGetSiteStructuredContentsPage_getSiteId();
+		String irrelevantSiteId =
 			testGetSiteStructuredContentsPage_getIrrelevantSiteId();
 
 		Page<StructuredContent> page =
@@ -2251,7 +2251,7 @@ public abstract class BaseStructuredContentResourceTestCase {
 	}
 
 	protected Map<String, Map<String, String>>
-			testGetSiteStructuredContentsPage_getExpectedActions(Long siteId)
+			testGetSiteStructuredContentsPage_getExpectedActions(String siteId)
 		throws Exception {
 
 		Map<String, Map<String, String>> expectedActions = new HashMap<>();
@@ -2279,7 +2279,7 @@ public abstract class BaseStructuredContentResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteStructuredContentsPage_getSiteId();
+		String siteId = testGetSiteStructuredContentsPage_getSiteId();
 
 		StructuredContent structuredContent1 = randomStructuredContent();
 
@@ -2342,7 +2342,7 @@ public abstract class BaseStructuredContentResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteStructuredContentsPage_getSiteId();
+		String siteId = testGetSiteStructuredContentsPage_getSiteId();
 
 		StructuredContent structuredContent1 =
 			testGetSiteStructuredContentsPage_addStructuredContent(
@@ -2370,7 +2370,7 @@ public abstract class BaseStructuredContentResourceTestCase {
 	public void testGetSiteStructuredContentsPageWithPagination()
 		throws Exception {
 
-		Long siteId = testGetSiteStructuredContentsPage_getSiteId();
+		String siteId = testGetSiteStructuredContentsPage_getSiteId();
 
 		Page<StructuredContent> structuredContentsPage =
 			structuredContentResource.getSiteStructuredContentsPage(
@@ -2578,7 +2578,7 @@ public abstract class BaseStructuredContentResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteStructuredContentsPage_getSiteId();
+		String siteId = testGetSiteStructuredContentsPage_getSiteId();
 
 		StructuredContent structuredContent1 = randomStructuredContent();
 		StructuredContent structuredContent2 = randomStructuredContent();
@@ -2631,20 +2631,20 @@ public abstract class BaseStructuredContentResourceTestCase {
 
 	protected StructuredContent
 			testGetSiteStructuredContentsPage_addStructuredContent(
-				Long siteId, StructuredContent structuredContent)
+				String siteId, StructuredContent structuredContent)
 		throws Exception {
 
 		return structuredContentResource.postSiteStructuredContent(
 			siteId, structuredContent);
 	}
 
-	protected Long testGetSiteStructuredContentsPage_getSiteId()
+	protected String testGetSiteStructuredContentsPage_getSiteId()
 		throws Exception {
 
 		return testGroup.getGroupId();
 	}
 
-	protected Long testGetSiteStructuredContentsPage_getIrrelevantSiteId()
+	protected String testGetSiteStructuredContentsPage_getIrrelevantSiteId()
 		throws Exception {
 
 		return irrelevantGroup.getGroupId();
@@ -2652,7 +2652,7 @@ public abstract class BaseStructuredContentResourceTestCase {
 
 	@Test
 	public void testGraphQLGetSiteStructuredContentsPage() throws Exception {
-		Long siteId = testGetSiteStructuredContentsPage_getSiteId();
+		String siteId = testGetSiteStructuredContentsPage_getSiteId();
 
 		GraphQLField graphQLField = new GraphQLField(
 			"structuredContents",
@@ -3875,7 +3875,7 @@ public abstract class BaseStructuredContentResourceTestCase {
 			putStructuredContent.getExternalReferenceCode());
 	}
 
-	protected Long
+	protected String
 			testPutSiteStructuredContentByExternalReferenceCode_getSiteId(
 				StructuredContent structuredContent)
 		throws Exception {

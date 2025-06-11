@@ -60,12 +60,12 @@ public interface DocumentFolderResource {
 		throws Exception;
 
 	public void deleteSiteDocumentsFolderByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			deleteSiteDocumentsFolderByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public Page<Permission> getAssetLibraryDocumentFolderPermissionsPage(
@@ -136,42 +136,42 @@ public interface DocumentFolderResource {
 		throws Exception;
 
 	public Page<Permission> getSiteDocumentFolderPermissionsPage(
-			Long siteId, String roleNames)
+			String siteId, String roleNames)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteDocumentFolderPermissionsPageHttpResponse(
-				Long siteId, String roleNames)
+				String siteId, String roleNames)
 		throws Exception;
 
 	public Page<DocumentFolder> getSiteDocumentFoldersPage(
-			Long siteId, Boolean flatten, String search,
+			String siteId, Boolean flatten, String search,
 			List<String> aggregations, String filterString,
 			Pagination pagination, String sortString)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse getSiteDocumentFoldersPageHttpResponse(
-			Long siteId, Boolean flatten, String search,
+			String siteId, Boolean flatten, String search,
 			List<String> aggregations, String filterString,
 			Pagination pagination, String sortString)
 		throws Exception;
 
 	public Page<DocumentFolder> getSiteDocumentFoldersRatedByMePage(
-			Long siteId, Pagination pagination)
+			String siteId, Pagination pagination)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteDocumentFoldersRatedByMePageHttpResponse(
-				Long siteId, Pagination pagination)
+				String siteId, Pagination pagination)
 		throws Exception;
 
 	public DocumentFolder getSiteDocumentsFolderByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteDocumentsFolderByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public DocumentFolder patchDocumentFolder(
@@ -230,29 +230,30 @@ public interface DocumentFolderResource {
 		throws Exception;
 
 	public DocumentFolder postSiteDocumentFolder(
-			Long siteId, DocumentFolder documentFolder)
+			String siteId, DocumentFolder documentFolder)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse postSiteDocumentFolderHttpResponse(
-			Long siteId, DocumentFolder documentFolder)
+			String siteId, DocumentFolder documentFolder)
 		throws Exception;
 
 	public void postSiteDocumentFolderBatch(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse postSiteDocumentFolderBatchHttpResponse(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public void postSiteDocumentFoldersPageExportBatch(
-			Long siteId, String search, String filterString, String sortString,
-			String callbackURL, String contentType, String fieldNames)
+			String siteId, String search, String filterString,
+			String sortString, String callbackURL, String contentType,
+			String fieldNames)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			postSiteDocumentFoldersPageExportBatchHttpResponse(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				String sortString, String callbackURL, String contentType,
 				String fieldNames)
 		throws Exception;
@@ -313,22 +314,22 @@ public interface DocumentFolderResource {
 		throws Exception;
 
 	public Page<Permission> putSiteDocumentFolderPermissionsPage(
-			Long siteId, Permission[] permissions)
+			String siteId, Permission[] permissions)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			putSiteDocumentFolderPermissionsPageHttpResponse(
-				Long siteId, Permission[] permissions)
+				String siteId, Permission[] permissions)
 		throws Exception;
 
 	public DocumentFolder putSiteDocumentsFolderByExternalReferenceCode(
-			Long siteId, String externalReferenceCode,
+			String siteId, String externalReferenceCode,
 			DocumentFolder documentFolder)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			putSiteDocumentsFolderByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode,
+				String siteId, String externalReferenceCode,
 				DocumentFolder documentFolder)
 		throws Exception;
 
@@ -751,7 +752,7 @@ public interface DocumentFolderResource {
 		}
 
 		public void deleteSiteDocumentsFolderByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -819,7 +820,7 @@ public interface DocumentFolderResource {
 
 		public HttpInvoker.HttpResponse
 				deleteSiteDocumentsFolderByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode)
+					String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1681,7 +1682,7 @@ public interface DocumentFolderResource {
 		}
 
 		public Page<Permission> getSiteDocumentFolderPermissionsPage(
-				Long siteId, String roleNames)
+				String siteId, String roleNames)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1749,7 +1750,7 @@ public interface DocumentFolderResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteDocumentFolderPermissionsPageHttpResponse(
-					Long siteId, String roleNames)
+					String siteId, String roleNames)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1793,7 +1794,7 @@ public interface DocumentFolderResource {
 		}
 
 		public Page<DocumentFolder> getSiteDocumentFoldersPage(
-				Long siteId, Boolean flatten, String search,
+				String siteId, Boolean flatten, String search,
 				List<String> aggregations, String filterString,
 				Pagination pagination, String sortString)
 			throws Exception {
@@ -1863,7 +1864,7 @@ public interface DocumentFolderResource {
 		}
 
 		public HttpInvoker.HttpResponse getSiteDocumentFoldersPageHttpResponse(
-				Long siteId, Boolean flatten, String search,
+				String siteId, Boolean flatten, String search,
 				List<String> aggregations, String filterString,
 				Pagination pagination, String sortString)
 			throws Exception {
@@ -1928,7 +1929,7 @@ public interface DocumentFolderResource {
 		}
 
 		public Page<DocumentFolder> getSiteDocumentFoldersRatedByMePage(
-				Long siteId, Pagination pagination)
+				String siteId, Pagination pagination)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1996,7 +1997,7 @@ public interface DocumentFolderResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteDocumentFoldersRatedByMePageHttpResponse(
-					Long siteId, Pagination pagination)
+					String siteId, Pagination pagination)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -2043,7 +2044,7 @@ public interface DocumentFolderResource {
 		}
 
 		public DocumentFolder getSiteDocumentsFolderByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -2111,7 +2112,7 @@ public interface DocumentFolderResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteDocumentsFolderByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode)
+					String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -2824,7 +2825,7 @@ public interface DocumentFolderResource {
 		}
 
 		public DocumentFolder postSiteDocumentFolder(
-				Long siteId, DocumentFolder documentFolder)
+				String siteId, DocumentFolder documentFolder)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -2890,7 +2891,7 @@ public interface DocumentFolderResource {
 		}
 
 		public HttpInvoker.HttpResponse postSiteDocumentFolderHttpResponse(
-				Long siteId, DocumentFolder documentFolder)
+				String siteId, DocumentFolder documentFolder)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -2932,7 +2933,7 @@ public interface DocumentFolderResource {
 		}
 
 		public void postSiteDocumentFolderBatch(
-				Long siteId, String callbackURL, Object object)
+				String siteId, String callbackURL, Object object)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -2988,7 +2989,7 @@ public interface DocumentFolderResource {
 		}
 
 		public HttpInvoker.HttpResponse postSiteDocumentFolderBatchHttpResponse(
-				Long siteId, String callbackURL, Object object)
+				String siteId, String callbackURL, Object object)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -3035,7 +3036,7 @@ public interface DocumentFolderResource {
 		}
 
 		public void postSiteDocumentFoldersPageExportBatch(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				String sortString, String callbackURL, String contentType,
 				String fieldNames)
 			throws Exception {
@@ -3095,7 +3096,7 @@ public interface DocumentFolderResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteDocumentFoldersPageExportBatchHttpResponse(
-					Long siteId, String search, String filterString,
+					String siteId, String search, String filterString,
 					String sortString, String callbackURL, String contentType,
 					String fieldNames)
 			throws Exception {
@@ -3926,7 +3927,7 @@ public interface DocumentFolderResource {
 		}
 
 		public Page<Permission> putSiteDocumentFolderPermissionsPage(
-				Long siteId, Permission[] permissions)
+				String siteId, Permission[] permissions)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -3994,7 +3995,7 @@ public interface DocumentFolderResource {
 
 		public HttpInvoker.HttpResponse
 				putSiteDocumentFolderPermissionsPageHttpResponse(
-					Long siteId, Permission[] permissions)
+					String siteId, Permission[] permissions)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -4042,7 +4043,7 @@ public interface DocumentFolderResource {
 		}
 
 		public DocumentFolder putSiteDocumentsFolderByExternalReferenceCode(
-				Long siteId, String externalReferenceCode,
+				String siteId, String externalReferenceCode,
 				DocumentFolder documentFolder)
 			throws Exception {
 
@@ -4111,7 +4112,7 @@ public interface DocumentFolderResource {
 
 		public HttpInvoker.HttpResponse
 				putSiteDocumentsFolderByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode,
+					String siteId, String externalReferenceCode,
 					DocumentFolder documentFolder)
 			throws Exception {
 

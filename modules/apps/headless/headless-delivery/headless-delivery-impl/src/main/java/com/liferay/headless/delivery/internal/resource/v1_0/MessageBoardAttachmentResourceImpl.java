@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.vulcan.multipart.BinaryFile;
 import com.liferay.portal.vulcan.multipart.MultipartBody;
 import com.liferay.portal.vulcan.pagination.Page;
+import com.liferay.portal.vulcan.util.GroupUtil;
 
 import jakarta.ws.rs.BadRequestException;
 
@@ -52,17 +53,20 @@ public class MessageBoardAttachmentResourceImpl
 	@Override
 	public void
 			deleteSiteMessageBoardMessageByExternalReferenceCodeMessageBoardMessageExternalReferenceCodeMessageBoardAttachmentByExternalReferenceCode(
-				Long siteId, String messageBoardMessageExternalReferenceCode,
+				String siteId, String messageBoardMessageExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception {
 
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
+
 		MBMessage mbMessage =
 			_mbMessageService.getMBMessageByExternalReferenceCode(
-				messageBoardMessageExternalReferenceCode, siteId);
+				messageBoardMessageExternalReferenceCode, groupId);
 
 		FileEntry fileEntry =
 			mbMessage.getAttachmentsFileEntryByExternalReferenceCode(
-				externalReferenceCode, siteId);
+				externalReferenceCode, groupId);
 
 		_portletFileRepository.deletePortletFileEntry(
 			fileEntry.getFileEntryId());
@@ -126,17 +130,20 @@ public class MessageBoardAttachmentResourceImpl
 	@Override
 	public MessageBoardAttachment
 			getSiteMessageBoardMessageByExternalReferenceCodeMessageBoardMessageExternalReferenceCodeMessageBoardAttachmentByExternalReferenceCode(
-				Long siteId, String messageBoardMessageExternalReferenceCode,
+				String siteId, String messageBoardMessageExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception {
 
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
+
 		MBMessage mbMessage =
 			_mbMessageService.getMBMessageByExternalReferenceCode(
-				messageBoardMessageExternalReferenceCode, siteId);
+				messageBoardMessageExternalReferenceCode, groupId);
 
 		FileEntry fileEntry =
 			mbMessage.getAttachmentsFileEntryByExternalReferenceCode(
-				externalReferenceCode, siteId);
+				externalReferenceCode, groupId);
 
 		return _toMessageBoardAttachment(fileEntry);
 	}

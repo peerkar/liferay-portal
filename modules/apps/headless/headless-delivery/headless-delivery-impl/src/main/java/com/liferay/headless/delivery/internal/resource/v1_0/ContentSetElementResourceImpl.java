@@ -30,6 +30,7 @@ import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 import com.liferay.segments.SegmentsEntryRetriever;
 import com.liferay.segments.context.RequestContextMapper;
@@ -61,7 +62,7 @@ public class ContentSetElementResourceImpl
 		throws Exception {
 
 		return getSiteContentSetByKeyContentSetElementsPage(
-			assetLibraryId, key, pagination);
+			String.valueOf(assetLibraryId), key, pagination);
 	}
 
 	@Override
@@ -71,7 +72,7 @@ public class ContentSetElementResourceImpl
 		throws Exception {
 
 		return getSiteContentSetByUuidContentSetElementsPage(
-			assetLibraryId, uuid, pagination);
+			String.valueOf(assetLibraryId), uuid, pagination);
 	}
 
 	@Override
@@ -85,22 +86,28 @@ public class ContentSetElementResourceImpl
 
 	@Override
 	public Page<ContentSetElement> getSiteContentSetByKeyContentSetElementsPage(
-			Long siteId, String key, Pagination pagination)
+			String siteId, String key, Pagination pagination)
 		throws Exception {
 
 		return _getContentSetContentSetElementsPage(
-			_assetListEntryService.getAssetListEntry(siteId, key), pagination);
+			_assetListEntryService.getAssetListEntry(
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService),
+				key),
+			pagination);
 	}
 
 	@Override
 	public Page<ContentSetElement>
 			getSiteContentSetByUuidContentSetElementsPage(
-				Long siteId, String uuid, Pagination pagination)
+				String siteId, String uuid, Pagination pagination)
 		throws Exception {
 
 		AssetListEntry assetListEntry =
 			_assetListEntryService.getAssetListEntryByUuidAndGroupId(
-				uuid, siteId);
+				uuid,
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService));
 
 		return _getContentSetContentSetElementsPage(assetListEntry, pagination);
 	}
@@ -108,7 +115,7 @@ public class ContentSetElementResourceImpl
 	@Override
 	public Page<ContentSetElement>
 			getSiteContentSetProviderByKeyContentSetElementsPage(
-				Long siteId, String key, Pagination pagination)
+				String siteId, String key, Pagination pagination)
 		throws Exception {
 
 		if (!FeatureFlagManagerUtil.isEnabled("LPD-32867")) {
@@ -132,7 +139,9 @@ public class ContentSetElementResourceImpl
 		}
 
 		ServiceContextThreadLocal.pushServiceContext(
-			_getServiceContext(siteId));
+			_getServiceContext(
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService)));
 
 		try {
 			CollectionQuery collectionQuery = new CollectionQuery();

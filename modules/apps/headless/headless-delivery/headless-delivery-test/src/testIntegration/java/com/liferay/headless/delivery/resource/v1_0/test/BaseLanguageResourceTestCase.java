@@ -276,8 +276,9 @@ public abstract class BaseLanguageResourceTestCase {
 
 	@Test
 	public void testGetSiteLanguagesPage() throws Exception {
-		Long siteId = testGetSiteLanguagesPage_getSiteId();
-		Long irrelevantSiteId = testGetSiteLanguagesPage_getIrrelevantSiteId();
+		String siteId = testGetSiteLanguagesPage_getSiteId();
+		String irrelevantSiteId =
+			testGetSiteLanguagesPage_getIrrelevantSiteId();
 
 		Page<Language> page = languageResource.getSiteLanguagesPage(siteId);
 
@@ -313,7 +314,7 @@ public abstract class BaseLanguageResourceTestCase {
 	}
 
 	protected Map<String, Map<String, String>>
-			testGetSiteLanguagesPage_getExpectedActions(Long siteId)
+			testGetSiteLanguagesPage_getExpectedActions(String siteId)
 		throws Exception {
 
 		Map<String, Map<String, String>> expectedActions = new HashMap<>();
@@ -322,18 +323,18 @@ public abstract class BaseLanguageResourceTestCase {
 	}
 
 	protected Language testGetSiteLanguagesPage_addLanguage(
-			Long siteId, Language language)
+			String siteId, Language language)
 		throws Exception {
 
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
 	}
 
-	protected Long testGetSiteLanguagesPage_getSiteId() throws Exception {
+	protected String testGetSiteLanguagesPage_getSiteId() throws Exception {
 		return testGroup.getGroupId();
 	}
 
-	protected Long testGetSiteLanguagesPage_getIrrelevantSiteId()
+	protected String testGetSiteLanguagesPage_getIrrelevantSiteId()
 		throws Exception {
 
 		return irrelevantGroup.getGroupId();
@@ -341,7 +342,7 @@ public abstract class BaseLanguageResourceTestCase {
 
 	@Test
 	public void testGraphQLGetSiteLanguagesPage() throws Exception {
-		Long siteId = testGetSiteLanguagesPage_getSiteId();
+		String siteId = testGetSiteLanguagesPage_getSiteId();
 
 		GraphQLField graphQLField = new GraphQLField(
 			"languages",

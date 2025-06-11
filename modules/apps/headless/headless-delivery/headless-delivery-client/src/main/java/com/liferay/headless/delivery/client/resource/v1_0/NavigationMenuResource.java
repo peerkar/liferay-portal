@@ -51,12 +51,12 @@ public interface NavigationMenuResource {
 		throws Exception;
 
 	public void deleteSiteNavigationMenuByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			deleteSiteNavigationMenuByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public NavigationMenu getNavigationMenu(Long navigationMenuId)
@@ -76,57 +76,58 @@ public interface NavigationMenuResource {
 		throws Exception;
 
 	public NavigationMenu getSiteNavigationMenuByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteNavigationMenuByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public Page<Permission> getSiteNavigationMenuPermissionsPage(
-			Long siteId, String roleNames)
+			String siteId, String roleNames)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteNavigationMenuPermissionsPageHttpResponse(
-				Long siteId, String roleNames)
+				String siteId, String roleNames)
 		throws Exception;
 
 	public Page<NavigationMenu> getSiteNavigationMenusPage(
-			Long siteId, String search, String filterString,
+			String siteId, String search, String filterString,
 			Pagination pagination, String sortString)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse getSiteNavigationMenusPageHttpResponse(
-			Long siteId, String search, String filterString,
+			String siteId, String search, String filterString,
 			Pagination pagination, String sortString)
 		throws Exception;
 
 	public NavigationMenu postSiteNavigationMenu(
-			Long siteId, NavigationMenu navigationMenu)
+			String siteId, NavigationMenu navigationMenu)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse postSiteNavigationMenuHttpResponse(
-			Long siteId, NavigationMenu navigationMenu)
+			String siteId, NavigationMenu navigationMenu)
 		throws Exception;
 
 	public void postSiteNavigationMenuBatch(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse postSiteNavigationMenuBatchHttpResponse(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public void postSiteNavigationMenusPageExportBatch(
-			Long siteId, String search, String filterString, String sortString,
-			String callbackURL, String contentType, String fieldNames)
+			String siteId, String search, String filterString,
+			String sortString, String callbackURL, String contentType,
+			String fieldNames)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			postSiteNavigationMenusPageExportBatchHttpResponse(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				String sortString, String callbackURL, String contentType,
 				String fieldNames)
 		throws Exception;
@@ -156,23 +157,23 @@ public interface NavigationMenuResource {
 		throws Exception;
 
 	public NavigationMenu putSiteNavigationMenuByExternalReferenceCode(
-			Long siteId, String externalReferenceCode,
+			String siteId, String externalReferenceCode,
 			NavigationMenu navigationMenu)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			putSiteNavigationMenuByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode,
+				String siteId, String externalReferenceCode,
 				NavigationMenu navigationMenu)
 		throws Exception;
 
 	public Page<Permission> putSiteNavigationMenuPermissionsPage(
-			Long siteId, Permission[] permissions)
+			String siteId, Permission[] permissions)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			putSiteNavigationMenuPermissionsPageHttpResponse(
-				Long siteId, Permission[] permissions)
+				String siteId, Permission[] permissions)
 		throws Exception;
 
 	public static class Builder {
@@ -489,7 +490,7 @@ public interface NavigationMenuResource {
 		}
 
 		public void deleteSiteNavigationMenuByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -557,7 +558,7 @@ public interface NavigationMenuResource {
 
 		public HttpInvoker.HttpResponse
 				deleteSiteNavigationMenuByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode)
+					String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -815,7 +816,7 @@ public interface NavigationMenuResource {
 		}
 
 		public NavigationMenu getSiteNavigationMenuByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -883,7 +884,7 @@ public interface NavigationMenuResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteNavigationMenuByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode)
+					String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -924,7 +925,7 @@ public interface NavigationMenuResource {
 		}
 
 		public Page<Permission> getSiteNavigationMenuPermissionsPage(
-				Long siteId, String roleNames)
+				String siteId, String roleNames)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -992,7 +993,7 @@ public interface NavigationMenuResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteNavigationMenuPermissionsPageHttpResponse(
-					Long siteId, String roleNames)
+					String siteId, String roleNames)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1036,7 +1037,7 @@ public interface NavigationMenuResource {
 		}
 
 		public Page<NavigationMenu> getSiteNavigationMenusPage(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				Pagination pagination, String sortString)
 			throws Exception {
 
@@ -1104,7 +1105,7 @@ public interface NavigationMenuResource {
 		}
 
 		public HttpInvoker.HttpResponse getSiteNavigationMenusPageHttpResponse(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				Pagination pagination, String sortString)
 			throws Exception {
 
@@ -1164,7 +1165,7 @@ public interface NavigationMenuResource {
 		}
 
 		public NavigationMenu postSiteNavigationMenu(
-				Long siteId, NavigationMenu navigationMenu)
+				String siteId, NavigationMenu navigationMenu)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1230,7 +1231,7 @@ public interface NavigationMenuResource {
 		}
 
 		public HttpInvoker.HttpResponse postSiteNavigationMenuHttpResponse(
-				Long siteId, NavigationMenu navigationMenu)
+				String siteId, NavigationMenu navigationMenu)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1272,7 +1273,7 @@ public interface NavigationMenuResource {
 		}
 
 		public void postSiteNavigationMenuBatch(
-				Long siteId, String callbackURL, Object object)
+				String siteId, String callbackURL, Object object)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1328,7 +1329,7 @@ public interface NavigationMenuResource {
 		}
 
 		public HttpInvoker.HttpResponse postSiteNavigationMenuBatchHttpResponse(
-				Long siteId, String callbackURL, Object object)
+				String siteId, String callbackURL, Object object)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1375,7 +1376,7 @@ public interface NavigationMenuResource {
 		}
 
 		public void postSiteNavigationMenusPageExportBatch(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				String sortString, String callbackURL, String contentType,
 				String fieldNames)
 			throws Exception {
@@ -1435,7 +1436,7 @@ public interface NavigationMenuResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteNavigationMenusPageExportBatchHttpResponse(
-					Long siteId, String search, String filterString,
+					String siteId, String search, String filterString,
 					String sortString, String callbackURL, String contentType,
 					String fieldNames)
 			throws Exception {
@@ -1828,7 +1829,7 @@ public interface NavigationMenuResource {
 		}
 
 		public NavigationMenu putSiteNavigationMenuByExternalReferenceCode(
-				Long siteId, String externalReferenceCode,
+				String siteId, String externalReferenceCode,
 				NavigationMenu navigationMenu)
 			throws Exception {
 
@@ -1897,7 +1898,7 @@ public interface NavigationMenuResource {
 
 		public HttpInvoker.HttpResponse
 				putSiteNavigationMenuByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode,
+					String siteId, String externalReferenceCode,
 					NavigationMenu navigationMenu)
 			throws Exception {
 
@@ -1941,7 +1942,7 @@ public interface NavigationMenuResource {
 		}
 
 		public Page<Permission> putSiteNavigationMenuPermissionsPage(
-				Long siteId, Permission[] permissions)
+				String siteId, Permission[] permissions)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -2009,7 +2010,7 @@ public interface NavigationMenuResource {
 
 		public HttpInvoker.HttpResponse
 				putSiteNavigationMenuPermissionsPageHttpResponse(
-					Long siteId, Permission[] permissions)
+					String siteId, Permission[] permissions)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();

@@ -57,7 +57,7 @@ public interface MessageBoardAttachmentResource {
 
 	public void
 			deleteSiteMessageBoardMessageByExternalReferenceCodeMessageBoardMessageExternalReferenceCodeMessageBoardAttachmentByExternalReferenceCode(
-				Long siteId, String messageBoardMessageExternalReferenceCode,
+				String siteId, String messageBoardMessageExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception;
 
@@ -77,7 +77,7 @@ public interface MessageBoardAttachmentResource {
 
 	public MessageBoardAttachment
 			getSiteMessageBoardMessageByExternalReferenceCodeMessageBoardMessageExternalReferenceCodeMessageBoardAttachmentByExternalReferenceCode(
-				Long siteId, String messageBoardMessageExternalReferenceCode,
+				String siteId, String messageBoardMessageExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception;
 

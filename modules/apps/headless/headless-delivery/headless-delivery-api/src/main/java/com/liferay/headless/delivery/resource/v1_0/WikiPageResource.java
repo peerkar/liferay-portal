@@ -49,7 +49,7 @@ import org.osgi.annotation.versioning.ProviderType;
 public interface WikiPageResource {
 
 	public void deleteSiteWikiPageByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public void deleteWikiPage(Long wikiPageId) throws Exception;
@@ -58,7 +58,7 @@ public interface WikiPageResource {
 		throws Exception;
 
 	public WikiPage getSiteWikiPageByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public Page<WikiPage> getWikiNodeWikiPagesPage(
@@ -97,7 +97,7 @@ public interface WikiPageResource {
 		throws Exception;
 
 	public WikiPage putSiteWikiPageByExternalReferenceCode(
-			Long siteId, String externalReferenceCode, WikiPage wikiPage)
+			String siteId, String externalReferenceCode, WikiPage wikiPage)
 		throws Exception;
 
 	public WikiPage putWikiPage(Long wikiPageId, WikiPage wikiPage)

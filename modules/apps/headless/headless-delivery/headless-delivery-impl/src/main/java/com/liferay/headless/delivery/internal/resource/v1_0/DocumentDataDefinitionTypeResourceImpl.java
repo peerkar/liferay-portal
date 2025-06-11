@@ -28,6 +28,7 @@ import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 import com.liferay.portal.vulcan.util.SearchUtil;
 import com.liferay.portlet.documentlibrary.constants.DLConstants;
@@ -113,9 +114,12 @@ public class DocumentDataDefinitionTypeResourceImpl
 	@Override
 	public Page<DocumentDataDefinitionType>
 			getSiteDocumentDataDefinitionTypesPage(
-				Long siteId, String search, Aggregation aggregation,
+				String siteId, String search, Aggregation aggregation,
 				Filter filter, Pagination pagination, Sort[] sorts)
 		throws Exception {
+
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
 		return _getDocumentDataDefinitionTypePage(
 			HashMapBuilder.put(
@@ -123,15 +127,15 @@ public class DocumentDataDefinitionTypeResourceImpl
 				addAction(
 					ActionKeys.ADD_DOCUMENT_TYPE,
 					"postSiteDocumentDataDefinitionType",
-					DLConstants.RESOURCE_NAME, siteId)
+					DLConstants.RESOURCE_NAME, groupId)
 			).put(
 				"createBatch",
 				addAction(
 					ActionKeys.ADD_DOCUMENT_TYPE,
 					"postSiteDocumentDataDefinitionTypeBatch",
-					DLConstants.RESOURCE_NAME, siteId)
+					DLConstants.RESOURCE_NAME, groupId)
 			).build(),
-			siteId, search, aggregation, filter, pagination, sorts);
+			groupId, search, aggregation, filter, pagination, sorts);
 	}
 
 	@Override
@@ -142,13 +146,17 @@ public class DocumentDataDefinitionTypeResourceImpl
 		throws Exception {
 
 		return postSiteDocumentDataDefinitionType(
-			assetLibraryId, documentDataDefinitionType);
+			String.valueOf(assetLibraryId), documentDataDefinitionType);
 	}
 
 	@Override
 	public DocumentDataDefinitionType postSiteDocumentDataDefinitionType(
-			Long siteId, DocumentDataDefinitionType documentDataDefinitionType)
+			String siteId,
+			DocumentDataDefinitionType documentDataDefinitionType)
 		throws Exception {
+
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
 		DataDefinitionResource.Builder builder =
 			_dataDefinitionResourceFactory.create();
@@ -168,7 +176,7 @@ public class DocumentDataDefinitionTypeResourceImpl
 
 		DataDefinition dataDefinition =
 			dataDefinitionResource.postSiteDataDefinitionByContentType(
-				siteId, "document-library",
+				groupId, "document-library",
 				new DataDefinition() {
 					{
 						setAvailableLanguageIds(
@@ -184,17 +192,17 @@ public class DocumentDataDefinitionTypeResourceImpl
 						setName(
 							() -> LocalizedValueUtil.toStringObjectMap(
 								nameMap));
-						setSiteId(() -> siteId);
+						setSiteId(() -> groupId);
 						setUserId(contextUser::getUserId);
 					}
 				});
 
 		DLFileEntryType dlFileEntryType =
 			_dlFileEntryTypeService.addFileEntryType(
-				documentDataDefinitionType.getExternalReferenceCode(), siteId,
+				documentDataDefinitionType.getExternalReferenceCode(), groupId,
 				dataDefinition.getId(), null, nameMap, descriptionMap,
 				ServiceContextBuilder.create(
-					siteId, contextHttpServletRequest,
+					groupId, contextHttpServletRequest,
 					documentDataDefinitionType.getViewableByAsString()
 				).build());
 

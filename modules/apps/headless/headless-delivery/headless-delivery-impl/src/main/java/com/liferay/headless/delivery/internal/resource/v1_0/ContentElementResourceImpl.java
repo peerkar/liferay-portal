@@ -34,6 +34,7 @@ import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 import com.liferay.portal.vulcan.util.SearchUtil;
 
@@ -62,7 +63,8 @@ public class ContentElementResourceImpl extends BaseContentElementResourceImpl {
 		throws Exception {
 
 		return getSiteContentElementsPage(
-			assetLibraryId, search, aggregation, filter, pagination, sorts);
+			String.valueOf(assetLibraryId), search, aggregation, filter,
+			pagination, sorts);
 	}
 
 	@Override
@@ -74,18 +76,21 @@ public class ContentElementResourceImpl extends BaseContentElementResourceImpl {
 
 	@Override
 	public Page<ContentElement> getSiteContentElementsPage(
-			Long siteId, String search, Aggregation aggregation, Filter filter,
-			Pagination pagination, Sort[] sorts)
+			String siteId, String search, Aggregation aggregation,
+			Filter filter, Pagination pagination, Sort[] sorts)
 		throws Exception {
 
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
+
 		SearchContext searchContext = _getAssetSearchContext(
-			siteId, search, aggregation, filter, pagination, sorts);
+			groupId, search, aggregation, filter, pagination, sorts);
 
 		Map<String, Facet> facets = searchContext.getFacets();
 
 		AssetEntryQuery assetEntryQuery = new AssetEntryQuery();
 
-		assetEntryQuery.setGroupIds(new long[] {siteId});
+		assetEntryQuery.setGroupIds(new long[] {groupId});
 
 		BaseSearcher baseSearcher = _assetSearcherFactory.createBaseSearcher(
 			assetEntryQuery);

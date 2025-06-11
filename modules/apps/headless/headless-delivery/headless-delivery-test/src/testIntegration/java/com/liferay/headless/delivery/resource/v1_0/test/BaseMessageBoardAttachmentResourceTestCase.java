@@ -430,7 +430,7 @@ public abstract class BaseMessageBoardAttachmentResourceTestCase {
 					"-"));
 	}
 
-	protected Long
+	protected String
 			testDeleteSiteMessageBoardMessageByExternalReferenceCodeMessageBoardMessageExternalReferenceCodeMessageBoardAttachmentByExternalReferenceCode_getSiteId()
 		throws Exception {
 
@@ -1027,7 +1027,7 @@ public abstract class BaseMessageBoardAttachmentResourceTestCase {
 		assertValid(getMessageBoardAttachment);
 	}
 
-	protected Long
+	protected String
 			testGetSiteMessageBoardMessageByExternalReferenceCodeMessageBoardMessageExternalReferenceCodeMessageBoardAttachmentByExternalReferenceCode_getSiteId()
 		throws Exception {
 
@@ -1133,7 +1133,7 @@ public abstract class BaseMessageBoardAttachmentResourceTestCase {
 						"Object/messageBoardMessageByExternalReferenceCodeMessageBoardMessageExternalReferenceCodeMessageBoardAttachmentByExternalReferenceCode"))));
 	}
 
-	protected Long
+	protected String
 			testGraphQLGetSiteMessageBoardMessageByExternalReferenceCodeMessageBoardMessageExternalReferenceCodeMessageBoardAttachmentByExternalReferenceCode_getSiteId()
 		throws Exception {
 

@@ -463,7 +463,7 @@ public abstract class BaseKnowledgeBaseArticleResourceTestCase {
 					"-"));
 	}
 
-	protected Long
+	protected String
 			testDeleteSiteKnowledgeBaseArticleByExternalReferenceCode_getSiteId(
 				KnowledgeBaseArticle knowledgeBaseArticle)
 		throws Exception {
@@ -1842,7 +1842,7 @@ public abstract class BaseKnowledgeBaseArticleResourceTestCase {
 		assertValid(getKnowledgeBaseArticle);
 	}
 
-	protected Long
+	protected String
 			testGetSiteKnowledgeBaseArticleByExternalReferenceCode_getSiteId(
 				KnowledgeBaseArticle knowledgeBaseArticle)
 		throws Exception {
@@ -1930,7 +1930,7 @@ public abstract class BaseKnowledgeBaseArticleResourceTestCase {
 						"Object/knowledgeBaseArticleByExternalReferenceCode"))));
 	}
 
-	protected Long
+	protected String
 			testGraphQLGetSiteKnowledgeBaseArticleByExternalReferenceCode_getSiteId(
 				KnowledgeBaseArticle knowledgeBaseArticle)
 		throws Exception {
@@ -2022,8 +2022,8 @@ public abstract class BaseKnowledgeBaseArticleResourceTestCase {
 
 	@Test
 	public void testGetSiteKnowledgeBaseArticlesPage() throws Exception {
-		Long siteId = testGetSiteKnowledgeBaseArticlesPage_getSiteId();
-		Long irrelevantSiteId =
+		String siteId = testGetSiteKnowledgeBaseArticlesPage_getSiteId();
+		String irrelevantSiteId =
 			testGetSiteKnowledgeBaseArticlesPage_getIrrelevantSiteId();
 
 		Page<KnowledgeBaseArticle> page =
@@ -2082,7 +2082,8 @@ public abstract class BaseKnowledgeBaseArticleResourceTestCase {
 	}
 
 	protected Map<String, Map<String, String>>
-			testGetSiteKnowledgeBaseArticlesPage_getExpectedActions(Long siteId)
+			testGetSiteKnowledgeBaseArticlesPage_getExpectedActions(
+				String siteId)
 		throws Exception {
 
 		Map<String, Map<String, String>> expectedActions = new HashMap<>();
@@ -2110,7 +2111,7 @@ public abstract class BaseKnowledgeBaseArticleResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteKnowledgeBaseArticlesPage_getSiteId();
+		String siteId = testGetSiteKnowledgeBaseArticlesPage_getSiteId();
 
 		KnowledgeBaseArticle knowledgeBaseArticle1 =
 			randomKnowledgeBaseArticle();
@@ -2175,7 +2176,7 @@ public abstract class BaseKnowledgeBaseArticleResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteKnowledgeBaseArticlesPage_getSiteId();
+		String siteId = testGetSiteKnowledgeBaseArticlesPage_getSiteId();
 
 		KnowledgeBaseArticle knowledgeBaseArticle1 =
 			testGetSiteKnowledgeBaseArticlesPage_addKnowledgeBaseArticle(
@@ -2204,7 +2205,7 @@ public abstract class BaseKnowledgeBaseArticleResourceTestCase {
 	public void testGetSiteKnowledgeBaseArticlesPageWithPagination()
 		throws Exception {
 
-		Long siteId = testGetSiteKnowledgeBaseArticlesPage_getSiteId();
+		String siteId = testGetSiteKnowledgeBaseArticlesPage_getSiteId();
 
 		Page<KnowledgeBaseArticle> knowledgeBaseArticlesPage =
 			knowledgeBaseArticleResource.getSiteKnowledgeBaseArticlesPage(
@@ -2419,7 +2420,7 @@ public abstract class BaseKnowledgeBaseArticleResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteKnowledgeBaseArticlesPage_getSiteId();
+		String siteId = testGetSiteKnowledgeBaseArticlesPage_getSiteId();
 
 		KnowledgeBaseArticle knowledgeBaseArticle1 =
 			randomKnowledgeBaseArticle();
@@ -2474,20 +2475,20 @@ public abstract class BaseKnowledgeBaseArticleResourceTestCase {
 
 	protected KnowledgeBaseArticle
 			testGetSiteKnowledgeBaseArticlesPage_addKnowledgeBaseArticle(
-				Long siteId, KnowledgeBaseArticle knowledgeBaseArticle)
+				String siteId, KnowledgeBaseArticle knowledgeBaseArticle)
 		throws Exception {
 
 		return knowledgeBaseArticleResource.postSiteKnowledgeBaseArticle(
 			siteId, knowledgeBaseArticle);
 	}
 
-	protected Long testGetSiteKnowledgeBaseArticlesPage_getSiteId()
+	protected String testGetSiteKnowledgeBaseArticlesPage_getSiteId()
 		throws Exception {
 
 		return testGroup.getGroupId();
 	}
 
-	protected Long testGetSiteKnowledgeBaseArticlesPage_getIrrelevantSiteId()
+	protected String testGetSiteKnowledgeBaseArticlesPage_getIrrelevantSiteId()
 		throws Exception {
 
 		return irrelevantGroup.getGroupId();
@@ -2495,7 +2496,7 @@ public abstract class BaseKnowledgeBaseArticleResourceTestCase {
 
 	@Test
 	public void testGraphQLGetSiteKnowledgeBaseArticlesPage() throws Exception {
-		Long siteId = testGetSiteKnowledgeBaseArticlesPage_getSiteId();
+		String siteId = testGetSiteKnowledgeBaseArticlesPage_getSiteId();
 
 		GraphQLField graphQLField = new GraphQLField(
 			"knowledgeBaseArticles",
@@ -2888,7 +2889,7 @@ public abstract class BaseKnowledgeBaseArticleResourceTestCase {
 			putKnowledgeBaseArticle.getExternalReferenceCode());
 	}
 
-	protected Long
+	protected String
 			testPutSiteKnowledgeBaseArticleByExternalReferenceCode_getSiteId(
 				KnowledgeBaseArticle knowledgeBaseArticle)
 		throws Exception {

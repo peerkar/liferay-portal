@@ -24,6 +24,7 @@ import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 import com.liferay.portlet.documentlibrary.constants.DLConstants;
 
@@ -49,7 +50,7 @@ public class DocumentMetadataSetResourceImpl
 		throws Exception {
 
 		deleteSiteDocumentMetadataSetByExternalReferenceCode(
-			assetLibraryId, externalReferenceCode);
+			String.valueOf(assetLibraryId), externalReferenceCode);
 	}
 
 	@Override
@@ -68,7 +69,7 @@ public class DocumentMetadataSetResourceImpl
 
 	@Override
 	public void deleteSiteDocumentMetadataSetByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception {
 
 		DocumentMetadataSet documentMetadataSet =
@@ -85,7 +86,7 @@ public class DocumentMetadataSetResourceImpl
 		throws Exception {
 
 		return getSiteDocumentMetadataSetByExternalReferenceCode(
-			assetLibraryId, externalReferenceCode);
+			String.valueOf(assetLibraryId), externalReferenceCode);
 	}
 
 	@Override
@@ -126,39 +127,44 @@ public class DocumentMetadataSetResourceImpl
 	@Override
 	public DocumentMetadataSet
 			getSiteDocumentMetadataSetByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception {
 
 		return _toDocumentMetadataSet(
 			_ddmStructureService.getStructureByExternalReferenceCode(
-				externalReferenceCode, siteId,
+				externalReferenceCode,
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService),
 				_classNameLocalService.getClassNameId(
 					DLFileEntryMetadata.class)));
 	}
 
 	@Override
 	public Page<DocumentMetadataSet> getSiteDocumentMetadataSetsPage(
-			Long siteId, Pagination pagination)
+			String siteId, Pagination pagination)
 		throws Exception {
+
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
 		return _getPage(
 			HashMapBuilder.put(
 				"create",
 				addAction(
 					ActionKeys.UPDATE, "postSiteDocumentMetadataSet",
-					DLConstants.RESOURCE_NAME, siteId)
+					DLConstants.RESOURCE_NAME, groupId)
 			).put(
 				"createBatch",
 				addAction(
 					ActionKeys.UPDATE, "postSiteDocumentMetadataSetBatch",
-					DLConstants.RESOURCE_NAME, siteId)
+					DLConstants.RESOURCE_NAME, groupId)
 			).put(
 				"get",
 				addAction(
 					ActionKeys.VIEW, "getSiteDocumentMetadataSetsPage",
-					DLConstants.RESOURCE_NAME, siteId)
+					DLConstants.RESOURCE_NAME, groupId)
 			).build(),
-			siteId, pagination);
+			groupId, pagination);
 	}
 
 	@Override
@@ -166,15 +172,19 @@ public class DocumentMetadataSetResourceImpl
 			Long assetLibraryId, DocumentMetadataSet documentMetadataSet)
 		throws Exception {
 
-		return postSiteDocumentMetadataSet(assetLibraryId, documentMetadataSet);
+		return postSiteDocumentMetadataSet(
+			String.valueOf(assetLibraryId), documentMetadataSet);
 	}
 
 	@Override
 	public DocumentMetadataSet postSiteDocumentMetadataSet(
-			Long siteId, DocumentMetadataSet documentMetadataSet)
+			String siteId, DocumentMetadataSet documentMetadataSet)
 		throws Exception {
 
-		return _addDocumentMetadataSet(siteId, documentMetadataSet);
+		return _addDocumentMetadataSet(
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService),
+			documentMetadataSet);
 	}
 
 	@Override
@@ -185,19 +195,23 @@ public class DocumentMetadataSetResourceImpl
 		throws Exception {
 
 		return putSiteDocumentMetadataSetByExternalReferenceCode(
-			assetLibraryId, externalReferenceCode, documentMetadataSet);
+			String.valueOf(assetLibraryId), externalReferenceCode,
+			documentMetadataSet);
 	}
 
 	@Override
 	public DocumentMetadataSet
 			putSiteDocumentMetadataSetByExternalReferenceCode(
-				Long siteId, String externalReferenceCode,
+				String siteId, String externalReferenceCode,
 				DocumentMetadataSet documentMetadataSet)
 		throws Exception {
 
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
+
 		DDMStructure ddmStructure =
 			_ddmStructureService.fetchStructureByExternalReferenceCode(
-				externalReferenceCode, siteId,
+				externalReferenceCode, groupId,
 				_classNameLocalService.getClassNameId(
 					DLFileEntryMetadata.class));
 
@@ -206,11 +220,11 @@ public class DocumentMetadataSetResourceImpl
 				ddmStructure, documentMetadataSet);
 		}
 
-		return _addDocumentMetadataSet(siteId, documentMetadataSet);
+		return _addDocumentMetadataSet(groupId, documentMetadataSet);
 	}
 
 	private DocumentMetadataSet _addDocumentMetadataSet(
-			long groupId, DocumentMetadataSet documentMetadataSet)
+			Long groupId, DocumentMetadataSet documentMetadataSet)
 		throws Exception {
 
 		DataDefinitionResource.Builder builder =

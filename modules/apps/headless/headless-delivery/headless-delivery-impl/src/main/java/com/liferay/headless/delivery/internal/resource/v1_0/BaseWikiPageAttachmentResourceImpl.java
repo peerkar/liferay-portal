@@ -113,7 +113,7 @@ public abstract class BaseWikiPageAttachmentResourceImpl
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("siteId")
-				Long siteId,
+				String siteId,
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("wikiPageExternalReferenceCode")
@@ -252,7 +252,7 @@ public abstract class BaseWikiPageAttachmentResourceImpl
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("siteId")
-				Long siteId,
+				String siteId,
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("wikiPageExternalReferenceCode")

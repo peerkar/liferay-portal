@@ -23,6 +23,7 @@ import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portlet.documentlibrary.constants.DLConstants;
 
 import java.util.Map;
@@ -50,11 +51,13 @@ public class DocumentShortcutResourceImpl
 
 	@Override
 	public void deleteSiteDocumentShortcutByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception {
 
 		_dlAppService.deleteFileShortcutByExternalReferenceCode(
-			externalReferenceCode, siteId);
+			externalReferenceCode,
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService));
 	}
 
 	@Override
@@ -93,37 +96,42 @@ public class DocumentShortcutResourceImpl
 
 	@Override
 	public DocumentShortcut getSiteDocumentShortcutByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception {
 
 		return _toDocumentShortcut(
 			_dlAppService.getFileShortcutByExternalReferenceCode(
-				externalReferenceCode, siteId));
+				externalReferenceCode,
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService)));
 	}
 
 	@Override
 	public Page<DocumentShortcut> getSiteDocumentShortcutsPage(
-			Long siteId, Pagination pagination)
+			String siteId, Pagination pagination)
 		throws Exception {
+
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
 		return _getPage(
 			HashMapBuilder.put(
 				"create",
 				addAction(
 					ActionKeys.ADD_SHORTCUT, "postSiteDocumentShortcut",
-					DLConstants.RESOURCE_NAME, siteId)
+					DLConstants.RESOURCE_NAME, groupId)
 			).put(
 				"createBatch",
 				addAction(
 					ActionKeys.ADD_SHORTCUT, "postSiteDocumentShortcutBatch",
-					DLConstants.RESOURCE_NAME, siteId)
+					DLConstants.RESOURCE_NAME, groupId)
 			).put(
 				"get",
 				addAction(
 					ActionKeys.VIEW, "getSiteDocumentShortcutsPage",
-					DLConstants.RESOURCE_NAME, siteId)
+					DLConstants.RESOURCE_NAME, groupId)
 			).build(),
-			siteId, pagination);
+			groupId, pagination);
 	}
 
 	@Override
@@ -131,12 +139,13 @@ public class DocumentShortcutResourceImpl
 			Long assetLibraryId, DocumentShortcut documentShortcut)
 		throws Exception {
 
-		return postSiteDocumentShortcut(assetLibraryId, documentShortcut);
+		return postSiteDocumentShortcut(
+			String.valueOf(assetLibraryId), documentShortcut);
 	}
 
 	@Override
 	public DocumentShortcut postSiteDocumentShortcut(
-			Long siteId, DocumentShortcut documentShortcut)
+			String siteId, DocumentShortcut documentShortcut)
 		throws Exception {
 
 		Long documentFolderId = documentShortcut.getFolderId();
@@ -145,12 +154,15 @@ public class DocumentShortcutResourceImpl
 			documentFolderId = DLFolderConstants.DEFAULT_PARENT_FOLDER_ID;
 		}
 
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
+
 		return _toDocumentShortcut(
 			_dlAppService.addFileShortcut(
-				null, siteId, documentFolderId,
+				null, groupId, documentFolderId,
 				documentShortcut.getTargetDocumentId(),
 				_createServiceContext(
-					siteId, documentShortcut.getViewableByAsString())));
+					groupId, documentShortcut.getViewableByAsString())));
 	}
 
 	@Override
@@ -183,13 +195,16 @@ public class DocumentShortcutResourceImpl
 
 	@Override
 	public DocumentShortcut putSiteDocumentShortcutByExternalReferenceCode(
-			Long siteId, String externalReferenceCode,
+			String siteId, String externalReferenceCode,
 			DocumentShortcut documentShortcut)
 		throws Exception {
 
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
+
 		FileShortcut fileShortcut =
 			_dlAppLocalService.fetchFileShortcutByExternalReferenceCode(
-				externalReferenceCode, siteId);
+				externalReferenceCode, groupId);
 
 		if (fileShortcut != null) {
 			return _toDocumentShortcut(
@@ -204,10 +219,10 @@ public class DocumentShortcutResourceImpl
 
 		return _toDocumentShortcut(
 			_dlAppService.addFileShortcut(
-				externalReferenceCode, siteId, documentShortcut.getFolderId(),
+				externalReferenceCode, groupId, documentShortcut.getFolderId(),
 				documentShortcut.getTargetDocumentId(),
 				_createServiceContext(
-					siteId, documentShortcut.getViewableByAsString())));
+					groupId, documentShortcut.getViewableByAsString())));
 	}
 
 	private ServiceContext _createServiceContext(

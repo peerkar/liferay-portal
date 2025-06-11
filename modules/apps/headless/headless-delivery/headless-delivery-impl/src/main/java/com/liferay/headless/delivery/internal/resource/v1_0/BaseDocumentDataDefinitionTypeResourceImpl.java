@@ -346,7 +346,7 @@ public abstract class BaseDocumentDataDefinitionTypeResourceImpl
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("siteId")
-				Long siteId,
+				String siteId,
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.ws.rs.QueryParam("search")
 				String search,
@@ -590,7 +590,7 @@ public abstract class BaseDocumentDataDefinitionTypeResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			DocumentDataDefinitionType documentDataDefinitionType)
 		throws Exception {
 
@@ -630,7 +630,7 @@ public abstract class BaseDocumentDataDefinitionTypeResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.ws.rs.QueryParam("callbackURL")
 			String callbackURL,
@@ -709,7 +709,7 @@ public abstract class BaseDocumentDataDefinitionTypeResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.ws.rs.QueryParam("search")
 			String search,
@@ -774,7 +774,7 @@ public abstract class BaseDocumentDataDefinitionTypeResourceImpl
 				documentDataDefinitionTypeUnsafeFunction =
 					documentDataDefinitionType ->
 						postSiteDocumentDataDefinitionType(
-							(Long)parameters.get("siteId"),
+							(String)parameters.get("siteId"),
 							documentDataDefinitionType);
 			}
 			else {
@@ -891,7 +891,7 @@ public abstract class BaseDocumentDataDefinitionTypeResourceImpl
 		}
 		else if (parameters.containsKey("siteId")) {
 			return getSiteDocumentDataDefinitionTypesPage(
-				(Long)parameters.get("siteId"), search, null, filter,
+				(String)parameters.get("siteId"), search, null, filter,
 				pagination, sorts);
 		}
 		else {

@@ -57,7 +57,7 @@ public interface KnowledgeBaseAttachmentResource {
 
 	public void
 			deleteSiteKnowledgeBaseArticleByExternalReferenceCodeKnowledgeBaseArticleExternalReferenceCodeKnowledgeBaseAttachmentByExternalReferenceCode(
-				Long siteId, String knowledgeBaseArticleExternalReferenceCode,
+				String siteId, String knowledgeBaseArticleExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception;
 
@@ -72,7 +72,7 @@ public interface KnowledgeBaseAttachmentResource {
 
 	public KnowledgeBaseAttachment
 			getSiteKnowledgeBaseArticleByExternalReferenceCodeKnowledgeBaseArticleExternalReferenceCodeKnowledgeBaseAttachmentByExternalReferenceCode(
-				Long siteId, String knowledgeBaseArticleExternalReferenceCode,
+				String siteId, String knowledgeBaseArticleExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception;
 

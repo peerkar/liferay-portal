@@ -201,7 +201,7 @@ public abstract class BaseSitePageResourceTestCase {
 		assertValid(getSitePage);
 	}
 
-	protected Long testGetSiteSitePage_getSiteId(SitePage sitePage)
+	protected String testGetSiteSitePage_getSiteId(SitePage sitePage)
 		throws Exception {
 
 		return sitePage.getSiteId();
@@ -277,7 +277,7 @@ public abstract class BaseSitePageResourceTestCase {
 						"Object/sitePage"))));
 	}
 
-	protected Long testGraphQLGetSiteSitePage_getSiteId(SitePage sitePage)
+	protected String testGraphQLGetSiteSitePage_getSiteId(SitePage sitePage)
 		throws Exception {
 
 		return sitePage.getSiteId();
@@ -358,7 +358,7 @@ public abstract class BaseSitePageResourceTestCase {
 		assertValid(getSitePage);
 	}
 
-	protected Long testGetSiteSitePageExperienceExperienceKey_getSiteId(
+	protected String testGetSiteSitePageExperienceExperienceKey_getSiteId(
 			SitePage sitePage)
 		throws Exception {
 
@@ -461,8 +461,9 @@ public abstract class BaseSitePageResourceTestCase {
 						"Object/sitePageExperienceExperienceKey"))));
 	}
 
-	protected Long testGraphQLGetSiteSitePageExperienceExperienceKey_getSiteId(
-			SitePage sitePage)
+	protected String
+			testGraphQLGetSiteSitePageExperienceExperienceKey_getSiteId(
+				SitePage sitePage)
 		throws Exception {
 
 		return sitePage.getSiteId();
@@ -558,8 +559,8 @@ public abstract class BaseSitePageResourceTestCase {
 
 	@Test
 	public void testGetSiteSitePagesExperiencesPage() throws Exception {
-		Long siteId = testGetSiteSitePagesExperiencesPage_getSiteId();
-		Long irrelevantSiteId =
+		String siteId = testGetSiteSitePagesExperiencesPage_getSiteId();
+		String irrelevantSiteId =
 			testGetSiteSitePagesExperiencesPage_getIrrelevantSiteId();
 		String friendlyUrlPath =
 			testGetSiteSitePagesExperiencesPage_getFriendlyUrlPath();
@@ -610,7 +611,7 @@ public abstract class BaseSitePageResourceTestCase {
 
 	protected Map<String, Map<String, String>>
 			testGetSiteSitePagesExperiencesPage_getExpectedActions(
-				Long siteId, String friendlyUrlPath)
+				String siteId, String friendlyUrlPath)
 		throws Exception {
 
 		Map<String, Map<String, String>> expectedActions = new HashMap<>();
@@ -619,20 +620,20 @@ public abstract class BaseSitePageResourceTestCase {
 	}
 
 	protected SitePage testGetSiteSitePagesExperiencesPage_addSitePage(
-			Long siteId, String friendlyUrlPath, SitePage sitePage)
+			String siteId, String friendlyUrlPath, SitePage sitePage)
 		throws Exception {
 
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
 	}
 
-	protected Long testGetSiteSitePagesExperiencesPage_getSiteId()
+	protected String testGetSiteSitePagesExperiencesPage_getSiteId()
 		throws Exception {
 
 		return testGroup.getGroupId();
 	}
 
-	protected Long testGetSiteSitePagesExperiencesPage_getIrrelevantSiteId()
+	protected String testGetSiteSitePagesExperiencesPage_getIrrelevantSiteId()
 		throws Exception {
 
 		return irrelevantGroup.getGroupId();
@@ -654,8 +655,9 @@ public abstract class BaseSitePageResourceTestCase {
 
 	@Test
 	public void testGetSiteSitePagesPage() throws Exception {
-		Long siteId = testGetSiteSitePagesPage_getSiteId();
-		Long irrelevantSiteId = testGetSiteSitePagesPage_getIrrelevantSiteId();
+		String siteId = testGetSiteSitePagesPage_getSiteId();
+		String irrelevantSiteId =
+			testGetSiteSitePagesPage_getIrrelevantSiteId();
 
 		Page<SitePage> page = sitePageResource.getSiteSitePagesPage(
 			siteId, null, null, null, Pagination.of(1, 10), null);
@@ -695,7 +697,7 @@ public abstract class BaseSitePageResourceTestCase {
 	}
 
 	protected Map<String, Map<String, String>>
-			testGetSiteSitePagesPage_getExpectedActions(Long siteId)
+			testGetSiteSitePagesPage_getExpectedActions(String siteId)
 		throws Exception {
 
 		Map<String, Map<String, String>> expectedActions = new HashMap<>();
@@ -723,7 +725,7 @@ public abstract class BaseSitePageResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteSitePagesPage_getSiteId();
+		String siteId = testGetSiteSitePagesPage_getSiteId();
 
 		SitePage sitePage1 = randomSitePage();
 
@@ -780,7 +782,7 @@ public abstract class BaseSitePageResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteSitePagesPage_getSiteId();
+		String siteId = testGetSiteSitePagesPage_getSiteId();
 
 		SitePage sitePage1 = testGetSiteSitePagesPage_addSitePage(
 			siteId, randomSitePage());
@@ -803,7 +805,7 @@ public abstract class BaseSitePageResourceTestCase {
 
 	@Test
 	public void testGetSiteSitePagesPageWithPagination() throws Exception {
-		Long siteId = testGetSiteSitePagesPage_getSiteId();
+		String siteId = testGetSiteSitePagesPage_getSiteId();
 
 		Page<SitePage> sitePagesPage = sitePageResource.getSiteSitePagesPage(
 			siteId, null, null, null, null, null);
@@ -977,7 +979,7 @@ public abstract class BaseSitePageResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteSitePagesPage_getSiteId();
+		String siteId = testGetSiteSitePagesPage_getSiteId();
 
 		SitePage sitePage1 = randomSitePage();
 		SitePage sitePage2 = randomSitePage();
@@ -1013,17 +1015,17 @@ public abstract class BaseSitePageResourceTestCase {
 	}
 
 	protected SitePage testGetSiteSitePagesPage_addSitePage(
-			Long siteId, SitePage sitePage)
+			String siteId, SitePage sitePage)
 		throws Exception {
 
 		return sitePageResource.postSiteSitePage(siteId, sitePage);
 	}
 
-	protected Long testGetSiteSitePagesPage_getSiteId() throws Exception {
+	protected String testGetSiteSitePagesPage_getSiteId() throws Exception {
 		return testGroup.getGroupId();
 	}
 
-	protected Long testGetSiteSitePagesPage_getIrrelevantSiteId()
+	protected String testGetSiteSitePagesPage_getIrrelevantSiteId()
 		throws Exception {
 
 		return irrelevantGroup.getGroupId();
@@ -1031,7 +1033,7 @@ public abstract class BaseSitePageResourceTestCase {
 
 	@Test
 	public void testGraphQLGetSiteSitePagesPage() throws Exception {
-		Long siteId = testGetSiteSitePagesPage_getSiteId();
+		String siteId = testGetSiteSitePagesPage_getSiteId();
 
 		GraphQLField graphQLField = new GraphQLField(
 			"sitePages",

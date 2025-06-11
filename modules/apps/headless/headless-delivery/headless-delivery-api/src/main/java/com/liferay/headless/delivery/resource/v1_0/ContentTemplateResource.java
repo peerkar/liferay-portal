@@ -57,11 +57,11 @@ public interface ContentTemplateResource {
 		throws Exception;
 
 	public ContentTemplate getSiteContentTemplate(
-			Long siteId, String contentTemplateId)
+			String siteId, String contentTemplateId)
 		throws Exception;
 
 	public Page<ContentTemplate> getSiteContentTemplatesPage(
-			Long siteId, String search,
+			String siteId, String search,
 			com.liferay.portal.vulcan.aggregation.Aggregation aggregation,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			Pagination pagination,
@@ -76,7 +76,7 @@ public interface ContentTemplateResource {
 		throws Exception;
 
 	public Response postSiteContentTemplatesPageExportBatch(
-			Long siteId, String search,
+			String siteId, String search,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			com.liferay.portal.kernel.search.Sort[] sorts, String callbackURL,
 			String contentType, String fieldNames)

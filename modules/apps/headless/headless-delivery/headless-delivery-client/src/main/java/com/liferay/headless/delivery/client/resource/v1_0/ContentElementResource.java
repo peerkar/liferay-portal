@@ -47,12 +47,12 @@ public interface ContentElementResource {
 		throws Exception;
 
 	public Page<ContentElement> getSiteContentElementsPage(
-			Long siteId, String search, List<String> aggregations,
+			String siteId, String search, List<String> aggregations,
 			String filterString, Pagination pagination, String sortString)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse getSiteContentElementsPageHttpResponse(
-			Long siteId, String search, List<String> aggregations,
+			String siteId, String search, List<String> aggregations,
 			String filterString, Pagination pagination, String sortString)
 		throws Exception;
 
@@ -70,13 +70,14 @@ public interface ContentElementResource {
 		throws Exception;
 
 	public void postSiteContentElementsPageExportBatch(
-			Long siteId, String search, String filterString, String sortString,
-			String callbackURL, String contentType, String fieldNames)
+			String siteId, String search, String filterString,
+			String sortString, String callbackURL, String contentType,
+			String fieldNames)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			postSiteContentElementsPageExportBatchHttpResponse(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				String sortString, String callbackURL, String contentType,
 				String fieldNames)
 		throws Exception;
@@ -322,7 +323,7 @@ public interface ContentElementResource {
 		}
 
 		public Page<ContentElement> getSiteContentElementsPage(
-				Long siteId, String search, List<String> aggregations,
+				String siteId, String search, List<String> aggregations,
 				String filterString, Pagination pagination, String sortString)
 			throws Exception {
 
@@ -391,7 +392,7 @@ public interface ContentElementResource {
 		}
 
 		public HttpInvoker.HttpResponse getSiteContentElementsPageHttpResponse(
-				Long siteId, String search, List<String> aggregations,
+				String siteId, String search, List<String> aggregations,
 				String filterString, Pagination pagination, String sortString)
 			throws Exception {
 
@@ -581,7 +582,7 @@ public interface ContentElementResource {
 		}
 
 		public void postSiteContentElementsPageExportBatch(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				String sortString, String callbackURL, String contentType,
 				String fieldNames)
 			throws Exception {
@@ -641,7 +642,7 @@ public interface ContentElementResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteContentElementsPageExportBatchHttpResponse(
-					Long siteId, String search, String filterString,
+					String siteId, String search, String filterString,
 					String sortString, String callbackURL, String contentType,
 					String fieldNames)
 			throws Exception {

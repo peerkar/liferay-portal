@@ -84,31 +84,31 @@ public interface MessageBoardSectionResource {
 		throws Exception;
 
 	public MessageBoardSection getSiteMessageBoardSectionByFriendlyUrlPath(
-			Long siteId, String friendlyUrlPath)
+			String siteId, String friendlyUrlPath)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteMessageBoardSectionByFriendlyUrlPathHttpResponse(
-				Long siteId, String friendlyUrlPath)
+				String siteId, String friendlyUrlPath)
 		throws Exception;
 
 	public Page<Permission> getSiteMessageBoardSectionPermissionsPage(
-			Long siteId, String roleNames)
+			String siteId, String roleNames)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteMessageBoardSectionPermissionsPageHttpResponse(
-				Long siteId, String roleNames)
+				String siteId, String roleNames)
 		throws Exception;
 
 	public Page<MessageBoardSection> getSiteMessageBoardSectionsPage(
-			Long siteId, Boolean flatten, String search,
+			String siteId, Boolean flatten, String search,
 			List<String> aggregations, String filterString,
 			Pagination pagination, String sortString)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse getSiteMessageBoardSectionsPageHttpResponse(
-			Long siteId, Boolean flatten, String search,
+			String siteId, Boolean flatten, String search,
 			List<String> aggregations, String filterString,
 			Pagination pagination, String sortString)
 		throws Exception;
@@ -133,30 +133,31 @@ public interface MessageBoardSectionResource {
 		throws Exception;
 
 	public MessageBoardSection postSiteMessageBoardSection(
-			Long siteId, MessageBoardSection messageBoardSection)
+			String siteId, MessageBoardSection messageBoardSection)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse postSiteMessageBoardSectionHttpResponse(
-			Long siteId, MessageBoardSection messageBoardSection)
+			String siteId, MessageBoardSection messageBoardSection)
 		throws Exception;
 
 	public void postSiteMessageBoardSectionBatch(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			postSiteMessageBoardSectionBatchHttpResponse(
-				Long siteId, String callbackURL, Object object)
+				String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public void postSiteMessageBoardSectionsPageExportBatch(
-			Long siteId, String search, String filterString, String sortString,
-			String callbackURL, String contentType, String fieldNames)
+			String siteId, String search, String filterString,
+			String sortString, String callbackURL, String contentType,
+			String fieldNames)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			postSiteMessageBoardSectionsPageExportBatchHttpResponse(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				String sortString, String callbackURL, String contentType,
 				String fieldNames)
 		throws Exception;
@@ -201,12 +202,12 @@ public interface MessageBoardSectionResource {
 		throws Exception;
 
 	public Page<Permission> putSiteMessageBoardSectionPermissionsPage(
-			Long siteId, Permission[] permissions)
+			String siteId, Permission[] permissions)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			putSiteMessageBoardSectionPermissionsPageHttpResponse(
-				Long siteId, Permission[] permissions)
+				String siteId, Permission[] permissions)
 		throws Exception;
 
 	public static class Builder {
@@ -877,7 +878,7 @@ public interface MessageBoardSectionResource {
 		}
 
 		public MessageBoardSection getSiteMessageBoardSectionByFriendlyUrlPath(
-				Long siteId, String friendlyUrlPath)
+				String siteId, String friendlyUrlPath)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -945,7 +946,7 @@ public interface MessageBoardSectionResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteMessageBoardSectionByFriendlyUrlPathHttpResponse(
-					Long siteId, String friendlyUrlPath)
+					String siteId, String friendlyUrlPath)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -986,7 +987,7 @@ public interface MessageBoardSectionResource {
 		}
 
 		public Page<Permission> getSiteMessageBoardSectionPermissionsPage(
-				Long siteId, String roleNames)
+				String siteId, String roleNames)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1054,7 +1055,7 @@ public interface MessageBoardSectionResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteMessageBoardSectionPermissionsPageHttpResponse(
-					Long siteId, String roleNames)
+					String siteId, String roleNames)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1098,7 +1099,7 @@ public interface MessageBoardSectionResource {
 		}
 
 		public Page<MessageBoardSection> getSiteMessageBoardSectionsPage(
-				Long siteId, Boolean flatten, String search,
+				String siteId, Boolean flatten, String search,
 				List<String> aggregations, String filterString,
 				Pagination pagination, String sortString)
 			throws Exception {
@@ -1169,7 +1170,7 @@ public interface MessageBoardSectionResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteMessageBoardSectionsPageHttpResponse(
-					Long siteId, Boolean flatten, String search,
+					String siteId, Boolean flatten, String search,
 					List<String> aggregations, String filterString,
 					Pagination pagination, String sortString)
 			throws Exception {
@@ -1460,7 +1461,7 @@ public interface MessageBoardSectionResource {
 		}
 
 		public MessageBoardSection postSiteMessageBoardSection(
-				Long siteId, MessageBoardSection messageBoardSection)
+				String siteId, MessageBoardSection messageBoardSection)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1527,7 +1528,7 @@ public interface MessageBoardSectionResource {
 		}
 
 		public HttpInvoker.HttpResponse postSiteMessageBoardSectionHttpResponse(
-				Long siteId, MessageBoardSection messageBoardSection)
+				String siteId, MessageBoardSection messageBoardSection)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1570,7 +1571,7 @@ public interface MessageBoardSectionResource {
 		}
 
 		public void postSiteMessageBoardSectionBatch(
-				Long siteId, String callbackURL, Object object)
+				String siteId, String callbackURL, Object object)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1627,7 +1628,7 @@ public interface MessageBoardSectionResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteMessageBoardSectionBatchHttpResponse(
-					Long siteId, String callbackURL, Object object)
+					String siteId, String callbackURL, Object object)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1674,7 +1675,7 @@ public interface MessageBoardSectionResource {
 		}
 
 		public void postSiteMessageBoardSectionsPageExportBatch(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				String sortString, String callbackURL, String contentType,
 				String fieldNames)
 			throws Exception {
@@ -1734,7 +1735,7 @@ public interface MessageBoardSectionResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteMessageBoardSectionsPageExportBatchHttpResponse(
-					Long siteId, String search, String filterString,
+					String siteId, String search, String filterString,
 					String sortString, String callbackURL, String contentType,
 					String fieldNames)
 			throws Exception {
@@ -2351,7 +2352,7 @@ public interface MessageBoardSectionResource {
 		}
 
 		public Page<Permission> putSiteMessageBoardSectionPermissionsPage(
-				Long siteId, Permission[] permissions)
+				String siteId, Permission[] permissions)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -2419,7 +2420,7 @@ public interface MessageBoardSectionResource {
 
 		public HttpInvoker.HttpResponse
 				putSiteMessageBoardSectionPermissionsPageHttpResponse(
-					Long siteId, Permission[] permissions)
+					String siteId, Permission[] permissions)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();

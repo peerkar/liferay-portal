@@ -75,13 +75,13 @@ public interface DocumentDataDefinitionTypeResource {
 
 	public Page<DocumentDataDefinitionType>
 			getSiteDocumentDataDefinitionTypesPage(
-				Long siteId, String search, List<String> aggregations,
+				String siteId, String search, List<String> aggregations,
 				String filterString, Pagination pagination, String sortString)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteDocumentDataDefinitionTypesPageHttpResponse(
-				Long siteId, String search, List<String> aggregations,
+				String siteId, String search, List<String> aggregations,
 				String filterString, Pagination pagination, String sortString)
 		throws Exception;
 
@@ -120,32 +120,34 @@ public interface DocumentDataDefinitionTypeResource {
 		throws Exception;
 
 	public DocumentDataDefinitionType postSiteDocumentDataDefinitionType(
-			Long siteId, DocumentDataDefinitionType documentDataDefinitionType)
+			String siteId,
+			DocumentDataDefinitionType documentDataDefinitionType)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			postSiteDocumentDataDefinitionTypeHttpResponse(
-				Long siteId,
+				String siteId,
 				DocumentDataDefinitionType documentDataDefinitionType)
 		throws Exception;
 
 	public void postSiteDocumentDataDefinitionTypeBatch(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			postSiteDocumentDataDefinitionTypeBatchHttpResponse(
-				Long siteId, String callbackURL, Object object)
+				String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public void postSiteDocumentDataDefinitionTypesPageExportBatch(
-			Long siteId, String search, String filterString, String sortString,
-			String callbackURL, String contentType, String fieldNames)
+			String siteId, String search, String filterString,
+			String sortString, String callbackURL, String contentType,
+			String fieldNames)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			postSiteDocumentDataDefinitionTypesPageExportBatchHttpResponse(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				String sortString, String callbackURL, String contentType,
 				String fieldNames)
 		throws Exception;
@@ -715,7 +717,7 @@ public interface DocumentDataDefinitionTypeResource {
 
 		public Page<DocumentDataDefinitionType>
 				getSiteDocumentDataDefinitionTypesPage(
-					Long siteId, String search, List<String> aggregations,
+					String siteId, String search, List<String> aggregations,
 					String filterString, Pagination pagination,
 					String sortString)
 			throws Exception {
@@ -787,7 +789,7 @@ public interface DocumentDataDefinitionTypeResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteDocumentDataDefinitionTypesPageHttpResponse(
-					Long siteId, String search, List<String> aggregations,
+					String siteId, String search, List<String> aggregations,
 					String filterString, Pagination pagination,
 					String sortString)
 			throws Exception {
@@ -1196,7 +1198,7 @@ public interface DocumentDataDefinitionTypeResource {
 		}
 
 		public DocumentDataDefinitionType postSiteDocumentDataDefinitionType(
-				Long siteId,
+				String siteId,
 				DocumentDataDefinitionType documentDataDefinitionType)
 			throws Exception {
 
@@ -1265,7 +1267,7 @@ public interface DocumentDataDefinitionTypeResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteDocumentDataDefinitionTypeHttpResponse(
-					Long siteId,
+					String siteId,
 					DocumentDataDefinitionType documentDataDefinitionType)
 			throws Exception {
 
@@ -1309,7 +1311,7 @@ public interface DocumentDataDefinitionTypeResource {
 		}
 
 		public void postSiteDocumentDataDefinitionTypeBatch(
-				Long siteId, String callbackURL, Object object)
+				String siteId, String callbackURL, Object object)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1366,7 +1368,7 @@ public interface DocumentDataDefinitionTypeResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteDocumentDataDefinitionTypeBatchHttpResponse(
-					Long siteId, String callbackURL, Object object)
+					String siteId, String callbackURL, Object object)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1413,7 +1415,7 @@ public interface DocumentDataDefinitionTypeResource {
 		}
 
 		public void postSiteDocumentDataDefinitionTypesPageExportBatch(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				String sortString, String callbackURL, String contentType,
 				String fieldNames)
 			throws Exception {
@@ -1473,7 +1475,7 @@ public interface DocumentDataDefinitionTypeResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteDocumentDataDefinitionTypesPageExportBatchHttpResponse(
-					Long siteId, String search, String filterString,
+					String siteId, String search, String filterString,
 					String sortString, String callbackURL, String contentType,
 					String fieldNames)
 			throws Exception {

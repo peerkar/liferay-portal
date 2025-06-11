@@ -144,7 +144,7 @@ public abstract class BaseLanguageResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId)
+			String siteId)
 		throws Exception {
 
 		return Page.of(Collections.emptyList());
@@ -257,7 +257,7 @@ public abstract class BaseLanguageResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.ws.rs.QueryParam("callbackURL")
 			String callbackURL,
@@ -353,7 +353,7 @@ public abstract class BaseLanguageResourceImpl
 				(Long)parameters.get("assetLibraryId"));
 		}
 		else if (parameters.containsKey("siteId")) {
-			return getSiteLanguagesPage((Long)parameters.get("siteId"));
+			return getSiteLanguagesPage((String)parameters.get("siteId"));
 		}
 		else {
 			throw new NotSupportedException(

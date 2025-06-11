@@ -493,7 +493,7 @@ public abstract class BaseDocumentResourceTestCase {
 				"-"));
 	}
 
-	protected Long testDeleteSiteDocumentByExternalReferenceCode_getSiteId(
+	protected String testDeleteSiteDocumentByExternalReferenceCode_getSiteId(
 			Document document)
 		throws Exception {
 
@@ -2057,7 +2057,7 @@ public abstract class BaseDocumentResourceTestCase {
 		assertValid(getDocument);
 	}
 
-	protected Long testGetSiteDocumentByExternalReferenceCode_getSiteId(
+	protected String testGetSiteDocumentByExternalReferenceCode_getSiteId(
 			Document document)
 		throws Exception {
 
@@ -2141,8 +2141,9 @@ public abstract class BaseDocumentResourceTestCase {
 						"Object/documentByExternalReferenceCode"))));
 	}
 
-	protected Long testGraphQLGetSiteDocumentByExternalReferenceCode_getSiteId(
-			Document document)
+	protected String
+			testGraphQLGetSiteDocumentByExternalReferenceCode_getSiteId(
+				Document document)
 		throws Exception {
 
 		return document.getSiteId();
@@ -2227,8 +2228,9 @@ public abstract class BaseDocumentResourceTestCase {
 
 	@Test
 	public void testGetSiteDocumentsPage() throws Exception {
-		Long siteId = testGetSiteDocumentsPage_getSiteId();
-		Long irrelevantSiteId = testGetSiteDocumentsPage_getIrrelevantSiteId();
+		String siteId = testGetSiteDocumentsPage_getSiteId();
+		String irrelevantSiteId =
+			testGetSiteDocumentsPage_getIrrelevantSiteId();
 
 		Page<Document> page = documentResource.getSiteDocumentsPage(
 			siteId, null, null, null, null, Pagination.of(1, 10), null);
@@ -2272,7 +2274,7 @@ public abstract class BaseDocumentResourceTestCase {
 	}
 
 	protected Map<String, Map<String, String>>
-			testGetSiteDocumentsPage_getExpectedActions(Long siteId)
+			testGetSiteDocumentsPage_getExpectedActions(String siteId)
 		throws Exception {
 
 		Map<String, Map<String, String>> expectedActions = new HashMap<>();
@@ -2300,7 +2302,7 @@ public abstract class BaseDocumentResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteDocumentsPage_getSiteId();
+		String siteId = testGetSiteDocumentsPage_getSiteId();
 
 		Document document1 = randomDocument();
 
@@ -2357,7 +2359,7 @@ public abstract class BaseDocumentResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteDocumentsPage_getSiteId();
+		String siteId = testGetSiteDocumentsPage_getSiteId();
 
 		Document document1 = testGetSiteDocumentsPage_addDocument(
 			siteId, randomDocument());
@@ -2380,7 +2382,7 @@ public abstract class BaseDocumentResourceTestCase {
 
 	@Test
 	public void testGetSiteDocumentsPageWithPagination() throws Exception {
-		Long siteId = testGetSiteDocumentsPage_getSiteId();
+		String siteId = testGetSiteDocumentsPage_getSiteId();
 
 		Page<Document> documentsPage = documentResource.getSiteDocumentsPage(
 			siteId, null, null, null, null, null, null);
@@ -2554,7 +2556,7 @@ public abstract class BaseDocumentResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteDocumentsPage_getSiteId();
+		String siteId = testGetSiteDocumentsPage_getSiteId();
 
 		Document document1 = randomDocument();
 		Document document2 = randomDocument();
@@ -2590,18 +2592,18 @@ public abstract class BaseDocumentResourceTestCase {
 	}
 
 	protected Document testGetSiteDocumentsPage_addDocument(
-			Long siteId, Document document)
+			String siteId, Document document)
 		throws Exception {
 
 		return documentResource.postSiteDocument(
 			siteId, document, getMultipartFiles());
 	}
 
-	protected Long testGetSiteDocumentsPage_getSiteId() throws Exception {
+	protected String testGetSiteDocumentsPage_getSiteId() throws Exception {
 		return testGroup.getGroupId();
 	}
 
-	protected Long testGetSiteDocumentsPage_getIrrelevantSiteId()
+	protected String testGetSiteDocumentsPage_getIrrelevantSiteId()
 		throws Exception {
 
 		return irrelevantGroup.getGroupId();
@@ -2609,7 +2611,7 @@ public abstract class BaseDocumentResourceTestCase {
 
 	@Test
 	public void testGraphQLGetSiteDocumentsPage() throws Exception {
-		Long siteId = testGetSiteDocumentsPage_getSiteId();
+		String siteId = testGetSiteDocumentsPage_getSiteId();
 
 		GraphQLField graphQLField = new GraphQLField(
 			"documents",
@@ -2680,8 +2682,8 @@ public abstract class BaseDocumentResourceTestCase {
 
 	@Test
 	public void testGetSiteDocumentsRatedByMePage() throws Exception {
-		Long siteId = testGetSiteDocumentsRatedByMePage_getSiteId();
-		Long irrelevantSiteId =
+		String siteId = testGetSiteDocumentsRatedByMePage_getSiteId();
+		String irrelevantSiteId =
 			testGetSiteDocumentsRatedByMePage_getIrrelevantSiteId();
 
 		Page<Document> page = documentResource.getSiteDocumentsRatedByMePage(
@@ -2728,7 +2730,7 @@ public abstract class BaseDocumentResourceTestCase {
 	}
 
 	protected Map<String, Map<String, String>>
-			testGetSiteDocumentsRatedByMePage_getExpectedActions(Long siteId)
+			testGetSiteDocumentsRatedByMePage_getExpectedActions(String siteId)
 		throws Exception {
 
 		Map<String, Map<String, String>> expectedActions = new HashMap<>();
@@ -2740,7 +2742,7 @@ public abstract class BaseDocumentResourceTestCase {
 	public void testGetSiteDocumentsRatedByMePageWithPagination()
 		throws Exception {
 
-		Long siteId = testGetSiteDocumentsRatedByMePage_getSiteId();
+		String siteId = testGetSiteDocumentsRatedByMePage_getSiteId();
 
 		Page<Document> documentsPage =
 			documentResource.getSiteDocumentsRatedByMePage(siteId, null);
@@ -2821,20 +2823,20 @@ public abstract class BaseDocumentResourceTestCase {
 	}
 
 	protected Document testGetSiteDocumentsRatedByMePage_addDocument(
-			Long siteId, Document document)
+			String siteId, Document document)
 		throws Exception {
 
 		return documentResource.postSiteDocument(
 			siteId, document, getMultipartFiles());
 	}
 
-	protected Long testGetSiteDocumentsRatedByMePage_getSiteId()
+	protected String testGetSiteDocumentsRatedByMePage_getSiteId()
 		throws Exception {
 
 		return testGroup.getGroupId();
 	}
 
-	protected Long testGetSiteDocumentsRatedByMePage_getIrrelevantSiteId()
+	protected String testGetSiteDocumentsRatedByMePage_getIrrelevantSiteId()
 		throws Exception {
 
 		return irrelevantGroup.getGroupId();
@@ -3187,7 +3189,7 @@ public abstract class BaseDocumentResourceTestCase {
 			putDocument.getExternalReferenceCode());
 	}
 
-	protected Long testPutSiteDocumentByExternalReferenceCode_getSiteId(
+	protected String testPutSiteDocumentByExternalReferenceCode_getSiteId(
 			Document document)
 		throws Exception {
 

@@ -1052,8 +1052,8 @@ public abstract class BaseContentStructureResourceTestCase {
 
 	@Test
 	public void testGetSiteContentStructuresPage() throws Exception {
-		Long siteId = testGetSiteContentStructuresPage_getSiteId();
-		Long irrelevantSiteId =
+		String siteId = testGetSiteContentStructuresPage_getSiteId();
+		String irrelevantSiteId =
 			testGetSiteContentStructuresPage_getIrrelevantSiteId();
 
 		Page<ContentStructure> page =
@@ -1104,7 +1104,7 @@ public abstract class BaseContentStructureResourceTestCase {
 	}
 
 	protected Map<String, Map<String, String>>
-			testGetSiteContentStructuresPage_getExpectedActions(Long siteId)
+			testGetSiteContentStructuresPage_getExpectedActions(String siteId)
 		throws Exception {
 
 		Map<String, Map<String, String>> expectedActions = new HashMap<>();
@@ -1123,7 +1123,7 @@ public abstract class BaseContentStructureResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteContentStructuresPage_getSiteId();
+		String siteId = testGetSiteContentStructuresPage_getSiteId();
 
 		ContentStructure contentStructure1 = randomContentStructure();
 
@@ -1186,7 +1186,7 @@ public abstract class BaseContentStructureResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteContentStructuresPage_getSiteId();
+		String siteId = testGetSiteContentStructuresPage_getSiteId();
 
 		ContentStructure contentStructure1 =
 			testGetSiteContentStructuresPage_addContentStructure(
@@ -1214,7 +1214,7 @@ public abstract class BaseContentStructureResourceTestCase {
 	public void testGetSiteContentStructuresPageWithPagination()
 		throws Exception {
 
-		Long siteId = testGetSiteContentStructuresPage_getSiteId();
+		String siteId = testGetSiteContentStructuresPage_getSiteId();
 
 		Page<ContentStructure> contentStructuresPage =
 			contentStructureResource.getSiteContentStructuresPage(
@@ -1422,7 +1422,7 @@ public abstract class BaseContentStructureResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteContentStructuresPage_getSiteId();
+		String siteId = testGetSiteContentStructuresPage_getSiteId();
 
 		ContentStructure contentStructure1 = randomContentStructure();
 		ContentStructure contentStructure2 = randomContentStructure();
@@ -1471,20 +1471,20 @@ public abstract class BaseContentStructureResourceTestCase {
 
 	protected ContentStructure
 			testGetSiteContentStructuresPage_addContentStructure(
-				Long siteId, ContentStructure contentStructure)
+				String siteId, ContentStructure contentStructure)
 		throws Exception {
 
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
 	}
 
-	protected Long testGetSiteContentStructuresPage_getSiteId()
+	protected String testGetSiteContentStructuresPage_getSiteId()
 		throws Exception {
 
 		return testGroup.getGroupId();
 	}
 
-	protected Long testGetSiteContentStructuresPage_getIrrelevantSiteId()
+	protected String testGetSiteContentStructuresPage_getIrrelevantSiteId()
 		throws Exception {
 
 		return irrelevantGroup.getGroupId();
@@ -1492,7 +1492,7 @@ public abstract class BaseContentStructureResourceTestCase {
 
 	@Test
 	public void testGraphQLGetSiteContentStructuresPage() throws Exception {
-		Long siteId = testGetSiteContentStructuresPage_getSiteId();
+		String siteId = testGetSiteContentStructuresPage_getSiteId();
 
 		GraphQLField graphQLField = new GraphQLField(
 			"contentStructures",

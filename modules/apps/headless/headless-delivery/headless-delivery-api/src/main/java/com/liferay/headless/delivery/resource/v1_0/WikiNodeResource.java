@@ -49,7 +49,7 @@ import org.osgi.annotation.versioning.ProviderType;
 public interface WikiNodeResource {
 
 	public void deleteSiteWikiNodeByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public void deleteWikiNode(Long wikiNodeId) throws Exception;
@@ -58,15 +58,15 @@ public interface WikiNodeResource {
 		throws Exception;
 
 	public WikiNode getSiteWikiNodeByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public Page<com.liferay.portal.vulcan.permission.Permission>
-			getSiteWikiNodePermissionsPage(Long siteId, String roleNames)
+			getSiteWikiNodePermissionsPage(String siteId, String roleNames)
 		throws Exception;
 
 	public Page<WikiNode> getSiteWikiNodesPage(
-			Long siteId, String search,
+			String siteId, String search,
 			com.liferay.portal.vulcan.aggregation.Aggregation aggregation,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			Pagination pagination,
@@ -79,27 +79,27 @@ public interface WikiNodeResource {
 			getWikiNodePermissionsPage(Long wikiNodeId, String roleNames)
 		throws Exception;
 
-	public WikiNode postSiteWikiNode(Long siteId, WikiNode wikiNode)
+	public WikiNode postSiteWikiNode(String siteId, WikiNode wikiNode)
 		throws Exception;
 
 	public Response postSiteWikiNodeBatch(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public Response postSiteWikiNodesPageExportBatch(
-			Long siteId, String search,
+			String siteId, String search,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			com.liferay.portal.kernel.search.Sort[] sorts, String callbackURL,
 			String contentType, String fieldNames)
 		throws Exception;
 
 	public WikiNode putSiteWikiNodeByExternalReferenceCode(
-			Long siteId, String externalReferenceCode, WikiNode wikiNode)
+			String siteId, String externalReferenceCode, WikiNode wikiNode)
 		throws Exception;
 
 	public Page<com.liferay.portal.vulcan.permission.Permission>
 			putSiteWikiNodePermissionsPage(
-				Long siteId,
+				String siteId,
 				com.liferay.portal.vulcan.permission.Permission[] permissions)
 		throws Exception;
 

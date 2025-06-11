@@ -37,13 +37,13 @@ public interface WikiPageAttachmentResource {
 
 	public void
 			deleteSiteWikiPageByExternalReferenceCodeWikiPageExternalReferenceCodeWikiPageAttachmentByExternalReferenceCode(
-				Long siteId, String wikiPageExternalReferenceCode,
+				String siteId, String wikiPageExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			deleteSiteWikiPageByExternalReferenceCodeWikiPageExternalReferenceCodeWikiPageAttachmentByExternalReferenceCodeHttpResponse(
-				Long siteId, String wikiPageExternalReferenceCode,
+				String siteId, String wikiPageExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception;
 
@@ -63,13 +63,13 @@ public interface WikiPageAttachmentResource {
 
 	public WikiPageAttachment
 			getSiteWikiPageByExternalReferenceCodeWikiPageExternalReferenceCodeWikiPageAttachmentByExternalReferenceCode(
-				Long siteId, String wikiPageExternalReferenceCode,
+				String siteId, String wikiPageExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteWikiPageByExternalReferenceCodeWikiPageExternalReferenceCodeWikiPageAttachmentByExternalReferenceCodeHttpResponse(
-				Long siteId, String wikiPageExternalReferenceCode,
+				String siteId, String wikiPageExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception;
 
@@ -232,7 +232,7 @@ public interface WikiPageAttachmentResource {
 
 		public void
 				deleteSiteWikiPageByExternalReferenceCodeWikiPageExternalReferenceCodeWikiPageAttachmentByExternalReferenceCode(
-					Long siteId, String wikiPageExternalReferenceCode,
+					String siteId, String wikiPageExternalReferenceCode,
 					String externalReferenceCode)
 			throws Exception {
 
@@ -302,7 +302,7 @@ public interface WikiPageAttachmentResource {
 
 		public HttpInvoker.HttpResponse
 				deleteSiteWikiPageByExternalReferenceCodeWikiPageExternalReferenceCodeWikiPageAttachmentByExternalReferenceCodeHttpResponse(
-					Long siteId, String wikiPageExternalReferenceCode,
+					String siteId, String wikiPageExternalReferenceCode,
 					String externalReferenceCode)
 			throws Exception {
 
@@ -553,7 +553,7 @@ public interface WikiPageAttachmentResource {
 
 		public WikiPageAttachment
 				getSiteWikiPageByExternalReferenceCodeWikiPageExternalReferenceCodeWikiPageAttachmentByExternalReferenceCode(
-					Long siteId, String wikiPageExternalReferenceCode,
+					String siteId, String wikiPageExternalReferenceCode,
 					String externalReferenceCode)
 			throws Exception {
 
@@ -623,7 +623,7 @@ public interface WikiPageAttachmentResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteWikiPageByExternalReferenceCodeWikiPageExternalReferenceCodeWikiPageAttachmentByExternalReferenceCodeHttpResponse(
-					Long siteId, String wikiPageExternalReferenceCode,
+					String siteId, String wikiPageExternalReferenceCode,
 					String externalReferenceCode)
 			throws Exception {
 

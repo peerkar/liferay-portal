@@ -54,7 +54,7 @@ public interface NavigationMenuResource {
 		throws Exception;
 
 	public void deleteSiteNavigationMenuByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public NavigationMenu getNavigationMenu(Long navigationMenuId)
@@ -66,30 +66,31 @@ public interface NavigationMenuResource {
 		throws Exception;
 
 	public NavigationMenu getSiteNavigationMenuByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public Page<com.liferay.portal.vulcan.permission.Permission>
-			getSiteNavigationMenuPermissionsPage(Long siteId, String roleNames)
+			getSiteNavigationMenuPermissionsPage(
+				String siteId, String roleNames)
 		throws Exception;
 
 	public Page<NavigationMenu> getSiteNavigationMenusPage(
-			Long siteId, String search,
+			String siteId, String search,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			Pagination pagination,
 			com.liferay.portal.kernel.search.Sort[] sorts)
 		throws Exception;
 
 	public NavigationMenu postSiteNavigationMenu(
-			Long siteId, NavigationMenu navigationMenu)
+			String siteId, NavigationMenu navigationMenu)
 		throws Exception;
 
 	public Response postSiteNavigationMenuBatch(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public Response postSiteNavigationMenusPageExportBatch(
-			Long siteId, String search,
+			String siteId, String search,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			com.liferay.portal.kernel.search.Sort[] sorts, String callbackURL,
 			String contentType, String fieldNames)
@@ -109,13 +110,13 @@ public interface NavigationMenuResource {
 		throws Exception;
 
 	public NavigationMenu putSiteNavigationMenuByExternalReferenceCode(
-			Long siteId, String externalReferenceCode,
+			String siteId, String externalReferenceCode,
 			NavigationMenu navigationMenu)
 		throws Exception;
 
 	public Page<com.liferay.portal.vulcan.permission.Permission>
 			putSiteNavigationMenuPermissionsPage(
-				Long siteId,
+				String siteId,
 				com.liferay.portal.vulcan.permission.Permission[] permissions)
 		throws Exception;
 

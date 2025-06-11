@@ -431,7 +431,7 @@ public abstract class BaseKnowledgeBaseAttachmentResourceTestCase {
 					"-"));
 	}
 
-	protected Long
+	protected String
 			testDeleteSiteKnowledgeBaseArticleByExternalReferenceCodeKnowledgeBaseArticleExternalReferenceCodeKnowledgeBaseAttachmentByExternalReferenceCode_getSiteId()
 		throws Exception {
 
@@ -910,7 +910,7 @@ public abstract class BaseKnowledgeBaseAttachmentResourceTestCase {
 		assertValid(getKnowledgeBaseAttachment);
 	}
 
-	protected Long
+	protected String
 			testGetSiteKnowledgeBaseArticleByExternalReferenceCodeKnowledgeBaseArticleExternalReferenceCodeKnowledgeBaseAttachmentByExternalReferenceCode_getSiteId()
 		throws Exception {
 
@@ -1016,7 +1016,7 @@ public abstract class BaseKnowledgeBaseAttachmentResourceTestCase {
 						"Object/knowledgeBaseArticleByExternalReferenceCodeKnowledgeBaseArticleExternalReferenceCodeKnowledgeBaseAttachmentByExternalReferenceCode"))));
 	}
 
-	protected Long
+	protected String
 			testGraphQLGetSiteKnowledgeBaseArticleByExternalReferenceCodeKnowledgeBaseArticleExternalReferenceCodeKnowledgeBaseAttachmentByExternalReferenceCode_getSiteId()
 		throws Exception {
 

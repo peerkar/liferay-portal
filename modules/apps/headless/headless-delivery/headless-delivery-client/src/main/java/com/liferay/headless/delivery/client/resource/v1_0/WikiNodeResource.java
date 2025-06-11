@@ -38,12 +38,12 @@ public interface WikiNodeResource {
 	}
 
 	public void deleteSiteWikiNodeByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			deleteSiteWikiNodeByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public void deleteWikiNode(Long wikiNodeId) throws Exception;
@@ -59,29 +59,29 @@ public interface WikiNodeResource {
 		throws Exception;
 
 	public WikiNode getSiteWikiNodeByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteWikiNodeByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public Page<Permission> getSiteWikiNodePermissionsPage(
-			Long siteId, String roleNames)
+			String siteId, String roleNames)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse getSiteWikiNodePermissionsPageHttpResponse(
-			Long siteId, String roleNames)
+			String siteId, String roleNames)
 		throws Exception;
 
 	public Page<WikiNode> getSiteWikiNodesPage(
-			Long siteId, String search, List<String> aggregations,
+			String siteId, String search, List<String> aggregations,
 			String filterString, Pagination pagination, String sortString)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse getSiteWikiNodesPageHttpResponse(
-			Long siteId, String search, List<String> aggregations,
+			String siteId, String search, List<String> aggregations,
 			String filterString, Pagination pagination, String sortString)
 		throws Exception;
 
@@ -98,48 +98,49 @@ public interface WikiNodeResource {
 			Long wikiNodeId, String roleNames)
 		throws Exception;
 
-	public WikiNode postSiteWikiNode(Long siteId, WikiNode wikiNode)
+	public WikiNode postSiteWikiNode(String siteId, WikiNode wikiNode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse postSiteWikiNodeHttpResponse(
-			Long siteId, WikiNode wikiNode)
+			String siteId, WikiNode wikiNode)
 		throws Exception;
 
 	public void postSiteWikiNodeBatch(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse postSiteWikiNodeBatchHttpResponse(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public void postSiteWikiNodesPageExportBatch(
-			Long siteId, String search, String filterString, String sortString,
-			String callbackURL, String contentType, String fieldNames)
+			String siteId, String search, String filterString,
+			String sortString, String callbackURL, String contentType,
+			String fieldNames)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			postSiteWikiNodesPageExportBatchHttpResponse(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				String sortString, String callbackURL, String contentType,
 				String fieldNames)
 		throws Exception;
 
 	public WikiNode putSiteWikiNodeByExternalReferenceCode(
-			Long siteId, String externalReferenceCode, WikiNode wikiNode)
+			String siteId, String externalReferenceCode, WikiNode wikiNode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			putSiteWikiNodeByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode, WikiNode wikiNode)
+				String siteId, String externalReferenceCode, WikiNode wikiNode)
 		throws Exception;
 
 	public Page<Permission> putSiteWikiNodePermissionsPage(
-			Long siteId, Permission[] permissions)
+			String siteId, Permission[] permissions)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse putSiteWikiNodePermissionsPageHttpResponse(
-			Long siteId, Permission[] permissions)
+			String siteId, Permission[] permissions)
 		throws Exception;
 
 	public WikiNode putWikiNode(Long wikiNodeId, WikiNode wikiNode)
@@ -285,7 +286,7 @@ public interface WikiNodeResource {
 	public static class WikiNodeResourceImpl implements WikiNodeResource {
 
 		public void deleteSiteWikiNodeByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -353,7 +354,7 @@ public interface WikiNodeResource {
 
 		public HttpInvoker.HttpResponse
 				deleteSiteWikiNodeByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode)
+					String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -596,7 +597,7 @@ public interface WikiNodeResource {
 		}
 
 		public WikiNode getSiteWikiNodeByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -664,7 +665,7 @@ public interface WikiNodeResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteWikiNodeByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode)
+					String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -705,7 +706,7 @@ public interface WikiNodeResource {
 		}
 
 		public Page<Permission> getSiteWikiNodePermissionsPage(
-				Long siteId, String roleNames)
+				String siteId, String roleNames)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -772,7 +773,7 @@ public interface WikiNodeResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteWikiNodePermissionsPageHttpResponse(
-					Long siteId, String roleNames)
+					String siteId, String roleNames)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -816,7 +817,7 @@ public interface WikiNodeResource {
 		}
 
 		public Page<WikiNode> getSiteWikiNodesPage(
-				Long siteId, String search, List<String> aggregations,
+				String siteId, String search, List<String> aggregations,
 				String filterString, Pagination pagination, String sortString)
 			throws Exception {
 
@@ -885,7 +886,7 @@ public interface WikiNodeResource {
 		}
 
 		public HttpInvoker.HttpResponse getSiteWikiNodesPageHttpResponse(
-				Long siteId, String search, List<String> aggregations,
+				String siteId, String search, List<String> aggregations,
 				String filterString, Pagination pagination, String sortString)
 			throws Exception {
 
@@ -1156,7 +1157,7 @@ public interface WikiNodeResource {
 			return httpInvoker.invoke();
 		}
 
-		public WikiNode postSiteWikiNode(Long siteId, WikiNode wikiNode)
+		public WikiNode postSiteWikiNode(String siteId, WikiNode wikiNode)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1222,7 +1223,7 @@ public interface WikiNodeResource {
 		}
 
 		public HttpInvoker.HttpResponse postSiteWikiNodeHttpResponse(
-				Long siteId, WikiNode wikiNode)
+				String siteId, WikiNode wikiNode)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1264,7 +1265,7 @@ public interface WikiNodeResource {
 		}
 
 		public void postSiteWikiNodeBatch(
-				Long siteId, String callbackURL, Object object)
+				String siteId, String callbackURL, Object object)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1319,7 +1320,7 @@ public interface WikiNodeResource {
 		}
 
 		public HttpInvoker.HttpResponse postSiteWikiNodeBatchHttpResponse(
-				Long siteId, String callbackURL, Object object)
+				String siteId, String callbackURL, Object object)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1366,7 +1367,7 @@ public interface WikiNodeResource {
 		}
 
 		public void postSiteWikiNodesPageExportBatch(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				String sortString, String callbackURL, String contentType,
 				String fieldNames)
 			throws Exception {
@@ -1426,7 +1427,7 @@ public interface WikiNodeResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteWikiNodesPageExportBatchHttpResponse(
-					Long siteId, String search, String filterString,
+					String siteId, String search, String filterString,
 					String sortString, String callbackURL, String contentType,
 					String fieldNames)
 			throws Exception {
@@ -1496,7 +1497,7 @@ public interface WikiNodeResource {
 		}
 
 		public WikiNode putSiteWikiNodeByExternalReferenceCode(
-				Long siteId, String externalReferenceCode, WikiNode wikiNode)
+				String siteId, String externalReferenceCode, WikiNode wikiNode)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1564,7 +1565,7 @@ public interface WikiNodeResource {
 
 		public HttpInvoker.HttpResponse
 				putSiteWikiNodeByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode,
+					String siteId, String externalReferenceCode,
 					WikiNode wikiNode)
 			throws Exception {
 
@@ -1608,7 +1609,7 @@ public interface WikiNodeResource {
 		}
 
 		public Page<Permission> putSiteWikiNodePermissionsPage(
-				Long siteId, Permission[] permissions)
+				String siteId, Permission[] permissions)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1675,7 +1676,7 @@ public interface WikiNodeResource {
 
 		public HttpInvoker.HttpResponse
 				putSiteWikiNodePermissionsPageHttpResponse(
-					Long siteId, Permission[] permissions)
+					String siteId, Permission[] permissions)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();

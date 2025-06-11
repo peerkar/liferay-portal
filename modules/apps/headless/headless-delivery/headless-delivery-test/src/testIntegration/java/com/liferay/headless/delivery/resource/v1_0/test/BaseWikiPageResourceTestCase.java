@@ -261,7 +261,7 @@ public abstract class BaseWikiPageResourceTestCase {
 				"-"));
 	}
 
-	protected Long testDeleteSiteWikiPageByExternalReferenceCode_getSiteId(
+	protected String testDeleteSiteWikiPageByExternalReferenceCode_getSiteId(
 			WikiPage wikiPage)
 		throws Exception {
 
@@ -421,7 +421,7 @@ public abstract class BaseWikiPageResourceTestCase {
 		assertValid(getWikiPage);
 	}
 
-	protected Long testGetSiteWikiPageByExternalReferenceCode_getSiteId(
+	protected String testGetSiteWikiPageByExternalReferenceCode_getSiteId(
 			WikiPage wikiPage)
 		throws Exception {
 
@@ -505,8 +505,9 @@ public abstract class BaseWikiPageResourceTestCase {
 						"Object/wikiPageByExternalReferenceCode"))));
 	}
 
-	protected Long testGraphQLGetSiteWikiPageByExternalReferenceCode_getSiteId(
-			WikiPage wikiPage)
+	protected String
+			testGraphQLGetSiteWikiPageByExternalReferenceCode_getSiteId(
+				WikiPage wikiPage)
 		throws Exception {
 
 		return wikiPage.getSiteId();
@@ -1440,7 +1441,7 @@ public abstract class BaseWikiPageResourceTestCase {
 			putWikiPage.getExternalReferenceCode());
 	}
 
-	protected Long testPutSiteWikiPageByExternalReferenceCode_getSiteId(
+	protected String testPutSiteWikiPageByExternalReferenceCode_getSiteId(
 			WikiPage wikiPage)
 		throws Exception {
 

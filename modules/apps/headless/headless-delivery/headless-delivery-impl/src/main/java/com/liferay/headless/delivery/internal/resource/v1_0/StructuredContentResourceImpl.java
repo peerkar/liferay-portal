@@ -118,6 +118,7 @@ import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.permission.ModelPermissionsUtil;
 import com.liferay.portal.vulcan.util.ContentLanguageUtil;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.LocalDateTimeUtil;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 import com.liferay.portal.vulcan.util.SearchUtil;
@@ -172,12 +173,14 @@ public class StructuredContentResourceImpl
 
 	@Override
 	public void deleteSiteStructuredContentByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception {
 
 		JournalArticle journalArticle =
 			_journalArticleLocalService.getLatestArticleByExternalReferenceCode(
-				siteId, externalReferenceCode);
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService),
+				externalReferenceCode);
 
 		_journalArticleService.deleteArticle(
 			journalArticle.getGroupId(), journalArticle.getArticleId(),
@@ -312,33 +315,39 @@ public class StructuredContentResourceImpl
 
 	@Override
 	public StructuredContent getSiteStructuredContentByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception {
 
 		return _getStructuredContent(
 			_journalArticleService.getLatestArticleByExternalReferenceCode(
-				siteId, externalReferenceCode));
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService),
+				externalReferenceCode));
 	}
 
 	@Override
 	public StructuredContent getSiteStructuredContentByKey(
-			Long siteId, String key)
+			String siteId, String key)
 		throws Exception {
 
 		JournalArticle journalArticle = _journalArticleService.getArticle(
-			siteId, key);
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService),
+			key);
 
 		return _getStructuredContent(journalArticle);
 	}
 
 	@Override
 	public StructuredContent getSiteStructuredContentByUuid(
-			Long siteId, String uuid)
+			String siteId, String uuid)
 		throws Exception {
 
 		JournalArticle journalArticle =
 			_journalArticleLocalService.getJournalArticleByUuidAndGroupId(
-				uuid, siteId);
+				uuid,
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService));
 
 		_journalArticleModelResourcePermission.check(
 			PermissionThreadLocal.getPermissionChecker(),
@@ -349,22 +358,25 @@ public class StructuredContentResourceImpl
 
 	@Override
 	public Page<StructuredContent> getSiteStructuredContentsPage(
-			Long siteId, Boolean flatten, String search,
+			String siteId, Boolean flatten, String search,
 			Aggregation aggregation, Filter filter, Pagination pagination,
 			Sort[] sorts)
 		throws Exception {
+
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
 		return _getStructuredContentsPage(
 			HashMapBuilder.put(
 				"create",
 				addAction(
 					ActionKeys.ADD_ARTICLE, "postSiteStructuredContent",
-					JournalConstants.RESOURCE_NAME, siteId)
+					JournalConstants.RESOURCE_NAME, groupId)
 			).put(
 				"createBatch",
 				addAction(
 					ActionKeys.ADD_ARTICLE, "postSiteStructuredContentBatch",
-					JournalConstants.RESOURCE_NAME, siteId)
+					JournalConstants.RESOURCE_NAME, groupId)
 			).put(
 				"deleteBatch",
 				addAction(
@@ -374,7 +386,7 @@ public class StructuredContentResourceImpl
 				"get",
 				addAction(
 					ActionKeys.VIEW, "getSiteStructuredContentsPage",
-					JournalConstants.RESOURCE_NAME, siteId)
+					JournalConstants.RESOURCE_NAME, groupId)
 			).put(
 				"updateBatch",
 				addAction(
@@ -382,7 +394,7 @@ public class StructuredContentResourceImpl
 					JournalConstants.RESOURCE_NAME, null)
 			).build(),
 			_createStructuredContentsPageBooleanQueryUnsafeConsumer(flatten),
-			siteId, search, aggregation, filter, pagination, sorts);
+			groupId, search, aggregation, filter, pagination, sorts);
 	}
 
 	@Override
@@ -607,12 +619,13 @@ public class StructuredContentResourceImpl
 			Long assetLibraryId, StructuredContent structuredContent)
 		throws Exception {
 
-		return postSiteStructuredContent(assetLibraryId, structuredContent);
+		return postSiteStructuredContent(
+			String.valueOf(assetLibraryId), structuredContent);
 	}
 
 	@Override
 	public StructuredContent postSiteStructuredContent(
-			Long siteId, StructuredContent structuredContent)
+			String siteId, StructuredContent structuredContent)
 		throws Exception {
 
 		Long parentStructuredContentFolderId =
@@ -624,7 +637,9 @@ public class StructuredContentResourceImpl
 		}
 
 		return _addStructuredContent(
-			structuredContent.getExternalReferenceCode(), siteId,
+			structuredContent.getExternalReferenceCode(),
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService),
 			parentStructuredContentFolderId, structuredContent);
 	}
 
@@ -676,21 +691,24 @@ public class StructuredContentResourceImpl
 
 	@Override
 	public StructuredContent putSiteStructuredContentByExternalReferenceCode(
-			Long siteId, String externalReferenceCode,
+			String siteId, String externalReferenceCode,
 			StructuredContent structuredContent)
 		throws Exception {
+
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
 		JournalArticle journalArticle =
 			_journalArticleLocalService.
 				fetchLatestArticleByExternalReferenceCode(
-					siteId, externalReferenceCode);
+					groupId, externalReferenceCode);
 
 		if (journalArticle != null) {
 			return _updateStructuredContent(journalArticle, structuredContent);
 		}
 
 		return _addStructuredContent(
-			externalReferenceCode, siteId,
+			externalReferenceCode, groupId,
 			JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID, structuredContent);
 	}
 

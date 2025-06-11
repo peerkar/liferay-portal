@@ -424,7 +424,7 @@ public abstract class BaseDocumentShortcutResourceTestCase {
 					"-"));
 	}
 
-	protected Long
+	protected String
 			testDeleteSiteDocumentShortcutByExternalReferenceCode_getSiteId(
 				DocumentShortcut documentShortcut)
 		throws Exception {
@@ -976,8 +976,9 @@ public abstract class BaseDocumentShortcutResourceTestCase {
 		assertValid(getDocumentShortcut);
 	}
 
-	protected Long testGetSiteDocumentShortcutByExternalReferenceCode_getSiteId(
-			DocumentShortcut documentShortcut)
+	protected String
+			testGetSiteDocumentShortcutByExternalReferenceCode_getSiteId(
+				DocumentShortcut documentShortcut)
 		throws Exception {
 
 		return documentShortcut.getSiteId();
@@ -1062,7 +1063,7 @@ public abstract class BaseDocumentShortcutResourceTestCase {
 						"Object/documentShortcutByExternalReferenceCode"))));
 	}
 
-	protected Long
+	protected String
 			testGraphQLGetSiteDocumentShortcutByExternalReferenceCode_getSiteId(
 				DocumentShortcut documentShortcut)
 		throws Exception {
@@ -1134,8 +1135,8 @@ public abstract class BaseDocumentShortcutResourceTestCase {
 
 	@Test
 	public void testGetSiteDocumentShortcutsPage() throws Exception {
-		Long siteId = testGetSiteDocumentShortcutsPage_getSiteId();
-		Long irrelevantSiteId =
+		String siteId = testGetSiteDocumentShortcutsPage_getSiteId();
+		String irrelevantSiteId =
 			testGetSiteDocumentShortcutsPage_getIrrelevantSiteId();
 
 		Page<DocumentShortcut> page =
@@ -1191,7 +1192,7 @@ public abstract class BaseDocumentShortcutResourceTestCase {
 	}
 
 	protected Map<String, Map<String, String>>
-			testGetSiteDocumentShortcutsPage_getExpectedActions(Long siteId)
+			testGetSiteDocumentShortcutsPage_getExpectedActions(String siteId)
 		throws Exception {
 
 		Map<String, Map<String, String>> expectedActions = new HashMap<>();
@@ -1212,7 +1213,7 @@ public abstract class BaseDocumentShortcutResourceTestCase {
 	public void testGetSiteDocumentShortcutsPageWithPagination()
 		throws Exception {
 
-		Long siteId = testGetSiteDocumentShortcutsPage_getSiteId();
+		String siteId = testGetSiteDocumentShortcutsPage_getSiteId();
 
 		Page<DocumentShortcut> documentShortcutsPage =
 			documentShortcutResource.getSiteDocumentShortcutsPage(siteId, null);
@@ -1308,20 +1309,20 @@ public abstract class BaseDocumentShortcutResourceTestCase {
 
 	protected DocumentShortcut
 			testGetSiteDocumentShortcutsPage_addDocumentShortcut(
-				Long siteId, DocumentShortcut documentShortcut)
+				String siteId, DocumentShortcut documentShortcut)
 		throws Exception {
 
 		return documentShortcutResource.postSiteDocumentShortcut(
 			siteId, documentShortcut);
 	}
 
-	protected Long testGetSiteDocumentShortcutsPage_getSiteId()
+	protected String testGetSiteDocumentShortcutsPage_getSiteId()
 		throws Exception {
 
 		return testGroup.getGroupId();
 	}
 
-	protected Long testGetSiteDocumentShortcutsPage_getIrrelevantSiteId()
+	protected String testGetSiteDocumentShortcutsPage_getIrrelevantSiteId()
 		throws Exception {
 
 		return irrelevantGroup.getGroupId();
@@ -1329,7 +1330,7 @@ public abstract class BaseDocumentShortcutResourceTestCase {
 
 	@Test
 	public void testGraphQLGetSiteDocumentShortcutsPage() throws Exception {
-		Long siteId = testGetSiteDocumentShortcutsPage_getSiteId();
+		String siteId = testGetSiteDocumentShortcutsPage_getSiteId();
 
 		GraphQLField graphQLField = new GraphQLField(
 			"documentShortcuts",
@@ -1579,8 +1580,9 @@ public abstract class BaseDocumentShortcutResourceTestCase {
 			putDocumentShortcut.getExternalReferenceCode());
 	}
 
-	protected Long testPutSiteDocumentShortcutByExternalReferenceCode_getSiteId(
-			DocumentShortcut documentShortcut)
+	protected String
+			testPutSiteDocumentShortcutByExternalReferenceCode_getSiteId(
+				DocumentShortcut documentShortcut)
 		throws Exception {
 
 		return documentShortcut.getSiteId();

@@ -38,12 +38,12 @@ public interface WikiPageResource {
 	}
 
 	public void deleteSiteWikiPageByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			deleteSiteWikiPageByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public void deleteWikiPage(Long wikiPageId) throws Exception;
@@ -59,12 +59,12 @@ public interface WikiPageResource {
 		throws Exception;
 
 	public WikiPage getSiteWikiPageByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteWikiPageByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public Page<WikiPage> getWikiNodeWikiPagesPage(
@@ -134,12 +134,12 @@ public interface WikiPageResource {
 		throws Exception;
 
 	public WikiPage putSiteWikiPageByExternalReferenceCode(
-			Long siteId, String externalReferenceCode, WikiPage wikiPage)
+			String siteId, String externalReferenceCode, WikiPage wikiPage)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			putSiteWikiPageByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode, WikiPage wikiPage)
+				String siteId, String externalReferenceCode, WikiPage wikiPage)
 		throws Exception;
 
 	public WikiPage putWikiPage(Long wikiPageId, WikiPage wikiPage)
@@ -285,7 +285,7 @@ public interface WikiPageResource {
 	public static class WikiPageResourceImpl implements WikiPageResource {
 
 		public void deleteSiteWikiPageByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -353,7 +353,7 @@ public interface WikiPageResource {
 
 		public HttpInvoker.HttpResponse
 				deleteSiteWikiPageByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode)
+					String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -596,7 +596,7 @@ public interface WikiPageResource {
 		}
 
 		public WikiPage getSiteWikiPageByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -664,7 +664,7 @@ public interface WikiPageResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteWikiPageByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode)
+					String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1599,7 +1599,7 @@ public interface WikiPageResource {
 		}
 
 		public WikiPage putSiteWikiPageByExternalReferenceCode(
-				Long siteId, String externalReferenceCode, WikiPage wikiPage)
+				String siteId, String externalReferenceCode, WikiPage wikiPage)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1667,7 +1667,7 @@ public interface WikiPageResource {
 
 		public HttpInvoker.HttpResponse
 				putSiteWikiPageByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode,
+					String siteId, String externalReferenceCode,
 					WikiPage wikiPage)
 			throws Exception {
 

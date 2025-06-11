@@ -49,49 +49,49 @@ public interface CommentResource {
 
 	public void
 			deleteSiteBlogPostingByExternalReferenceCodeBlogPostingExternalReferenceCodeCommentByExternalReferenceCode(
-				Long siteId, String blogPostingExternalReferenceCode,
+				String siteId, String blogPostingExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			deleteSiteBlogPostingByExternalReferenceCodeBlogPostingExternalReferenceCodeCommentByExternalReferenceCodeHttpResponse(
-				Long siteId, String blogPostingExternalReferenceCode,
+				String siteId, String blogPostingExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception;
 
 	public void
 			deleteSiteCommentByExternalReferenceCodeParentCommentExternalReferenceCodeCommentByExternalReferenceCode(
-				Long siteId, String parentCommentExternalReferenceCode,
+				String siteId, String parentCommentExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			deleteSiteCommentByExternalReferenceCodeParentCommentExternalReferenceCodeCommentByExternalReferenceCodeHttpResponse(
-				Long siteId, String parentCommentExternalReferenceCode,
+				String siteId, String parentCommentExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception;
 
 	public void
 			deleteSiteDocumentByExternalReferenceCodeDocumentExternalReferenceCodeCommentByExternalReferenceCode(
-				Long siteId, String documentExternalReferenceCode,
+				String siteId, String documentExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			deleteSiteDocumentByExternalReferenceCodeDocumentExternalReferenceCodeCommentByExternalReferenceCodeHttpResponse(
-				Long siteId, String documentExternalReferenceCode,
+				String siteId, String documentExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception;
 
 	public void
 			deleteSiteStructuredContentByExternalReferenceCodeStructuredContentExternalReferenceCodeCommentByExternalReferenceCode(
-				Long siteId, String structuredContentExternalReferenceCode,
+				String siteId, String structuredContentExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			deleteSiteStructuredContentByExternalReferenceCodeStructuredContentExternalReferenceCodeCommentByExternalReferenceCodeHttpResponse(
-				Long siteId, String structuredContentExternalReferenceCode,
+				String siteId, String structuredContentExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception;
 
@@ -132,49 +132,49 @@ public interface CommentResource {
 
 	public Comment
 			getSiteBlogPostingByExternalReferenceCodeBlogPostingExternalReferenceCodeCommentByExternalReferenceCode(
-				Long siteId, String blogPostingExternalReferenceCode,
+				String siteId, String blogPostingExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteBlogPostingByExternalReferenceCodeBlogPostingExternalReferenceCodeCommentByExternalReferenceCodeHttpResponse(
-				Long siteId, String blogPostingExternalReferenceCode,
+				String siteId, String blogPostingExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception;
 
 	public Comment
 			getSiteCommentByExternalReferenceCodeParentCommentExternalReferenceCodeCommentByExternalReferenceCode(
-				Long siteId, String parentCommentExternalReferenceCode,
+				String siteId, String parentCommentExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteCommentByExternalReferenceCodeParentCommentExternalReferenceCodeCommentByExternalReferenceCodeHttpResponse(
-				Long siteId, String parentCommentExternalReferenceCode,
+				String siteId, String parentCommentExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception;
 
 	public Comment
 			getSiteDocumentByExternalReferenceCodeDocumentExternalReferenceCodeCommentByExternalReferenceCode(
-				Long siteId, String documentExternalReferenceCode,
+				String siteId, String documentExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteDocumentByExternalReferenceCodeDocumentExternalReferenceCodeCommentByExternalReferenceCodeHttpResponse(
-				Long siteId, String documentExternalReferenceCode,
+				String siteId, String documentExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception;
 
 	public Comment
 			getSiteStructuredContentByExternalReferenceCodeStructuredContentExternalReferenceCodeCommentByExternalReferenceCode(
-				Long siteId, String structuredContentExternalReferenceCode,
+				String siteId, String structuredContentExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteStructuredContentByExternalReferenceCodeStructuredContentExternalReferenceCodeCommentByExternalReferenceCodeHttpResponse(
-				Long siteId, String structuredContentExternalReferenceCode,
+				String siteId, String structuredContentExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception;
 
@@ -298,49 +298,49 @@ public interface CommentResource {
 
 	public Comment
 			putSiteBlogPostingByExternalReferenceCodeBlogPostingExternalReferenceCodeCommentByExternalReferenceCode(
-				Long siteId, String blogPostingExternalReferenceCode,
+				String siteId, String blogPostingExternalReferenceCode,
 				String externalReferenceCode, Comment comment)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			putSiteBlogPostingByExternalReferenceCodeBlogPostingExternalReferenceCodeCommentByExternalReferenceCodeHttpResponse(
-				Long siteId, String blogPostingExternalReferenceCode,
+				String siteId, String blogPostingExternalReferenceCode,
 				String externalReferenceCode, Comment comment)
 		throws Exception;
 
 	public Comment
 			putSiteCommentByExternalReferenceCodeParentCommentExternalReferenceCodeCommentByExternalReferenceCode(
-				Long siteId, String parentCommentExternalReferenceCode,
+				String siteId, String parentCommentExternalReferenceCode,
 				String externalReferenceCode, Comment comment)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			putSiteCommentByExternalReferenceCodeParentCommentExternalReferenceCodeCommentByExternalReferenceCodeHttpResponse(
-				Long siteId, String parentCommentExternalReferenceCode,
+				String siteId, String parentCommentExternalReferenceCode,
 				String externalReferenceCode, Comment comment)
 		throws Exception;
 
 	public Comment
 			putSiteDocumentByExternalReferenceCodeDocumentExternalReferenceCodeCommentByExternalReferenceCode(
-				Long siteId, String documentExternalReferenceCode,
+				String siteId, String documentExternalReferenceCode,
 				String externalReferenceCode, Comment comment)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			putSiteDocumentByExternalReferenceCodeDocumentExternalReferenceCodeCommentByExternalReferenceCodeHttpResponse(
-				Long siteId, String documentExternalReferenceCode,
+				String siteId, String documentExternalReferenceCode,
 				String externalReferenceCode, Comment comment)
 		throws Exception;
 
 	public Comment
 			putSiteStructuredContentByExternalReferenceCodeStructuredContentExternalReferenceCodeCommentByExternalReferenceCode(
-				Long siteId, String structuredContentExternalReferenceCode,
+				String siteId, String structuredContentExternalReferenceCode,
 				String externalReferenceCode, Comment comment)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			putSiteStructuredContentByExternalReferenceCodeStructuredContentExternalReferenceCodeCommentByExternalReferenceCodeHttpResponse(
-				Long siteId, String structuredContentExternalReferenceCode,
+				String siteId, String structuredContentExternalReferenceCode,
 				String externalReferenceCode, Comment comment)
 		throws Exception;
 
@@ -656,7 +656,7 @@ public interface CommentResource {
 
 		public void
 				deleteSiteBlogPostingByExternalReferenceCodeBlogPostingExternalReferenceCodeCommentByExternalReferenceCode(
-					Long siteId, String blogPostingExternalReferenceCode,
+					String siteId, String blogPostingExternalReferenceCode,
 					String externalReferenceCode)
 			throws Exception {
 
@@ -726,7 +726,7 @@ public interface CommentResource {
 
 		public HttpInvoker.HttpResponse
 				deleteSiteBlogPostingByExternalReferenceCodeBlogPostingExternalReferenceCodeCommentByExternalReferenceCodeHttpResponse(
-					Long siteId, String blogPostingExternalReferenceCode,
+					String siteId, String blogPostingExternalReferenceCode,
 					String externalReferenceCode)
 			throws Exception {
 
@@ -772,7 +772,7 @@ public interface CommentResource {
 
 		public void
 				deleteSiteCommentByExternalReferenceCodeParentCommentExternalReferenceCodeCommentByExternalReferenceCode(
-					Long siteId, String parentCommentExternalReferenceCode,
+					String siteId, String parentCommentExternalReferenceCode,
 					String externalReferenceCode)
 			throws Exception {
 
@@ -842,7 +842,7 @@ public interface CommentResource {
 
 		public HttpInvoker.HttpResponse
 				deleteSiteCommentByExternalReferenceCodeParentCommentExternalReferenceCodeCommentByExternalReferenceCodeHttpResponse(
-					Long siteId, String parentCommentExternalReferenceCode,
+					String siteId, String parentCommentExternalReferenceCode,
 					String externalReferenceCode)
 			throws Exception {
 
@@ -888,7 +888,7 @@ public interface CommentResource {
 
 		public void
 				deleteSiteDocumentByExternalReferenceCodeDocumentExternalReferenceCodeCommentByExternalReferenceCode(
-					Long siteId, String documentExternalReferenceCode,
+					String siteId, String documentExternalReferenceCode,
 					String externalReferenceCode)
 			throws Exception {
 
@@ -958,7 +958,7 @@ public interface CommentResource {
 
 		public HttpInvoker.HttpResponse
 				deleteSiteDocumentByExternalReferenceCodeDocumentExternalReferenceCodeCommentByExternalReferenceCodeHttpResponse(
-					Long siteId, String documentExternalReferenceCode,
+					String siteId, String documentExternalReferenceCode,
 					String externalReferenceCode)
 			throws Exception {
 
@@ -1003,7 +1003,8 @@ public interface CommentResource {
 
 		public void
 				deleteSiteStructuredContentByExternalReferenceCodeStructuredContentExternalReferenceCodeCommentByExternalReferenceCode(
-					Long siteId, String structuredContentExternalReferenceCode,
+					String siteId,
+					String structuredContentExternalReferenceCode,
 					String externalReferenceCode)
 			throws Exception {
 
@@ -1073,7 +1074,8 @@ public interface CommentResource {
 
 		public HttpInvoker.HttpResponse
 				deleteSiteStructuredContentByExternalReferenceCodeStructuredContentExternalReferenceCodeCommentByExternalReferenceCodeHttpResponse(
-					Long siteId, String structuredContentExternalReferenceCode,
+					String siteId,
+					String structuredContentExternalReferenceCode,
 					String externalReferenceCode)
 			throws Exception {
 
@@ -1608,7 +1610,7 @@ public interface CommentResource {
 
 		public Comment
 				getSiteBlogPostingByExternalReferenceCodeBlogPostingExternalReferenceCodeCommentByExternalReferenceCode(
-					Long siteId, String blogPostingExternalReferenceCode,
+					String siteId, String blogPostingExternalReferenceCode,
 					String externalReferenceCode)
 			throws Exception {
 
@@ -1678,7 +1680,7 @@ public interface CommentResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteBlogPostingByExternalReferenceCodeBlogPostingExternalReferenceCodeCommentByExternalReferenceCodeHttpResponse(
-					Long siteId, String blogPostingExternalReferenceCode,
+					String siteId, String blogPostingExternalReferenceCode,
 					String externalReferenceCode)
 			throws Exception {
 
@@ -1724,7 +1726,7 @@ public interface CommentResource {
 
 		public Comment
 				getSiteCommentByExternalReferenceCodeParentCommentExternalReferenceCodeCommentByExternalReferenceCode(
-					Long siteId, String parentCommentExternalReferenceCode,
+					String siteId, String parentCommentExternalReferenceCode,
 					String externalReferenceCode)
 			throws Exception {
 
@@ -1794,7 +1796,7 @@ public interface CommentResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteCommentByExternalReferenceCodeParentCommentExternalReferenceCodeCommentByExternalReferenceCodeHttpResponse(
-					Long siteId, String parentCommentExternalReferenceCode,
+					String siteId, String parentCommentExternalReferenceCode,
 					String externalReferenceCode)
 			throws Exception {
 
@@ -1840,7 +1842,7 @@ public interface CommentResource {
 
 		public Comment
 				getSiteDocumentByExternalReferenceCodeDocumentExternalReferenceCodeCommentByExternalReferenceCode(
-					Long siteId, String documentExternalReferenceCode,
+					String siteId, String documentExternalReferenceCode,
 					String externalReferenceCode)
 			throws Exception {
 
@@ -1910,7 +1912,7 @@ public interface CommentResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteDocumentByExternalReferenceCodeDocumentExternalReferenceCodeCommentByExternalReferenceCodeHttpResponse(
-					Long siteId, String documentExternalReferenceCode,
+					String siteId, String documentExternalReferenceCode,
 					String externalReferenceCode)
 			throws Exception {
 
@@ -1955,7 +1957,8 @@ public interface CommentResource {
 
 		public Comment
 				getSiteStructuredContentByExternalReferenceCodeStructuredContentExternalReferenceCodeCommentByExternalReferenceCode(
-					Long siteId, String structuredContentExternalReferenceCode,
+					String siteId,
+					String structuredContentExternalReferenceCode,
 					String externalReferenceCode)
 			throws Exception {
 
@@ -2025,7 +2028,8 @@ public interface CommentResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteStructuredContentByExternalReferenceCodeStructuredContentExternalReferenceCodeCommentByExternalReferenceCodeHttpResponse(
-					Long siteId, String structuredContentExternalReferenceCode,
+					String siteId,
+					String structuredContentExternalReferenceCode,
 					String externalReferenceCode)
 			throws Exception {
 
@@ -3541,7 +3545,7 @@ public interface CommentResource {
 
 		public Comment
 				putSiteBlogPostingByExternalReferenceCodeBlogPostingExternalReferenceCodeCommentByExternalReferenceCode(
-					Long siteId, String blogPostingExternalReferenceCode,
+					String siteId, String blogPostingExternalReferenceCode,
 					String externalReferenceCode, Comment comment)
 			throws Exception {
 
@@ -3611,7 +3615,7 @@ public interface CommentResource {
 
 		public HttpInvoker.HttpResponse
 				putSiteBlogPostingByExternalReferenceCodeBlogPostingExternalReferenceCodeCommentByExternalReferenceCodeHttpResponse(
-					Long siteId, String blogPostingExternalReferenceCode,
+					String siteId, String blogPostingExternalReferenceCode,
 					String externalReferenceCode, Comment comment)
 			throws Exception {
 
@@ -3659,7 +3663,7 @@ public interface CommentResource {
 
 		public Comment
 				putSiteCommentByExternalReferenceCodeParentCommentExternalReferenceCodeCommentByExternalReferenceCode(
-					Long siteId, String parentCommentExternalReferenceCode,
+					String siteId, String parentCommentExternalReferenceCode,
 					String externalReferenceCode, Comment comment)
 			throws Exception {
 
@@ -3729,7 +3733,7 @@ public interface CommentResource {
 
 		public HttpInvoker.HttpResponse
 				putSiteCommentByExternalReferenceCodeParentCommentExternalReferenceCodeCommentByExternalReferenceCodeHttpResponse(
-					Long siteId, String parentCommentExternalReferenceCode,
+					String siteId, String parentCommentExternalReferenceCode,
 					String externalReferenceCode, Comment comment)
 			throws Exception {
 
@@ -3777,7 +3781,7 @@ public interface CommentResource {
 
 		public Comment
 				putSiteDocumentByExternalReferenceCodeDocumentExternalReferenceCodeCommentByExternalReferenceCode(
-					Long siteId, String documentExternalReferenceCode,
+					String siteId, String documentExternalReferenceCode,
 					String externalReferenceCode, Comment comment)
 			throws Exception {
 
@@ -3847,7 +3851,7 @@ public interface CommentResource {
 
 		public HttpInvoker.HttpResponse
 				putSiteDocumentByExternalReferenceCodeDocumentExternalReferenceCodeCommentByExternalReferenceCodeHttpResponse(
-					Long siteId, String documentExternalReferenceCode,
+					String siteId, String documentExternalReferenceCode,
 					String externalReferenceCode, Comment comment)
 			throws Exception {
 
@@ -3894,7 +3898,8 @@ public interface CommentResource {
 
 		public Comment
 				putSiteStructuredContentByExternalReferenceCodeStructuredContentExternalReferenceCodeCommentByExternalReferenceCode(
-					Long siteId, String structuredContentExternalReferenceCode,
+					String siteId,
+					String structuredContentExternalReferenceCode,
 					String externalReferenceCode, Comment comment)
 			throws Exception {
 
@@ -3964,7 +3969,8 @@ public interface CommentResource {
 
 		public HttpInvoker.HttpResponse
 				putSiteStructuredContentByExternalReferenceCodeStructuredContentExternalReferenceCodeCommentByExternalReferenceCodeHttpResponse(
-					Long siteId, String structuredContentExternalReferenceCode,
+					String siteId,
+					String structuredContentExternalReferenceCode,
 					String externalReferenceCode, Comment comment)
 			throws Exception {
 

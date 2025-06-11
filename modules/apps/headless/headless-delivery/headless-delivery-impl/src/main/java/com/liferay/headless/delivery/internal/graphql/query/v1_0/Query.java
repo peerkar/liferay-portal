@@ -411,7 +411,7 @@ public class Query {
 			this::_populateResourceContext,
 			blogPostingResource ->
 				blogPostingResource.getSiteBlogPostingByExternalReferenceCode(
-					Long.valueOf(siteKey), externalReferenceCode));
+					siteKey, externalReferenceCode));
 	}
 
 	/**
@@ -430,7 +430,7 @@ public class Query {
 			this::_populateResourceContext,
 			blogPostingResource -> new BlogPostingPage(
 				blogPostingResource.getSiteBlogPostingPermissionsPage(
-					Long.valueOf(siteKey), roleNames)));
+					siteKey, roleNames)));
 	}
 
 	/**
@@ -456,7 +456,7 @@ public class Query {
 			this::_populateResourceContext,
 			blogPostingResource -> new BlogPostingPage(
 				blogPostingResource.getSiteBlogPostingsPage(
-					Long.valueOf(siteKey), search,
+					siteKey, search,
 					_aggregationBiFunction.apply(
 						blogPostingResource, aggregations),
 					_filterBiFunction.apply(blogPostingResource, filterString),
@@ -503,7 +503,7 @@ public class Query {
 			blogPostingImageResource ->
 				blogPostingImageResource.
 					getSiteBlogPostingImageByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode));
+						siteKey, externalReferenceCode));
 	}
 
 	/**
@@ -529,7 +529,7 @@ public class Query {
 			this::_populateResourceContext,
 			blogPostingImageResource -> new BlogPostingImagePage(
 				blogPostingImageResource.getSiteBlogPostingImagesPage(
-					Long.valueOf(siteKey), search,
+					siteKey, search,
 					_aggregationBiFunction.apply(
 						blogPostingImageResource, aggregations),
 					_filterBiFunction.apply(
@@ -667,7 +667,7 @@ public class Query {
 			commentResource ->
 				commentResource.
 					getSiteBlogPostingByExternalReferenceCodeBlogPostingExternalReferenceCodeCommentByExternalReferenceCode(
-						Long.valueOf(siteKey), blogPostingExternalReferenceCode,
+						siteKey, blogPostingExternalReferenceCode,
 						externalReferenceCode));
 	}
 
@@ -694,8 +694,7 @@ public class Query {
 			commentResource ->
 				commentResource.
 					getSiteCommentByExternalReferenceCodeParentCommentExternalReferenceCodeCommentByExternalReferenceCode(
-						Long.valueOf(siteKey),
-						parentCommentExternalReferenceCode,
+						siteKey, parentCommentExternalReferenceCode,
 						externalReferenceCode));
 	}
 
@@ -722,7 +721,7 @@ public class Query {
 			commentResource ->
 				commentResource.
 					getSiteDocumentByExternalReferenceCodeDocumentExternalReferenceCodeCommentByExternalReferenceCode(
-						Long.valueOf(siteKey), documentExternalReferenceCode,
+						siteKey, documentExternalReferenceCode,
 						externalReferenceCode));
 	}
 
@@ -749,8 +748,7 @@ public class Query {
 			commentResource ->
 				commentResource.
 					getSiteStructuredContentByExternalReferenceCodeStructuredContentExternalReferenceCodeCommentByExternalReferenceCode(
-						Long.valueOf(siteKey),
-						structuredContentExternalReferenceCode,
+						siteKey, structuredContentExternalReferenceCode,
 						externalReferenceCode));
 	}
 
@@ -836,7 +834,7 @@ public class Query {
 			this::_populateResourceContext,
 			contentElementResource -> new ContentElementPage(
 				contentElementResource.getSiteContentElementsPage(
-					Long.valueOf(siteKey), search,
+					siteKey, search,
 					_aggregationBiFunction.apply(
 						contentElementResource, aggregations),
 					_filterBiFunction.apply(
@@ -935,8 +933,7 @@ public class Query {
 			contentSetElementResource -> new ContentSetElementPage(
 				contentSetElementResource.
 					getSiteContentSetByKeyContentSetElementsPage(
-						Long.valueOf(siteKey), key,
-						Pagination.of(page, pageSize))));
+						siteKey, key, Pagination.of(page, pageSize))));
 	}
 
 	/**
@@ -960,8 +957,7 @@ public class Query {
 			contentSetElementResource -> new ContentSetElementPage(
 				contentSetElementResource.
 					getSiteContentSetByUuidContentSetElementsPage(
-						Long.valueOf(siteKey), uuid,
-						Pagination.of(page, pageSize))));
+						siteKey, uuid, Pagination.of(page, pageSize))));
 	}
 
 	/**
@@ -983,8 +979,7 @@ public class Query {
 			contentSetElementResource -> new ContentSetElementPage(
 				contentSetElementResource.
 					getSiteContentSetProviderByKeyContentSetElementsPage(
-						Long.valueOf(siteKey), key,
-						Pagination.of(page, pageSize))));
+						siteKey, key, Pagination.of(page, pageSize))));
 	}
 
 	/**
@@ -1091,7 +1086,7 @@ public class Query {
 			this::_populateResourceContext,
 			contentStructureResource -> new ContentStructurePage(
 				contentStructureResource.getSiteContentStructurePermissionsPage(
-					Long.valueOf(siteKey), roleNames)));
+					siteKey, roleNames)));
 	}
 
 	/**
@@ -1117,7 +1112,7 @@ public class Query {
 			this::_populateResourceContext,
 			contentStructureResource -> new ContentStructurePage(
 				contentStructureResource.getSiteContentStructuresPage(
-					Long.valueOf(siteKey), search,
+					siteKey, search,
 					_aggregationBiFunction.apply(
 						contentStructureResource, aggregations),
 					_filterBiFunction.apply(
@@ -1174,7 +1169,7 @@ public class Query {
 			this::_populateResourceContext,
 			contentTemplateResource ->
 				contentTemplateResource.getSiteContentTemplate(
-					Long.valueOf(siteKey), contentTemplateId));
+					siteKey, contentTemplateId));
 	}
 
 	/**
@@ -1198,7 +1193,7 @@ public class Query {
 			this::_populateResourceContext,
 			contentTemplateResource -> new ContentTemplatePage(
 				contentTemplateResource.getSiteContentTemplatesPage(
-					Long.valueOf(siteKey), search,
+					siteKey, search,
 					_aggregationBiFunction.apply(
 						contentTemplateResource, aggregations),
 					_filterBiFunction.apply(
@@ -1421,7 +1416,7 @@ public class Query {
 			this::_populateResourceContext,
 			documentResource ->
 				documentResource.getSiteDocumentByExternalReferenceCode(
-					Long.valueOf(siteKey), externalReferenceCode));
+					siteKey, externalReferenceCode));
 	}
 
 	/**
@@ -1440,7 +1435,7 @@ public class Query {
 			this::_populateResourceContext,
 			documentResource -> new DocumentPage(
 				documentResource.getSiteDocumentPermissionsPage(
-					Long.valueOf(siteKey), roleNames)));
+					siteKey, roleNames)));
 	}
 
 	/**
@@ -1467,7 +1462,7 @@ public class Query {
 			this::_populateResourceContext,
 			documentResource -> new DocumentPage(
 				documentResource.getSiteDocumentsPage(
-					Long.valueOf(siteKey), flatten, search,
+					siteKey, flatten, search,
 					_aggregationBiFunction.apply(
 						documentResource, aggregations),
 					_filterBiFunction.apply(documentResource, filterString),
@@ -1492,7 +1487,7 @@ public class Query {
 			this::_populateResourceContext,
 			documentResource -> new DocumentPage(
 				documentResource.getSiteDocumentsRatedByMePage(
-					Long.valueOf(siteKey), Pagination.of(page, pageSize))));
+					siteKey, Pagination.of(page, pageSize))));
 	}
 
 	/**
@@ -1575,7 +1570,7 @@ public class Query {
 				new DocumentDataDefinitionTypePage(
 					documentDataDefinitionTypeResource.
 						getSiteDocumentDataDefinitionTypesPage(
-							Long.valueOf(siteKey), search,
+							siteKey, search,
 							_aggregationBiFunction.apply(
 								documentDataDefinitionTypeResource,
 								aggregations),
@@ -1768,7 +1763,7 @@ public class Query {
 			this::_populateResourceContext,
 			documentFolderResource -> new DocumentFolderPage(
 				documentFolderResource.getSiteDocumentFolderPermissionsPage(
-					Long.valueOf(siteKey), roleNames)));
+					siteKey, roleNames)));
 	}
 
 	/**
@@ -1795,7 +1790,7 @@ public class Query {
 			this::_populateResourceContext,
 			documentFolderResource -> new DocumentFolderPage(
 				documentFolderResource.getSiteDocumentFoldersPage(
-					Long.valueOf(siteKey), flatten, search,
+					siteKey, flatten, search,
 					_aggregationBiFunction.apply(
 						documentFolderResource, aggregations),
 					_filterBiFunction.apply(
@@ -1824,7 +1819,7 @@ public class Query {
 			this::_populateResourceContext,
 			documentFolderResource -> new DocumentFolderPage(
 				documentFolderResource.getSiteDocumentFoldersRatedByMePage(
-					Long.valueOf(siteKey), Pagination.of(page, pageSize))));
+					siteKey, Pagination.of(page, pageSize))));
 	}
 
 	/**
@@ -1846,7 +1841,7 @@ public class Query {
 			documentFolderResource ->
 				documentFolderResource.
 					getSiteDocumentsFolderByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode));
+						siteKey, externalReferenceCode));
 	}
 
 	/**
@@ -1932,7 +1927,7 @@ public class Query {
 			documentMetadataSetResource ->
 				documentMetadataSetResource.
 					getSiteDocumentMetadataSetByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode));
+						siteKey, externalReferenceCode));
 	}
 
 	/**
@@ -1952,7 +1947,7 @@ public class Query {
 			this::_populateResourceContext,
 			documentMetadataSetResource -> new DocumentMetadataSetPage(
 				documentMetadataSetResource.getSiteDocumentMetadataSetsPage(
-					Long.valueOf(siteKey), Pagination.of(page, pageSize))));
+					siteKey, Pagination.of(page, pageSize))));
 	}
 
 	/**
@@ -2013,7 +2008,7 @@ public class Query {
 			documentShortcutResource ->
 				documentShortcutResource.
 					getSiteDocumentShortcutByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode));
+						siteKey, externalReferenceCode));
 	}
 
 	/**
@@ -2033,7 +2028,7 @@ public class Query {
 			this::_populateResourceContext,
 			documentShortcutResource -> new DocumentShortcutPage(
 				documentShortcutResource.getSiteDocumentShortcutsPage(
-					Long.valueOf(siteKey), Pagination.of(page, pageSize))));
+					siteKey, Pagination.of(page, pageSize))));
 	}
 
 	/**
@@ -2184,7 +2179,7 @@ public class Query {
 			knowledgeBaseArticleResource ->
 				knowledgeBaseArticleResource.
 					getSiteKnowledgeBaseArticleByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode));
+						siteKey, externalReferenceCode));
 	}
 
 	/**
@@ -2204,7 +2199,7 @@ public class Query {
 			knowledgeBaseArticleResource -> new KnowledgeBaseArticlePage(
 				knowledgeBaseArticleResource.
 					getSiteKnowledgeBaseArticlePermissionsPage(
-						Long.valueOf(siteKey), roleNames)));
+						siteKey, roleNames)));
 	}
 
 	/**
@@ -2231,7 +2226,7 @@ public class Query {
 			this::_populateResourceContext,
 			knowledgeBaseArticleResource -> new KnowledgeBaseArticlePage(
 				knowledgeBaseArticleResource.getSiteKnowledgeBaseArticlesPage(
-					Long.valueOf(siteKey), flatten, search,
+					siteKey, flatten, search,
 					_aggregationBiFunction.apply(
 						knowledgeBaseArticleResource, aggregations),
 					_filterBiFunction.apply(
@@ -2306,8 +2301,7 @@ public class Query {
 			knowledgeBaseAttachmentResource ->
 				knowledgeBaseAttachmentResource.
 					getSiteKnowledgeBaseArticleByExternalReferenceCodeKnowledgeBaseArticleExternalReferenceCodeKnowledgeBaseAttachmentByExternalReferenceCode(
-						Long.valueOf(siteKey),
-						knowledgeBaseArticleExternalReferenceCode,
+						siteKey, knowledgeBaseArticleExternalReferenceCode,
 						externalReferenceCode));
 	}
 
@@ -2393,7 +2387,7 @@ public class Query {
 			knowledgeBaseFolderResource ->
 				knowledgeBaseFolderResource.
 					getSiteKnowledgeBaseFolderByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode));
+						siteKey, externalReferenceCode));
 	}
 
 	/**
@@ -2413,7 +2407,7 @@ public class Query {
 			knowledgeBaseFolderResource -> new KnowledgeBaseFolderPage(
 				knowledgeBaseFolderResource.
 					getSiteKnowledgeBaseFolderPermissionsPage(
-						Long.valueOf(siteKey), roleNames)));
+						siteKey, roleNames)));
 	}
 
 	/**
@@ -2435,7 +2429,7 @@ public class Query {
 			this::_populateResourceContext,
 			knowledgeBaseFolderResource -> new KnowledgeBaseFolderPage(
 				knowledgeBaseFolderResource.getSiteKnowledgeBaseFoldersPage(
-					Long.valueOf(siteKey), Pagination.of(page, pageSize))));
+					siteKey, Pagination.of(page, pageSize))));
 	}
 
 	/**
@@ -2470,7 +2464,7 @@ public class Query {
 			_languageResourceComponentServiceObjects,
 			this::_populateResourceContext,
 			languageResource -> new LanguagePage(
-				languageResource.getSiteLanguagesPage(Long.valueOf(siteKey))));
+				languageResource.getSiteLanguagesPage(siteKey)));
 	}
 
 	/**
@@ -2559,8 +2553,7 @@ public class Query {
 			messageBoardAttachmentResource ->
 				messageBoardAttachmentResource.
 					getSiteMessageBoardMessageByExternalReferenceCodeMessageBoardMessageExternalReferenceCodeMessageBoardAttachmentByExternalReferenceCode(
-						Long.valueOf(siteKey),
-						messageBoardMessageExternalReferenceCode,
+						siteKey, messageBoardMessageExternalReferenceCode,
 						externalReferenceCode));
 	}
 
@@ -2709,7 +2702,7 @@ public class Query {
 			messageBoardMessageResource ->
 				messageBoardMessageResource.
 					getSiteMessageBoardMessageByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode));
+						siteKey, externalReferenceCode));
 	}
 
 	/**
@@ -2729,7 +2722,7 @@ public class Query {
 			messageBoardMessageResource ->
 				messageBoardMessageResource.
 					getSiteMessageBoardMessageByFriendlyUrlPath(
-						Long.valueOf(siteKey), friendlyUrlPath));
+						siteKey, friendlyUrlPath));
 	}
 
 	/**
@@ -2749,7 +2742,7 @@ public class Query {
 			messageBoardMessageResource -> new MessageBoardMessagePage(
 				messageBoardMessageResource.
 					getSiteMessageBoardMessagePermissionsPage(
-						Long.valueOf(siteKey), roleNames)));
+						siteKey, roleNames)));
 	}
 
 	/**
@@ -2774,7 +2767,7 @@ public class Query {
 			this::_populateResourceContext,
 			messageBoardMessageResource -> new MessageBoardMessagePage(
 				messageBoardMessageResource.getSiteMessageBoardMessagesPage(
-					Long.valueOf(siteKey), flatten, search,
+					siteKey, flatten, search,
 					_aggregationBiFunction.apply(
 						messageBoardMessageResource, aggregations),
 					_filterBiFunction.apply(
@@ -2805,8 +2798,7 @@ public class Query {
 			messageBoardMessageResource -> new MessageBoardMessagePage(
 				messageBoardMessageResource.
 					getSiteUserMessageBoardMessagesActivityPage(
-						Long.valueOf(siteKey), userId,
-						Pagination.of(page, pageSize))));
+						siteKey, userId, Pagination.of(page, pageSize))));
 	}
 
 	/**
@@ -2899,7 +2891,7 @@ public class Query {
 			messageBoardSectionResource ->
 				messageBoardSectionResource.
 					getSiteMessageBoardSectionByFriendlyUrlPath(
-						Long.valueOf(siteKey), friendlyUrlPath));
+						siteKey, friendlyUrlPath));
 	}
 
 	/**
@@ -2919,7 +2911,7 @@ public class Query {
 			messageBoardSectionResource -> new MessageBoardSectionPage(
 				messageBoardSectionResource.
 					getSiteMessageBoardSectionPermissionsPage(
-						Long.valueOf(siteKey), roleNames)));
+						siteKey, roleNames)));
 	}
 
 	/**
@@ -2946,7 +2938,7 @@ public class Query {
 			this::_populateResourceContext,
 			messageBoardSectionResource -> new MessageBoardSectionPage(
 				messageBoardSectionResource.getSiteMessageBoardSectionsPage(
-					Long.valueOf(siteKey), flatten, search,
+					siteKey, flatten, search,
 					_aggregationBiFunction.apply(
 						messageBoardSectionResource, aggregations),
 					_filterBiFunction.apply(
@@ -3088,7 +3080,7 @@ public class Query {
 			messageBoardThreadResource ->
 				messageBoardThreadResource.
 					getSiteMessageBoardThreadByFriendlyUrlPath(
-						Long.valueOf(siteKey), friendlyUrlPath));
+						siteKey, friendlyUrlPath));
 	}
 
 	/**
@@ -3108,7 +3100,7 @@ public class Query {
 			messageBoardThreadResource -> new MessageBoardThreadPage(
 				messageBoardThreadResource.
 					getSiteMessageBoardThreadPermissionsPage(
-						Long.valueOf(siteKey), roleNames)));
+						siteKey, roleNames)));
 	}
 
 	/**
@@ -3135,7 +3127,7 @@ public class Query {
 			this::_populateResourceContext,
 			messageBoardThreadResource -> new MessageBoardThreadPage(
 				messageBoardThreadResource.getSiteMessageBoardThreadsPage(
-					Long.valueOf(siteKey), flatten, search,
+					siteKey, flatten, search,
 					_aggregationBiFunction.apply(
 						messageBoardThreadResource, aggregations),
 					_filterBiFunction.apply(
@@ -3200,7 +3192,7 @@ public class Query {
 			navigationMenuResource ->
 				navigationMenuResource.
 					getSiteNavigationMenuByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode));
+						siteKey, externalReferenceCode));
 	}
 
 	/**
@@ -3219,7 +3211,7 @@ public class Query {
 			this::_populateResourceContext,
 			navigationMenuResource -> new NavigationMenuPage(
 				navigationMenuResource.getSiteNavigationMenuPermissionsPage(
-					Long.valueOf(siteKey), roleNames)));
+					siteKey, roleNames)));
 	}
 
 	/**
@@ -3242,7 +3234,7 @@ public class Query {
 			this::_populateResourceContext,
 			navigationMenuResource -> new NavigationMenuPage(
 				navigationMenuResource.getSiteNavigationMenusPage(
-					Long.valueOf(siteKey), search,
+					siteKey, search,
 					_filterBiFunction.apply(
 						navigationMenuResource, filterString),
 					Pagination.of(page, pageSize),
@@ -3265,7 +3257,7 @@ public class Query {
 			_sitePageResourceComponentServiceObjects,
 			this::_populateResourceContext,
 			sitePageResource -> sitePageResource.getSiteSitePage(
-				Long.valueOf(siteKey), friendlyUrlPath));
+				siteKey, friendlyUrlPath));
 	}
 
 	/**
@@ -3287,7 +3279,7 @@ public class Query {
 			this::_populateResourceContext,
 			sitePageResource ->
 				sitePageResource.getSiteSitePageExperienceExperienceKey(
-					Long.valueOf(siteKey), friendlyUrlPath, experienceKey));
+					siteKey, friendlyUrlPath, experienceKey));
 	}
 
 	/**
@@ -3310,7 +3302,7 @@ public class Query {
 			sitePageResource ->
 				sitePageResource.
 					getSiteSitePageExperienceExperienceKeyRenderedPage(
-						Long.valueOf(siteKey), friendlyUrlPath, experienceKey));
+						siteKey, friendlyUrlPath, experienceKey));
 	}
 
 	/**
@@ -3330,7 +3322,7 @@ public class Query {
 			_sitePageResourceComponentServiceObjects,
 			this::_populateResourceContext,
 			sitePageResource -> sitePageResource.getSiteSitePageRenderedPage(
-				Long.valueOf(siteKey), friendlyUrlPath));
+				siteKey, friendlyUrlPath));
 	}
 
 	/**
@@ -3349,7 +3341,7 @@ public class Query {
 			this::_populateResourceContext,
 			sitePageResource -> new SitePagePage(
 				sitePageResource.getSiteSitePagesExperiencesPage(
-					Long.valueOf(siteKey), friendlyUrlPath)));
+					siteKey, friendlyUrlPath)));
 	}
 
 	/**
@@ -3373,7 +3365,7 @@ public class Query {
 			this::_populateResourceContext,
 			sitePageResource -> new SitePagePage(
 				sitePageResource.getSiteSitePagesPage(
-					Long.valueOf(siteKey), search,
+					siteKey, search,
 					_aggregationBiFunction.apply(
 						sitePageResource, aggregations),
 					_filterBiFunction.apply(sitePageResource, filterString),
@@ -3508,7 +3500,7 @@ public class Query {
 			structuredContentResource ->
 				structuredContentResource.
 					getSiteStructuredContentByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode));
+						siteKey, externalReferenceCode));
 	}
 
 	/**
@@ -3529,7 +3521,7 @@ public class Query {
 			this::_populateResourceContext,
 			structuredContentResource ->
 				structuredContentResource.getSiteStructuredContentByKey(
-					Long.valueOf(siteKey), key));
+					siteKey, key));
 	}
 
 	/**
@@ -3548,7 +3540,7 @@ public class Query {
 			this::_populateResourceContext,
 			structuredContentResource ->
 				structuredContentResource.getSiteStructuredContentByUuid(
-					Long.valueOf(siteKey), uuid));
+					siteKey, uuid));
 	}
 
 	/**
@@ -3568,7 +3560,7 @@ public class Query {
 			structuredContentResource -> new StructuredContentPage(
 				structuredContentResource.
 					getSiteStructuredContentPermissionsPage(
-						Long.valueOf(siteKey), roleNames)));
+						siteKey, roleNames)));
 	}
 
 	/**
@@ -3595,7 +3587,7 @@ public class Query {
 			this::_populateResourceContext,
 			structuredContentResource -> new StructuredContentPage(
 				structuredContentResource.getSiteStructuredContentsPage(
-					Long.valueOf(siteKey), flatten, search,
+					siteKey, flatten, search,
 					_aggregationBiFunction.apply(
 						structuredContentResource, aggregations),
 					_filterBiFunction.apply(
@@ -3837,7 +3829,7 @@ public class Query {
 			structuredContentFolderResource ->
 				structuredContentFolderResource.
 					getSiteStructuredContentFolderByExternalReferenceCode(
-						Long.valueOf(siteKey), externalReferenceCode));
+						siteKey, externalReferenceCode));
 	}
 
 	/**
@@ -3857,7 +3849,7 @@ public class Query {
 			structuredContentFolderResource -> new StructuredContentFolderPage(
 				structuredContentFolderResource.
 					getSiteStructuredContentFolderPermissionsPage(
-						Long.valueOf(siteKey), roleNames)));
+						siteKey, roleNames)));
 	}
 
 	/**
@@ -3885,7 +3877,7 @@ public class Query {
 			structuredContentFolderResource -> new StructuredContentFolderPage(
 				structuredContentFolderResource.
 					getSiteStructuredContentFoldersPage(
-						Long.valueOf(siteKey), flatten, search,
+						siteKey, flatten, search,
 						_aggregationBiFunction.apply(
 							structuredContentFolderResource, aggregations),
 						_filterBiFunction.apply(
@@ -3989,7 +3981,7 @@ public class Query {
 			this::_populateResourceContext,
 			wikiNodeResource ->
 				wikiNodeResource.getSiteWikiNodeByExternalReferenceCode(
-					Long.valueOf(siteKey), externalReferenceCode));
+					siteKey, externalReferenceCode));
 	}
 
 	/**
@@ -4008,7 +4000,7 @@ public class Query {
 			this::_populateResourceContext,
 			wikiNodeResource -> new WikiNodePage(
 				wikiNodeResource.getSiteWikiNodePermissionsPage(
-					Long.valueOf(siteKey), roleNames)));
+					siteKey, roleNames)));
 	}
 
 	/**
@@ -4034,7 +4026,7 @@ public class Query {
 			this::_populateResourceContext,
 			wikiNodeResource -> new WikiNodePage(
 				wikiNodeResource.getSiteWikiNodesPage(
-					Long.valueOf(siteKey), search,
+					siteKey, search,
 					_aggregationBiFunction.apply(
 						wikiNodeResource, aggregations),
 					_filterBiFunction.apply(wikiNodeResource, filterString),
@@ -4094,7 +4086,7 @@ public class Query {
 			this::_populateResourceContext,
 			wikiPageResource ->
 				wikiPageResource.getSiteWikiPageByExternalReferenceCode(
-					Long.valueOf(siteKey), externalReferenceCode));
+					siteKey, externalReferenceCode));
 	}
 
 	/**
@@ -4204,7 +4196,7 @@ public class Query {
 			wikiPageAttachmentResource ->
 				wikiPageAttachmentResource.
 					getSiteWikiPageByExternalReferenceCodeWikiPageExternalReferenceCodeWikiPageAttachmentByExternalReferenceCode(
-						Long.valueOf(siteKey), wikiPageExternalReferenceCode,
+						siteKey, wikiPageExternalReferenceCode,
 						externalReferenceCode));
 	}
 

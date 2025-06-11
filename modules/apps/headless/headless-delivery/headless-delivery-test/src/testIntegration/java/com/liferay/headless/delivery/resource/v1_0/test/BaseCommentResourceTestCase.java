@@ -382,7 +382,7 @@ public abstract class BaseCommentResourceTestCase {
 					"-"));
 	}
 
-	protected Long
+	protected String
 			testDeleteSiteBlogPostingByExternalReferenceCodeBlogPostingExternalReferenceCodeCommentByExternalReferenceCode_getSiteId()
 		throws Exception {
 
@@ -438,7 +438,7 @@ public abstract class BaseCommentResourceTestCase {
 					"-"));
 	}
 
-	protected Long
+	protected String
 			testDeleteSiteCommentByExternalReferenceCodeParentCommentExternalReferenceCodeCommentByExternalReferenceCode_getSiteId()
 		throws Exception {
 
@@ -494,7 +494,7 @@ public abstract class BaseCommentResourceTestCase {
 					"-"));
 	}
 
-	protected Long
+	protected String
 			testDeleteSiteDocumentByExternalReferenceCodeDocumentExternalReferenceCodeCommentByExternalReferenceCode_getSiteId()
 		throws Exception {
 
@@ -550,7 +550,7 @@ public abstract class BaseCommentResourceTestCase {
 					"-"));
 	}
 
-	protected Long
+	protected String
 			testDeleteSiteStructuredContentByExternalReferenceCodeStructuredContentExternalReferenceCodeCommentByExternalReferenceCode_getSiteId()
 		throws Exception {
 
@@ -2057,7 +2057,7 @@ public abstract class BaseCommentResourceTestCase {
 		assertValid(getComment);
 	}
 
-	protected Long
+	protected String
 			testGetSiteBlogPostingByExternalReferenceCodeBlogPostingExternalReferenceCodeCommentByExternalReferenceCode_getSiteId()
 		throws Exception {
 
@@ -2163,7 +2163,7 @@ public abstract class BaseCommentResourceTestCase {
 						"Object/blogPostingByExternalReferenceCodeBlogPostingExternalReferenceCodeCommentByExternalReferenceCode"))));
 	}
 
-	protected Long
+	protected String
 			testGraphQLGetSiteBlogPostingByExternalReferenceCodeBlogPostingExternalReferenceCodeCommentByExternalReferenceCode_getSiteId()
 		throws Exception {
 
@@ -2267,7 +2267,7 @@ public abstract class BaseCommentResourceTestCase {
 		assertValid(getComment);
 	}
 
-	protected Long
+	protected String
 			testGetSiteCommentByExternalReferenceCodeParentCommentExternalReferenceCodeCommentByExternalReferenceCode_getSiteId()
 		throws Exception {
 
@@ -2373,7 +2373,7 @@ public abstract class BaseCommentResourceTestCase {
 						"Object/commentByExternalReferenceCodeParentCommentExternalReferenceCodeCommentByExternalReferenceCode"))));
 	}
 
-	protected Long
+	protected String
 			testGraphQLGetSiteCommentByExternalReferenceCodeParentCommentExternalReferenceCodeCommentByExternalReferenceCode_getSiteId()
 		throws Exception {
 
@@ -2477,7 +2477,7 @@ public abstract class BaseCommentResourceTestCase {
 		assertValid(getComment);
 	}
 
-	protected Long
+	protected String
 			testGetSiteDocumentByExternalReferenceCodeDocumentExternalReferenceCodeCommentByExternalReferenceCode_getSiteId()
 		throws Exception {
 
@@ -2583,7 +2583,7 @@ public abstract class BaseCommentResourceTestCase {
 						"Object/documentByExternalReferenceCodeDocumentExternalReferenceCodeCommentByExternalReferenceCode"))));
 	}
 
-	protected Long
+	protected String
 			testGraphQLGetSiteDocumentByExternalReferenceCodeDocumentExternalReferenceCodeCommentByExternalReferenceCode_getSiteId()
 		throws Exception {
 
@@ -2687,7 +2687,7 @@ public abstract class BaseCommentResourceTestCase {
 		assertValid(getComment);
 	}
 
-	protected Long
+	protected String
 			testGetSiteStructuredContentByExternalReferenceCodeStructuredContentExternalReferenceCodeCommentByExternalReferenceCode_getSiteId()
 		throws Exception {
 
@@ -2793,7 +2793,7 @@ public abstract class BaseCommentResourceTestCase {
 						"Object/structuredContentByExternalReferenceCodeStructuredContentExternalReferenceCodeCommentByExternalReferenceCode"))));
 	}
 
-	protected Long
+	protected String
 			testGraphQLGetSiteStructuredContentByExternalReferenceCodeStructuredContentExternalReferenceCodeCommentByExternalReferenceCode_getSiteId()
 		throws Exception {
 
@@ -3457,7 +3457,7 @@ public abstract class BaseCommentResourceTestCase {
 			putComment.getExternalReferenceCode());
 	}
 
-	protected Long
+	protected String
 			testPutSiteBlogPostingByExternalReferenceCodeBlogPostingExternalReferenceCodeCommentByExternalReferenceCode_getSiteId()
 		throws Exception {
 
@@ -3544,7 +3544,7 @@ public abstract class BaseCommentResourceTestCase {
 			putComment.getExternalReferenceCode());
 	}
 
-	protected Long
+	protected String
 			testPutSiteCommentByExternalReferenceCodeParentCommentExternalReferenceCodeCommentByExternalReferenceCode_getSiteId()
 		throws Exception {
 
@@ -3631,7 +3631,7 @@ public abstract class BaseCommentResourceTestCase {
 			putComment.getExternalReferenceCode());
 	}
 
-	protected Long
+	protected String
 			testPutSiteDocumentByExternalReferenceCodeDocumentExternalReferenceCodeCommentByExternalReferenceCode_getSiteId()
 		throws Exception {
 
@@ -3718,7 +3718,7 @@ public abstract class BaseCommentResourceTestCase {
 			putComment.getExternalReferenceCode());
 	}
 
-	protected Long
+	protected String
 			testPutSiteStructuredContentByExternalReferenceCodeStructuredContentExternalReferenceCodeCommentByExternalReferenceCode_getSiteId()
 		throws Exception {
 

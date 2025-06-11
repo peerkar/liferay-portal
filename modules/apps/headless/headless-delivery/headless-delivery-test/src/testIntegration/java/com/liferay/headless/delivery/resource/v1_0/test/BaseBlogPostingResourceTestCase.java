@@ -437,7 +437,7 @@ public abstract class BaseBlogPostingResourceTestCase {
 					"-"));
 	}
 
-	protected Long testDeleteSiteBlogPostingByExternalReferenceCode_getSiteId(
+	protected String testDeleteSiteBlogPostingByExternalReferenceCode_getSiteId(
 			BlogPosting blogPosting)
 		throws Exception {
 
@@ -795,7 +795,7 @@ public abstract class BaseBlogPostingResourceTestCase {
 		assertValid(getBlogPosting);
 	}
 
-	protected Long testGetSiteBlogPostingByExternalReferenceCode_getSiteId(
+	protected String testGetSiteBlogPostingByExternalReferenceCode_getSiteId(
 			BlogPosting blogPosting)
 		throws Exception {
 
@@ -880,7 +880,7 @@ public abstract class BaseBlogPostingResourceTestCase {
 						"Object/blogPostingByExternalReferenceCode"))));
 	}
 
-	protected Long
+	protected String
 			testGraphQLGetSiteBlogPostingByExternalReferenceCode_getSiteId(
 				BlogPosting blogPosting)
 		throws Exception {
@@ -967,8 +967,8 @@ public abstract class BaseBlogPostingResourceTestCase {
 
 	@Test
 	public void testGetSiteBlogPostingsPage() throws Exception {
-		Long siteId = testGetSiteBlogPostingsPage_getSiteId();
-		Long irrelevantSiteId =
+		String siteId = testGetSiteBlogPostingsPage_getSiteId();
+		String irrelevantSiteId =
 			testGetSiteBlogPostingsPage_getIrrelevantSiteId();
 
 		Page<BlogPosting> page = blogPostingResource.getSiteBlogPostingsPage(
@@ -1017,7 +1017,7 @@ public abstract class BaseBlogPostingResourceTestCase {
 	}
 
 	protected Map<String, Map<String, String>>
-			testGetSiteBlogPostingsPage_getExpectedActions(Long siteId)
+			testGetSiteBlogPostingsPage_getExpectedActions(String siteId)
 		throws Exception {
 
 		Map<String, Map<String, String>> expectedActions = new HashMap<>();
@@ -1045,7 +1045,7 @@ public abstract class BaseBlogPostingResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteBlogPostingsPage_getSiteId();
+		String siteId = testGetSiteBlogPostingsPage_getSiteId();
 
 		BlogPosting blogPosting1 = randomBlogPosting();
 
@@ -1105,7 +1105,7 @@ public abstract class BaseBlogPostingResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteBlogPostingsPage_getSiteId();
+		String siteId = testGetSiteBlogPostingsPage_getSiteId();
 
 		BlogPosting blogPosting1 = testGetSiteBlogPostingsPage_addBlogPosting(
 			siteId, randomBlogPosting());
@@ -1129,7 +1129,7 @@ public abstract class BaseBlogPostingResourceTestCase {
 
 	@Test
 	public void testGetSiteBlogPostingsPageWithPagination() throws Exception {
-		Long siteId = testGetSiteBlogPostingsPage_getSiteId();
+		String siteId = testGetSiteBlogPostingsPage_getSiteId();
 
 		Page<BlogPosting> blogPostingsPage =
 			blogPostingResource.getSiteBlogPostingsPage(
@@ -1318,7 +1318,7 @@ public abstract class BaseBlogPostingResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteBlogPostingsPage_getSiteId();
+		String siteId = testGetSiteBlogPostingsPage_getSiteId();
 
 		BlogPosting blogPosting1 = randomBlogPosting();
 		BlogPosting blogPosting2 = randomBlogPosting();
@@ -1360,17 +1360,17 @@ public abstract class BaseBlogPostingResourceTestCase {
 	}
 
 	protected BlogPosting testGetSiteBlogPostingsPage_addBlogPosting(
-			Long siteId, BlogPosting blogPosting)
+			String siteId, BlogPosting blogPosting)
 		throws Exception {
 
 		return blogPostingResource.postSiteBlogPosting(siteId, blogPosting);
 	}
 
-	protected Long testGetSiteBlogPostingsPage_getSiteId() throws Exception {
+	protected String testGetSiteBlogPostingsPage_getSiteId() throws Exception {
 		return testGroup.getGroupId();
 	}
 
-	protected Long testGetSiteBlogPostingsPage_getIrrelevantSiteId()
+	protected String testGetSiteBlogPostingsPage_getIrrelevantSiteId()
 		throws Exception {
 
 		return irrelevantGroup.getGroupId();
@@ -1378,7 +1378,7 @@ public abstract class BaseBlogPostingResourceTestCase {
 
 	@Test
 	public void testGraphQLGetSiteBlogPostingsPage() throws Exception {
-		Long siteId = testGetSiteBlogPostingsPage_getSiteId();
+		String siteId = testGetSiteBlogPostingsPage_getSiteId();
 
 		GraphQLField graphQLField = new GraphQLField(
 			"blogPostings",
@@ -1631,7 +1631,7 @@ public abstract class BaseBlogPostingResourceTestCase {
 			putBlogPosting.getExternalReferenceCode());
 	}
 
-	protected Long testPutSiteBlogPostingByExternalReferenceCode_getSiteId(
+	protected String testPutSiteBlogPostingByExternalReferenceCode_getSiteId(
 			BlogPosting blogPosting)
 		throws Exception {
 

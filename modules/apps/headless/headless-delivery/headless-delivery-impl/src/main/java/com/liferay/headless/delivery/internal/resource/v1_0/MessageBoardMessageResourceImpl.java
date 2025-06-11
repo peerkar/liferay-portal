@@ -63,6 +63,7 @@ import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.SearchUtil;
 import com.liferay.portal.vulcan.util.UriInfoUtil;
 import com.liferay.ratings.kernel.service.RatingsEntryLocalService;
@@ -107,12 +108,14 @@ public class MessageBoardMessageResourceImpl
 
 	@Override
 	public void deleteSiteMessageBoardMessageByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception {
 
 		MBMessage mbMessage =
 			_mbMessageLocalService.getMBMessageByExternalReferenceCode(
-				externalReferenceCode, siteId);
+				externalReferenceCode,
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService));
 
 		_mbMessageService.deleteMessage(mbMessage.getMessageId());
 	}
@@ -290,21 +293,25 @@ public class MessageBoardMessageResourceImpl
 	@Override
 	public MessageBoardMessage
 			getSiteMessageBoardMessageByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception {
 
 		return _toMessageBoardMessage(
 			_mbMessageLocalService.getMBMessageByExternalReferenceCode(
-				externalReferenceCode, siteId));
+				externalReferenceCode,
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService)));
 	}
 
 	@Override
 	public MessageBoardMessage getSiteMessageBoardMessageByFriendlyUrlPath(
-			Long siteId, String friendlyUrlPath)
+			String siteId, String friendlyUrlPath)
 		throws Exception {
 
 		MBMessage mbMessage = _mbMessageService.fetchMBMessageByUrlSubject(
-			siteId, friendlyUrlPath);
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService),
+			friendlyUrlPath);
 
 		if (mbMessage == null) {
 			throw new NoSuchMessageException(
@@ -316,10 +323,13 @@ public class MessageBoardMessageResourceImpl
 
 	@Override
 	public Page<MessageBoardMessage> getSiteMessageBoardMessagesPage(
-			Long siteId, Boolean flatten, String search,
+			String siteId, Boolean flatten, String search,
 			Aggregation aggregation, Filter filter, Pagination pagination,
 			Sort[] sorts)
 		throws Exception {
+
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
 		return _getMessageBoardMessagesPage(
 			HashMapBuilder.put(
@@ -331,22 +341,25 @@ public class MessageBoardMessageResourceImpl
 				"get",
 				addAction(
 					ActionKeys.VIEW, "getSiteMessageBoardMessagesPage",
-					MBConstants.RESOURCE_NAME, siteId)
+					MBConstants.RESOURCE_NAME, groupId)
 			).put(
 				"updateBatch",
 				addAction(
 					ActionKeys.UPDATE, "putMessageBoardMessageBatch",
 					MBConstants.RESOURCE_NAME, null)
 			).build(),
-			null, siteId, flatten, search, aggregation, filter, pagination,
+			null, groupId, flatten, search, aggregation, filter, pagination,
 			sorts);
 	}
 
 	@Override
 	public Page<MessageBoardMessage>
 			getSiteUserMessageBoardMessagesActivityPage(
-				Long siteId, Long userId, Pagination pagination)
+				String siteId, Long userId, Pagination pagination)
 		throws Exception {
+
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
 		int start = QueryUtil.ALL_POS;
 		int end = QueryUtil.ALL_POS;
@@ -359,11 +372,11 @@ public class MessageBoardMessageResourceImpl
 		return Page.of(
 			transform(
 				_mbMessageService.getGroupUserMessageBoardMessagesActivity(
-					siteId, userId, start, end),
+					groupId, userId, start, end),
 				this::_toMessageBoardMessage),
 			pagination,
 			_mbMessageService.getGroupUserMessageBoardMessagesActivityCount(
-				siteId, userId));
+				groupId, userId));
 	}
 
 	@Override
@@ -459,20 +472,23 @@ public class MessageBoardMessageResourceImpl
 	@Override
 	public MessageBoardMessage
 			putSiteMessageBoardMessageByExternalReferenceCode(
-				Long siteId, String externalReferenceCode,
+				String siteId, String externalReferenceCode,
 				MessageBoardMessage messageBoardMessage)
 		throws Exception {
 
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
+
 		MBMessage mbMessage =
 			_mbMessageLocalService.fetchMBMessageByExternalReferenceCode(
-				externalReferenceCode, siteId);
+				externalReferenceCode, groupId);
 
 		if (mbMessage != null) {
 			return _updateMessageBoardMessage(mbMessage, messageBoardMessage);
 		}
 
 		return _addMessageBoardMessage(
-			externalReferenceCode, siteId,
+			externalReferenceCode, groupId,
 			messageBoardMessage.getParentMessageBoardMessageId(),
 			messageBoardMessage);
 	}

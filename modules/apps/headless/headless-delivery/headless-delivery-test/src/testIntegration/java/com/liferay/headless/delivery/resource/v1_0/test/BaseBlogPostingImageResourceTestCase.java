@@ -417,7 +417,7 @@ public abstract class BaseBlogPostingImageResourceTestCase {
 					"-"));
 	}
 
-	protected Long
+	protected String
 			testDeleteSiteBlogPostingImageByExternalReferenceCode_getSiteId()
 		throws Exception {
 
@@ -765,7 +765,7 @@ public abstract class BaseBlogPostingImageResourceTestCase {
 		assertValid(getBlogPostingImage);
 	}
 
-	protected Long
+	protected String
 			testGetSiteBlogPostingImageByExternalReferenceCode_getSiteId()
 		throws Exception {
 
@@ -852,7 +852,7 @@ public abstract class BaseBlogPostingImageResourceTestCase {
 						"Object/blogPostingImageByExternalReferenceCode"))));
 	}
 
-	protected Long
+	protected String
 			testGraphQLGetSiteBlogPostingImageByExternalReferenceCode_getSiteId()
 		throws Exception {
 
@@ -924,8 +924,8 @@ public abstract class BaseBlogPostingImageResourceTestCase {
 
 	@Test
 	public void testGetSiteBlogPostingImagesPage() throws Exception {
-		Long siteId = testGetSiteBlogPostingImagesPage_getSiteId();
-		Long irrelevantSiteId =
+		String siteId = testGetSiteBlogPostingImagesPage_getSiteId();
+		String irrelevantSiteId =
 			testGetSiteBlogPostingImagesPage_getIrrelevantSiteId();
 
 		Page<BlogPostingImage> page =
@@ -982,7 +982,7 @@ public abstract class BaseBlogPostingImageResourceTestCase {
 	}
 
 	protected Map<String, Map<String, String>>
-			testGetSiteBlogPostingImagesPage_getExpectedActions(Long siteId)
+			testGetSiteBlogPostingImagesPage_getExpectedActions(String siteId)
 		throws Exception {
 
 		Map<String, Map<String, String>> expectedActions = new HashMap<>();
@@ -1010,7 +1010,7 @@ public abstract class BaseBlogPostingImageResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteBlogPostingImagesPage_getSiteId();
+		String siteId = testGetSiteBlogPostingImagesPage_getSiteId();
 
 		BlogPostingImage blogPostingImage1 = randomBlogPostingImage();
 
@@ -1073,7 +1073,7 @@ public abstract class BaseBlogPostingImageResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteBlogPostingImagesPage_getSiteId();
+		String siteId = testGetSiteBlogPostingImagesPage_getSiteId();
 
 		BlogPostingImage blogPostingImage1 =
 			testGetSiteBlogPostingImagesPage_addBlogPostingImage(
@@ -1101,7 +1101,7 @@ public abstract class BaseBlogPostingImageResourceTestCase {
 	public void testGetSiteBlogPostingImagesPageWithPagination()
 		throws Exception {
 
-		Long siteId = testGetSiteBlogPostingImagesPage_getSiteId();
+		String siteId = testGetSiteBlogPostingImagesPage_getSiteId();
 
 		Page<BlogPostingImage> blogPostingImagesPage =
 			blogPostingImageResource.getSiteBlogPostingImagesPage(
@@ -1309,7 +1309,7 @@ public abstract class BaseBlogPostingImageResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteBlogPostingImagesPage_getSiteId();
+		String siteId = testGetSiteBlogPostingImagesPage_getSiteId();
 
 		BlogPostingImage blogPostingImage1 = randomBlogPostingImage();
 		BlogPostingImage blogPostingImage2 = randomBlogPostingImage();
@@ -1358,20 +1358,20 @@ public abstract class BaseBlogPostingImageResourceTestCase {
 
 	protected BlogPostingImage
 			testGetSiteBlogPostingImagesPage_addBlogPostingImage(
-				Long siteId, BlogPostingImage blogPostingImage)
+				String siteId, BlogPostingImage blogPostingImage)
 		throws Exception {
 
 		return blogPostingImageResource.postSiteBlogPostingImage(
 			siteId, blogPostingImage, getMultipartFiles());
 	}
 
-	protected Long testGetSiteBlogPostingImagesPage_getSiteId()
+	protected String testGetSiteBlogPostingImagesPage_getSiteId()
 		throws Exception {
 
 		return testGroup.getGroupId();
 	}
 
-	protected Long testGetSiteBlogPostingImagesPage_getIrrelevantSiteId()
+	protected String testGetSiteBlogPostingImagesPage_getIrrelevantSiteId()
 		throws Exception {
 
 		return irrelevantGroup.getGroupId();
@@ -1379,7 +1379,7 @@ public abstract class BaseBlogPostingImageResourceTestCase {
 
 	@Test
 	public void testGraphQLGetSiteBlogPostingImagesPage() throws Exception {
-		Long siteId = testGetSiteBlogPostingImagesPage_getSiteId();
+		String siteId = testGetSiteBlogPostingImagesPage_getSiteId();
 
 		GraphQLField graphQLField = new GraphQLField(
 			"blogPostingImages",

@@ -47,20 +47,20 @@ public interface ContentTemplateResource {
 		throws Exception;
 
 	public ContentTemplate getSiteContentTemplate(
-			Long siteId, String contentTemplateId)
+			String siteId, String contentTemplateId)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse getSiteContentTemplateHttpResponse(
-			Long siteId, String contentTemplateId)
+			String siteId, String contentTemplateId)
 		throws Exception;
 
 	public Page<ContentTemplate> getSiteContentTemplatesPage(
-			Long siteId, String search, List<String> aggregations,
+			String siteId, String search, List<String> aggregations,
 			String filterString, Pagination pagination, String sortString)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse getSiteContentTemplatesPageHttpResponse(
-			Long siteId, String search, List<String> aggregations,
+			String siteId, String search, List<String> aggregations,
 			String filterString, Pagination pagination, String sortString)
 		throws Exception;
 
@@ -78,13 +78,14 @@ public interface ContentTemplateResource {
 		throws Exception;
 
 	public void postSiteContentTemplatesPageExportBatch(
-			Long siteId, String search, String filterString, String sortString,
-			String callbackURL, String contentType, String fieldNames)
+			String siteId, String search, String filterString,
+			String sortString, String callbackURL, String contentType,
+			String fieldNames)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			postSiteContentTemplatesPageExportBatchHttpResponse(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				String sortString, String callbackURL, String contentType,
 				String fieldNames)
 		throws Exception;
@@ -330,7 +331,7 @@ public interface ContentTemplateResource {
 		}
 
 		public ContentTemplate getSiteContentTemplate(
-				Long siteId, String contentTemplateId)
+				String siteId, String contentTemplateId)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -396,7 +397,7 @@ public interface ContentTemplateResource {
 		}
 
 		public HttpInvoker.HttpResponse getSiteContentTemplateHttpResponse(
-				Long siteId, String contentTemplateId)
+				String siteId, String contentTemplateId)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -437,7 +438,7 @@ public interface ContentTemplateResource {
 		}
 
 		public Page<ContentTemplate> getSiteContentTemplatesPage(
-				Long siteId, String search, List<String> aggregations,
+				String siteId, String search, List<String> aggregations,
 				String filterString, Pagination pagination, String sortString)
 			throws Exception {
 
@@ -506,7 +507,7 @@ public interface ContentTemplateResource {
 		}
 
 		public HttpInvoker.HttpResponse getSiteContentTemplatesPageHttpResponse(
-				Long siteId, String search, List<String> aggregations,
+				String siteId, String search, List<String> aggregations,
 				String filterString, Pagination pagination, String sortString)
 			throws Exception {
 
@@ -696,7 +697,7 @@ public interface ContentTemplateResource {
 		}
 
 		public void postSiteContentTemplatesPageExportBatch(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				String sortString, String callbackURL, String contentType,
 				String fieldNames)
 			throws Exception {
@@ -756,7 +757,7 @@ public interface ContentTemplateResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteContentTemplatesPageExportBatchHttpResponse(
-					Long siteId, String search, String filterString,
+					String siteId, String search, String filterString,
 					String sortString, String callbackURL, String contentType,
 					String fieldNames)
 			throws Exception {

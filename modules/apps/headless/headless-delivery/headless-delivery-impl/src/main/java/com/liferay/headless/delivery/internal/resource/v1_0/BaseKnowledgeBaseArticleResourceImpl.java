@@ -53,6 +53,7 @@ import com.liferay.portal.vulcan.permission.ModelPermissionsUtil;
 import com.liferay.portal.vulcan.permission.Permission;
 import com.liferay.portal.vulcan.resource.EntityModelResource;
 import com.liferay.portal.vulcan.util.ActionUtil;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.UriInfoUtil;
 
 import jakarta.annotation.Generated;
@@ -245,7 +246,7 @@ public abstract class BaseKnowledgeBaseArticleResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("externalReferenceCode")
@@ -665,7 +666,7 @@ public abstract class BaseKnowledgeBaseArticleResourceImpl
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("siteId")
-				Long siteId,
+				String siteId,
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("externalReferenceCode")
@@ -719,15 +720,18 @@ public abstract class BaseKnowledgeBaseArticleResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.ws.rs.QueryParam("roleNames")
 			String roleNames)
 		throws Exception {
 
-		String portletName = getPermissionCheckerPortletName(siteId);
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
-		PermissionServiceUtil.checkPermission(siteId, portletName, siteId);
+		String portletName = getPermissionCheckerPortletName(groupId);
+
+		PermissionServiceUtil.checkPermission(groupId, portletName, groupId);
 
 		return toPermissionPage(
 			HashMapBuilder.put(
@@ -735,15 +739,15 @@ public abstract class BaseKnowledgeBaseArticleResourceImpl
 				addAction(
 					ActionKeys.PERMISSIONS,
 					"getSiteKnowledgeBaseArticlePermissionsPage", portletName,
-					siteId)
+					groupId)
 			).put(
 				"replace",
 				addAction(
 					ActionKeys.PERMISSIONS,
 					"putSiteKnowledgeBaseArticlePermissionsPage", portletName,
-					siteId)
+					groupId)
 			).build(),
-			siteId, portletName, roleNames);
+			groupId, portletName, roleNames);
 	}
 
 	/**
@@ -817,7 +821,7 @@ public abstract class BaseKnowledgeBaseArticleResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.ws.rs.QueryParam("flatten")
 			Boolean flatten,
@@ -1248,7 +1252,7 @@ public abstract class BaseKnowledgeBaseArticleResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			KnowledgeBaseArticle knowledgeBaseArticle)
 		throws Exception {
 
@@ -1288,7 +1292,7 @@ public abstract class BaseKnowledgeBaseArticleResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.ws.rs.QueryParam("callbackURL")
 			String callbackURL,
@@ -1364,7 +1368,7 @@ public abstract class BaseKnowledgeBaseArticleResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.ws.rs.QueryParam("search")
 			String search,
@@ -1737,7 +1741,7 @@ public abstract class BaseKnowledgeBaseArticleResourceImpl
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("siteId")
-				Long siteId,
+				String siteId,
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("externalReferenceCode")
@@ -1777,19 +1781,22 @@ public abstract class BaseKnowledgeBaseArticleResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			Permission[] permissions)
 		throws Exception {
 
-		String portletName = getPermissionCheckerPortletName(siteId);
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
-		PermissionServiceUtil.checkPermission(siteId, portletName, siteId);
+		String portletName = getPermissionCheckerPortletName(groupId);
+
+		PermissionServiceUtil.checkPermission(groupId, portletName, groupId);
 
 		ModelPermissions modelPermissions =
 			ModelPermissionsUtil.toModelPermissions(
-				contextCompany.getCompanyId(), permissions, siteId, portletName,
-				resourceActionLocalService, resourcePermissionLocalService,
-				roleLocalService);
+				contextCompany.getCompanyId(), permissions, groupId,
+				portletName, resourceActionLocalService,
+				resourcePermissionLocalService, roleLocalService);
 
 		Collection<String> roleNames = modelPermissions.getRoleNames();
 
@@ -1797,7 +1804,7 @@ public abstract class BaseKnowledgeBaseArticleResourceImpl
 				resourcePermissionLocalService.getResourcePermissions(
 					contextCompany.getCompanyId(), portletName,
 					ResourceConstants.SCOPE_INDIVIDUAL,
-					String.valueOf(siteId))) {
+					String.valueOf(groupId))) {
 
 			com.liferay.portal.kernel.model.Role role =
 				roleLocalService.fetchRole(resourcePermission.getRoleId());
@@ -1812,14 +1819,14 @@ public abstract class BaseKnowledgeBaseArticleResourceImpl
 
 				resourcePermissionLocalService.removeResourcePermission(
 					contextCompany.getCompanyId(), portletName,
-					ResourceConstants.SCOPE_INDIVIDUAL, String.valueOf(siteId),
+					ResourceConstants.SCOPE_INDIVIDUAL, String.valueOf(groupId),
 					role.getRoleId(), resourceAction.getActionId());
 			}
 		}
 
 		resourcePermissionLocalService.updateResourcePermissions(
-			contextCompany.getCompanyId(), siteId, portletName,
-			String.valueOf(siteId), modelPermissions);
+			contextCompany.getCompanyId(), groupId, portletName,
+			String.valueOf(groupId), modelPermissions);
 
 		return toPermissionPage(
 			HashMapBuilder.put(
@@ -1827,15 +1834,15 @@ public abstract class BaseKnowledgeBaseArticleResourceImpl
 				addAction(
 					ActionKeys.PERMISSIONS,
 					"getSiteKnowledgeBaseArticlePermissionsPage", portletName,
-					siteId)
+					groupId)
 			).put(
 				"replace",
 				addAction(
 					ActionKeys.PERMISSIONS,
 					"putSiteKnowledgeBaseArticlePermissionsPage", portletName,
-					siteId)
+					groupId)
 			).build(),
-			siteId, portletName, null);
+			groupId, portletName, null);
 	}
 
 	/**
@@ -1866,7 +1873,7 @@ public abstract class BaseKnowledgeBaseArticleResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId)
+			String siteId)
 		throws Exception {
 	}
 
@@ -1898,7 +1905,7 @@ public abstract class BaseKnowledgeBaseArticleResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId)
+			String siteId)
 		throws Exception {
 	}
 
@@ -1926,7 +1933,7 @@ public abstract class BaseKnowledgeBaseArticleResourceImpl
 			else if (parameters.containsKey("siteId")) {
 				knowledgeBaseArticleUnsafeFunction =
 					knowledgeBaseArticle -> postSiteKnowledgeBaseArticle(
-						(Long)parameters.get("siteId"), knowledgeBaseArticle);
+						(String)parameters.get("siteId"), knowledgeBaseArticle);
 			}
 			else {
 				throw new NotSupportedException(
@@ -1946,8 +1953,9 @@ public abstract class BaseKnowledgeBaseArticleResourceImpl
 						KnowledgeBaseArticle getKnowledgeBaseArticle =
 							getSiteKnowledgeBaseArticleByExternalReferenceCode(
 								knowledgeBaseArticle.getSiteId() != null ?
-									knowledgeBaseArticle.getSiteId() :
-										(Long)parameters.get("siteId"),
+									String.valueOf(
+										knowledgeBaseArticle.getSiteId()) :
+											(String)parameters.get("siteId"),
 								knowledgeBaseArticle.
 									getExternalReferenceCode());
 
@@ -1972,7 +1980,7 @@ public abstract class BaseKnowledgeBaseArticleResourceImpl
 						else if (parameters.containsKey("siteId")) {
 							persistedKnowledgeBaseArticle =
 								postSiteKnowledgeBaseArticle(
-									(Long)parameters.get("siteId"),
+									(String)parameters.get("siteId"),
 									knowledgeBaseArticle);
 						}
 						else {
@@ -1989,8 +1997,8 @@ public abstract class BaseKnowledgeBaseArticleResourceImpl
 				knowledgeBaseArticleUnsafeFunction = knowledgeBaseArticle ->
 					putSiteKnowledgeBaseArticleByExternalReferenceCode(
 						knowledgeBaseArticle.getSiteId() != null ?
-							knowledgeBaseArticle.getSiteId() :
-								(Long)parameters.get("siteId"),
+							String.valueOf(knowledgeBaseArticle.getSiteId()) :
+								(String)parameters.get("siteId"),
 						knowledgeBaseArticle.getExternalReferenceCode(),
 						knowledgeBaseArticle);
 			}
@@ -2092,7 +2100,7 @@ public abstract class BaseKnowledgeBaseArticleResourceImpl
 
 		if (parameters.containsKey("siteId")) {
 			return getSiteKnowledgeBaseArticlesPage(
-				(Long)parameters.get("siteId"),
+				(String)parameters.get("siteId"),
 				_parseBoolean((String)parameters.get("flatten")), search, null,
 				filter, pagination, sorts);
 		}

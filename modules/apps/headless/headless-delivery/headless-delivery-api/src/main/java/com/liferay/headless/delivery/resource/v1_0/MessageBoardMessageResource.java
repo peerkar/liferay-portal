@@ -60,7 +60,7 @@ public interface MessageBoardMessageResource {
 		throws Exception;
 
 	public void deleteSiteMessageBoardMessageByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public MessageBoardMessage getMessageBoardMessage(
@@ -96,20 +96,20 @@ public interface MessageBoardMessageResource {
 
 	public MessageBoardMessage
 			getSiteMessageBoardMessageByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public MessageBoardMessage getSiteMessageBoardMessageByFriendlyUrlPath(
-			Long siteId, String friendlyUrlPath)
+			String siteId, String friendlyUrlPath)
 		throws Exception;
 
 	public Page<com.liferay.portal.vulcan.permission.Permission>
 			getSiteMessageBoardMessagePermissionsPage(
-				Long siteId, String roleNames)
+				String siteId, String roleNames)
 		throws Exception;
 
 	public Page<MessageBoardMessage> getSiteMessageBoardMessagesPage(
-			Long siteId, Boolean flatten, String search,
+			String siteId, Boolean flatten, String search,
 			com.liferay.portal.vulcan.aggregation.Aggregation aggregation,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			Pagination pagination,
@@ -118,7 +118,7 @@ public interface MessageBoardMessageResource {
 
 	public Page<MessageBoardMessage>
 			getSiteUserMessageBoardMessagesActivityPage(
-				Long siteId, Long userId, Pagination pagination)
+				String siteId, Long userId, Pagination pagination)
 		throws Exception;
 
 	public MessageBoardMessage patchMessageBoardMessage(
@@ -150,7 +150,7 @@ public interface MessageBoardMessageResource {
 		throws Exception;
 
 	public Response postSiteMessageBoardMessagesPageExportBatch(
-			Long siteId, String search,
+			String siteId, String search,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			com.liferay.portal.kernel.search.Sort[] sorts, String callbackURL,
 			String contentType, String fieldNames)
@@ -188,13 +188,13 @@ public interface MessageBoardMessageResource {
 
 	public MessageBoardMessage
 			putSiteMessageBoardMessageByExternalReferenceCode(
-				Long siteId, String externalReferenceCode,
+				String siteId, String externalReferenceCode,
 				MessageBoardMessage messageBoardMessage)
 		throws Exception;
 
 	public Page<com.liferay.portal.vulcan.permission.Permission>
 			putSiteMessageBoardMessagePermissionsPage(
-				Long siteId,
+				String siteId,
 				com.liferay.portal.vulcan.permission.Permission[] permissions)
 		throws Exception;
 

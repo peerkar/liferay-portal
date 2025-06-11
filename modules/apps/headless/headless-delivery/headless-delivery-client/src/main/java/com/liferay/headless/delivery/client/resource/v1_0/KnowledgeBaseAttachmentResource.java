@@ -53,13 +53,13 @@ public interface KnowledgeBaseAttachmentResource {
 
 	public void
 			deleteSiteKnowledgeBaseArticleByExternalReferenceCodeKnowledgeBaseArticleExternalReferenceCodeKnowledgeBaseAttachmentByExternalReferenceCode(
-				Long siteId, String knowledgeBaseArticleExternalReferenceCode,
+				String siteId, String knowledgeBaseArticleExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			deleteSiteKnowledgeBaseArticleByExternalReferenceCodeKnowledgeBaseArticleExternalReferenceCodeKnowledgeBaseAttachmentByExternalReferenceCodeHttpResponse(
-				Long siteId, String knowledgeBaseArticleExternalReferenceCode,
+				String siteId, String knowledgeBaseArticleExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception;
 
@@ -83,13 +83,13 @@ public interface KnowledgeBaseAttachmentResource {
 
 	public KnowledgeBaseAttachment
 			getSiteKnowledgeBaseArticleByExternalReferenceCodeKnowledgeBaseArticleExternalReferenceCodeKnowledgeBaseAttachmentByExternalReferenceCode(
-				Long siteId, String knowledgeBaseArticleExternalReferenceCode,
+				String siteId, String knowledgeBaseArticleExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteKnowledgeBaseArticleByExternalReferenceCodeKnowledgeBaseArticleExternalReferenceCodeKnowledgeBaseAttachmentByExternalReferenceCodeHttpResponse(
-				Long siteId, String knowledgeBaseArticleExternalReferenceCode,
+				String siteId, String knowledgeBaseArticleExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception;
 
@@ -454,7 +454,7 @@ public interface KnowledgeBaseAttachmentResource {
 
 		public void
 				deleteSiteKnowledgeBaseArticleByExternalReferenceCodeKnowledgeBaseArticleExternalReferenceCodeKnowledgeBaseAttachmentByExternalReferenceCode(
-					Long siteId,
+					String siteId,
 					String knowledgeBaseArticleExternalReferenceCode,
 					String externalReferenceCode)
 			throws Exception {
@@ -525,7 +525,7 @@ public interface KnowledgeBaseAttachmentResource {
 
 		public HttpInvoker.HttpResponse
 				deleteSiteKnowledgeBaseArticleByExternalReferenceCodeKnowledgeBaseArticleExternalReferenceCodeKnowledgeBaseAttachmentByExternalReferenceCodeHttpResponse(
-					Long siteId,
+					String siteId,
 					String knowledgeBaseArticleExternalReferenceCode,
 					String externalReferenceCode)
 			throws Exception {
@@ -789,7 +789,7 @@ public interface KnowledgeBaseAttachmentResource {
 
 		public KnowledgeBaseAttachment
 				getSiteKnowledgeBaseArticleByExternalReferenceCodeKnowledgeBaseArticleExternalReferenceCodeKnowledgeBaseAttachmentByExternalReferenceCode(
-					Long siteId,
+					String siteId,
 					String knowledgeBaseArticleExternalReferenceCode,
 					String externalReferenceCode)
 			throws Exception {
@@ -860,7 +860,7 @@ public interface KnowledgeBaseAttachmentResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteKnowledgeBaseArticleByExternalReferenceCodeKnowledgeBaseArticleExternalReferenceCodeKnowledgeBaseAttachmentByExternalReferenceCodeHttpResponse(
-					Long siteId,
+					String siteId,
 					String knowledgeBaseArticleExternalReferenceCode,
 					String externalReferenceCode)
 			throws Exception {

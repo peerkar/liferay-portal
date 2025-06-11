@@ -261,7 +261,7 @@ public abstract class BaseWikiPageAttachmentResourceTestCase {
 					"-"));
 	}
 
-	protected Long
+	protected String
 			testDeleteSiteWikiPageByExternalReferenceCodeWikiPageExternalReferenceCodeWikiPageAttachmentByExternalReferenceCode_getSiteId()
 		throws Exception {
 
@@ -460,7 +460,7 @@ public abstract class BaseWikiPageAttachmentResourceTestCase {
 		assertValid(getWikiPageAttachment);
 	}
 
-	protected Long
+	protected String
 			testGetSiteWikiPageByExternalReferenceCodeWikiPageExternalReferenceCodeWikiPageAttachmentByExternalReferenceCode_getSiteId()
 		throws Exception {
 
@@ -566,7 +566,7 @@ public abstract class BaseWikiPageAttachmentResourceTestCase {
 						"Object/wikiPageByExternalReferenceCodeWikiPageExternalReferenceCodeWikiPageAttachmentByExternalReferenceCode"))));
 	}
 
-	protected Long
+	protected String
 			testGraphQLGetSiteWikiPageByExternalReferenceCodeWikiPageExternalReferenceCodeWikiPageAttachmentByExternalReferenceCode_getSiteId()
 		throws Exception {
 

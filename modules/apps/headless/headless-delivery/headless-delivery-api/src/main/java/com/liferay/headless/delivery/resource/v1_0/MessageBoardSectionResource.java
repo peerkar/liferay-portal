@@ -74,16 +74,16 @@ public interface MessageBoardSectionResource {
 		throws Exception;
 
 	public MessageBoardSection getSiteMessageBoardSectionByFriendlyUrlPath(
-			Long siteId, String friendlyUrlPath)
+			String siteId, String friendlyUrlPath)
 		throws Exception;
 
 	public Page<com.liferay.portal.vulcan.permission.Permission>
 			getSiteMessageBoardSectionPermissionsPage(
-				Long siteId, String roleNames)
+				String siteId, String roleNames)
 		throws Exception;
 
 	public Page<MessageBoardSection> getSiteMessageBoardSectionsPage(
-			Long siteId, Boolean flatten, String search,
+			String siteId, Boolean flatten, String search,
 			com.liferay.portal.vulcan.aggregation.Aggregation aggregation,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			Pagination pagination,
@@ -100,15 +100,15 @@ public interface MessageBoardSectionResource {
 		throws Exception;
 
 	public MessageBoardSection postSiteMessageBoardSection(
-			Long siteId, MessageBoardSection messageBoardSection)
+			String siteId, MessageBoardSection messageBoardSection)
 		throws Exception;
 
 	public Response postSiteMessageBoardSectionBatch(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public Response postSiteMessageBoardSectionsPageExportBatch(
-			Long siteId, String search,
+			String siteId, String search,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			com.liferay.portal.kernel.search.Sort[] sorts, String callbackURL,
 			String contentType, String fieldNames)
@@ -136,7 +136,7 @@ public interface MessageBoardSectionResource {
 
 	public Page<com.liferay.portal.vulcan.permission.Permission>
 			putSiteMessageBoardSectionPermissionsPage(
-				Long siteId,
+				String siteId,
 				com.liferay.portal.vulcan.permission.Permission[] permissions)
 		throws Exception;
 

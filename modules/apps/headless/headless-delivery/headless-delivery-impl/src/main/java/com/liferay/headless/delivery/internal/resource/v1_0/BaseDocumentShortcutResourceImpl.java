@@ -186,7 +186,7 @@ public abstract class BaseDocumentShortcutResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("externalReferenceCode")
@@ -325,7 +325,7 @@ public abstract class BaseDocumentShortcutResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("externalReferenceCode")
@@ -377,7 +377,7 @@ public abstract class BaseDocumentShortcutResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@jakarta.ws.rs.core.Context Pagination pagination)
 		throws Exception {
 
@@ -637,7 +637,7 @@ public abstract class BaseDocumentShortcutResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			DocumentShortcut documentShortcut)
 		throws Exception {
 
@@ -675,7 +675,7 @@ public abstract class BaseDocumentShortcutResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.ws.rs.QueryParam("callbackURL")
 			String callbackURL,
@@ -737,7 +737,7 @@ public abstract class BaseDocumentShortcutResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.ws.rs.QueryParam("callbackURL")
 			String callbackURL,
@@ -885,7 +885,7 @@ public abstract class BaseDocumentShortcutResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("externalReferenceCode")
@@ -919,7 +919,7 @@ public abstract class BaseDocumentShortcutResourceImpl
 			else if (parameters.containsKey("siteId")) {
 				documentShortcutUnsafeFunction =
 					documentShortcut -> postSiteDocumentShortcut(
-						(Long)parameters.get("siteId"), documentShortcut);
+						(String)parameters.get("siteId"), documentShortcut);
 			}
 			else {
 				throw new NotSupportedException(
@@ -939,8 +939,9 @@ public abstract class BaseDocumentShortcutResourceImpl
 						DocumentShortcut getDocumentShortcut =
 							getSiteDocumentShortcutByExternalReferenceCode(
 								documentShortcut.getSiteId() != null ?
-									documentShortcut.getSiteId() :
-										(Long)parameters.get("siteId"),
+									String.valueOf(
+										documentShortcut.getSiteId()) :
+											(String)parameters.get("siteId"),
 								documentShortcut.getExternalReferenceCode());
 
 						persistedDocumentShortcut = patchDocumentShortcut(
@@ -961,7 +962,7 @@ public abstract class BaseDocumentShortcutResourceImpl
 						else if (parameters.containsKey("siteId")) {
 							persistedDocumentShortcut =
 								postSiteDocumentShortcut(
-									(Long)parameters.get("siteId"),
+									(String)parameters.get("siteId"),
 									documentShortcut);
 						}
 						else {
@@ -978,8 +979,8 @@ public abstract class BaseDocumentShortcutResourceImpl
 				documentShortcutUnsafeFunction = documentShortcut ->
 					putSiteDocumentShortcutByExternalReferenceCode(
 						documentShortcut.getSiteId() != null ?
-							documentShortcut.getSiteId() :
-								(Long)parameters.get("siteId"),
+							String.valueOf(documentShortcut.getSiteId()) :
+								(String)parameters.get("siteId"),
 						documentShortcut.getExternalReferenceCode(),
 						documentShortcut);
 			}
@@ -1079,7 +1080,7 @@ public abstract class BaseDocumentShortcutResourceImpl
 		}
 		else if (parameters.containsKey("siteId")) {
 			return getSiteDocumentShortcutsPage(
-				(Long)parameters.get("siteId"), pagination);
+				(String)parameters.get("siteId"), pagination);
 		}
 		else {
 			throw new NotSupportedException(

@@ -476,7 +476,7 @@ public abstract class BaseDocumentMetadataSetResourceTestCase {
 					"-"));
 	}
 
-	protected Long
+	protected String
 			testDeleteSiteDocumentMetadataSetByExternalReferenceCode_getSiteId(
 				DocumentMetadataSet documentMetadataSet)
 		throws Exception {
@@ -1222,7 +1222,7 @@ public abstract class BaseDocumentMetadataSetResourceTestCase {
 		assertValid(getDocumentMetadataSet);
 	}
 
-	protected Long
+	protected String
 			testGetSiteDocumentMetadataSetByExternalReferenceCode_getSiteId(
 				DocumentMetadataSet documentMetadataSet)
 		throws Exception {
@@ -1310,7 +1310,7 @@ public abstract class BaseDocumentMetadataSetResourceTestCase {
 						"Object/documentMetadataSetByExternalReferenceCode"))));
 	}
 
-	protected Long
+	protected String
 			testGraphQLGetSiteDocumentMetadataSetByExternalReferenceCode_getSiteId(
 				DocumentMetadataSet documentMetadataSet)
 		throws Exception {
@@ -1382,8 +1382,8 @@ public abstract class BaseDocumentMetadataSetResourceTestCase {
 
 	@Test
 	public void testGetSiteDocumentMetadataSetsPage() throws Exception {
-		Long siteId = testGetSiteDocumentMetadataSetsPage_getSiteId();
-		Long irrelevantSiteId =
+		String siteId = testGetSiteDocumentMetadataSetsPage_getSiteId();
+		String irrelevantSiteId =
 			testGetSiteDocumentMetadataSetsPage_getIrrelevantSiteId();
 
 		Page<DocumentMetadataSet> page =
@@ -1440,7 +1440,8 @@ public abstract class BaseDocumentMetadataSetResourceTestCase {
 	}
 
 	protected Map<String, Map<String, String>>
-			testGetSiteDocumentMetadataSetsPage_getExpectedActions(Long siteId)
+			testGetSiteDocumentMetadataSetsPage_getExpectedActions(
+				String siteId)
 		throws Exception {
 
 		Map<String, Map<String, String>> expectedActions = new HashMap<>();
@@ -1461,7 +1462,7 @@ public abstract class BaseDocumentMetadataSetResourceTestCase {
 	public void testGetSiteDocumentMetadataSetsPageWithPagination()
 		throws Exception {
 
-		Long siteId = testGetSiteDocumentMetadataSetsPage_getSiteId();
+		String siteId = testGetSiteDocumentMetadataSetsPage_getSiteId();
 
 		Page<DocumentMetadataSet> documentMetadataSetsPage =
 			documentMetadataSetResource.getSiteDocumentMetadataSetsPage(
@@ -1565,20 +1566,20 @@ public abstract class BaseDocumentMetadataSetResourceTestCase {
 
 	protected DocumentMetadataSet
 			testGetSiteDocumentMetadataSetsPage_addDocumentMetadataSet(
-				Long siteId, DocumentMetadataSet documentMetadataSet)
+				String siteId, DocumentMetadataSet documentMetadataSet)
 		throws Exception {
 
 		return documentMetadataSetResource.postSiteDocumentMetadataSet(
 			siteId, documentMetadataSet);
 	}
 
-	protected Long testGetSiteDocumentMetadataSetsPage_getSiteId()
+	protected String testGetSiteDocumentMetadataSetsPage_getSiteId()
 		throws Exception {
 
 		return testGroup.getGroupId();
 	}
 
-	protected Long testGetSiteDocumentMetadataSetsPage_getIrrelevantSiteId()
+	protected String testGetSiteDocumentMetadataSetsPage_getIrrelevantSiteId()
 		throws Exception {
 
 		return irrelevantGroup.getGroupId();
@@ -1586,7 +1587,7 @@ public abstract class BaseDocumentMetadataSetResourceTestCase {
 
 	@Test
 	public void testGraphQLGetSiteDocumentMetadataSetsPage() throws Exception {
-		Long siteId = testGetSiteDocumentMetadataSetsPage_getSiteId();
+		String siteId = testGetSiteDocumentMetadataSetsPage_getSiteId();
 
 		GraphQLField graphQLField = new GraphQLField(
 			"documentMetadataSets",
@@ -1861,7 +1862,7 @@ public abstract class BaseDocumentMetadataSetResourceTestCase {
 			putDocumentMetadataSet.getExternalReferenceCode());
 	}
 
-	protected Long
+	protected String
 			testPutSiteDocumentMetadataSetByExternalReferenceCode_getSiteId(
 				DocumentMetadataSet documentMetadataSet)
 		throws Exception {

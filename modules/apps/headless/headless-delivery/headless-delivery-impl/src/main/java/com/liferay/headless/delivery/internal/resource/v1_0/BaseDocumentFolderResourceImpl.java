@@ -52,6 +52,7 @@ import com.liferay.portal.vulcan.permission.ModelPermissionsUtil;
 import com.liferay.portal.vulcan.permission.Permission;
 import com.liferay.portal.vulcan.resource.EntityModelResource;
 import com.liferay.portal.vulcan.util.ActionUtil;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.UriInfoUtil;
 
 import jakarta.annotation.Generated;
@@ -234,7 +235,7 @@ public abstract class BaseDocumentFolderResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("externalReferenceCode")
@@ -738,29 +739,34 @@ public abstract class BaseDocumentFolderResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.ws.rs.QueryParam("roleNames")
 			String roleNames)
 		throws Exception {
 
-		String portletName = getPermissionCheckerPortletName(siteId);
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
-		PermissionServiceUtil.checkPermission(siteId, portletName, siteId);
+		String portletName = getPermissionCheckerPortletName(groupId);
+
+		PermissionServiceUtil.checkPermission(groupId, portletName, groupId);
 
 		return toPermissionPage(
 			HashMapBuilder.put(
 				"get",
 				addAction(
 					ActionKeys.PERMISSIONS,
-					"getSiteDocumentFolderPermissionsPage", portletName, siteId)
+					"getSiteDocumentFolderPermissionsPage", portletName,
+					groupId)
 			).put(
 				"replace",
 				addAction(
 					ActionKeys.PERMISSIONS,
-					"putSiteDocumentFolderPermissionsPage", portletName, siteId)
+					"putSiteDocumentFolderPermissionsPage", portletName,
+					groupId)
 			).build(),
-			siteId, portletName, roleNames);
+			groupId, portletName, roleNames);
 	}
 
 	/**
@@ -832,7 +838,7 @@ public abstract class BaseDocumentFolderResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.ws.rs.QueryParam("flatten")
 			Boolean flatten,
@@ -888,7 +894,7 @@ public abstract class BaseDocumentFolderResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@jakarta.ws.rs.core.Context Pagination pagination)
 		throws Exception {
 
@@ -930,7 +936,7 @@ public abstract class BaseDocumentFolderResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("externalReferenceCode")
@@ -1299,7 +1305,7 @@ public abstract class BaseDocumentFolderResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			DocumentFolder documentFolder)
 		throws Exception {
 
@@ -1337,7 +1343,7 @@ public abstract class BaseDocumentFolderResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.ws.rs.QueryParam("callbackURL")
 			String callbackURL,
@@ -1411,7 +1417,7 @@ public abstract class BaseDocumentFolderResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.ws.rs.QueryParam("search")
 			String search,
@@ -1841,19 +1847,22 @@ public abstract class BaseDocumentFolderResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			Permission[] permissions)
 		throws Exception {
 
-		String portletName = getPermissionCheckerPortletName(siteId);
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
-		PermissionServiceUtil.checkPermission(siteId, portletName, siteId);
+		String portletName = getPermissionCheckerPortletName(groupId);
+
+		PermissionServiceUtil.checkPermission(groupId, portletName, groupId);
 
 		ModelPermissions modelPermissions =
 			ModelPermissionsUtil.toModelPermissions(
-				contextCompany.getCompanyId(), permissions, siteId, portletName,
-				resourceActionLocalService, resourcePermissionLocalService,
-				roleLocalService);
+				contextCompany.getCompanyId(), permissions, groupId,
+				portletName, resourceActionLocalService,
+				resourcePermissionLocalService, roleLocalService);
 
 		Collection<String> roleNames = modelPermissions.getRoleNames();
 
@@ -1861,7 +1870,7 @@ public abstract class BaseDocumentFolderResourceImpl
 				resourcePermissionLocalService.getResourcePermissions(
 					contextCompany.getCompanyId(), portletName,
 					ResourceConstants.SCOPE_INDIVIDUAL,
-					String.valueOf(siteId))) {
+					String.valueOf(groupId))) {
 
 			com.liferay.portal.kernel.model.Role role =
 				roleLocalService.fetchRole(resourcePermission.getRoleId());
@@ -1876,28 +1885,30 @@ public abstract class BaseDocumentFolderResourceImpl
 
 				resourcePermissionLocalService.removeResourcePermission(
 					contextCompany.getCompanyId(), portletName,
-					ResourceConstants.SCOPE_INDIVIDUAL, String.valueOf(siteId),
+					ResourceConstants.SCOPE_INDIVIDUAL, String.valueOf(groupId),
 					role.getRoleId(), resourceAction.getActionId());
 			}
 		}
 
 		resourcePermissionLocalService.updateResourcePermissions(
-			contextCompany.getCompanyId(), siteId, portletName,
-			String.valueOf(siteId), modelPermissions);
+			contextCompany.getCompanyId(), groupId, portletName,
+			String.valueOf(groupId), modelPermissions);
 
 		return toPermissionPage(
 			HashMapBuilder.put(
 				"get",
 				addAction(
 					ActionKeys.PERMISSIONS,
-					"getSiteDocumentFolderPermissionsPage", portletName, siteId)
+					"getSiteDocumentFolderPermissionsPage", portletName,
+					groupId)
 			).put(
 				"replace",
 				addAction(
 					ActionKeys.PERMISSIONS,
-					"putSiteDocumentFolderPermissionsPage", portletName, siteId)
+					"putSiteDocumentFolderPermissionsPage", portletName,
+					groupId)
 			).build(),
-			siteId, portletName, null);
+			groupId, portletName, null);
 	}
 
 	/**
@@ -1936,7 +1947,7 @@ public abstract class BaseDocumentFolderResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("externalReferenceCode")
@@ -1969,7 +1980,7 @@ public abstract class BaseDocumentFolderResourceImpl
 			else if (parameters.containsKey("siteId")) {
 				documentFolderUnsafeFunction =
 					documentFolder -> postSiteDocumentFolder(
-						(Long)parameters.get("siteId"), documentFolder);
+						(String)parameters.get("siteId"), documentFolder);
 			}
 			else {
 				throw new NotSupportedException(
@@ -2073,7 +2084,7 @@ public abstract class BaseDocumentFolderResourceImpl
 		}
 		else if (parameters.containsKey("siteId")) {
 			return getSiteDocumentFoldersPage(
-				(Long)parameters.get("siteId"),
+				(String)parameters.get("siteId"),
 				_parseBoolean((String)parameters.get("flatten")), search, null,
 				filter, pagination, sorts);
 		}

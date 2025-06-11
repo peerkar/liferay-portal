@@ -1260,8 +1260,8 @@ public abstract class BaseDocumentDataDefinitionTypeResourceTestCase {
 
 	@Test
 	public void testGetSiteDocumentDataDefinitionTypesPage() throws Exception {
-		Long siteId = testGetSiteDocumentDataDefinitionTypesPage_getSiteId();
-		Long irrelevantSiteId =
+		String siteId = testGetSiteDocumentDataDefinitionTypesPage_getSiteId();
+		String irrelevantSiteId =
 			testGetSiteDocumentDataDefinitionTypesPage_getIrrelevantSiteId();
 
 		Page<DocumentDataDefinitionType> page =
@@ -1329,7 +1329,7 @@ public abstract class BaseDocumentDataDefinitionTypeResourceTestCase {
 
 	protected Map<String, Map<String, String>>
 			testGetSiteDocumentDataDefinitionTypesPage_getExpectedActions(
-				Long siteId)
+				String siteId)
 		throws Exception {
 
 		Map<String, Map<String, String>> expectedActions = new HashMap<>();
@@ -1357,7 +1357,7 @@ public abstract class BaseDocumentDataDefinitionTypeResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteDocumentDataDefinitionTypesPage_getSiteId();
+		String siteId = testGetSiteDocumentDataDefinitionTypesPage_getSiteId();
 
 		DocumentDataDefinitionType documentDataDefinitionType1 =
 			randomDocumentDataDefinitionType();
@@ -1424,7 +1424,7 @@ public abstract class BaseDocumentDataDefinitionTypeResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteDocumentDataDefinitionTypesPage_getSiteId();
+		String siteId = testGetSiteDocumentDataDefinitionTypesPage_getSiteId();
 
 		DocumentDataDefinitionType documentDataDefinitionType1 =
 			testGetSiteDocumentDataDefinitionTypesPage_addDocumentDataDefinitionType(
@@ -1454,7 +1454,7 @@ public abstract class BaseDocumentDataDefinitionTypeResourceTestCase {
 	public void testGetSiteDocumentDataDefinitionTypesPageWithPagination()
 		throws Exception {
 
-		Long siteId = testGetSiteDocumentDataDefinitionTypesPage_getSiteId();
+		String siteId = testGetSiteDocumentDataDefinitionTypesPage_getSiteId();
 
 		Page<DocumentDataDefinitionType> documentDataDefinitionTypesPage =
 			documentDataDefinitionTypeResource.
@@ -1684,7 +1684,7 @@ public abstract class BaseDocumentDataDefinitionTypeResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteDocumentDataDefinitionTypesPage_getSiteId();
+		String siteId = testGetSiteDocumentDataDefinitionTypesPage_getSiteId();
 
 		DocumentDataDefinitionType documentDataDefinitionType1 =
 			randomDocumentDataDefinitionType();
@@ -1743,7 +1743,7 @@ public abstract class BaseDocumentDataDefinitionTypeResourceTestCase {
 
 	protected DocumentDataDefinitionType
 			testGetSiteDocumentDataDefinitionTypesPage_addDocumentDataDefinitionType(
-				Long siteId,
+				String siteId,
 				DocumentDataDefinitionType documentDataDefinitionType)
 		throws Exception {
 
@@ -1752,13 +1752,13 @@ public abstract class BaseDocumentDataDefinitionTypeResourceTestCase {
 				siteId, documentDataDefinitionType);
 	}
 
-	protected Long testGetSiteDocumentDataDefinitionTypesPage_getSiteId()
+	protected String testGetSiteDocumentDataDefinitionTypesPage_getSiteId()
 		throws Exception {
 
 		return testGroup.getGroupId();
 	}
 
-	protected Long
+	protected String
 			testGetSiteDocumentDataDefinitionTypesPage_getIrrelevantSiteId()
 		throws Exception {
 
@@ -1769,7 +1769,7 @@ public abstract class BaseDocumentDataDefinitionTypeResourceTestCase {
 	public void testGraphQLGetSiteDocumentDataDefinitionTypesPage()
 		throws Exception {
 
-		Long siteId = testGetSiteDocumentDataDefinitionTypesPage_getSiteId();
+		String siteId = testGetSiteDocumentDataDefinitionTypesPage_getSiteId();
 
 		GraphQLField graphQLField = new GraphQLField(
 			"documentDataDefinitionTypes",

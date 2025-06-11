@@ -456,7 +456,7 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 					"-"));
 	}
 
-	protected Long
+	protected String
 			testDeleteSiteMessageBoardMessageByExternalReferenceCode_getSiteId(
 				MessageBoardMessage messageBoardMessage)
 		throws Exception {
@@ -1826,7 +1826,7 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 		assertValid(getMessageBoardMessage);
 	}
 
-	protected Long
+	protected String
 			testGetSiteMessageBoardMessageByExternalReferenceCode_getSiteId(
 				MessageBoardMessage messageBoardMessage)
 		throws Exception {
@@ -1914,7 +1914,7 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 						"Object/messageBoardMessageByExternalReferenceCode"))));
 	}
 
-	protected Long
+	protected String
 			testGraphQLGetSiteMessageBoardMessageByExternalReferenceCode_getSiteId(
 				MessageBoardMessage messageBoardMessage)
 		throws Exception {
@@ -2002,7 +2002,7 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 		assertValid(getMessageBoardMessage);
 	}
 
-	protected Long testGetSiteMessageBoardMessageByFriendlyUrlPath_getSiteId(
+	protected String testGetSiteMessageBoardMessageByFriendlyUrlPath_getSiteId(
 			MessageBoardMessage messageBoardMessage)
 		throws Exception {
 
@@ -2089,7 +2089,7 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 						"Object/messageBoardMessageByFriendlyUrlPath"))));
 	}
 
-	protected Long
+	protected String
 			testGraphQLGetSiteMessageBoardMessageByFriendlyUrlPath_getSiteId(
 				MessageBoardMessage messageBoardMessage)
 		throws Exception {
@@ -2181,8 +2181,8 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 
 	@Test
 	public void testGetSiteMessageBoardMessagesPage() throws Exception {
-		Long siteId = testGetSiteMessageBoardMessagesPage_getSiteId();
-		Long irrelevantSiteId =
+		String siteId = testGetSiteMessageBoardMessagesPage_getSiteId();
+		String irrelevantSiteId =
 			testGetSiteMessageBoardMessagesPage_getIrrelevantSiteId();
 
 		Page<MessageBoardMessage> page =
@@ -2240,7 +2240,8 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 	}
 
 	protected Map<String, Map<String, String>>
-			testGetSiteMessageBoardMessagesPage_getExpectedActions(Long siteId)
+			testGetSiteMessageBoardMessagesPage_getExpectedActions(
+				String siteId)
 		throws Exception {
 
 		Map<String, Map<String, String>> expectedActions = new HashMap<>();
@@ -2259,7 +2260,7 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteMessageBoardMessagesPage_getSiteId();
+		String siteId = testGetSiteMessageBoardMessagesPage_getSiteId();
 
 		MessageBoardMessage messageBoardMessage1 = randomMessageBoardMessage();
 
@@ -2323,7 +2324,7 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteMessageBoardMessagesPage_getSiteId();
+		String siteId = testGetSiteMessageBoardMessagesPage_getSiteId();
 
 		MessageBoardMessage messageBoardMessage1 =
 			testGetSiteMessageBoardMessagesPage_addMessageBoardMessage(
@@ -2352,7 +2353,7 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 	public void testGetSiteMessageBoardMessagesPageWithPagination()
 		throws Exception {
 
-		Long siteId = testGetSiteMessageBoardMessagesPage_getSiteId();
+		String siteId = testGetSiteMessageBoardMessagesPage_getSiteId();
 
 		Page<MessageBoardMessage> messageBoardMessagesPage =
 			messageBoardMessageResource.getSiteMessageBoardMessagesPage(
@@ -2567,7 +2568,7 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteMessageBoardMessagesPage_getSiteId();
+		String siteId = testGetSiteMessageBoardMessagesPage_getSiteId();
 
 		MessageBoardMessage messageBoardMessage1 = randomMessageBoardMessage();
 		MessageBoardMessage messageBoardMessage2 = randomMessageBoardMessage();
@@ -2620,20 +2621,20 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 
 	protected MessageBoardMessage
 			testGetSiteMessageBoardMessagesPage_addMessageBoardMessage(
-				Long siteId, MessageBoardMessage messageBoardMessage)
+				String siteId, MessageBoardMessage messageBoardMessage)
 		throws Exception {
 
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
 	}
 
-	protected Long testGetSiteMessageBoardMessagesPage_getSiteId()
+	protected String testGetSiteMessageBoardMessagesPage_getSiteId()
 		throws Exception {
 
 		return testGroup.getGroupId();
 	}
 
-	protected Long testGetSiteMessageBoardMessagesPage_getIrrelevantSiteId()
+	protected String testGetSiteMessageBoardMessagesPage_getIrrelevantSiteId()
 		throws Exception {
 
 		return irrelevantGroup.getGroupId();
@@ -2641,7 +2642,7 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 
 	@Test
 	public void testGraphQLGetSiteMessageBoardMessagesPage() throws Exception {
-		Long siteId = testGetSiteMessageBoardMessagesPage_getSiteId();
+		String siteId = testGetSiteMessageBoardMessagesPage_getSiteId();
 
 		GraphQLField graphQLField = new GraphQLField(
 			"messageBoardMessages",
@@ -2724,9 +2725,9 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 	public void testGetSiteUserMessageBoardMessagesActivityPage()
 		throws Exception {
 
-		Long siteId =
+		String siteId =
 			testGetSiteUserMessageBoardMessagesActivityPage_getSiteId();
-		Long irrelevantSiteId =
+		String irrelevantSiteId =
 			testGetSiteUserMessageBoardMessagesActivityPage_getIrrelevantSiteId();
 		Long userId =
 			testGetSiteUserMessageBoardMessagesActivityPage_getUserId();
@@ -2796,7 +2797,7 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 
 	protected Map<String, Map<String, String>>
 			testGetSiteUserMessageBoardMessagesActivityPage_getExpectedActions(
-				Long siteId, Long userId)
+				String siteId, Long userId)
 		throws Exception {
 
 		Map<String, Map<String, String>> expectedActions = new HashMap<>();
@@ -2808,7 +2809,7 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 	public void testGetSiteUserMessageBoardMessagesActivityPageWithPagination()
 		throws Exception {
 
-		Long siteId =
+		String siteId =
 			testGetSiteUserMessageBoardMessagesActivityPage_getSiteId();
 		Long userId =
 			testGetSiteUserMessageBoardMessagesActivityPage_getUserId();
@@ -2922,7 +2923,7 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 
 	protected MessageBoardMessage
 			testGetSiteUserMessageBoardMessagesActivityPage_addMessageBoardMessage(
-				Long siteId, Long userId,
+				String siteId, Long userId,
 				MessageBoardMessage messageBoardMessage)
 		throws Exception {
 
@@ -2930,13 +2931,13 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 			"This method needs to be implemented");
 	}
 
-	protected Long testGetSiteUserMessageBoardMessagesActivityPage_getSiteId()
+	protected String testGetSiteUserMessageBoardMessagesActivityPage_getSiteId()
 		throws Exception {
 
 		return testGroup.getGroupId();
 	}
 
-	protected Long
+	protected String
 			testGetSiteUserMessageBoardMessagesActivityPage_getIrrelevantSiteId()
 		throws Exception {
 
@@ -3286,7 +3287,7 @@ public abstract class BaseMessageBoardMessageResourceTestCase {
 			putMessageBoardMessage.getExternalReferenceCode());
 	}
 
-	protected Long
+	protected String
 			testPutSiteMessageBoardMessageByExternalReferenceCode_getSiteId(
 				MessageBoardMessage messageBoardMessage)
 		throws Exception {

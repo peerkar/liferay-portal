@@ -35,80 +35,81 @@ public interface SitePageResource {
 		return new Builder();
 	}
 
-	public SitePage getSiteSitePage(Long siteId, String friendlyUrlPath)
+	public SitePage getSiteSitePage(String siteId, String friendlyUrlPath)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse getSiteSitePageHttpResponse(
-			Long siteId, String friendlyUrlPath)
+			String siteId, String friendlyUrlPath)
 		throws Exception;
 
 	public SitePage getSiteSitePageExperienceExperienceKey(
-			Long siteId, String friendlyUrlPath, String experienceKey)
+			String siteId, String friendlyUrlPath, String experienceKey)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteSitePageExperienceExperienceKeyHttpResponse(
-				Long siteId, String friendlyUrlPath, String experienceKey)
+				String siteId, String friendlyUrlPath, String experienceKey)
 		throws Exception;
 
 	public String getSiteSitePageExperienceExperienceKeyRenderedPage(
-			Long siteId, String friendlyUrlPath, String experienceKey)
+			String siteId, String friendlyUrlPath, String experienceKey)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteSitePageExperienceExperienceKeyRenderedPageHttpResponse(
-				Long siteId, String friendlyUrlPath, String experienceKey)
+				String siteId, String friendlyUrlPath, String experienceKey)
 		throws Exception;
 
 	public String getSiteSitePageRenderedPage(
-			Long siteId, String friendlyUrlPath)
+			String siteId, String friendlyUrlPath)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse getSiteSitePageRenderedPageHttpResponse(
-			Long siteId, String friendlyUrlPath)
+			String siteId, String friendlyUrlPath)
 		throws Exception;
 
 	public Page<SitePage> getSiteSitePagesExperiencesPage(
-			Long siteId, String friendlyUrlPath)
+			String siteId, String friendlyUrlPath)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse getSiteSitePagesExperiencesPageHttpResponse(
-			Long siteId, String friendlyUrlPath)
+			String siteId, String friendlyUrlPath)
 		throws Exception;
 
 	public Page<SitePage> getSiteSitePagesPage(
-			Long siteId, String search, List<String> aggregations,
+			String siteId, String search, List<String> aggregations,
 			String filterString, Pagination pagination, String sortString)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse getSiteSitePagesPageHttpResponse(
-			Long siteId, String search, List<String> aggregations,
+			String siteId, String search, List<String> aggregations,
 			String filterString, Pagination pagination, String sortString)
 		throws Exception;
 
-	public SitePage postSiteSitePage(Long siteId, SitePage sitePage)
+	public SitePage postSiteSitePage(String siteId, SitePage sitePage)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse postSiteSitePageHttpResponse(
-			Long siteId, SitePage sitePage)
+			String siteId, SitePage sitePage)
 		throws Exception;
 
 	public void postSiteSitePageBatch(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse postSiteSitePageBatchHttpResponse(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public void postSiteSitePagesPageExportBatch(
-			Long siteId, String search, String filterString, String sortString,
-			String callbackURL, String contentType, String fieldNames)
+			String siteId, String search, String filterString,
+			String sortString, String callbackURL, String contentType,
+			String fieldNames)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			postSiteSitePagesPageExportBatchHttpResponse(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				String sortString, String callbackURL, String contentType,
 				String fieldNames)
 		throws Exception;
@@ -221,7 +222,7 @@ public interface SitePageResource {
 
 	public static class SitePageResourceImpl implements SitePageResource {
 
-		public SitePage getSiteSitePage(Long siteId, String friendlyUrlPath)
+		public SitePage getSiteSitePage(String siteId, String friendlyUrlPath)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse = getSiteSitePageHttpResponse(
@@ -287,7 +288,7 @@ public interface SitePageResource {
 		}
 
 		public HttpInvoker.HttpResponse getSiteSitePageHttpResponse(
-				Long siteId, String friendlyUrlPath)
+				String siteId, String friendlyUrlPath)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -328,7 +329,7 @@ public interface SitePageResource {
 		}
 
 		public SitePage getSiteSitePageExperienceExperienceKey(
-				Long siteId, String friendlyUrlPath, String experienceKey)
+				String siteId, String friendlyUrlPath, String experienceKey)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -396,7 +397,7 @@ public interface SitePageResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteSitePageExperienceExperienceKeyHttpResponse(
-					Long siteId, String friendlyUrlPath, String experienceKey)
+					String siteId, String friendlyUrlPath, String experienceKey)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -438,7 +439,7 @@ public interface SitePageResource {
 		}
 
 		public String getSiteSitePageExperienceExperienceKeyRenderedPage(
-				Long siteId, String friendlyUrlPath, String experienceKey)
+				String siteId, String friendlyUrlPath, String experienceKey)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -506,7 +507,7 @@ public interface SitePageResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteSitePageExperienceExperienceKeyRenderedPageHttpResponse(
-					Long siteId, String friendlyUrlPath, String experienceKey)
+					String siteId, String friendlyUrlPath, String experienceKey)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -548,7 +549,7 @@ public interface SitePageResource {
 		}
 
 		public String getSiteSitePageRenderedPage(
-				Long siteId, String friendlyUrlPath)
+				String siteId, String friendlyUrlPath)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -615,7 +616,7 @@ public interface SitePageResource {
 		}
 
 		public HttpInvoker.HttpResponse getSiteSitePageRenderedPageHttpResponse(
-				Long siteId, String friendlyUrlPath)
+				String siteId, String friendlyUrlPath)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -656,7 +657,7 @@ public interface SitePageResource {
 		}
 
 		public Page<SitePage> getSiteSitePagesExperiencesPage(
-				Long siteId, String friendlyUrlPath)
+				String siteId, String friendlyUrlPath)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -724,7 +725,7 @@ public interface SitePageResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteSitePagesExperiencesPageHttpResponse(
-					Long siteId, String friendlyUrlPath)
+					String siteId, String friendlyUrlPath)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -765,7 +766,7 @@ public interface SitePageResource {
 		}
 
 		public Page<SitePage> getSiteSitePagesPage(
-				Long siteId, String search, List<String> aggregations,
+				String siteId, String search, List<String> aggregations,
 				String filterString, Pagination pagination, String sortString)
 			throws Exception {
 
@@ -834,7 +835,7 @@ public interface SitePageResource {
 		}
 
 		public HttpInvoker.HttpResponse getSiteSitePagesPageHttpResponse(
-				Long siteId, String search, List<String> aggregations,
+				String siteId, String search, List<String> aggregations,
 				String filterString, Pagination pagination, String sortString)
 			throws Exception {
 
@@ -893,7 +894,7 @@ public interface SitePageResource {
 			return httpInvoker.invoke();
 		}
 
-		public SitePage postSiteSitePage(Long siteId, SitePage sitePage)
+		public SitePage postSiteSitePage(String siteId, SitePage sitePage)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -959,7 +960,7 @@ public interface SitePageResource {
 		}
 
 		public HttpInvoker.HttpResponse postSiteSitePageHttpResponse(
-				Long siteId, SitePage sitePage)
+				String siteId, SitePage sitePage)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1001,7 +1002,7 @@ public interface SitePageResource {
 		}
 
 		public void postSiteSitePageBatch(
-				Long siteId, String callbackURL, Object object)
+				String siteId, String callbackURL, Object object)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1056,7 +1057,7 @@ public interface SitePageResource {
 		}
 
 		public HttpInvoker.HttpResponse postSiteSitePageBatchHttpResponse(
-				Long siteId, String callbackURL, Object object)
+				String siteId, String callbackURL, Object object)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1103,7 +1104,7 @@ public interface SitePageResource {
 		}
 
 		public void postSiteSitePagesPageExportBatch(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				String sortString, String callbackURL, String contentType,
 				String fieldNames)
 			throws Exception {
@@ -1163,7 +1164,7 @@ public interface SitePageResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteSitePagesPageExportBatchHttpResponse(
-					Long siteId, String search, String filterString,
+					String siteId, String search, String filterString,
 					String sortString, String callbackURL, String contentType,
 					String fieldNames)
 			throws Exception {

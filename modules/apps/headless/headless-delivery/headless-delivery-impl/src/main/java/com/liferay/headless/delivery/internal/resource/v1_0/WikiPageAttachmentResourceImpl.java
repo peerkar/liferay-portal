@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.vulcan.multipart.BinaryFile;
 import com.liferay.portal.vulcan.multipart.MultipartBody;
 import com.liferay.portal.vulcan.pagination.Page;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.wiki.constants.WikiConstants;
 import com.liferay.wiki.model.WikiPage;
 import com.liferay.wiki.service.WikiPageService;
@@ -41,17 +42,20 @@ public class WikiPageAttachmentResourceImpl
 	@Override
 	public void
 			deleteSiteWikiPageByExternalReferenceCodeWikiPageExternalReferenceCodeWikiPageAttachmentByExternalReferenceCode(
-				Long siteId, String wikiPageExternalReferenceCode,
+				String siteId, String wikiPageExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception {
 
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
+
 		WikiPage wikiPage =
 			_wikiPageService.getLatestPageByExternalReferenceCode(
-				siteId, wikiPageExternalReferenceCode);
+				groupId, wikiPageExternalReferenceCode);
 
 		FileEntry fileEntry =
 			wikiPage.getAttachmentsFileEntryByExternalReferenceCode(
-				siteId, externalReferenceCode);
+				groupId, externalReferenceCode);
 
 		_portletFileRepository.deletePortletFileEntry(
 			fileEntry.getFileEntryId());
@@ -67,17 +71,20 @@ public class WikiPageAttachmentResourceImpl
 	@Override
 	public WikiPageAttachment
 			getSiteWikiPageByExternalReferenceCodeWikiPageExternalReferenceCodeWikiPageAttachmentByExternalReferenceCode(
-				Long siteId, String wikiPageExternalReferenceCode,
+				String siteId, String wikiPageExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception {
 
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
+
 		WikiPage wikiPage =
 			_wikiPageService.getLatestPageByExternalReferenceCode(
-				siteId, wikiPageExternalReferenceCode);
+				groupId, wikiPageExternalReferenceCode);
 
 		FileEntry fileEntry =
 			wikiPage.getAttachmentsFileEntryByExternalReferenceCode(
-				siteId, externalReferenceCode);
+				groupId, externalReferenceCode);
 
 		return _toWikiPageAttachment(fileEntry);
 	}

@@ -1233,7 +1233,7 @@ public abstract class BaseMessageBoardSectionResourceTestCase {
 		assertValid(getMessageBoardSection);
 	}
 
-	protected Long testGetSiteMessageBoardSectionByFriendlyUrlPath_getSiteId(
+	protected String testGetSiteMessageBoardSectionByFriendlyUrlPath_getSiteId(
 			MessageBoardSection messageBoardSection)
 		throws Exception {
 
@@ -1320,7 +1320,7 @@ public abstract class BaseMessageBoardSectionResourceTestCase {
 						"Object/messageBoardSectionByFriendlyUrlPath"))));
 	}
 
-	protected Long
+	protected String
 			testGraphQLGetSiteMessageBoardSectionByFriendlyUrlPath_getSiteId(
 				MessageBoardSection messageBoardSection)
 		throws Exception {
@@ -1412,8 +1412,8 @@ public abstract class BaseMessageBoardSectionResourceTestCase {
 
 	@Test
 	public void testGetSiteMessageBoardSectionsPage() throws Exception {
-		Long siteId = testGetSiteMessageBoardSectionsPage_getSiteId();
-		Long irrelevantSiteId =
+		String siteId = testGetSiteMessageBoardSectionsPage_getSiteId();
+		String irrelevantSiteId =
 			testGetSiteMessageBoardSectionsPage_getIrrelevantSiteId();
 
 		Page<MessageBoardSection> page =
@@ -1471,7 +1471,8 @@ public abstract class BaseMessageBoardSectionResourceTestCase {
 	}
 
 	protected Map<String, Map<String, String>>
-			testGetSiteMessageBoardSectionsPage_getExpectedActions(Long siteId)
+			testGetSiteMessageBoardSectionsPage_getExpectedActions(
+				String siteId)
 		throws Exception {
 
 		Map<String, Map<String, String>> expectedActions = new HashMap<>();
@@ -1499,7 +1500,7 @@ public abstract class BaseMessageBoardSectionResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteMessageBoardSectionsPage_getSiteId();
+		String siteId = testGetSiteMessageBoardSectionsPage_getSiteId();
 
 		MessageBoardSection messageBoardSection1 = randomMessageBoardSection();
 
@@ -1563,7 +1564,7 @@ public abstract class BaseMessageBoardSectionResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteMessageBoardSectionsPage_getSiteId();
+		String siteId = testGetSiteMessageBoardSectionsPage_getSiteId();
 
 		MessageBoardSection messageBoardSection1 =
 			testGetSiteMessageBoardSectionsPage_addMessageBoardSection(
@@ -1592,7 +1593,7 @@ public abstract class BaseMessageBoardSectionResourceTestCase {
 	public void testGetSiteMessageBoardSectionsPageWithPagination()
 		throws Exception {
 
-		Long siteId = testGetSiteMessageBoardSectionsPage_getSiteId();
+		String siteId = testGetSiteMessageBoardSectionsPage_getSiteId();
 
 		Page<MessageBoardSection> messageBoardSectionsPage =
 			messageBoardSectionResource.getSiteMessageBoardSectionsPage(
@@ -1807,7 +1808,7 @@ public abstract class BaseMessageBoardSectionResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteMessageBoardSectionsPage_getSiteId();
+		String siteId = testGetSiteMessageBoardSectionsPage_getSiteId();
 
 		MessageBoardSection messageBoardSection1 = randomMessageBoardSection();
 		MessageBoardSection messageBoardSection2 = randomMessageBoardSection();
@@ -1860,20 +1861,20 @@ public abstract class BaseMessageBoardSectionResourceTestCase {
 
 	protected MessageBoardSection
 			testGetSiteMessageBoardSectionsPage_addMessageBoardSection(
-				Long siteId, MessageBoardSection messageBoardSection)
+				String siteId, MessageBoardSection messageBoardSection)
 		throws Exception {
 
 		return messageBoardSectionResource.postSiteMessageBoardSection(
 			siteId, messageBoardSection);
 	}
 
-	protected Long testGetSiteMessageBoardSectionsPage_getSiteId()
+	protected String testGetSiteMessageBoardSectionsPage_getSiteId()
 		throws Exception {
 
 		return testGroup.getGroupId();
 	}
 
-	protected Long testGetSiteMessageBoardSectionsPage_getIrrelevantSiteId()
+	protected String testGetSiteMessageBoardSectionsPage_getIrrelevantSiteId()
 		throws Exception {
 
 		return irrelevantGroup.getGroupId();
@@ -1881,7 +1882,7 @@ public abstract class BaseMessageBoardSectionResourceTestCase {
 
 	@Test
 	public void testGraphQLGetSiteMessageBoardSectionsPage() throws Exception {
-		Long siteId = testGetSiteMessageBoardSectionsPage_getSiteId();
+		String siteId = testGetSiteMessageBoardSectionsPage_getSiteId();
 
 		GraphQLField graphQLField = new GraphQLField(
 			"messageBoardSections",

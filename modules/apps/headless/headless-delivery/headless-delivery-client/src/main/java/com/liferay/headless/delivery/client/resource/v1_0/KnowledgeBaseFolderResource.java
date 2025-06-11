@@ -53,12 +53,12 @@ public interface KnowledgeBaseFolderResource {
 		throws Exception;
 
 	public void deleteSiteKnowledgeBaseFolderByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			deleteSiteKnowledgeBaseFolderByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public KnowledgeBaseFolder getKnowledgeBaseFolder(
@@ -90,29 +90,29 @@ public interface KnowledgeBaseFolderResource {
 
 	public KnowledgeBaseFolder
 			getSiteKnowledgeBaseFolderByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteKnowledgeBaseFolderByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public Page<Permission> getSiteKnowledgeBaseFolderPermissionsPage(
-			Long siteId, String roleNames)
+			String siteId, String roleNames)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteKnowledgeBaseFolderPermissionsPageHttpResponse(
-				Long siteId, String roleNames)
+				String siteId, String roleNames)
 		throws Exception;
 
 	public Page<KnowledgeBaseFolder> getSiteKnowledgeBaseFoldersPage(
-			Long siteId, Pagination pagination)
+			String siteId, Pagination pagination)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse getSiteKnowledgeBaseFoldersPageHttpResponse(
-			Long siteId, Pagination pagination)
+			String siteId, Pagination pagination)
 		throws Exception;
 
 	public KnowledgeBaseFolder patchKnowledgeBaseFolder(
@@ -135,30 +135,30 @@ public interface KnowledgeBaseFolderResource {
 		throws Exception;
 
 	public KnowledgeBaseFolder postSiteKnowledgeBaseFolder(
-			Long siteId, KnowledgeBaseFolder knowledgeBaseFolder)
+			String siteId, KnowledgeBaseFolder knowledgeBaseFolder)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse postSiteKnowledgeBaseFolderHttpResponse(
-			Long siteId, KnowledgeBaseFolder knowledgeBaseFolder)
+			String siteId, KnowledgeBaseFolder knowledgeBaseFolder)
 		throws Exception;
 
 	public void postSiteKnowledgeBaseFolderBatch(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			postSiteKnowledgeBaseFolderBatchHttpResponse(
-				Long siteId, String callbackURL, Object object)
+				String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public void postSiteKnowledgeBaseFoldersPageExportBatch(
-			Long siteId, String callbackURL, String contentType,
+			String siteId, String callbackURL, String contentType,
 			String fieldNames)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			postSiteKnowledgeBaseFoldersPageExportBatchHttpResponse(
-				Long siteId, String callbackURL, String contentType,
+				String siteId, String callbackURL, String contentType,
 				String fieldNames)
 		throws Exception;
 
@@ -188,23 +188,23 @@ public interface KnowledgeBaseFolderResource {
 
 	public KnowledgeBaseFolder
 			putSiteKnowledgeBaseFolderByExternalReferenceCode(
-				Long siteId, String externalReferenceCode,
+				String siteId, String externalReferenceCode,
 				KnowledgeBaseFolder knowledgeBaseFolder)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			putSiteKnowledgeBaseFolderByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode,
+				String siteId, String externalReferenceCode,
 				KnowledgeBaseFolder knowledgeBaseFolder)
 		throws Exception;
 
 	public Page<Permission> putSiteKnowledgeBaseFolderPermissionsPage(
-			Long siteId, Permission[] permissions)
+			String siteId, Permission[] permissions)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			putSiteKnowledgeBaseFolderPermissionsPageHttpResponse(
-				Long siteId, Permission[] permissions)
+				String siteId, Permission[] permissions)
 		throws Exception;
 
 	public static class Builder {
@@ -523,7 +523,7 @@ public interface KnowledgeBaseFolderResource {
 		}
 
 		public void deleteSiteKnowledgeBaseFolderByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -591,7 +591,7 @@ public interface KnowledgeBaseFolderResource {
 
 		public HttpInvoker.HttpResponse
 				deleteSiteKnowledgeBaseFolderByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode)
+					String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -968,7 +968,7 @@ public interface KnowledgeBaseFolderResource {
 
 		public KnowledgeBaseFolder
 				getSiteKnowledgeBaseFolderByExternalReferenceCode(
-					Long siteId, String externalReferenceCode)
+					String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1036,7 +1036,7 @@ public interface KnowledgeBaseFolderResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteKnowledgeBaseFolderByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode)
+					String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1077,7 +1077,7 @@ public interface KnowledgeBaseFolderResource {
 		}
 
 		public Page<Permission> getSiteKnowledgeBaseFolderPermissionsPage(
-				Long siteId, String roleNames)
+				String siteId, String roleNames)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1145,7 +1145,7 @@ public interface KnowledgeBaseFolderResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteKnowledgeBaseFolderPermissionsPageHttpResponse(
-					Long siteId, String roleNames)
+					String siteId, String roleNames)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1189,7 +1189,7 @@ public interface KnowledgeBaseFolderResource {
 		}
 
 		public Page<KnowledgeBaseFolder> getSiteKnowledgeBaseFoldersPage(
-				Long siteId, Pagination pagination)
+				String siteId, Pagination pagination)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1256,7 +1256,7 @@ public interface KnowledgeBaseFolderResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteKnowledgeBaseFoldersPageHttpResponse(
-					Long siteId, Pagination pagination)
+					String siteId, Pagination pagination)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1529,7 +1529,7 @@ public interface KnowledgeBaseFolderResource {
 		}
 
 		public KnowledgeBaseFolder postSiteKnowledgeBaseFolder(
-				Long siteId, KnowledgeBaseFolder knowledgeBaseFolder)
+				String siteId, KnowledgeBaseFolder knowledgeBaseFolder)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1596,7 +1596,7 @@ public interface KnowledgeBaseFolderResource {
 		}
 
 		public HttpInvoker.HttpResponse postSiteKnowledgeBaseFolderHttpResponse(
-				Long siteId, KnowledgeBaseFolder knowledgeBaseFolder)
+				String siteId, KnowledgeBaseFolder knowledgeBaseFolder)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1639,7 +1639,7 @@ public interface KnowledgeBaseFolderResource {
 		}
 
 		public void postSiteKnowledgeBaseFolderBatch(
-				Long siteId, String callbackURL, Object object)
+				String siteId, String callbackURL, Object object)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1696,7 +1696,7 @@ public interface KnowledgeBaseFolderResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteKnowledgeBaseFolderBatchHttpResponse(
-					Long siteId, String callbackURL, Object object)
+					String siteId, String callbackURL, Object object)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1743,7 +1743,7 @@ public interface KnowledgeBaseFolderResource {
 		}
 
 		public void postSiteKnowledgeBaseFoldersPageExportBatch(
-				Long siteId, String callbackURL, String contentType,
+				String siteId, String callbackURL, String contentType,
 				String fieldNames)
 			throws Exception {
 
@@ -1801,7 +1801,7 @@ public interface KnowledgeBaseFolderResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteKnowledgeBaseFoldersPageExportBatchHttpResponse(
-					Long siteId, String callbackURL, String contentType,
+					String siteId, String callbackURL, String contentType,
 					String fieldNames)
 			throws Exception {
 
@@ -2187,7 +2187,7 @@ public interface KnowledgeBaseFolderResource {
 
 		public KnowledgeBaseFolder
 				putSiteKnowledgeBaseFolderByExternalReferenceCode(
-					Long siteId, String externalReferenceCode,
+					String siteId, String externalReferenceCode,
 					KnowledgeBaseFolder knowledgeBaseFolder)
 			throws Exception {
 
@@ -2256,7 +2256,7 @@ public interface KnowledgeBaseFolderResource {
 
 		public HttpInvoker.HttpResponse
 				putSiteKnowledgeBaseFolderByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode,
+					String siteId, String externalReferenceCode,
 					KnowledgeBaseFolder knowledgeBaseFolder)
 			throws Exception {
 
@@ -2301,7 +2301,7 @@ public interface KnowledgeBaseFolderResource {
 		}
 
 		public Page<Permission> putSiteKnowledgeBaseFolderPermissionsPage(
-				Long siteId, Permission[] permissions)
+				String siteId, Permission[] permissions)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -2369,7 +2369,7 @@ public interface KnowledgeBaseFolderResource {
 
 		public HttpInvoker.HttpResponse
 				putSiteKnowledgeBaseFolderPermissionsPageHttpResponse(
-					Long siteId, Permission[] permissions)
+					String siteId, Permission[] permissions)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();

@@ -118,7 +118,7 @@ public abstract class BaseWikiPageResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("externalReferenceCode")
@@ -246,7 +246,7 @@ public abstract class BaseWikiPageResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("externalReferenceCode")
@@ -735,7 +735,7 @@ public abstract class BaseWikiPageResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("externalReferenceCode")
@@ -1000,8 +1000,9 @@ public abstract class BaseWikiPageResourceImpl
 			if (StringUtil.equalsIgnoreCase(updateStrategy, "UPDATE")) {
 				wikiPageUnsafeFunction =
 					wikiPage -> putSiteWikiPageByExternalReferenceCode(
-						wikiPage.getSiteId() != null ? wikiPage.getSiteId() :
-							(Long)parameters.get("siteId"),
+						wikiPage.getSiteId() != null ?
+							String.valueOf(wikiPage.getSiteId()) :
+								(String)parameters.get("siteId"),
 						wikiPage.getExternalReferenceCode(), wikiPage);
 			}
 		}

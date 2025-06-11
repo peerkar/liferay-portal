@@ -54,7 +54,7 @@ public interface StructuredContentResource {
 		throws Exception;
 
 	public void deleteSiteStructuredContentByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public void deleteStructuredContent(Long structuredContentId)
@@ -94,24 +94,24 @@ public interface StructuredContentResource {
 		throws Exception;
 
 	public StructuredContent getSiteStructuredContentByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public StructuredContent getSiteStructuredContentByKey(
-			Long siteId, String key)
+			String siteId, String key)
 		throws Exception;
 
 	public StructuredContent getSiteStructuredContentByUuid(
-			Long siteId, String uuid)
+			String siteId, String uuid)
 		throws Exception;
 
 	public Page<com.liferay.portal.vulcan.permission.Permission>
 			getSiteStructuredContentPermissionsPage(
-				Long siteId, String roleNames)
+				String siteId, String roleNames)
 		throws Exception;
 
 	public Page<StructuredContent> getSiteStructuredContentsPage(
-			Long siteId, Boolean flatten, String search,
+			String siteId, Boolean flatten, String search,
 			com.liferay.portal.vulcan.aggregation.Aggregation aggregation,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			Pagination pagination,
@@ -174,15 +174,15 @@ public interface StructuredContentResource {
 		throws Exception;
 
 	public StructuredContent postSiteStructuredContent(
-			Long siteId, StructuredContent structuredContent)
+			String siteId, StructuredContent structuredContent)
 		throws Exception;
 
 	public Response postSiteStructuredContentBatch(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public Response postSiteStructuredContentsPageExportBatch(
-			Long siteId, String search,
+			String siteId, String search,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			com.liferay.portal.kernel.search.Sort[] sorts, String callbackURL,
 			String contentType, String fieldNames)
@@ -221,13 +221,13 @@ public interface StructuredContentResource {
 		throws Exception;
 
 	public StructuredContent putSiteStructuredContentByExternalReferenceCode(
-			Long siteId, String externalReferenceCode,
+			String siteId, String externalReferenceCode,
 			StructuredContent structuredContent)
 		throws Exception;
 
 	public Page<com.liferay.portal.vulcan.permission.Permission>
 			putSiteStructuredContentPermissionsPage(
-				Long siteId,
+				String siteId,
 				com.liferay.portal.vulcan.permission.Permission[] permissions)
 		throws Exception;
 

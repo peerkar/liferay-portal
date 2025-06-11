@@ -60,7 +60,7 @@ public interface KnowledgeBaseArticleResource {
 		throws Exception;
 
 	public void deleteSiteKnowledgeBaseArticleByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public KnowledgeBaseArticle getKnowledgeBaseArticle(
@@ -96,16 +96,16 @@ public interface KnowledgeBaseArticleResource {
 
 	public KnowledgeBaseArticle
 			getSiteKnowledgeBaseArticleByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public Page<com.liferay.portal.vulcan.permission.Permission>
 			getSiteKnowledgeBaseArticlePermissionsPage(
-				Long siteId, String roleNames)
+				String siteId, String roleNames)
 		throws Exception;
 
 	public Page<KnowledgeBaseArticle> getSiteKnowledgeBaseArticlesPage(
-			Long siteId, Boolean flatten, String search,
+			String siteId, Boolean flatten, String search,
 			com.liferay.portal.vulcan.aggregation.Aggregation aggregation,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			Pagination pagination,
@@ -143,15 +143,15 @@ public interface KnowledgeBaseArticleResource {
 		throws Exception;
 
 	public KnowledgeBaseArticle postSiteKnowledgeBaseArticle(
-			Long siteId, KnowledgeBaseArticle knowledgeBaseArticle)
+			String siteId, KnowledgeBaseArticle knowledgeBaseArticle)
 		throws Exception;
 
 	public Response postSiteKnowledgeBaseArticleBatch(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public Response postSiteKnowledgeBaseArticlesPageExportBatch(
-			Long siteId, String search,
+			String siteId, String search,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			com.liferay.portal.kernel.search.Sort[] sorts, String callbackURL,
 			String contentType, String fieldNames)
@@ -184,20 +184,20 @@ public interface KnowledgeBaseArticleResource {
 
 	public KnowledgeBaseArticle
 			putSiteKnowledgeBaseArticleByExternalReferenceCode(
-				Long siteId, String externalReferenceCode,
+				String siteId, String externalReferenceCode,
 				KnowledgeBaseArticle knowledgeBaseArticle)
 		throws Exception;
 
 	public Page<com.liferay.portal.vulcan.permission.Permission>
 			putSiteKnowledgeBaseArticlePermissionsPage(
-				Long siteId,
+				String siteId,
 				com.liferay.portal.vulcan.permission.Permission[] permissions)
 		throws Exception;
 
-	public void putSiteKnowledgeBaseArticleSubscribe(Long siteId)
+	public void putSiteKnowledgeBaseArticleSubscribe(String siteId)
 		throws Exception;
 
-	public void putSiteKnowledgeBaseArticleUnsubscribe(Long siteId)
+	public void putSiteKnowledgeBaseArticleUnsubscribe(String siteId)
 		throws Exception;
 
 	public default void setContextAcceptLanguage(

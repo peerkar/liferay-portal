@@ -59,12 +59,12 @@ public interface BlogPostingResource {
 		throws Exception;
 
 	public void deleteSiteBlogPostingByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			deleteSiteBlogPostingByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public BlogPosting getBlogPosting(Long blogPostingId) throws Exception;
@@ -97,30 +97,30 @@ public interface BlogPostingResource {
 		throws Exception;
 
 	public BlogPosting getSiteBlogPostingByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteBlogPostingByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public Page<Permission> getSiteBlogPostingPermissionsPage(
-			Long siteId, String roleNames)
+			String siteId, String roleNames)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteBlogPostingPermissionsPageHttpResponse(
-				Long siteId, String roleNames)
+				String siteId, String roleNames)
 		throws Exception;
 
 	public Page<BlogPosting> getSiteBlogPostingsPage(
-			Long siteId, String search, List<String> aggregations,
+			String siteId, String search, List<String> aggregations,
 			String filterString, Pagination pagination, String sortString)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse getSiteBlogPostingsPageHttpResponse(
-			Long siteId, String search, List<String> aggregations,
+			String siteId, String search, List<String> aggregations,
 			String filterString, Pagination pagination, String sortString)
 		throws Exception;
 
@@ -139,29 +139,31 @@ public interface BlogPostingResource {
 			Long blogPostingId, Rating rating)
 		throws Exception;
 
-	public BlogPosting postSiteBlogPosting(Long siteId, BlogPosting blogPosting)
+	public BlogPosting postSiteBlogPosting(
+			String siteId, BlogPosting blogPosting)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse postSiteBlogPostingHttpResponse(
-			Long siteId, BlogPosting blogPosting)
+			String siteId, BlogPosting blogPosting)
 		throws Exception;
 
 	public void postSiteBlogPostingBatch(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse postSiteBlogPostingBatchHttpResponse(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public void postSiteBlogPostingsPageExportBatch(
-			Long siteId, String search, String filterString, String sortString,
-			String callbackURL, String contentType, String fieldNames)
+			String siteId, String search, String filterString,
+			String sortString, String callbackURL, String contentType,
+			String fieldNames)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			postSiteBlogPostingsPageExportBatchHttpResponse(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				String sortString, String callbackURL, String contentType,
 				String fieldNames)
 		throws Exception;
@@ -197,34 +199,35 @@ public interface BlogPostingResource {
 		throws Exception;
 
 	public BlogPosting putSiteBlogPostingByExternalReferenceCode(
-			Long siteId, String externalReferenceCode, BlogPosting blogPosting)
+			String siteId, String externalReferenceCode,
+			BlogPosting blogPosting)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			putSiteBlogPostingByExternalReferenceCodeHttpResponse(
-				Long siteId, String externalReferenceCode,
+				String siteId, String externalReferenceCode,
 				BlogPosting blogPosting)
 		throws Exception;
 
 	public Page<Permission> putSiteBlogPostingPermissionsPage(
-			Long siteId, Permission[] permissions)
+			String siteId, Permission[] permissions)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			putSiteBlogPostingPermissionsPageHttpResponse(
-				Long siteId, Permission[] permissions)
+				String siteId, Permission[] permissions)
 		throws Exception;
 
-	public void putSiteBlogPostingSubscribe(Long siteId) throws Exception;
+	public void putSiteBlogPostingSubscribe(String siteId) throws Exception;
 
 	public HttpInvoker.HttpResponse putSiteBlogPostingSubscribeHttpResponse(
-			Long siteId)
+			String siteId)
 		throws Exception;
 
-	public void putSiteBlogPostingUnsubscribe(Long siteId) throws Exception;
+	public void putSiteBlogPostingUnsubscribe(String siteId) throws Exception;
 
 	public HttpInvoker.HttpResponse putSiteBlogPostingUnsubscribeHttpResponse(
-			Long siteId)
+			String siteId)
 		throws Exception;
 
 	public static class Builder {
@@ -643,7 +646,7 @@ public interface BlogPostingResource {
 		}
 
 		public void deleteSiteBlogPostingByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -711,7 +714,7 @@ public interface BlogPostingResource {
 
 		public HttpInvoker.HttpResponse
 				deleteSiteBlogPostingByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode)
+					String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1181,7 +1184,7 @@ public interface BlogPostingResource {
 		}
 
 		public BlogPosting getSiteBlogPostingByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1249,7 +1252,7 @@ public interface BlogPostingResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteBlogPostingByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode)
+					String siteId, String externalReferenceCode)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1290,7 +1293,7 @@ public interface BlogPostingResource {
 		}
 
 		public Page<Permission> getSiteBlogPostingPermissionsPage(
-				Long siteId, String roleNames)
+				String siteId, String roleNames)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1358,7 +1361,7 @@ public interface BlogPostingResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteBlogPostingPermissionsPageHttpResponse(
-					Long siteId, String roleNames)
+					String siteId, String roleNames)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1402,7 +1405,7 @@ public interface BlogPostingResource {
 		}
 
 		public Page<BlogPosting> getSiteBlogPostingsPage(
-				Long siteId, String search, List<String> aggregations,
+				String siteId, String search, List<String> aggregations,
 				String filterString, Pagination pagination, String sortString)
 			throws Exception {
 
@@ -1471,7 +1474,7 @@ public interface BlogPostingResource {
 		}
 
 		public HttpInvoker.HttpResponse getSiteBlogPostingsPageHttpResponse(
-				Long siteId, String search, List<String> aggregations,
+				String siteId, String search, List<String> aggregations,
 				String filterString, Pagination pagination, String sortString)
 			throws Exception {
 
@@ -1746,7 +1749,7 @@ public interface BlogPostingResource {
 		}
 
 		public BlogPosting postSiteBlogPosting(
-				Long siteId, BlogPosting blogPosting)
+				String siteId, BlogPosting blogPosting)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1812,7 +1815,7 @@ public interface BlogPostingResource {
 		}
 
 		public HttpInvoker.HttpResponse postSiteBlogPostingHttpResponse(
-				Long siteId, BlogPosting blogPosting)
+				String siteId, BlogPosting blogPosting)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1854,7 +1857,7 @@ public interface BlogPostingResource {
 		}
 
 		public void postSiteBlogPostingBatch(
-				Long siteId, String callbackURL, Object object)
+				String siteId, String callbackURL, Object object)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1910,7 +1913,7 @@ public interface BlogPostingResource {
 		}
 
 		public HttpInvoker.HttpResponse postSiteBlogPostingBatchHttpResponse(
-				Long siteId, String callbackURL, Object object)
+				String siteId, String callbackURL, Object object)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1957,7 +1960,7 @@ public interface BlogPostingResource {
 		}
 
 		public void postSiteBlogPostingsPageExportBatch(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				String sortString, String callbackURL, String contentType,
 				String fieldNames)
 			throws Exception {
@@ -2017,7 +2020,7 @@ public interface BlogPostingResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteBlogPostingsPageExportBatchHttpResponse(
-					Long siteId, String search, String filterString,
+					String siteId, String search, String filterString,
 					String sortString, String callbackURL, String contentType,
 					String fieldNames)
 			throws Exception {
@@ -2517,7 +2520,7 @@ public interface BlogPostingResource {
 		}
 
 		public BlogPosting putSiteBlogPostingByExternalReferenceCode(
-				Long siteId, String externalReferenceCode,
+				String siteId, String externalReferenceCode,
 				BlogPosting blogPosting)
 			throws Exception {
 
@@ -2586,7 +2589,7 @@ public interface BlogPostingResource {
 
 		public HttpInvoker.HttpResponse
 				putSiteBlogPostingByExternalReferenceCodeHttpResponse(
-					Long siteId, String externalReferenceCode,
+					String siteId, String externalReferenceCode,
 					BlogPosting blogPosting)
 			throws Exception {
 
@@ -2630,7 +2633,7 @@ public interface BlogPostingResource {
 		}
 
 		public Page<Permission> putSiteBlogPostingPermissionsPage(
-				Long siteId, Permission[] permissions)
+				String siteId, Permission[] permissions)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -2698,7 +2701,7 @@ public interface BlogPostingResource {
 
 		public HttpInvoker.HttpResponse
 				putSiteBlogPostingPermissionsPageHttpResponse(
-					Long siteId, Permission[] permissions)
+					String siteId, Permission[] permissions)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -2745,7 +2748,9 @@ public interface BlogPostingResource {
 			return httpInvoker.invoke();
 		}
 
-		public void putSiteBlogPostingSubscribe(Long siteId) throws Exception {
+		public void putSiteBlogPostingSubscribe(String siteId)
+			throws Exception {
+
 			HttpInvoker.HttpResponse httpResponse =
 				putSiteBlogPostingSubscribeHttpResponse(siteId);
 
@@ -2809,7 +2814,7 @@ public interface BlogPostingResource {
 		}
 
 		public HttpInvoker.HttpResponse putSiteBlogPostingSubscribeHttpResponse(
-				Long siteId)
+				String siteId)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -2850,7 +2855,7 @@ public interface BlogPostingResource {
 			return httpInvoker.invoke();
 		}
 
-		public void putSiteBlogPostingUnsubscribe(Long siteId)
+		public void putSiteBlogPostingUnsubscribe(String siteId)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -2916,7 +2921,7 @@ public interface BlogPostingResource {
 		}
 
 		public HttpInvoker.HttpResponse
-				putSiteBlogPostingUnsubscribeHttpResponse(Long siteId)
+				putSiteBlogPostingUnsubscribeHttpResponse(String siteId)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();

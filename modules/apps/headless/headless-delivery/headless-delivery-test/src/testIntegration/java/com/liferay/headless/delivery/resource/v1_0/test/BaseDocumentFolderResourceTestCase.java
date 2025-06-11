@@ -456,7 +456,7 @@ public abstract class BaseDocumentFolderResourceTestCase {
 					"-"));
 	}
 
-	protected Long
+	protected String
 			testDeleteSiteDocumentsFolderByExternalReferenceCode_getSiteId(
 				DocumentFolder documentFolder)
 		throws Exception {
@@ -1961,8 +1961,8 @@ public abstract class BaseDocumentFolderResourceTestCase {
 
 	@Test
 	public void testGetSiteDocumentFoldersPage() throws Exception {
-		Long siteId = testGetSiteDocumentFoldersPage_getSiteId();
-		Long irrelevantSiteId =
+		String siteId = testGetSiteDocumentFoldersPage_getSiteId();
+		String irrelevantSiteId =
 			testGetSiteDocumentFoldersPage_getIrrelevantSiteId();
 
 		Page<DocumentFolder> page =
@@ -2015,7 +2015,7 @@ public abstract class BaseDocumentFolderResourceTestCase {
 	}
 
 	protected Map<String, Map<String, String>>
-			testGetSiteDocumentFoldersPage_getExpectedActions(Long siteId)
+			testGetSiteDocumentFoldersPage_getExpectedActions(String siteId)
 		throws Exception {
 
 		Map<String, Map<String, String>> expectedActions = new HashMap<>();
@@ -2043,7 +2043,7 @@ public abstract class BaseDocumentFolderResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteDocumentFoldersPage_getSiteId();
+		String siteId = testGetSiteDocumentFoldersPage_getSiteId();
 
 		DocumentFolder documentFolder1 = randomDocumentFolder();
 
@@ -2103,7 +2103,7 @@ public abstract class BaseDocumentFolderResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteDocumentFoldersPage_getSiteId();
+		String siteId = testGetSiteDocumentFoldersPage_getSiteId();
 
 		DocumentFolder documentFolder1 =
 			testGetSiteDocumentFoldersPage_addDocumentFolder(
@@ -2131,7 +2131,7 @@ public abstract class BaseDocumentFolderResourceTestCase {
 	public void testGetSiteDocumentFoldersPageWithPagination()
 		throws Exception {
 
-		Long siteId = testGetSiteDocumentFoldersPage_getSiteId();
+		String siteId = testGetSiteDocumentFoldersPage_getSiteId();
 
 		Page<DocumentFolder> documentFoldersPage =
 			documentFolderResource.getSiteDocumentFoldersPage(
@@ -2339,7 +2339,7 @@ public abstract class BaseDocumentFolderResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteDocumentFoldersPage_getSiteId();
+		String siteId = testGetSiteDocumentFoldersPage_getSiteId();
 
 		DocumentFolder documentFolder1 = randomDocumentFolder();
 		DocumentFolder documentFolder2 = randomDocumentFolder();
@@ -2385,18 +2385,20 @@ public abstract class BaseDocumentFolderResourceTestCase {
 	}
 
 	protected DocumentFolder testGetSiteDocumentFoldersPage_addDocumentFolder(
-			Long siteId, DocumentFolder documentFolder)
+			String siteId, DocumentFolder documentFolder)
 		throws Exception {
 
 		return documentFolderResource.postSiteDocumentFolder(
 			siteId, documentFolder);
 	}
 
-	protected Long testGetSiteDocumentFoldersPage_getSiteId() throws Exception {
+	protected String testGetSiteDocumentFoldersPage_getSiteId()
+		throws Exception {
+
 		return testGroup.getGroupId();
 	}
 
-	protected Long testGetSiteDocumentFoldersPage_getIrrelevantSiteId()
+	protected String testGetSiteDocumentFoldersPage_getIrrelevantSiteId()
 		throws Exception {
 
 		return irrelevantGroup.getGroupId();
@@ -2404,7 +2406,7 @@ public abstract class BaseDocumentFolderResourceTestCase {
 
 	@Test
 	public void testGraphQLGetSiteDocumentFoldersPage() throws Exception {
-		Long siteId = testGetSiteDocumentFoldersPage_getSiteId();
+		String siteId = testGetSiteDocumentFoldersPage_getSiteId();
 
 		GraphQLField graphQLField = new GraphQLField(
 			"documentFolders",
@@ -2482,8 +2484,8 @@ public abstract class BaseDocumentFolderResourceTestCase {
 
 	@Test
 	public void testGetSiteDocumentFoldersRatedByMePage() throws Exception {
-		Long siteId = testGetSiteDocumentFoldersRatedByMePage_getSiteId();
-		Long irrelevantSiteId =
+		String siteId = testGetSiteDocumentFoldersRatedByMePage_getSiteId();
+		String irrelevantSiteId =
 			testGetSiteDocumentFoldersRatedByMePage_getIrrelevantSiteId();
 
 		Page<DocumentFolder> page =
@@ -2537,7 +2539,7 @@ public abstract class BaseDocumentFolderResourceTestCase {
 
 	protected Map<String, Map<String, String>>
 			testGetSiteDocumentFoldersRatedByMePage_getExpectedActions(
-				Long siteId)
+				String siteId)
 		throws Exception {
 
 		Map<String, Map<String, String>> expectedActions = new HashMap<>();
@@ -2549,7 +2551,7 @@ public abstract class BaseDocumentFolderResourceTestCase {
 	public void testGetSiteDocumentFoldersRatedByMePageWithPagination()
 		throws Exception {
 
-		Long siteId = testGetSiteDocumentFoldersRatedByMePage_getSiteId();
+		String siteId = testGetSiteDocumentFoldersRatedByMePage_getSiteId();
 
 		Page<DocumentFolder> documentFoldersPage =
 			documentFolderResource.getSiteDocumentFoldersRatedByMePage(
@@ -2646,20 +2648,21 @@ public abstract class BaseDocumentFolderResourceTestCase {
 
 	protected DocumentFolder
 			testGetSiteDocumentFoldersRatedByMePage_addDocumentFolder(
-				Long siteId, DocumentFolder documentFolder)
+				String siteId, DocumentFolder documentFolder)
 		throws Exception {
 
 		return documentFolderResource.postSiteDocumentFolder(
 			siteId, documentFolder);
 	}
 
-	protected Long testGetSiteDocumentFoldersRatedByMePage_getSiteId()
+	protected String testGetSiteDocumentFoldersRatedByMePage_getSiteId()
 		throws Exception {
 
 		return testGroup.getGroupId();
 	}
 
-	protected Long testGetSiteDocumentFoldersRatedByMePage_getIrrelevantSiteId()
+	protected String
+			testGetSiteDocumentFoldersRatedByMePage_getIrrelevantSiteId()
 		throws Exception {
 
 		return irrelevantGroup.getGroupId();
@@ -2683,8 +2686,9 @@ public abstract class BaseDocumentFolderResourceTestCase {
 		assertValid(getDocumentFolder);
 	}
 
-	protected Long testGetSiteDocumentsFolderByExternalReferenceCode_getSiteId(
-			DocumentFolder documentFolder)
+	protected String
+			testGetSiteDocumentsFolderByExternalReferenceCode_getSiteId(
+				DocumentFolder documentFolder)
 		throws Exception {
 
 		return documentFolder.getSiteId();
@@ -2768,7 +2772,7 @@ public abstract class BaseDocumentFolderResourceTestCase {
 						"Object/documentsFolderByExternalReferenceCode"))));
 	}
 
-	protected Long
+	protected String
 			testGraphQLGetSiteDocumentsFolderByExternalReferenceCode_getSiteId(
 				DocumentFolder documentFolder)
 		throws Exception {
@@ -3218,8 +3222,9 @@ public abstract class BaseDocumentFolderResourceTestCase {
 			putDocumentFolder.getExternalReferenceCode());
 	}
 
-	protected Long testPutSiteDocumentsFolderByExternalReferenceCode_getSiteId(
-			DocumentFolder documentFolder)
+	protected String
+			testPutSiteDocumentsFolderByExternalReferenceCode_getSiteId(
+				DocumentFolder documentFolder)
 		throws Exception {
 
 		return documentFolder.getSiteId();

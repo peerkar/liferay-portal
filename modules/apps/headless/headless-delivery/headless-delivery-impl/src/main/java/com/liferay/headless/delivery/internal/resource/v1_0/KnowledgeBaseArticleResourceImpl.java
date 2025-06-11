@@ -58,6 +58,7 @@ import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.SearchUtil;
 import com.liferay.ratings.kernel.service.RatingsEntryLocalService;
 
@@ -98,12 +99,14 @@ public class KnowledgeBaseArticleResourceImpl
 
 	@Override
 	public void deleteSiteKnowledgeBaseArticleByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception {
 
 		KBArticle kbArticle =
 			_kbArticleLocalService.getLatestKBArticleByExternalReferenceCode(
-				siteId, externalReferenceCode);
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService),
+				externalReferenceCode);
 
 		_kbArticleService.deleteKBArticle(kbArticle.getResourcePrimKey());
 	}
@@ -245,33 +248,38 @@ public class KnowledgeBaseArticleResourceImpl
 	@Override
 	public KnowledgeBaseArticle
 			getSiteKnowledgeBaseArticleByExternalReferenceCode(
-				Long siteId, String externalReferenceCode)
+				String siteId, String externalReferenceCode)
 		throws Exception {
 
 		return _toKnowledgeBaseArticle(
 			_kbArticleService.getLatestKBArticleByExternalReferenceCode(
-				siteId, externalReferenceCode));
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService),
+				externalReferenceCode));
 	}
 
 	@Override
 	public Page<KnowledgeBaseArticle> getSiteKnowledgeBaseArticlesPage(
-			Long siteId, Boolean flatten, String search,
+			String siteId, Boolean flatten, String search,
 			Aggregation aggregation, Filter filter, Pagination pagination,
 			Sort[] sorts)
 		throws Exception {
+
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
 		return _getKnowledgeBaseArticlesPage(
 			HashMapBuilder.put(
 				"create",
 				addAction(
 					KBActionKeys.ADD_KB_ARTICLE, "postSiteKnowledgeBaseArticle",
-					KBConstants.RESOURCE_NAME_ADMIN, siteId)
+					KBConstants.RESOURCE_NAME_ADMIN, groupId)
 			).put(
 				"createBatch",
 				addAction(
 					KBActionKeys.ADD_KB_ARTICLE,
 					"postSiteKnowledgeBaseArticleBatch",
-					KBConstants.RESOURCE_NAME_ADMIN, siteId)
+					KBConstants.RESOURCE_NAME_ADMIN, groupId)
 			).put(
 				"deleteBatch",
 				addAction(
@@ -282,19 +290,19 @@ public class KnowledgeBaseArticleResourceImpl
 				"get",
 				addAction(
 					ActionKeys.VIEW, "getSiteKnowledgeBaseArticlesPage",
-					KBConstants.RESOURCE_NAME_ADMIN, siteId)
+					KBConstants.RESOURCE_NAME_ADMIN, groupId)
 			).put(
 				"subscribe",
 				addAction(
 					ActionKeys.SUBSCRIBE,
 					"putSiteKnowledgeBaseArticleSubscribe",
-					KBConstants.RESOURCE_NAME_ADMIN, siteId)
+					KBConstants.RESOURCE_NAME_ADMIN, groupId)
 			).put(
 				"unsubscribe",
 				addAction(
 					ActionKeys.SUBSCRIBE,
 					"putSiteKnowledgeBaseArticleUnsubscribe",
-					KBConstants.RESOURCE_NAME_ADMIN, siteId)
+					KBConstants.RESOURCE_NAME_ADMIN, groupId)
 			).put(
 				"updateBatch",
 				addAction(
@@ -315,7 +323,7 @@ public class KnowledgeBaseArticleResourceImpl
 						BooleanClauseOccur.MUST);
 				}
 			},
-			siteId, search, aggregation, filter, pagination, sorts);
+			groupId, search, aggregation, filter, pagination, sorts);
 	}
 
 	@Override
@@ -362,11 +370,13 @@ public class KnowledgeBaseArticleResourceImpl
 
 	@Override
 	public KnowledgeBaseArticle postSiteKnowledgeBaseArticle(
-			Long siteId, KnowledgeBaseArticle knowledgeBaseArticle)
+			String siteId, KnowledgeBaseArticle knowledgeBaseArticle)
 		throws Exception {
 
 		return _addKnowledgeBaseArticle(
-			knowledgeBaseArticle.getExternalReferenceCode(), siteId,
+			knowledgeBaseArticle.getExternalReferenceCode(),
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService),
 			_portal.getClassNameId(KBFolder.class.getName()), null,
 			knowledgeBaseArticle);
 	}
@@ -415,13 +425,16 @@ public class KnowledgeBaseArticleResourceImpl
 	@Override
 	public KnowledgeBaseArticle
 			putSiteKnowledgeBaseArticleByExternalReferenceCode(
-				Long siteId, String externalReferenceCode,
+				String siteId, String externalReferenceCode,
 				KnowledgeBaseArticle knowledgeBaseArticle)
 		throws Exception {
 
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
+
 		KBArticle kbArticle =
 			_kbArticleLocalService.fetchLatestKBArticleByExternalReferenceCode(
-				siteId, externalReferenceCode);
+				groupId, externalReferenceCode);
 
 		if (kbArticle != null) {
 			return _updateKnowledgeBaseArticle(kbArticle, knowledgeBaseArticle);
@@ -443,24 +456,28 @@ public class KnowledgeBaseArticleResourceImpl
 		}
 
 		return _addKnowledgeBaseArticle(
-			externalReferenceCode, siteId, parentResourceClassNameId,
+			externalReferenceCode, groupId, parentResourceClassNameId,
 			parentResourcePrimaryKey, knowledgeBaseArticle);
 	}
 
 	@Override
-	public void putSiteKnowledgeBaseArticleSubscribe(Long siteId)
+	public void putSiteKnowledgeBaseArticleSubscribe(String siteId)
 		throws Exception {
 
 		_kbArticleService.subscribeGroupKBArticles(
-			siteId, KBPortletKeys.KNOWLEDGE_BASE_DISPLAY);
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService),
+			KBPortletKeys.KNOWLEDGE_BASE_DISPLAY);
 	}
 
 	@Override
-	public void putSiteKnowledgeBaseArticleUnsubscribe(Long siteId)
+	public void putSiteKnowledgeBaseArticleUnsubscribe(String siteId)
 		throws Exception {
 
 		_kbArticleService.unsubscribeGroupKBArticles(
-			siteId, KBPortletKeys.KNOWLEDGE_BASE_DISPLAY);
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService),
+			KBPortletKeys.KNOWLEDGE_BASE_DISPLAY);
 	}
 
 	@Override

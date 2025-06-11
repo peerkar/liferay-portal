@@ -671,7 +671,7 @@ public abstract class BaseContentTemplateResourceTestCase {
 		assertValid(getContentTemplate);
 	}
 
-	protected Long testGetSiteContentTemplate_getSiteId(
+	protected String testGetSiteContentTemplate_getSiteId(
 			ContentTemplate contentTemplate)
 		throws Exception {
 
@@ -749,7 +749,7 @@ public abstract class BaseContentTemplateResourceTestCase {
 						"Object/contentTemplate"))));
 	}
 
-	protected Long testGraphQLGetSiteContentTemplate_getSiteId(
+	protected String testGraphQLGetSiteContentTemplate_getSiteId(
 			ContentTemplate contentTemplate)
 		throws Exception {
 
@@ -818,8 +818,8 @@ public abstract class BaseContentTemplateResourceTestCase {
 
 	@Test
 	public void testGetSiteContentTemplatesPage() throws Exception {
-		Long siteId = testGetSiteContentTemplatesPage_getSiteId();
-		Long irrelevantSiteId =
+		String siteId = testGetSiteContentTemplatesPage_getSiteId();
+		String irrelevantSiteId =
 			testGetSiteContentTemplatesPage_getIrrelevantSiteId();
 
 		Page<ContentTemplate> page =
@@ -870,7 +870,7 @@ public abstract class BaseContentTemplateResourceTestCase {
 	}
 
 	protected Map<String, Map<String, String>>
-			testGetSiteContentTemplatesPage_getExpectedActions(Long siteId)
+			testGetSiteContentTemplatesPage_getExpectedActions(String siteId)
 		throws Exception {
 
 		Map<String, Map<String, String>> expectedActions = new HashMap<>();
@@ -889,7 +889,7 @@ public abstract class BaseContentTemplateResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteContentTemplatesPage_getSiteId();
+		String siteId = testGetSiteContentTemplatesPage_getSiteId();
 
 		ContentTemplate contentTemplate1 = randomContentTemplate();
 
@@ -951,7 +951,7 @@ public abstract class BaseContentTemplateResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteContentTemplatesPage_getSiteId();
+		String siteId = testGetSiteContentTemplatesPage_getSiteId();
 
 		ContentTemplate contentTemplate1 =
 			testGetSiteContentTemplatesPage_addContentTemplate(
@@ -979,7 +979,7 @@ public abstract class BaseContentTemplateResourceTestCase {
 	public void testGetSiteContentTemplatesPageWithPagination()
 		throws Exception {
 
-		Long siteId = testGetSiteContentTemplatesPage_getSiteId();
+		String siteId = testGetSiteContentTemplatesPage_getSiteId();
 
 		Page<ContentTemplate> contentTemplatesPage =
 			contentTemplateResource.getSiteContentTemplatesPage(
@@ -1187,7 +1187,7 @@ public abstract class BaseContentTemplateResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteContentTemplatesPage_getSiteId();
+		String siteId = testGetSiteContentTemplatesPage_getSiteId();
 
 		ContentTemplate contentTemplate1 = randomContentTemplate();
 		ContentTemplate contentTemplate2 = randomContentTemplate();
@@ -1234,20 +1234,20 @@ public abstract class BaseContentTemplateResourceTestCase {
 
 	protected ContentTemplate
 			testGetSiteContentTemplatesPage_addContentTemplate(
-				Long siteId, ContentTemplate contentTemplate)
+				String siteId, ContentTemplate contentTemplate)
 		throws Exception {
 
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
 	}
 
-	protected Long testGetSiteContentTemplatesPage_getSiteId()
+	protected String testGetSiteContentTemplatesPage_getSiteId()
 		throws Exception {
 
 		return testGroup.getGroupId();
 	}
 
-	protected Long testGetSiteContentTemplatesPage_getIrrelevantSiteId()
+	protected String testGetSiteContentTemplatesPage_getIrrelevantSiteId()
 		throws Exception {
 
 		return irrelevantGroup.getGroupId();
@@ -1255,7 +1255,7 @@ public abstract class BaseContentTemplateResourceTestCase {
 
 	@Test
 	public void testGraphQLGetSiteContentTemplatesPage() throws Exception {
-		Long siteId = testGetSiteContentTemplatesPage_getSiteId();
+		String siteId = testGetSiteContentTemplatesPage_getSiteId();
 
 		GraphQLField graphQLField = new GraphQLField(
 			"contentTemplates",

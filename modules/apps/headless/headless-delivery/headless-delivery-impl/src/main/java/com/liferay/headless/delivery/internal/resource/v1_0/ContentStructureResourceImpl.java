@@ -25,6 +25,7 @@ import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.vulcan.aggregation.Aggregation;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.SearchUtil;
 
 import jakarta.ws.rs.core.MultivaluedMap;
@@ -52,7 +53,8 @@ public class ContentStructureResourceImpl
 		throws Exception {
 
 		return getSiteContentStructuresPage(
-			assetLibraryId, search, aggregation, filter, pagination, sorts);
+			String.valueOf(assetLibraryId), search, aggregation, filter,
+			pagination, sorts);
 	}
 
 	@Override
@@ -70,8 +72,8 @@ public class ContentStructureResourceImpl
 
 	@Override
 	public Page<ContentStructure> getSiteContentStructuresPage(
-			Long siteId, String search, Aggregation aggregation, Filter filter,
-			Pagination pagination, Sort[] sorts)
+			String siteId, String search, Aggregation aggregation,
+			Filter filter, Pagination pagination, Sort[] sorts)
 		throws Exception {
 
 		return SearchUtil.search(
@@ -88,7 +90,12 @@ public class ContentStructureResourceImpl
 				searchContext.setAttribute(
 					"searchPermissionContext", StringPool.BLANK);
 				searchContext.setCompanyId(contextCompany.getCompanyId());
-				searchContext.setGroupIds(new long[] {siteId});
+				searchContext.setGroupIds(
+					new long[] {
+						GroupUtil.getGroupId(
+							contextCompany.getCompanyId(), siteId,
+							groupLocalService)
+					});
 			},
 			sorts,
 			document -> _toContentStructure(

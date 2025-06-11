@@ -46,6 +46,7 @@ import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.vulcan.aggregation.Aggregation;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.SearchUtil;
 
 import jakarta.ws.rs.ClientErrorException;
@@ -76,16 +77,19 @@ public class CommentResourceImpl extends BaseCommentResourceImpl {
 	@Override
 	public void
 			deleteSiteBlogPostingByExternalReferenceCodeBlogPostingExternalReferenceCodeCommentByExternalReferenceCode(
-				Long siteId, String blogPostingExternalReferenceCode,
+				String siteId, String blogPostingExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception {
 
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
+
 		BlogsEntry blogsEntry =
 			_blogsEntryService.getBlogsEntryByExternalReferenceCode(
-				siteId, blogPostingExternalReferenceCode);
+				groupId, blogPostingExternalReferenceCode);
 
 		com.liferay.portal.kernel.comment.Comment comment = _getComment(
-			externalReferenceCode, siteId, BlogsEntry.class.getName(),
+			externalReferenceCode, groupId, BlogsEntry.class.getName(),
 			blogsEntry.getEntryId());
 
 		_deleteComment(comment.getCommentId());
@@ -94,12 +98,14 @@ public class CommentResourceImpl extends BaseCommentResourceImpl {
 	@Override
 	public void
 			deleteSiteCommentByExternalReferenceCodeParentCommentExternalReferenceCodeCommentByExternalReferenceCode(
-				Long siteId, String parentCommentExternalReferenceCode,
+				String siteId, String parentCommentExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception {
 
 		com.liferay.portal.kernel.comment.Comment comment = _getComment(
-			externalReferenceCode, parentCommentExternalReferenceCode, siteId);
+			externalReferenceCode, parentCommentExternalReferenceCode,
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService));
 
 		_deleteComment(comment.getCommentId());
 	}
@@ -107,16 +113,19 @@ public class CommentResourceImpl extends BaseCommentResourceImpl {
 	@Override
 	public void
 			deleteSiteDocumentByExternalReferenceCodeDocumentExternalReferenceCodeCommentByExternalReferenceCode(
-				Long siteId, String documentExternalReferenceCode,
+				String siteId, String documentExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception {
 
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
+
 		DLFileEntry dlFileEntry =
 			_dlFileEntryService.getFileEntryByExternalReferenceCode(
-				documentExternalReferenceCode, siteId);
+				documentExternalReferenceCode, groupId);
 
 		com.liferay.portal.kernel.comment.Comment comment = _getComment(
-			externalReferenceCode, siteId, DLFileEntry.class.getName(),
+			externalReferenceCode, groupId, DLFileEntry.class.getName(),
 			dlFileEntry.getFileEntryId());
 
 		_deleteComment(comment.getCommentId());
@@ -125,16 +134,19 @@ public class CommentResourceImpl extends BaseCommentResourceImpl {
 	@Override
 	public void
 			deleteSiteStructuredContentByExternalReferenceCodeStructuredContentExternalReferenceCodeCommentByExternalReferenceCode(
-				Long siteId, String structuredContentExternalReferenceCode,
+				String siteId, String structuredContentExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception {
 
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
+
 		JournalArticle journalArticle =
 			_journalArticleService.getLatestArticleByExternalReferenceCode(
-				siteId, structuredContentExternalReferenceCode);
+				groupId, structuredContentExternalReferenceCode);
 
 		com.liferay.portal.kernel.comment.Comment comment = _getComment(
-			externalReferenceCode, siteId, JournalArticle.class.getName(),
+			externalReferenceCode, groupId, JournalArticle.class.getName(),
 			journalArticle.getResourcePrimKey());
 
 		_deleteComment(comment.getCommentId());
@@ -267,16 +279,19 @@ public class CommentResourceImpl extends BaseCommentResourceImpl {
 	@Override
 	public Comment
 			getSiteBlogPostingByExternalReferenceCodeBlogPostingExternalReferenceCodeCommentByExternalReferenceCode(
-				Long siteId, String blogPostingExternalReferenceCode,
+				String siteId, String blogPostingExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception {
 
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
+
 		BlogsEntry blogsEntry =
 			_blogsEntryService.getBlogsEntryByExternalReferenceCode(
-				siteId, blogPostingExternalReferenceCode);
+				groupId, blogPostingExternalReferenceCode);
 
 		com.liferay.portal.kernel.comment.Comment comment = _getComment(
-			externalReferenceCode, siteId, BlogsEntry.class.getName(),
+			externalReferenceCode, groupId, BlogsEntry.class.getName(),
 			blogsEntry.getEntryId());
 
 		_discussionPermission.checkViewPermission(
@@ -290,12 +305,14 @@ public class CommentResourceImpl extends BaseCommentResourceImpl {
 	@Override
 	public Comment
 			getSiteCommentByExternalReferenceCodeParentCommentExternalReferenceCodeCommentByExternalReferenceCode(
-				Long siteId, String parentCommentExternalReferenceCode,
+				String siteId, String parentCommentExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception {
 
 		com.liferay.portal.kernel.comment.Comment comment = _getComment(
-			externalReferenceCode, parentCommentExternalReferenceCode, siteId);
+			externalReferenceCode, parentCommentExternalReferenceCode,
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService));
 
 		_discussionPermission.checkViewPermission(
 			PermissionThreadLocal.getPermissionChecker(),
@@ -308,16 +325,19 @@ public class CommentResourceImpl extends BaseCommentResourceImpl {
 	@Override
 	public Comment
 			getSiteDocumentByExternalReferenceCodeDocumentExternalReferenceCodeCommentByExternalReferenceCode(
-				Long siteId, String documentExternalReferenceCode,
+				String siteId, String documentExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception {
 
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
+
 		DLFileEntry dlFileEntry =
 			_dlFileEntryService.getFileEntryByExternalReferenceCode(
-				documentExternalReferenceCode, siteId);
+				documentExternalReferenceCode, groupId);
 
 		com.liferay.portal.kernel.comment.Comment comment = _getComment(
-			externalReferenceCode, siteId, DLFileEntry.class.getName(),
+			externalReferenceCode, groupId, DLFileEntry.class.getName(),
 			dlFileEntry.getFileEntryId());
 
 		_discussionPermission.checkViewPermission(
@@ -331,16 +351,19 @@ public class CommentResourceImpl extends BaseCommentResourceImpl {
 	@Override
 	public Comment
 			getSiteStructuredContentByExternalReferenceCodeStructuredContentExternalReferenceCodeCommentByExternalReferenceCode(
-				Long siteId, String structuredContentExternalReferenceCode,
+				String siteId, String structuredContentExternalReferenceCode,
 				String externalReferenceCode)
 		throws Exception {
 
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
+
 		JournalArticle journalArticle =
 			_journalArticleService.getLatestArticleByExternalReferenceCode(
-				siteId, structuredContentExternalReferenceCode);
+				groupId, structuredContentExternalReferenceCode);
 
 		com.liferay.portal.kernel.comment.Comment comment = _getComment(
-			externalReferenceCode, siteId, JournalArticle.class.getName(),
+			externalReferenceCode, groupId, JournalArticle.class.getName(),
 			journalArticle.getResourcePrimKey());
 
 		_discussionPermission.checkViewPermission(
@@ -459,17 +482,20 @@ public class CommentResourceImpl extends BaseCommentResourceImpl {
 	@Override
 	public Comment
 			putSiteBlogPostingByExternalReferenceCodeBlogPostingExternalReferenceCodeCommentByExternalReferenceCode(
-				Long siteId, String blogPostingExternalReferenceCode,
+				String siteId, String blogPostingExternalReferenceCode,
 				String externalReferenceCode, Comment comment)
 		throws Exception {
 
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
+
 		BlogsEntry blogsEntry =
 			_blogsEntryService.getBlogsEntryByExternalReferenceCode(
-				siteId, blogPostingExternalReferenceCode);
+				groupId, blogPostingExternalReferenceCode);
 
 		com.liferay.portal.kernel.comment.Comment existingComment =
 			_fetchComment(
-				externalReferenceCode, siteId, BlogsEntry.class.getName(),
+				externalReferenceCode, groupId, BlogsEntry.class.getName(),
 				blogsEntry.getEntryId());
 
 		if (existingComment != null) {
@@ -487,16 +513,19 @@ public class CommentResourceImpl extends BaseCommentResourceImpl {
 	@Override
 	public Comment
 			putSiteCommentByExternalReferenceCodeParentCommentExternalReferenceCodeCommentByExternalReferenceCode(
-				Long siteId, String parentCommentExternalReferenceCode,
+				String siteId, String parentCommentExternalReferenceCode,
 				String externalReferenceCode, Comment comment)
 		throws Exception {
 
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
+
 		com.liferay.portal.kernel.comment.Comment parentComment = _getComment(
-			parentCommentExternalReferenceCode, siteId);
+			parentCommentExternalReferenceCode, groupId);
 
 		com.liferay.portal.kernel.comment.Comment existingComment =
 			_fetchComment(
-				externalReferenceCode, siteId, parentComment.getClassName(),
+				externalReferenceCode, groupId, parentComment.getClassName(),
 				parentComment.getClassPK());
 
 		if ((existingComment != null) &&
@@ -517,17 +546,20 @@ public class CommentResourceImpl extends BaseCommentResourceImpl {
 	@Override
 	public Comment
 			putSiteDocumentByExternalReferenceCodeDocumentExternalReferenceCodeCommentByExternalReferenceCode(
-				Long siteId, String documentExternalReferenceCode,
+				String siteId, String documentExternalReferenceCode,
 				String externalReferenceCode, Comment comment)
 		throws Exception {
 
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
+
 		DLFileEntry dlFileEntry =
 			_dlFileEntryService.getFileEntryByExternalReferenceCode(
-				documentExternalReferenceCode, siteId);
+				documentExternalReferenceCode, groupId);
 
 		com.liferay.portal.kernel.comment.Comment existingComment =
 			_fetchComment(
-				externalReferenceCode, siteId, DLFileEntry.class.getName(),
+				externalReferenceCode, groupId, DLFileEntry.class.getName(),
 				dlFileEntry.getFileEntryId());
 
 		if (existingComment != null) {
@@ -545,17 +577,20 @@ public class CommentResourceImpl extends BaseCommentResourceImpl {
 	@Override
 	public Comment
 			putSiteStructuredContentByExternalReferenceCodeStructuredContentExternalReferenceCodeCommentByExternalReferenceCode(
-				Long siteId, String structuredContentExternalReferenceCode,
+				String siteId, String structuredContentExternalReferenceCode,
 				String externalReferenceCode, Comment comment)
 		throws Exception {
 
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
+
 		JournalArticle journalArticle =
 			_journalArticleService.getLatestArticleByExternalReferenceCode(
-				siteId, structuredContentExternalReferenceCode);
+				groupId, structuredContentExternalReferenceCode);
 
 		com.liferay.portal.kernel.comment.Comment existingComment =
 			_fetchComment(
-				externalReferenceCode, siteId, JournalArticle.class.getName(),
+				externalReferenceCode, groupId, JournalArticle.class.getName(),
 				journalArticle.getResourcePrimKey());
 
 		if (existingComment != null) {

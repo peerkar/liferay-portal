@@ -71,7 +71,7 @@ public interface DocumentDataDefinitionTypeResource {
 
 	public Page<DocumentDataDefinitionType>
 			getSiteDocumentDataDefinitionTypesPage(
-				Long siteId, String search,
+				String siteId, String search,
 				com.liferay.portal.vulcan.aggregation.Aggregation aggregation,
 				com.liferay.portal.kernel.search.filter.Filter filter,
 				Pagination pagination,
@@ -96,15 +96,16 @@ public interface DocumentDataDefinitionTypeResource {
 		throws Exception;
 
 	public DocumentDataDefinitionType postSiteDocumentDataDefinitionType(
-			Long siteId, DocumentDataDefinitionType documentDataDefinitionType)
+			String siteId,
+			DocumentDataDefinitionType documentDataDefinitionType)
 		throws Exception;
 
 	public Response postSiteDocumentDataDefinitionTypeBatch(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public Response postSiteDocumentDataDefinitionTypesPageExportBatch(
-			Long siteId, String search,
+			String siteId, String search,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			com.liferay.portal.kernel.search.Sort[] sorts, String callbackURL,
 			String contentType, String fieldNames)

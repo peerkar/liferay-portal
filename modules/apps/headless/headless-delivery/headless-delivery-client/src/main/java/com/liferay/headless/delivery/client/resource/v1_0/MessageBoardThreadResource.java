@@ -115,31 +115,31 @@ public interface MessageBoardThreadResource {
 		throws Exception;
 
 	public MessageBoardThread getSiteMessageBoardThreadByFriendlyUrlPath(
-			Long siteId, String friendlyUrlPath)
+			String siteId, String friendlyUrlPath)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteMessageBoardThreadByFriendlyUrlPathHttpResponse(
-				Long siteId, String friendlyUrlPath)
+				String siteId, String friendlyUrlPath)
 		throws Exception;
 
 	public Page<Permission> getSiteMessageBoardThreadPermissionsPage(
-			Long siteId, String roleNames)
+			String siteId, String roleNames)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			getSiteMessageBoardThreadPermissionsPageHttpResponse(
-				Long siteId, String roleNames)
+				String siteId, String roleNames)
 		throws Exception;
 
 	public Page<MessageBoardThread> getSiteMessageBoardThreadsPage(
-			Long siteId, Boolean flatten, String search,
+			String siteId, Boolean flatten, String search,
 			List<String> aggregations, String filterString,
 			Pagination pagination, String sortString)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse getSiteMessageBoardThreadsPageHttpResponse(
-			Long siteId, Boolean flatten, String search,
+			String siteId, Boolean flatten, String search,
 			List<String> aggregations, String filterString,
 			Pagination pagination, String sortString)
 		throws Exception;
@@ -193,29 +193,30 @@ public interface MessageBoardThreadResource {
 		throws Exception;
 
 	public MessageBoardThread postSiteMessageBoardThread(
-			Long siteId, MessageBoardThread messageBoardThread)
+			String siteId, MessageBoardThread messageBoardThread)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse postSiteMessageBoardThreadHttpResponse(
-			Long siteId, MessageBoardThread messageBoardThread)
+			String siteId, MessageBoardThread messageBoardThread)
 		throws Exception;
 
 	public void postSiteMessageBoardThreadBatch(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse postSiteMessageBoardThreadBatchHttpResponse(
-			Long siteId, String callbackURL, Object object)
+			String siteId, String callbackURL, Object object)
 		throws Exception;
 
 	public void postSiteMessageBoardThreadsPageExportBatch(
-			Long siteId, String search, String filterString, String sortString,
-			String callbackURL, String contentType, String fieldNames)
+			String siteId, String search, String filterString,
+			String sortString, String callbackURL, String contentType,
+			String fieldNames)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			postSiteMessageBoardThreadsPageExportBatchHttpResponse(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				String sortString, String callbackURL, String contentType,
 				String fieldNames)
 		throws Exception;
@@ -268,12 +269,12 @@ public interface MessageBoardThreadResource {
 		throws Exception;
 
 	public Page<Permission> putSiteMessageBoardThreadPermissionsPage(
-			Long siteId, Permission[] permissions)
+			String siteId, Permission[] permissions)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
 			putSiteMessageBoardThreadPermissionsPageHttpResponse(
-				Long siteId, Permission[] permissions)
+				String siteId, Permission[] permissions)
 		throws Exception;
 
 	public static class Builder {
@@ -1298,7 +1299,7 @@ public interface MessageBoardThreadResource {
 		}
 
 		public MessageBoardThread getSiteMessageBoardThreadByFriendlyUrlPath(
-				Long siteId, String friendlyUrlPath)
+				String siteId, String friendlyUrlPath)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1366,7 +1367,7 @@ public interface MessageBoardThreadResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteMessageBoardThreadByFriendlyUrlPathHttpResponse(
-					Long siteId, String friendlyUrlPath)
+					String siteId, String friendlyUrlPath)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1407,7 +1408,7 @@ public interface MessageBoardThreadResource {
 		}
 
 		public Page<Permission> getSiteMessageBoardThreadPermissionsPage(
-				Long siteId, String roleNames)
+				String siteId, String roleNames)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -1475,7 +1476,7 @@ public interface MessageBoardThreadResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteMessageBoardThreadPermissionsPageHttpResponse(
-					Long siteId, String roleNames)
+					String siteId, String roleNames)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1519,7 +1520,7 @@ public interface MessageBoardThreadResource {
 		}
 
 		public Page<MessageBoardThread> getSiteMessageBoardThreadsPage(
-				Long siteId, Boolean flatten, String search,
+				String siteId, Boolean flatten, String search,
 				List<String> aggregations, String filterString,
 				Pagination pagination, String sortString)
 			throws Exception {
@@ -1590,7 +1591,7 @@ public interface MessageBoardThreadResource {
 
 		public HttpInvoker.HttpResponse
 				getSiteMessageBoardThreadsPageHttpResponse(
-					Long siteId, Boolean flatten, String search,
+					String siteId, Boolean flatten, String search,
 					List<String> aggregations, String filterString,
 					Pagination pagination, String sortString)
 			throws Exception {
@@ -2223,7 +2224,7 @@ public interface MessageBoardThreadResource {
 		}
 
 		public MessageBoardThread postSiteMessageBoardThread(
-				Long siteId, MessageBoardThread messageBoardThread)
+				String siteId, MessageBoardThread messageBoardThread)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -2290,7 +2291,7 @@ public interface MessageBoardThreadResource {
 		}
 
 		public HttpInvoker.HttpResponse postSiteMessageBoardThreadHttpResponse(
-				Long siteId, MessageBoardThread messageBoardThread)
+				String siteId, MessageBoardThread messageBoardThread)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -2332,7 +2333,7 @@ public interface MessageBoardThreadResource {
 		}
 
 		public void postSiteMessageBoardThreadBatch(
-				Long siteId, String callbackURL, Object object)
+				String siteId, String callbackURL, Object object)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -2389,7 +2390,7 @@ public interface MessageBoardThreadResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteMessageBoardThreadBatchHttpResponse(
-					Long siteId, String callbackURL, Object object)
+					String siteId, String callbackURL, Object object)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -2436,7 +2437,7 @@ public interface MessageBoardThreadResource {
 		}
 
 		public void postSiteMessageBoardThreadsPageExportBatch(
-				Long siteId, String search, String filterString,
+				String siteId, String search, String filterString,
 				String sortString, String callbackURL, String contentType,
 				String fieldNames)
 			throws Exception {
@@ -2496,7 +2497,7 @@ public interface MessageBoardThreadResource {
 
 		public HttpInvoker.HttpResponse
 				postSiteMessageBoardThreadsPageExportBatchHttpResponse(
-					Long siteId, String search, String filterString,
+					String siteId, String search, String filterString,
 					String sortString, String callbackURL, String contentType,
 					String fieldNames)
 			throws Exception {
@@ -3221,7 +3222,7 @@ public interface MessageBoardThreadResource {
 		}
 
 		public Page<Permission> putSiteMessageBoardThreadPermissionsPage(
-				Long siteId, Permission[] permissions)
+				String siteId, Permission[] permissions)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
@@ -3289,7 +3290,7 @@ public interface MessageBoardThreadResource {
 
 		public HttpInvoker.HttpResponse
 				putSiteMessageBoardThreadPermissionsPageHttpResponse(
-					Long siteId, Permission[] permissions)
+					String siteId, Permission[] permissions)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();

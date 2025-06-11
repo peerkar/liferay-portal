@@ -648,8 +648,8 @@ public abstract class BaseContentElementResourceTestCase {
 
 	@Test
 	public void testGetSiteContentElementsPage() throws Exception {
-		Long siteId = testGetSiteContentElementsPage_getSiteId();
-		Long irrelevantSiteId =
+		String siteId = testGetSiteContentElementsPage_getSiteId();
+		String irrelevantSiteId =
 			testGetSiteContentElementsPage_getIrrelevantSiteId();
 
 		Page<ContentElement> page =
@@ -698,7 +698,7 @@ public abstract class BaseContentElementResourceTestCase {
 	}
 
 	protected Map<String, Map<String, String>>
-			testGetSiteContentElementsPage_getExpectedActions(Long siteId)
+			testGetSiteContentElementsPage_getExpectedActions(String siteId)
 		throws Exception {
 
 		Map<String, Map<String, String>> expectedActions = new HashMap<>();
@@ -717,7 +717,7 @@ public abstract class BaseContentElementResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteContentElementsPage_getSiteId();
+		String siteId = testGetSiteContentElementsPage_getSiteId();
 
 		ContentElement contentElement1 = randomContentElement();
 
@@ -777,7 +777,7 @@ public abstract class BaseContentElementResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteContentElementsPage_getSiteId();
+		String siteId = testGetSiteContentElementsPage_getSiteId();
 
 		ContentElement contentElement1 =
 			testGetSiteContentElementsPage_addContentElement(
@@ -805,7 +805,7 @@ public abstract class BaseContentElementResourceTestCase {
 	public void testGetSiteContentElementsPageWithPagination()
 		throws Exception {
 
-		Long siteId = testGetSiteContentElementsPage_getSiteId();
+		String siteId = testGetSiteContentElementsPage_getSiteId();
 
 		Page<ContentElement> contentElementsPage =
 			contentElementResource.getSiteContentElementsPage(
@@ -1013,7 +1013,7 @@ public abstract class BaseContentElementResourceTestCase {
 			return;
 		}
 
-		Long siteId = testGetSiteContentElementsPage_getSiteId();
+		String siteId = testGetSiteContentElementsPage_getSiteId();
 
 		ContentElement contentElement1 = randomContentElement();
 		ContentElement contentElement2 = randomContentElement();
@@ -1059,18 +1059,20 @@ public abstract class BaseContentElementResourceTestCase {
 	}
 
 	protected ContentElement testGetSiteContentElementsPage_addContentElement(
-			Long siteId, ContentElement contentElement)
+			String siteId, ContentElement contentElement)
 		throws Exception {
 
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
 	}
 
-	protected Long testGetSiteContentElementsPage_getSiteId() throws Exception {
+	protected String testGetSiteContentElementsPage_getSiteId()
+		throws Exception {
+
 		return testGroup.getGroupId();
 	}
 
-	protected Long testGetSiteContentElementsPage_getIrrelevantSiteId()
+	protected String testGetSiteContentElementsPage_getIrrelevantSiteId()
 		throws Exception {
 
 		return irrelevantGroup.getGroupId();
@@ -1078,7 +1080,7 @@ public abstract class BaseContentElementResourceTestCase {
 
 	@Test
 	public void testGraphQLGetSiteContentElementsPage() throws Exception {
-		Long siteId = testGetSiteContentElementsPage_getSiteId();
+		String siteId = testGetSiteContentElementsPage_getSiteId();
 
 		GraphQLField graphQLField = new GraphQLField(
 			"contentElements",

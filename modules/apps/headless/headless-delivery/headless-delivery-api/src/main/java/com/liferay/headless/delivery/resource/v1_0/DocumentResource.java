@@ -62,7 +62,7 @@ public interface DocumentResource {
 	public void deleteDocumentMyRating(Long documentId) throws Exception;
 
 	public void deleteSiteDocumentByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public Document getAssetLibraryDocumentByExternalReferenceCode(
@@ -107,15 +107,15 @@ public interface DocumentResource {
 		throws Exception;
 
 	public Document getSiteDocumentByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception;
 
 	public Page<com.liferay.portal.vulcan.permission.Permission>
-			getSiteDocumentPermissionsPage(Long siteId, String roleNames)
+			getSiteDocumentPermissionsPage(String siteId, String roleNames)
 		throws Exception;
 
 	public Page<Document> getSiteDocumentsPage(
-			Long siteId, Boolean flatten, String search,
+			String siteId, Boolean flatten, String search,
 			com.liferay.portal.vulcan.aggregation.Aggregation aggregation,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			Pagination pagination,
@@ -123,7 +123,7 @@ public interface DocumentResource {
 		throws Exception;
 
 	public Page<Document> getSiteDocumentsRatedByMePage(
-			Long siteId, Pagination pagination)
+			String siteId, Pagination pagination)
 		throws Exception;
 
 	public Document patchDocument(Long documentId, MultipartBody multipartBody)
@@ -164,16 +164,16 @@ public interface DocumentResource {
 	public Rating postDocumentMyRating(Long documentId, Rating rating)
 		throws Exception;
 
-	public Document postSiteDocument(Long siteId, MultipartBody multipartBody)
+	public Document postSiteDocument(String siteId, MultipartBody multipartBody)
 		throws Exception;
 
 	public Response postSiteDocumentBatch(
-			Long siteId, MultipartBody multipartBody, String callbackURL,
+			String siteId, MultipartBody multipartBody, String callbackURL,
 			Object object)
 		throws Exception;
 
 	public Response postSiteDocumentsPageExportBatch(
-			Long siteId, String search,
+			String siteId, String search,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			com.liferay.portal.kernel.search.Sort[] sorts, String callbackURL,
 			String contentType, String fieldNames)
@@ -207,13 +207,13 @@ public interface DocumentResource {
 		throws Exception;
 
 	public Document putSiteDocumentByExternalReferenceCode(
-			Long siteId, String externalReferenceCode,
+			String siteId, String externalReferenceCode,
 			MultipartBody multipartBody)
 		throws Exception;
 
 	public Page<com.liferay.portal.vulcan.permission.Permission>
 			putSiteDocumentPermissionsPage(
-				Long siteId,
+				String siteId,
 				com.liferay.portal.vulcan.permission.Permission[] permissions)
 		throws Exception;
 

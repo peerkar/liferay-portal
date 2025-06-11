@@ -13,6 +13,7 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Localization;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.pagination.Page;
+import com.liferay.portal.vulcan.util.GroupUtil;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -37,13 +38,16 @@ public class LanguageResourceImpl extends BaseLanguageResourceImpl {
 	public Page<Language> getAssetLibraryLanguagesPage(Long assetLibraryId)
 		throws Exception {
 
-		return getSiteLanguagesPage(assetLibraryId);
+		return getSiteLanguagesPage(String.valueOf(assetLibraryId));
 	}
 
 	@Override
-	public Page<Language> getSiteLanguagesPage(Long siteId) throws Exception {
-		Set<Locale> availableLocales = _language.getAvailableLocales(siteId);
-		Locale defaultLocale = _getDefaultLocale(siteId);
+	public Page<Language> getSiteLanguagesPage(String siteId) throws Exception {
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
+
+		Set<Locale> availableLocales = _language.getAvailableLocales(groupId);
+		Locale defaultLocale = _getDefaultLocale(groupId);
 
 		return Page.of(
 			transform(

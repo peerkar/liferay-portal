@@ -52,6 +52,7 @@ import com.liferay.portal.vulcan.permission.ModelPermissionsUtil;
 import com.liferay.portal.vulcan.permission.Permission;
 import com.liferay.portal.vulcan.resource.EntityModelResource;
 import com.liferay.portal.vulcan.util.ActionUtil;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.UriInfoUtil;
 
 import jakarta.annotation.Generated;
@@ -207,7 +208,7 @@ public abstract class BaseKnowledgeBaseFolderResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("externalReferenceCode")
@@ -452,7 +453,7 @@ public abstract class BaseKnowledgeBaseFolderResourceImpl
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("siteId")
-				Long siteId,
+				String siteId,
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("externalReferenceCode")
@@ -506,15 +507,18 @@ public abstract class BaseKnowledgeBaseFolderResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.ws.rs.QueryParam("roleNames")
 			String roleNames)
 		throws Exception {
 
-		String portletName = getPermissionCheckerPortletName(siteId);
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
-		PermissionServiceUtil.checkPermission(siteId, portletName, siteId);
+		String portletName = getPermissionCheckerPortletName(groupId);
+
+		PermissionServiceUtil.checkPermission(groupId, portletName, groupId);
 
 		return toPermissionPage(
 			HashMapBuilder.put(
@@ -522,15 +526,15 @@ public abstract class BaseKnowledgeBaseFolderResourceImpl
 				addAction(
 					ActionKeys.PERMISSIONS,
 					"getSiteKnowledgeBaseFolderPermissionsPage", portletName,
-					siteId)
+					groupId)
 			).put(
 				"replace",
 				addAction(
 					ActionKeys.PERMISSIONS,
 					"putSiteKnowledgeBaseFolderPermissionsPage", portletName,
-					siteId)
+					groupId)
 			).build(),
-			siteId, portletName, roleNames);
+			groupId, portletName, roleNames);
 	}
 
 	/**
@@ -584,7 +588,7 @@ public abstract class BaseKnowledgeBaseFolderResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@jakarta.ws.rs.core.Context Pagination pagination)
 		throws Exception {
 
@@ -738,7 +742,7 @@ public abstract class BaseKnowledgeBaseFolderResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			KnowledgeBaseFolder knowledgeBaseFolder)
 		throws Exception {
 
@@ -778,7 +782,7 @@ public abstract class BaseKnowledgeBaseFolderResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.ws.rs.QueryParam("callbackURL")
 			String callbackURL,
@@ -842,7 +846,7 @@ public abstract class BaseKnowledgeBaseFolderResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.ws.rs.QueryParam("callbackURL")
 			String callbackURL,
@@ -1098,7 +1102,7 @@ public abstract class BaseKnowledgeBaseFolderResourceImpl
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("siteId")
-				Long siteId,
+				String siteId,
 				@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 				@jakarta.validation.constraints.NotNull
 				@jakarta.ws.rs.PathParam("externalReferenceCode")
@@ -1138,19 +1142,22 @@ public abstract class BaseKnowledgeBaseFolderResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			Permission[] permissions)
 		throws Exception {
 
-		String portletName = getPermissionCheckerPortletName(siteId);
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
-		PermissionServiceUtil.checkPermission(siteId, portletName, siteId);
+		String portletName = getPermissionCheckerPortletName(groupId);
+
+		PermissionServiceUtil.checkPermission(groupId, portletName, groupId);
 
 		ModelPermissions modelPermissions =
 			ModelPermissionsUtil.toModelPermissions(
-				contextCompany.getCompanyId(), permissions, siteId, portletName,
-				resourceActionLocalService, resourcePermissionLocalService,
-				roleLocalService);
+				contextCompany.getCompanyId(), permissions, groupId,
+				portletName, resourceActionLocalService,
+				resourcePermissionLocalService, roleLocalService);
 
 		Collection<String> roleNames = modelPermissions.getRoleNames();
 
@@ -1158,7 +1165,7 @@ public abstract class BaseKnowledgeBaseFolderResourceImpl
 				resourcePermissionLocalService.getResourcePermissions(
 					contextCompany.getCompanyId(), portletName,
 					ResourceConstants.SCOPE_INDIVIDUAL,
-					String.valueOf(siteId))) {
+					String.valueOf(groupId))) {
 
 			com.liferay.portal.kernel.model.Role role =
 				roleLocalService.fetchRole(resourcePermission.getRoleId());
@@ -1173,14 +1180,14 @@ public abstract class BaseKnowledgeBaseFolderResourceImpl
 
 				resourcePermissionLocalService.removeResourcePermission(
 					contextCompany.getCompanyId(), portletName,
-					ResourceConstants.SCOPE_INDIVIDUAL, String.valueOf(siteId),
+					ResourceConstants.SCOPE_INDIVIDUAL, String.valueOf(groupId),
 					role.getRoleId(), resourceAction.getActionId());
 			}
 		}
 
 		resourcePermissionLocalService.updateResourcePermissions(
-			contextCompany.getCompanyId(), siteId, portletName,
-			String.valueOf(siteId), modelPermissions);
+			contextCompany.getCompanyId(), groupId, portletName,
+			String.valueOf(groupId), modelPermissions);
 
 		return toPermissionPage(
 			HashMapBuilder.put(
@@ -1188,15 +1195,15 @@ public abstract class BaseKnowledgeBaseFolderResourceImpl
 				addAction(
 					ActionKeys.PERMISSIONS,
 					"getSiteKnowledgeBaseFolderPermissionsPage", portletName,
-					siteId)
+					groupId)
 			).put(
 				"replace",
 				addAction(
 					ActionKeys.PERMISSIONS,
 					"putSiteKnowledgeBaseFolderPermissionsPage", portletName,
-					siteId)
+					groupId)
 			).build(),
-			siteId, portletName, null);
+			groupId, portletName, null);
 	}
 
 	@Override
@@ -1216,7 +1223,7 @@ public abstract class BaseKnowledgeBaseFolderResourceImpl
 			if (parameters.containsKey("siteId")) {
 				knowledgeBaseFolderUnsafeFunction =
 					knowledgeBaseFolder -> postSiteKnowledgeBaseFolder(
-						(Long)parameters.get("siteId"), knowledgeBaseFolder);
+						(String)parameters.get("siteId"), knowledgeBaseFolder);
 			}
 			else {
 				throw new NotSupportedException(
@@ -1236,8 +1243,9 @@ public abstract class BaseKnowledgeBaseFolderResourceImpl
 						KnowledgeBaseFolder getKnowledgeBaseFolder =
 							getSiteKnowledgeBaseFolderByExternalReferenceCode(
 								knowledgeBaseFolder.getSiteId() != null ?
-									knowledgeBaseFolder.getSiteId() :
-										(Long)parameters.get("siteId"),
+									String.valueOf(
+										knowledgeBaseFolder.getSiteId()) :
+											(String)parameters.get("siteId"),
 								knowledgeBaseFolder.getExternalReferenceCode());
 
 						persistedKnowledgeBaseFolder = patchKnowledgeBaseFolder(
@@ -1252,7 +1260,7 @@ public abstract class BaseKnowledgeBaseFolderResourceImpl
 						if (parameters.containsKey("siteId")) {
 							persistedKnowledgeBaseFolder =
 								postSiteKnowledgeBaseFolder(
-									(Long)parameters.get("siteId"),
+									(String)parameters.get("siteId"),
 									knowledgeBaseFolder);
 						}
 					}
@@ -1265,8 +1273,8 @@ public abstract class BaseKnowledgeBaseFolderResourceImpl
 				knowledgeBaseFolderUnsafeFunction = knowledgeBaseFolder ->
 					putSiteKnowledgeBaseFolderByExternalReferenceCode(
 						knowledgeBaseFolder.getSiteId() != null ?
-							knowledgeBaseFolder.getSiteId() :
-								(Long)parameters.get("siteId"),
+							String.valueOf(knowledgeBaseFolder.getSiteId()) :
+								(String)parameters.get("siteId"),
 						knowledgeBaseFolder.getExternalReferenceCode(),
 						knowledgeBaseFolder);
 			}
@@ -1366,7 +1374,7 @@ public abstract class BaseKnowledgeBaseFolderResourceImpl
 
 		if (parameters.containsKey("siteId")) {
 			return getSiteKnowledgeBaseFoldersPage(
-				(Long)parameters.get("siteId"), pagination);
+				(String)parameters.get("siteId"), pagination);
 		}
 		else {
 			throw new NotSupportedException(

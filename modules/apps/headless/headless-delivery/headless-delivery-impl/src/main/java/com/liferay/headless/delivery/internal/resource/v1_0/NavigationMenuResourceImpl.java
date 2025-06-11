@@ -48,6 +48,7 @@ import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.permission.ModelPermissionsUtil;
 import com.liferay.portal.vulcan.permission.Permission;
 import com.liferay.portal.vulcan.permission.PermissionUtil;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.JaxRsLinkUtil;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 import com.liferay.portal.vulcan.util.SearchUtil;
@@ -91,11 +92,13 @@ public class NavigationMenuResourceImpl extends BaseNavigationMenuResourceImpl {
 
 	@Override
 	public void deleteSiteNavigationMenuByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception {
 
 		_siteNavigationMenuService.deleteSiteNavigationMenu(
-			externalReferenceCode, siteId);
+			externalReferenceCode,
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService));
 	}
 
 	@Override
@@ -114,20 +117,26 @@ public class NavigationMenuResourceImpl extends BaseNavigationMenuResourceImpl {
 
 	@Override
 	public NavigationMenu getSiteNavigationMenuByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception {
 
 		return _toNavigationMenu(
 			_siteNavigationMenuService.
 				getSiteNavigationMenuByExternalReferenceCode(
-					externalReferenceCode, siteId));
+					externalReferenceCode,
+					GroupUtil.getGroupId(
+						contextCompany.getCompanyId(), siteId,
+						groupLocalService)));
 	}
 
 	@Override
 	public Page<NavigationMenu> getSiteNavigationMenusPage(
-			Long siteId, String search, Filter filter, Pagination pagination,
+			String siteId, String search, Filter filter, Pagination pagination,
 			Sort[] sorts)
 		throws Exception {
+
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
 		return SearchUtil.search(
 			HashMapBuilder.put(
@@ -135,13 +144,13 @@ public class NavigationMenuResourceImpl extends BaseNavigationMenuResourceImpl {
 				addAction(
 					SiteNavigationActionKeys.ADD_SITE_NAVIGATION_MENU,
 					"postSiteNavigationMenu",
-					SiteNavigationConstants.RESOURCE_NAME, siteId)
+					SiteNavigationConstants.RESOURCE_NAME, groupId)
 			).put(
 				"createBatch",
 				addAction(
 					SiteNavigationActionKeys.ADD_SITE_NAVIGATION_MENU,
 					"postSiteNavigationMenuBatch",
-					SiteNavigationConstants.RESOURCE_NAME, siteId)
+					SiteNavigationConstants.RESOURCE_NAME, groupId)
 			).put(
 				"deleteBatch",
 				addAction(
@@ -160,7 +169,7 @@ public class NavigationMenuResourceImpl extends BaseNavigationMenuResourceImpl {
 				Field.ENTRY_CLASS_PK),
 			searchContext -> {
 				searchContext.setCompanyId(contextCompany.getCompanyId());
-				searchContext.setGroupIds(new long[] {siteId});
+				searchContext.setGroupIds(new long[] {groupId});
 			},
 			sorts,
 			document -> _toNavigationMenu(
@@ -170,11 +179,14 @@ public class NavigationMenuResourceImpl extends BaseNavigationMenuResourceImpl {
 
 	@Override
 	public NavigationMenu postSiteNavigationMenu(
-			Long siteId, NavigationMenu navigationMenu)
+			String siteId, NavigationMenu navigationMenu)
 		throws Exception {
 
 		return _addNavigationMenu(
-			navigationMenu.getExternalReferenceCode(), siteId, navigationMenu);
+			navigationMenu.getExternalReferenceCode(),
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService),
+			navigationMenu);
 	}
 
 	@Override
@@ -191,21 +203,24 @@ public class NavigationMenuResourceImpl extends BaseNavigationMenuResourceImpl {
 
 	@Override
 	public NavigationMenu putSiteNavigationMenuByExternalReferenceCode(
-			Long siteId, String externalReferenceCode,
+			String siteId, String externalReferenceCode,
 			NavigationMenu navigationMenu)
 		throws Exception {
+
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
 		SiteNavigationMenu siteNavigationMenu =
 			_siteNavigationMenuLocalService.
 				fetchSiteNavigationMenuByExternalReferenceCode(
-					externalReferenceCode, siteId);
+					externalReferenceCode, groupId);
 
 		if (siteNavigationMenu != null) {
 			return _updateNavigationMenu(navigationMenu, siteNavigationMenu);
 		}
 
 		return _addNavigationMenu(
-			externalReferenceCode, siteId, navigationMenu);
+			externalReferenceCode, groupId, navigationMenu);
 	}
 
 	@Override

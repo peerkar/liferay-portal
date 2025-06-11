@@ -50,6 +50,7 @@ import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.LocalDateTimeUtil;
 import com.liferay.portal.vulcan.util.SearchUtil;
 import com.liferay.ratings.kernel.service.RatingsEntryLocalService;
@@ -87,12 +88,14 @@ public class BlogPostingResourceImpl extends BaseBlogPostingResourceImpl {
 
 	@Override
 	public void deleteSiteBlogPostingByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception {
 
 		BlogsEntry blogsEntry =
 			_blogsEntryLocalService.getBlogsEntryByExternalReferenceCode(
-				externalReferenceCode, siteId);
+				externalReferenceCode,
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService));
 
 		_blogsEntryService.deleteEntry(blogsEntry.getEntryId());
 	}
@@ -137,31 +140,36 @@ public class BlogPostingResourceImpl extends BaseBlogPostingResourceImpl {
 
 	@Override
 	public BlogPosting getSiteBlogPostingByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception {
 
 		return _toBlogPosting(
 			_blogsEntryService.getBlogsEntryByExternalReferenceCode(
-				siteId, externalReferenceCode));
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService),
+				externalReferenceCode));
 	}
 
 	@Override
 	public Page<BlogPosting> getSiteBlogPostingsPage(
-			Long siteId, String search, Aggregation aggregation, Filter filter,
-			Pagination pagination, Sort[] sorts)
+			String siteId, String search, Aggregation aggregation,
+			Filter filter, Pagination pagination, Sort[] sorts)
 		throws Exception {
+
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
 		return SearchUtil.search(
 			HashMapBuilder.put(
 				"create",
 				addAction(
 					ActionKeys.ADD_ENTRY, "postSiteBlogPosting",
-					BlogsConstants.RESOURCE_NAME, siteId)
+					BlogsConstants.RESOURCE_NAME, groupId)
 			).put(
 				"createBatch",
 				addAction(
 					ActionKeys.ADD_ENTRY, "postSiteBlogPostingBatch",
-					BlogsConstants.RESOURCE_NAME, siteId)
+					BlogsConstants.RESOURCE_NAME, groupId)
 			).put(
 				"deleteBatch",
 				addAction(
@@ -171,12 +179,12 @@ public class BlogPostingResourceImpl extends BaseBlogPostingResourceImpl {
 				"subscribe",
 				addAction(
 					ActionKeys.SUBSCRIBE, "putSiteBlogPostingSubscribe",
-					BlogsConstants.RESOURCE_NAME, siteId)
+					BlogsConstants.RESOURCE_NAME, groupId)
 			).put(
 				"unsubscribe",
 				addAction(
 					ActionKeys.SUBSCRIBE, "putSiteBlogPostingUnsubscribe",
-					BlogsConstants.RESOURCE_NAME, siteId)
+					BlogsConstants.RESOURCE_NAME, groupId)
 			).put(
 				"updateBatch",
 				addAction(
@@ -193,7 +201,7 @@ public class BlogPostingResourceImpl extends BaseBlogPostingResourceImpl {
 				searchContext.setAttribute(
 					Field.STATUS, WorkflowConstants.STATUS_APPROVED);
 				searchContext.setCompanyId(contextCompany.getCompanyId());
-				searchContext.setGroupIds(new long[] {siteId});
+				searchContext.setGroupIds(new long[] {groupId});
 			},
 			sorts,
 			document -> _toBlogPosting(
@@ -212,11 +220,15 @@ public class BlogPostingResourceImpl extends BaseBlogPostingResourceImpl {
 	}
 
 	@Override
-	public BlogPosting postSiteBlogPosting(Long siteId, BlogPosting blogPosting)
+	public BlogPosting postSiteBlogPosting(
+			String siteId, BlogPosting blogPosting)
 		throws Exception {
 
 		return _addBlogPosting(
-			blogPosting.getExternalReferenceCode(), siteId, blogPosting);
+			blogPosting.getExternalReferenceCode(),
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService),
+			blogPosting);
 	}
 
 	@Override
@@ -241,28 +253,36 @@ public class BlogPostingResourceImpl extends BaseBlogPostingResourceImpl {
 
 	@Override
 	public BlogPosting putSiteBlogPostingByExternalReferenceCode(
-			Long siteId, String externalReferenceCode, BlogPosting blogPosting)
+			String siteId, String externalReferenceCode,
+			BlogPosting blogPosting)
 		throws Exception {
+
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
 		BlogsEntry blogsEntry =
 			_blogsEntryLocalService.fetchBlogsEntryByExternalReferenceCode(
-				externalReferenceCode, siteId);
+				externalReferenceCode, groupId);
 
 		if (blogsEntry != null) {
 			return _updateBlogPosting(blogsEntry, blogPosting);
 		}
 
-		return _addBlogPosting(externalReferenceCode, siteId, blogPosting);
+		return _addBlogPosting(externalReferenceCode, groupId, blogPosting);
 	}
 
 	@Override
-	public void putSiteBlogPostingSubscribe(Long siteId) throws Exception {
-		_blogsEntryService.subscribe(siteId);
+	public void putSiteBlogPostingSubscribe(String siteId) throws Exception {
+		_blogsEntryService.subscribe(
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService));
 	}
 
 	@Override
-	public void putSiteBlogPostingUnsubscribe(Long siteId) throws Exception {
-		_blogsEntryService.unsubscribe(siteId);
+	public void putSiteBlogPostingUnsubscribe(String siteId) throws Exception {
+		_blogsEntryService.unsubscribe(
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService));
 	}
 
 	@Override

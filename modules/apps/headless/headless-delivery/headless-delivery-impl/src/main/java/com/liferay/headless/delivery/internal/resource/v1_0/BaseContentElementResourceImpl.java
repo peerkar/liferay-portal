@@ -200,7 +200,7 @@ public abstract class BaseContentElementResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.ws.rs.QueryParam("search")
 			String search,
@@ -359,7 +359,7 @@ public abstract class BaseContentElementResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.validation.constraints.NotNull
 			@jakarta.ws.rs.PathParam("siteId")
-			Long siteId,
+			String siteId,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@jakarta.ws.rs.QueryParam("search")
 			String search,
@@ -465,7 +465,7 @@ public abstract class BaseContentElementResourceImpl
 		}
 		else if (parameters.containsKey("siteId")) {
 			return getSiteContentElementsPage(
-				(Long)parameters.get("siteId"), search, null, filter,
+				(String)parameters.get("siteId"), search, null, filter,
 				pagination, sorts);
 		}
 		else {

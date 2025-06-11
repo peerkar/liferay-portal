@@ -42,6 +42,7 @@ import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.SearchUtil;
 import com.liferay.wiki.constants.WikiConstants;
 import com.liferay.wiki.constants.WikiPageConstants;
@@ -68,12 +69,14 @@ public class WikiPageResourceImpl extends BaseWikiPageResourceImpl {
 
 	@Override
 	public void deleteSiteWikiPageByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception {
 
 		com.liferay.wiki.model.WikiPage wikiPage =
 			_wikiPageService.getLatestPageByExternalReferenceCode(
-				siteId, externalReferenceCode);
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService),
+				externalReferenceCode);
 
 		_wikiPageService.deletePage(wikiPage.getNodeId(), wikiPage.getTitle());
 	}
@@ -98,12 +101,14 @@ public class WikiPageResourceImpl extends BaseWikiPageResourceImpl {
 
 	@Override
 	public WikiPage getSiteWikiPageByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception {
 
 		return _toWikiPage(
 			_wikiPageService.getLatestPageByExternalReferenceCode(
-				siteId, externalReferenceCode));
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService),
+				externalReferenceCode));
 	}
 
 	@Override
@@ -232,12 +237,15 @@ public class WikiPageResourceImpl extends BaseWikiPageResourceImpl {
 
 	@Override
 	public WikiPage putSiteWikiPageByExternalReferenceCode(
-			Long siteId, String externalReferenceCode, WikiPage wikiPage)
+			String siteId, String externalReferenceCode, WikiPage wikiPage)
 		throws Exception {
+
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
 		com.liferay.wiki.model.WikiPage serviceBuilderWikiPage =
 			_wikiPageLocalService.fetchLatestPageByExternalReferenceCode(
-				siteId, externalReferenceCode);
+				groupId, externalReferenceCode);
 
 		if (serviceBuilderWikiPage != null) {
 			return _updateWikiPage(serviceBuilderWikiPage, wikiPage);
@@ -253,7 +261,7 @@ public class WikiPageResourceImpl extends BaseWikiPageResourceImpl {
 				wikiPage.getHeadline(), wikiPage.getContent(),
 				wikiPage.getDescription(), false,
 				_toFormat(wikiPage.getEncodingFormat()), null, null,
-				_createServiceContext(Constants.ADD, siteId, wikiPage)));
+				_createServiceContext(Constants.ADD, groupId, wikiPage)));
 	}
 
 	@Override

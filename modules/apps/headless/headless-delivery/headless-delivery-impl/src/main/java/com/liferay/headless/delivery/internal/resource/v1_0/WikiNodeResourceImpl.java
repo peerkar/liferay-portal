@@ -25,6 +25,7 @@ import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.SearchUtil;
 import com.liferay.wiki.constants.WikiConstants;
 import com.liferay.wiki.service.WikiNodeLocalService;
@@ -47,12 +48,14 @@ public class WikiNodeResourceImpl extends BaseWikiNodeResourceImpl {
 
 	@Override
 	public void deleteSiteWikiNodeByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception {
 
 		com.liferay.wiki.model.WikiNode wikiNode =
 			_wikiNodeLocalService.getWikiNodeByExternalReferenceCode(
-				externalReferenceCode, siteId);
+				externalReferenceCode,
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService));
 
 		_wikiNodeService.deleteNode(wikiNode.getNodeId());
 	}
@@ -69,31 +72,36 @@ public class WikiNodeResourceImpl extends BaseWikiNodeResourceImpl {
 
 	@Override
 	public WikiNode getSiteWikiNodeByExternalReferenceCode(
-			Long siteId, String externalReferenceCode)
+			String siteId, String externalReferenceCode)
 		throws Exception {
 
 		return _toWikiNode(
 			_wikiNodeService.getWikiNodeByExternalReferenceCode(
-				siteId, externalReferenceCode));
+				GroupUtil.getGroupId(
+					contextCompany.getCompanyId(), siteId, groupLocalService),
+				externalReferenceCode));
 	}
 
 	@Override
 	public Page<WikiNode> getSiteWikiNodesPage(
-			Long siteId, String search, Aggregation aggregation, Filter filter,
-			Pagination pagination, Sort[] sorts)
+			String siteId, String search, Aggregation aggregation,
+			Filter filter, Pagination pagination, Sort[] sorts)
 		throws Exception {
+
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
 		return SearchUtil.search(
 			HashMapBuilder.put(
 				"create",
 				addAction(
 					ActionKeys.ADD_NODE, "postSiteWikiNode",
-					WikiConstants.RESOURCE_NAME, siteId)
+					WikiConstants.RESOURCE_NAME, groupId)
 			).put(
 				"createBatch",
 				addAction(
 					ActionKeys.ADD_NODE, "postSiteWikiNodeBatch",
-					WikiConstants.RESOURCE_NAME, siteId)
+					WikiConstants.RESOURCE_NAME, groupId)
 			).put(
 				"deleteBatch",
 				addAction(
@@ -133,27 +141,33 @@ public class WikiNodeResourceImpl extends BaseWikiNodeResourceImpl {
 	}
 
 	@Override
-	public WikiNode postSiteWikiNode(Long siteId, WikiNode wikiNode)
+	public WikiNode postSiteWikiNode(String siteId, WikiNode wikiNode)
 		throws Exception {
 
 		return _addWikiNode(
-			wikiNode.getExternalReferenceCode(), siteId, wikiNode);
+			wikiNode.getExternalReferenceCode(),
+			GroupUtil.getGroupId(
+				contextCompany.getCompanyId(), siteId, groupLocalService),
+			wikiNode);
 	}
 
 	@Override
 	public WikiNode putSiteWikiNodeByExternalReferenceCode(
-			Long siteId, String externalReferenceCode, WikiNode wikiNode)
+			String siteId, String externalReferenceCode, WikiNode wikiNode)
 		throws Exception {
+
+		Long groupId = GroupUtil.getGroupId(
+			contextCompany.getCompanyId(), siteId, groupLocalService);
 
 		com.liferay.wiki.model.WikiNode serviceBuilderWikiNode =
 			_wikiNodeLocalService.fetchWikiNodeByExternalReferenceCode(
-				externalReferenceCode, siteId);
+				externalReferenceCode, groupId);
 
 		if (serviceBuilderWikiNode != null) {
 			return _updateWikiNode(serviceBuilderWikiNode, wikiNode);
 		}
 
-		return _addWikiNode(externalReferenceCode, siteId, wikiNode);
+		return _addWikiNode(externalReferenceCode, groupId, wikiNode);
 	}
 
 	@Override
