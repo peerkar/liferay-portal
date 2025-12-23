@@ -5,6 +5,7 @@
 
 package com.liferay.exportimport.kernel.lar;
 
+import com.liferay.exportimport.kernel.exception.MissingReferenceException;
 import com.liferay.exportimport.kernel.exception.handler.ImportStagedModelExceptionHandler;
 import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerList;
 import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerListFactory;
@@ -332,8 +333,9 @@ public class StagedModelDataHandlerUtil {
 			}
 
 			if (portletDataContext.isMissingReference(referenceElement)) {
-				stagedModelDataHandler.importMissingReference(
-					portletDataContext, referenceElement);
+				_importMissingReference(
+					portletDataContext, referenceElement,
+					stagedModelDataHandler);
 
 				continue;
 			}
@@ -417,8 +419,8 @@ public class StagedModelDataHandlerUtil {
 		}
 
 		if (portletDataContext.isMissingReference(referenceElement)) {
-			stagedModelDataHandler.importMissingReference(
-				portletDataContext, referenceElement);
+			_importMissingReference(
+				portletDataContext, referenceElement, stagedModelDataHandler);
 
 			return;
 		}
@@ -632,6 +634,43 @@ public class StagedModelDataHandlerUtil {
 		return (StagedModelDataHandler<T>)
 			StagedModelDataHandlerRegistryUtil.getStagedModelDataHandler(
 				ExportImportClassedModelUtil.getClassName(stagedModel));
+	}
+
+	private static void _importMissingReference(
+			PortletDataContext portletDataContext, Element referenceElement,
+			StagedModelDataHandler<?> stagedModelDataHandler)
+		throws PortletDataException {
+
+		try {
+			stagedModelDataHandler.importMissingReference(
+				portletDataContext, referenceElement);
+		}
+		catch (PortletDataException portletDataException) {
+			if (portletDataException.getCause() instanceof
+					MissingReferenceException missingReferenceException) {
+
+				String className = referenceElement.attributeValue(
+					"class-name");
+
+				long classPK = GetterUtil.getLong(
+					referenceElement.attributeValue("class-pk"));
+
+				String externalReferenceCode = GetterUtil.getString(
+					referenceElement.attributeValue("external-reference-code"));
+
+				for (ImportStagedModelExceptionHandler
+						importStagedModelExceptionHandler :
+							_serviceTrackerList) {
+
+					importStagedModelExceptionHandler.handle(
+						classPK, missingReferenceException,
+						externalReferenceCode, className, portletDataContext);
+				}
+			}
+			else {
+				throw portletDataException;
+			}
+		}
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
