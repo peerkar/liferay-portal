@@ -219,6 +219,7 @@ renderResponse.setTitle(headerTitle);
 			</liferay-ui:error>
 
 			<liferay-ui:error exception="<%= DuplicateFileEntryException.class %>" message="please-enter-a-unique-document-name" />
+			<liferay-ui:error exception="<%= DuplicateFileEntryExternalReferenceCodeException.class %>" message="please-enter-a-unique-external-reference-code" />
 			<liferay-ui:error exception="<%= DuplicateFolderNameException.class %>" message="please-enter-a-unique-document-name" />
 
 			<liferay-ui:error exception="<%= LiferayFileItemException.class %>">
@@ -340,6 +341,16 @@ renderResponse.setTitle(headerTitle);
 
 					<c:if test="<%= (folder == null) || folder.isSupportsMetadata() %>">
 						<aui:input name="description" />
+
+						<aui:field-wrapper cssClass="form-group" label="external-reference-code" name="externalReferenceCode">
+							<div class="small text-secondary"><liferay-ui:message key="unique-key-for-referencing-the-document-definition" /></div>
+
+							<div class="input-group">
+								<div class="input-group-item">
+									<aui:input disabled="<%= dlEditFileEntryDisplayContext.isERCFieldEnabled() %>" label="" name="externalReferenceCode" type="text" value="<%= dlEditFileEntryDisplayContext.getExternalReferenceCode() %>" />
+								</div>
+							</div>
+						</aui:field-wrapper>
 
 						<c:if test="<%= (folder == null) || (folder.getModel() instanceof DLFolder) %>">
 

@@ -37,8 +37,11 @@ public class JUnitDownstreamBuild extends BaseDownstreamBuild {
 		return false;
 	}
 
-	protected JUnitDownstreamBuild(String url, TopLevelBuild topLevelBuild) {
-		super(url, topLevelBuild);
+	protected JUnitDownstreamBuild(
+		String buildURL, DownstreamBuildReport cachedDownstreamBuildReport,
+		TopLevelBuild topLevelBuild) {
+
+		super(buildURL, cachedDownstreamBuildReport, topLevelBuild);
 	}
 
 }

@@ -796,6 +796,36 @@ public class ExportImportLayoutPageTemplateEntriesTest {
 	}
 
 	@Test
+	public void testImportExportLayoutPageTemplateEntryFragmentDateField()
+		throws Exception {
+
+		_addDateFragmentEntry();
+
+		Map<String, String> numberValuesMap = HashMapBuilder.put(
+			"CLASS_PK",
+			() -> {
+				JournalArticle journalArticle = _addJournalArticle(
+					_group1.getGroupId());
+
+				return String.valueOf(journalArticle.getResourcePrimKey());
+			}
+		).build();
+
+		Map<String, String> stringValuesMap = HashMapBuilder.put(
+			"SITE_KEY", _group1.getGroupKey()
+		).build();
+
+		File expectedFile = _generateZipFile(
+			"fragment/date_field/mapped/expected", numberValuesMap,
+			stringValuesMap);
+		File inputFile = _generateZipFile(
+			"fragment/date_field/mapped/input", numberValuesMap,
+			stringValuesMap);
+
+		_validateImportExport(expectedFile, inputFile);
+	}
+
+	@Test
 	public void testImportExportLayoutPageTemplateEntryFragmentHidden()
 		throws Exception {
 
@@ -1364,6 +1394,17 @@ public class ExportImportLayoutPageTemplateEntriesTest {
 			ServiceContextTestUtil.getServiceContext(groupId));
 	}
 
+	private void _addDateFragmentEntry() throws Exception {
+		String html =
+			"<div data-lfr-editable-id=\"element-date\" " +
+				"data-lfr-editable-type=\"date-time\">" +
+					"01/01/2025 00:00 AM</div>";
+
+		_addFragmentEntry(
+			_group1.getGroupId(), "test-date-fragment", "Test Date Fragment",
+			html);
+	}
+
 	private void _addDisplayPageTemplate(JournalArticle journalArticle)
 		throws Exception {
 
@@ -1453,14 +1494,15 @@ public class ExportImportLayoutPageTemplateEntriesTest {
 		ObjectDefinition objectDefinition =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
 				null, TestPropsValues.getUserId(), 0, null, false, true, false,
-				true, false, false, false, false, false, null,
+				true, false, false, false, false, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				ObjectDefinitionTestUtil.getRandomName(), null,
 				"control_panel.sites",
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				false, ObjectDefinitionConstants.SCOPE_SITE,
 				ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT,
-				Collections.emptyList(), null, Collections.emptyList());
+				Collections.emptyList(), null, Collections.emptyList(),
+				new ServiceContext());
 
 		ObjectField objectField = ObjectFieldUtil.addCustomObjectField(
 			new TextObjectFieldBuilder(

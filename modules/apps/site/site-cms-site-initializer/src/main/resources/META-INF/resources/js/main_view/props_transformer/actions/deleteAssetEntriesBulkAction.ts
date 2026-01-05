@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {openModal} from 'frontend-js-components-web';
 import {sub} from 'frontend-js-web';
 
 import SpaceService from '../../../common/services/SpaceService';
 import {IBulkActionFDSData} from '../../../common/types/BulkActionTask';
 import {getScopeExternalReferenceCode} from '../../../common/utils/getScopeExternalReferenceCode';
+import {openCMSModal} from '../../../common/utils/openCMSModal';
 import {isFromRecycleBin} from '../utils/isFromRecycleBin';
 import {triggerAssetBulkAction} from './triggerAssetBulkAction';
 
@@ -17,11 +17,13 @@ import {triggerAssetBulkAction} from './triggerAssetBulkAction';
  */
 export function executeBulkDeleteAction(
 	apiURL: string,
+	dataSetId: string,
 	selectedData: IBulkActionFDSData,
 	processClose?: () => void
 ): void {
 	triggerAssetBulkAction({
 		apiURL,
+		dataSetId,
 		onCreateSuccess: () => {
 			processClose?.();
 		},
@@ -83,9 +85,11 @@ async function getEntriesSpaces(
  */
 async function handleBulkDeletion({
 	apiURL,
+	dataSetId,
 	selectedData,
 }: {
 	apiURL: string;
+	dataSetId: string;
 	selectedData: IBulkActionFDSData;
 }): Promise<void> {
 	const spaces = await getEntriesSpaces(selectedData?.items || []);
@@ -107,7 +111,7 @@ async function handleBulkDeletion({
 	// Scenario 1: All spaces have trash disabled
 
 	if (noEntriesHaveTrashEnabled) {
-		showModal(apiURL, confirmationMessage, title, selectedData);
+		showModal(apiURL, confirmationMessage, dataSetId, title, selectedData);
 	}
 
 	// Scenario 2: Some spaces have trash enabled, but not all
@@ -117,6 +121,7 @@ async function handleBulkDeletion({
 			apiURL,
 			Liferay.Language.get('bulk-delete-cms-entries-confirmation'),
 			Liferay.Language.get('delete-entries'),
+			dataSetId,
 			selectedData
 		);
 	}
@@ -125,10 +130,16 @@ async function handleBulkDeletion({
 
 	else if (allEntriesHaveTrashEnabled) {
 		if (!isFromRecycleBin(selectedData)) {
-			executeBulkDeleteAction(apiURL, selectedData);
+			executeBulkDeleteAction(apiURL, dataSetId, selectedData);
 		}
 		else {
-			showModal(apiURL, confirmationMessage, title, selectedData);
+			showModal(
+				apiURL,
+				confirmationMessage,
+				dataSetId,
+				title,
+				selectedData
+			);
 		}
 	}
 }
@@ -139,10 +150,11 @@ async function handleBulkDeletion({
 async function showModal(
 	apiURL: string,
 	confirmationMessage: string,
+	dataSetId: string,
 	title: string,
 	selectedData: any
 ): Promise<void> {
-	openModal({
+	openCMSModal({
 		bodyHTML: `
 			<div>
 				<p>
@@ -165,7 +177,12 @@ async function showModal(
 				onClick: async ({processClose}: {processClose: () => void}) => {
 					processClose();
 
-					executeBulkDeleteAction(apiURL, selectedData, processClose);
+					executeBulkDeleteAction(
+						apiURL,
+						dataSetId,
+						selectedData,
+						processClose
+					);
 				},
 			},
 		],
@@ -180,10 +197,12 @@ async function showModal(
  */
 export default async function deleteAssetEntriesBulkAction({
 	apiURL = '',
+	dataSetId = '',
 	selectedData,
 }: {
 	apiURL?: string;
+	dataSetId?: string;
 	selectedData: IBulkActionFDSData;
 }): Promise<void> {
-	await handleBulkDeletion({apiURL, selectedData});
+	await handleBulkDeletion({apiURL, dataSetId, selectedData});
 }

@@ -462,7 +462,7 @@
 				/>
 			</delete>
 
-			<for list="app-server.properties,com.liferay.portal.tools.db.upgrade.client.jar,db_upgrade_client.bat,db_upgrade_client.sh,portal-upgrade-database.properties,portal-upgrade-ext.properties" param="upgrade.file">
+			<for list="app-server.properties,com.liferay.portal.tools.db.upgrade.client.jar,db_upgrade_client.bat,db_upgrade_client.sh,portal-upgrade-ext.properties" param="upgrade.file">
 				<sequential>
 					<if>
 						<available file="${db.upgrade.client.home}/@{upgrade.file}" />
@@ -490,35 +490,10 @@
 		<clean-database-upgrade-client />
 	</target>
 
-	<target name="check-upgrade-properties-app-db-set">
-		<get-database-upgrade-client-paths />
-
-		<prepare-database-upgrade-properties />
-
-		<delete file="${db.upgrade.client.home}/portal-upgrade-ext.properties" />
-
-		<run-expect
-			db.upgrade.client.home="${db.upgrade.client.home}"
-			expect.file="check-upgrade-properties-app-db-set.expect"
-			file.suffix.bat="${file.suffix.bat}"
-		/>
-
-		<fail message="Exception thrown, failing.">
-			<condition>
-				<resourcecontains
-					resource="${db.upgrade.client.log}"
-					substring="Exception"
-				/>
-			</condition>
-		</fail>
-	</target>
-
 	<target name="check-upgrade-properties-app-ext-set">
 		<get-database-upgrade-client-paths />
 
 		<prepare-database-upgrade-properties />
-
-		<delete file="${db.upgrade.client.home}/portal-upgrade-database.properties" />
 
 		<run-expect
 			db.upgrade.client.home="${db.upgrade.client.home}"
@@ -536,7 +511,30 @@
 		</fail>
 	</target>
 
-	<target name="check-upgrade-properties-db-ext-set">
+	<target name="check-upgrade-properties-app-set">
+		<get-database-upgrade-client-paths />
+
+		<prepare-database-upgrade-properties />
+
+		<delete file="${db.upgrade.client.home}/portal-upgrade-ext.properties" />
+
+		<run-expect
+			db.upgrade.client.home="${db.upgrade.client.home}"
+			expect.file="check-upgrade-properties-app-set.expect"
+			file.suffix.bat="${file.suffix.bat}"
+		/>
+
+		<fail message="Exception thrown, failing.">
+			<condition>
+				<resourcecontains
+					resource="${db.upgrade.client.log}"
+					substring="Exception"
+				/>
+			</condition>
+		</fail>
+	</target>
+
+	<target name="check-upgrade-properties-ext-set">
 		<get-database-upgrade-client-paths />
 
 		<prepare-database-upgrade-properties />
@@ -545,7 +543,7 @@
 
 		<run-expect
 			db.upgrade.client.home="${db.upgrade.client.home}"
-			expect.file="check-upgrade-properties-db-ext-set.expect"
+			expect.file="check-upgrade-properties-ext-set.expect"
 			file.suffix.bat="${file.suffix.bat}"
 		/>
 
@@ -565,8 +563,6 @@
 		<prepare-database-upgrade-properties />
 
 		<delete file="${db.upgrade.client.home}/app-server.properties" />
-
-		<delete file="${db.upgrade.client.home}/portal-upgrade-database.properties" />
 
 		<delete file="${db.upgrade.client.home}/portal-upgrade-ext.properties" />
 

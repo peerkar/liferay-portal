@@ -56,7 +56,7 @@ import java.util.function.Supplier;
 	}
 )
 @JsonTypeInfo(
-	include = JsonTypeInfo.As.PROPERTY, property = "favIconType",
+	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "favIconType",
 	use = JsonTypeInfo.Id.NAME, visible = true
 )
 @XmlRootElement(name = "FavIcon")
@@ -165,9 +165,7 @@ public abstract class FavIcon implements Serializable {
 			sb.append("\"favIconType\": ");
 
 			sb.append("\"");
-
 			sb.append(favIconType);
-
 			sb.append("\"");
 		}
 

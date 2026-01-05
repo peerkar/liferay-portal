@@ -18,7 +18,6 @@ import com.liferay.portal.kernel.service.LayoutService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
@@ -26,6 +25,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.site.navigation.exception.InvalidSiteNavigationMenuItemOrderException;
 import com.liferay.site.navigation.exception.InvalidSiteNavigationMenuItemTypeException;
 import com.liferay.site.navigation.exception.SiteNavigationMenuItemNameException;
+import com.liferay.site.navigation.menu.item.layout.constants.SiteNavigationMenuItemTypeConstants;
 import com.liferay.site.navigation.model.SiteNavigationMenu;
 import com.liferay.site.navigation.model.SiteNavigationMenuItem;
 import com.liferay.site.navigation.model.SiteNavigationMenuItemTable;
@@ -37,6 +37,7 @@ import com.liferay.site.navigation.util.comparator.SiteNavigationMenuItemOrderCo
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -437,7 +438,9 @@ public class SiteNavigationMenuItemLocalServiceImpl
 
 		_validateName(name);
 
-		_validateLayout(typeSettings);
+		_validateLayout(
+			siteNavigationMenuItem.getGroupId(),
+			siteNavigationMenuItem.getType(), typeSettings);
 
 		siteNavigationMenuItem.setUserId(userId);
 		siteNavigationMenuItem.setUserName(user.getFullName());
@@ -475,7 +478,13 @@ public class SiteNavigationMenuItemLocalServiceImpl
 		}
 	}
 
-	private void _validateLayout(String typeSettings) throws PortalException {
+	private void _validateLayout(long groupId, String type, String typeSettings)
+		throws PortalException {
+
+		if (!Objects.equals(type, SiteNavigationMenuItemTypeConstants.LAYOUT)) {
+			return;
+		}
+
 		UnicodeProperties typeSettingsUnicodeProperties =
 			UnicodePropertiesBuilder.create(
 				true
@@ -483,20 +492,15 @@ public class SiteNavigationMenuItemLocalServiceImpl
 				typeSettings
 			).build();
 
-		String layoutUuid = typeSettingsUnicodeProperties.getProperty(
-			"layoutUuid");
+		String externalReferenceCode =
+			typeSettingsUnicodeProperties.getProperty("externalReferenceCode");
 
-		if (Validator.isNull(layoutUuid)) {
+		if (Validator.isNull(externalReferenceCode)) {
 			return;
 		}
 
-		long groupId = GetterUtil.getLong(
-			typeSettingsUnicodeProperties.getProperty("groupId"));
-		boolean privateLayout = GetterUtil.getBoolean(
-			typeSettingsUnicodeProperties.getProperty("privateLayout"));
-
-		_layoutService.getLayoutByUuidAndGroupId(
-			layoutUuid, groupId, privateLayout);
+		_layoutService.getLayoutByExternalReferenceCode(
+			externalReferenceCode, groupId);
 	}
 
 	private void _validateName(String name) throws PortalException {

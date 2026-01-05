@@ -93,7 +93,6 @@ const RichText = ({
 	);
 	const [ckEditor5Config, setCKEditor5Config] = useState({
 		...editorConfig,
-		initialData: contents,
 		language: {
 			content: getISO639LanguageCode(editingLocale?.localeId),
 		},
@@ -105,15 +104,27 @@ const RichText = ({
 		if (Liferay.FeatureFlags['LPD-11235']) {
 			setCKEditor5Config({
 				...ckEditor5Config,
-				initialData: currentInternalValue,
 				language: {
 					content: getISO639LanguageCode(
 						currentEditingLocale.localeId
 					),
 				},
 			});
+
+			const {availableLocales} = transformAvailableLocalesAndValue({
+				availableLocales: currentAvailableLocales,
+				defaultLocale,
+				value: currentValue,
+			});
+
+			setCurrentAvailableLocales(availableLocales);
 		}
-		else {
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentEditingLocale.localeId]);
+
+	useEffect(() => {
+		if (!Liferay.FeatureFlags['LPD-11235']) {
 			const editor = editorRef.current?.editor;
 
 			if (editor) {
@@ -122,20 +133,85 @@ const RichText = ({
 				editor.config.contentsLanguage = currentEditingLocale.localeId;
 				editor.setData(currentInternalValue);
 			}
-		}
 
-		const {availableLocales} = {
-			...transformAvailableLocalesAndValue({
+			const {availableLocales} = transformAvailableLocalesAndValue({
 				availableLocales: currentAvailableLocales,
 				defaultLocale,
 				value: currentValue,
-			}),
-		};
+			});
 
-		setCurrentAvailableLocales(availableLocales);
+			setCurrentAvailableLocales(availableLocales);
+		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentEditingLocale]);
+
+	/**
+	 * This `useEffect` is needed to fix an issue on the Forms edit page causing
+	 * the Rich Text field to replace any focused field when changing languages.
+	 *
+	 * `setCurrentInternalValue` needs to be set after `currentEditingLocale`
+	 * and `currentValue` are updated otherwise `handleContentChange` could be
+	 * called with stale data.
+	 */
+	useEffect(() => {
+		if (Liferay.FeatureFlags['LPD-11235']) {
+			setCurrentInternalValue(
+				getEditingValue({
+					defaultLocale,
+					editingLocale: currentEditingLocale,
+					fieldName,
+					value: currentValue,
+				})
+			);
+		}
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentEditingLocale, currentValue]);
+
+	const changeLanguage = (localeId) => {
+		if (!localeId) {
+			return;
+		}
+
+		let newEditingLocale = {};
+
+		if (currentAvailableLocales) {
+			const index = currentAvailableLocales?.findIndex(
+				(availableLocale) => availableLocale.localeId === localeId
+			);
+
+			newEditingLocale = currentAvailableLocales[index];
+		}
+		else {
+			newEditingLocale = {localeId};
+		}
+
+		const newLocaleEntry = convertStringToObject(contents, localeId);
+
+		const newCurrentValue = {
+			...currentValue,
+			...newLocaleEntry,
+		};
+
+		setCurrentValue(newCurrentValue);
+
+		setCurrentEditingLocale({
+			...newEditingLocale,
+			icon: normalizeLocaleId(newEditingLocale.localeId),
+		});
+
+		if (!Liferay.FeatureFlags['LPD-11235']) {
+			setCurrentInternalValue(
+				getEditingValue({
+					defaultLocale,
+					editingLocale: newEditingLocale,
+					fieldName,
+					value: newCurrentValue,
+				})
+			);
+		}
+	};
 
 	useEffect(() => {
 		changeLanguage(editingLanguageId ?? defaultLocale?.localeId ?? locale);
@@ -143,55 +219,20 @@ const RichText = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [editingLanguageId, locale, predefinedValue]);
 
-	const changeLanguage = (localeId) => {
-		if (!localeId) {
-			return;
-		}
-		let newEditingLocale = {};
-
-		if (currentAvailableLocales) {
-			const index = currentAvailableLocales?.findIndex(
-				(availableLocale) => availableLocale.localeId === localeId
-			);
-			newEditingLocale = currentAvailableLocales[index];
-		}
-		else {
-			newEditingLocale = {localeId};
-		}
-
-		const newValue = convertStringToObject(contents, localeId);
-
-		setCurrentEditingLocale({
-			...newEditingLocale,
-			icon: normalizeLocaleId(newEditingLocale.localeId),
-		});
-		setCurrentInternalValue(
-			getEditingValue({
-				defaultLocale,
-				editingLocale: newEditingLocale,
-				fieldName,
-				value: newValue,
-			})
-		);
-
-		setCurrentValue(newValue);
-	};
-
 	const handleContentChange = (content) => {
 		if (currentValue[currentEditingLocale?.localeId] !== content) {
 			const newValue = {
 				...currentValue,
 				[currentEditingLocale.localeId]: content,
 			};
+
 			setCurrentInternalValue(content);
 
-			const {availableLocales} = {
-				...transformAvailableLocalesAndValue({
-					availableLocales: currentAvailableLocales,
-					defaultLocale,
-					value: newValue,
-				}),
-			};
+			const {availableLocales} = transformAvailableLocalesAndValue({
+				availableLocales: currentAvailableLocales,
+				defaultLocale,
+				value: newValue,
+			});
 
 			setCurrentAvailableLocales(availableLocales);
 
@@ -279,23 +320,17 @@ const RichText = ({
 		const data = currentValue[defaultLocale.localeId];
 
 		if (Liferay.FeatureFlags['LPD-11235']) {
-			setCKEditor5Config({
-				...ckEditor5Config,
-				initialData: data ?? '',
-			});
+			setCurrentInternalValue(data ?? '');
 		}
 		else {
 			editorRef.current.editor.setData(data);
 		}
-	}, [ckEditor5Config, currentValue, defaultLocale, editorRef]);
+	}, [currentValue, defaultLocale, editorRef]);
 
 	useEffect(() => {
 		const handleRestoreState = () => {
 			if (Liferay.FeatureFlags['LPD-11235']) {
-				setCKEditor5Config({
-					...ckEditor5Config,
-					initialData: value,
-				});
+				setCurrentInternalValue(value ?? '');
 			}
 			else {
 				editorRef.current.editor.setData(value);
@@ -307,7 +342,7 @@ const RichText = ({
 		return () => {
 			Liferay.detach('ddm:restoreState', handleRestoreState);
 		};
-	}, [ckEditor5Config, currentValue, value]);
+	}, [currentValue, value]);
 
 	useEffect(() => {
 		Liferay.after('inputLocalized:resetTranslations', resetTranslation);
@@ -339,8 +374,10 @@ const RichText = ({
 						<CKEditor5ClassicEditor
 							className="w-100"
 							config={ckEditor5Config}
+							data={currentInternalValue}
 							disabled={readOnly}
 							key={JSON.stringify(ckEditor5Config)}
+							onBlur={onBlur}
 							onChange={(event, editor) =>
 								handleContentChange(editor.getData())
 							}

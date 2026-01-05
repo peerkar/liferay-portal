@@ -42,6 +42,7 @@ import com.liferay.layout.content.page.editor.web.internal.configuration.PageEdi
 import com.liferay.layout.content.page.editor.web.internal.constants.ContentPageEditorActionKeys;
 import com.liferay.layout.content.page.editor.web.internal.manager.FragmentCollectionManager;
 import com.liferay.layout.content.page.editor.web.internal.manager.FragmentEntryLinkManager;
+import com.liferay.layout.content.page.editor.web.internal.util.CodeEditorUtil;
 import com.liferay.layout.content.page.editor.web.internal.util.MappingContentUtil;
 import com.liferay.layout.content.page.editor.web.internal.util.MappingTypesUtil;
 import com.liferay.layout.content.page.editor.web.internal.util.StyleBookEntryUtil;
@@ -70,7 +71,6 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.editor.configuration.EditorConfiguration;
 import com.liferay.portal.kernel.editor.configuration.EditorConfigurationFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
@@ -80,10 +80,10 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
-import com.liferay.portal.kernel.model.LayoutSet;
 import com.liferay.portal.kernel.model.ModelHintsUtil;
 import com.liferay.portal.kernel.model.Theme;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletURLFactory;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactory;
@@ -134,7 +134,6 @@ import com.liferay.style.book.model.StyleBookEntry;
 import com.liferay.style.book.service.StyleBookEntryLocalService;
 import com.liferay.style.book.util.DefaultStyleBookEntryUtil;
 import com.liferay.style.book.util.StyleBookUtil;
-import com.liferay.style.book.util.comparator.StyleBookEntryNameComparator;
 
 import jakarta.portlet.PortletRequest;
 import jakarta.portlet.PortletURL;
@@ -291,6 +290,9 @@ public class ContentPageEditorDisplayContext {
 				getFragmentEntryActionURL(
 					"/layout_content_page_editor/change_style_book_entry")
 			).put(
+				"codeEditorSidebarPanels",
+				CodeEditorUtil.getSidebarSectionsJSONArray(httpServletRequest)
+			).put(
 				"collectionSelectorURL", _getCollectionSelectorURL()
 			).put(
 				"commonStyles",
@@ -380,26 +382,10 @@ public class ContentPageEditorDisplayContext {
 			).put(
 				"frontendTokens",
 				() -> {
-					FrontendTokenDefinition frontendTokenDefinition = null;
-
-					if (FeatureFlagManagerUtil.isEnabled(
-							themeDisplay.getCompanyId(), "LPD-30204")) {
-
-						frontendTokenDefinition =
-							_frontendTokenDefinitionRegistry.
-								getFrontendTokenDefinition(
-									themeDisplay.getLayout());
-					}
-					else {
-						Group group = themeDisplay.getScopeGroup();
-
-						frontendTokenDefinition =
-							_frontendTokenDefinitionRegistry.
-								getFrontendTokenDefinition(
-									_layoutSetLocalService.fetchLayoutSet(
-										themeDisplay.getSiteGroupId(),
-										group.isLayoutSetPrototype()));
-					}
+					FrontendTokenDefinition frontendTokenDefinition =
+						_frontendTokenDefinitionRegistry.
+							getFrontendTokenDefinition(
+								themeDisplay.getLayout());
 
 					if (frontendTokenDefinition == null) {
 						return _jsonFactory.createJSONObject();
@@ -486,6 +472,16 @@ public class ContentPageEditorDisplayContext {
 				_getResourceURL(
 					"/layout_content_page_editor" +
 						"/get_fragment_entry_input_field_types")
+			).put(
+				"getFragmentEntryInputURL",
+				PortletURLBuilder.createRenderURL(
+					portal.getLiferayPortletResponse(renderResponse),
+					FragmentPortletKeys.FRAGMENT
+				).setMVCRenderCommandName(
+					"/fragment/select_input_fragment_entry"
+				).setWindowState(
+					LiferayWindowState.POP_UP
+				).buildString()
 			).put(
 				"getIframeContentCssURL",
 				portal.getStaticResourceURL(
@@ -682,19 +678,6 @@ public class ContentPageEditorDisplayContext {
 				"siteNavigationMenuItemSelectorURL",
 				_getSiteNavigationMenuItemSelectorURL()
 			).put(
-				"styleBookEnabled",
-				() -> {
-					Layout layout = themeDisplay.getLayout();
-
-					Theme theme = layout.getTheme();
-
-					LayoutSet layoutSet = _layoutSetLocalService.fetchLayoutSet(
-						themeDisplay.getSiteGroupId(), false);
-
-					return Objects.equals(
-						theme.getThemeId(), layoutSet.getThemeId());
-				}
-			).put(
 				"styleBookEntryERC",
 				() -> {
 					Layout layout = themeDisplay.getLayout();
@@ -702,27 +685,35 @@ public class ContentPageEditorDisplayContext {
 					String styleBookEntryERC = GetterUtil.getString(
 						layout.getStyleBookEntryERC());
 
-					if (!FeatureFlagManagerUtil.isEnabled(
-							layout.getCompanyId(), "LPD-30204")) {
+					if (Validator.isNotNull(styleBookEntryERC)) {
+						StyleBookEntry styleBookEntry =
+							_styleBookEntryLocalService.
+								fetchStyleBookEntryByExternalReferenceCode(
+									styleBookEntryERC,
+									_staging.getLiveGroupId(
+										layout.getGroupId()));
 
-						return styleBookEntryERC;
-					}
+						FrontendTokenDefinition frontendTokenDefinition =
+							_frontendTokenDefinitionRegistry.
+								getFrontendTokenDefinition(layout);
 
-					if (Validator.isNull(styleBookEntryERC)) {
-						StyleBookEntry defaultStyleBookEntry =
-							DefaultStyleBookEntryUtil.getDefaultStyleBookEntry(
-								layout);
+						if ((styleBookEntry != null) &&
+							Objects.equals(
+								frontendTokenDefinition.getThemeId(),
+								styleBookEntry.getThemeId())) {
 
-						if (defaultStyleBookEntry != null) {
-							return defaultStyleBookEntry.
-								getExternalReferenceCode();
+							return styleBookEntryERC;
 						}
 					}
 
-					return styleBookEntryERC;
+					return StringPool.BLANK;
 				}
 			).put(
 				"styleBooks", _getStyleBooks()
+			).put(
+				"swapFragmentEntryLinkURL",
+				getFragmentEntryActionURL(
+					"/layout_content_page_editor/swap_fragment_entry_link")
 			).put(
 				"themeColorsCssClasses", _getThemeColorsCssClasses()
 			).put(
@@ -779,6 +770,10 @@ public class ContentPageEditorDisplayContext {
 				getFragmentEntryActionURL(
 					"/layout_content_page_editor/update_row_columns")
 			).put(
+				"updateRulesURL",
+				getFragmentEntryActionURL(
+					"/layout_content_page_editor/update_rules")
+			).put(
 				"updateRuleURL",
 				getFragmentEntryActionURL(
 					"/layout_content_page_editor/update_rule")
@@ -791,6 +786,10 @@ public class ContentPageEditorDisplayContext {
 				"updateSegmentsExperienceURL",
 				getFragmentEntryActionURL(
 					"/layout_content_page_editor/update_segments_experience")
+			).put(
+				"validateExpressionURL",
+				_getResourceURL(
+					"/layout_content_page_editor/validate_expression")
 			).put(
 				"videoItemSelectorURL", _getVideoItemSelectorURL()
 			).put(
@@ -1470,11 +1469,12 @@ public class ContentPageEditorDisplayContext {
 
 		Layout layout = themeDisplay.getLayout();
 
-		if (layout.getMasterLayoutPlid() > 0) {
+		if (Validator.isNotNull(layout.getMasterLayoutPageTemplateEntryERC())) {
 			LayoutPageTemplateEntry masterLayoutPageTemplateEntry =
 				layoutPageTemplateEntryLocalService.
-					fetchLayoutPageTemplateEntryByPlid(
-						layout.getMasterLayoutPlid());
+					fetchLayoutPageTemplateEntryByExternalReferenceCode(
+						layout.getMasterLayoutPageTemplateEntryERC(),
+						layout.getGroupId());
 
 			if (masterLayoutPageTemplateEntry != null) {
 				fragmentEntryLinks =
@@ -1786,11 +1786,11 @@ public class ContentPageEditorDisplayContext {
 				return null;
 			}
 		).put(
-			"masterLayoutPlid",
+			"masterLayoutPageTemplateEntryERC",
 			() -> {
 				Layout layout = themeDisplay.getLayout();
 
-				return String.valueOf(layout.getMasterLayoutPlid());
+				return layout.getMasterLayoutPageTemplateEntryERC();
 			}
 		);
 	}
@@ -1802,7 +1802,7 @@ public class ContentPageEditorDisplayContext {
 			HashMapBuilder.<String, Object>put(
 				"imagePreviewURL", StringPool.BLANK
 			).put(
-				"masterLayoutPlid", "0"
+				"masterLayoutPageTemplateEntryERC", StringPool.BLANK
 			).put(
 				"name", language.get(httpServletRequest, "blank")
 			).build());
@@ -1823,8 +1823,9 @@ public class ContentPageEditorDisplayContext {
 					"imagePreviewURL",
 					layoutPageTemplateEntry.getImagePreviewURL(themeDisplay)
 				).put(
-					"masterLayoutPlid",
-					String.valueOf(layoutPageTemplateEntry.getPlid())
+					"masterLayoutPageTemplateEntryERC",
+					String.valueOf(
+						layoutPageTemplateEntry.getExternalReferenceCode())
 				).put(
 					"name", layoutPageTemplateEntry.getName()
 				).build());
@@ -1959,70 +1960,54 @@ public class ContentPageEditorDisplayContext {
 	private List<Map<String, Object>> _getStyleBooks() throws Exception {
 		ArrayList<Map<String, Object>> styleBooks = new ArrayList<>();
 
-		List<StyleBookEntry> styleBookEntries = new ArrayList<>();
+		FrontendTokenDefinition frontendTokenDefinition =
+			_frontendTokenDefinitionRegistry.getFrontendTokenDefinition(
+				themeDisplay.getLayout());
 
-		FrontendTokenDefinition frontendTokenDefinition = null;
-
-		if (FeatureFlagManagerUtil.isEnabled("LPD-30204")) {
-			frontendTokenDefinition =
-				_frontendTokenDefinitionRegistry.getFrontendTokenDefinition(
-					themeDisplay.getLayout());
-
-			if (frontendTokenDefinition != null) {
-				styleBookEntries =
-					_styleBookEntryLocalService.getStyleBookEntries(
-						_staging.getLiveGroupId(themeDisplay.getScopeGroupId()),
-						frontendTokenDefinition.getThemeId());
-			}
+		if (frontendTokenDefinition == null) {
+			return styleBooks;
 		}
-		else {
-			frontendTokenDefinition =
-				_frontendTokenDefinitionRegistry.getFrontendTokenDefinition(
-					themeDisplay.getLayoutSet());
 
-			styleBookEntries = _styleBookEntryLocalService.getStyleBookEntries(
+		styleBooks.add(
+			HashMapBuilder.<String, Object>put(
+				"imagePreviewURL",
+				() -> {
+					StyleBookEntry defaultStyleBookEntry =
+						_getDefaultMasterStyleBookEntry();
+
+					if (defaultStyleBookEntry != null) {
+						return defaultStyleBookEntry.getImagePreviewURL(
+							themeDisplay);
+					}
+
+					return StringPool.BLANK;
+				}
+			).put(
+				"name",
+				DefaultStyleBookEntryUtil.getStyleBookEntryName(
+					themeDisplay.getLayout(), themeDisplay.getLocale(),
+					StyleBookUtil.getStyleFromThemeStyleBookEntry(
+						themeDisplay.getLayout(), themeDisplay.getLocale()))
+			).put(
+				"styleBookEntryERC", StringPool.BLANK
+			).put(
+				"subtitle",
+				() -> {
+					StyleBookEntry defaultStyleBookEntry =
+						_getDefaultMasterStyleBookEntry();
+
+					if (defaultStyleBookEntry != null) {
+						return defaultStyleBookEntry.getName();
+					}
+
+					return null;
+				}
+			).build());
+
+		List<StyleBookEntry> styleBookEntries =
+			_styleBookEntryLocalService.getStyleBookEntries(
 				_staging.getLiveGroupId(themeDisplay.getScopeGroupId()),
-				QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-				StyleBookEntryNameComparator.getInstance(true));
-		}
-
-		if (frontendTokenDefinition != null) {
-			styleBooks.add(
-				HashMapBuilder.<String, Object>put(
-					"imagePreviewURL",
-					() -> {
-						StyleBookEntry defaultStyleBookEntry =
-							_getDefaultMasterStyleBookEntry();
-
-						if (defaultStyleBookEntry != null) {
-							return defaultStyleBookEntry.getImagePreviewURL(
-								themeDisplay);
-						}
-
-						return StringPool.BLANK;
-					}
-				).put(
-					"name",
-					DefaultStyleBookEntryUtil.getStyleBookEntryName(
-						themeDisplay.getLayout(), themeDisplay.getLocale(),
-						StyleBookUtil.getStyleFromThemeStyleBookEntry(
-							themeDisplay.getLayout(), themeDisplay.getLocale()))
-				).put(
-					"styleBookEntryERC", StringPool.BLANK
-				).put(
-					"subtitle",
-					() -> {
-						StyleBookEntry defaultStyleBookEntry =
-							_getDefaultMasterStyleBookEntry();
-
-						if (defaultStyleBookEntry != null) {
-							return defaultStyleBookEntry.getName();
-						}
-
-						return null;
-					}
-				).build());
-		}
+				frontendTokenDefinition.getThemeId());
 
 		for (StyleBookEntry styleBookEntry : styleBookEntries) {
 			styleBooks.add(
@@ -2125,11 +2110,24 @@ public class ContentPageEditorDisplayContext {
 
 		Layout draftLayout = themeDisplay.getLayout();
 
-		int masterUsagesCount = _layoutLocalService.getMasterLayoutsCount(
-			themeDisplay.getScopeGroupId(), draftLayout.getClassPK());
+		try {
+			LayoutPageTemplateEntry layoutPageTemplateEntry =
+				_layoutPageTemplateEntryService.
+					fetchLayoutPageTemplateEntryByPlid(
+						draftLayout.getClassPK());
 
-		if (masterUsagesCount > 0) {
-			return true;
+			int masterUsagesCount = _layoutLocalService.getMasterLayoutsCount(
+				themeDisplay.getScopeGroupId(),
+				layoutPageTemplateEntry.getExternalReferenceCode());
+
+			if (masterUsagesCount > 0) {
+				return true;
+			}
+		}
+		catch (Exception exception) {
+			if (_log.isDebugEnabled()) {
+				_log.debug("Unable to check if master is used", exception);
+			}
 		}
 
 		return false;

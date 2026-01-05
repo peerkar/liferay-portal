@@ -30,6 +30,19 @@ import org.dom4j.Element;
 public abstract class BaseParentBuild extends BaseBuild implements ParentBuild {
 
 	@Override
+	public void addCachedDownstreamBuild(Build build) {
+		if ((build == null) || _downstreamBuilds.contains(build)) {
+			return;
+		}
+
+		build.setBuildCached(true);
+
+		build.saveBuildURLInBuildDatabase();
+
+		addDownstreamBuild(build);
+	}
+
+	@Override
 	public void addDownstreamBuilds(Map<String, String> urlAxisNames) {
 		if (urlAxisNames.isEmpty()) {
 			return;
@@ -71,7 +84,7 @@ public abstract class BaseParentBuild extends BaseBuild implements ParentBuild {
 						public Build call() {
 							try {
 								return BuildFactory.newBuild(
-									buildURL, thisBuild, axisName);
+									buildURL, axisName, thisBuild);
 							}
 							catch (RuntimeException runtimeException) {
 								if (!isFromArchive()) {
@@ -568,12 +581,28 @@ public abstract class BaseParentBuild extends BaseBuild implements ParentBuild {
 		super.update();
 	}
 
-	protected BaseParentBuild(String url) {
-		super(url);
+	protected BaseParentBuild(String buildURL) {
+		super(buildURL);
 	}
 
-	protected BaseParentBuild(String url, Build parentBuild) {
-		super(url, parentBuild);
+	protected BaseParentBuild(String buildURL, Build parentBuild) {
+		super(buildURL, parentBuild);
+	}
+
+	protected void addDownstreamBuild(Build build) {
+		if (build == null) {
+			return;
+		}
+
+		if (_downstreamBuilds == null) {
+			getDownstreamBuilds();
+		}
+
+		if (build.isBuildCached() && _downstreamBuilds.contains(build)) {
+			return;
+		}
+
+		_downstreamBuilds.add(build);
 	}
 
 	protected void addDownstreamBuilds(Collection<Build> builds) {
@@ -581,13 +610,9 @@ public abstract class BaseParentBuild extends BaseBuild implements ParentBuild {
 			return;
 		}
 
-		builds.removeAll(Collections.singleton(null));
-
-		if (_downstreamBuilds == null) {
-			getDownstreamBuilds();
+		for (Build build : builds) {
+			addDownstreamBuild(build);
 		}
-
-		_downstreamBuilds.addAll(builds);
 	}
 
 	protected void addDownstreamBuildsTimelineData(TimelineData timelineData) {

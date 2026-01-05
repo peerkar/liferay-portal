@@ -30,8 +30,6 @@ const test = mergeTests(
 	featureFlagsTest({
 		'LPD-11235': {enabled: false},
 		'LPD-17564': {enabled: true},
-		'LPD-21926': {enabled: true},
-		'LPD-32050': {enabled: true},
 		'LPS-178052': {enabled: true},
 	}),
 	fragmentsPagesTest,
@@ -425,6 +423,18 @@ test(
 
 		await pageEditorPage.mapFormFragment(formId, 'Plant', 'all', {
 			addLocalizationSelect: true,
+		});
+
+		// Swap to Multiselector Checkbox fragment
+
+		const fragmentId = await pageEditorPage.getFragmentId(
+			'Multiselector Dropdown'
+		);
+
+		await pageEditorPage.swapFragment({
+			folder: 'Form Components',
+			fragmentId,
+			fragmentName: 'Multiselector Checkbox',
 		});
 
 		await pageEditorPage.publishPage();

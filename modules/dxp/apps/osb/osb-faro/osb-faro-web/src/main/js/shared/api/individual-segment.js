@@ -1,4 +1,4 @@
-import Constants, {SegmentTypes, TimeIntervals} from 'shared/util/constants';
+import Constants, {TimeIntervals} from 'shared/util/constants';
 import sendRequest from 'shared/util/request';
 import {buildOrderByFields, NAME} from 'shared/util/pagination';
 import {INDIVIDUALS, SEGMENTS} from 'shared/util/router';
@@ -49,25 +49,16 @@ export function create({
 	criteriaString = '',
 	groupId,
 	includeAnonymousUsers = false,
-	individualIds = [],
 	name,
 	segmentType
 }) {
-	const data =
-		segmentType === SegmentTypes.Batch
-			? {
-					channelId,
-					filter: criteriaString,
-					includeAnonymousUsers,
-					name,
-					segmentType
-			  }
-			: {
-					channelId,
-					individualIds,
-					name,
-					segmentType
-			  };
+	const data = {
+		channelId,
+		filter: criteriaString,
+		includeAnonymousUsers,
+		name,
+		segmentType
+	};
 
 	return sendRequest({
 		data,
@@ -85,20 +76,13 @@ export function update({
 	name,
 	segmentType
 }) {
-	const data =
-		segmentType === SegmentTypes.Batch
-			? {
-					channelId,
-					filter: criteriaString,
-					includeAnonymousUsers,
-					name,
-					segmentType
-			  }
-			: {
-					channelId,
-					name,
-					segmentType
-			  };
+	const data = {
+		channelId,
+		filter: criteriaString,
+		includeAnonymousUsers,
+		name,
+		segmentType
+	};
 
 	return sendRequest({
 		data,

@@ -5,8 +5,12 @@
 
 package com.liferay.portal.test.cluster.tomcat;
 
+import com.liferay.petra.concurrent.BaseFutureListener;
+import com.liferay.petra.concurrent.DefaultNoticeableFuture;
 import com.liferay.petra.concurrent.NoticeableFuture;
 import com.liferay.petra.io.ClassLoaderObjectInputStream;
+import com.liferay.petra.io.Deserializer;
+import com.liferay.petra.io.Serializer;
 import com.liferay.petra.io.unsync.UnsyncByteArrayInputStream;
 import com.liferay.petra.io.unsync.UnsyncByteArrayOutputStream;
 import com.liferay.petra.lang.SafeCloseable;
@@ -21,8 +25,10 @@ import com.liferay.petra.process.local.LocalProcessExecutor;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.dependency.manager.DependencyManagerSyncUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.module.util.SystemBundleUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
@@ -46,6 +52,7 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 
+import java.nio.ByteBuffer;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -62,8 +69,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 
 import org.apache.catalina.startup.Bootstrap;
+
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 
 /**
  * @author Shuyang Zhou
@@ -119,14 +130,15 @@ public class TomcatNode {
 	public <V extends Serializable> NoticeableFuture<V> execute(
 		ClusterExecutable<V> clusterExecutable) {
 
-		ProcessChannel<String> processChannel = _processChannel;
+		return _execute(clusterExecutable, _testBundleInstalled);
+	}
 
-		if (processChannel == null) {
-			throw new IllegalStateException("Tomcat node is not running");
-		}
+	public String getLiferayHome() {
+		return _liferayHome;
+	}
 
-		return processChannel.write(
-			new ClusterExecutableProcessCallable<>(clusterExecutable));
+	public Path getPortalExtPropertiesPath() {
+		return _portalExtPropertiesPath;
 	}
 
 	public ProcessChannel<String> start(boolean loadHomePage) throws Exception {
@@ -185,39 +197,68 @@ public class TomcatNode {
 
 		ProcessExecutor processExecutor = new LocalProcessExecutor();
 
-		ProcessChannel<String> processChannel = processExecutor.execute(
+		_processChannel = processExecutor.execute(
 			processConfig, new BootstrapStartProcessCallable(_nodeId));
 
-		NoticeableFuture<String> noticeableFuture =
-			processChannel.getProcessNoticeableFuture();
+		NoticeableFuture<String> processNoticeableFuture =
+			_processChannel.getProcessNoticeableFuture();
 
-		_processChannel = new ProcessChannel<String>() {
+		processNoticeableFuture.addFutureListener(
+			future -> {
+				_testBundleInstalled = false;
 
-			@Override
-			public NoticeableFuture<String> getProcessNoticeableFuture() {
-				return noticeableFuture;
-			}
+				_processChannel = null;
+			});
 
-			@Override
-			public <V extends Serializable> NoticeableFuture<V> write(
-				ProcessCallable<V> processCallable) {
+		// Make sure the lambda is capturing the local variable rather than the
+		// instance field to ensure serializability
 
-				return processChannel.write(
-					new BridgeProcessCallable<>(processCallable));
-			}
+		String clusterOwnerJarPath = _clusterOwnerJarPath;
 
-		};
+		NoticeableFuture<String> testBundleInstallationNoticeableFuture =
+			execute(
+				() -> {
+					DefaultNoticeableFuture<String> defaultNoticeableFuture =
+						new DefaultNoticeableFuture<>();
 
-		noticeableFuture.addFutureListener(future -> _processChannel = null);
+					DependencyManagerSyncUtil.registerSyncCallable(
+						() -> {
+							BundleContext bundleContext =
+								SystemBundleUtil.getBundleContext();
+
+							Bundle bundle = bundleContext.installBundle(
+								"file://" + clusterOwnerJarPath);
+
+							bundle.start();
+
+							defaultNoticeableFuture.set(bundle.toString());
+
+							return null;
+						});
+
+					return defaultNoticeableFuture.get();
+				});
+
+		testBundleInstallationNoticeableFuture.addFutureListener(
+			new BaseFutureListener<String>() {
+
+				@Override
+				public void completeWithResult(
+					Future<String> future, String result) {
+
+					_testBundleInstalled = true;
+				}
+
+			});
 
 		if (loadHomePage) {
 
-			// Make sure the follow lambda is capturing the local variable
-			// rather than the instance field to ensure serializability
+			// Make sure the lambda is capturing the local variable rather than
+			// the instance field to ensure serializability
 
 			int connectorPort = _connectorPort;
 
-			syncExecute(
+			_syncExecute(
 				() -> {
 					try {
 						URI uri = new URI("http://localhost:" + connectorPort);
@@ -231,7 +272,8 @@ public class TomcatNode {
 					catch (Exception exception) {
 						throw new ProcessException(exception);
 					}
-				});
+				},
+				false);
 		}
 
 		return _processChannel;
@@ -246,21 +288,25 @@ public class TomcatNode {
 
 		LogHolder.info("Stopping Tomcat node " + toString());
 
-		syncExecute(
+		_syncExecute(
 			() -> {
 				Bootstrap.main(new String[] {"stop"});
 
 				return "Done";
-			});
+			},
+			false);
+
+		NoticeableFuture<?> noticeableFuture =
+			processChannel.getProcessNoticeableFuture();
+
+		noticeableFuture.get();
 	}
 
 	public <V extends Serializable> V syncExecute(
 			ClusterExecutable<V> clusterExecutable)
 		throws Exception {
 
-		NoticeableFuture<V> noticeableFuture = execute(clusterExecutable);
-
-		return noticeableFuture.get();
+		return _syncExecute(clusterExecutable, _testBundleInstalled);
 	}
 
 	@Override
@@ -322,6 +368,7 @@ public class TomcatNode {
 		_catalinaHome = catalineHome;
 
 		_catalinaBase = _liferayHome + "/tomcat";
+		_clusterOwnerJarPath = _toJarPath(clusterOwnerClass);
 
 		StringBundler sb = StringUtil.replaceToStringBundler(
 			_TPL_PORTAL_EXT_PROPERTIES, "${", "}",
@@ -347,10 +394,15 @@ public class TomcatNode {
 			sb.append(PropsUtil.get(copyPropertyKey));
 		}
 
+		sb.append(StringPool.NEW_LINE);
+
 		String portalExtPropertiesContent = sb.toString();
 
+		_portalExtPropertiesPath = Paths.get(
+			_liferayHome, "portal-ext.properties");
+
 		Files.write(
-			Paths.get(_liferayHome, "portal-ext.properties"),
+			_portalExtPropertiesPath,
 			portalExtPropertiesContent.getBytes(StringPool.UTF8),
 			StandardOpenOption.CREATE, StandardOpenOption.WRITE);
 
@@ -421,11 +473,56 @@ public class TomcatNode {
 
 	private String _buildRuntimeClassPath() {
 		return StringBundler.concat(
-			_toJarFilePath(TomcatNode.class), File.pathSeparator,
-			_toJarFilePath(_clusterOwnerClass));
+			_toJarPath(TomcatNode.class), File.pathSeparator,
+			_clusterOwnerJarPath);
 	}
 
-	private String _toJarFilePath(Class<?> clazz) {
+	private <V extends Serializable> NoticeableFuture<V> _execute(
+		ClusterExecutable<V> clusterExecutable, boolean osgiify) {
+
+		ProcessChannel<String> processChannel = _processChannel;
+
+		if (processChannel == null) {
+			throw new IllegalStateException("Tomcat node is not running");
+		}
+
+		if (osgiify) {
+			clusterExecutable = _osgiify(clusterExecutable);
+		}
+
+		return processChannel.write(
+			new BridgeProcessCallable<>(clusterExecutable));
+	}
+
+	private <V extends Serializable> ClusterExecutable<V> _osgiify(
+		ClusterExecutable<V> clusterExecutable) {
+
+		Serializer serializer = new Serializer();
+
+		serializer.writeObject(clusterExecutable);
+
+		ByteBuffer byteBuffer = serializer.toByteBuffer();
+
+		byte[] data = byteBuffer.array();
+
+		return () -> {
+			Deserializer deserializer = new Deserializer(ByteBuffer.wrap(data));
+
+			return RPCUtil._invokeClusterExecutable(deserializer.readObject());
+		};
+	}
+
+	private <V extends Serializable> V _syncExecute(
+			ClusterExecutable<V> clusterExecutable, boolean osgiify)
+		throws Exception {
+
+		NoticeableFuture<V> noticeableFuture = _execute(
+			clusterExecutable, osgiify);
+
+		return noticeableFuture.get();
+	}
+
+	private String _toJarPath(Class<?> clazz) {
 		ProtectionDomain protectionDomain = clazz.getProtectionDomain();
 
 		CodeSource codeSource = protectionDomain.getCodeSource();
@@ -465,6 +562,7 @@ public class TomcatNode {
 	private final String _catalinaBase;
 	private final String _catalinaHome;
 	private final Class<?> _clusterOwnerClass;
+	private final String _clusterOwnerJarPath;
 	private final int _connectorPort;
 	private final List<String> _copyPropertyKeys;
 	private boolean _destroyed;
@@ -475,8 +573,10 @@ public class TomcatNode {
 	private final String _jvmArgs;
 	private final String _liferayHome;
 	private final int _nodeId;
+	private final Path _portalExtPropertiesPath;
 	private volatile ProcessChannel<String> _processChannel;
 	private final int _shutdownPort;
+	private volatile boolean _testBundleInstalled;
 
 	private static class BootstrapStartProcessCallable
 		implements Externalizable, ProcessCallable<String> {
@@ -536,19 +636,12 @@ public class TomcatNode {
 						inputStream,
 						BridgeClassLoaderHolder._bridgeClassLoader)) {
 
-				Object payloadProcessCallable = objectInputStream.readObject();
-
-				Class<?> clazz = payloadProcessCallable.getClass();
-
-				Method method = clazz.getMethod("call");
-
-				method.setAccessible(true);
-
 				try (SafeCloseable safeCloseable =
 						ThreadContextClassLoaderUtil.swap(
 							BridgeClassLoaderHolder._bridgeClassLoader)) {
 
-					return (T)method.invoke(payloadProcessCallable);
+					return RPCUtil._invokeClusterExecutable(
+						objectInputStream.readObject());
 				}
 			}
 			catch (Exception exception) {
@@ -556,14 +649,14 @@ public class TomcatNode {
 			}
 		}
 
-		private BridgeProcessCallable(ProcessCallable<T> processCallable) {
+		private BridgeProcessCallable(ClusterExecutable<T> clusterExecutable) {
 			UnsyncByteArrayOutputStream unsyncByteArrayOutputStream =
 				new UnsyncByteArrayOutputStream();
 
 			try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(
 					unsyncByteArrayOutputStream)) {
 
-				objectOutputStream.writeObject(processCallable);
+				objectOutputStream.writeObject(clusterExecutable);
 			}
 			catch (IOException ioException) {
 				throw new RuntimeException(ioException);
@@ -624,30 +717,6 @@ public class TomcatNode {
 
 	}
 
-	private static class ClusterExecutableProcessCallable
-		<V extends Serializable>
-			implements ProcessCallable<V> {
-
-		@Override
-		public V call() throws ProcessException {
-			try {
-				return _clusterExecutable.execute();
-			}
-			catch (Throwable throwable) {
-				throw new ProcessException(throwable);
-			}
-		}
-
-		private ClusterExecutableProcessCallable(
-			ClusterExecutable<V> clusterExecutable) {
-
-			_clusterExecutable = clusterExecutable;
-		}
-
-		private final ClusterExecutable<V> _clusterExecutable;
-
-	}
-
 	// This class is loaded by the testee JVM before Tomcat starts. Lazy load
 	// Log to make sure it is only used on the tester JVM and never by the
 	// testee JVM.
@@ -661,6 +730,25 @@ public class TomcatNode {
 		}
 
 		private static final Log _log = LogFactoryUtil.getLog(TomcatNode.class);
+
+	}
+
+	/**
+	 * RPCUtil can only access classes from bootstrap classloader
+	 */
+	private static class RPCUtil {
+
+		private static <T> T _invokeClusterExecutable(Object clusterExecutable)
+			throws Exception {
+
+			Class<?> clazz = clusterExecutable.getClass();
+
+			Method method = clazz.getMethod("execute");
+
+			method.setAccessible(true);
+
+			return (T)method.invoke(clusterExecutable);
+		}
 
 	}
 

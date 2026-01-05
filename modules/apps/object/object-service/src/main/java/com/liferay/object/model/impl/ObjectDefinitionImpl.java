@@ -6,19 +6,24 @@
 package com.liferay.object.model.impl;
 
 import com.liferay.object.constants.ObjectDefinitionConstants;
-import com.liferay.object.constants.ObjectPortletKeys;
+import com.liferay.object.constants.ObjectDefinitionSettingConstants;
+import com.liferay.object.constants.ObjectFolderConstants;
+import com.liferay.object.definition.setting.util.ObjectDefinitionSettingUtil;
 import com.liferay.object.definition.tree.util.ObjectDefinitionTreeUtil;
 import com.liferay.object.definition.util.ObjectDefinitionUtil;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectDefinitionSetting;
 import com.liferay.object.model.ObjectFolder;
+import com.liferay.object.model.bag.ObjectFieldBag;
 import com.liferay.object.service.ObjectDefinitionLocalServiceUtil;
 import com.liferay.object.service.ObjectDefinitionSettingLocalServiceUtil;
+import com.liferay.object.service.ObjectFieldLocalServiceUtil;
 import com.liferay.object.service.ObjectFolderLocalServiceUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.TextFormatter;
@@ -81,10 +86,6 @@ public class ObjectDefinitionImpl extends ObjectDefinitionBaseImpl {
 
 	@Override
 	public String getLocalizationDBTableName() {
-		if (!isEnableLocalization()) {
-			return null;
-		}
-
 		return getDBTableName() + "_l";
 	}
 
@@ -97,6 +98,18 @@ public class ObjectDefinitionImpl extends ObjectDefinitionBaseImpl {
 		}
 
 		return _objectDefinitionSettings;
+	}
+
+	@Override
+	public ObjectFieldBag getObjectFieldBag() {
+		if (_objectFieldBag == null) {
+			setObjectFieldBag(
+				new ObjectFieldBag(
+					ObjectFieldLocalServiceUtil.getObjectFields(
+						getObjectDefinitionId())));
+		}
+
+		return _objectFieldBag;
 	}
 
 	@Override
@@ -127,8 +140,7 @@ public class ObjectDefinitionImpl extends ObjectDefinitionBaseImpl {
 			throw new UnsupportedOperationException();
 		}
 
-		return ObjectPortletKeys.OBJECT_DEFINITIONS + StringPool.UNDERLINE +
-			StringUtil.split(getClassName(), StringPool.POUND)[1];
+		return ObjectDefinitionUtil.getPortletId(getClassName());
 	}
 
 	@Override
@@ -157,9 +169,15 @@ public class ObjectDefinitionImpl extends ObjectDefinitionBaseImpl {
 
 	@Override
 	public String getRootObjectDefinitionExternalReferenceCode() {
+		long rootObjectDefinitionId = getRootObjectDefinitionId();
+
+		if (rootObjectDefinitionId == 0) {
+			return null;
+		}
+
 		ObjectDefinition rootObjectDefinition =
 			ObjectDefinitionLocalServiceUtil.fetchObjectDefinition(
-				getRootObjectDefinitionId());
+				rootObjectDefinitionId);
 
 		if (rootObjectDefinition == null) {
 			return null;
@@ -202,6 +220,26 @@ public class ObjectDefinitionImpl extends ObjectDefinitionBaseImpl {
 	@Override
 	public boolean isApproved() {
 		if (getStatus() == WorkflowConstants.STATUS_APPROVED) {
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public boolean isCMS() {
+		if (!FeatureFlagManagerUtil.isEnabled(getCompanyId(), "LPD-17564")) {
+			return false;
+		}
+
+		if (Objects.equals(
+				getObjectFolderExternalReferenceCode(),
+				ObjectFolderConstants.
+					EXTERNAL_REFERENCE_CODE_CONTENT_STRUCTURES) ||
+			Objects.equals(
+				getObjectFolderExternalReferenceCode(),
+				ObjectFolderConstants.EXTERNAL_REFERENCE_CODE_FILE_TYPES)) {
+
 			return true;
 		}
 
@@ -277,12 +315,30 @@ public class ObjectDefinitionImpl extends ObjectDefinitionBaseImpl {
 	}
 
 	@Override
+	public boolean isVisible() {
+		if (!isModifiableAndSystem()) {
+			return true;
+		}
+
+		return GetterUtil.getBoolean(
+			ObjectDefinitionSettingUtil.getValue(
+				ObjectDefinitionSettingConstants.NAME_VISIBLE,
+				getObjectDefinitionSettings()));
+	}
+
+	@Override
 	public void setObjectDefinitionSettings(
 		List<ObjectDefinitionSetting> objectDefinitionSettings) {
 
 		_objectDefinitionSettings = objectDefinitionSettings;
 	}
 
+	@Override
+	public void setObjectFieldBag(ObjectFieldBag objectFieldBag) {
+		_objectFieldBag = objectFieldBag;
+	}
+
 	private List<ObjectDefinitionSetting> _objectDefinitionSettings;
+	private ObjectFieldBag _objectFieldBag;
 
 }

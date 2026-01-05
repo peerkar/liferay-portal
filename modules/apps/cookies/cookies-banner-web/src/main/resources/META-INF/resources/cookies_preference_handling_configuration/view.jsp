@@ -48,6 +48,60 @@ CookiesPreferenceHandlingConfigurationDisplayContext cookiesPreferenceHandlingCo
 	</div>
 </div>
 
+<c:if test='<%= FeatureFlagManagerUtil.isEnabled("LPD-65277") %>'>
+	<div class="row">
+		<div class="col-sm-12 form-group">
+			<div class="form-group__inner">
+				<aui:input disabled="<%= !cookiesPreferenceHandlingConfigurationDisplayContext.getCookiesPreferenceHandlingEnabled() %>" id='<%= liferayPortletResponse.getNamespace() + "consentRenewalPeriod" %>' label="cookie-consent-renewal-period" max="12" min="1" name='<%= liferayPortletResponse.getNamespace() + "consentRenewalPeriod" %>' required="<%= cookiesPreferenceHandlingConfigurationDisplayContext.getCookiesPreferenceHandlingEnabled() %>" type="number" useNamespace="<%= false %>" value="<%= (cookiesPreferenceHandlingConfigurationDisplayContext.getCookiesPreferenceHandlingConsentRenewalPeriod() == 0) ? 12 : cookiesPreferenceHandlingConfigurationDisplayContext.getCookiesPreferenceHandlingConsentRenewalPeriod() %>" />
+
+				<div aria-hidden="true" class="form-feedback-group">
+					<div class="form-text text-weight-normal">
+						<liferay-ui:message key="cookie-consent-renewal-period-help" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</c:if>
+
 <liferay-frontend:component
 	module="{ConfigurationFormEventHandler} from cookies-banner-web"
 />
+
+<aui:script>
+	var form = document.<portlet:namespace />fm;
+
+	if (form && Liferay.FeatureFlags['LPD-65277']) {
+		form.addEventListener('submit', (event) => {
+			var consentRenewalPeriod = document.getElementById(
+				'<portlet:namespace />consentRenewalPeriod'
+			);
+
+			if (!consentRenewalPeriod.value || isNaN(consentRenewalPeriod.value)) {
+				event.preventDefault();
+				event.stopImmediatePropagation();
+				return;
+			}
+
+			var enabled = document.getElementById('<portlet:namespace />enabled');
+
+			if (
+				enabled.checked &&
+				<%= cookiesPreferenceHandlingConfigurationDisplayContext.getCookiesPreferenceHandlingEnabled() %>
+			) {
+				event.preventDefault();
+				event.stopImmediatePropagation();
+
+				Liferay.Util.openConfirmModal({
+					message:
+						'<liferay-ui:message key="you-are-about-to-change-the-consent-renewal-period" />',
+					onConfirm: (isConfirmed) => {
+						if (isConfirmed) {
+							form.submit();
+						}
+					},
+				});
+			}
+		});
+	}
+</aui:script>

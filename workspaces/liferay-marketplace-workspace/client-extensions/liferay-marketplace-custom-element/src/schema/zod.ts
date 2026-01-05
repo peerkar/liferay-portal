@@ -142,7 +142,9 @@ const zodSchema = {
 		dataCenterLocation: z.string(),
 		friendlyWorkspaceURL: z.string().optional(),
 		incidentReportContacts: z.array(z.string().email()).min(1),
-		subscriptionType: z.string(),
+		productKey: z.string().optional(),
+		productName: z.string(),
+		productPurchaseKey: z.string().optional(),
 		workspaceName: z.string().min(3),
 		workspaceOwnerEmail: z.string().email(),
 	}),
@@ -152,7 +154,7 @@ const zodSchema = {
 			liferayPackages: z
 				.array(
 					z.object({
-						file: z.object({}),
+						file: z.array(z.any()).nonempty(),
 						versions: z.array(z.string()).min(1),
 					})
 				)
@@ -301,6 +303,14 @@ const zodSchema = {
 		}),
 		termsAndConditions: z.boolean().refine((data) => data === true),
 	},
+	ssaInviteUsers: z.object({
+		emailAddress: z
+			.string()
+			.email({message: i18n.translate('please-fill-in-a-valid-email')}),
+		roles: z
+			.array(z.object({value: z.string()}))
+			.nonempty(i18n.translate('at-least-one-role-must-be-provided')),
+	}),
 	ssaTrialForm: z.object({
 		duration: z.coerce
 			.number()

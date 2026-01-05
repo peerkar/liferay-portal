@@ -38,26 +38,9 @@ import org.json.JSONObject;
 public class TestrayFactory {
 
 	public static TestrayCaseResult newBuildTestrayCaseResult(
-		TestrayBuild testrayBuild, TopLevelBuildReport topLevelBuildReport,
-		AxisTestClassGroup axisTestClassGroup) {
-
-		return newBuildTestrayCaseResult(
-			testrayBuild, topLevelBuildReport, axisTestClassGroup, null, null);
-	}
-
-	public static TestrayCaseResult newBuildTestrayCaseResult(
-		TestrayBuild testrayBuild, TopLevelBuildReport topLevelBuildReport,
-		AxisTestClassGroup axisTestClassGroup, TestClass testClass) {
-
-		return newBuildTestrayCaseResult(
-			testrayBuild, topLevelBuildReport, axisTestClassGroup, testClass,
-			null);
-	}
-
-	public static TestrayCaseResult newBuildTestrayCaseResult(
-		TestrayBuild testrayBuild, TopLevelBuildReport topLevelBuildReport,
 		AxisTestClassGroup axisTestClassGroup, TestClass testClass,
-		TestClassMethod testClassMethod) {
+		TestClassMethod testClassMethod, TestrayBuild testrayBuild,
+		TopLevelBuildReport topLevelBuildReport) {
 
 		if (testrayBuild == null) {
 			throw new RuntimeException("Testray build is null");
@@ -74,36 +57,36 @@ public class TestrayFactory {
 		if (testClass != null) {
 			if (axisTestClassGroup instanceof FunctionalAxisTestClassGroup) {
 				return new FunctionalBatchBuildTestrayCaseResult(
-					testrayBuild, topLevelBuildReport, axisTestClassGroup,
-					testClass);
+					axisTestClassGroup, testClass, testrayBuild,
+					topLevelBuildReport);
 			}
 			else if (axisTestClassGroup instanceof JSUnitAxisTestClassGroup) {
 				return new JSUnitBatchBuildTestrayCaseResult(
-					testrayBuild, topLevelBuildReport, axisTestClassGroup,
-					testClass);
+					axisTestClassGroup, testClass, testrayBuild,
+					topLevelBuildReport);
 			}
 			else if (axisTestClassGroup instanceof JUnitAxisTestClassGroup) {
 				return new JUnitBatchBuildTestrayCaseResult(
-					testrayBuild, topLevelBuildReport, axisTestClassGroup,
-					testClass);
+					axisTestClassGroup, testClass, testrayBuild,
+					topLevelBuildReport);
 			}
 			else if (axisTestClassGroup instanceof ModulesAxisTestClassGroup) {
 				if (testClass instanceof ServiceBuilderAntTargetTestClass) {
 					return new AntTargetBatchBuildTestrayCaseResult(
-						testrayBuild, topLevelBuildReport, axisTestClassGroup,
-						testClass);
+						axisTestClassGroup, testClass, testrayBuild,
+						topLevelBuildReport);
 				}
 
 				return new ModulesBatchBuildTestrayCaseResult(
-					testrayBuild, topLevelBuildReport, axisTestClassGroup,
-					testClass);
+					axisTestClassGroup, testClass, testrayBuild,
+					topLevelBuildReport);
 			}
 			else if (axisTestClassGroup instanceof
 						PlaywrightAxisTestClassGroup) {
 
 				return new PlaywrightBatchBuildTestrayCaseResult(
-					testrayBuild, topLevelBuildReport, axisTestClassGroup,
-					testClass, testClassMethod);
+					axisTestClassGroup, testClass, testClassMethod,
+					testrayBuild, topLevelBuildReport);
 			}
 		}
 
@@ -112,11 +95,28 @@ public class TestrayFactory {
 				"test-portal-source-format")) {
 
 			return new SFBatchBuildTestrayCaseResult(
-				testrayBuild, topLevelBuildReport, axisTestClassGroup);
+				axisTestClassGroup, testrayBuild, topLevelBuildReport);
 		}
 
-		return new BatchBuildTestrayCaseResult(
-			testrayBuild, topLevelBuildReport, axisTestClassGroup);
+		return new BatchBuildTestrayCaseResult<>(
+			axisTestClassGroup, testrayBuild, topLevelBuildReport);
+	}
+
+	public static TestrayCaseResult newBuildTestrayCaseResult(
+		AxisTestClassGroup axisTestClassGroup, TestClass testClass,
+		TestrayBuild testrayBuild, TopLevelBuildReport topLevelBuildReport) {
+
+		return newBuildTestrayCaseResult(
+			axisTestClassGroup, testClass, null, testrayBuild,
+			topLevelBuildReport);
+	}
+
+	public static TestrayCaseResult newBuildTestrayCaseResult(
+		AxisTestClassGroup axisTestClassGroup, TestrayBuild testrayBuild,
+		TopLevelBuildReport topLevelBuildReport) {
+
+		return newBuildTestrayCaseResult(
+			axisTestClassGroup, null, null, testrayBuild, topLevelBuildReport);
 	}
 
 	public static TestrayCaseResult newJSONObjectTestrayCaseResult(
@@ -133,11 +133,11 @@ public class TestrayFactory {
 
 	public static PortalLogBatchBuildTestrayCaseResult
 		newPortalLogTestrayCaseResult(
-			TestrayBuild testrayBuild, TopLevelBuildReport topLevelBuildReport,
-			AxisTestClassGroup axisTestClassGroup) {
+			AxisTestClassGroup axisTestClassGroup, TestrayBuild testrayBuild,
+			TopLevelBuildReport topLevelBuildReport) {
 
 		return new PortalLogBatchBuildTestrayCaseResult(
-			testrayBuild, topLevelBuildReport, axisTestClassGroup);
+			axisTestClassGroup, testrayBuild, topLevelBuildReport);
 	}
 
 	public static TestrayAttachment newTestrayAttachment(
@@ -279,6 +279,14 @@ public class TestrayFactory {
 		TestrayServer testrayServer, JSONObject jsonObject) {
 
 		return new TestrayRoutine(testrayServer, jsonObject);
+	}
+
+	public static TestrayRun newTestrayRun(
+		TestrayBuild testrayBuild, AxisTestClassGroup axisTestClassGroup,
+		List<File> propertiesFiles) {
+
+		return new TestrayRun(
+			testrayBuild, axisTestClassGroup, propertiesFiles);
 	}
 
 	public static TestrayRun newTestrayRun(

@@ -4,7 +4,7 @@
  */
 
 import {useEffect} from 'react';
-import {HashRouter, Outlet, Route, Routes} from 'react-router-dom';
+import {Outlet, Route, Routes} from 'react-router-dom';
 
 import NewAppContextProvider from '../../context/NewAppContext';
 import SolutionContextProvider from '../../context/SolutionContext';
@@ -18,8 +18,6 @@ import PublishedDashboardOutlet from './PublisherDashboardOutlet';
 import Accounts from './pages/Accounts/Accounts';
 import Apps from './pages/Apps';
 import App from './pages/Apps/App';
-import {AppContextProvider} from './pages/Apps/AppCreationFlow/AppContext/AppManageState';
-import {AppCreationFlow} from './pages/Apps/AppCreationFlow/AppCreationFlow';
 import PublishAppOutlet from './pages/NewAppFlow/PublishAppOutlet';
 import {Build, Profile as AppProfile} from './pages/NewAppFlow/pages';
 import Licensing from './pages/NewAppFlow/pages/Licensing';
@@ -43,6 +41,8 @@ import {
 	Profile,
 	Submit,
 } from './pages/Solutions/SolutionForm/pages';
+
+import './PublisherDashboard.scss';
 
 const PublisherDashboardRouter = () => {
 	const {accountId} = Liferay.CommerceContext.account || {};
@@ -78,122 +78,100 @@ const PublisherDashboardRouter = () => {
 	}
 
 	return (
-		<HashRouter>
-			<Routes>
-				<Route path="newapp">
+		<Routes>
+			<Route path="newapp">
+				<Route
+					element={
+						<NewAppContextProvider catalog={catalog as Catalog}>
+							<Outlet />
+						</NewAppContextProvider>
+					}
+					path=":productId?"
+				>
+					<Route element={<PublishAppOutlet />} path="publisher">
+						<Route element={<AppProfile />} path="profile" />
+						<Route element={<Build />} path="build" />
+						<Route element={<Create />} index />
+						<Route element={<Licensing />} path="licensing" />
+						<Route element={<Pricing />} path="pricing" />
+						<Route element={<Storefront />} path="storefront" />
+						<Route element={<Version />} path="version" />
+						<Route element={<SubmitApp />} path="submit" />
+
+						<Route
+							element={<LicensePrices />}
+							path="licensing-prices"
+						/>
+
+						<Route element={<Support />} path="support" />
+					</Route>
+					<Route element={<NewAppBuildOutlet />} path="newbuild">
+						<Route element={<Build />} index />
+						<Route element={<SubmitNewBuild />} path="submit" />
+					</Route>
+				</Route>
+			</Route>
+
+			<Route element={<PublishedDashboardOutlet catalogId={catalogId} />}>
+				<Route path="/">
+					<Route element={<Apps />} index />
+
 					<Route
 						element={
 							<NewAppContextProvider catalog={catalog as Catalog}>
-								<Outlet />
+								<App />
 							</NewAppContextProvider>
 						}
-						path=":productId?"
-					>
-						<Route element={<PublishAppOutlet />} path="publisher">
-							<Route element={<AppProfile />} path="profile" />
-							<Route element={<Build />} path="build" />
-							<Route element={<Create />} index />
-							<Route element={<Licensing />} path="licensing" />
-							<Route element={<Pricing />} path="pricing" />
-							<Route element={<Storefront />} path="storefront" />
-							<Route element={<Version />} path="version" />
-							<Route element={<SubmitApp />} path="submit" />
-
-							<Route
-								element={<LicensePrices />}
-								path="licensing-prices"
-							/>
-
-							<Route element={<Support />} path="support" />
-						</Route>
-						<Route element={<NewAppBuildOutlet />} path="newbuild">
-							<Route element={<Build />} index />
-							<Route element={<SubmitNewBuild />} path="submit" />
-						</Route>
-					</Route>
+						path="app/:productId"
+					/>
 				</Route>
 
-				<Route
-					element={
-						<AppContextProvider>
-							<AppCreationFlow catalogId={String(catalogId)} />
-						</AppContextProvider>
-					}
-					path="app/create"
-				/>
-
-				<Route
-					element={
-						<PublishedDashboardOutlet
-							accountsSearch={accountsSearch}
-							catalogId={catalogId}
-						/>
-					}
-				>
-					<Route path="/">
-						<Route element={<Apps />} index />
-
-						<Route
-							element={
-								<NewAppContextProvider
-									catalog={catalog as Catalog}
-								>
-									<App />
-								</NewAppContextProvider>
-							}
-							path="app/:productId"
-						/>
-					</Route>
-
-					<Route element={<Accounts />} path="accounts" />
-
-					<Route path="solutions">
-						<Route element={<Solutions />} index />
-					</Route>
-				</Route>
+				<Route element={<Accounts />} path="accounts" />
 
 				<Route path="solutions">
+					<Route element={<Solutions />} index />
+				</Route>
+			</Route>
+
+			<Route path="solutions">
+				<Route
+					element={
+						<SolutionContextProvider
+							catalogId={catalogId as number}
+						>
+							<Outlet />
+						</SolutionContextProvider>
+					}
+					path=":productId?"
+				>
 					<Route
 						element={
-							<SolutionContextProvider
-								catalogId={catalogId as number}
-							>
-								<Outlet />
-							</SolutionContextProvider>
+							<PublishedDashboardOutlet catalogId={catalogId} />
 						}
-						path=":productId?"
 					>
-						<Route
-							element={
-								<PublishedDashboardOutlet
-									accountsSearch={accountsSearch}
-									catalogId={catalogId}
-								/>
-							}
-						>
-							<Route element={<SolutionsDetails />} index />
-						</Route>
+						<Route element={<SolutionsDetails />} index />
+					</Route>
 
-						<Route
-							element={<PublishSolutionOutlet />}
-							path="publisher"
-						>
-							<Route element={<Create />} path="" />
-							<Route
-								element={<CompanyProfile />}
-								path="company"
-							/>
-							<Route element={<ContactUs />} path="contact" />
-							<Route element={<Details />} path="details" />
-							<Route element={<Header />} path="header" />
-							<Route element={<Profile />} path="profile" />
-							<Route element={<Submit />} path="submit" />
-						</Route>
+					<Route element={<PublishSolutionOutlet />} path="publisher">
+						<Route element={<Create />} path="" />
+						<Route element={<CompanyProfile />} path="company" />
+						<Route element={<ContactUs />} path="contact" />
+						<Route element={<Details />} path="details" />
+						<Route element={<Header />} path="header" />
+						<Route element={<Profile />} path="profile" />
+						<Route element={<Submit />} path="submit" />
 					</Route>
 				</Route>
-			</Routes>
-		</HashRouter>
+			</Route>
+		</Routes>
 	);
 };
 
-export default withProviders(PublisherDashboardRouter);
+export default withProviders(PublisherDashboardRouter, {
+	breadcrumbProps: {
+		hiddenPaths: ['publisher-dashboard#/app'],
+	},
+	withBreadcrumbs: true,
+	withErrorBoundary: true,
+	withHashRouter: true,
+});

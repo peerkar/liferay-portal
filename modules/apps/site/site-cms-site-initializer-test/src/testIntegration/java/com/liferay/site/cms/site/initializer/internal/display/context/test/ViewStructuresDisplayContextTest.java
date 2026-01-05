@@ -13,8 +13,8 @@ import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.test.rule.FeatureFlag;
-import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
@@ -35,9 +35,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 /**
  * @author Marco Galluzzi
  */
-@FeatureFlags(
-	featureFlags = {@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-32050")}
-)
+@FeatureFlag("LPD-17564")
 @RunWith(Arquillian.class)
 public class ViewStructuresDisplayContextTest
 	extends BaseDisplayContextTestCase {
@@ -73,7 +71,7 @@ public class ViewStructuresDisplayContextTest
 				"getFDSActionDropdownItems", new Class<?>[0]);
 
 		Assert.assertEquals(
-			fdsActionDropdownItems.toString(), 7,
+			fdsActionDropdownItems.toString(), 6,
 			fdsActionDropdownItems.size());
 
 		_assertFDSActionDropdownItem(
@@ -83,19 +81,16 @@ public class ViewStructuresDisplayContextTest
 			fdsActionDropdownItems.get(1), "list-ul", "viewUsages",
 			"view-usages", "get", null);
 		_assertFDSActionDropdownItem(
-			fdsActionDropdownItems.get(2), "copy", "copy", "make-a-copy", null,
-			null);
-		_assertFDSActionDropdownItem(
-			fdsActionDropdownItems.get(3), "export", "export", "export-as-json",
+			fdsActionDropdownItems.get(2), "export", "export", "export-as-json",
 			"get", null);
 		_assertFDSActionDropdownItem(
-			fdsActionDropdownItems.get(4), "import", "import",
+			fdsActionDropdownItems.get(3), "import", "import",
 			"import-and-override", "get", null);
 		_assertFDSActionDropdownItem(
-			fdsActionDropdownItems.get(5), "password-policies", "permissions",
+			fdsActionDropdownItems.get(4), "password-policies", "permissions",
 			"permissions", "get", null);
 		_assertFDSActionDropdownItem(
-			fdsActionDropdownItems.get(6), "trash", "delete", "delete",
+			fdsActionDropdownItems.get(5), "trash", "delete", "delete",
 			"delete", Map.of("system", false));
 	}
 
@@ -103,7 +98,9 @@ public class ViewStructuresDisplayContextTest
 		DropdownItem dropdownItem, String expectedLabel,
 		String objectFolderExternalReferenceCode) {
 
-		Assert.assertEquals(expectedLabel, dropdownItem.get("label"));
+		Assert.assertEquals(
+			language.get(LocaleUtil.getDefault(), expectedLabel),
+			dropdownItem.get("label"));
 		Assert.assertEquals(
 			GroupConstants.CMS_FRIENDLY_URL +
 				"/structure-builder?objectFolderExternalReferenceCode=" +
@@ -122,7 +119,9 @@ public class ViewStructuresDisplayContextTest
 		Assert.assertEquals(method, data.get("method"));
 
 		Assert.assertEquals(icon, fdsActionDropdownItem.get("icon"));
-		Assert.assertEquals(label, fdsActionDropdownItem.get("label"));
+		Assert.assertEquals(
+			language.get(LocaleUtil.getDefault(), label),
+			fdsActionDropdownItem.get("label"));
 
 		if (visibilityFilters != null) {
 			Assert.assertEquals(

@@ -21,13 +21,17 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.model.PortletPreferences;
+import com.liferay.portal.kernel.model.ResourceConstants;
+import com.liferay.portal.kernel.model.ResourcePermission;
 import com.liferay.portal.kernel.portlet.PortletIdCodec;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.service.PortletLocalServiceUtil;
 import com.liferay.portal.kernel.service.PortletPreferenceValueLocalServiceUtil;
 import com.liferay.portal.kernel.service.PortletPreferencesLocalServiceUtil;
+import com.liferay.portal.kernel.service.ResourcePermissionLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.permission.PortletPermissionUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.CopyLayoutThreadLocal;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -50,6 +54,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -202,7 +207,37 @@ public class SegmentsExperienceUtil {
 				dataJSONObject.toString());
 	}
 
-	private static void _copyPortletPreferences(
+	private static void _copyPortletPermissions(
+		long companyId, String newPortletId, long plid, String portletId) {
+
+		String rootPortletId = PortletIdCodec.decodePortletName(portletId);
+
+		for (ResourcePermission resourcePermission :
+				ResourcePermissionLocalServiceUtil.getResourcePermissions(
+					companyId, rootPortletId,
+					ResourceConstants.SCOPE_INDIVIDUAL,
+					PortletPermissionUtil.getPrimaryKey(plid, portletId))) {
+
+			ResourcePermission newPermission =
+				ResourcePermissionLocalServiceUtil.createResourcePermission(
+					CounterLocalServiceUtil.increment(
+						ResourcePermission.class.getName()));
+
+			newPermission.setCompanyId(companyId);
+			newPermission.setName(rootPortletId);
+			newPermission.setScope(ResourceConstants.SCOPE_INDIVIDUAL);
+			newPermission.setPrimKey(
+				PortletPermissionUtil.getPrimaryKey(plid, newPortletId));
+			newPermission.setRoleId(resourcePermission.getRoleId());
+			newPermission.setActionIds(resourcePermission.getActionIds());
+			newPermission.setViewActionId(resourcePermission.isViewActionId());
+
+			ResourcePermissionLocalServiceUtil.addResourcePermission(
+				newPermission);
+		}
+	}
+
+	private static void _copyPortlets(
 		FragmentEntryLink fragmentEntryLink,
 		FragmentEntryLink newFragmentEntryLink, long plid,
 		PortletRegistry portletRegistry) {
@@ -211,15 +246,23 @@ public class SegmentsExperienceUtil {
 				portletRegistry.getFragmentEntryLinkPortletIds(
 					fragmentEntryLink)) {
 
-			_getNewPortletPreferences(
-				fragmentEntryLink.getNamespace(),
-				newFragmentEntryLink.getNamespace(), plid, portletId);
+			String newPortletId = _getNewPortletId(
+				newFragmentEntryLink.getNamespace(), portletId);
+
+			if (Objects.equals(newPortletId, portletId)) {
+				continue;
+			}
+
+			_getNewPortletPreferences(newPortletId, plid, portletId);
+
+			_copyPortletPermissions(
+				fragmentEntryLink.getCompanyId(), newPortletId, plid,
+				portletId);
 		}
 	}
 
 	private static String _getNewEditableValues(
-		JSONObject editableValuesJSONObject, String namespace,
-		String newNamespace, long plid) {
+		JSONObject editableValuesJSONObject, String namespace, long plid) {
 
 		String instanceId = editableValuesJSONObject.getString("instanceId");
 		String portletId = editableValuesJSONObject.getString("portletId");
@@ -229,33 +272,34 @@ public class SegmentsExperienceUtil {
 		}
 
 		PortletPreferences portletPreferences = _getNewPortletPreferences(
-			namespace, newNamespace, plid,
+			PortletIdCodec.encode(portletId, namespace), plid,
 			PortletIdCodec.encode(portletId, instanceId));
 
 		if (portletPreferences == null) {
 			return editableValuesJSONObject.toString();
 		}
 
-		JSONObject newEditableValuesJSONObject = editableValuesJSONObject.put(
-			"instanceId",
-			PortletIdCodec.decodeInstanceId(portletPreferences.getPortletId()));
-
-		return newEditableValuesJSONObject.toString();
+		return JSONUtil.put(
+			"instanceId", namespace
+		).put(
+			"portletId", portletId
+		).toString();
 	}
 
 	private static String _getNewPortletId(
-		String namespace, String newNamespace, String portletId) {
+		String newInstanceId, String portletId) {
 
-		if (!portletId.contains(namespace)) {
-			return PortletIdCodec.encode(
-				PortletIdCodec.decodePortletName(portletId), newNamespace);
+		String instanceId = PortletIdCodec.decodeInstanceId(portletId);
+
+		if (Validator.isNull(instanceId)) {
+			return portletId;
 		}
 
-		return StringUtil.replace(portletId, namespace, newNamespace);
+		return StringUtil.replace(portletId, instanceId, newInstanceId);
 	}
 
 	private static PortletPreferences _getNewPortletPreferences(
-		String namespace, String newNamespace, long plid, String portletId) {
+		String newPortletId, long plid, String portletId) {
 
 		PortletPreferences portletPreferences =
 			PortletPreferencesLocalServiceUtil.fetchPortletPreferences(
@@ -271,9 +315,6 @@ public class SegmentsExperienceUtil {
 		if ((portlet == null) || portlet.isUndeployedPortlet()) {
 			return null;
 		}
-
-		String newPortletId = _getNewPortletId(
-			namespace, newNamespace, portletId);
 
 		PortletPreferences existingPortletPreferences =
 			PortletPreferencesLocalServiceUtil.fetchPortletPreferences(
@@ -375,8 +416,7 @@ public class SegmentsExperienceUtil {
 
 			newFragmentEntryLink.setEditableValues(
 				_getNewEditableValues(
-					editableValuesJSONObject, fragmentEntryLink.getNamespace(),
-					newNamespace, layout.getPlid()));
+					editableValuesJSONObject, newNamespace, layout.getPlid()));
 
 			newFragmentEntryLink.setNamespace(newNamespace);
 			newFragmentEntryLink.setLastPropagationDate(new Date());
@@ -394,7 +434,7 @@ public class SegmentsExperienceUtil {
 				newFragmentEntryLink.getFragmentEntryLinkId(),
 				serviceContextFunction);
 
-			_copyPortletPreferences(
+			_copyPortlets(
 				fragmentEntryLink, newFragmentEntryLink, layout.getPlid(),
 				portletRegistry);
 		}

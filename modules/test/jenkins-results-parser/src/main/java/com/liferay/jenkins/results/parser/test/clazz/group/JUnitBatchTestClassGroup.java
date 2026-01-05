@@ -19,6 +19,8 @@ import com.liferay.jenkins.results.parser.test.clazz.TestClass;
 import com.liferay.jenkins.results.parser.test.clazz.TestClassBalancedListSplitter;
 import com.liferay.jenkins.results.parser.test.clazz.TestClassFactory;
 import com.liferay.jenkins.results.parser.test.clazz.TestClassMethod;
+import com.liferay.jenkins.results.parser.test.clazz.TestTaskBalancedListSplitter;
+import com.liferay.jenkins.results.parser.test.task.TestTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -224,6 +226,10 @@ public class JUnitBatchTestClassGroup extends BatchTestClassGroup {
 		}
 
 		return null;
+	}
+
+	public List<TestTask> getTestTasks() {
+		return new ArrayList<>();
 	}
 
 	public void writeTestCSVReportFile() throws Exception {
@@ -639,13 +645,45 @@ public class JUnitBatchTestClassGroup extends BatchTestClassGroup {
 					0, TestClassGroupFactory.newAxisTestClassGroup(this));
 			}
 			else {
-				List<TestClass> batchTestClasses = new ArrayList<>(testClasses);
+				List<List<TestClass>> testClassLists = null;
 
-				TestClassBalancedListSplitter testClassBalancedListSplitter =
-					new TestClassBalancedListSplitter(targetAxisDuration);
+				GroupingStrategy groupingStrategy = getGroupingStrategy();
 
-				List<List<TestClass>> testClassLists =
-					testClassBalancedListSplitter.split(batchTestClasses);
+				if ((this instanceof ModulesJUnitBatchTestClassGroup) &&
+					((groupingStrategy ==
+						GroupingStrategy.TEST_TASK_AVERAGE_DURATION) ||
+					 (groupingStrategy ==
+						 GroupingStrategy.TEST_TASK_AVERAGE_TOTAL_DURATION) ||
+					 (groupingStrategy ==
+						 GroupingStrategy.TEST_TASK_LONGEST_DURATION))) {
+
+					TestTaskBalancedListSplitter testTaskBalancedListSplitter =
+						new TestTaskBalancedListSplitter(targetAxisDuration);
+
+					List<List<TestTask>> testTaskLists =
+						testTaskBalancedListSplitter.split(getTestTasks());
+
+					testClassLists = new ArrayList<>();
+
+					for (List<TestTask> testTasksList : testTaskLists) {
+						List<TestClass> testClassList = new ArrayList<>();
+
+						for (TestTask testTask : testTasksList) {
+							testClassList.addAll(testTask.getTestClasses());
+						}
+
+						testClassLists.add(testClassList);
+					}
+				}
+				else {
+					TestClassBalancedListSplitter
+						testClassBalancedListSplitter =
+							new TestClassBalancedListSplitter(
+								targetAxisDuration);
+
+					testClassLists = testClassBalancedListSplitter.split(
+						new ArrayList<>(testClasses));
+				}
 
 				for (List<TestClass> testClassList : testClassLists) {
 					AxisTestClassGroup axisTestClassGroup =

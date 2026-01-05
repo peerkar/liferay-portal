@@ -4,16 +4,15 @@
  */
 
 import {IInternalRenderer} from '@liferay/frontend-data-set-web';
-import {openModal} from 'frontend-js-components-web';
 
+import {OBJECT_ENTRY_FOLDER_CLASS_NAME} from '../../common/utils/constants';
+import {openCMSModal} from '../../common/utils/openCMSModal';
 import AssetNavigationModalContent from '../modal/asset_navigation_view/AssetNavigationModalContent';
 import {AdditionalProps} from './AssetsFDSPropsTransformer';
 import shareAction from './actions/shareAction';
 import AuthorRenderer from './cell_renderers/AuthorRenderer';
 import SharedItemRenderer from './cell_renderers/SharedItemRenderer';
-
-const OBJECT_ENTRY_FOLDER_CLASS_NAME =
-	'com.liferay.object.model.ObjectEntryFolder';
+import VisibleRenderer from './cell_renderers/VisibleRenderer';
 
 export default function SharedWithMeFDSPropsTransformer({
 	additionalProps,
@@ -38,6 +37,11 @@ export default function SharedWithMeFDSPropsTransformer({
 					name: 'sharedItemTableCellRenderer',
 					type: 'internal',
 				} as IInternalRenderer,
+				{
+					component: VisibleRenderer,
+					name: 'visibleTableCellRenderer',
+					type: 'internal',
+				} as IInternalRenderer,
 			],
 		},
 		itemsActions: itemsActions.map((action) => {
@@ -60,7 +64,8 @@ export default function SharedWithMeFDSPropsTransformer({
 						Boolean(
 							item?.className !==
 								OBJECT_ENTRY_FOLDER_CLASS_NAME &&
-								item?.actionIds?.includes('UPDATE')
+								item?.actionIds?.includes('UPDATE') &&
+								item?.visible
 						),
 				};
 			}
@@ -74,13 +79,16 @@ export default function SharedWithMeFDSPropsTransformer({
 				return {
 					...action,
 					isVisible: (item: any) =>
-						Boolean(item?.actionIds?.includes('UPDATE')),
+						Boolean(
+							item?.actionIds?.includes('UPDATE') && item?.visible
+						),
 				};
 			}
 			else if (action?.data?.id === 'share') {
 				return {
 					...action,
-					isVisible: (item: any) => Boolean(item?.shareable),
+					isVisible: (item: any) =>
+						Boolean(item?.shareable && item?.visible),
 				};
 			}
 			else if (action?.data?.id === 'view-content') {
@@ -152,10 +160,7 @@ export default function SharedWithMeFDSPropsTransformer({
 					},
 				}));
 
-				openModal({
-					containerProps: {
-						className: '',
-					},
+				openCMSModal({
 					contentComponent: () =>
 						AssetNavigationModalContent({
 							additionalProps,

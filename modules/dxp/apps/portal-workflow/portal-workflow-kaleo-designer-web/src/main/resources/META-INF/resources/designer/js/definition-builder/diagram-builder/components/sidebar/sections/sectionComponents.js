@@ -12,9 +12,12 @@ import AssignmentsSummary from './assignments/AssignmentsSummary';
 import SourceCode from './assignments/SourceCode';
 import Notifications from './notifications/Notifications';
 import NotificationsSummary from './notifications/NotificationsSummary';
+import PromptSummary from './prompt/PromptSummary';
+import RAGSummary from './rag/RAGSummary';
 import TimerSourceCode from './timers/TimerSourceCode';
 import Timers from './timers/Timers';
 import TimersSummary from './timers/TimersSummary';
+import ToolsSummary from './tools/ToolsSummary';
 
 const sectionComponents = {
 	actions: Actions,
@@ -25,10 +28,13 @@ const sectionComponents = {
 	nodeInformation: NodeInformation,
 	notifications: Notifications,
 	notificationsSummary: NotificationsSummary,
+	promptSummary: PromptSummary,
+	ragSummary: RAGSummary,
 	sourceCode: SourceCode,
 	timerSourceCode: TimerSourceCode,
 	timers: Timers,
 	timersSummary: TimersSummary,
+	toolsSummary: ToolsSummary,
 };
 
 export default sectionComponents;

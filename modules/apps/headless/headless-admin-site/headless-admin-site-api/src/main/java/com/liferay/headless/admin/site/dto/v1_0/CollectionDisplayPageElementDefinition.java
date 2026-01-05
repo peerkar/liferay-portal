@@ -336,51 +336,6 @@ public class CollectionDisplayPageElementDefinition
 	private Supplier<EmptyCollectionConfig> _emptyCollectionConfigSupplier;
 
 	@io.swagger.v3.oas.annotations.media.Schema(
-		description = "Specifies if the collection display is hidden to the user."
-	)
-	public Boolean getHidden() {
-		if (_hiddenSupplier != null) {
-			hidden = _hiddenSupplier.get();
-
-			_hiddenSupplier = null;
-		}
-
-		return hidden;
-	}
-
-	public void setHidden(Boolean hidden) {
-		this.hidden = hidden;
-
-		_hiddenSupplier = null;
-	}
-
-	@JsonIgnore
-	public void setHidden(
-		UnsafeSupplier<Boolean, Exception> hiddenUnsafeSupplier) {
-
-		_hiddenSupplier = () -> {
-			try {
-				return hiddenUnsafeSupplier.get();
-			}
-			catch (RuntimeException runtimeException) {
-				throw runtimeException;
-			}
-			catch (Exception exception) {
-				throw new RuntimeException(exception);
-			}
-		};
-	}
-
-	@GraphQLField(
-		description = "Specifies if the collection display is hidden to the user."
-	)
-	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected Boolean hidden;
-
-	@JsonIgnore
-	private Supplier<Boolean> _hiddenSupplier;
-
-	@io.swagger.v3.oas.annotations.media.Schema(
 		description = "The custom name of a collection display page element."
 	)
 	public String getName() {
@@ -730,18 +685,6 @@ public class CollectionDisplayPageElementDefinition
 			sb.append(String.valueOf(emptyCollectionConfig));
 		}
 
-		Boolean hidden = getHidden();
-
-		if (hidden != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"hidden\": ");
-
-			sb.append(hidden);
-		}
-
 		String name = getName();
 
 		if (name != null) {
@@ -804,9 +747,7 @@ public class CollectionDisplayPageElementDefinition
 			sb.append("\"paginationType\": ");
 
 			sb.append("\"");
-
 			sb.append(paginationType);
-
 			sb.append("\"");
 		}
 
@@ -820,9 +761,7 @@ public class CollectionDisplayPageElementDefinition
 			sb.append("\"type\": ");
 
 			sb.append("\"");
-
 			sb.append(type);
-
 			sb.append("\"");
 		}
 

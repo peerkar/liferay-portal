@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.model.ModelHintsUtil;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.SystemEventConstants;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.portletfilerepository.PortletFileRepository;
 import com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil;
 import com.liferay.portal.kernel.service.ResourceLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -309,9 +310,21 @@ public class FragmentCompositionLocalServiceImpl
 				fragmentCompositionId);
 
 		fragmentComposition.setModifiedDate(new Date());
+
+		long previousPreviewFileEntryId =
+			fragmentComposition.getPreviewFileEntryId();
+
 		fragmentComposition.setPreviewFileEntryId(previewFileEntryId);
 
-		return fragmentCompositionPersistence.update(fragmentComposition);
+		fragmentComposition = fragmentCompositionPersistence.update(
+			fragmentComposition);
+
+		if ((previewFileEntryId == 0) && (previousPreviewFileEntryId > 0)) {
+			_portletFileRepository.deletePortletFileEntry(
+				previousPreviewFileEntryId);
+		}
+
+		return fragmentComposition;
 	}
 
 	@Override
@@ -425,6 +438,9 @@ public class FragmentCompositionLocalServiceImpl
 
 	@Reference
 	private CustomSQL _customSQL;
+
+	@Reference
+	private PortletFileRepository _portletFileRepository;
 
 	@Reference
 	private ResourceLocalService _resourceLocalService;

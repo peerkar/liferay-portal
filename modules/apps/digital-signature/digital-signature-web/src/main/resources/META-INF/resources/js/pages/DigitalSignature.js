@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import {HashRouter, Route, Switch} from 'react-router-dom';
+import {HashRouter, Route, Routes} from 'react-router';
 
 import {AppContextProvider} from '../AppContext';
 import EnvelopeForm from './envelope/EnvelopeForm';
@@ -14,17 +14,16 @@ import EnvelopeView from './envelope/EnvelopeView';
 const DigitalSignature = (props) => (
 	<AppContextProvider {...props}>
 		<HashRouter>
-			<Switch>
-				<Route component={EnvelopeList} exact path="/" />
+			<Routes>
+				<Route element={<EnvelopeList />} path="/" />
 
 				<Route
-					component={EnvelopeView}
-					exact
+					element={<EnvelopeView />}
 					path="/envelope/:envelopeId"
 				/>
 
-				<Route component={EnvelopeForm} exact path="/new-envelope" />
-			</Switch>
+				<Route element={<EnvelopeForm />} path="/new-envelope" />
+			</Routes>
 		</HashRouter>
 	</AppContextProvider>
 );

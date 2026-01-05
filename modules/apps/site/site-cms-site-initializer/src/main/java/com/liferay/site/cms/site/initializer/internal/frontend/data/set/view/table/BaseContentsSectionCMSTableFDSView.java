@@ -25,13 +25,11 @@ public abstract class BaseContentsSectionCMSTableFDSView
 			fdsTableSchemaBuilderFactory.create();
 
 		return fdsTableSchemaBuilder.add(
-			"title", "title",
+			"embedded.title", "title",
 			fdsTableSchemaField -> fdsTableSchemaField.setActionId(
 				"actionLink"
 			).setContentRenderer(
 				"simpleActionLinkTableCellRenderer"
-			).setSortable(
-				true
 			)
 		).add(
 			"embedded.systemProperties.objectDefinitionBrief.label", "type",

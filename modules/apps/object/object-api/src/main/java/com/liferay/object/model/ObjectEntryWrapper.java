@@ -311,6 +311,11 @@ public class ObjectEntryWrapper
 		return model.getHeadObjectEntryId();
 	}
 
+	@Override
+	public Map<String, Serializable> getIndexedValues() {
+		return model.getIndexedValues();
+	}
+
 	/**
 	 * Returns the last publish date of this object entry.
 	 *
@@ -351,6 +356,11 @@ public class ObjectEntryWrapper
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return model.getNonzeroGroupId();
+	}
+
+	@Override
+	public ObjectDefinition getObjectDefinition() {
+		return model.getObjectDefinition();
 	}
 
 	/**
@@ -789,6 +799,11 @@ public class ObjectEntryWrapper
 	@Override
 	public void setMvccVersion(long mvccVersion) {
 		model.setMvccVersion(mvccVersion);
+	}
+
+	@Override
+	public void setObjectDefinition(ObjectDefinition objectDefinition) {
+		model.setObjectDefinition(objectDefinition);
 	}
 
 	/**

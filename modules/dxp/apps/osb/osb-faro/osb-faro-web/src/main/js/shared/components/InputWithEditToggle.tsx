@@ -1,17 +1,18 @@
-import autobind from 'autobind-decorator';
 import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
 import Form from 'shared/components/form';
 import getCN from 'classnames';
 import Label from 'shared/components/form/Label';
 import Loading, {Align} from 'shared/components/Loading';
-import React from 'react';
+import React, {createRef, useState} from 'react';
 import {Formik} from 'formik';
+import {Text} from '@clayui/core';
+
 interface IInputWithEditToggleProps {
 	className?: string;
 	editable: boolean;
 	inputWidth?: number;
-	label: string;
+	label?: string;
 	name?: string;
 	onSubmit: (value, name) => Promise<any>;
 	required: boolean;
@@ -19,34 +20,23 @@ interface IInputWithEditToggleProps {
 	value: string;
 }
 
-interface IInputWithEditToggleState {
-	editing: boolean;
-}
+const InputWithEditToggle: React.FC<IInputWithEditToggleProps> = ({
+	className,
+	editable = true,
+	inputWidth,
+	label,
+	name = 'name',
+	onSubmit,
+	required = false,
+	validate,
+	value
+}) => {
+	const [editing, setEditing] = useState(false);
 
-export default class InputWithEditToggle extends React.Component<
-	IInputWithEditToggleProps,
-	IInputWithEditToggleState
-> {
-	static defaultProps = {
-		editable: true,
-		name: 'name',
-		required: false
-	};
+	const _formRef = createRef<Formik>();
 
-	state = {
-		editing: false
-	};
-
-	_formRef = React.createRef<Formik>();
-
-	@autobind
-	handleSubmit(values) {
-		const {name, onSubmit} = this.props;
-
-		const {
-			resetForm,
-			setSubmitting
-		} = this._formRef.current.getFormikActions();
+	const handleSubmit = values => {
+		const {resetForm, setSubmitting} = _formRef.current.getFormikActions();
 
 		if (onSubmit) {
 			onSubmit(values[name], name)
@@ -55,7 +45,7 @@ export default class InputWithEditToggle extends React.Component<
 
 					resetForm();
 
-					this.setState({editing: false});
+					setEditing(false);
 				})
 				.catch(err => {
 					if (!err.IS_CANCELLATION_ERROR) {
@@ -63,42 +53,42 @@ export default class InputWithEditToggle extends React.Component<
 					}
 				});
 		}
-	}
+	};
 
-	@autobind
-	handleEditToggle() {
-		this.setState({
-			editing: !this.state.editing
-		});
-	}
+	return (
+		<div
+			className={getCN(
+				'input-with-edit-toggle-root',
+				'definition-item-root',
+				className
+			)}
+		>
+			{!editing && (
+				<div className='d-inline-flex'>
+					<Text size={8} weight='bold'>
+						{value}
+					</Text>
 
-	render() {
-		const {
-			props: {
-				className,
-				editable,
-				inputWidth,
-				label,
-				name,
-				required,
-				validate,
-				value
-			},
-			state: {editing}
-		} = this;
+					<ClayButton
+						aria-label={Liferay.Language.get('edit')}
+						borderless
+						className='button-root'
+						data-testid='edit'
+						disabled={!editable}
+						displayType='secondary'
+						onClick={() => setEditing(true)}
+						size='sm'
+					>
+						<ClayIcon className='icon-root' symbol='pencil' />
+					</ClayButton>
+				</div>
+			)}
 
-		return (
-			<div
-				className={getCN(
-					'input-with-edit-toggle-root',
-					'definition-item-root',
-					className
-				)}
-			>
+			{editing && (
 				<Form
 					initialValues={{[name]: value}}
-					onSubmit={this.handleSubmit}
-					ref={this._formRef}
+					onSubmit={handleSubmit}
+					ref={_formRef}
 				>
 					{({handleSubmit, isSubmitting, isValid, resetForm}) => (
 						<Form.Form
@@ -112,66 +102,48 @@ export default class InputWithEditToggle extends React.Component<
 							<Form.Group autoFit className='align-items-center'>
 								<Form.Input
 									contentAfter={
-										editing ? (
-											<>
-												<ClayButton
-													aria-label={Liferay.Language.get(
-														'cancel'
-													)}
-													className='button-root'
-													displayType='secondary'
-													onClick={() => {
-														this.handleEditToggle();
-
-														resetForm();
-													}}
-													size='sm'
-												>
-													<ClayIcon
-														className='icon-root'
-														symbol='times'
-													/>
-												</ClayButton>
-
-												<ClayButton
-													aria-label={Liferay.Language.get(
-														'submit'
-													)}
-													className='button-root'
-													disabled={!isValid}
-													displayType='primary'
-													size='sm'
-													type='submit'
-												>
-													{isSubmitting && (
-														<Loading
-															align={Align.Left}
-														/>
-													)}
-
-													<ClayIcon
-														className='icon-root'
-														symbol='check'
-													/>
-												</ClayButton>
-											</>
-										) : (
+										<>
 											<ClayButton
 												aria-label={Liferay.Language.get(
-													'edit'
+													'cancel'
 												)}
 												className='button-root'
-												disabled={!editable}
 												displayType='secondary'
-												onClick={this.handleEditToggle}
+												onClick={() => {
+													setEditing(false);
+
+													resetForm();
+												}}
 												size='sm'
 											>
 												<ClayIcon
 													className='icon-root'
-													symbol='pencil'
+													symbol='times'
 												/>
 											</ClayButton>
-										)
+
+											<ClayButton
+												aria-label={Liferay.Language.get(
+													'submit'
+												)}
+												className='button-root'
+												disabled={!isValid}
+												displayType='primary'
+												size='sm'
+												type='submit'
+											>
+												{isSubmitting && (
+													<Loading
+														align={Align.Left}
+													/>
+												)}
+
+												<ClayIcon
+													className='icon-root'
+													symbol='check'
+												/>
+											</ClayButton>
+										</>
 									}
 									disabled={
 										!editing || !editable || isSubmitting
@@ -184,7 +156,9 @@ export default class InputWithEditToggle extends React.Component<
 						</Form.Form>
 					)}
 				</Form>
-			</div>
-		);
-	}
-}
+			)}
+		</div>
+	);
+};
+
+export default InputWithEditToggle;

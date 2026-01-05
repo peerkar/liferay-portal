@@ -6,6 +6,7 @@
 package com.liferay.search.experiences.internal.blueprint.search.request.body.contributor;
 
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -13,6 +14,9 @@ import com.liferay.portal.kernel.util.TimeZoneUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.asset.AssetSubtypeIdentifier;
 import com.liferay.portal.search.asset.AssetSubtypeIdentifierBuilder;
+import com.liferay.portal.search.filter.ComplexQueryPartBuilderFactory;
+import com.liferay.portal.search.query.Queries;
+import com.liferay.portal.search.query.TermsQuery;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.search.experiences.internal.blueprint.parameter.SXPParameterData;
 import com.liferay.search.experiences.rest.dto.v1_0.Configuration;
@@ -31,9 +35,13 @@ public class GeneralSXPSearchRequestBodyContributor
 	implements SXPSearchRequestBodyContributor {
 
 	public GeneralSXPSearchRequestBodyContributor(
-		AssetSubtypeIdentifierBuilder assetSubtypeIdentifierBuilder) {
+		AssetSubtypeIdentifierBuilder assetSubtypeIdentifierBuilder,
+		ComplexQueryPartBuilderFactory complexQueryPartBuilderFactory,
+		Queries queries) {
 
 		_assetSubtypeIdentifierBuilder = assetSubtypeIdentifierBuilder;
+		_complexQueryPartBuilderFactory = complexQueryPartBuilderFactory;
+		_queries = queries;
 	}
 
 	@Override
@@ -110,7 +118,8 @@ public class GeneralSXPSearchRequestBodyContributor
 
 				if ((assetSubtypeIdentifier.getSubtypeExternalReferenceCode() ==
 						null) ||
-					!FeatureFlagManagerUtil.isEnabled("LPS-129412")) {
+					!FeatureFlagManagerUtil.isEnabled(
+						CompanyThreadLocal.getCompanyId(), "LPS-129412")) {
 
 					continue;
 				}
@@ -133,12 +142,30 @@ public class GeneralSXPSearchRequestBodyContributor
 			searchRequestBuilder.entryClassNames(classNames);
 			searchRequestBuilder.modelIndexerClassNames(classNames);
 
-			if (FeatureFlagManagerUtil.isEnabled("LPS-129412")) {
+			if (FeatureFlagManagerUtil.isEnabled(
+					CompanyThreadLocal.getCompanyId(), "LPS-129412")) {
+
 				searchRequestBuilder.withSearchContext(
 					searchContext -> searchContext.setAttribute(
 						"assetSubtypeIdentifiersMap",
 						assetSubtypeIdentifiersMap));
 			}
+		}
+
+		if (ArrayUtil.isNotEmpty(generalConfiguration.getScope()) &&
+			FeatureFlagManagerUtil.isEnabled(
+				CompanyThreadLocal.getCompanyId(), "LPD-37320")) {
+
+			TermsQuery termsQuery = _queries.terms(
+				"scopeGroupExternalReferenceCode");
+
+			termsQuery.addValues((Object[])generalConfiguration.getScope());
+
+			searchRequestBuilder.addComplexQueryPart(
+				_complexQueryPartBuilderFactory.builder(
+				).query(
+					termsQuery
+				).build());
 		}
 
 		if (!Validator.isBlank(generalConfiguration.getLanguageId())) {
@@ -161,5 +188,8 @@ public class GeneralSXPSearchRequestBodyContributor
 	}
 
 	private final AssetSubtypeIdentifierBuilder _assetSubtypeIdentifierBuilder;
+	private final ComplexQueryPartBuilderFactory
+		_complexQueryPartBuilderFactory;
+	private final Queries _queries;
 
 }

@@ -293,9 +293,7 @@ public class UserAccountSerDes {
 			sb.append("\"gender\": ");
 
 			sb.append("\"");
-
 			sb.append(userAccount.getGender());
-
 			sb.append("\"");
 		}
 
@@ -476,6 +474,21 @@ public class UserAccountSerDes {
 			sb.append("\"");
 		}
 
+		if (userAccount.getLoginDate() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"loginDate\": ");
+
+			sb.append("\"");
+
+			sb.append(
+				liferayToJSONDateFormat.format(userAccount.getLoginDate()));
+
+			sb.append("\"");
+		}
+
 		if (userAccount.getName() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -609,9 +622,7 @@ public class UserAccountSerDes {
 			sb.append("\"status\": ");
 
 			sb.append("\"");
-
 			sb.append(userAccount.getStatus());
-
 			sb.append("\"");
 		}
 
@@ -926,6 +937,15 @@ public class UserAccountSerDes {
 				liferayToJSONDateFormat.format(userAccount.getLastLoginDate()));
 		}
 
+		if (userAccount.getLoginDate() == null) {
+			map.put("loginDate", null);
+		}
+		else {
+			map.put(
+				"loginDate",
+				liferayToJSONDateFormat.format(userAccount.getLoginDate()));
+		}
+
 		if (userAccount.getName() == null) {
 			map.put("name", null);
 		}
@@ -1123,6 +1143,9 @@ public class UserAccountSerDes {
 				return false;
 			}
 			else if (Objects.equals(jsonParserFieldName, "lastLoginDate")) {
+				return false;
+			}
+			else if (Objects.equals(jsonParserFieldName, "loginDate")) {
 				return false;
 			}
 			else if (Objects.equals(jsonParserFieldName, "name")) {
@@ -1378,6 +1401,12 @@ public class UserAccountSerDes {
 			else if (Objects.equals(jsonParserFieldName, "lastLoginDate")) {
 				if (jsonParserFieldValue != null) {
 					userAccount.setLastLoginDate(
+						toDate((String)jsonParserFieldValue));
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "loginDate")) {
+				if (jsonParserFieldValue != null) {
+					userAccount.setLoginDate(
 						toDate((String)jsonParserFieldValue));
 				}
 			}

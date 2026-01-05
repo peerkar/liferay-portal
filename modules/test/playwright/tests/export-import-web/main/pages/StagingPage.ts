@@ -3,19 +3,27 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {Page, expect} from '@playwright/test';
+import {Locator, Page, expect} from '@playwright/test';
 
 import getRandomString from '../../../../utils/getRandomString';
 
 export class StagingPage {
+	readonly localStagingButton: Locator;
 	readonly page: Page;
+	readonly stagedPortletCheckbox: (stagedPortletName: string) => Locator;
 
 	constructor(page: Page) {
+		this.localStagingButton = page.getByTestId('stagingType_local');
 		this.page = page;
+		this.stagedPortletCheckbox = (stagedPortletName: string) =>
+			this.page
+				.locator('.custom-checkbox')
+				.filter({hasText: stagedPortletName})
+				.locator('input');
 	}
 
-	async enableLocalStaging() {
-		await this.page.getByTestId('stagingType_local').check();
+	async enableLocalStaging(stagedPortlets?: string[]) {
+		await this.localStagingButton.check();
 
 		this.page.once('dialog', async (dialog) => {
 			expect(dialog.message()).toContain(
@@ -23,6 +31,15 @@ export class StagingPage {
 			);
 			await dialog.accept().catch();
 		});
+
+		if (stagedPortlets) {
+			await this.stagedPortletCheckbox('Select All').check();
+			await this.stagedPortletCheckbox('Select All').uncheck();
+
+			for (const stagedPortlet of stagedPortlets) {
+				await this.stagedPortletCheckbox(stagedPortlet).check();
+			}
+		}
 
 		await this.page.getByRole('button', {name: 'Save'}).click();
 
@@ -67,7 +84,17 @@ export class StagingPage {
 		});
 	}
 
-	async publish(includeIfModified?: string[], title?: string) {
+	async publish({
+		includeIfModified = [],
+		rangeAll,
+		selectedEntities = [],
+		title,
+	}: {
+		includeIfModified?: string[];
+		rangeAll?: boolean;
+		selectedEntities?: string[];
+		title?: string;
+	} = {}) {
 		if (!title) {
 			title = getRandomString();
 		}
@@ -79,6 +106,17 @@ export class StagingPage {
 		await this.page
 			.getByPlaceholder('Enter the name of the process')
 			.fill(title);
+
+		if (rangeAll) {
+			await this.page.locator('[data-qa-id="range_rangeAll"]').check();
+			await this.page.getByRole('link', {name: 'Refresh Counts'}).click();
+		}
+
+		for (const selectedEntity of selectedEntities) {
+			await this.page
+				.getByRole('checkbox', {name: selectedEntity})
+				.check();
+		}
 
 		for (const i in includeIfModified) {
 			await this.page

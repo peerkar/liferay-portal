@@ -223,6 +223,10 @@ public class FileEntryDisplayContextHelper {
 		return false;
 	}
 
+	public boolean isHistoryActionAvailable() throws PortalException {
+		return _permissionChecker.isSignedIn();
+	}
+
 	public boolean isLockedByMe() {
 		return hasLock();
 	}
@@ -249,6 +253,14 @@ public class FileEntryDisplayContextHelper {
 		}
 
 		return false;
+	}
+
+	public boolean isViewUsagesActionAvailable() {
+		if (_fileEntry == null) {
+			return false;
+		}
+
+		return _permissionChecker.isGroupAdmin(_fileEntry.getGroupId());
 	}
 
 	private boolean _hasPreviousVersions() {

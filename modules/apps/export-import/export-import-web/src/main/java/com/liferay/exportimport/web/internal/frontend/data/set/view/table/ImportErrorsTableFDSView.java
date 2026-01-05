@@ -22,8 +22,8 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	property = {
-		"frontend.data.set.name=" + ExportImportFDSNames.COMPANY_IMPORT_ERRORS,
-		"frontend.data.set.name=" + ExportImportFDSNames.IMPORT_ERRORS
+		"frontend.data.set.name=" + ExportImportFDSNames.COMPANY_IMPORT_REPORT_ENTRIES,
+		"frontend.data.set.name=" + ExportImportFDSNames.IMPORT_REPORT_ENTRIES
 	},
 	service = FDSView.class
 )
@@ -39,7 +39,7 @@ public class ImportErrorsTableFDSView extends BaseTableFDSView {
 		).add(
 			"classExternalReferenceCode", "external-reference-code"
 		).add(
-			"type", "error"
+			"type", "type"
 		).add(
 			"errorMessage", "description"
 		).add(

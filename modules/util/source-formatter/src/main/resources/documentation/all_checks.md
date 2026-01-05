@@ -110,6 +110,7 @@ GradleCommerceDependenciesCheck | [Bug Prevention](bug_prevention_checks.md#bug-
 [GradleDependencyArtifactsCheck](check/gradle_dependency_artifacts_check.md#gradledependencyartifactscheck) | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .eslintignore, .gradle, .prettierignore, or .properties | Performs several checks on dependencies artifacts. |
 GradleDependencyConfigurationCheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .gradle | Validates the scope of dependencies in build gradle files. |
 GradleDependencyVersionCheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .gradle | Checks the version for dependencies in gradle build files. |
+GradleEmptyLinesCheck | [Styling](styling_checks.md#styling-checks) | .gradle | Finds missing and unnecessary empty lines. |
 GradleExportedPackageDependenciesCheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .gradle | Validates dependencies in gradle build files. |
 GradleImportsCheck | [Styling](styling_checks.md#styling-checks) | .gradle | Sorts and groups imports in `.gradle` files. |
 GradleIndentationCheck | [Styling](styling_checks.md#styling-checks) | .gradle | Finds incorrect indentation in gradle build files. |
@@ -126,6 +127,7 @@ GradleStylingCheck | [Styling](styling_checks.md#styling-checks) | .gradle | App
 GradleTestDependencyVersionCheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .gradle | Checks the version for dependencies in gradle build files. |
 GradleTestUtilDeployDirCheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .gradle | Checks for incorrect use of `deployDir`. |
 [GradleUpgradeReleaseDXPCheck](check/gradle_upgrade_release_dxp_check.md#gradleupgradereleasedxpcheck) | [Upgrade](upgrade_checks.md#upgrade-checks) | .gradle | Remove and replaced dependencies in `build.gradle` that are already in `release.dxp.api` with `released.dxp.api` dependency. |
+GradleWhitespaceCheck | [Styling](styling_checks.md#styling-checks) | .gradle | Finds missing and unnecessary whitespace. |
 GroovyImportsCheck | [Styling](styling_checks.md#styling-checks) | .groovy | Sorts and groups imports in `.groovy` files. |
 HTMLEmptyLinesCheck | [Styling](styling_checks.md#styling-checks) | .html or .path | Finds missing and unnecessary empty lines. |
 HTMLWhitespaceCheck | [Styling](styling_checks.md#styling-checks) | .html or .path | Finds missing and unnecessary whitespace in `.html` files. |
@@ -234,6 +236,7 @@ JavaDefaultAdminScreenNameCheck | [Bug Prevention](bug_prevention_checks.md#bug-
 JavaDeprecatedJavadocCheck | [Javadoc](javadoc_checks.md#javadoc-checks) | .java | Checks if the `@deprecated` javadoc is pointing to the correct version. |
 JavaDeserializationSecurityCheck | [Security](security_checks.md#security-checks) | .java | Finds Java serialization vulnerabilities. |
 JavaDiamondOperatorCheck | [Miscellaneous](miscellaneous_checks.md#miscellaneous-checks) | .java | Finds cases where Diamond Operator is not used. |
+JavaDocumentAddCallsOrderCheck | [Styling](styling_checks.md#styling-checks) | .java | Sorts `add*` calls for type `Document`. |
 JavaDuplicateVariableCheck | [Miscellaneous](miscellaneous_checks.md#miscellaneous-checks) | .java | Finds variables where a variable with the same name already exists in an extended class. |
 [JavaElseStatementCheck](check/java_else_statement_check.md#javaelsestatementcheck) | [Miscellaneous](miscellaneous_checks.md#miscellaneous-checks) | .java | Finds unnecessary `else` statements (when the `if` statement ends with a `return` statement). |
 JavaEmptyLineAfterSuperCallCheck | [Miscellaneous](miscellaneous_checks.md#miscellaneous-checks) | .java | Finds missing empty line after a `super` call. |
@@ -293,7 +296,8 @@ JavaReferenceAnnotationsCheck | [Bug Prevention](bug_prevention_checks.md#bug-pr
 JavaReleaseInfoCheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .java | Validates information in `ReleaseInfo.java`. |
 [JavaResultSetCheck](check/java_result_set_check.md#javaresultsetcheck) | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .java | Checks for correct use `java.sql.ResultSet.getInt(int)`. |
 JavaReturnStatementCheck | [Styling](styling_checks.md#styling-checks) | .java | Finds unnecessary `else` statement (when `if` and `else` statement both end with `return` statement). |
-JavaRunSqlStylingCheck | [Styling](styling_checks.md#styling-checks) | .java | Applies rules to enforce consistency in code style. |
+JavaRunSQLCheck | [Styling](styling_checks.md#styling-checks) | .java | Applies rules to enforce consistency in code style. |
+JavaSQLStatementCheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .java | Perform several checks in SQL statements. |
 [JavaSeeAnnotationCheck](check/java_see_annotation_check.md#javaseeannotationcheck) | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .java | Checks for nested annotations inside `@see`. |
 JavaServiceImplCheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .java | Ensures that `afterPropertiesSet` and `destroy` methods in `*ServiceImpl` always call the method with the same name in the superclass. |
 JavaServiceImplErcUsageCheck | [Productivity](productivity_checks.md#productivity-checks) | .java | Automatically generates and ensures that `externalReferenceCode` is properly used in remote `*ServiceImpl` add method. |
@@ -324,12 +328,15 @@ JavaTermStylingCheck | [Styling](styling_checks.md#styling-checks) | .java | App
 [JavaTestMethodAnnotationsCheck](check/java_test_method_annotations_check.md#javatestmethodannotationscheck) | [Naming Conventions](naming_conventions_checks.md#naming-conventions-checks) | .java | Checks if methods with test annotations follow the naming conventions. |
 JavaToJSONArrayCheck | [Styling](styling_checks.md#styling-checks) | .java | Finds missing and unnecessary whitespace on `toJSONArray` calls. |
 JavaTransactionBoundaryCheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .java | Finds direct `add*` or `get*` calls in `*ServiceImpl` (those should use the `*service` global variable instead). |
+JavaUniqueUpgradeProcessCheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .java | Checks that only one regular `UpgradeProcess` is allowed when registering a new upgrade process |
 [JavaUnsafeCastingCheck](check/java_unsafe_casting_check.md#javaunsafecastingcheck) | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .java | Checks for potential ClassCastException. |
 [JavaUnusedSourceFormatterChecksCheck](check/java_unused_source_formatter_checks_check.md#javaunusedsourceformattercheckscheck) | [Miscellaneous](miscellaneous_checks.md#miscellaneous-checks) | .java | Finds `*Check` classes that are not configured. |
 [JavaUpgradeAlterCheck](check/java_upgrade_alter_check.md#javaupgradealtercheck) | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .java | Performs several checks on `alter` calls in Upgrade classes. |
 JavaUpgradeAlterColumnCallsOrderCheck | [Styling](styling_checks.md#styling-checks) | .java | Sorts method calls for altering table columns. |
 [JavaUpgradeClassCheck](check/java_upgrade_class_check.md#javaupgradeclasscheck) | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .java | Performs several checks on Upgrade classes. |
+JavaUpgradeCompanyThreadLocalCheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .java | Checks that we do not use `CompanyThreadLocal.setCompanyId*` in upgrade classes. |
 JavaUpgradeConnectionCheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .java | Finds cases where `DataAccess.getConnection` is used (instead of using the available global variable `connection`). |
+JavaUpgradeCreateTableCheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .java | Checks that we do not use `create table` statement in upgrade classes. |
 [JavaUpgradeDropTableCheck](check/java_upgrade_drop_table_check.md#javaupgradedroptablecheck) | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .java | Finds cases where `DROP_TABLE_IF_EXISTS` should be used (instead of `drop table if exists`). |
 JavaUpgradeEmptyLinesCheck | [Styling](styling_checks.md#styling-checks) | .java | Finds missing and unnecessary empty lines in upgrade classes. |
 [JavaUpgradeIndexCheck](check/java_upgrade_index_check.md#javaupgradeindexcheck) | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .java | Finds cases where the service builder indexes are updated manually in Upgrade classes. This is not needed because Liferay takes care of it. |
@@ -435,6 +442,7 @@ PropertiesEmptyLinesCheck | [Styling](styling_checks.md#styling-checks) | .eslin
 PropertiesEnvironmentVariablesCheck | [Documentation](documentation_checks.md#documentation-checks) | .eslintignore, .prettierignore, or .properties | Verifies that the environment property in the documentation matches the property name. |
 PropertiesFeatureFlagsCheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .eslintignore, .prettierignore, or .properties | Generate feature flags in `portal.properties` file. |
 PropertiesImportedFilesContentCheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .eslintignore, .prettierignore, or .properties | Performs several checks on `imported-files.properties` file. |
+PropertiesJVMAttributesOrderCheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .eslintignore, .prettierignore, or .properties | Sorts JVM attributes. |
 PropertiesLanguageContractionsCheck | [Styling](styling_checks.md#styling-checks) | .eslintignore, .prettierignore, or .properties | Finds contractions (such as `can't` or `you're`). |
 [PropertiesLanguageKeysCheck](check/properties_language_keys_check.md#propertieslanguagekeyscheck) | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .eslintignore, .prettierignore, or .properties | Checks that there is no HTML markup in language keys. |
 PropertiesLanguageKeysContextCheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .eslintignore, .prettierignore, or .properties | Checks if the language keys include a word of context to indicate specific meaning. |
@@ -509,6 +517,7 @@ TXTEmptyLinesCheck | [Styling](styling_checks.md#styling-checks) | .txt | Finds 
 TXTStylingCheck | [Styling](styling_checks.md#styling-checks) | .txt | Applies rules to enforce consistency in code style. |
 TernaryOperatorCheck | [Styling](styling_checks.md#styling-checks) | .java, .jsp, .jspf, .jspx, .tag, .tpl, or .vm | Finds use of ternary operator in `java` files (use if statement instead). |
 TestClassCheck | [Naming Conventions](naming_conventions_checks.md#naming-conventions-checks) | .java | Checks that names of test classes follow naming conventions. |
+TestClassDBConnectionCheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .java | Finds cases of incorrect use of database connection. |
 TestClassMissingLiferayUnitTestRuleCheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .java | Finds missing LiferayUnitTestRule. |
 TextBlockCheck | [Styling](styling_checks.md#styling-checks) | .java | Finds usage of text block. |
 [ThreadContextClassLoaderCheck](check/thread_context_class_loader_check.md#threadcontextclassloadercheck) | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .java | Checks usage of `Thread.setContextClassLoader`. |
@@ -555,7 +564,6 @@ UpgradeJavaGetFileMethodCheck | [Upgrade](upgrade_checks.md#upgrade-checks) | .b
 UpgradeJavaGetLayoutDisplayPageObjectProviderCheck | [Upgrade](upgrade_checks.md#upgrade-checks) | .bnd, .ftl, .gradle, .java, .json, .jsp, .jspf, .scss, or .vm | Replace parameter type long by ItemInfoReference in the getLayoutDisplayPageObjectProvider method. |
 UpgradeJavaGetLayoutDisplayPageProviderCheck | [Upgrade](upgrade_checks.md#upgrade-checks) | .bnd, .ftl, .gradle, .java, .json, .jsp, .jspf, .scss, or .vm | Replace getLayoutDisplayPageProvider by getLayoutDisplayPageProviderByClassName. |
 UpgradeJavaLocalServiceImplCheck | [Upgrade](upgrade_checks.md#upgrade-checks) | .bnd, .ftl, .gradle, .java, .json, .jsp, .jspf, .scss, or .vm | Add Component annotation to `*LocalServiceImpl.java` file. |
-UpgradeJavaMultiVMPoolUtilCheck | [Upgrade](upgrade_checks.md#upgrade-checks) | .bnd, .ftl, .gradle, .java, .json, .jsp, .jspf, .scss, or .vm | Replaces the references of the MultiVMPoolUtil class and also its methods usages. |
 UpgradeJavaPortletIdMethodCheck | [Upgrade](upgrade_checks.md#upgrade-checks) | .bnd, .ftl, .gradle, .java, .json, .jsp, .jspf, .scss, or .vm | Replace the 'document.get(Field.PORTLET_ID)' by the new interface 'PortletProviderUtil.getPortletId'. |
 UpgradeJavaPortletSharedSearchSettingsCheck | [Upgrade](upgrade_checks.md#upgrade-checks) | .bnd, .ftl, .gradle, .java, .json, .jsp, .jspf, .scss, or .vm | Replaces the Optional return type of the methods `getParameterValues` and `getPortletPreferences` of `PortletSharedSearchSettings` class. |
 UpgradeJavaProductDTOConverterReferenceCheck | [Upgrade](upgrade_checks.md#upgrade-checks) | .bnd, .ftl, .gradle, .java, .json, .jsp, .jspf, .scss, or .vm | Updates references of `ProductDTOConverter` to `DTOConverter` |
@@ -587,7 +595,7 @@ VariableDeclarationAsUsedCheck | [Performance](performance_checks.md#performance
 VariableNameCheck | [Naming Conventions](naming_conventions_checks.md#naming-conventions-checks) | .java, .jsp, .jspf, .jspx, .tag, .tpl, or .vm | Checks that variable names follow naming conventions. |
 [WhitespaceAfterCheck](https://checkstyle.sourceforge.io/checks/whitespace/whitespaceafter.html) | [Styling](styling_checks.md#styling-checks) | .java, .jsp, .jspf, .jspx, .tag, .tpl, or .vm | Checks that a token is followed by whitespace, with the exception that it does not check for whitespace after the semicolon of an empty for iterator. |
 [WhitespaceAroundCheck](https://checkstyle.sourceforge.io/checks/whitespace/whitespacearound.html) | [Styling](styling_checks.md#styling-checks) | .java, .jsp, .jspf, .jspx, .tag, .tpl, or .vm | Checks that a token is surrounded by whitespace. |
-WhitespaceCheck | [Styling](styling_checks.md#styling-checks) | .cql, .css, .dtd, .expect, .gradle, .groovy, .scss, .sh, .soy, .sql, .tld, .tpl, .ts, .tsx, Dockerfile, or packageinfo | Finds missing and unnecessary whitespace. |
+WhitespaceCheck | [Styling](styling_checks.md#styling-checks) | .cql, .css, .dtd, .expect, .groovy, .scss, .sh, .soy, .sql, .tld, .tpl, .ts, .tsx, Dockerfile, or packageinfo | Finds missing and unnecessary whitespace. |
 XMLBuildFileCheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .qti, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Performs several checks on `build.xml`. |
 XMLCDATACheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .qti, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Performs several checks on `CDATA` inside `xml`. |
 XMLCheckstyleFileCheck | [Bug Prevention](bug_prevention_checks.md#bug-prevention-checks) | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .qti, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Performs several checks on `checkstyle.xml` file. |

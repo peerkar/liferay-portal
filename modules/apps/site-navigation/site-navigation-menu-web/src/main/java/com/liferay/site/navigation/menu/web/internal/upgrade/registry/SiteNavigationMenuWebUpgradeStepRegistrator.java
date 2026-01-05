@@ -5,6 +5,7 @@
 
 package com.liferay.site.navigation.menu.web.internal.upgrade.registry;
 
+import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.upgrade.registry.UpgradeStepRegistrator;
 import com.liferay.site.navigation.menu.web.internal.upgrade.v1_0_0.UpgradePortletId;
 import com.liferay.site.navigation.menu.web.internal.upgrade.v1_0_0.UpgradePortletPreferences;
@@ -26,9 +27,9 @@ public class SiteNavigationMenuWebUpgradeStepRegistrator
 	public void register(Registry registry) {
 		registry.registerInitialization();
 
-		registry.register(
-			"0.0.1", "1.0.0", new UpgradePortletId(),
-			new UpgradePortletPreferences());
+		registry.register("0.0.1", "0.0.2", new UpgradePortletId());
+
+		registry.register("0.0.2", "1.0.0", new UpgradePortletPreferences());
 
 		registry.register(
 			"1.0.0", "1.0.1", new PortletPreferencesUpgradeProcess());
@@ -39,7 +40,15 @@ public class SiteNavigationMenuWebUpgradeStepRegistrator
 				UpgradePortletPreferences(
 					_siteNavigationMenuItemLocalService,
 					_siteNavigationMenuLocalService));
+
+		registry.register(
+			"1.0.2", "1.0.3",
+			new com.liferay.site.navigation.menu.web.internal.upgrade.v1_0_3.
+				UpgradePortletPreferences(_layoutLocalService));
 	}
+
+	@Reference
+	private LayoutLocalService _layoutLocalService;
 
 	@Reference
 	private SiteNavigationMenuItemLocalService

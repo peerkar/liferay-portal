@@ -12,10 +12,12 @@ import com.liferay.layout.display.page.constants.LayoutDisplayPageWebKeys;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.service.ObjectDefinitionLocalService;
+import com.liferay.object.service.ObjectEntryService;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.comment.Comment;
 import com.liferay.portal.kernel.comment.CommentManager;
+import com.liferay.portal.kernel.comment.DiscussionPermission;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.editor.configuration.EditorConfiguration;
 import com.liferay.portal.kernel.editor.configuration.EditorConfigurationFactoryUtil;
@@ -24,6 +26,8 @@ import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
@@ -121,13 +125,29 @@ public class ContentEditorSidePanelComponentSectionFragmentRenderer
 
 		return HashMapBuilder.<String, Object>put(
 			"addCommentURL",
-			StringBundler.concat(
-				themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
-				GroupConstants.CMS_FRIENDLY_URL,
-				"/add_content_item_comment?classNameId=",
-				_classNameLocalService.getClassNameId(
-					objectEntry.getModelClassName()),
-				"&classPK=", objectEntry.getObjectEntryId())
+			() -> {
+				if (_discussionPermission.hasAddPermission(
+						themeDisplay.getPermissionChecker(),
+						themeDisplay.getCompanyId(),
+						themeDisplay.getScopeGroupId(),
+						objectEntry.getModelClassName(),
+						objectEntry.getObjectEntryId())) {
+
+					return StringBundler.concat(
+						themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
+						GroupConstants.CMS_FRIENDLY_URL,
+						"/add_content_item_comment?classNameId=",
+						_classNameLocalService.getClassNameId(
+							objectEntry.getModelClassName()),
+						"&classPK=", objectEntry.getObjectEntryId());
+				}
+
+				return null;
+			}
+		).put(
+			"assetLibraryId", objectEntry.getGroupId()
+		).put(
+			"cmsGroupId", themeDisplay.getScopeGroupId()
 		).put(
 			"comments",
 			() -> {
@@ -222,7 +242,16 @@ public class ContentEditorSidePanelComponentSectionFragmentRenderer
 					themeDisplay.getLocale());
 			}
 		).put(
-			"groupId", themeDisplay.getScopeGroupId()
+			"hasUpdatePermission",
+			() -> {
+				ModelResourcePermission<ObjectEntry> modelResourcePermission =
+					_objectEntryService.getModelResourcePermission(
+						objectEntry.getObjectDefinitionId());
+
+				return modelResourcePermission.contains(
+					themeDisplay.getPermissionChecker(), objectEntry,
+					ActionKeys.UPDATE);
+			}
 		).put(
 			"id", String.valueOf(objectEntry.getObjectEntryId())
 		).put(
@@ -266,10 +295,16 @@ public class ContentEditorSidePanelComponentSectionFragmentRenderer
 	private CommentManager _commentManager;
 
 	@Reference
+	private DiscussionPermission _discussionPermission;
+
+	@Reference
 	private JSONFactory _jsonFactory;
 
 	@Reference
 	private ObjectDefinitionLocalService _objectDefinitionLocalService;
+
+	@Reference
+	private ObjectEntryService _objectEntryService;
 
 	@Reference
 	private SubscriptionLocalService _subscriptionLocalService;

@@ -19,9 +19,9 @@ import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 import com.liferay.portal.upgrade.v7_0_0.UpgradeCompanyId;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -44,10 +44,15 @@ public class UpgradeCompanyIdTest {
 			PermissionCheckerMethodTestRule.INSTANCE);
 
 	@BeforeClass
-	public static void setUpClass() throws SQLException {
+	public static void setUpClass() throws Exception {
 		_connection = DataAccess.getConnection();
 
 		_dbInspector = new DBInspector(_connection);
+	}
+
+	@AfterClass
+	public static void tearDownClass() {
+		DataAccess.cleanUp(_connection);
 	}
 
 	@Before

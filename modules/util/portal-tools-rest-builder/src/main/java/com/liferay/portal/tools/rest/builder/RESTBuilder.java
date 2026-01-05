@@ -196,6 +196,7 @@ public class RESTBuilder {
 		}
 
 		boolean createClientCustomFieldFiles = true;
+		boolean createClientScopeFiles = true;
 		List<String> validationErrorMessages = new ArrayList<>();
 
 		for (File openAPIYAMLFile :
@@ -313,7 +314,26 @@ public class RESTBuilder {
 				allExternalSchemas, openAPIYAML, schemas);
 
 			for (Map.Entry<String, Schema> entry : schemas.entrySet()) {
+				Schema schema = entry.getValue();
 				String schemaName = entry.getKey();
+
+				if (Validator.isNotNull(_configYAML.getClientDir())) {
+					if (createClientCustomFieldFiles &&
+						_containsVulcanCustomField(schema)) {
+
+						_createClientCustomFieldFiles(context);
+
+						createClientCustomFieldFiles = false;
+					}
+
+					if (createClientScopeFiles &&
+						_containsVulcanScope(schema)) {
+
+						_createClientScopeFile(context);
+
+						createClientScopeFiles = false;
+					}
+				}
 
 				List<JavaMethodSignature> javaMethodSignatures =
 					freeMarkerTool.getResourceJavaMethodSignatures(
@@ -322,8 +342,6 @@ public class RESTBuilder {
 				if (javaMethodSignatures.isEmpty()) {
 					continue;
 				}
-
-				Schema schema = entry.getValue();
 
 				_putSchema(
 					context, escapedVersion, javaDataTypeMap, schema,
@@ -346,14 +364,6 @@ public class RESTBuilder {
 				_createResourceImplFile(context, escapedVersion, schemaName);
 
 				if (Validator.isNotNull(_configYAML.getClientDir())) {
-					if (createClientCustomFieldFiles &&
-						_containsVulcanCustomField(schema)) {
-
-						_createClientCustomFieldFiles(context);
-
-						createClientCustomFieldFiles = false;
-					}
-
 					_createClientResourceFile(
 						context, escapedVersion, schemaName);
 				}
@@ -521,6 +531,22 @@ public class RESTBuilder {
 				}
 			}
 			else if (Objects.equals(propertySchema.getType(), "customField")) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private boolean _containsVulcanScope(Schema schema) {
+		Map<String, Schema> propertySchemas = schema.getPropertySchemas();
+
+		if (MapUtil.isEmpty(propertySchemas)) {
+			return false;
+		}
+
+		for (Schema propertySchema : propertySchemas.values()) {
+			if (Objects.equals(propertySchema.getType(), "scope")) {
 				return true;
 			}
 		}
@@ -729,6 +755,12 @@ public class RESTBuilder {
 		_createClientFile(
 			context, escapedVersion, "resource", schemaName + "Resource",
 			"client_resource");
+	}
+
+	private void _createClientScopeFile(Map<String, Object> context)
+		throws Exception {
+
+		_createClientFile(context, "", "scope", "Scope", "client_scope");
 	}
 
 	private void _createClientSerDesFile(

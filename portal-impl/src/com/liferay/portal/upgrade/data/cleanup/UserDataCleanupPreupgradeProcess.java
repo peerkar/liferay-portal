@@ -25,35 +25,48 @@ public class UserDataCleanupPreupgradeProcess
 			new UserAllTablesOrphanReferencesDataCleanupPreupgradeProcess());
 		upgrade(
 			new TableOrphanReferencesDataCleanupPreupgradeProcess(
+				null,
 				StringBundler.concat(
-					"classNameId = (select classNameId from ClassName_ where ",
-					"value = '", User.class.getName(), "')"),
+					"[$SOURCE_TABLE_ALIAS$].classNameId = (select classNameId ",
+					"from ClassName_ where value = '", User.class.getName(),
+					"')"),
 				"classPK", "AssetEntry", "userId", "User_"));
 		upgrade(
 			new TableOrphanReferencesDataCleanupPreupgradeProcess(
+				null,
 				StringBundler.concat(
-					"classNameId = (select classNameId from ClassName_ where ",
-					"value = '", User.class.getName(), "')"),
+					"[$SOURCE_TABLE_ALIAS$].classNameId = (select classNameId ",
+					"from ClassName_ where value = '", User.class.getName(),
+					"')"),
 				"classPK", "Contact_", "userId", "User_"));
 		upgrade(
 			new TableOrphanReferencesDataCleanupPreupgradeProcess(
+				null,
 				StringBundler.concat(
-					"classNameId = (select classNameId from ClassName_ where ",
-					"value = '", User.class.getName(), "')"),
+					"[$SOURCE_TABLE_ALIAS$].classNameId = (select classNameId ",
+					"from ClassName_ where value = '", User.class.getName(),
+					"')"),
 				"classPK", "Group_", "userId", "User_"));
 		upgrade(
 			new TableOrphanReferencesDataCleanupPreupgradeProcess(
-				"ownerType = " + PortletKeys.PREFS_OWNER_TYPE_USER, "ownerId",
-				"PortalPreferences", "userId", "User_"));
+				null,
+				"[$SOURCE_TABLE_ALIAS$].ownerType = " +
+					PortletKeys.PREFS_OWNER_TYPE_USER,
+				"ownerId", "PortalPreferences", "userId", "User_"));
 		upgrade(
 			new TableOrphanReferencesDataCleanupPreupgradeProcess(
-				"ownerType = " + PortletKeys.PREFS_OWNER_TYPE_USER, "ownerId",
-				"PortletPreferences", "userId", "User_"));
+				null,
+				"[$SOURCE_TABLE_ALIAS$].ownerType = " +
+					PortletKeys.PREFS_OWNER_TYPE_USER,
+				"ownerId", "PortletPreferences", "userId", "User_"));
 		upgrade(
 			new TableOrphanReferencesDataCleanupPreupgradeProcess(
+				null,
 				StringBundler.concat(
-					"scope = ", ResourceConstants.SCOPE_INDIVIDUAL,
-					" and name = '", User.class.getName(), "'"),
+					"[$SOURCE_TABLE_ALIAS$].scope = ",
+					ResourceConstants.SCOPE_INDIVIDUAL, " and ",
+					"[$SOURCE_TABLE_ALIAS$].name = '", User.class.getName(),
+					"'"),
 				"primKeyId", "ResourcePermission", "userId", "User_"));
 	}
 

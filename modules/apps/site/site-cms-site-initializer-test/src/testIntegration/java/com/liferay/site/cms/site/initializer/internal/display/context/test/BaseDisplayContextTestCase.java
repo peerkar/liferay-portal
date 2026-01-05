@@ -5,28 +5,23 @@
 
 package com.liferay.site.cms.site.initializer.internal.display.context.test;
 
-import com.liferay.batch.engine.unit.BatchEngineUnitProcessor;
-import com.liferay.batch.engine.unit.BatchEngineUnitReader;
 import com.liferay.info.constants.InfoDisplayWebKeys;
 import com.liferay.layout.test.util.LayoutTestUtil;
 import com.liferay.object.constants.ObjectDefinitionConstants;
-import com.liferay.object.constants.ObjectFolderConstants;
 import com.liferay.object.field.util.ObjectFieldUtil;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectDefinitionSetting;
 import com.liferay.object.model.ObjectEntryFolder;
-import com.liferay.object.model.ObjectFolder;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectFolderLocalService;
 import com.liferay.object.test.util.ObjectDefinitionTestUtil;
+import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.CompanyLocalService;
-import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
-import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
-import com.liferay.portal.kernel.test.util.GroupTestUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
-import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -34,23 +29,14 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.Inject;
-import com.liferay.site.initializer.SiteInitializer;
-import com.liferay.site.initializer.SiteInitializerRegistry;
+import com.liferay.site.cms.site.initializer.test.util.CMSTestUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import java.io.File;
-
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 
 import org.junit.Before;
-
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
 
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -61,58 +47,11 @@ public abstract class BaseDisplayContextTestCase {
 
 	@Before
 	public void setUp() throws Exception {
-		group = GroupTestUtil.addGroup();
+		group = CMSTestUtil.getOrAddGroup(BaseDisplayContextTestCase.class);
 
 		mockHttpServletRequest = getMockHttpServletRequest();
 
 		themeDisplay = getThemeDisplay(mockHttpServletRequest);
-
-		if (_isCMSSiteInitialized()) {
-			return;
-		}
-
-		ServiceContextThreadLocal.pushServiceContext(
-			ServiceContextTestUtil.getServiceContext(group.getGroupId()));
-
-		try {
-
-			// These tests require the instance to be created with the feature
-			// flag LPD-17564 enabled. On CI, feature flags are enabled on
-			// demand for each test, but not during instance initialization.
-			// Until the feature flag LPD-17564 is removed, run the instance
-			// lifecycle initializer manually so that the role is created.
-
-			SiteInitializer siteInitializer =
-				_siteInitializerRegistry.getSiteInitializer(
-					"com.liferay.site.initializer.cms");
-
-			siteInitializer.initialize(group.getGroupId());
-
-			Bundle testBundle = FrameworkUtil.getBundle(
-				BaseDisplayContextTestCase.class);
-
-			BundleContext bundleContext = testBundle.getBundleContext();
-
-			for (Bundle bundle : bundleContext.getBundles()) {
-				if (Objects.equals(
-						bundle.getSymbolicName(),
-						"com.liferay.site.initializer.cms")) {
-
-					_deleteFile(bundle, "00.list.type.definition");
-					_deleteFile(bundle, "01.object.folder");
-					_deleteFile(bundle, "02.object.definition");
-
-					CompletableFuture<Void> completableFuture =
-						_batchEngineUnitProcessor.processBatchEngineUnits(
-							_batchEngineUnitReader.getBatchEngineUnits(bundle));
-
-					completableFuture.join();
-				}
-			}
-		}
-		finally {
-			ServiceContextThreadLocal.popServiceContext();
-		}
 	}
 
 	protected ObjectDefinition addCustomObjectDefinition(
@@ -124,8 +63,8 @@ public abstract class BaseDisplayContextTestCase {
 		ObjectDefinition objectDefinition =
 			objectDefinitionLocalService.addCustomObjectDefinition(
 				null, TestPropsValues.getUserId(), objectFolderId, null, false,
-				true, false, true, true, enableObjectEntryDraft, false, false,
-				false, null,
+				true, false, true, enableObjectEntryDraft, false, false, false,
+				null,
 				Collections.singletonMap(
 					LocaleUtil.getDefault(), RandomTestUtil.randomString()),
 				ObjectDefinitionTestUtil.getRandomName(), null, null,
@@ -137,7 +76,7 @@ public abstract class BaseDisplayContextTestCase {
 					ObjectFieldUtil.createObjectField(
 						"Text", "String", true, true, null,
 						RandomTestUtil.randomString(), "text", false)),
-				Collections.emptyList());
+				Collections.emptyList(), new ServiceContext());
 
 		if (status == WorkflowConstants.STATUS_DRAFT) {
 			return objectDefinition;
@@ -162,7 +101,6 @@ public abstract class BaseDisplayContextTestCase {
 			objectDefinition.isEnableFormContainer(),
 			objectDefinition.isEnableFriendlyURLCustomization(),
 			objectDefinition.isEnableIndexSearch(),
-			objectDefinition.isEnableLocalization(),
 			objectDefinition.isEnableObjectEntryDraft(),
 			objectDefinition.isEnableObjectEntryHistory(),
 			objectDefinition.isEnableObjectEntrySchedule(),
@@ -175,7 +113,8 @@ public abstract class BaseDisplayContextTestCase {
 			objectDefinition.isPortlet(), objectDefinition.getPluralLabelMap(),
 			objectDefinition.getScope(), objectDefinition.getStatus(),
 			objectDefinition.getObjectDefinitionSettings(),
-			Collections.emptyList(), Collections.emptyList());
+			Collections.emptyList(), Collections.emptyList(),
+			new ServiceContext());
 	}
 
 	protected ObjectDefinition addCustomObjectDefinition(
@@ -221,8 +160,13 @@ public abstract class BaseDisplayContextTestCase {
 		themeDisplay.setCompany(
 			companyLocalService.getCompany(TestPropsValues.getCompanyId()));
 		themeDisplay.setLanguageId(group.getDefaultLanguageId());
-		themeDisplay.setLayout(
-			LayoutTestUtil.addTypeContentLayout(group, "test"));
+
+		Layout layout = LayoutTestUtil.addTypeContentLayout(group, "test");
+
+		themeDisplay.setLayout(layout);
+		themeDisplay.setLayoutSet(layout.getLayoutSet());
+
+		themeDisplay.setLocale(LocaleUtil.getDefault());
 		themeDisplay.setPathMain(portal.getPathMain());
 		themeDisplay.setPermissionChecker(
 			PermissionThreadLocal.getPermissionChecker());
@@ -240,8 +184,10 @@ public abstract class BaseDisplayContextTestCase {
 	@Inject
 	protected CompanyLocalService companyLocalService;
 
-	@DeleteAfterTestRun
 	protected Group group;
+
+	@Inject
+	protected Language language;
 
 	protected MockHttpServletRequest mockHttpServletRequest;
 
@@ -255,37 +201,5 @@ public abstract class BaseDisplayContextTestCase {
 	protected Portal portal;
 
 	protected ThemeDisplay themeDisplay;
-
-	private void _deleteFile(Bundle bundle, String fileName) {
-		File file = bundle.getDataFile(
-			".com.liferay.site.initializer.cms.internal.batch." + fileName +
-				".batch.engine.data.json.0.processed");
-
-		if ((file != null) && file.exists()) {
-			file.delete();
-		}
-	}
-
-	private boolean _isCMSSiteInitialized() {
-		ObjectFolder objectFolder =
-			objectFolderLocalService.fetchObjectFolderByExternalReferenceCode(
-				ObjectFolderConstants.EXTERNAL_REFERENCE_CODE_FILE_TYPES,
-				group.getCompanyId());
-
-		if (objectFolder != null) {
-			return true;
-		}
-
-		return false;
-	}
-
-	@Inject
-	private BatchEngineUnitProcessor _batchEngineUnitProcessor;
-
-	@Inject
-	private BatchEngineUnitReader _batchEngineUnitReader;
-
-	@Inject
-	private SiteInitializerRegistry _siteInitializerRegistry;
 
 }

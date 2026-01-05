@@ -510,367 +510,6 @@ exports[`View should render a CSV data-source page 1`] = `
 </div>
 `;
 
-exports[`View should render a Liferay data-source old page 1`] = `
-<div>
-  <div
-    class="settings-root"
-  >
-    <nav
-      class="bg-white mb-4 tbar component-tbar"
-    >
-      <ul
-        class="mx-4 tbar-nav"
-      >
-        <li
-          class="tbar-item"
-        >
-          <div
-            class="component-action"
-          >
-            <a
-              aria-label="Back"
-              class="text-secondary"
-              href="/workspace/23"
-            >
-              <svg
-                class="lexicon-icon lexicon-icon-angle-left mb-1"
-                role="presentation"
-              >
-                <use
-                  href="#angle-left"
-                />
-              </svg>
-            </a>
-          </div>
-        </li>
-        <li
-          class="pl-0 tbar-item"
-        >
-          <div
-            class="tbar-section"
-          >
-            <span
-              class="text-dark"
-            >
-              <span
-                class="text-5 font-weight-bold"
-              >
-                Settings
-              </span>
-            </span>
-          </div>
-        </li>
-      </ul>
-    </nav>
-    <div
-      class="content-wrapper"
-    >
-      <nav
-        class="section-side settings-side-bar"
-      >
-        <div>
-          <h5
-            class="section-title"
-          >
-            Workspace Data
-          </h5>
-          <ul
-            class="nav"
-          >
-            <li
-              class="item"
-            >
-              <a
-                class="button-root"
-                href="/workspace/23/settings/apis/tokens"
-              >
-                <span
-                  class="icon-wrapper"
-                >
-                  <svg
-                    class="lexicon-icon lexicon-icon-ac_api icon-root"
-                    role="presentation"
-                  >
-                    <use
-                      href="#ac_api"
-                    />
-                  </svg>
-                </span>
-                APIs
-              </a>
-            </li>
-            <li
-              class="item"
-            >
-              <a
-                class="button-root"
-                href="/workspace/23/settings/definitions"
-              >
-                <span
-                  class="icon-wrapper"
-                >
-                  <svg
-                    class="lexicon-icon lexicon-icon-definitions icon-root"
-                    role="presentation"
-                  >
-                    <use
-                      href="#definitions"
-                    />
-                  </svg>
-                </span>
-                Definitions
-              </a>
-            </li>
-            <li
-              class="item"
-            >
-              <a
-                class="button-root"
-                href="/workspace/23/settings/data-privacy"
-              >
-                <span
-                  class="icon-wrapper"
-                >
-                  <svg
-                    class="lexicon-icon lexicon-icon-data_privacy_lock icon-root"
-                    role="presentation"
-                  >
-                    <use
-                      href="#data_privacy_lock"
-                    />
-                  </svg>
-                </span>
-                Data Control & Privacy
-              </a>
-            </li>
-            <li
-              class="item active"
-            >
-              <a
-                class="button-root"
-                href="/workspace/23/settings/data-source"
-              >
-                <span
-                  class="icon-wrapper"
-                >
-                  <svg
-                    class="lexicon-icon lexicon-icon-faro_data_source icon-root"
-                    role="presentation"
-                  >
-                    <use
-                      href="#faro_data_source"
-                    />
-                  </svg>
-                </span>
-                Data Sources
-              </a>
-            </li>
-            <li
-              class="item"
-            >
-              <a
-                class="button-root"
-                href="/workspace/23/settings/recommendations"
-              >
-                <span
-                  class="icon-wrapper"
-                >
-                  <svg
-                    class="lexicon-icon lexicon-icon-ac_star icon-root"
-                    role="presentation"
-                  >
-                    <use
-                      href="#ac_star"
-                    />
-                  </svg>
-                </span>
-                Recommendations
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div>
-          <h5
-            class="section-title"
-          >
-            Workspace Settings
-          </h5>
-          <ul
-            class="nav"
-          >
-            <li
-              class="item"
-            >
-              <a
-                class="button-root"
-                href="/workspace/23/settings/users"
-              >
-                <span
-                  class="icon-wrapper"
-                >
-                  <svg
-                    class="lexicon-icon lexicon-icon-user_management icon-root"
-                    role="presentation"
-                  >
-                    <use
-                      href="#user_management"
-                    />
-                  </svg>
-                </span>
-                User Management
-              </a>
-            </li>
-            <li
-              class="item"
-            >
-              <a
-                class="button-root"
-                href="/workspace/23/settings/properties"
-              >
-                <span
-                  class="icon-wrapper"
-                >
-                  <svg
-                    class="lexicon-icon lexicon-icon-ac_page icon-root"
-                    role="presentation"
-                  >
-                    <use
-                      href="#ac_page"
-                    />
-                  </svg>
-                </span>
-                Properties
-              </a>
-            </li>
-            <li
-              class="item"
-            >
-              <a
-                class="button-root"
-                href="/workspace/23/settings/usage"
-              >
-                <span
-                  class="icon-wrapper"
-                >
-                  <svg
-                    class="lexicon-icon lexicon-icon-usage icon-root"
-                    role="presentation"
-                  >
-                    <use
-                      href="#usage"
-                    />
-                  </svg>
-                </span>
-                Subscription & Usage
-              </a>
-            </li>
-            <li
-              class="item"
-            >
-              <a
-                class="button-root"
-                href="/workspace/23/settings/workspace"
-              >
-                <span
-                  class="icon-wrapper"
-                >
-                  <svg
-                    class="lexicon-icon lexicon-icon-cog icon-root"
-                    role="presentation"
-                  >
-                    <use
-                      href="#cog"
-                    />
-                  </svg>
-                </span>
-                Workspace
-              </a>
-            </li>
-          </ul>
-        </div>
-      </nav>
-      <div
-        class="content section-main"
-      >
-        <div
-          class="settings-base-page-root data-source-base-page-root"
-        >
-          <div
-            class="maintenance-alert-root"
-          />
-          <ol
-            class="breadcrumb breadcrumbs-root"
-          >
-            <li
-              class="breadcrumb-item"
-            >
-              <a
-                class="breadcrumb-text-truncate breadcrumb-link"
-                href="/workspace/23/settings/data-source"
-              >
-                Data Sources
-              </a>
-            </li>
-            <li
-              class="breadcrumb-item active"
-            >
-              <span
-                class="breadcrumb-text-truncate breadcrumb-link"
-              >
-                Liferay1
-              </span>
-            </li>
-          </ol>
-          <div
-            class="content-header"
-          >
-            <div
-              class="header-text"
-            >
-              <div
-                class="d-flex"
-              >
-                <h3
-                  class="title-text text-truncate"
-                >
-                  <span
-                    class="text-truncate"
-                    data-tooltip="false"
-                    title=""
-                  >
-                    Configure Liferay DXP
-                  </span>
-                </h3>
-              </div>
-              <div
-                class="description"
-              >
-                Liferay1 - https://www.faro-1.io
-              </div>
-            </div>
-            <div
-              class="page-actions-container"
-            />
-          </div>
-          <div>
-            <div
-              class="page-container"
-            >
-              <div
-                class="content-main"
-              />
-              <div
-                class="content-side"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
 exports[`View should render a Liferay data-source page 1`] = `
 <div>
   <div
@@ -1154,7 +793,7 @@ exports[`View should render a Liferay data-source page 1`] = `
         class="content section-main"
       >
         <div
-          class="settings-base-page-root data-source-base-page-root"
+          class="settings-base-page-root"
         >
           <div
             class="maintenance-alert-root"
@@ -1182,266 +821,590 @@ exports[`View should render a Liferay data-source page 1`] = `
               </span>
             </li>
           </ol>
-          <div
-            class="content-header"
-          >
+          <div>
             <div
-              class="header-text"
+              class="mb-5"
             >
-              <div
-                class="d-flex"
+              <span
+                class="label mb-2 label-success"
               >
-                <h3
-                  class="title-text text-truncate"
+                <span
+                  class="label-item label-item-expand"
+                >
+                  Connected
+                </span>
+              </span>
+              <div
+                class="input-with-edit-toggle-root definition-item-root"
+              >
+                <div
+                  class="d-inline-flex"
                 >
                   <span
-                    class="text-truncate"
-                    data-tooltip="false"
-                    title=""
+                    class="text-8 font-weight-bold"
                   >
                     Liferay123
                   </span>
-                </h3>
-              </div>
-              <div
-                class="description"
-              >
-                https://www.faro-123.io
+                  <button
+                    aria-label="Edit"
+                    class="button-root btn btn-outline-borderless btn-sm btn-outline-secondary"
+                    data-testid="edit"
+                    type="button"
+                  >
+                    <svg
+                      class="lexicon-icon lexicon-icon-pencil icon-root"
+                      role="presentation"
+                    >
+                      <use
+                        href="#pencil"
+                      />
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
             <div
-              class="page-actions-container"
-            />
-          </div>
-          <div>
-            <div
-              class="page-container"
+              class="panel mb-4 panel-secondary"
             >
               <div
-                class="content-main"
+                class="panel-header"
+              >
+                <h2
+                  class="mb-0 p-2 text-6 text-dark"
+                >
+                  Authentication
+                </h2>
+              </div>
+              <div
+                class="panel-body p-4"
               >
                 <div
-                  class="sheet liferay-data-source-root"
+                  class="mb-4"
                 >
-                  <div
-                    class="sheet-header mb-1"
+                  <span
+                    class="text-3 text-secondary font-weight-semi-bold"
                   >
-                    <h2
-                      class="sheet-title"
-                    >
-                      Data Source Information
-                    </h2>
-                  </div>
+                    CONNECTION STATUS
+                  </span>
+                  <hr
+                    class="my-2"
+                  />
                   <div
-                    class="sheet-body"
+                    class="alert alert-success"
                   >
                     <div
-                      class="sheet-section"
+                      class="alert-autofit-row autofit-row"
+                      role="alert"
                     >
                       <div
-                        class="input-with-edit-toggle-root definition-item-root"
-                      >
-                        <form
-                          class="form-root input-with-edit-toggle-editor"
-                        >
-                          <label
-                            class="form-control-label label-root required"
-                          >
-                            <span
-                              class="content-container"
-                            >
-                              Name
-                            </span>
-                          </label>
-                          <div
-                            class="form-group align-items-center form-group-autofit"
-                          >
-                            <div
-                              class=""
-                              style="flex-basis: 100%; flex-grow: 0;"
-                            >
-                              <div
-                                class="input-group content-after"
-                              >
-                                <div
-                                  class="input-group-item"
-                                >
-                                  <input
-                                    class="input-root form-control"
-                                    disabled=""
-                                    id="dataSourceName"
-                                    name="dataSourceName"
-                                    type="text"
-                                    value="Liferay123"
-                                  />
-                                </div>
-                                <div
-                                  class="input-group-item input-group-item-shrink"
-                                >
-                                  <button
-                                    aria-label="Edit"
-                                    class="button-root btn btn-sm btn-secondary"
-                                    type="button"
-                                  >
-                                    <svg
-                                      class="lexicon-icon lexicon-icon-pencil icon-root"
-                                      role="presentation"
-                                    >
-                                      <use
-                                        href="#pencil"
-                                      />
-                                    </svg>
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                    <div
-                      class="sheet-section"
-                    >
-                      <form
-                        class="form-root dxp-instance-id-root"
+                        class="autofit-col"
                       >
                         <div
-                          class="form-group"
+                          class="autofit-section"
                         >
-                          <div
-                            class="form-group-item d-flex mb-3"
+                          <span
+                            class="alert-indicator"
                           >
-                            <div
-                              class=""
-                              style="flex-basis: 100%; flex-grow: 0;"
+                            <svg
+                              class="lexicon-icon lexicon-icon-check-circle-full"
+                              role="presentation"
                             >
-                              <label
-                                class="form-control-label label-root"
-                                for="dxpInstanceId"
-                              >
-                                <span
-                                  class="content-container"
-                                >
-                                  DXP Instance ID
-                                </span>
-                              </label>
-                              <input
-                                class="input-root form-control"
-                                id="dxpInstanceId"
-                                name="dxpInstanceId"
-                                readonly=""
-                                type="text"
-                                value="123"
+                              <use
+                                href="#check-circle-full"
                               />
-                            </div>
-                          </div>
-                          <div
-                            class="form-group-item"
-                          >
-                            <button
-                              class="button-root btn btn-secondary"
-                              data-testid="disconnect-button"
-                              type="button"
-                            >
-                              Disconnect
-                            </button>
-                          </div>
-                        </div>
-                      </form>
-                    </div>
-                    <div
-                      class="sheet-section has-last-child-margin"
-                    >
-                      <div
-                        class="mb-1 d-flex align-items-center"
-                      >
-                        <div
-                          class="h4 mb-0 mr-2"
-                        >
-                          Synced Sites
-                        </div>
-                        <div
-                          class="label label-root label-secondary label-lg label-uppercase"
-                        >
-                          <span
-                            class="label-item"
-                          >
-                            Unconfigured
+                            </svg>
                           </span>
                         </div>
                       </div>
-                      <p
-                        class="description-secondary"
-                      >
-                        To configure sites, go to the Analytics Cloud configuration in your DXP Instance Settings, then select the sites you would like to start tracking.
-                      </p>
-                    </div>
-                    <div
-                      class="sheet-section has-last-child-margin"
-                    >
                       <div
-                        class="mb-1 d-flex align-items-center"
+                        class="autofit-col autofit-col-expand"
                       >
                         <div
-                          class="h4 mb-0 mr-2"
+                          class="autofit-section"
                         >
-                          Synced Contacts
-                        </div>
-                        <div
-                          class="label label-root label-secondary label-lg label-uppercase"
-                        >
-                          <span
-                            class="label-item"
-                          >
-                            Unconfigured
-                          </span>
+                          You have successfully authenticated your token with Liferay Analytics Cloud. You can now select the data to sync.
                         </div>
                       </div>
-                      <p
-                        class="description-secondary"
-                      >
-                        To configure contacts, go to the Analytics Cloud configuration in your DXP Instance Settings, then select which contacts you would like to sync.
-                      </p>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div
-                class="content-side"
-              >
                 <div
-                  class="panel-root data-source-status-root"
+                  class="mb-4"
                 >
+                  <span
+                    class="text-3 text-secondary font-weight-semi-bold"
+                  >
+                    DATA SOURCE DETAILS
+                  </span>
+                  <hr
+                    class="my-2"
+                  />
                   <div
-                    class="panel-header"
-                    role="button"
-                    tabindex="0"
+                    class="input-group d-flex mt-3"
                   >
                     <div
-                      class="panel-title"
+                      class="input-group-item mr-3 input-group-item-shrink"
                     >
-                      <div>
-                        Current Status:
-                      </div>
+                      <label
+                        for="dataSourceType"
+                      >
+                        Data Source Type
+                      </label>
+                      <input
+                        class="form-control"
+                        readonly=""
+                        type="text"
+                        value="Liferay Portal"
+                      />
                     </div>
                     <div
-                      class="panel-title-label"
+                      class="input-group-item ml-0 input-group-item-shrink"
                     >
-                      <div
-                        class="label label-root label-success label-lg label-uppercase"
+                      <label
+                        for="dataSourceId"
                       >
-                        <span
-                          class="label-item"
-                        >
-                          Connected
-                        </span>
-                      </div>
+                        Data Source ID
+                      </label>
+                      <input
+                        class="form-control"
+                        readonly=""
+                        type="text"
+                        value="123"
+                      />
                     </div>
                   </div>
-                  <div
-                    class="panel-body"
+                </div>
+                <button
+                  aria-label="Disconnect Data Source"
+                  class="btn btn-sm btn-outline-danger"
+                  type="button"
+                >
+                  <svg
+                    class="lexicon-icon lexicon-icon-logout mr-2"
+                    role="presentation"
                   >
-                    You have successfully authenticated your token with your data source. You can now configure your data in DXP.
+                    <use
+                      href="#logout"
+                    />
+                  </svg>
+                  Disconnect Data Source
+                </button>
+              </div>
+            </div>
+            <div
+              class="panel mb-4 panel-secondary"
+            >
+              <div
+                class="panel-header"
+              >
+                <h2
+                  class="mb-0 p-2 text-6 text-dark"
+                >
+                  Synced Data
+                </h2>
+              </div>
+              <div
+                class="panel-body p-4"
+              >
+                <div
+                  class="mb-2"
+                >
+                  <span
+                    class="text-2 font-weight-semi-bold"
+                  >
+                    CONNECTION STATUS
+                  </span>
+                </div>
+                <ul
+                  class="list-group show-quick-actions-on-hover"
+                >
+                  <li
+                    class="list-group-item list-group-item-flex"
+                  >
+                    <div
+                      class="autofit-col"
+                    >
+                      <span
+                        class="sticker sticker-unstyled"
+                      >
+                        <span
+                          class="sticker-overlay"
+                        >
+                          <svg
+                            class="lexicon-icon lexicon-icon-nodes text-secondary"
+                            role="presentation"
+                          >
+                            <use
+                              href="#nodes"
+                            />
+                          </svg>
+                        </span>
+                      </span>
+                    </div>
+                    <div
+                      class="autofit-col autofit-col-expand"
+                    >
+                      <p
+                        class="list-group-title"
+                      >
+                        Properties
+                      </p>
+                      <p
+                        class="list-group-text"
+                      >
+                        Used to aggregate data on your users, sites and DXP commerce channels.
+                      </p>
+                    </div>
+                    <div
+                      class="justify-content-center autofit-col"
+                    >
+                      <span
+                        class="label label-secondary"
+                      >
+                        <span
+                          class="label-item label-item-expand"
+                        >
+                          Disconnected
+                        </span>
+                      </span>
+                    </div>
+                  </li>
+                  <li
+                    class="list-group-item list-group-item-flex"
+                  >
+                    <div
+                      class="autofit-col"
+                    >
+                      <span
+                        class="sticker sticker-unstyled"
+                      >
+                        <span
+                          class="sticker-overlay"
+                        >
+                          <svg
+                            class="lexicon-icon lexicon-icon-picture text-secondary"
+                            role="presentation"
+                          >
+                            <use
+                              href="#picture"
+                            />
+                          </svg>
+                        </span>
+                      </span>
+                    </div>
+                    <div
+                      class="autofit-col autofit-col-expand"
+                    >
+                      <p
+                        class="list-group-title"
+                      >
+                        Sites
+                      </p>
+                      <p
+                        class="list-group-text"
+                      >
+                        Represents the sites synced from Liferay Portal, under DXP Instance Settings &gt; Analytics Cloud.
+                      </p>
+                    </div>
+                    <div
+                      class="justify-content-center autofit-col"
+                    >
+                      <span
+                        class="label label-secondary"
+                      >
+                        <span
+                          class="label-item label-item-expand"
+                        >
+                          Disconnected
+                        </span>
+                      </span>
+                    </div>
+                  </li>
+                  <li
+                    class="list-group-item list-group-item-flex"
+                  >
+                    <div
+                      class="autofit-col"
+                    >
+                      <span
+                        class="sticker sticker-unstyled"
+                      >
+                        <span
+                          class="sticker-overlay"
+                        >
+                          <svg
+                            class="lexicon-icon lexicon-icon-users text-secondary"
+                            role="presentation"
+                          >
+                            <use
+                              href="#users"
+                            />
+                          </svg>
+                        </span>
+                      </span>
+                    </div>
+                    <div
+                      class="autofit-col autofit-col-expand"
+                    >
+                      <p
+                        class="list-group-title"
+                      >
+                        Individuals
+                      </p>
+                      <p
+                        class="list-group-text"
+                      >
+                        Represents the fields synced from the Contact object within Liferay Portal, under DXP Instance Settings &gt; Analytics Cloud.
+                      </p>
+                    </div>
+                    <div
+                      class="justify-content-center autofit-col"
+                    >
+                      <span
+                        class="label label-secondary"
+                      >
+                        <span
+                          class="label-item label-item-expand"
+                        >
+                          Disconnected
+                        </span>
+                      </span>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div
+              class="panel mb-4 panel-secondary"
+            >
+              <div
+                class="panel-header"
+              >
+                <h2
+                  class="mb-0 p-2 text-6 text-dark"
+                >
+                  Assigned Properties
+                </h2>
+              </div>
+              <div
+                class="panel-body p-0"
+              >
+                <div
+                  class="p-4"
+                >
+                  <p
+                    class="text-4 text-secondary"
+                  >
+                    Properties allow you to aggregate data on your users and DXP sites and channels. The data source data will be available in any property they are assigned to.
+                  </p>
+                  <span
+                    class="text-3 text-secondary font-weight-semi-bold"
+                  >
+                    DATA AVAILABILITY
+                  </span>
+                  <hr
+                    class="my-2"
+                  />
+                  <p
+                    class="text-4 text-secondary"
+                  >
+                    Choose the properties that will have access to this data source.
+                  </p>
+                  <div
+                    class=""
+                  >
+                    <div
+                      class="custom-control custom-radio custom-control-inline custom-control-outside"
+                    >
+                      <label>
+                        <input
+                          class="custom-control-input"
+                          role="radio"
+                          type="radio"
+                          value="all"
+                        />
+                        <span
+                          class="custom-control-label"
+                        >
+                          <span
+                            class="custom-control-label-text"
+                          >
+                            Make individual data from this data source available in all properties, including those not yet created.
+                          </span>
+                        </span>
+                      </label>
+                    </div>
+                    <div
+                      class="custom-control custom-radio custom-control-inline custom-control-outside"
+                    >
+                      <label>
+                        <input
+                          checked=""
+                          class="custom-control-input"
+                          role="radio"
+                          type="radio"
+                          value="custom"
+                        />
+                        <span
+                          class="custom-control-label"
+                        >
+                          <span
+                            class="custom-control-label-text"
+                          >
+                            Select Properties
+                          </span>
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="toolbar-root"
+                >
+                  <nav
+                    class="navbar navbar-root management-bar management-bar-light navbar-expand"
+                  >
+                    <div
+                      class="container-fluid"
+                    >
+                      <ul
+                        class="nav-root front-nav navbar-nav"
+                        role="tablist"
+                      >
+                        <li
+                          class="nav-item"
+                          role="presentation"
+                        >
+                          <div
+                            class="dropdown dropdown-root"
+                          >
+                            <button
+                              aria-controls="clay-dropdown-menu-3"
+                              aria-expanded="false"
+                              aria-haspopup="true"
+                              class="dropdown-toggle btn btn-outline-borderless btn-sm btn-outline-secondary"
+                              data-testid="order-button"
+                              type="button"
+                            >
+                              <span
+                                class="caret-root"
+                              >
+                                <svg
+                                  class="lexicon-icon lexicon-icon-order-list-down"
+                                  role="presentation"
+                                >
+                                  <use
+                                    href="#order-list-down"
+                                  />
+                                </svg>
+                              </span>
+                              <span
+                                class="mx-2"
+                              >
+                                Order
+                              </span>
+                              <span
+                                class="caret-root"
+                              >
+                                <svg
+                                  class="lexicon-icon lexicon-icon-caret-bottom"
+                                  role="presentation"
+                                >
+                                  <use
+                                    href="#caret-bottom"
+                                  />
+                                </svg>
+                              </span>
+                            </button>
+                          </div>
+                        </li>
+                      </ul>
+                      <div
+                        class="navbar-form navbar-form-autofit mx-2"
+                      >
+                        <div
+                          class="input-group search"
+                        >
+                          <div
+                            class="input-group-item"
+                          >
+                            <input
+                              class="input-root form-control input-group-inset input-group-inset-after"
+                              placeholder="Search"
+                              type="text"
+                              value=""
+                            />
+                            <div
+                              class="input-group-inset-item input-group-inset-item-after"
+                            >
+                              <button
+                                aria-label="Search"
+                                class="button-root btn btn-unstyled"
+                                type="button"
+                              >
+                                <svg
+                                  class="lexicon-icon lexicon-icon-search icon-root"
+                                  role="presentation"
+                                >
+                                  <use
+                                    href="#search"
+                                  />
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        class="btn btn-primary"
+                        type="button"
+                      >
+                        Select Property
+                      </button>
+                    </div>
+                  </nav>
+                </div>
+                <div
+                  class="py-6 no-results-root flex-grow-1"
+                >
+                  <div
+                    class="no-results-content"
+                  >
+                    <div
+                      class="no-results-icon"
+                    >
+                      <svg
+                        class="lexicon-icon lexicon-icon-ac_satellite icon-root icon-size-xxxl"
+                        role="presentation"
+                      >
+                        <use
+                          href="#ac_satellite"
+                        />
+                      </svg>
+                    </div>
+                    <div
+                      class="h4 no-results-title"
+                    >
+                      There are no properties found.
+                    </div>
+                    <div
+                      class="no-results-description"
+                    >
+                      Go to Properties under Workspace Settings to create a property.
+                      <a
+                        class="d-block mb-3"
+                        href="https://learn.liferay.com/w/dxp/personalization/analytics-cloud/workspace-settings/scoping-sites-and-individuals-using-properties"
+                        rel="noreferrer noopener"
+                        target="_blank"
+                      >
+                        Access our documentation to learn more.
+                        <span
+                          class="sr-only"
+                        >
+                          (Opens a new window)
+                        </span>
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1737,7 +1700,7 @@ exports[`View should render a Salesforce data-source page 1`] = `
         class="content section-main"
       >
         <div
-          class="settings-base-page-root data-source-base-page-root salesforce-data-source-root"
+          class="settings-base-page-root"
         >
           <div
             class="maintenance-alert-root"
@@ -1765,330 +1728,611 @@ exports[`View should render a Salesforce data-source page 1`] = `
               </span>
             </li>
           </ol>
-          <div
-            class="content-header"
-          >
+          <div>
             <div
-              class="header-text"
+              class="mb-5"
             >
-              <div
-                class="d-flex"
+              <span
+                class="label mb-2 label-success"
               >
-                <h3
-                  class="title-text text-truncate"
+                <span
+                  class="label-item label-item-expand"
+                >
+                  Connected
+                </span>
+              </span>
+              <div
+                class="input-with-edit-toggle-root definition-item-root"
+              >
+                <div
+                  class="d-inline-flex"
                 >
                   <span
-                    class="text-truncate"
-                    data-tooltip="false"
-                    title=""
+                    class="text-8 font-weight-bold"
                   >
-                    Configure Salesforce
+                    Salesforce{seed}
                   </span>
-                </h3>
-              </div>
-              <div
-                class="description"
-              >
-                Salesforce{seed} - https://login.salesforce.com
+                  <button
+                    aria-label="Edit"
+                    class="button-root btn btn-outline-borderless btn-sm btn-outline-secondary"
+                    data-testid="edit"
+                    type="button"
+                  >
+                    <svg
+                      class="lexicon-icon lexicon-icon-pencil icon-root"
+                      role="presentation"
+                    >
+                      <use
+                        href="#pencil"
+                      />
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
             <div
-              class="page-actions-container"
-            />
-          </div>
-          <div>
-            <div
-              class="page-container"
+              class="panel mb-4 panel-secondary"
             >
               <div
-                class="content-main"
+                class="panel-header"
+              >
+                <h2
+                  class="mb-0 p-2 text-6 text-dark"
+                >
+                  Authentication
+                </h2>
+              </div>
+              <div
+                class="panel-body p-4"
               >
                 <div
-                  class="sheet data-source-base-tabs-root page-display"
+                  class="mb-4"
                 >
+                  <span
+                    class="text-3 text-secondary font-weight-semi-bold"
+                  >
+                    CONNECTION STATUS
+                  </span>
+                  <hr
+                    class="my-2"
+                  />
                   <div
-                    class="sheet-body"
+                    class="alert alert-success"
+                  >
+                    <div
+                      class="alert-autofit-row autofit-row"
+                      role="alert"
+                    >
+                      <div
+                        class="autofit-col"
+                      >
+                        <div
+                          class="autofit-section"
+                        >
+                          <span
+                            class="alert-indicator"
+                          >
+                            <svg
+                              class="lexicon-icon lexicon-icon-check-circle-full"
+                              role="presentation"
+                            >
+                              <use
+                                href="#check-circle-full"
+                              />
+                            </svg>
+                          </span>
+                        </div>
+                      </div>
+                      <div
+                        class="autofit-col autofit-col-expand"
+                      >
+                        <div
+                          class="autofit-section"
+                        >
+                          You have successfully authenticated your token with Liferay Analytics Cloud. You can now select the data to sync.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="mb-4"
+                >
+                  <span
+                    class="text-3 text-secondary font-weight-semi-bold"
+                  >
+                    DATA SOURCE DETAILS
+                  </span>
+                  <hr
+                    class="my-2"
+                  />
+                  <div
+                    class="input-group d-flex mt-3"
+                  >
+                    <div
+                      class="input-group-item mr-3 input-group-item-shrink"
+                    >
+                      <label
+                        for="dataSourceType"
+                      >
+                        Data Source Type
+                      </label>
+                      <input
+                        class="form-control"
+                        readonly=""
+                        type="text"
+                        value="Salesforce"
+                      />
+                    </div>
+                    <div
+                      class="input-group-item ml-0 input-group-item-shrink"
+                    >
+                      <label
+                        for="dataSourceId"
+                      >
+                        Data Source ID
+                      </label>
+                      <input
+                        class="form-control"
+                        readonly=""
+                        type="text"
+                        value="1"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <button
+                  aria-label="Disconnect Data Source"
+                  class="btn btn-sm btn-outline-danger"
+                  type="button"
+                >
+                  <svg
+                    class="lexicon-icon lexicon-icon-logout mr-2"
+                    role="presentation"
+                  >
+                    <use
+                      href="#logout"
+                    />
+                  </svg>
+                  Disconnect Data Source
+                </button>
+              </div>
+            </div>
+            <div
+              class="panel mb-4 panel-secondary"
+            >
+              <div
+                class="panel-header"
+              >
+                <h2
+                  class="mb-0 p-2 text-6 text-dark"
+                >
+                  Synced Data
+                </h2>
+              </div>
+              <div
+                class="panel-body p-4"
+              >
+                <div>
+                  <div
+                    class="alert alert-warning"
+                  >
+                    <div
+                      class="alert-autofit-row autofit-row"
+                      role="alert"
+                    >
+                      <div
+                        class="autofit-col"
+                      >
+                        <div
+                          class="autofit-section"
+                        >
+                          <span
+                            class="alert-indicator"
+                          >
+                            <svg
+                              class="lexicon-icon lexicon-icon-warning-full"
+                              role="presentation"
+                            >
+                              <use
+                                href="#warning-full"
+                              />
+                            </svg>
+                          </span>
+                        </div>
+                      </div>
+                      <div
+                        class="autofit-col autofit-col-expand"
+                      >
+                        <div
+                          class="autofit-section"
+                        >
+                          <strong
+                            class="lead"
+                          >
+                            Warning
+                          </strong>
+                          The data source setup is almost complete. Sync data to start seeing results as activities occur on your sites.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="mb-2"
+                  >
+                    <span
+                      class="text-4 text-secondary"
+                    >
+                      To configure your Salesforce data source, go to your Salesforce environment to update this app connection.
+                    </span>
+                  </div>
+                  <div
+                    class="mt-3 text-dark"
+                  >
+                    <span
+                      class="text-2 font-weight-semi-bold"
+                    >
+                      SELECT ITEMS TO SYNC
+                    </span>
+                  </div>
+                  <div
+                    class="pt-1"
                   >
                     <ul
-                      class="nav-root nav nav-underline"
-                      role="tablist"
+                      class="list-group mb-0 show-quick-actions-on-hover"
                     >
                       <li
-                        class="nav-item active"
-                        role="presentation"
+                        class="list-group-item list-group-item-flex"
                       >
-                        <a
-                          class="nav-link active"
-                          href="/workspace/23/settings/data-source/24"
-                          role="tab"
+                        <div
+                          class="autofit-col"
                         >
                           <div
-                            class="h4"
+                            class="custom-control custom-checkbox"
                           >
-                            Authorization
+                            <label>
+                              <input
+                                class="custom-control-input"
+                                type="checkbox"
+                              />
+                              <span
+                                class="custom-control-label"
+                              />
+                            </label>
                           </div>
-                        </a>
-                      </li>
-                      <li
-                        class="nav-item"
-                        role="presentation"
-                      >
-                        <a
-                          class="nav-link"
-                          href="/workspace/23/settings/data-source/24/salesforce/configuration-status"
-                          role="tab"
+                        </div>
+                        <div
+                          class="autofit-col"
                         >
-                          <div
-                            class="h4"
-                          >
-                            Configure Data Source
-                          </div>
                           <span
-                            class="badge badge-primary ml-2"
+                            class="sticker sticker-unstyled"
                           >
                             <span
-                              class="badge-item badge-item-expand"
+                              class="sticker-overlay"
                             >
-                              2
+                              <svg
+                                class="lexicon-icon lexicon-icon-briefcase text-secondary"
+                                role="presentation"
+                              >
+                                <use
+                                  href="#briefcase"
+                                />
+                              </svg>
                             </span>
                           </span>
-                        </a>
+                        </div>
+                        <div
+                          class="autofit-col autofit-col-expand"
+                        >
+                          <p
+                            class="list-group-title"
+                          >
+                            Accounts
+                          </p>
+                          <p
+                            class="list-group-text"
+                          >
+                            Represents fields from the Account object within Salesforce.
+                          </p>
+                        </div>
+                      </li>
+                      <li
+                        class="list-group-item list-group-item-flex"
+                      >
+                        <div
+                          class="autofit-col"
+                        >
+                          <div
+                            class="custom-control custom-checkbox"
+                          >
+                            <label>
+                              <input
+                                class="custom-control-input"
+                                type="checkbox"
+                              />
+                              <span
+                                class="custom-control-label"
+                              />
+                            </label>
+                          </div>
+                        </div>
+                        <div
+                          class="autofit-col"
+                        >
+                          <span
+                            class="sticker sticker-unstyled"
+                          >
+                            <span
+                              class="sticker-overlay"
+                            >
+                              <svg
+                                class="lexicon-icon lexicon-icon-users text-secondary"
+                                role="presentation"
+                              >
+                                <use
+                                  href="#users"
+                                />
+                              </svg>
+                            </span>
+                          </span>
+                        </div>
+                        <div
+                          class="d-flex justify-content-center autofit-col autofit-col-expand"
+                        >
+                          <p
+                            class="list-group-title"
+                          >
+                            Individuals
+                          </p>
+                          <p
+                            class="list-group-text"
+                          >
+                            Represents fields from the Contact or Lead object within Salesforce.
+                          </p>
+                        </div>
                       </li>
                     </ul>
                   </div>
-                  <form
-                    class="form-root oauth-form-root"
+                  <button
+                    class="mt-3 btn btn-sm btn-primary"
+                    type="button"
+                  >
+                    Save
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div
+              class="panel mb-4 panel-secondary"
+            >
+              <div
+                class="panel-header"
+              >
+                <h2
+                  class="mb-0 p-2 text-6 text-dark"
+                >
+                  Assigned Properties
+                </h2>
+              </div>
+              <div
+                class="panel-body p-0"
+              >
+                <div
+                  class="p-4"
+                >
+                  <p
+                    class="text-4 text-secondary"
+                  >
+                    Properties allow you to aggregate data on your users and DXP sites and channels. The data source data will be available in any property they are assigned to.
+                  </p>
+                  <span
+                    class="text-3 text-secondary font-weight-semi-bold"
+                  >
+                    DATA AVAILABILITY
+                  </span>
+                  <hr
+                    class="my-2"
+                  />
+                  <p
+                    class="text-4 text-secondary"
+                  >
+                    Choose the properties that will have access to this data source.
+                  </p>
+                  <div
+                    class=""
                   >
                     <div
-                      class="sheet-body"
+                      class="custom-control custom-radio custom-control-inline custom-control-outside"
                     >
-                      <div
-                        class="sheet-section"
+                      <label>
+                        <input
+                          class="custom-control-input"
+                          role="radio"
+                          type="radio"
+                          value="all"
+                        />
+                        <span
+                          class="custom-control-label"
+                        >
+                          <span
+                            class="custom-control-label-text"
+                          >
+                            Make individual data from this data source available in all properties, including those not yet created.
+                          </span>
+                        </span>
+                      </label>
+                    </div>
+                    <div
+                      class="custom-control custom-radio custom-control-inline custom-control-outside"
+                    >
+                      <label>
+                        <input
+                          checked=""
+                          class="custom-control-input"
+                          role="radio"
+                          type="radio"
+                          value="custom"
+                        />
+                        <span
+                          class="custom-control-label"
+                        >
+                          <span
+                            class="custom-control-label-text"
+                          >
+                            Select Properties
+                          </span>
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="toolbar-root"
+                >
+                  <nav
+                    class="navbar navbar-root management-bar management-bar-light navbar-expand"
+                  >
+                    <div
+                      class="container-fluid"
+                    >
+                      <ul
+                        class="nav-root front-nav navbar-nav"
+                        role="tablist"
                       >
-                        <div
-                          class="sheet-text"
+                        <li
+                          class="nav-item"
+                          role="presentation"
                         >
-                          Please enter the URL of the target instance to start configuring the 
-                          Salesforce
-                           Data Source. You will need to enter the credentials of the data source's administrator. If you need help setting this up, please refer to the 
-                          <a
-                            class=""
-                            href="https://developer.salesforce.com/page/Connected_Apps"
-                          >
-                            documentation
-                          </a>
-                          .
-                        </div>
-                        <div
-                          class="callback-url"
-                        >
-                          <b>
-                            Analytics Cloud Callback URL:
-                          </b>
-                          <pre>
-                            http://liferay.com/oauth/receive
-                          </pre>
-                        </div>
-                      </div>
-                      <div
-                        class="sheet-section"
-                      >
-                        <h3
-                          class="sheet-subtitle"
-                        >
-                          Data Source
-                        </h3>
-                        <div
-                          class=""
-                        >
-                          <label
-                            class="form-control-label label-root required"
-                            for="dataSourceName"
-                          >
-                            <span
-                              class="content-container"
-                            >
-                              Name
-                            </span>
-                          </label>
-                          <input
-                            class="input-root form-control"
-                            disabled=""
-                            id="dataSourceName"
-                            name="dataSourceName"
-                            type="text"
-                            value="Salesforce{seed}"
-                          />
-                        </div>
-                        <div
-                          class=""
-                        >
-                          <label
-                            class="form-control-label label-root required"
-                            for="url"
-                          >
-                            <span
-                              class="content-container"
-                            >
-                              URL
-                            </span>
-                          </label>
-                          <input
-                            class="input-root form-control"
-                            disabled=""
-                            id="url"
-                            name="url"
-                            type="text"
-                            value="https://login.salesforce.com"
-                          />
-                        </div>
-                      </div>
-                      <div
-                        class="sheet-section"
-                      >
-                        <h3
-                          class="sheet-subtitle"
-                        >
-                          Client Credentials
-                        </h3>
-                        <div
-                          class=""
-                        >
-                          <label
-                            class="form-control-label label-root required"
-                            for="consumerKey"
-                          >
-                            <span
-                              class="content-container"
-                            >
-                              Consumer Key/Client ID
-                            </span>
-                          </label>
-                          <input
-                            autocomplete="new-password"
-                            class="input-root form-control"
-                            disabled=""
-                            id="consumerKey"
-                            name="consumerKey"
-                            type="text"
-                            value="oAuthMockClientId-1"
-                          />
-                        </div>
-                        <div
-                          class=""
-                        >
-                          <label
-                            class="form-control-label label-root required"
-                            for="consumerSecret"
-                          >
-                            <span
-                              class="content-container"
-                            >
-                              Consumer Secret/Client Secret
-                            </span>
-                          </label>
                           <div
-                            class="input-group"
+                            class="dropdown dropdown-root"
                           >
-                            <div
-                              class="input-group-item"
+                            <button
+                              aria-controls="clay-dropdown-menu-4"
+                              aria-expanded="false"
+                              aria-haspopup="true"
+                              class="dropdown-toggle btn btn-outline-borderless btn-sm btn-outline-secondary"
+                              data-testid="order-button"
+                              type="button"
                             >
-                              <input
-                                autocomplete="new-password"
-                                class="input-root form-control input-group-inset input-group-inset-after"
-                                disabled=""
-                                id="consumerSecret"
-                                name="consumerSecret"
-                                type="password"
-                                value="oAuthMockClientSecret-1"
-                              />
-                              <div
-                                class="input-group-inset-item input-group-inset-item-after"
+                              <span
+                                class="caret-root"
                               >
-                                <button
-                                  aria-label="Watch"
-                                  class="button-root btn btn-unstyled"
-                                  disabled=""
-                                  type="button"
+                                <svg
+                                  class="lexicon-icon lexicon-icon-order-list-down"
+                                  role="presentation"
                                 >
-                                  <svg
-                                    class="lexicon-icon lexicon-icon-view icon-root"
-                                    role="presentation"
-                                  >
-                                    <use
-                                      href="#view"
-                                    />
-                                  </svg>
-                                </button>
-                              </div>
+                                  <use
+                                    href="#order-list-down"
+                                  />
+                                </svg>
+                              </span>
+                              <span
+                                class="mx-2"
+                              >
+                                Order
+                              </span>
+                              <span
+                                class="caret-root"
+                              >
+                                <svg
+                                  class="lexicon-icon lexicon-icon-caret-bottom"
+                                  role="presentation"
+                                >
+                                  <use
+                                    href="#caret-bottom"
+                                  />
+                                </svg>
+                              </span>
+                            </button>
+                          </div>
+                        </li>
+                      </ul>
+                      <div
+                        class="navbar-form navbar-form-autofit mx-2"
+                      >
+                        <div
+                          class="input-group search"
+                        >
+                          <div
+                            class="input-group-item"
+                          >
+                            <input
+                              class="input-root form-control input-group-inset input-group-inset-after"
+                              placeholder="Search"
+                              type="text"
+                              value=""
+                            />
+                            <div
+                              class="input-group-inset-item input-group-inset-item-after"
+                            >
+                              <button
+                                aria-label="Search"
+                                class="button-root btn btn-unstyled"
+                                type="button"
+                              >
+                                <svg
+                                  class="lexicon-icon lexicon-icon-search icon-root"
+                                  role="presentation"
+                                >
+                                  <use
+                                    href="#search"
+                                  />
+                                </svg>
+                              </button>
                             </div>
                           </div>
                         </div>
                       </div>
-                      <div
-                        class="sheet-section"
-                      >
-                        <h5>
-                          OAuth Owner
-                        </h5>
-                        <div
-                          class="oauth-owner disabled"
-                        >
-                          <em>
-                            Authorize to add a new owner.
-                          </em>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      class="sheet-footer form-actions"
-                    >
                       <button
-                        class="button-root edit btn btn-secondary"
+                        class="btn btn-primary"
                         type="button"
                       >
-                        Edit
+                        Select Property
                       </button>
                     </div>
-                  </form>
+                  </nav>
                 </div>
-              </div>
-              <div
-                class="content-side"
-              >
                 <div
-                  class="panel-root data-source-status-root"
+                  class="py-6 no-results-root flex-grow-1"
                 >
                   <div
-                    class="panel-header"
-                    role="button"
-                    tabindex="0"
+                    class="no-results-content"
                   >
                     <div
-                      class="panel-title"
+                      class="no-results-icon"
                     >
-                      <div>
-                        Current Status:
-                      </div>
-                    </div>
-                    <div
-                      class="panel-title-label"
-                    >
-                      <div
-                        class="label label-root label-info label-lg label-uppercase"
+                      <svg
+                        class="lexicon-icon lexicon-icon-ac_satellite icon-root icon-size-xxxl"
+                        role="presentation"
                       >
-                        <span
-                          class="label-item"
-                        >
-                          Authenticated
-                        </span>
-                      </div>
+                        <use
+                          href="#ac_satellite"
+                        />
+                      </svg>
                     </div>
-                  </div>
-                  <div
-                    class="panel-body"
-                  >
-                    You have successfully authenticated your client id and secret with you data source. You can now configure your data.
+                    <div
+                      class="h4 no-results-title"
+                    >
+                      There are no properties found.
+                    </div>
+                    <div
+                      class="no-results-description"
+                    >
+                      Go to Properties under Workspace Settings to create a property.
+                      <a
+                        class="d-block mb-3"
+                        href="https://learn.liferay.com/w/dxp/personalization/analytics-cloud/workspace-settings/scoping-sites-and-individuals-using-properties"
+                        rel="noreferrer noopener"
+                        target="_blank"
+                      >
+                        Access our documentation to learn more.
+                        <span
+                          class="sr-only"
+                        >
+                          (Opens a new window)
+                        </span>
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>

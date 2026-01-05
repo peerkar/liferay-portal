@@ -1,0 +1,11 @@
+{
+	"externalReferenceCode": "T_AC_TEAM_MEMBERS",
+	"name": "Team Members",
+	"name_i18n": {
+		"en_US": "Team Members",
+		"es-ES": "Miembros del equipo",
+		"ja-JP": "チームメンバー",
+		"pt-BR": "Membros da equipe"
+	},
+	"viewableBy": "Anyone"
+}

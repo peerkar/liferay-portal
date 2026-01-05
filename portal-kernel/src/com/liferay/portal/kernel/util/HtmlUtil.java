@@ -894,6 +894,10 @@ public class HtmlUtil {
 	).put(
 		"#61", "="
 	).put(
+		"#8211", "\u2013"
+	).put(
+		"#8212", "\u2014"
+	).put(
 		"amp", "&"
 	).put(
 		"gt", ">"

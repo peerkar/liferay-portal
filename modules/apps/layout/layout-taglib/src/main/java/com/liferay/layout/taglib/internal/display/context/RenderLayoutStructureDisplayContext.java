@@ -7,6 +7,7 @@ package com.liferay.layout.taglib.internal.display.context;
 
 import com.liferay.fragment.entry.processor.constants.FragmentEntryProcessorConstants;
 import com.liferay.fragment.entry.processor.helper.FragmentEntryProcessorHelper;
+import com.liferay.fragment.entry.processor.helper.LayoutReferenceResolver;
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.renderer.DefaultFragmentRendererContext;
 import com.liferay.fragment.service.FragmentEntryLinkLocalServiceUtil;
@@ -22,6 +23,7 @@ import com.liferay.info.form.InfoForm;
 import com.liferay.info.item.ClassPKInfoItemIdentifier;
 import com.liferay.info.item.ERCInfoItemIdentifier;
 import com.liferay.info.item.InfoItemDetails;
+import com.liferay.info.item.InfoItemFieldValues;
 import com.liferay.info.item.InfoItemIdentifier;
 import com.liferay.info.item.InfoItemReference;
 import com.liferay.info.item.InfoItemServiceRegistry;
@@ -483,10 +485,24 @@ public class RenderLayoutStructureDisplayContext {
 		LayoutStructureRulesHelper layoutStructureRulesHelper =
 			ServletContextUtil.getLayoutStructureRulesHelper();
 
+		InfoItemFieldValues infoItemFieldValues = null;
+
+		Object infoItem = _httpServletRequest.getAttribute(
+			InfoDisplayWebKeys.INFO_ITEM);
+
+		InfoItemFieldValuesProvider infoItemFieldValuesProvider =
+			_getInfoFieldValuesProvider(infoItem);
+
+		if (infoItemFieldValuesProvider != null) {
+			infoItemFieldValues =
+				infoItemFieldValuesProvider.getInfoItemFieldValues(infoItem);
+		}
+
 		LayoutStructureRulesHelper.LayoutStructureRulesResult
 			layoutStructureRulesResult =
 				layoutStructureRulesHelper.processLayoutStructureRules(
-					_themeDisplay.getScopeGroupId(), _layoutStructure,
+					_themeDisplay.getScopeGroupId(), infoItemFieldValues,
+					_layoutStructure, _themeDisplay.getLocale(),
 					_themeDisplay.getPermissionChecker(),
 					_getSegmentsEntryIds());
 
@@ -766,25 +782,13 @@ public class RenderLayoutStructureDisplayContext {
 			Object infoItem = _httpServletRequest.getAttribute(
 				InfoDisplayWebKeys.INFO_ITEM);
 
-			InfoItemDetails infoItemDetails =
-				(InfoItemDetails)_httpServletRequest.getAttribute(
-					InfoDisplayWebKeys.INFO_ITEM_DETAILS);
+			InfoItemFieldValuesProvider infoItemFieldValuesProvider =
+				_getInfoFieldValuesProvider(infoItem);
 
-			if ((infoItem != null) && (infoItemDetails != null)) {
-				InfoItemServiceRegistry infoItemServiceRegistry =
-					ServletContextUtil.getInfoItemServiceRegistry();
-
-				InfoItemFieldValuesProvider<Object>
-					infoItemFieldValuesProvider =
-						infoItemServiceRegistry.getFirstInfoItemService(
-							InfoItemFieldValuesProvider.class,
-							infoItemDetails.getClassName());
-
-				if (infoItemFieldValuesProvider != null) {
-					return _parseInfoFieldValue(
-						infoItemFieldValuesProvider.getInfoFieldValue(
-							infoItem, mappedField));
-				}
+			if (infoItemFieldValuesProvider != null) {
+				return _parseInfoFieldValue(
+					infoItemFieldValuesProvider.getInfoFieldValue(
+						infoItem, mappedField));
 			}
 
 			return StringPool.BLANK;
@@ -927,12 +931,19 @@ public class RenderLayoutStructureDisplayContext {
 			return StringPool.BLANK;
 		}
 
-		String layoutUuid = layoutJSONObject.getString("layoutUuid");
-		long groupId = layoutJSONObject.getLong("groupId");
-		boolean privateLayout = layoutJSONObject.getBoolean("privateLayout");
+		LayoutReferenceResolver layoutReferenceResolver =
+			ServletContextUtil.getLayoutReferenceResolverRegistry();
 
-		Layout layout = LayoutLocalServiceUtil.fetchLayoutByUuidAndGroupId(
-			layoutUuid, groupId, privateLayout);
+		Layout layout = layoutReferenceResolver.resolve(
+			_themeDisplay.getCompanyId(), layoutJSONObject,
+			_themeDisplay.getScopeGroupId());
+
+		if (layout == null) {
+			layout = LayoutLocalServiceUtil.fetchLayoutByUuidAndGroupId(
+				layoutJSONObject.getString("layoutUuid"),
+				layoutJSONObject.getLong("groupId"),
+				layoutJSONObject.getBoolean("privateLayout"));
+		}
 
 		if (layout != null) {
 			return PortalUtil.getLayoutURL(layout, _themeDisplay);
@@ -964,6 +975,25 @@ public class RenderLayoutStructureDisplayContext {
 		}
 
 		return redirect;
+	}
+
+	private InfoItemFieldValuesProvider _getInfoFieldValuesProvider(
+		Object infoItem) {
+
+		InfoItemDetails infoItemDetails =
+			(InfoItemDetails)_httpServletRequest.getAttribute(
+				InfoDisplayWebKeys.INFO_ITEM_DETAILS);
+
+		if ((infoItem != null) && (infoItemDetails != null)) {
+			InfoItemServiceRegistry infoItemServiceRegistry =
+				ServletContextUtil.getInfoItemServiceRegistry();
+
+			return infoItemServiceRegistry.getFirstInfoItemService(
+				InfoItemFieldValuesProvider.class,
+				infoItemDetails.getClassName());
+		}
+
+		return null;
 	}
 
 	private Object _getInfoItem(InfoItemReference infoItemReference) {

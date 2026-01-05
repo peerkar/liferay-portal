@@ -6,6 +6,7 @@
 package com.liferay.depot.internal.security.permission.contributor;
 
 import com.liferay.depot.constants.DepotRolesConstants;
+import com.liferay.depot.model.DepotEntry;
 import com.liferay.depot.model.DepotEntryGroupRel;
 import com.liferay.depot.service.DepotEntryGroupRelLocalService;
 import com.liferay.depot.service.DepotEntryLocalService;
@@ -39,45 +40,7 @@ public class DepotRoleContributor implements RoleContributor {
 	@Override
 	public void contribute(RoleCollection roleCollection) {
 		try {
-			if (roleCollection.getGroupId() <= 0) {
-				return;
-			}
-
-			Group group = _groupLocalService.getGroup(
-				roleCollection.getGroupId());
-
-			if (group.isDepot()) {
-				UserBag userBag = roleCollection.getUserBag();
-
-				if (userBag.hasUserGroup(group) ||
-					_hasInheritedMemberships(group.getGroupId(), userBag)) {
-
-					_addRoleId(
-						roleCollection,
-						DepotRolesConstants.ASSET_LIBRARY_MEMBER);
-				}
-
-				List<DepotEntryGroupRel> depotEntryGroupRels =
-					_depotEntryGroupRelLocalService.getDepotEntryGroupRels(
-						_depotEntryLocalService.getGroupDepotEntry(
-							group.getGroupId()));
-
-				for (DepotEntryGroupRel depotEntryGroupRel :
-						depotEntryGroupRels) {
-
-					if (userBag.hasUserGroup(
-							_groupLocalService.getGroup(
-								depotEntryGroupRel.getToGroupId()))) {
-
-						_addRoleId(
-							roleCollection,
-							DepotRolesConstants.
-								ASSET_LIBRARY_CONNECTED_SITE_MEMBER);
-
-						break;
-					}
-				}
-			}
+			_contribute(roleCollection);
 		}
 		catch (PortalException portalException) {
 			_log.error(portalException);
@@ -91,6 +54,48 @@ public class DepotRoleContributor implements RoleContributor {
 			roleCollection.getCompanyId(), roleName);
 
 		roleCollection.addRoleId(role.getRoleId());
+	}
+
+	private void _contribute(RoleCollection roleCollection)
+		throws PortalException {
+
+		if (roleCollection.getGroupId() <= 0) {
+			return;
+		}
+
+		DepotEntry depotEntry = _depotEntryLocalService.fetchGroupDepotEntry(
+			roleCollection.getGroupId());
+
+		if (depotEntry == null) {
+			return;
+		}
+
+		Group group = _groupLocalService.getGroup(roleCollection.getGroupId());
+
+		UserBag userBag = roleCollection.getUserBag();
+
+		if (userBag.hasUserGroup(group) ||
+			_hasInheritedMemberships(group.getGroupId(), userBag)) {
+
+			_addRoleId(
+				roleCollection, DepotRolesConstants.ASSET_LIBRARY_MEMBER);
+		}
+
+		List<DepotEntryGroupRel> depotEntryGroupRels =
+			_depotEntryGroupRelLocalService.getDepotEntryGroupRels(depotEntry);
+
+		for (DepotEntryGroupRel depotEntryGroupRel : depotEntryGroupRels) {
+			if (userBag.hasUserGroup(
+					_groupLocalService.getGroup(
+						depotEntryGroupRel.getToGroupId()))) {
+
+				_addRoleId(
+					roleCollection,
+					DepotRolesConstants.ASSET_LIBRARY_CONNECTED_SITE_MEMBER);
+
+				break;
+			}
+		}
 	}
 
 	private boolean _hasInheritedMemberships(long groupId, UserBag userBag) {

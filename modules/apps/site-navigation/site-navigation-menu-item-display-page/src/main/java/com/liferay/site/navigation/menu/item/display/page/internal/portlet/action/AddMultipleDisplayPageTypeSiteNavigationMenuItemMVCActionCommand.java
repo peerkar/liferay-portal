@@ -129,6 +129,7 @@ public class AddMultipleDisplayPageTypeSiteNavigationMenuItemMVCActionCommand
 						infoItemReferences.get(i);
 
 					_addSiteNavigationMenuItem(
+						themeDisplay.getCompanyId(),
 						themeDisplay.getScopeGroupId(), infoItemReference,
 						jsonObjects, order + i, parentSiteNavigationMenuItemId,
 						serviceContext, siteNavigationMenuId,
@@ -194,7 +195,7 @@ public class AddMultipleDisplayPageTypeSiteNavigationMenuItemMVCActionCommand
 	}
 
 	private void _addSiteNavigationMenuItem(
-			long groupId, InfoItemReference infoItemReference,
+			long companyId, long groupId, InfoItemReference infoItemReference,
 			Map<Long, JSONObject> jsonObjects, int order,
 			long parentSiteNavigationMenuItemId, ServiceContext serviceContext,
 			long siteNavigationMenuId, String siteNavigationMenuItemType)
@@ -215,14 +216,11 @@ public class AddMultipleDisplayPageTypeSiteNavigationMenuItemMVCActionCommand
 				).put(
 					"className", jsonObject.getString("className")
 				).put(
-					"classNameId", jsonObject.getString("classNameId")
-				).put(
-					"classPK", jsonObject.getString("classPK")
-				).put(
-					"classTypeId", jsonObject.getString("classTypeId")
-				).put(
 					"externalReferenceCode",
 					jsonObject.getString("externalReferenceCode")
+				).put(
+					"scopeExternalReferenceCode",
+					jsonObject.getString("scopeExternalReferenceCode")
 				).put(
 					"title", jsonObject.getString("title")
 				).put(
@@ -248,7 +246,8 @@ public class AddMultipleDisplayPageTypeSiteNavigationMenuItemMVCActionCommand
 					getChildrenHierarchicalInfoItemReferences()) {
 
 			_addSiteNavigationMenuItem(
-				groupId, childHierarchicalInfoItemReference, jsonObjects, -1,
+				companyId, groupId, childHierarchicalInfoItemReference,
+				jsonObjects, -1,
 				siteNavigationMenuItem.getSiteNavigationMenuItemId(),
 				serviceContext, siteNavigationMenuId,
 				siteNavigationMenuItemType);

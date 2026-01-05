@@ -1,0 +1,84 @@
+{
+	"accountEntryRestricted": true,
+	"accountEntryRestrictedObjectFieldName": "r_liferayExperienceCloudEnvironment_accountEntryId",
+	"externalReferenceCode": "C_LXC_ENVIRONMENT",
+	"label": {
+		"en_US": "Liferay Experience Cloud Environment"
+	},
+	"name": "LiferayExperienceCloudEnvironment",
+	"objectFields": [
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_LXC_ENVIRONMENT_accountKey",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Account Key"
+			},
+			"name": "accountKey",
+			"required": false
+		},
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_LXC_ENVIRONMENT_acOwner",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Analytics Cloud Owner"
+			},
+			"name": "analyticsCloudOwner",
+			"required": false
+		},
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_LXC_ENVIRONMENT_incidentManagementEmailAddress",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Incident Management Email Address"
+			},
+			"name": "incidentManagementEmailAddress",
+			"required": false
+		},
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_LXC_ENVIRONMENT_incidentManagementFullName",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Incident Management Full Name"
+			},
+			"name": "incidentManagementFullName",
+			"required": false
+		},
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_LXC_ENVIRONMENT_primaryRegion",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Primary Region"
+			},
+			"name": "primaryRegion",
+			"required": false
+		},
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_LXC_ENVIRONMENT_projectId",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Project ID"
+			},
+			"name": "projectId",
+			"required": true
+		}
+	],
+	"panelCategoryKey": "applications_menu.applications.content",
+	"pluralLabel": {
+		"en_US": "Liferay Experience Cloud Environments"
+	},
+	"portlet": true,
+	"scope": "company",
+	"system": false
+}

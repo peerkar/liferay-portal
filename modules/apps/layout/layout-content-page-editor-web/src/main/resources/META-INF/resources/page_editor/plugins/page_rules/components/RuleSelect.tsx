@@ -8,9 +8,13 @@ import {Option, Picker} from '@clayui/core';
 import {ClayInput} from '@clayui/form';
 import {usePrevious} from '@liferay/frontend-js-react-web';
 import classNames from 'classnames';
-import React, {MutableRefObject, useEffect} from 'react';
+import {useId} from 'frontend-js-components-web';
+import React, {MutableRefObject, useEffect, useRef, useState} from 'react';
 
+import {useRuleValidation} from '../../../app/contexts/RulesModalContext';
 import {getSelectOptions} from '../../../common/getSelectOptions';
+import {RuleError} from '../../../types/Rule';
+import RuleField from './RuleField';
 
 const TriggerLabel = React.forwardRef<HTMLButtonElement, any>(
 	(
@@ -30,7 +34,7 @@ const TriggerLabel = React.forwardRef<HTMLButtonElement, any>(
 		return (
 			<ClayButton
 				className={classNames(
-					'page-editor__rule-builder-select form-control form-control-select form-control-sm'
+					'form-control form-control-select form-control-sm'
 				)}
 				displayType="secondary"
 				onClick={onClick}
@@ -47,54 +51,105 @@ const TriggerLabel = React.forwardRef<HTMLButtonElement, any>(
 interface RuleSelectProps<T> {
 	'aria-label'?: string;
 	'items': ReadonlyArray<{label: string; value: T}>;
+	'onErrorChange': (error: RuleError | null) => void;
 	'onSelectionChange': (selection: T) => void;
+	'readOnly'?: boolean;
 	'selectedKey'?: string;
 	'triggerRef'?: MutableRefObject<HTMLButtonElement | undefined>;
 }
 
 export default function RuleSelect<T extends string>({
+	'aria-label': label = '',
 	items,
+	onErrorChange,
 	onSelectionChange,
+	readOnly,
 	selectedKey,
 	triggerRef,
 	...otherProps
 }: RuleSelectProps<T>) {
+	const [hasError, setHasError] = useState<boolean>(false);
+	const id = useId();
+	const inputRef = useRef<HTMLInputElement | null>(null);
 	const previousSelectedKey = usePrevious(selectedKey);
 
-	if (!items.length) {
+	const fieldRef = inputRef || triggerRef;
+
+	useEffect(() => {
+		if (!previousSelectedKey && fieldRef?.current) {
+			onErrorChange(
+				selectedKey ? null : {element: fieldRef.current, message: label}
+			);
+		}
+	}, [label, id, fieldRef, onErrorChange, previousSelectedKey, selectedKey]);
+
+	useRuleValidation(() => setHasError(!selectedKey && !previousSelectedKey));
+
+	if (readOnly) {
+		const item = items.find(({value}) => value === selectedKey);
+
 		return (
 			<ClayInput
+				aria-label={item?.label}
 				className="w-auto"
 				readOnly
 				sizing="sm"
-				value={Liferay.Language.get('no-options-available')}
+				value={item?.label}
 			/>
 		);
 	}
 
 	return (
-		<Picker
-			as={TriggerLabel}
-			items={getSelectOptions(items)}
-			key={selectedKey === undefined && previousSelectedKey ? 0 : 1}
-			messages={{
-				itemDescribedby: Liferay.Language.get(
-					'you-are-currently-on-a-text-element,-inside-of-a-list-box'
-				),
-				itemSelected: Liferay.Language.get('x-selected'),
-				scrollToBottomAriaLabel:
-					Liferay.Language.get('scroll-to-bottom'),
-				scrollToTopAriaLabel: Liferay.Language.get('scroll-to-top'),
-			}}
-			onSelectionChange={(selection: React.Key) =>
-				onSelectionChange(selection as T)
-			}
-			placeholder={Liferay.Language.get('select')}
-			selectedKey={selectedKey}
-			triggerRef={triggerRef}
-			{...otherProps}
+		<RuleField
+			className="mb-0 page-editor__rule-builder-select w-100"
+			errorMessage={label}
+			fieldId={id}
+			hasError={hasError}
 		>
-			{(item) => <Option key={item.value}>{item.label}</Option>}
-		</Picker>
+			{items.length ? (
+				<Picker
+					aria-label={label}
+					as={TriggerLabel}
+					id={id}
+					items={getSelectOptions(items)}
+					key={
+						selectedKey === undefined && previousSelectedKey ? 0 : 1
+					}
+					messages={{
+						itemDescribedby: Liferay.Language.get(
+							'you-are-currently-on-a-text-element,-inside-of-a-list-box'
+						),
+						itemSelected: Liferay.Language.get('x-selected'),
+						scrollToBottomAriaLabel:
+							Liferay.Language.get('scroll-to-bottom'),
+						scrollToTopAriaLabel:
+							Liferay.Language.get('scroll-to-top'),
+					}}
+					onSelectionChange={(selection: React.Key) => {
+						onSelectionChange(selection as T);
+
+						setHasError(false);
+					}}
+					placeholder={Liferay.Language.get('select')}
+					selectedKey={selectedKey}
+					triggerRef={fieldRef}
+					{...(hasError && {'aria-describedby': `${id}-error`})}
+					{...otherProps}
+				>
+					{(item) => <Option key={item.value}>{item.label}</Option>}
+				</Picker>
+			) : (
+				<ClayInput
+					aria-label={label}
+					className="w-auto"
+					id={id}
+					readOnly
+					ref={inputRef}
+					sizing="sm"
+					value={Liferay.Language.get('no-options-available')}
+					{...(hasError && {'aria-describedby': `${id}-error`})}
+				/>
+			)}
+		</RuleField>
 	);
 }

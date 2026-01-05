@@ -4,6 +4,7 @@
  */
 
 export const config = {
+	dependencies: ['site-cms-site.main'],
 	name: 'site-cms-site-initializer.structure-builder',
 	testDir: 'tests/site-cms-site-initializer/structure-builder',
 };

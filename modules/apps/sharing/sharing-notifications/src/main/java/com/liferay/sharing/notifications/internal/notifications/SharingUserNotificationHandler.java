@@ -86,8 +86,14 @@ public class SharingUserNotificationHandler
 		AssetRenderer<Object> assetRenderer =
 			assetRendererFactory.getAssetRenderer(sharingEntry.getClassPK());
 
-		return assetRenderer.getURLViewInContext(
+		String viewInContextURL = assetRenderer.getURLViewInContext(
 			themeDisplay, StringPool.BLANK);
+
+		if (Validator.isBlank(viewInContextURL)) {
+			return super.getLink(userNotificationEvent, serviceContext);
+		}
+
+		return viewInContextURL;
 	}
 
 	@Override

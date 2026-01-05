@@ -449,7 +449,7 @@ public class OpenSearchQueryTranslator
 		}
 
 		throw new IllegalArgumentException(
-			"Invalid Boolean clause occur " + booleanClauseOccur);
+			"Invalid boolean clause occur " + booleanClauseOccur);
 	}
 
 	private List<Like> _getLikes(MoreLikeThisQuery moreLikeThisQuery) {

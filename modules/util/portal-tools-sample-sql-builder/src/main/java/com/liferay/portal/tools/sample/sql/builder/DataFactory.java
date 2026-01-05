@@ -182,6 +182,7 @@ import com.liferay.layout.page.template.model.LayoutPageTemplateStructureRelMode
 import com.liferay.layout.page.template.model.impl.LayoutPageTemplateStructureModelImpl;
 import com.liferay.layout.page.template.model.impl.LayoutPageTemplateStructureRelModelImpl;
 import com.liferay.layout.util.constants.LayoutClassedModelUsageConstants;
+import com.liferay.layout.util.constants.LayoutDataItemTypeConstants;
 import com.liferay.list.type.model.ListTypeDefinition;
 import com.liferay.list.type.model.ListTypeDefinitionModel;
 import com.liferay.list.type.model.ListTypeEntryModel;
@@ -702,6 +703,10 @@ public class DataFactory {
 		return _defaultDLDDMStructureId;
 	}
 
+	public String getDefaultListTypeEntryKey() {
+		return _defaultListTypeEntryKey;
+	}
+
 	public long getDLFileEntryClassNameId() {
 		return getClassNameId(DLFileEntry.class);
 	}
@@ -890,6 +895,10 @@ public class DataFactory {
 		_assetClassNameIdsIndexes.put(groupId, ++index);
 
 		return classNameId;
+	}
+
+	public String[] getObjectLayoutDataItemTypes() {
+		return BenchmarksPropsValues.OBJECT_LAYOUT_DATA_ITEM_TYPES;
 	}
 
 	public String getPortletId(String portletPrefix) {
@@ -4388,10 +4397,12 @@ public class DataFactory {
 				newFragmentEntryLinkModel(
 					layoutModel, null, segmentsExperienceId,
 					_readFile(
-						_getFragmentComponentInputStream("paragraph", "css")),
+						_getFragmentComponentInputStream(
+							"basic/component", "paragraph", "css")),
 					_readFile(
-						_getFragmentComponentInputStream("paragraph", "html")),
-					StringPool.BLANK,
+						_getFragmentComponentInputStream(
+							"basic/component", "paragraph", "html")),
+					StringPool.BLANK, StringPool.BLANK,
 					_readFile(
 						"fragment_component" +
 							"/fragment_component_paragraph_title_editValue." +
@@ -4402,10 +4413,12 @@ public class DataFactory {
 				newFragmentEntryLinkModel(
 					layoutModel, null, segmentsExperienceId,
 					_readFile(
-						_getFragmentComponentInputStream("paragraph", "css")),
+						_getFragmentComponentInputStream(
+							"basic/component", "paragraph", "css")),
 					_readFile(
-						_getFragmentComponentInputStream("paragraph", "html")),
-					StringPool.BLANK,
+						_getFragmentComponentInputStream(
+							"basic/component", "paragraph", "html")),
+					StringPool.BLANK, StringPool.BLANK,
 					_readFile(
 						"fragment_component" +
 							"/fragment_component_paragraph_content_editValue." +
@@ -4416,7 +4429,9 @@ public class DataFactory {
 				newFragmentEntryLinkModel(
 					layoutModel, null, segmentsExperienceId, "",
 					_readFile(
-						_getFragmentComponentInputStream("image", "html")),
+						_getFragmentComponentInputStream(
+							"basic/component", "image", "html")),
+					StringPool.BLANK,
 					_readFile(
 						"fragment_component" +
 							"/fragment_component_image_configuration.json"),
@@ -4442,6 +4457,7 @@ public class DataFactory {
 					hiddenFragmentEntryLinkModel.getExternalReferenceCode(),
 					segmentsExperienceId, hiddenFragmentEntryLinkModel.getCss(),
 					hiddenFragmentEntryLinkModel.getHtml(),
+					hiddenFragmentEntryLinkModel.getJs(),
 					hiddenFragmentEntryLinkModel.getConfiguration(),
 					hiddenFragmentEntryLinkModel.getEditableValues(),
 					hiddenFragmentEntryLinkModel.getNamespace(),
@@ -5575,7 +5591,7 @@ public class DataFactory {
 	public LayoutPageTemplateStructureRelModel
 			newObjectDefinitionLayoutPageTemplateStructureRelModel(
 				List<FragmentEntryLinkModel> fragmentEntryLinkModels,
-				LayoutModel layoutModel,
+				String layoutDataItemType, LayoutModel layoutModel,
 				LayoutPageTemplateStructureModel
 					layoutPageTemplateStructureModel,
 				ObjectDefinition objectDefinition)
@@ -5612,11 +5628,27 @@ public class DataFactory {
 		FragmentEntryLinkModel correspondingFragmentEntryLinkModel = null;
 
 		String data = _readFile(
-			"object/object_definition_layout_page_template_structure_rel.json");
+			StringBundler.concat(
+				"object/object_definition_layout_page_template_structure_rel",
+				"_data_item_type_", layoutDataItemType, ".json"));
 
-		data = StringUtil.replace(
-			data, "${objectDefinitionClassName}",
-			objectDefinition.getClassName());
+		if (StringUtil.equals(
+				layoutDataItemType,
+				LayoutDataItemTypeConstants.TYPE_COLLECTION)) {
+
+			data = StringUtil.replace(
+				data, "${objectDefinitionClassName}",
+				objectDefinition.getClassName());
+		}
+		else if (StringUtil.equals(
+					layoutDataItemType,
+					LayoutDataItemTypeConstants.TYPE_FORM)) {
+
+			data = StringUtil.replace(
+				data, "${objectDefinitionClassNameId}",
+				String.valueOf(
+					getClassNameId(objectDefinition.getClassName())));
+		}
 
 		for (FragmentEntryLinkModel fragmentEntryLinkModel :
 				fragmentEntryLinkModels) {
@@ -5917,17 +5949,12 @@ public class DataFactory {
 	}
 
 	public List<FragmentEntryLinkModel> newObjectFieldsFragmentEntryLinkModels(
-			List<LayoutModel> layoutModels,
+			String layoutDataItemType, List<LayoutModel> layoutModels,
 			List<ObjectFieldModel> objectFieldModels,
 			List<SegmentsExperienceModel> segmentsExperienceModels)
 		throws Exception {
 
-		String editValueJSON = _readFile(
-			"fragment_component/fragment_component_heading_editValue.json");
-		String headingCss = _readFile(
-			_getFragmentComponentInputStream("heading", "css"));
-		String headingHtml = _readFile(
-			_getFragmentComponentInputStream("heading", "html"));
+		boolean addSubmitFragmentEntryLink = false;
 		List<FragmentEntryLinkModel> nonhiddenFragmentEntryLinkModels =
 			new ArrayList<>();
 		String paragraphRenderNamespace = StringUtil.randomId();
@@ -5938,35 +5965,111 @@ public class DataFactory {
 				continue;
 			}
 
+			String css = null;
+			String editValueJSON = null;
+			String html = null;
+			String js = null;
+			String renderKey = null;
+
+			if (StringUtil.equals(
+					layoutDataItemType,
+					LayoutDataItemTypeConstants.TYPE_COLLECTION)) {
+
+				css = _readFile(
+					_getFragmentComponentInputStream(
+						"basic/component", "heading", "css"));
+
+				editValueJSON = _readFile(
+					"fragment_component/fragment_component_heading_editValue." +
+						"json");
+
+				if (StringUtil.equals(
+						objectFieldModel.getBusinessType(),
+						ObjectFieldConstants.BUSINESS_TYPE_ATTACHMENT)) {
+
+					editValueJSON = StringUtil.replace(
+						_readFile(
+							"fragment_component" +
+								"/fragment_component_heading_editValue_" +
+									"attachment_object_field.json"),
+						"${objectFieldId}",
+						String.valueOf(objectFieldModel.getObjectFieldId()));
+				}
+				else {
+					editValueJSON = StringUtil.replaceFirst(
+						editValueJSON, "${collectionFieldId}",
+						"ObjectField_" + objectFieldModel.getName());
+				}
+
+				html = _readFile(
+					_getFragmentComponentInputStream(
+						"basic/component", "heading", "html"));
+				js = StringPool.BLANK;
+				renderKey = _FRAGMENT_COMPONENT_RENDER_KEY_HEADING;
+			}
+			else if (StringUtil.equals(
+						layoutDataItemType,
+						LayoutDataItemTypeConstants.TYPE_FORM)) {
+
+				addSubmitFragmentEntryLink = true;
+
+				Map<String, String> objectFieldFragmentEntryAttributes =
+					_objectFieldFragmentEntryAttributes.get(
+						objectFieldModel.getBusinessType());
+
+				renderKey = objectFieldFragmentEntryAttributes.get("key");
+
+				String fragmentName = StringUtil.replaceFirst(
+					renderKey, "INPUTS-", StringPool.BLANK);
+
+				css = _readFile(
+					_getFragmentComponentInputStream(
+						"inputs", fragmentName, "css"));
+
+				String editValueFileName =
+					objectFieldFragmentEntryAttributes.get("editValueFileName");
+
+				editValueJSON = StringUtil.replace(
+					_readFile("fragment_component/" + editValueFileName),
+					"${objectFieldId}",
+					"ObjectField_" + objectFieldModel.getName());
+
+				html = _readFile(
+					_getFragmentComponentInputStream(
+						"inputs", fragmentName, "html"));
+				js = _readFile(
+					_getFragmentComponentInputStream(
+						"inputs", fragmentName, "js"));
+			}
+
 			segmentsExperienceId = _getSegmentsExperienceId(
 				layoutModels.get(1), segmentsExperienceModels);
 
-			String editValue;
-
-			if (StringUtil.equals(
-					objectFieldModel.getBusinessType(),
-					ObjectFieldConstants.BUSINESS_TYPE_ATTACHMENT)) {
-
-				editValue = StringUtil.replace(
-					_readFile(
-						"fragment_component" +
-							"/fragment_component_heading_editValue_" +
-								"attachment_object_field.json"),
-					"${objectFieldId}",
-					String.valueOf(objectFieldModel.getObjectFieldId()));
-			}
-			else {
-				editValue = StringUtil.replaceFirst(
-					editValueJSON, "${collectionFieldId}",
-					"ObjectField_" + objectFieldModel.getName());
-			}
-
 			nonhiddenFragmentEntryLinkModels.add(
 				newFragmentEntryLinkModel(
-					layoutModels.get(1), null, segmentsExperienceId, headingCss,
-					headingHtml, StringPool.BLANK, editValue,
-					paragraphRenderNamespace, 0,
-					_FRAGMENT_COMPONENT_RENDER_KEY_HEADING));
+					layoutModels.get(1), null, segmentsExperienceId,
+					_escape(css), _escape(html), _escape(js), StringPool.BLANK,
+					editValueJSON, paragraphRenderNamespace, 0, renderKey));
+		}
+
+		if (addSubmitFragmentEntryLink) {
+			nonhiddenFragmentEntryLinkModels.add(
+				newFragmentEntryLinkModel(
+					layoutModels.get(1), null, segmentsExperienceId,
+					StringPool.BLANK,
+					_escape(
+						_readFile(
+							_getFragmentComponentInputStream(
+								"inputs", "submit-button", "html"))),
+					_escape(
+						_readFile(
+							_getFragmentComponentInputStream(
+								"inputs", "submit-button", "js"))),
+					StringPool.BLANK,
+					_readFile(
+						"fragment_component" +
+							"/fragment_component_input_submit_editValue.json"),
+					paragraphRenderNamespace, 0, "INPUTS-submit-button"));
 		}
 
 		List<FragmentEntryLinkModel> fragmentEntryLinkModels = new ArrayList<>(
@@ -5985,6 +6088,7 @@ public class DataFactory {
 					segmentsExperienceId,
 					originalFragmentEntryLinkModel.getCss(),
 					originalFragmentEntryLinkModel.getHtml(),
+					originalFragmentEntryLinkModel.getJs(),
 					originalFragmentEntryLinkModel.getConfiguration(),
 					originalFragmentEntryLinkModel.getEditableValues(),
 					originalFragmentEntryLinkModel.getNamespace(),
@@ -7667,9 +7771,13 @@ public class DataFactory {
 		fragmentEntryLinkModel.setClassPK(layoutModel.getPlid());
 		fragmentEntryLinkModel.setPlid(layoutModel.getPlid());
 		fragmentEntryLinkModel.setCss(
-			_readFile(_getFragmentComponentInputStream("heading", "css")));
+			_readFile(
+				_getFragmentComponentInputStream(
+					"basic/component", "heading", "css")));
 		fragmentEntryLinkModel.setHtml(
-			_readFile(_getFragmentComponentInputStream("heading", "html")));
+			_readFile(
+				_getFragmentComponentInputStream(
+					"basic/component", "heading", "html")));
 		fragmentEntryLinkModel.setJs(StringPool.BLANK);
 		fragmentEntryLinkModel.setConfiguration(
 			_readFile(
@@ -7707,7 +7815,7 @@ public class DataFactory {
 
 	protected FragmentEntryLinkModel newFragmentEntryLinkModel(
 		LayoutModel layoutModel, String originalFragmentEntryLinkERC,
-		long segmentsExperienceId, String css, String html,
+		long segmentsExperienceId, String css, String html, String js,
 		String configuration, String editValue, String nameSpace, int position,
 		String renderKey) {
 
@@ -7742,6 +7850,7 @@ public class DataFactory {
 		fragmentEntryLinkModel.setPlid(layoutModel.getPlid());
 		fragmentEntryLinkModel.setCss(css);
 		fragmentEntryLinkModel.setHtml(html);
+		fragmentEntryLinkModel.setJs(js);
 		fragmentEntryLinkModel.setConfiguration(configuration);
 		fragmentEntryLinkModel.setEditableValues(editValue);
 		fragmentEntryLinkModel.setNamespace(nameSpace);
@@ -8165,7 +8274,6 @@ public class DataFactory {
 		objectDefinitionModel.setEnableCategorization(true);
 		objectDefinitionModel.setEnableComments(enableComments);
 		objectDefinitionModel.setEnableIndexSearch(enableIndexSearch);
-		objectDefinitionModel.setEnableLocalization(false);
 		objectDefinitionModel.setEnableObjectEntryDraft(false);
 		objectDefinitionModel.setEnableObjectEntryHistory(
 			enableObjectEntryHistory);
@@ -8777,6 +8885,9 @@ public class DataFactory {
 				else if (name.equals("LPageTemplateStructureRelId")) {
 					name = "LayoutPageTemplateStructureRelId";
 				}
+				else if (name.equals("MasterLPTEERC")) {
+					name = "MasterLayoutPageTemplateEntryERC";
+				}
 				else if (name.equals("PaymentCTermEntryDescription")) {
 					name = "PaymentCommerceTermEntryDescription";
 				}
@@ -8896,6 +9007,11 @@ public class DataFactory {
 		}
 	}
 
+	private String _escape(String value) {
+		return StringUtil.replace(
+			value, CharPool.APOSTROPHE, StringPool.DOUBLE_APOSTROPHE);
+	}
+
 	private String _generateData(
 			List<FragmentEntryLinkModel> fragmentEntryLinkModels)
 		throws Exception {
@@ -9008,13 +9124,14 @@ public class DataFactory {
 	}
 
 	private InputStream _getFragmentComponentInputStream(
-			String fragmentName, String suffix)
+			String fragmentDirName, String fragmentName, String suffix)
 		throws Exception {
 
 		return DataFactory.class.getResourceAsStream(
 			StringBundler.concat(
-				"/com/liferay/fragment/collection/contributor/basic/component",
-				"/dependencies/", fragmentName, "/index.", suffix));
+				"/com/liferay/fragment/collection/contributor/",
+				fragmentDirName, "/dependencies/", fragmentName, "/index.",
+				suffix));
 	}
 
 	private String _getObjectLabel(String label) {
@@ -9230,6 +9347,50 @@ public class DataFactory {
 
 	private static final Log _log = LogFactoryUtil.getLog(DataFactory.class);
 
+	private static final Map<String, Map<String, String>>
+		_objectFieldFragmentEntryAttributes =
+			HashMapBuilder.<String, Map<String, String>>put(
+				ObjectFieldConstants.BUSINESS_TYPE_ATTACHMENT,
+				HashMapBuilder.put(
+					"editValueFileName",
+					"fragment_component_input_editValue_attachment_object_" +
+						"field.json"
+				).put(
+					"key", "INPUTS-file-upload"
+				).build()
+			).put(
+				ObjectFieldConstants.BUSINESS_TYPE_PICKLIST,
+				HashMapBuilder.put(
+					"editValueFileName",
+					"fragment_component_input_editValue.json"
+				).put(
+					"key", "INPUTS-select-from-list"
+				).build()
+			).put(
+				ObjectFieldConstants.BUSINESS_TYPE_RELATIONSHIP,
+				HashMapBuilder.put(
+					"editValueFileName",
+					"fragment_component_input_editValue.json"
+				).put(
+					"key", "INPUTS-select-from-list"
+				).build()
+			).put(
+				ObjectFieldConstants.BUSINESS_TYPE_RICH_TEXT,
+				HashMapBuilder.put(
+					"editValueFileName",
+					"fragment_component_input_editValue.json"
+				).put(
+					"key", "INPUTS-rich-text-input"
+				).build()
+			).put(
+				ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+				HashMapBuilder.put(
+					"editValueFileName",
+					"fragment_component_input_editValue_text_object_field.json"
+				).put(
+					"key", "INPUTS-text-input"
+				).build()
+			).build();
 	private static final PortletPreferencesFactory _portletPreferencesFactory =
 		new PortletPreferencesFactoryImpl();
 

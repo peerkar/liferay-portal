@@ -72,6 +72,11 @@ public class BuildRESTTask extends JavaExec {
 		return GradleUtil.toFile(getProject(), _restConfigDir);
 	}
 
+	@Input
+	public boolean isJakartaEnabled() {
+		return _jakartaEnabled;
+	}
+
 	public void setCopyrightFile(Object copyrightFile) {
 		_copyrightFile = copyrightFile;
 	}
@@ -86,6 +91,10 @@ public class BuildRESTTask extends JavaExec {
 		Object forcePredictableOperationId) {
 
 		_forcePredictableOperationId = forcePredictableOperationId;
+	}
+
+	public void setJakartaEnabled(boolean jakartaEnabled) {
+		_jakartaEnabled = jakartaEnabled;
 	}
 
 	public void setRESTConfigDir(Object restConfigDir) {
@@ -126,7 +135,7 @@ public class BuildRESTTask extends JavaExec {
 			args.add(forcePredictableOperationId);
 		}
 
-		if (_isJakartaEnabled()) {
+		if (_jakartaEnabled) {
 			args.add("--javaee-package");
 			args.add("jakarta");
 		}
@@ -134,16 +143,10 @@ public class BuildRESTTask extends JavaExec {
 		return args;
 	}
 
-	private boolean _isJakartaEnabled() {
-
-		// TODO Return a value based on the branch or workspace
-
-		return false;
-	}
-
 	private Object _copyrightFile;
 	private Object _forceClientVersionDescription;
 	private Object _forcePredictableOperationId;
+	private boolean _jakartaEnabled;
 	private Object _restConfigDir;
 
 }

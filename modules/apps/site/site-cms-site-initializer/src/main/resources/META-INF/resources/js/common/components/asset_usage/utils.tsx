@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {openModal} from 'frontend-js-components-web';
 import React from 'react';
 
+import {openCMSModal} from '../../../common/utils/openCMSModal';
 import ApiHelper from '../../services/ApiHelper';
 import {displayErrorToast} from '../../utils/toastUtil';
 import {AssetUsageListModal} from './AssetUsageListModal';
@@ -38,10 +38,12 @@ const fetchUsageAssetData = async ({
 	});
 
 	const {data, error} = await ApiHelper.post<BulkActionItemResponse>(
-		`/o/headless-cms/v1.0/bulk-action-item/preview${queryString}`,
+		`/o/bulk/v1.0/bulk-action-item/preview${queryString}`,
 		{
 			bulkActionItems,
-			selectAll,
+			selectionScope: {
+				selectAll,
+			},
 			type: 'DeleteBulkAction',
 		}
 	);
@@ -104,7 +106,7 @@ const openAssetUsageListModal = async ({
 		.some(({attributes}) => (attributes?.itemsCount ?? 0) > 0);
 
 	if (!!firstItem?.usages || folderThatContainsUsages) {
-		openModal({
+		openCMSModal({
 			contentComponent: ({closeModal}: {closeModal: () => void}) => (
 				<AssetUsageListModal
 					apiParams={{
@@ -132,7 +134,7 @@ const openDetailedAssetUsageModal = ({
 	item: BulkActionItem;
 	onClose: () => void;
 }) => {
-	openModal({
+	openCMSModal({
 		contentComponent: () => <DetailedAssetUsageModal item={item} />,
 		onClose,
 		size: 'lg',

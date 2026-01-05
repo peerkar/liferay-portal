@@ -5,6 +5,7 @@
 
 package com.liferay.change.tracking.service.impl;
 
+import com.liferay.change.tracking.configuration.helper.CTSettingsConfigurationHelper;
 import com.liferay.change.tracking.exception.CTCollectionDescriptionException;
 import com.liferay.change.tracking.exception.CTCollectionNameException;
 import com.liferay.change.tracking.model.CTCollection;
@@ -30,6 +31,7 @@ import com.liferay.portal.kernel.util.Validator;
 import java.time.Instant;
 import java.time.LocalDate;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -92,6 +94,27 @@ public class CTCollectionTemplateLocalServiceImpl
 			CTCollectionTemplate ctCollectionTemplate)
 		throws PortalException {
 
+		Map<String, Object> properties = new HashMap<>();
+
+		if (_ctSettingsConfigurationHelper.isDefaultCTCollectionTemplate(
+				ctCollectionTemplate.getCompanyId(),
+				ctCollectionTemplate.getCtCollectionTemplateId())) {
+
+			properties.put("defaultCTCollectionTemplateId", 0);
+		}
+
+		if (_ctSettingsConfigurationHelper.isDefaultSandboxCTCollectionTemplate(
+				ctCollectionTemplate.getCompanyId(),
+				ctCollectionTemplate.getCtCollectionTemplateId())) {
+
+			properties.put("defaultSandboxCTCollectionTemplateId", 0);
+		}
+
+		if (!properties.isEmpty()) {
+			_ctSettingsConfigurationHelper.save(
+				ctCollectionTemplate.getCompanyId(), properties);
+		}
+
 		ctCollectionTemplatePersistence.remove(ctCollectionTemplate);
 
 		_resourceLocalService.deleteResource(
@@ -101,6 +124,15 @@ public class CTCollectionTemplateLocalServiceImpl
 			ctCollectionTemplate.getCtCollectionTemplateId());
 
 		return ctCollectionTemplate;
+	}
+
+	@Override
+	public CTCollectionTemplate deleteCTCollectionTemplate(
+			long ctCollectionTemplateId)
+		throws PortalException {
+
+		return deleteCTCollectionTemplate(
+			fetchCTCollectionTemplate(ctCollectionTemplateId));
 	}
 
 	@Override
@@ -247,6 +279,9 @@ public class CTCollectionTemplateLocalServiceImpl
 
 	@Reference
 	private ClassNameLocalService _classNameLocalService;
+
+	@Reference
+	private CTSettingsConfigurationHelper _ctSettingsConfigurationHelper;
 
 	@Reference
 	private JSONStorageEntryLocalService _jsonStorageEntryLocalService;

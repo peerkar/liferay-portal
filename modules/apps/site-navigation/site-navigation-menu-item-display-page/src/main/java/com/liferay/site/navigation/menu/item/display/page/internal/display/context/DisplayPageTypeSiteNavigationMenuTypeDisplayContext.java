@@ -7,8 +7,12 @@ package com.liferay.site.navigation.menu.item.display.page.internal.display.cont
 
 import com.liferay.asset.display.page.util.AssetDisplayPageUtil;
 import com.liferay.info.field.InfoField;
+import com.liferay.info.item.ERCInfoItemIdentifier;
 import com.liferay.info.item.InfoItemFieldValues;
 import com.liferay.info.item.InfoItemFormVariation;
+import com.liferay.info.item.InfoItemIdentifier;
+import com.liferay.info.item.InfoItemReference;
+import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.info.item.provider.InfoItemFormVariationsProvider;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.item.selector.criteria.InfoItemItemSelectorReturnType;
@@ -53,11 +57,14 @@ public class DisplayPageTypeSiteNavigationMenuTypeDisplayContext {
 
 	public DisplayPageTypeSiteNavigationMenuTypeDisplayContext(
 		DisplayPageTypeContext displayPageTypeContext,
-		HttpServletRequest httpServletRequest, ItemSelector itemSelector,
+		HttpServletRequest httpServletRequest,
+		InfoItemServiceRegistry infoItemServiceRegistry,
+		ItemSelector itemSelector,
 		SiteNavigationMenuItem siteNavigationMenuItem) {
 
 		_displayPageTypeContext = displayPageTypeContext;
 		_httpServletRequest = httpServletRequest;
+		_infoItemServiceRegistry = infoItemServiceRegistry;
 		_itemSelector = itemSelector;
 		_siteNavigationMenuItem = siteNavigationMenuItem;
 
@@ -114,9 +121,9 @@ public class DisplayPageTypeSiteNavigationMenuTypeDisplayContext {
 		).build();
 	}
 
-	public long getClassNameId() {
-		if (_classNameId != null) {
-			return _classNameId;
+	public String getClassName() {
+		if (_className != null) {
+			return _className;
 		}
 
 		UnicodeProperties typeSettingsUnicodeProperties =
@@ -124,50 +131,9 @@ public class DisplayPageTypeSiteNavigationMenuTypeDisplayContext {
 				_siteNavigationMenuItem.getTypeSettings()
 			).build();
 
-		_classNameId = GetterUtil.getLong(
-			typeSettingsUnicodeProperties.get("classNameId"));
+		_className = typeSettingsUnicodeProperties.get("className");
 
-		return _classNameId;
-	}
-
-	public long getClassPK() {
-		if (_classPK != null) {
-			return _classPK;
-		}
-
-		UnicodeProperties typeSettingsUnicodeProperties =
-			UnicodePropertiesBuilder.fastLoad(
-				_siteNavigationMenuItem.getTypeSettings()
-			).build();
-
-		_classPK = GetterUtil.getLong(
-			typeSettingsUnicodeProperties.get("classPK"));
-
-		return _classPK;
-	}
-
-	public long getClassTypeId() {
-		if (_classTypeId != null) {
-			return _classTypeId;
-		}
-
-		LayoutDisplayPageObjectProvider<?> layoutDisplayPageObjectProvider =
-			_getLayoutDisplayPageObjectProvider();
-
-		if (layoutDisplayPageObjectProvider != null) {
-			_classTypeId = layoutDisplayPageObjectProvider.getClassTypeId();
-		}
-		else {
-			UnicodeProperties typeSettingsUnicodeProperties =
-				UnicodePropertiesBuilder.fastLoad(
-					_siteNavigationMenuItem.getTypeSettings()
-				).build();
-
-			_classTypeId = GetterUtil.getLong(
-				typeSettingsUnicodeProperties.get("classTypeId"));
-		}
-
-		return _classTypeId;
+		return _className;
 	}
 
 	public Map<String, Object> getDisplayPageItemContextualSidebarContext()
@@ -180,21 +146,28 @@ public class DisplayPageTypeSiteNavigationMenuTypeDisplayContext {
 			LocaleUtil.toLanguageId(LocaleUtil.getMostRelevantLocale())
 		).put(
 			"hasDisplayPage",
-			AssetDisplayPageUtil.hasAssetDisplayPage(
-				_themeDisplay.getScopeGroupId(), getClassNameId(), getClassPK(),
-				getClassTypeId())
+			() -> {
+				InfoItemIdentifier infoItemIdentifier =
+					new ERCInfoItemIdentifier(
+						getExternalReferenceCode(),
+						getScopeExternalReferenceCode());
+
+				return AssetDisplayPageUtil.hasAssetDisplayPage(
+					_themeDisplay.getSiteGroupId(),
+					new InfoItemReference(
+						_displayPageTypeContext.getClassName(),
+						infoItemIdentifier));
+			}
 		).put(
 			"item",
 			HashMapBuilder.<String, Object>put(
-				"classNameId", getClassNameId()
-			).put(
-				"classPK", getClassPK()
-			).put(
-				"classTypeId", getClassTypeId()
+				"className", getClassName()
 			).put(
 				"data", _getDataJSONArray()
 			).put(
 				"externalReferenceCode", getExternalReferenceCode()
+			).put(
+				"scopeExternalReferenceCode", getScopeExternalReferenceCode()
 			).put(
 				"title", getTitle()
 			).put(
@@ -295,7 +268,8 @@ public class DisplayPageTypeSiteNavigationMenuTypeDisplayContext {
 		InfoItemFormVariation infoItemFormVariation =
 			infoItemFormVariationsProvider.getInfoItemFormVariation(
 				layoutDisplayPageObjectProvider.getGroupId(),
-				String.valueOf(getClassTypeId()));
+				String.valueOf(
+					layoutDisplayPageObjectProvider.getClassTypeId()));
 
 		if (infoItemFormVariation != null) {
 			return infoItemFormVariation.getLabel(_themeDisplay.getLocale());
@@ -332,6 +306,22 @@ public class DisplayPageTypeSiteNavigationMenuTypeDisplayContext {
 		return _originalTitle;
 	}
 
+	public String getScopeExternalReferenceCode() {
+		if (_scopeExternalReferenceCode != null) {
+			return _scopeExternalReferenceCode;
+		}
+
+		UnicodeProperties typeSettingsUnicodeProperties =
+			UnicodePropertiesBuilder.fastLoad(
+				_siteNavigationMenuItem.getTypeSettings()
+			).build();
+
+		_scopeExternalReferenceCode = typeSettingsUnicodeProperties.get(
+			"scopeExternalReferenceCode");
+
+		return _scopeExternalReferenceCode;
+	}
+
 	public String getTitle() {
 		if (Validator.isNotNull(_title)) {
 			return _title;
@@ -363,18 +353,26 @@ public class DisplayPageTypeSiteNavigationMenuTypeDisplayContext {
 	}
 
 	private JSONArray _getDataJSONArray() throws Exception {
-		LayoutDisplayPageInfoItemFieldValuesProvider<?>
+		LayoutDisplayPageInfoItemFieldValuesProvider<Object>
 			layoutDisplayPageInfoItemFieldValuesProvider =
-				_displayPageTypeContext.
-					getLayoutDisplayPageInfoItemFieldValuesProvider();
+				(LayoutDisplayPageInfoItemFieldValuesProvider<Object>)
+					_displayPageTypeContext.
+						getLayoutDisplayPageInfoItemFieldValuesProvider();
 
 		if (layoutDisplayPageInfoItemFieldValuesProvider == null) {
 			return JSONFactoryUtil.createJSONArray();
 		}
 
+		LayoutDisplayPageObjectProvider<?> layoutDisplayPageObjectProvider =
+			_getLayoutDisplayPageObjectProvider();
+
+		if (layoutDisplayPageObjectProvider == null) {
+			return JSONFactoryUtil.createJSONArray();
+		}
+
 		InfoItemFieldValues infoItemFieldValues =
 			layoutDisplayPageInfoItemFieldValuesProvider.getInfoItemFieldValues(
-				getClassPK());
+				layoutDisplayPageObjectProvider.getDisplayObject());
 
 		return JSONUtil.toJSONArray(
 			infoItemFieldValues.getInfoFieldValues(),
@@ -399,21 +397,23 @@ public class DisplayPageTypeSiteNavigationMenuTypeDisplayContext {
 
 		_layoutDisplayPageObjectProvider =
 			_displayPageTypeContext.getLayoutDisplayPageObjectProvider(
-				getClassPK());
+				getExternalReferenceCode(),
+				_siteNavigationMenuItem.getGroupId(),
+				getScopeExternalReferenceCode());
 
 		return _layoutDisplayPageObjectProvider;
 	}
 
-	private Long _classNameId;
-	private Long _classPK;
-	private Long _classTypeId;
+	private String _className;
 	private final DisplayPageTypeContext _displayPageTypeContext;
 	private String _externalReferenceCode;
 	private final HttpServletRequest _httpServletRequest;
+	private final InfoItemServiceRegistry _infoItemServiceRegistry;
 	private final ItemSelector _itemSelector;
 	private LayoutDisplayPageObjectProvider<?> _layoutDisplayPageObjectProvider;
 	private final LiferayPortletResponse _liferayPortletResponse;
 	private String _originalTitle;
+	private String _scopeExternalReferenceCode;
 	private final SiteNavigationMenuItem _siteNavigationMenuItem;
 	private final ThemeDisplay _themeDisplay;
 	private String _title;

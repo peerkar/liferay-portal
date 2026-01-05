@@ -23,8 +23,8 @@ const mockUploadRequest = jest.fn().mockResolvedValue({error: false});
 
 const DEFAULT_PROPS = {
 	assetLibraries: [
-		{groupId: 123, name: 'Library A'},
-		{groupId: 456, name: 'Library B'},
+		{externalReferenceCode: 'erc-1', groupId: 123, name: 'Library A'},
+		{externalReferenceCode: 'erc-2', groupId: 456, name: 'Library B'},
 	],
 	onModalClose: mockCloseModal,
 	onUploadComplete: mockUploadComplete,
@@ -210,7 +210,13 @@ describe('MultipleFileUploader', () => {
 		const {container} = render(
 			<MultipleFileUploader
 				{...DEFAULT_PROPS}
-				assetLibraries={[{groupId: 2, name: 'Library A'}]}
+				assetLibraries={[
+					{
+						externalReferenceCode: 'erc-1',
+						groupId: 2,
+						name: 'Library A',
+					},
+				]}
 			/>
 		);
 
@@ -230,7 +236,11 @@ describe('MultipleFileUploader', () => {
 			expect(mockUploadRequest).toHaveBeenCalledTimes(2);
 
 			expect(mockUploadComplete).toHaveBeenCalledWith({
-				assetLibrary: {groupId: 2, name: 'Library A'},
+				assetLibrary: expect.objectContaining({
+					externalReferenceCode: 'erc-1',
+					groupId: 2,
+					name: 'Library A',
+				}),
 				failedFiles: [],
 				successFiles: ['upload1.png', 'upload2.png'],
 			});
@@ -245,7 +255,13 @@ describe('MultipleFileUploader', () => {
 		const {container, getByText} = render(
 			<MultipleFileUploader
 				{...DEFAULT_PROPS}
-				assetLibraries={[{groupId: 2, name: 'Library A'}]}
+				assetLibraries={[
+					{
+						externalReferenceCode: 'erc-2',
+						groupId: 2,
+						name: 'Library A',
+					},
+				]}
 				uploadRequest={mockUploadRequestFail}
 			/>
 		);
@@ -271,5 +287,39 @@ describe('MultipleFileUploader', () => {
 				screen.getByRole('button', {name: 'upload-another-file'})
 			).toBeInTheDocument();
 		});
+	});
+
+	it('can show custom button label and messages', async () => {
+		const {container, findByText, getByRole, getByText} = render(
+			<MultipleFileUploader
+				{...DEFAULT_PROPS}
+				buttonLabel="Import"
+				description="This is a custom description for import translation"
+				messages={{filesToUpload: 'files-to-import'}}
+			/>
+		);
+
+		expect(
+			getByText('This is a custom description for import translation')
+		).toBeInTheDocument();
+
+		const input =
+			container.querySelector<HTMLInputElement>('input[type="file"]')!;
+
+		const file = createFile('image1.png', 2048);
+
+		fireEvent.change(input, {
+			target: {files: [file]},
+		});
+
+		expect(await findByText('image1.png')).toBeInTheDocument();
+
+		expect(
+			getByRole('button', {
+				name: 'Import',
+			})
+		).toBeInTheDocument();
+
+		expect(getByText('files-to-import')).toBeInTheDocument();
 	});
 });

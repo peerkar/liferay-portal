@@ -6,14 +6,38 @@
 package com.liferay.fragment.util.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.fragment.entry.processor.constants.FragmentEntryProcessorConstants;
 import com.liferay.fragment.util.configuration.FragmentEntryConfigurationParser;
+import com.liferay.layout.test.util.ContentLayoutTestUtil;
+import com.liferay.layout.test.util.LayoutTestUtil;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutConstants;
+import com.liferay.portal.kernel.service.CompanyLocalService;
+import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.LayoutLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.portal.kernel.test.TestInfo;
+import com.liferay.portal.kernel.test.portlet.MockLiferayPortletRenderResponse;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
+import com.liferay.portal.kernel.test.util.GroupTestUtil;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
+import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.FileUtil;
+import com.liferay.portal.kernel.util.JavaConstants;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -48,6 +72,123 @@ public class FragmentEntryConfigurationParserTest {
 		Assert.assertEquals(
 			expectedConfigurationDefaultValuesJSONObject.toString(),
 			configurationDefaultValuesJSONObject.toString());
+	}
+
+	@Test
+	@TestInfo("LPD-67912")
+	public void testGetConfigurationJSONObjectURLConfigurationWithMappedLayout()
+		throws Exception {
+
+		Group group1 = _groupLocalService.getGroup(
+			TestPropsValues.getGroupId());
+
+		Layout layout1 = LayoutTestUtil.addTypeContentLayout(group1);
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(group1.getGroupId());
+
+		HttpServletRequest mockHttpServletRequest =
+			ContentLayoutTestUtil.getMockHttpServletRequest(
+				_companyLocalService.getCompany(group1.getCompanyId()), group1,
+				layout1);
+
+		mockHttpServletRequest.setAttribute(
+			JavaConstants.JAKARTA_PORTLET_RESPONSE,
+			new MockLiferayPortletRenderResponse());
+
+		serviceContext.setRequest(mockHttpServletRequest);
+
+		ServiceContextThreadLocal.pushServiceContext(serviceContext);
+
+		try {
+			String name = RandomTestUtil.randomString();
+
+			JSONObject configurationValuesJSONObject =
+				_fragmentEntryConfigurationParser.getConfigurationJSONObject(
+					JSONUtil.put(
+						"fieldSets",
+						JSONUtil.put(
+							JSONUtil.put(
+								"fields",
+								JSONUtil.put(
+									JSONUtil.put(
+										"label", RandomTestUtil.randomString()
+									).put(
+										"name", name
+									).put(
+										"type", "url"
+									))))),
+					JSONUtil.put(
+						FragmentEntryProcessorConstants.
+							KEY_FREEMARKER_FRAGMENT_ENTRY_PROCESSOR,
+						JSONUtil.put(
+							name,
+							JSONUtil.put(
+								"layout",
+								JSONUtil.put(
+									"externalReferenceCode",
+									layout1.getExternalReferenceCode()
+								).put(
+									"title", name
+								)))),
+					LocaleUtil.US);
+
+			Assert.assertEquals(
+				_portal.getLayoutFullURL(
+					layout1, serviceContext.getThemeDisplay()),
+				configurationValuesJSONObject.getString(name));
+
+			Group group2 = GroupTestUtil.addGroup();
+
+			Layout layout2 = _layoutLocalService.addLayout(
+				layout1.getExternalReferenceCode(), TestPropsValues.getUserId(),
+				group2.getGroupId(), false,
+				LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
+				RandomTestUtil.randomString(), StringPool.BLANK,
+				StringPool.BLANK, LayoutConstants.TYPE_CONTENT, false,
+				StringPool.BLANK, serviceContext);
+
+			configurationValuesJSONObject =
+				_fragmentEntryConfigurationParser.getConfigurationJSONObject(
+					JSONUtil.put(
+						"fieldSets",
+						JSONUtil.put(
+							JSONUtil.put(
+								"fields",
+								JSONUtil.put(
+									JSONUtil.put(
+										"label", RandomTestUtil.randomString()
+									).put(
+										"name", name
+									).put(
+										"type", "url"
+									))))),
+					JSONUtil.put(
+						FragmentEntryProcessorConstants.
+							KEY_FREEMARKER_FRAGMENT_ENTRY_PROCESSOR,
+						JSONUtil.put(
+							name,
+							JSONUtil.put(
+								"layout",
+								JSONUtil.put(
+									"externalReferenceCode",
+									layout1.getExternalReferenceCode()
+								).put(
+									"scopeExternalReferenceCode",
+									group2.getExternalReferenceCode()
+								).put(
+									"title", name
+								)))),
+					LocaleUtil.US);
+
+			Assert.assertEquals(
+				_portal.getLayoutFullURL(
+					layout2, serviceContext.getThemeDisplay()),
+				configurationValuesJSONObject.getString(name));
+		}
+		finally {
+			ServiceContextThreadLocal.popServiceContext();
+		}
 	}
 
 	@Test
@@ -92,6 +233,18 @@ public class FragmentEntryConfigurationParserTest {
 	}
 
 	@Inject
+	private CompanyLocalService _companyLocalService;
+
+	@Inject
 	private FragmentEntryConfigurationParser _fragmentEntryConfigurationParser;
+
+	@Inject
+	private GroupLocalService _groupLocalService;
+
+	@Inject
+	private LayoutLocalService _layoutLocalService;
+
+	@Inject
+	private Portal _portal;
 
 }

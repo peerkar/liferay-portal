@@ -11,12 +11,11 @@ import ClayLink from '@clayui/link';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import ClayModal from '@clayui/modal';
 import {ClayTooltipProvider} from '@clayui/tooltip';
-import {FrontendDataSet} from '@liferay/frontend-data-set-web';
-import {openModal} from 'frontend-js-components-web';
+import {FrontendDataSet, replaceTokens} from '@liferay/frontend-data-set-web';
 import {sub} from 'frontend-js-web';
 import React, {useEffect, useRef, useState} from 'react';
 
-import formatActionURL from '../../utils/formatActionURL';
+import {openCMSModal} from '../../../common/utils/openCMSModal';
 import {BulkActionItem} from './types';
 
 import '../../../../css/components/AssetUsageModals.scss';
@@ -44,10 +43,10 @@ const ViewButton = ({
 				data-testid="view-asset-button"
 				displayType="secondary"
 				onClick={() => {
-					openModal({
+					openCMSModal({
 						size: 'full-screen',
 						title: item.name,
-						url: formatActionURL(item.name, itemData.url as string),
+						url: replaceTokens(itemData.url as string, item.name),
 					});
 				}}
 				symbol="view"

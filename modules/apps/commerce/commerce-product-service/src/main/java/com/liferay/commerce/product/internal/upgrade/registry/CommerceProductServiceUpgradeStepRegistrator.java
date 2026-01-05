@@ -129,8 +129,10 @@ public class CommerceProductServiceUpgradeStepRegistrator
 			new CommerceCatalogUpgradeProcess(
 				_classNameLocalService, _groupLocalService));
 
+		registry.register("1.5.1", "1.5.2", CommerceCatalogTable.create());
+
 		registry.register(
-			"1.5.1", "1.6.0", CommerceCatalogTable.create(),
+			"1.5.2", "1.6.0",
 			new CPDefinitionTrashEntriesUpgradeProcess(_classNameLocalService));
 
 		registry.register(
@@ -646,9 +648,12 @@ public class CommerceProductServiceUpgradeStepRegistrator
 				"master BOOLEAN"));
 
 		registry.register(
-			"5.27.0", "5.28.0",
+			"5.27.0", "5.27.1",
 			new com.liferay.commerce.product.internal.upgrade.v5_28_0.
-				CPDefinitionSpecificationOptionValueUpgradeProcess(),
+				CPDefinitionSpecificationOptionValueUpgradeProcess());
+
+		registry.register(
+			"5.27.1", "5.28.0",
 			new com.liferay.commerce.product.internal.upgrade.v5_28_0.
 				CPSpecificationOptionUpgradeProcess());
 

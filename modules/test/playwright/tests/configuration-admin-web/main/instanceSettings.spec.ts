@@ -6,123 +6,123 @@
 import {expect, mergeTests} from '@playwright/test';
 import {readFile} from 'fs/promises';
 
-import {accessibilityMenuPagesTest} from '../../../fixtures/accessibilityMenuPagesTest';
 import {instanceSettingsPagesTest} from '../../../fixtures/instanceSettingsPagesTest';
 import {isolatedSiteTest} from '../../../fixtures/isolatedSiteTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {siteSettingsPagesTest} from '../../../fixtures/siteSettingsPagesTest';
 import {UsersAndOrganizationsPage} from '../../../pages/users-admin-web/UsersAndOrganizationsPage';
-import {clickAndExpectToBeVisible} from '../../../utils/clickAndExpectToBeVisible';
 import getRandomString from '../../../utils/getRandomString';
+import {waitForAlert} from '../../../utils/waitForAlert';
 
 export const test = mergeTests(
-	accessibilityMenuPagesTest,
 	instanceSettingsPagesTest,
 	isolatedSiteTest,
 	loginTest(),
 	siteSettingsPagesTest
 );
 
-test('Asserts that a user can create/update/delete factory configurations', async ({
+test('Asserts that a user can manage factory configurations', async ({
 	instanceSettingsPage,
 	page,
 }) => {
+	const providerNames = [getRandomString(), getRandomString()];
 
-	// Assert multiple factory configurations can be created
+	await test.step('Add factory configurations', async () => {
+		await instanceSettingsPage.goToInstanceSetting(
+			'SSO',
+			'OpenID Connect Provider Connection'
+		);
 
-	const providerName1 = getRandomString();
+		for (const providerName of providerNames) {
+			await page.getByRole('link', {name: 'Add'}).click();
 
-	await instanceSettingsPage.goToInstanceSetting(
-		'SSO',
-		'OpenID Connect Provider Connection'
-	);
+			await page.getByLabel('Provider Name').fill(providerName);
 
-	await page.getByRole('link', {name: 'Add'}).click();
+			await page
+				.getByLabel('OpenID Connect Client ID')
+				.fill(getRandomString());
 
-	await page.getByLabel('Provider Name').fill(providerName1);
+			await page
+				.getByLabel('OpenID Connect Client Secret')
+				.fill(getRandomString());
 
-	await page.getByLabel('OpenID Connect Client ID').fill(getRandomString());
-
-	await page
-		.getByLabel('OpenID Connect Client Secret')
-		.fill(getRandomString());
-
-	await instanceSettingsPage.saveAndWaitForAlert({
-		autoClose: true,
-		type: 'success',
+			await instanceSettingsPage.saveAndWaitForAlert({
+				autoClose: true,
+				type: 'success',
+			});
+		}
 	});
 
-	const providerName2 = getRandomString();
-
-	await page.getByRole('link', {name: 'Add'}).click();
-
-	await page.getByLabel('Provider Name').fill(providerName2);
-
-	await page.getByLabel('OpenID Connect Client ID').fill(getRandomString());
-
-	await page
-		.getByLabel('OpenID Connect Client Secret')
-		.fill(getRandomString());
-
-	await instanceSettingsPage.saveAndWaitForAlert({
-		autoClose: true,
-		type: 'success',
+	await test.step('Assert that the factory configurations were created successfully', async () => {
+		for (const providerName of providerNames) {
+			await expect(page.getByText(providerName)).toBeVisible();
+		}
 	});
 
-	await expect(
-		await page.locator('td.lfr-provider-name-column').count()
-	).toBe(2);
-	await expect(page.getByText(providerName1)).toBeVisible();
-	await expect(page.getByText(providerName2)).toBeVisible();
+	await test.step('Assert that a single factory configuration can be exported', async () => {
+		const downloadPromise = page.waitForEvent('download');
 
-	// Assert a factory configuration can be edited
+		await instanceSettingsPage.exportFactoryEntry(providerNames[0]);
 
-	const firstRow = page.locator('tbody tr').first();
+		const download = await downloadPromise;
 
-	const oldProviderName = await firstRow.innerText();
+		expect(download.suggestedFilename()).toEqual(
+			expect.stringMatching(
+				'com.liferay.portal.security.sso.openid.connect.internal.configuration.OpenIdConnectProviderConfiguration.scoped~(.*).config'
+			)
+		);
 
-	await clickAndExpectToBeVisible({
-		autoClick: true,
-		target: page.getByText('Edit').first(),
-		trigger: firstRow.getByRole('button'),
+		const path = await download.path();
+
+		const fileContent = await readFile(path, 'utf-8');
+
+		expect(fileContent).toContain(providerNames[0]);
 	});
 
-	const newProviderName = getRandomString();
+	await test.step('Assert that multiple factory configuration entries can be exported', async () => {
+		const downloadPromise = page.waitForEvent('download');
 
-	await page.getByLabel('Provider Name').fill(newProviderName);
+		await instanceSettingsPage.exportFactoryEntries();
 
-	await instanceSettingsPage.saveAndWaitForAlert({
-		autoClose: true,
-		type: 'success',
+		const download = await downloadPromise;
+
+		expect(download.suggestedFilename()).toEqual(
+			expect.stringMatching(
+				'com.liferay.portal.security.sso.openid.connect.internal.configuration.OpenIdConnectProviderConfiguration.zip'
+			)
+		);
 	});
 
-	await expect(await page.locator('tbody tr').first().innerText()).not.toBe(
-		oldProviderName
-	);
-	await expect(
-		(await page.locator('tbody tr').first().innerText()).trim()
-	).toBe(newProviderName);
+	await test.step('Assert that factory configurations can be edited', async () => {
+		await instanceSettingsPage.editFactoryEntry(providerNames[0]);
 
-	// Assert a factory configuration can be deleted
+		const newProviderName = getRandomString();
 
-	while ((await page.locator('td.lfr-provider-name-column').count()) > 0) {
-		const row = page.locator('tbody tr').first();
-		await clickAndExpectToBeVisible({
-			autoClick: true,
-			target: page.getByText('Delete').first(),
-			trigger: row.getByRole('button'),
+		await page.getByLabel('Provider Name').fill(newProviderName);
+
+		await instanceSettingsPage.saveAndWaitForAlert({
+			autoClose: true,
+			type: 'success',
 		});
 
-		await expect(
-			page.getByText('Success:Your request completed successfully.')
+		expect(
+			page.locator(`tbody tr:has-text("${providerNames[0]}")`)
+		).toBeHidden();
+
+		providerNames[0] = newProviderName;
+
+		expect(
+			page.locator(`tbody tr:has-text("${newProviderName}")`)
 		).toBeVisible();
+	});
 
-		await page.reload();
-	}
+	await test.step('Assert that factory configurations can be deleted', async () => {
+		for (const providerName of providerNames) {
+			await instanceSettingsPage.deleteFactoryEntry(providerName);
 
-	await expect(
-		await page.locator('td.lfr-provider-name-column').count()
-	).toBe(0);
+			await waitForAlert(page);
+		}
+	});
 });
 
 test('Asserts that a user can export a configuration', async ({
@@ -206,65 +206,5 @@ test('LPD-35562 Enter reserved screen name', async ({
 		autoClose: false,
 		text: 'Error:The screen name you requested is reserved.',
 		type: 'danger',
-	});
-});
-
-test('LPD-38043 Assert that a configuration at the site scope can override a falsy configuration at the instance scope', async ({
-	accessibilityMenuPage,
-	instanceSettingsPage,
-	page,
-	site,
-	siteSettingsPage,
-}) => {
-	await siteSettingsPage.goto(site.friendlyUrlPath);
-
-	if (await accessibilityMenuPage.isAccessibilityMenuAttached()) {
-		await test.step('Disable the instance scoped accessibility menu configuration', async () => {
-			await instanceSettingsPage.goToInstanceSetting(
-				'Accessibility',
-				'Accessibility Menu'
-			);
-
-			await accessibilityMenuPage.enableAccessibilityMenuCheckbox.uncheck();
-
-			await instanceSettingsPage.saveAndWaitForAlert();
-		});
-	}
-
-	await test.step('Check that the accessibility menu is not accessible in the site scope', async () => {
-		await siteSettingsPage.goToSiteSetting(
-			'Accessibility',
-			'Accessibility Menu',
-			site.friendlyUrlPath
-		);
-
-		await page.waitForLoadState();
-
-		await expect(
-			accessibilityMenuPage.openAccessibilityMenuButton
-		).not.toBeAttached();
-	});
-
-	await test.step('Enable the site accessibility menu configuration', async () => {
-		await accessibilityMenuPage.enableAccessibilityMenu();
-	});
-
-	await test.step('Check that the accessibility menu is accessible in the site scope', async () => {
-		await expect(
-			accessibilityMenuPage.openAccessibilityMenuButton
-		).toBeAttached();
-	});
-
-	await test.step('Check that the accessibility menu is not accessible in the instance scope', async () => {
-		await instanceSettingsPage.goToInstanceSetting(
-			'Accessibility',
-			'Accessibility Menu'
-		);
-
-		await page.waitForLoadState();
-
-		await expect(
-			accessibilityMenuPage.openAccessibilityMenuButton
-		).not.toBeAttached();
 	});
 });

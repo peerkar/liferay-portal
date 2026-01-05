@@ -190,18 +190,15 @@ public class ObjectEntryInfoItemFormProviderUtil {
 							objectDefinitionId,
 							ObjectRelationshipConstants.TYPE_ONE_TO_MANY)) {
 
-					if (Objects.equals(
-							objectDefinitionId,
-							objectRelationship.getObjectDefinitionId1()) &&
-						FeatureFlagManagerUtil.isEnabled("LPD-50377")) {
+					if (!FeatureFlagManagerUtil.isEnabled(
+							objectDefinition.getCompanyId(), "LPD-60546")) {
 
 						return;
 					}
 
 					ObjectDefinition relatedObjectDefinition = null;
 
-					if (FeatureFlagManagerUtil.isEnabled("LPD-60546") &&
-						!Objects.equals(
+					if (!Objects.equals(
 							objectDefinitionId,
 							objectRelationship.getObjectDefinitionId1())) {
 
@@ -315,6 +312,12 @@ public class ObjectEntryInfoItemFormProviderUtil {
 		return InfoFieldSet.builder(
 		).infoFieldSetEntry(
 			unsafeConsumer -> {
+				if (objectDefinition.isRootDescendantNode() &&
+					(parentObjectDefinition != null)) {
+
+					return;
+				}
+
 				for (ObjectField objectField :
 						objectFieldLocalService.getObjectFields(
 							objectDefinition.getObjectDefinitionId())) {
@@ -331,11 +334,12 @@ public class ObjectEntryInfoItemFormProviderUtil {
 								fetchObjectRelationshipByObjectFieldId2(
 									objectField.getObjectFieldId());
 
-						if ((parentObjectDefinition != null) &&
-							Objects.equals(
-								objectRelationship.getObjectDefinitionId1(),
-								parentObjectDefinition.
-									getObjectDefinitionId())) {
+						if (objectRelationship.isEdge() ||
+							((parentObjectDefinition != null) &&
+							 Objects.equals(
+								 objectRelationship.getObjectDefinitionId1(),
+								 parentObjectDefinition.
+									 getObjectDefinitionId()))) {
 
 							continue;
 						}
@@ -374,7 +378,8 @@ public class ObjectEntryInfoItemFormProviderUtil {
 						Objects.equals(
 							objectDefinition.getObjectDefinitionId(),
 							objectRelationship.getObjectDefinitionId2()) ||
-						!FeatureFlagManagerUtil.isEnabled("LPD-50377")) {
+						FeatureFlagManagerUtil.isEnabled(
+							objectDefinition.getCompanyId(), "LPD-60546")) {
 
 						continue;
 					}

@@ -11,12 +11,13 @@ import com.liferay.item.selector.criteria.FileEntryItemSelectorReturnType;
 import com.liferay.item.selector.criteria.URLItemSelectorReturnType;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ClassUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -33,7 +34,7 @@ public class ItemSelectorRepositoryEntryBrowserReturnTypeUtil
 			List<ItemSelectorReturnType> desiredItemSelectorReturnTypes) {
 
 		return getFirstAvailableItemSelectorReturnType(
-			desiredItemSelectorReturnTypes, _existingFileEntryReturnTypeNames);
+			desiredItemSelectorReturnTypes);
 	}
 
 	public static String getValue(
@@ -59,8 +60,14 @@ public class ItemSelectorRepositoryEntryBrowserReturnTypeUtil
 			FileEntry fileEntry, ThemeDisplay themeDisplay)
 		throws Exception {
 
+		Group group = GroupLocalServiceUtil.getGroup(fileEntry.getGroupId());
+
 		return JSONUtil.put(
+			"externalReferenceCode", fileEntry.getExternalReferenceCode()
+		).put(
 			"fileEntryId", fileEntry.getFileEntryId()
+		).put(
+			"groupExternalReferenceCode", group.getExternalReferenceCode()
 		).put(
 			"groupId", fileEntry.getGroupId()
 		).put(
@@ -79,16 +86,16 @@ public class ItemSelectorRepositoryEntryBrowserReturnTypeUtil
 
 	protected static ItemSelectorReturnType
 		getFirstAvailableItemSelectorReturnType(
-			List<ItemSelectorReturnType> desiredItemSelectorReturnTypes,
-			List<String> itemSelectorReturnTypeTypes) {
+			List<ItemSelectorReturnType> desiredItemSelectorReturnTypes) {
 
-		Iterator<ItemSelectorReturnType> iterator =
-			desiredItemSelectorReturnTypes.iterator();
+		if (ListUtil.isEmpty(desiredItemSelectorReturnTypes)) {
+			return null;
+		}
 
-		while (iterator.hasNext()) {
-			ItemSelectorReturnType itemSelectorReturnType = iterator.next();
+		for (ItemSelectorReturnType itemSelectorReturnType :
+				desiredItemSelectorReturnTypes) {
 
-			if (itemSelectorReturnTypeTypes.contains(
+			if (_existingFileEntryReturnTypeNames.contains(
 					ClassUtil.getClassName(itemSelectorReturnType))) {
 
 				return itemSelectorReturnType;

@@ -87,7 +87,7 @@ public class FavIconItemExternalReferenceSerDes {
 
 			sb.append("\"scope\": ");
 
-			sb.append(String.valueOf(favIconItemExternalReference.getScope()));
+			sb.append(favIconItemExternalReference.getScope());
 		}
 
 		if (favIconItemExternalReference.getFavIconType() != null) {
@@ -98,9 +98,7 @@ public class FavIconItemExternalReferenceSerDes {
 			sb.append("\"favIconType\": ");
 
 			sb.append("\"");
-
 			sb.append(favIconItemExternalReference.getFavIconType());
-
 			sb.append("\"");
 		}
 
@@ -221,7 +219,8 @@ public class FavIconItemExternalReferenceSerDes {
 			else if (Objects.equals(jsonParserFieldName, "scope")) {
 				if (jsonParserFieldValue != null) {
 					favIconItemExternalReference.setScope(
-						ScopeSerDes.toDTO((String)jsonParserFieldValue));
+						com.liferay.headless.admin.site.client.scope.Scope.
+							toDTO((String)jsonParserFieldValue));
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "favIconType")) {

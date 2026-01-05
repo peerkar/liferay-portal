@@ -77,6 +77,16 @@
 			<type>java.util.Map</type>
 		</attribute>
 		<attribute>
+			<name>formInputEnabled</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>formInputName</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
 			<name>height</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>

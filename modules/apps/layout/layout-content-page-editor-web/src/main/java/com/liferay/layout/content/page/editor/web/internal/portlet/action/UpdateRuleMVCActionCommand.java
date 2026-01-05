@@ -55,7 +55,8 @@ public class UpdateRuleMVCActionCommand
 						ParamUtil.getString(actionRequest, "conditions")),
 					ParamUtil.getString(actionRequest, "conditionType"),
 					ParamUtil.getString(actionRequest, "name"),
-					ParamUtil.getString(actionRequest, "ruleId"))));
+					ParamUtil.getString(actionRequest, "ruleId"),
+					ParamUtil.getString(actionRequest, "script", null))));
 	}
 
 	@Reference

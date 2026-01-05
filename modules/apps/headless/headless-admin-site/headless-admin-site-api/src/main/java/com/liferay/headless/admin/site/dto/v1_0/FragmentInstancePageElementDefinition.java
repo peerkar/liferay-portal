@@ -64,6 +64,53 @@ public class FragmentInstancePageElementDefinition
 	}
 
 	@io.swagger.v3.oas.annotations.media.Schema(
+		description = "The fragment's background image."
+	)
+	@Valid
+	public FragmentImage getBackgroundFragmentImage() {
+		if (_backgroundFragmentImageSupplier != null) {
+			backgroundFragmentImage = _backgroundFragmentImageSupplier.get();
+
+			_backgroundFragmentImageSupplier = null;
+		}
+
+		return backgroundFragmentImage;
+	}
+
+	public void setBackgroundFragmentImage(
+		FragmentImage backgroundFragmentImage) {
+
+		this.backgroundFragmentImage = backgroundFragmentImage;
+
+		_backgroundFragmentImageSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setBackgroundFragmentImage(
+		UnsafeSupplier<FragmentImage, Exception>
+			backgroundFragmentImageUnsafeSupplier) {
+
+		_backgroundFragmentImageSupplier = () -> {
+			try {
+				return backgroundFragmentImageUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField(description = "The fragment's background image.")
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected FragmentImage backgroundFragmentImage;
+
+	@JsonIgnore
+	private Supplier<FragmentImage> _backgroundFragmentImageSupplier;
+
+	@io.swagger.v3.oas.annotations.media.Schema(
 		description = "The fragment instance's configuration."
 	)
 	public String getConfiguration() {
@@ -193,98 +240,6 @@ public class FragmentInstancePageElementDefinition
 	private Supplier<String[]> _cssClassesSupplier;
 
 	@io.swagger.v3.oas.annotations.media.Schema(
-		description = "Custom CSS that is applied on the fragment instance."
-	)
-	public String getCustomCSS() {
-		if (_customCSSSupplier != null) {
-			customCSS = _customCSSSupplier.get();
-
-			_customCSSSupplier = null;
-		}
-
-		return customCSS;
-	}
-
-	public void setCustomCSS(String customCSS) {
-		this.customCSS = customCSS;
-
-		_customCSSSupplier = null;
-	}
-
-	@JsonIgnore
-	public void setCustomCSS(
-		UnsafeSupplier<String, Exception> customCSSUnsafeSupplier) {
-
-		_customCSSSupplier = () -> {
-			try {
-				return customCSSUnsafeSupplier.get();
-			}
-			catch (RuntimeException runtimeException) {
-				throw runtimeException;
-			}
-			catch (Exception exception) {
-				throw new RuntimeException(exception);
-			}
-		};
-	}
-
-	@GraphQLField(
-		description = "Custom CSS that is applied on the fragment instance."
-	)
-	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected String customCSS;
-
-	@JsonIgnore
-	private Supplier<String> _customCSSSupplier;
-
-	@io.swagger.v3.oas.annotations.media.Schema(
-		description = "The custom CSS viewports of the fragment instance."
-	)
-	@Valid
-	public CustomCSSViewport[] getCustomCSSViewports() {
-		if (_customCSSViewportsSupplier != null) {
-			customCSSViewports = _customCSSViewportsSupplier.get();
-
-			_customCSSViewportsSupplier = null;
-		}
-
-		return customCSSViewports;
-	}
-
-	public void setCustomCSSViewports(CustomCSSViewport[] customCSSViewports) {
-		this.customCSSViewports = customCSSViewports;
-
-		_customCSSViewportsSupplier = null;
-	}
-
-	@JsonIgnore
-	public void setCustomCSSViewports(
-		UnsafeSupplier<CustomCSSViewport[], Exception>
-			customCSSViewportsUnsafeSupplier) {
-
-		_customCSSViewportsSupplier = () -> {
-			try {
-				return customCSSViewportsUnsafeSupplier.get();
-			}
-			catch (RuntimeException runtimeException) {
-				throw runtimeException;
-			}
-			catch (Exception exception) {
-				throw new RuntimeException(exception);
-			}
-		};
-	}
-
-	@GraphQLField(
-		description = "The custom CSS viewports of the fragment instance."
-	)
-	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected CustomCSSViewport[] customCSSViewports;
-
-	@JsonIgnore
-	private Supplier<CustomCSSViewport[]> _customCSSViewportsSupplier;
-
-	@io.swagger.v3.oas.annotations.media.Schema(
 		description = "The fragment instance's most recent propagation date."
 	)
 	public Date getDatePropagated() {
@@ -382,33 +337,40 @@ public class FragmentInstancePageElementDefinition
 		_draftFragmentInstanceExternalReferenceCodeSupplier;
 
 	@io.swagger.v3.oas.annotations.media.Schema(
-		description = "The configuration values of the fragment instance."
+		description = "The fragment configuration field values of the fragment instance."
 	)
 	@Valid
-	public Map<String, Object> getFragmentConfig() {
-		if (_fragmentConfigSupplier != null) {
-			fragmentConfig = _fragmentConfigSupplier.get();
+	public Map<String, FragmentConfigurationFieldValue>
+		getFragmentConfigurationFieldValues() {
 
-			_fragmentConfigSupplier = null;
+		if (_fragmentConfigurationFieldValuesSupplier != null) {
+			fragmentConfigurationFieldValues =
+				_fragmentConfigurationFieldValuesSupplier.get();
+
+			_fragmentConfigurationFieldValuesSupplier = null;
 		}
 
-		return fragmentConfig;
+		return fragmentConfigurationFieldValues;
 	}
 
-	public void setFragmentConfig(Map<String, Object> fragmentConfig) {
-		this.fragmentConfig = fragmentConfig;
+	public void setFragmentConfigurationFieldValues(
+		Map<String, FragmentConfigurationFieldValue>
+			fragmentConfigurationFieldValues) {
 
-		_fragmentConfigSupplier = null;
+		this.fragmentConfigurationFieldValues =
+			fragmentConfigurationFieldValues;
+
+		_fragmentConfigurationFieldValuesSupplier = null;
 	}
 
 	@JsonIgnore
-	public void setFragmentConfig(
-		UnsafeSupplier<Map<String, Object>, Exception>
-			fragmentConfigUnsafeSupplier) {
+	public void setFragmentConfigurationFieldValues(
+		UnsafeSupplier<Map<String, FragmentConfigurationFieldValue>, Exception>
+			fragmentConfigurationFieldValuesUnsafeSupplier) {
 
-		_fragmentConfigSupplier = () -> {
+		_fragmentConfigurationFieldValuesSupplier = () -> {
 			try {
-				return fragmentConfigUnsafeSupplier.get();
+				return fragmentConfigurationFieldValuesUnsafeSupplier.get();
 			}
 			catch (RuntimeException runtimeException) {
 				throw runtimeException;
@@ -420,42 +382,46 @@ public class FragmentInstancePageElementDefinition
 	}
 
 	@GraphQLField(
-		description = "The configuration values of the fragment instance."
+		description = "The fragment configuration field values of the fragment instance."
 	)
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected Map<String, Object> fragmentConfig;
+	protected Map<String, FragmentConfigurationFieldValue>
+		fragmentConfigurationFieldValues;
 
 	@JsonIgnore
-	private Supplier<Map<String, Object>> _fragmentConfigSupplier;
+	private Supplier<Map<String, FragmentConfigurationFieldValue>>
+		_fragmentConfigurationFieldValuesSupplier;
 
 	@io.swagger.v3.oas.annotations.media.Schema(
-		description = "The fragment field values of the the fragment instance."
+		description = "The fragment editable elements of the the fragment instance."
 	)
 	@Valid
-	public FragmentField[] getFragmentFields() {
-		if (_fragmentFieldsSupplier != null) {
-			fragmentFields = _fragmentFieldsSupplier.get();
+	public FragmentEditableElement[] getFragmentEditableElements() {
+		if (_fragmentEditableElementsSupplier != null) {
+			fragmentEditableElements = _fragmentEditableElementsSupplier.get();
 
-			_fragmentFieldsSupplier = null;
+			_fragmentEditableElementsSupplier = null;
 		}
 
-		return fragmentFields;
+		return fragmentEditableElements;
 	}
 
-	public void setFragmentFields(FragmentField[] fragmentFields) {
-		this.fragmentFields = fragmentFields;
+	public void setFragmentEditableElements(
+		FragmentEditableElement[] fragmentEditableElements) {
 
-		_fragmentFieldsSupplier = null;
+		this.fragmentEditableElements = fragmentEditableElements;
+
+		_fragmentEditableElementsSupplier = null;
 	}
 
 	@JsonIgnore
-	public void setFragmentFields(
-		UnsafeSupplier<FragmentField[], Exception>
-			fragmentFieldsUnsafeSupplier) {
+	public void setFragmentEditableElements(
+		UnsafeSupplier<FragmentEditableElement[], Exception>
+			fragmentEditableElementsUnsafeSupplier) {
 
-		_fragmentFieldsSupplier = () -> {
+		_fragmentEditableElementsSupplier = () -> {
 			try {
-				return fragmentFieldsUnsafeSupplier.get();
+				return fragmentEditableElementsUnsafeSupplier.get();
 			}
 			catch (RuntimeException runtimeException) {
 				throw runtimeException;
@@ -467,13 +433,14 @@ public class FragmentInstancePageElementDefinition
 	}
 
 	@GraphQLField(
-		description = "The fragment field values of the the fragment instance."
+		description = "The fragment editable elements of the the fragment instance."
 	)
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected FragmentField[] fragmentFields;
+	protected FragmentEditableElement[] fragmentEditableElements;
 
 	@JsonIgnore
-	private Supplier<FragmentField[]> _fragmentFieldsSupplier;
+	private Supplier<FragmentEditableElement[]>
+		_fragmentEditableElementsSupplier;
 
 	@io.swagger.v3.oas.annotations.media.Schema(
 		description = "The fragment instance's external reference code."
@@ -572,52 +539,6 @@ public class FragmentInstancePageElementDefinition
 
 	@JsonIgnore
 	private Supplier<FragmentReference> _fragmentReferenceSupplier;
-
-	@io.swagger.v3.oas.annotations.media.Schema(
-		description = "The fragment style of the fragment instance page element."
-	)
-	@Valid
-	public FragmentStyle getFragmentStyle() {
-		if (_fragmentStyleSupplier != null) {
-			fragmentStyle = _fragmentStyleSupplier.get();
-
-			_fragmentStyleSupplier = null;
-		}
-
-		return fragmentStyle;
-	}
-
-	public void setFragmentStyle(FragmentStyle fragmentStyle) {
-		this.fragmentStyle = fragmentStyle;
-
-		_fragmentStyleSupplier = null;
-	}
-
-	@JsonIgnore
-	public void setFragmentStyle(
-		UnsafeSupplier<FragmentStyle, Exception> fragmentStyleUnsafeSupplier) {
-
-		_fragmentStyleSupplier = () -> {
-			try {
-				return fragmentStyleUnsafeSupplier.get();
-			}
-			catch (RuntimeException runtimeException) {
-				throw runtimeException;
-			}
-			catch (Exception exception) {
-				throw new RuntimeException(exception);
-			}
-		};
-	}
-
-	@GraphQLField(
-		description = "The fragment style of the fragment instance page element."
-	)
-	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected FragmentStyle fragmentStyle;
-
-	@JsonIgnore
-	private Supplier<FragmentStyle> _fragmentStyleSupplier;
 
 	@io.swagger.v3.oas.annotations.media.Schema(
 		description = "The fragment instance's type (basic, form)."
@@ -1060,6 +981,18 @@ public class FragmentInstancePageElementDefinition
 		DateFormat liferayToJSONDateFormat = new SimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ss'Z'");
 
+		FragmentImage backgroundFragmentImage = getBackgroundFragmentImage();
+
+		if (backgroundFragmentImage != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"backgroundFragmentImage\": ");
+
+			sb.append(String.valueOf(backgroundFragmentImage));
+		}
+
 		String configuration = getConfiguration();
 
 		if (configuration != null) {
@@ -1118,44 +1051,6 @@ public class FragmentInstancePageElementDefinition
 			sb.append("]");
 		}
 
-		String customCSS = getCustomCSS();
-
-		if (customCSS != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"customCSS\": ");
-
-			sb.append("\"");
-
-			sb.append(_escape(customCSS));
-
-			sb.append("\"");
-		}
-
-		CustomCSSViewport[] customCSSViewports = getCustomCSSViewports();
-
-		if (customCSSViewports != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"customCSSViewports\": ");
-
-			sb.append("[");
-
-			for (int i = 0; i < customCSSViewports.length; i++) {
-				sb.append(String.valueOf(customCSSViewports[i]));
-
-				if ((i + 1) < customCSSViewports.length) {
-					sb.append(", ");
-				}
-			}
-
-			sb.append("]");
-		}
-
 		Date datePropagated = getDatePropagated();
 
 		if (datePropagated != null) {
@@ -1189,33 +1084,36 @@ public class FragmentInstancePageElementDefinition
 			sb.append("\"");
 		}
 
-		Map<String, Object> fragmentConfig = getFragmentConfig();
+		Map<String, FragmentConfigurationFieldValue>
+			fragmentConfigurationFieldValues =
+				getFragmentConfigurationFieldValues();
 
-		if (fragmentConfig != null) {
+		if (fragmentConfigurationFieldValues != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"fragmentConfig\": ");
+			sb.append("\"fragmentConfigurationFieldValues\": ");
 
-			sb.append(_toJSON(fragmentConfig));
+			sb.append(_toJSON(fragmentConfigurationFieldValues));
 		}
 
-		FragmentField[] fragmentFields = getFragmentFields();
+		FragmentEditableElement[] fragmentEditableElements =
+			getFragmentEditableElements();
 
-		if (fragmentFields != null) {
+		if (fragmentEditableElements != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"fragmentFields\": ");
+			sb.append("\"fragmentEditableElements\": ");
 
 			sb.append("[");
 
-			for (int i = 0; i < fragmentFields.length; i++) {
-				sb.append(String.valueOf(fragmentFields[i]));
+			for (int i = 0; i < fragmentEditableElements.length; i++) {
+				sb.append(String.valueOf(fragmentEditableElements[i]));
 
-				if ((i + 1) < fragmentFields.length) {
+				if ((i + 1) < fragmentEditableElements.length) {
 					sb.append(", ");
 				}
 			}
@@ -1252,18 +1150,6 @@ public class FragmentInstancePageElementDefinition
 			sb.append(String.valueOf(fragmentReference));
 		}
 
-		FragmentStyle fragmentStyle = getFragmentStyle();
-
-		if (fragmentStyle != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"fragmentStyle\": ");
-
-			sb.append(String.valueOf(fragmentStyle));
-		}
-
 		FragmentType fragmentType = getFragmentType();
 
 		if (fragmentType != null) {
@@ -1274,9 +1160,7 @@ public class FragmentInstancePageElementDefinition
 			sb.append("\"fragmentType\": ");
 
 			sb.append("\"");
-
 			sb.append(fragmentType);
-
 			sb.append("\"");
 		}
 
@@ -1426,9 +1310,7 @@ public class FragmentInstancePageElementDefinition
 			sb.append("\"type\": ");
 
 			sb.append("\"");
-
 			sb.append(type);
-
 			sb.append("\"");
 		}
 

@@ -1,6 +1,8 @@
 dependencies {
 	testIntegrationImplementation group: "com.liferay.portal", name: "com.liferay.portal.impl", version: "default"
-	testIntegrationImplementation project(":apps:data-cleanup:data-cleanup")
+	testIntegrationImplementation project(":apps:change-tracking:change-tracking-api")
+	testIntegrationImplementation project(":apps:data-cleanup:data-cleanup-api")
+	testIntegrationImplementation project(":apps:data-cleanup:data-cleanup-impl")
 	testIntegrationImplementation project(":apps:expando:expando-test-util")
 	testIntegrationImplementation project(":apps:fragment:fragment-api")
 	testIntegrationImplementation project(":apps:fragment:fragment-entry-processor:fragment-entry-processor-api")
@@ -9,9 +11,12 @@ dependencies {
 	testIntegrationImplementation project(":apps:layout:layout-api")
 	testIntegrationImplementation project(":apps:layout:layout-page-template-api")
 	testIntegrationImplementation project(":apps:layout:layout-test-util")
+	testIntegrationImplementation project(":apps:object:object-api")
 	testIntegrationImplementation project(":apps:portal-configuration:portal-configuration-test-util")
 	testIntegrationImplementation project(":apps:segments:segments-api")
+	testIntegrationImplementation project(":apps:static:osgi:osgi-util")
 	testIntegrationImplementation project(":apps:static:portal-configuration:portal-configuration-metatype-api")
+	testIntegrationImplementation project(":apps:static:portal-lpkg-deployer:portal-lpkg-deployer-api")
 	testIntegrationImplementation project(":apps:static:portal:portal-upgrade-api")
 	testIntegrationImplementation project(":test:arquillian-extension-junit-bridge")
 }

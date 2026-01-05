@@ -350,7 +350,7 @@ public class CTTableMapperTest {
 	}
 
 	@Test
-	public void testBooleanParamSetter() throws SQLException {
+	public void testBooleanParamSetter() throws Exception {
 		ParamSetter booleanParamSetter = ReflectionTestUtil.getFieldValue(
 			_ctTableMapper, "_booleanParamSetter");
 

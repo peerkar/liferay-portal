@@ -45,7 +45,6 @@ create table ObjectDefinition (
 	enableFormContainer BOOLEAN,
 	enableFriendlyURLCustomization BOOLEAN,
 	enableIndexSearch BOOLEAN,
-	enableLocalization BOOLEAN,
 	enableObjectEntryDraft BOOLEAN,
 	enableObjectEntryHistory BOOLEAN,
 	enableObjectEntrySchedule BOOLEAN,
@@ -192,7 +191,7 @@ create table ObjectFieldSetting (
 	modifiedDate DATE null,
 	objectFieldId LONG,
 	name VARCHAR(75) null,
-	value VARCHAR(255) null
+	value TEXT null
 );
 
 create table ObjectFilter (

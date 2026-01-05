@@ -12,6 +12,7 @@ import com.liferay.commerce.notification.service.base.CommerceNotificationQueueE
 import com.liferay.commerce.notification.util.comparator.CommerceNotificationAttachmentCreateDateComparator;
 import com.liferay.mail.kernel.model.MailMessage;
 import com.liferay.mail.kernel.service.MailService;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -31,7 +32,6 @@ import com.liferay.portal.kernel.util.StringUtil;
 
 import jakarta.mail.internet.InternetAddress;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -256,26 +256,16 @@ public class CommerceNotificationQueueEntryLocalServiceImpl
 					fileEntry.getFileName(), fileEntry.getContentStream());
 			}
 
-			List<InternetAddress> bccInternetAddresses = new ArrayList<>();
-			List<InternetAddress> ccInternetAddresses = new ArrayList<>();
-
-			String[] bccAddresses = StringUtil.split(
-				commerceNotificationQueueEntry.getBcc());
-			String[] ccAddresses = StringUtil.split(
-				commerceNotificationQueueEntry.getCc());
-
-			for (String bccAddress : bccAddresses) {
-				bccInternetAddresses.add(new InternetAddress(bccAddress));
-			}
-
-			for (String ccAddress : ccAddresses) {
-				ccInternetAddresses.add(new InternetAddress(ccAddress));
-			}
-
 			mailMessage.setBCC(
-				bccInternetAddresses.toArray(new InternetAddress[0]));
+				TransformUtil.transform(
+					StringUtil.split(commerceNotificationQueueEntry.getBcc()),
+					bccAddress -> new InternetAddress(bccAddress),
+					InternetAddress.class));
 			mailMessage.setCC(
-				ccInternetAddresses.toArray(new InternetAddress[0]));
+				TransformUtil.transform(
+					StringUtil.split(commerceNotificationQueueEntry.getCc()),
+					ccAddress -> new InternetAddress(ccAddress),
+					InternetAddress.class));
 
 			try {
 				_mailService.sendEmail(mailMessage);

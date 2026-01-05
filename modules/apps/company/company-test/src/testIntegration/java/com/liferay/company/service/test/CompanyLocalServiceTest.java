@@ -219,6 +219,8 @@ public class CompanyLocalServiceTest {
 		if (_safeCloseable != null) {
 			_safeCloseable.close();
 		}
+
+		DataAccess.cleanUp(_connection);
 	}
 
 	@Before
@@ -1495,15 +1497,15 @@ public class CompanyLocalServiceTest {
 	}
 
 	private int _getTablesCount(long companyId) throws Exception {
-		return _getTableNames(
-			"TABLE", companyId
-		).size();
+		List<String> tableNames = _getTableNames("TABLE", companyId);
+
+		return tableNames.size();
 	}
 
 	private int _getViewsCount(long companyId) throws Exception {
-		return _getTableNames(
-			"VIEW", companyId
-		).size();
+		List<String> tableNames = _getTableNames("VIEW", companyId);
+
+		return tableNames.size();
 	}
 
 	private void _resetCompanyLocales(long companyId) throws Exception {

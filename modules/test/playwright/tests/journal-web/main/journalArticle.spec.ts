@@ -26,7 +26,7 @@ import {nextPage, setItemsPerPage} from '../../../utils/pagination';
 import addApprovedStructuredContent from '../../../utils/structured-content/addApprovedStructuredContent';
 import getBasicWebContentStructureId from '../../../utils/structured-content/getBasicWebContentStructureId';
 import {waitForAlert} from '../../../utils/waitForAlert';
-import {ckeditor4PageTest} from '../../frontend-editor-ckeditor-web/main/fixtures/ckeditor4PageTest';
+import {ClassicPage as CKEditor4ClassicPage} from '../../frontend-editor-ckeditor-sample-web/pages/ckeditor4/ClassicPage';
 import {journalPagesTest} from './fixtures/journalPagesTest';
 import getDataStructureDefinition from './utils/getDataStructureDefinition';
 
@@ -81,7 +81,7 @@ const assetPublisherDeprecationTest = mergeTests(
 	})
 );
 
-const ckeditor4Test = mergeTests(baseTest, ckeditor4PageTest);
+const ckeditor4Test = mergeTests(baseTest);
 
 const ckeditor5Test = mergeTests(
 	baseTest,
@@ -139,12 +139,48 @@ baseTest(
 			)
 			.uncheck();
 
-		await page.getByRole('button', {exact: true, name: 'Publish'}).click();
+		await page
+			.getByLabel('Publish With Permissions')
+			.getByRole('button', {name: 'Publish'})
+			.click();
 
 		await journalPage.assertJournalArticlePermissions(title, [
 			{enabled: false, locator: '#guest_ACTION_ADD_DISCUSSION'},
 			{enabled: false, locator: '#site-member_ACTION_ADD_DISCUSSION'},
 		]);
+	}
+);
+
+baseTest(
+	' Published After Draft can schedule',
+	{
+		tag: '@LPD-70137',
+	},
+	async ({journalEditArticlePage, page, site}) => {
+		await journalEditArticlePage.goto({siteUrl: site.friendlyUrlPath});
+
+		await journalEditArticlePage.saveAsDraftWithPermissions(
+			getRandomString()
+		);
+
+		await journalEditArticlePage.publishDropdown.click();
+
+		await page
+			.getByRole('menuitem', {name: 'Schedule Publication'})
+			.click();
+
+		await page
+			.getByPlaceholder('YYYY-MM-DD HH:mm')
+			.fill('9987-11-26 13:00');
+
+		await page
+			.getByLabel('Schedule Publication')
+			.getByRole('button', {name: 'Schedule'})
+			.click();
+
+		await expect(
+			page.locator('span').filter({hasText: 'Scheduled'}).nth(1)
+		).toBeVisible();
 	}
 );
 
@@ -167,7 +203,7 @@ baseTest(
 		await waitForAlert(
 			page,
 			"Avertissement:Les URL simplifiées suivantes ont été modifiées pour garantir l'unicité",
-			{closeText: 'Fin', type: 'warning'}
+			{closeText: 'Fermer', type: 'warning'}
 		);
 
 		// change back to english language
@@ -469,6 +505,79 @@ baseTest(
 			.getByRole('link', {name: 'Sites and Libraries'});
 
 		await expect(breadcrumb).toBeVisible();
+	}
+);
+
+baseTest(
+	'Check multi select and single select Category selector',
+	{
+		tag: '@LPD-72738',
+	},
+	async ({apiHelpers, journalEditArticlePage, page, site}) => {
+		const category1 = getRandomString();
+		const category2 = getRandomString();
+		const vocabularyName1 = getRandomString();
+		const vocabularyName2 = getRandomString();
+
+		await baseTest.step('create vocabulary and category', async () => {
+			await createCategories({
+				apiHelpers,
+				assetTypes: [{required: false, type: 'AllAssetTypes'}],
+				categoryNames: [{name: category1}, {name: category2}],
+				siteId: site.id,
+				vocabularyName: vocabularyName1,
+			});
+		});
+
+		await baseTest.step('create vocabulary and category', async () => {
+			await createCategories({
+				apiHelpers,
+				assetTypes: [{required: false, type: 'AllAssetTypes'}],
+				categoryNames: [{name: category1}, {name: category2}],
+				multiValued: false,
+				siteId: site.id,
+				vocabularyName: vocabularyName2,
+			});
+		});
+
+		await journalEditArticlePage.goto({siteUrl: site.friendlyUrlPath});
+
+		const CategorizationButton = await page.getByRole('button', {
+			name: 'Categorization',
+		});
+
+		const expandedAttribute =
+			await CategorizationButton.getAttribute('aria-expanded');
+
+		if (expandedAttribute === 'false') {
+			await CategorizationButton.click();
+		}
+
+		await page
+			.getByRole('button', {name: `Select ${vocabularyName1}`})
+			.click();
+
+		let categoryCheckbox = page
+			.frameLocator(`iframe[title="Select ${vocabularyName1}"]`)
+			.locator('li')
+			.filter({hasText: `${category1}`})
+			.getByRole('checkbox');
+
+		await expect(categoryCheckbox).toBeVisible();
+
+		await page.getByRole('button', {name: 'Cancel'}).click();
+
+		await page
+			.getByRole('button', {name: `Select ${vocabularyName2}`})
+			.click();
+
+		categoryCheckbox = page
+			.frameLocator(`iframe[title="Select ${vocabularyName2}"]`)
+			.locator('li')
+			.filter({hasText: `${category1}`})
+			.getByRole('checkbox');
+
+		await expect(categoryCheckbox).toHaveCount(0);
 	}
 );
 
@@ -1910,10 +2019,12 @@ assetPublisherDeprecationTest(
 ckeditor4Test(
 	'Change image from context menu, in editor with "adaptivemedia" plugin',
 	{tag: ['@LPD-53880']},
-	async ({ckeditor4Page, journalEditArticlePage, site}) => {
+	async ({journalEditArticlePage, page, site}) => {
 		await ckeditor4Test.step('Open new Basic Web Content', async () => {
 			await journalEditArticlePage.goto({siteUrl: site.friendlyUrlPath});
 		});
+
+		const ckeditor4Page = new CKEditor4ClassicPage(page);
 
 		await ckeditor4Page.page.getByLabel('Image', {exact: true}).click();
 
@@ -1931,6 +2042,11 @@ ckeditor4Test(
 
 		await expect(moonImage).toBeVisible();
 		await expect(moonImage).toHaveAttribute('data-fileentryid');
+
+		const moonImageFileEntryId = await moonImage
+
+			// eslint-disable-next-line @liferay/no-get-data-attribute
+			.getAttribute('data-fileentryid');
 
 		await moonImage.dblclick();
 
@@ -1952,6 +2068,13 @@ ckeditor4Test(
 
 		await expect(satelliteImage).toBeVisible();
 		await expect(satelliteImage).toHaveAttribute('data-fileentryid');
+
+		const satelliteImageFileEntryId = await satelliteImage
+
+			// eslint-disable-next-line @liferay/no-get-data-attribute
+			.getAttribute('data-fileentryid');
+
+		await expect(moonImageFileEntryId).not.toBe(satelliteImageFileEntryId);
 	}
 );
 
@@ -1960,18 +2083,28 @@ ckeditor5Test(
 	{
 		tag: '@LPD-11235',
 	},
-	async ({journalEditArticlePage, page, site}) => {
+	async ({
+		journalEditArticlePage,
+		journalEditArticleTranslationsPage,
+		page,
+		site,
+	}) => {
 		await ckeditor5Test.step('Open new Basic Web Content', async () => {
 			await journalEditArticlePage.goto({siteUrl: site.friendlyUrlPath});
 		});
 
 		const articleContentAR = getRandomString();
 		const articleContentEN = getRandomString();
+		const articleDescriptionAR = getRandomString();
+		const articleDescriptionEN = getRandomString();
 		const articleTitleAR = getRandomString();
 		const articleTitleEN = getRandomString();
 
-		const editable = journalEditArticlePage.page.locator(
-			'.edit-article-panel .ck-content'
+		const contentEditable = journalEditArticlePage.page.locator(
+			'#_com_liferay_journal_web_portlet_JournalPortlet_content .ck-content'
+		);
+		const descriptionEditable = journalEditArticlePage.page.locator(
+			'#_com_liferay_journal_web_portlet_JournalPortlet_metadata .ck-content'
 		);
 
 		await ckeditor5Test.step('Expand fields if collapsed', async () => {
@@ -1985,15 +2118,16 @@ ckeditor5Test(
 				fieldsToggle.click();
 			}
 
-			await expect(editable).toBeVisible();
+			await expect(contentEditable).toBeVisible();
 		});
 
 		await ckeditor5Test.step(
-			'Add sample English title and content',
+			'Add sample English title, description and content',
 			async () => {
 				await journalEditArticlePage.fillTitle(articleTitleEN);
 
-				await editable.fill(articleContentEN);
+				await contentEditable.fill(articleContentEN);
+				await descriptionEditable.fill(articleDescriptionEN);
 			}
 		);
 
@@ -2008,16 +2142,19 @@ ckeditor5Test(
 					)
 				).toBeVisible();
 
-				expect(await editable.getAttribute('dir')).toEqual('rtl');
+				expect(await contentEditable.getAttribute('dir')).toEqual(
+					'rtl'
+				);
 			}
 		);
 
 		await ckeditor5Test.step(
-			'Add sample Arabic title and content',
+			'Add sample Arabic title, description and content',
 			async () => {
 				await journalEditArticlePage.fillTitle(articleTitleAR);
 
-				await editable.fill(articleContentAR);
+				await contentEditable.fill(articleContentAR);
+				await descriptionEditable.fill(articleDescriptionAR);
 			}
 		);
 
@@ -2031,13 +2168,19 @@ ckeditor5Test(
 				await page.getByTitle(articleTitleEN).click();
 
 				await expect(
-					editable.getByText(articleContentEN)
+					contentEditable.getByText(articleContentEN)
+				).toBeVisible();
+				await expect(
+					descriptionEditable.getByText(articleDescriptionEN)
 				).toBeVisible();
 
 				await journalEditArticlePage.changeLanguage('ar_SA');
 
 				await expect(
-					editable.getByText(articleContentAR)
+					contentEditable.getByText(articleContentAR)
+				).toBeVisible();
+				await expect(
+					descriptionEditable.getByText(articleDescriptionAR)
 				).toBeVisible();
 			}
 		);
@@ -2082,6 +2225,80 @@ ckeditor5Test(
 				await expect(sourceTextarea).toHaveValue(
 					/<a href="#">foo<\/a>alert\(\)/
 				);
+			}
+		);
+
+		await ckeditor5Test.step('Revert to simple content', async () => {
+			await sourceButton.click();
+
+			await contentEditable.fill(articleContentEN);
+
+			await journalEditArticlePage.publishArticle(true);
+
+			await expect(page.locator('.alert-success')).toBeVisible();
+		});
+
+		await ckeditor5Test.step('Open aricle translation editor', async () => {
+			await journalEditArticleTranslationsPage.goto({
+				title: articleTitleEN,
+			});
+
+			await expect(
+				journalEditArticleTranslationsPage.previewContainers.getByText(
+					articleDescriptionEN
+				)
+			).toBeVisible();
+			await expect(
+				journalEditArticleTranslationsPage.previewContainers.getByText(
+					articleContentEN
+				)
+			).toBeVisible();
+
+			await expect(
+				journalEditArticleTranslationsPage.contentEditor.editable.getByText(
+					articleContentAR
+				)
+			).toBeVisible();
+			await expect(
+				journalEditArticleTranslationsPage.descriptionEditor.editable.getByText(
+					articleDescriptionAR
+				)
+			).toBeVisible();
+		});
+
+		const articleDescriptionAR2 = getRandomString();
+		const articleContentAR2 = getRandomString();
+
+		await ckeditor5Test.step('Change Arabic translation', async () => {
+			await journalEditArticleTranslationsPage.descriptionEditor.editable.fill(
+				articleDescriptionAR2
+			);
+			await journalEditArticleTranslationsPage.contentEditor.editable.fill(
+				articleContentAR2
+			);
+
+			await journalEditArticleTranslationsPage.publishButton.click();
+
+			await expect(page.locator('.alert-success')).toBeVisible();
+		});
+
+		await ckeditor5Test.step(
+			'Open aricle translation editor and assert changes were saved',
+			async () => {
+				await journalEditArticleTranslationsPage.goto({
+					title: articleTitleEN,
+				});
+
+				await expect(
+					journalEditArticleTranslationsPage.descriptionEditor.editable.getByText(
+						articleDescriptionAR2
+					)
+				).toBeVisible();
+				await expect(
+					journalEditArticleTranslationsPage.contentEditor.editable.getByText(
+						articleContentAR2
+					)
+				).toBeVisible();
 			}
 		);
 	}
@@ -2187,13 +2404,9 @@ baseTest(
 			getRandomString()
 		);
 
-		await page.waitForTimeout(50000);
+		await page.waitForTimeout(60000);
 
-		await page.getByRole('button', {name: 'Publish'}).click();
-
-		await page.waitForTimeout(50000);
-
-		await page.getByRole('menuitem', {name: 'Publish'}).click();
+		await journalEditArticlePage.publishButton.click();
 
 		await journalPage.changeView('table');
 
@@ -2249,6 +2462,54 @@ baseTest(
 				await expect(
 					page.getByRole('gridcell', {exact: true, name: category1})
 				).not.toBeVisible();
+			}
+		);
+	}
+);
+
+baseTest(
+	'Web content with "pending" status has the submission button disabled',
+	{tag: '@LPD-70782'},
+	async ({journalEditArticlePage, journalPage, site, workflowPage}) => {
+		await baseTest.step('Set up view for pending articles', async () => {
+			await journalPage.goto(site.friendlyUrlPath);
+
+			await journalPage.changeView('list');
+		});
+
+		await baseTest.step('Update workflow to require approval', async () => {
+			await workflowPage.goto(site.friendlyUrlPath);
+
+			await workflowPage.changeWorkflow(
+				'Web Content Article',
+				'Single Approver'
+			);
+		});
+
+		const articleTitle = getRandomString();
+
+		await baseTest.step('Create web content article', async () => {
+			await journalEditArticlePage.goto({siteUrl: site.friendlyUrlPath});
+
+			await journalEditArticlePage.fillTitle(articleTitle);
+
+			await journalEditArticlePage.submitArticleForWorkflow(articleTitle);
+		});
+
+		await baseTest.step(
+			'Assert that the submission buttons are disabled',
+			async () => {
+				await journalPage.goToJournalArticleAction(
+					'Edit',
+					articleTitle
+				);
+
+				await expect(
+					journalEditArticlePage.publishDropdown
+				).toBeDisabled();
+				await expect(
+					journalEditArticlePage.publishButton
+				).toBeDisabled();
 			}
 		);
 	}

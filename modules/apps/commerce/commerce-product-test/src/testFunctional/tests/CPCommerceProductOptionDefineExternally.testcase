@@ -1,6 +1,7 @@
 @component-name = "portal-commerce"
 definition {
 
+	property browser.chrome.version = "139.0";
 	property custom.properties = "company.security.strangers.verify=false${line.separator}jsonws.web.service.paths.excludes=";
 	property portal.release = "true";
 	property portal.upstream = "true";
@@ -196,29 +197,7 @@ definition {
 				productOptionPriceType = "true");
 		}
 
-		task ("Then no product is present") {
-			AssertElementNotPresent(
-				key_entryName = "Turbocharger",
-				locator1 = "CommerceEntry#TABLE_ELIGIBILITY_ACCOUNT_GROUPS");
-
-			echo("The product Turbocharger is not present");
-		}
-
-		task ("When the admin disables the visibility for Turbocharger") {
-			CommerceProducts.openProductsAdmin();
-
-			CommerceProducts.searchAndGoToProductEntry(entryProductName = "Turbocharger");
-
-			CommerceEntry.gotoMenuTab(menuTab = "Visibility");
-
-			Click(
-				key_name = "Account Groups",
-				locator1 = "ToggleSwitch#ENABLE_SPECIFIC_TOGGLE_SWITCH");
-
-			Button.clickPublish();
-		}
-
-		task ("Then now tubocharger is present inside the U-Joint option") {
+		task ("Then turbocharger is present inside the U-Joint option") {
 			CommerceProducts.openProductsAdmin();
 
 			CommerceProducts.searchAndGoToProductEntry(entryProductName = "U-Joint");
@@ -234,8 +213,38 @@ definition {
 			AssertElementPresent(
 				key_entryName = "Turbocharger",
 				locator1 = "CommerceEntry#TABLE_ELIGIBILITY_ACCOUNT_GROUPS");
+		}
 
-			echo("The product Turbocharger is present");
+		task ("When the admin enables the visibility for Turbocharger") {
+			CommerceProducts.openProductsAdmin();
+
+			CommerceProducts.searchAndGoToProductEntry(entryProductName = "Turbocharger");
+
+			CommerceEntry.gotoMenuTab(menuTab = "Visibility");
+
+			Click(
+				key_name = "Account Groups",
+				locator1 = "ToggleSwitch#ENABLE_SPECIFIC_TOGGLE_SWITCH");
+
+			Button.clickPublish();
+		}
+
+		task ("Then no product is present inside the U-Joint option") {
+			CommerceProducts.openProductsAdmin();
+
+			CommerceProducts.searchAndGoToProductEntry(entryProductName = "U-Joint");
+
+			CommerceEntry.gotoMenuTab(menuTab = "Options");
+
+			Click(
+				key_index = "Option Select from List",
+				locator1 = "WorkflowMetrics#SEARCH_FIELD_MAPPINGS_METRICS_INDEXES");
+
+			SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+			AssertElementNotPresent(
+				key_entryName = "Turbocharger",
+				locator1 = "CommerceEntry#TABLE_ELIGIBILITY_ACCOUNT_GROUPS");
 		}
 	}
 
@@ -794,7 +803,7 @@ definition {
 		}
 
 		task ("Then can verify all the products in the catalog are listed as values") {
-			Pagination.viewResults(results = "Showing 1 to 10 of 52 entries.");
+			Pagination.viewResults(results = "Showing 1 to 10 of 53 entries.");
 
 			Pagination.changePagination(itemsPerPage = "60 Items");
 

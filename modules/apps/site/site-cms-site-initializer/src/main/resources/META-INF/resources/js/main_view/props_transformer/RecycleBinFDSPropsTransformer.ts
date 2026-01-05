@@ -6,12 +6,10 @@
 import {IInternalRenderer} from '@liferay/frontend-data-set-web';
 import {sub} from 'frontend-js-web';
 
+import {OBJECT_ENTRY_FOLDER_CLASS_NAME} from '../../common/utils/constants';
 import {openGenericFDSDeleteConfirmationModal} from '../../common/utils/genericOpenModalUtil';
 import {getFormattedLabel} from '../../common/utils/getFormattedText';
-import {
-	OBJECT_ENTRY_FOLDER_CLASS_NAME,
-	getScopeExternalReferenceCode,
-} from '../../common/utils/getScopeExternalReferenceCode';
+import {getScopeExternalReferenceCode} from '../../common/utils/getScopeExternalReferenceCode';
 import {displayDeleteSuccessToast} from '../../common/utils/toastUtil';
 import deleteAssetEntriesBulkAction from './actions/deleteAssetEntriesBulkAction';
 import restoreItemAction from './actions/restoreItemAction';
@@ -24,6 +22,7 @@ export default function RecycleBinFDSPropsTransformer({
 	...otherProps
 }: {
 	apiURL: string;
+	id: string;
 	itemsActions?: any[];
 	otherProps: any;
 }) {
@@ -119,6 +118,7 @@ export default function RecycleBinFDSPropsTransformer({
 			if (action?.data?.id === 'delete') {
 				deleteAssetEntriesBulkAction({
 					apiURL: otherProps.apiURL,
+					dataSetId: otherProps.id,
 					selectedData,
 				});
 			}

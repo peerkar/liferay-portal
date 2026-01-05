@@ -95,13 +95,18 @@ describe('buildState', () => {
 			name: 'myStructure',
 			spaces: [],
 			status: 'draft',
+			system: false,
 			type: 'L_CMS_CONTENT_STRUCTURES',
 			uuid: getUuid(),
 			workflows: {},
 		};
 
 		const initialState: State = {
-			history: {deletedChildren: false, modifiedNames: new Set()},
+			history: {
+				deletedChildren: false,
+				deletedGroupERCs: [],
+				modifiedNames: new Set(),
+			},
 			invalids: new Map(),
 			publishedChildren: new Set(),
 			selection: [],
@@ -144,13 +149,18 @@ describe('buildState', () => {
 			name: 'myStructure',
 			spaces: [],
 			status: 'published',
+			system: false,
 			type: 'L_CMS_CONTENT_STRUCTURES',
 			uuid: getUuid(),
 			workflows: {},
 		};
 
 		const initialState: State = {
-			history: {deletedChildren: false, modifiedNames: new Set()},
+			history: {
+				deletedChildren: false,
+				deletedGroupERCs: [],
+				modifiedNames: new Set(),
+			},
 			invalids: new Map(),
 			publishedChildren: new Set(),
 			selection: [],
@@ -201,6 +211,7 @@ describe('buildState', () => {
 			name: 'myStructure',
 			spaces: ['space-1-erc', 'space-2-erc'],
 			status: 'published',
+			system: false,
 			type: 'L_CMS_CONTENT_STRUCTURES',
 			uuid: getUuid(),
 			workflows: {
@@ -210,7 +221,11 @@ describe('buildState', () => {
 		};
 
 		const initialState: State = {
-			history: {deletedChildren: false, modifiedNames: new Set()},
+			history: {
+				deletedChildren: false,
+				deletedGroupERCs: [],
+				modifiedNames: new Set(),
+			},
 			invalids: new Map(),
 			publishedChildren: new Set(),
 			selection: [],
@@ -271,7 +286,7 @@ describe('buildState', () => {
 			objectFields: [
 				{
 					DBType: 'Double',
-					businessType: 'Decimal',
+					businessType: 'Decimal' as const,
 					externalReferenceCode: 'decimal-field',
 					indexed: true,
 					label: {

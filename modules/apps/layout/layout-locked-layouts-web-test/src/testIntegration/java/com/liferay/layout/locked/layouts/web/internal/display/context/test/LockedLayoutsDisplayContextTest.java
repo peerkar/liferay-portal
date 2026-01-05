@@ -323,7 +323,7 @@ public class LockedLayoutsDisplayContextTest {
 			UnicodePropertiesBuilder.put(
 				LayoutTypeSettingsConstants.KEY_PUBLISHED, "true"
 			).buildString(),
-			false, false, Collections.emptyMap(), 0, _serviceContext);
+			false, false, Collections.emptyMap(), null, _serviceContext);
 
 		Layout draftLayout = layout.fetchDraftLayout();
 
@@ -358,7 +358,7 @@ public class LockedLayoutsDisplayContextTest {
 			null, _serviceContext.getUserId(),
 			_serviceContext.getScopeGroupId(), draftLayout.getClassPK(), 0,
 			false, RandomTestUtil.randomString(),
-			LayoutUtilityPageEntryConstants.TYPE_SC_INTERNAL_SERVER_ERROR, 0,
+			LayoutUtilityPageEntryConstants.TYPE_SC_INTERNAL_SERVER_ERROR, null,
 			_serviceContext);
 
 		return draftLayout;

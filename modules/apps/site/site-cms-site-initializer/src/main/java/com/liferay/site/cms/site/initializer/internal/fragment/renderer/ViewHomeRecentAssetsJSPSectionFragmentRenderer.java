@@ -56,7 +56,8 @@ public class ViewHomeRecentAssetsJSPSectionFragmentRenderer
 			_depotEntryLocalService, _dlConfiguration, groupLocalService,
 			httpServletRequest, language, _objectDefinitionService,
 			_objectDefinitionSettingLocalService,
-			_objectEntryFolderModelResourcePermission, _portal);
+			_objectEntryFolderModelResourcePermission, _portal,
+			translationInfoItemFieldValuesExporterRegistry);
 	}
 
 	@Override

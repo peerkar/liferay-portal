@@ -10,8 +10,24 @@ package com.liferay.portal.workflow.constants;
  */
 public class WorkflowDefinitionConstants {
 
+	public static final String EXTERNAL_REFERENCE_CODE_CHANGE_TONE =
+		"L_CHANGE_TONE";
+
+	public static final String EXTERNAL_REFERENCE_CODE_CHAT_MESSAGE_PIPELINE =
+		"L_CHAT_MESSAGE_PIPELINE";
+
+	public static final String
+		EXTERNAL_REFERENCE_CODE_FIX_SPELLING_AND_GRAMMAR =
+			"L_FIX_SPELLING_AND_GRAMMAR";
+
 	public static final String EXTERNAL_REFERENCE_CODE_IMPROVE_WRITING =
 		"L_IMPROVE_WRITING";
+
+	public static final String EXTERNAL_REFERENCE_CODE_MAKE_LONGER =
+		"L_MAKE_LONGER";
+
+	public static final String EXTERNAL_REFERENCE_CODE_MAKE_SHORTER =
+		"L_MAKE_SHORTER";
 
 	public static final String
 		EXTERNAL_REFERENCE_CODE_MESSAGE_BOARDS_USER_STATS_MODERATION =
@@ -20,7 +36,19 @@ public class WorkflowDefinitionConstants {
 	public static final String EXTERNAL_REFERENCE_CODE_SINGLE_APPROVER =
 		"L_SINGLE_APPROVER";
 
+	public static final String NAME_CHANGE_TONE = "Change Tone";
+
+	public static final String NAME_CHAT_MESSAGE_PIPELINE =
+		"Chat Message Pipeline";
+
+	public static final String NAME_FIX_SPELLING_AND_GRAMMAR =
+		"Fix Spelling and Grammar";
+
 	public static final String NAME_IMPROVE_WRITING = "Improve Writing";
+
+	public static final String NAME_MAKE_LONGER = "Make Longer";
+
+	public static final String NAME_MAKE_SHORTER = "Make Shorter";
 
 	public static final String NAME_MESSAGE_BOARDS_USER_STATS_MODERATION =
 		"Message Boards User Stats Moderation";

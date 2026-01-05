@@ -59,14 +59,15 @@ public class AddDisplayPageTypeSiteNavigationMenuItemMVCActionCommand
 
 		JSONObject jsonObject = _jsonFactory.createJSONObject();
 
-		long classNameId = ParamUtil.getLong(actionRequest, "classNameId");
-		long classPK = ParamUtil.getLong(actionRequest, "classPK");
+		String externalReferenceCode = ParamUtil.getString(
+			actionRequest, "externalReferenceCode");
 		long siteNavigationMenuId = ParamUtil.getLong(
 			actionRequest, "siteNavigationMenuId");
 		String siteNavigationMenuItemType = ParamUtil.getString(
 			actionRequest, "siteNavigationMenuItemType");
 
-		if ((classNameId > 0) && (classPK > 0) && (siteNavigationMenuId > 0) &&
+		if (Validator.isNotNull(externalReferenceCode) &&
+			(siteNavigationMenuId > 0) &&
 			Validator.isNotNull(siteNavigationMenuItemType)) {
 
 			ThemeDisplay themeDisplay =
@@ -89,17 +90,11 @@ public class AddDisplayPageTypeSiteNavigationMenuItemMVCActionCommand
 						).put(
 							"className", siteNavigationMenuItemType
 						).put(
-							"classNameId", String.valueOf(classNameId)
+							"externalReferenceCode", externalReferenceCode
 						).put(
-							"classPK", String.valueOf(classPK)
-						).put(
-							"classTypeId",
-							String.valueOf(
-								ParamUtil.getLong(actionRequest, "classTypeId"))
-						).put(
-							"externalReferenceCode",
+							"scopeExternalReferenceCode",
 							ParamUtil.getString(
-								actionRequest, "externalReferenceCode")
+								actionRequest, "scopeExternalReferenceCode")
 						).put(
 							"title", ParamUtil.getString(actionRequest, "title")
 						).put(
@@ -118,7 +113,7 @@ public class AddDisplayPageTypeSiteNavigationMenuItemMVCActionCommand
 				InfoItemDetailsProvider<?> infoItemDetailsProvider =
 					_infoItemServiceRegistry.getFirstInfoItemService(
 						InfoItemDetailsProvider.class,
-						_portal.getClassName(classNameId));
+						siteNavigationMenuItemType);
 
 				InfoItemClassDetails infoItemClassDetails =
 					infoItemDetailsProvider.getInfoItemClassDetails();
@@ -150,9 +145,9 @@ public class AddDisplayPageTypeSiteNavigationMenuItemMVCActionCommand
 			if (_log.isDebugEnabled()) {
 				_log.debug(
 					StringBundler.concat(
-						"Unable to add SiteNavigationMenuItem for classNameId ",
-						classNameId, ", classPK ", classPK,
-						" siteNavigationMenuId ", siteNavigationMenuId,
+						"Unable to add site navigation menu item for external ",
+						"reference code ", externalReferenceCode,
+						" site navigation menu ID ", siteNavigationMenuId,
 						" and type ", siteNavigationMenuItemType));
 			}
 

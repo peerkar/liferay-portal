@@ -6,7 +6,7 @@
 package com.liferay.headless.admin.site.internal.dto.v1_0.util;
 
 import com.liferay.headless.admin.site.dto.v1_0.FragmentViewport;
-import com.liferay.layout.responsive.ViewportSize;
+import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
@@ -16,6 +16,7 @@ import com.liferay.portal.kernel.util.Validator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Mikel Lorza
@@ -29,28 +30,37 @@ public class FragmentViewportUtil {
 			return null;
 		}
 
-		List<FragmentViewport> fragmentViewports = new ArrayList<>();
+		List<FragmentViewport> fragmentViewports = new ArrayList<>() {
+			{
+				FragmentViewport fragmentViewport = _toFragmentViewport(
+					FragmentViewport.Id.DESKTOP, jsonObject);
 
-		FragmentViewport mobileLandscapeFragmentViewport = _toFragmentViewport(
-			jsonObject, ViewportSize.MOBILE_LANDSCAPE);
+				if (fragmentViewport != null) {
+					add(fragmentViewport);
+				}
 
-		if (mobileLandscapeFragmentViewport != null) {
-			fragmentViewports.add(mobileLandscapeFragmentViewport);
-		}
+				fragmentViewport = _toFragmentViewport(
+					FragmentViewport.Id.LANDSCAPE_MOBILE, jsonObject);
 
-		FragmentViewport portraitMobileFragmentViewport = _toFragmentViewport(
-			jsonObject, ViewportSize.PORTRAIT_MOBILE);
+				if (fragmentViewport != null) {
+					add(fragmentViewport);
+				}
 
-		if (portraitMobileFragmentViewport != null) {
-			fragmentViewports.add(portraitMobileFragmentViewport);
-		}
+				fragmentViewport = _toFragmentViewport(
+					FragmentViewport.Id.PORTRAIT_MOBILE, jsonObject);
 
-		FragmentViewport tabletFragmentViewport = _toFragmentViewport(
-			jsonObject, ViewportSize.TABLET);
+				if (fragmentViewport != null) {
+					add(fragmentViewport);
+				}
 
-		if (tabletFragmentViewport != null) {
-			fragmentViewports.add(tabletFragmentViewport);
-		}
+				fragmentViewport = _toFragmentViewport(
+					FragmentViewport.Id.TABLET, jsonObject);
+
+				if (fragmentViewport != null) {
+					add(fragmentViewport);
+				}
+			}
+		};
 
 		if (ListUtil.isEmpty(fragmentViewports)) {
 			return null;
@@ -60,7 +70,8 @@ public class FragmentViewportUtil {
 	}
 
 	public static JSONObject toFragmentViewportsJSONObject(
-		FragmentViewport[] fragmentViewports) {
+			FragmentViewport[] fragmentViewports)
+		throws JSONException {
 
 		if (ArrayUtil.isEmpty(fragmentViewports)) {
 			return null;
@@ -71,22 +82,60 @@ public class FragmentViewportUtil {
 		for (FragmentViewport fragmentViewport : fragmentViewports) {
 			String customCSS = fragmentViewport.getCustomCSS();
 
-			if (Validator.isNull(customCSS)) {
+			if (Validator.isNull(fragmentViewport.getId()) ||
+				(Validator.isNull(customCSS) &&
+				 (fragmentViewport.getFragmentViewportStyle() == null))) {
+
 				continue;
 			}
 
-			jsonObject.put(
-				fragmentViewport.getId(), JSONUtil.put("customCSS", customCSS));
+			JSONObject viewportJSONObject = JSONUtil.put(
+				"customCSS", customCSS
+			).put(
+				"styles",
+				FragmentViewportStyleUtil.toJSONObject(
+					fragmentViewport.getFragmentViewportStyle())
+			);
+
+			if (Objects.equals(
+					fragmentViewport.getId(), FragmentViewport.Id.DESKTOP)) {
+
+				jsonObject = JSONUtil.merge(jsonObject, viewportJSONObject);
+			}
+			else {
+				jsonObject.put(
+					ViewportIdUtil.toInternalValue(
+						fragmentViewport.getId(
+						).getValue()),
+					viewportJSONObject);
+			}
 		}
 
 		return jsonObject;
 	}
 
-	private static FragmentViewport _toFragmentViewport(
-		JSONObject jsonObject, ViewportSize viewportSize) {
+	private static JSONObject _getViewportJSONObject(
+		FragmentViewport.Id fragmentViewportId, JSONObject jsonObject) {
 
-		JSONObject viewportJSONObject = jsonObject.getJSONObject(
-			viewportSize.getViewportSizeId());
+		if (Objects.equals(fragmentViewportId, FragmentViewport.Id.DESKTOP)) {
+			return jsonObject;
+		}
+
+		String viewportId = ViewportIdUtil.toInternalValue(
+			fragmentViewportId.getValue());
+
+		if (!jsonObject.has(viewportId)) {
+			return null;
+		}
+
+		return jsonObject.getJSONObject(viewportId);
+	}
+
+	private static FragmentViewport _toFragmentViewport(
+		FragmentViewport.Id fragmentViewportId, JSONObject jsonObject) {
+
+		JSONObject viewportJSONObject = _getViewportJSONObject(
+			fragmentViewportId, jsonObject);
 
 		if (JSONUtil.isEmpty(viewportJSONObject) ||
 			(Validator.isNull(
@@ -100,7 +149,10 @@ public class FragmentViewportUtil {
 			{
 				setCustomCSS(
 					() -> viewportJSONObject.getString("customCSS", null));
-				setId(viewportSize::getViewportSizeId);
+				setFragmentViewportStyle(
+					() -> FragmentViewportStyleUtil.toFragmentViewportStyle(
+						viewportJSONObject.getJSONObject("styles")));
+				setId(() -> fragmentViewportId);
 			}
 		};
 	}

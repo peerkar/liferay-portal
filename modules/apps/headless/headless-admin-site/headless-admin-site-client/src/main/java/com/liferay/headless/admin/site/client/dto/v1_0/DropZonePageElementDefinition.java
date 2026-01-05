@@ -26,26 +26,52 @@ public class DropZonePageElementDefinition
 		return DropZonePageElementDefinitionSerDes.toDTO(json);
 	}
 
-	public Object getFragmentSettings() {
-		return fragmentSettings;
+	public Boolean getAddNewFragmentEntries() {
+		return addNewFragmentEntries;
 	}
 
-	public void setFragmentSettings(Object fragmentSettings) {
-		this.fragmentSettings = fragmentSettings;
+	public void setAddNewFragmentEntries(Boolean addNewFragmentEntries) {
+		this.addNewFragmentEntries = addNewFragmentEntries;
 	}
 
-	public void setFragmentSettings(
-		UnsafeSupplier<Object, Exception> fragmentSettingsUnsafeSupplier) {
+	public void setAddNewFragmentEntries(
+		UnsafeSupplier<Boolean, Exception>
+			addNewFragmentEntriesUnsafeSupplier) {
 
 		try {
-			fragmentSettings = fragmentSettingsUnsafeSupplier.get();
+			addNewFragmentEntries = addNewFragmentEntriesUnsafeSupplier.get();
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	protected Object fragmentSettings;
+	protected Boolean addNewFragmentEntries;
+
+	public FragmentReference[] getAllowedFragmentReferences() {
+		return allowedFragmentReferences;
+	}
+
+	public void setAllowedFragmentReferences(
+		FragmentReference[] allowedFragmentReferences) {
+
+		this.allowedFragmentReferences = allowedFragmentReferences;
+	}
+
+	public void setAllowedFragmentReferences(
+		UnsafeSupplier<FragmentReference[], Exception>
+			allowedFragmentReferencesUnsafeSupplier) {
+
+		try {
+			allowedFragmentReferences =
+				allowedFragmentReferencesUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected FragmentReference[] allowedFragmentReferences;
 
 	@Override
 	public DropZonePageElementDefinition clone()

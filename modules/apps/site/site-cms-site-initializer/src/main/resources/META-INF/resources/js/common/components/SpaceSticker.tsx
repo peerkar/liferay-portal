@@ -23,14 +23,8 @@ export const logoColors: Record<LogoColor, string> = {
 	'outline-9': Liferay.Language.get('white'),
 };
 
-function getDisplayType(char: string): LogoColor {
-	const displayTypes = Object.keys(logoColors);
-
-	return displayTypes[char.charCodeAt(0) % displayTypes.length] as LogoColor;
-}
-
 export default function SpaceSticker({
-	displayType,
+	displayType = 'outline-0',
 	hideName,
 	href,
 	name,
@@ -45,15 +39,11 @@ export default function SpaceSticker({
 	'className' | 'displayType' | 'id' | 'size'
 >) {
 	const gap = size === 'lg' ? 'c-gap-3' : 'c-gap-2';
-	const wrapperClasses = cx('align-items-center d-flex', gap);
+	const wrapperClasses = cx('align-items-center d-flex text-nowrap', gap);
 
 	return (
 		<div className={wrapperClasses}>
-			<ClaySticker
-				displayType={displayType || getDisplayType(name)}
-				size={size}
-				{...otherProps}
-			>
+			<ClaySticker displayType={displayType} size={size} {...otherProps}>
 				{name.charAt(0).toUpperCase()}
 			</ClaySticker>
 

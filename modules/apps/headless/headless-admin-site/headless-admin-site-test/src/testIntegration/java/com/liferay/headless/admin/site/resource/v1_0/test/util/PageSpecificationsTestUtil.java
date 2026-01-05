@@ -13,8 +13,11 @@ import com.liferay.expando.kernel.service.ExpandoColumnLocalServiceUtil;
 import com.liferay.expando.kernel.service.ExpandoTableLocalServiceUtil;
 import com.liferay.headless.admin.site.client.custom.field.CustomField;
 import com.liferay.headless.admin.site.client.custom.field.CustomValue;
+import com.liferay.headless.admin.site.client.dto.v1_0.BasicWidgetPageWidgetInstance;
 import com.liferay.headless.admin.site.client.dto.v1_0.ContentPageSpecification;
 import com.liferay.headless.admin.site.client.dto.v1_0.GeneralConfig;
+import com.liferay.headless.admin.site.client.dto.v1_0.NestedApplicationsWidgetPageWidgetInstance;
+import com.liferay.headless.admin.site.client.dto.v1_0.NestedWidgetSection;
 import com.liferay.headless.admin.site.client.dto.v1_0.PageExperience;
 import com.liferay.headless.admin.site.client.dto.v1_0.PageSpecification;
 import com.liferay.headless.admin.site.client.dto.v1_0.Settings;
@@ -33,6 +36,7 @@ import com.liferay.layout.test.util.ContentLayoutTestUtil;
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.petra.function.UnsafeRunnable;
 import com.liferay.petra.function.transform.TransformUtil;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.role.RoleConstants;
 import com.liferay.portal.kernel.portlet.PortletIdCodec;
@@ -50,6 +54,7 @@ import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.site.navigation.constants.SiteNavigationMenuPortletKeys;
@@ -343,7 +348,8 @@ public class PageSpecificationsTestUtil {
 		String contentPageSpecificationExternalReferenceCode,
 		CustomField[] customFields,
 		String draftContentPageSpecificationExternalReferenceCode,
-		PageExperience[] pageExperiences, PageSpecification.Status status) {
+		PageExperience[] pageExperiences, long scopeGroupId,
+		PageSpecification.Status status) {
 
 		ContentPageSpecification contentPageSpecification =
 			new ContentPageSpecification() {
@@ -361,10 +367,11 @@ public class PageSpecificationsTestUtil {
 
 		if (pageExperiences == null) {
 			pageExperiences = PageExperiencesTestUtil.getPageExperiences(
-				contentPageSpecificationExternalReferenceCode);
+				contentPageSpecificationExternalReferenceCode, scopeGroupId);
 		}
 		else {
-			PageExperiencesTestUtil.modifyPageExperiences(pageExperiences);
+			PageExperiencesTestUtil.modifyPageExperiences(
+				pageExperiences, scopeGroupId);
 		}
 
 		contentPageSpecification.setPageExperiences(pageExperiences);
@@ -375,20 +382,22 @@ public class PageSpecificationsTestUtil {
 
 	public static ContentPageSpecification getContentPageSpecification(
 		String draftContentPageSpecificationExternalReferenceCode,
-		PageSpecification.Status status) {
+		long scopeGroupId, PageSpecification.Status status) {
 
 		return getContentPageSpecification(
 			RandomTestUtil.randomString(), null,
-			draftContentPageSpecificationExternalReferenceCode, null, status);
+			draftContentPageSpecificationExternalReferenceCode, null,
+			scopeGroupId, status);
 	}
 
 	public static PageSpecification[] getContentPageSpecifications(
-		String publishedPageSpecificationExternalReferenceCode) {
+		String publishedPageSpecificationExternalReferenceCode,
+		long scopeGroupId) {
 
 		return _getContentPageSpecifications(
 			getCustomFields(), RandomTestUtil.randomString(), null,
 			getCustomFields(), publishedPageSpecificationExternalReferenceCode,
-			null);
+			null, scopeGroupId);
 	}
 
 	public static CustomField[] getCustomFields() {
@@ -406,17 +415,17 @@ public class PageSpecificationsTestUtil {
 	}
 
 	public static PageSpecification[] getPageSpecifications(
-		String externalReferenceCode, SitePage.Type type) {
+		String externalReferenceCode, long scopeGroupId, SitePage.Type type) {
 
 		if (type == SitePage.Type.CONTENT_PAGE) {
 			ContentPageSpecification draftContentPageSpecification =
 				getContentPageSpecification(
-					null, PageSpecification.Status.DRAFT);
+					null, scopeGroupId, PageSpecification.Status.DRAFT);
 
 			ContentPageSpecification publishedContentPageSpecification =
 				getContentPageSpecification(
 					draftContentPageSpecification.getExternalReferenceCode(),
-					PageSpecification.Status.APPROVED);
+					scopeGroupId, PageSpecification.Status.APPROVED);
 
 			publishedContentPageSpecification.setExternalReferenceCode(
 				externalReferenceCode);
@@ -444,7 +453,7 @@ public class PageSpecificationsTestUtil {
 	}
 
 	public static PageSpecification[] getPatchPageSpecifications(
-		PageSpecification[] pageSpecifications) {
+		PageSpecification[] pageSpecifications, long scopeGroupId) {
 
 		if (pageSpecifications.length == 2) {
 			ContentPageSpecification draftContentPageSpecification = null;
@@ -473,7 +482,8 @@ public class PageSpecificationsTestUtil {
 				draftContentPageSpecification.getPageExperiences(),
 				getCustomFields(),
 				publishedContentPageSpecification.getExternalReferenceCode(),
-				publishedContentPageSpecification.getPageExperiences());
+				publishedContentPageSpecification.getPageExperiences(),
+				scopeGroupId);
 		}
 
 		WidgetPageSpecification widgetPageSpecification =
@@ -496,9 +506,20 @@ public class PageSpecificationsTestUtil {
 		if (Objects.equals(layoutTemplateId, "1_column")) {
 			columns.add("column-1");
 		}
+		else if (Objects.equals(layoutTemplateId, "1_2_1_columns_i")) {
+			columns.add("column-1");
+			columns.add("column-2");
+			columns.add("column-3");
+			columns.add("column-4");
+		}
 		else if (Objects.equals(layoutTemplateId, "2_columns_ii")) {
 			columns.add("column-1");
 			columns.add("column-2");
+		}
+		else if (Objects.equals(layoutTemplateId, "3_columns")) {
+			columns.add("column-1");
+			columns.add("column-2");
+			columns.add("column-3");
 		}
 
 		return TransformUtil.transformToArray(
@@ -508,7 +529,8 @@ public class PageSpecificationsTestUtil {
 					setCustomizable(() -> Boolean.FALSE);
 					setId(() -> column);
 					setWidgetPageWidgetInstances(
-						() -> _getWidgetPageWidgetInstances(column));
+						() -> _getWidgetPageWidgetInstances(
+							column, 3, layoutTemplateId));
 				}
 			},
 			WidgetPageSection.class);
@@ -768,19 +790,53 @@ public class PageSpecificationsTestUtil {
 		};
 	}
 
+	private static BasicWidgetPageWidgetInstance
+		_getBasicWidgetPageWidgetInstance(String column, int position) {
+
+		BasicWidgetPageWidgetInstance basicWidgetPageWidgetInstance =
+			new BasicWidgetPageWidgetInstance();
+
+		String widgetName = AssetPublisherPortletKeys.ASSET_PUBLISHER;
+
+		if ((position % 2) == 0) {
+			widgetName = SiteNavigationMenuPortletKeys.SITE_NAVIGATION_MENU;
+		}
+
+		String widgetInstanceId = RandomTestUtil.randomString();
+
+		basicWidgetPageWidgetInstance.setExternalReferenceCode(
+			PortletIdCodec.encode(widgetName, widgetInstanceId));
+
+		basicWidgetPageWidgetInstance.setParentSectionId(column);
+		basicWidgetPageWidgetInstance.setPosition(position);
+		basicWidgetPageWidgetInstance.setType(
+			WidgetPageWidgetInstance.Type.BASIC_WIDGET_PAGE_WIDGET_INSTANCE);
+		basicWidgetPageWidgetInstance.setWidgetConfig(
+			() -> _getWidgetConfig(null));
+		basicWidgetPageWidgetInstance.setWidgetInstanceId(widgetInstanceId);
+		basicWidgetPageWidgetInstance.setWidgetLookAndFeelConfig(
+			() -> _getWidgetLookAndFeelConfig());
+		basicWidgetPageWidgetInstance.setWidgetName(widgetName);
+		basicWidgetPageWidgetInstance.setWidgetPermissions(
+			() -> _getWidgetPermissions());
+
+		return basicWidgetPageWidgetInstance;
+	}
+
 	private static ContentPageSpecification[] _getContentPageSpecifications(
 		CustomField[] draftPageSpecificationCustomFields,
 		String draftPageSpecificationExternalReferenceCode,
 		PageExperience[] draftPageSpecificationPageExperiences,
 		CustomField[] publishedPageSpecificationCustomFields,
 		String publishedPageSpecificationExternalReferenceCode,
-		PageExperience[] publishedPageSpecificationPageExperiences) {
+		PageExperience[] publishedPageSpecificationPageExperiences,
+		long scopeGroupId) {
 
 		ContentPageSpecification draftContentPageSpecification =
 			getContentPageSpecification(
 				draftPageSpecificationExternalReferenceCode,
 				draftPageSpecificationCustomFields, null,
-				draftPageSpecificationPageExperiences,
+				draftPageSpecificationPageExperiences, scopeGroupId,
 				PageSpecification.Status.DRAFT);
 
 		ContentPageSpecification publishedContentPageSpecification =
@@ -788,7 +844,7 @@ public class PageSpecificationsTestUtil {
 				publishedPageSpecificationExternalReferenceCode,
 				publishedPageSpecificationCustomFields,
 				draftContentPageSpecification.getExternalReferenceCode(),
-				publishedPageSpecificationPageExperiences,
+				publishedPageSpecificationPageExperiences, scopeGroupId,
 				PageSpecification.Status.APPROVED);
 
 		return new ContentPageSpecification[] {
@@ -858,6 +914,90 @@ public class PageSpecificationsTestUtil {
 		return expectedCustomFields;
 	}
 
+	private static WidgetPageWidgetInstance
+		_getNestedApplicationsWidgetPageWidgetInstance(
+			String column, String layoutTemplateId, int position) {
+
+		NestedApplicationsWidgetPageWidgetInstance
+			nestedApplicationsWidgetPageWidgetInstance =
+				new NestedApplicationsWidgetPageWidgetInstance();
+
+		String widgetInstanceId = RandomTestUtil.randomString();
+
+		String externalReferenceCode = PortletIdCodec.encode(
+			PortletKeys.NESTED_PORTLETS, widgetInstanceId);
+
+		nestedApplicationsWidgetPageWidgetInstance.setExternalReferenceCode(
+			externalReferenceCode);
+
+		String nextLayoutTemplateId = null;
+
+		if (layoutTemplateId.equals("1_2_1_columns_i")) {
+			nextLayoutTemplateId = "3_columns";
+		}
+		else if (layoutTemplateId.equals("3_columns")) {
+			nextLayoutTemplateId = "2_columns_i";
+		}
+
+		nestedApplicationsWidgetPageWidgetInstance.setNestedWidgetSections(
+			_getNestedWidgetSections(
+				externalReferenceCode, nextLayoutTemplateId));
+
+		nestedApplicationsWidgetPageWidgetInstance.setParentSectionId(column);
+		nestedApplicationsWidgetPageWidgetInstance.setPosition(position);
+		nestedApplicationsWidgetPageWidgetInstance.setType(
+			WidgetPageWidgetInstance.Type.
+				NESTED_APPLICATIONS_WIDGET_PAGE_WIDGET_INSTANCE);
+		nestedApplicationsWidgetPageWidgetInstance.setWidgetConfig(
+			_getWidgetConfig(nextLayoutTemplateId));
+		nestedApplicationsWidgetPageWidgetInstance.setWidgetInstanceId(
+			widgetInstanceId);
+		nestedApplicationsWidgetPageWidgetInstance.setWidgetLookAndFeelConfig(
+			() -> _getWidgetLookAndFeelConfig());
+		nestedApplicationsWidgetPageWidgetInstance.setWidgetName(
+			PortletKeys.NESTED_PORTLETS);
+		nestedApplicationsWidgetPageWidgetInstance.setWidgetPermissions(
+			() -> _getWidgetPermissions());
+
+		return nestedApplicationsWidgetPageWidgetInstance;
+	}
+
+	private static NestedWidgetSection[] _getNestedWidgetSections(
+		String externalReferenceCode, String layoutTemplateId) {
+
+		if (layoutTemplateId == null) {
+			return new NestedWidgetSection[0];
+		}
+
+		List<String> columns = new ArrayList<>();
+
+		String columnPrefix =
+			StringPool.UNDERLINE + externalReferenceCode +
+				StringPool.DOUBLE_UNDERLINE;
+
+		if (Objects.equals(layoutTemplateId, "2_columns_i")) {
+			columns.add(columnPrefix + "column-1");
+			columns.add(columnPrefix + "column-2");
+		}
+		else if (Objects.equals(layoutTemplateId, "3_columns")) {
+			columns.add(columnPrefix + "column-1");
+			columns.add(columnPrefix + "column-2");
+			columns.add(columnPrefix + "column-3");
+		}
+
+		return TransformUtil.transformToArray(
+			columns,
+			column -> new NestedWidgetSection() {
+				{
+					setId(() -> column);
+					setWidgetPageWidgetInstances(
+						() -> _getWidgetPageWidgetInstances(
+							column, 3, layoutTemplateId));
+				}
+			},
+			NestedWidgetSection.class);
+	}
+
 	private static GeneralConfig.ApplicationDecorator
 		_getRandomApplicationDecorator() {
 
@@ -878,8 +1018,14 @@ public class PageSpecificationsTestUtil {
 		return GeneralConfig.ApplicationDecorator.DECORATE;
 	}
 
-	private static Map<String, Object> _getWidgetConfig() {
+	private static Map<String, Object> _getWidgetConfig(
+		String layoutTemplateId) {
+
 		Map<String, Object> map = new TreeMap<>();
+
+		if (layoutTemplateId != null) {
+			map.put("layoutTemplateId", layoutTemplateId);
+		}
 
 		for (int i = 0; i < RandomTestUtil.randomInt(0, 3); i++) {
 			map.put(
@@ -923,35 +1069,28 @@ public class PageSpecificationsTestUtil {
 	}
 
 	private static WidgetPageWidgetInstance[] _getWidgetPageWidgetInstances(
-		String column) {
+		String column, int count, String layoutTemplateId) {
 
 		List<WidgetPageWidgetInstance> widgetPageWidgetInstances =
 			new ArrayList<>();
 
-		for (int i = 0; i < RandomTestUtil.randomInt(0, 3); i++) {
-			WidgetPageWidgetInstance widgetPageWidgetInstance =
-				new WidgetPageWidgetInstance();
+		for (int i = 0; i < count; i++) {
+			WidgetPageWidgetInstance widgetPageWidgetInstance = null;
 
-			String widgetName = AssetPublisherPortletKeys.ASSET_PUBLISHER;
+			if ((layoutTemplateId.equals("1_2_1_columns_i") &&
+				 (column.contains("column-1") || column.contains("column-3")) &&
+				 (i == 2)) ||
+				(layoutTemplateId.equals("3_columns") &&
+				 column.contains("column-3") && (i == 2))) {
 
-			if (RandomTestUtil.randomBoolean()) {
-				widgetName = SiteNavigationMenuPortletKeys.SITE_NAVIGATION_MENU;
+				widgetPageWidgetInstance =
+					_getNestedApplicationsWidgetPageWidgetInstance(
+						column, layoutTemplateId, i);
 			}
-
-			String widgetInstanceId = RandomTestUtil.randomString();
-
-			widgetPageWidgetInstance.setExternalReferenceCode(
-				PortletIdCodec.encode(widgetName, widgetInstanceId));
-
-			widgetPageWidgetInstance.setParentSectionId(column);
-			widgetPageWidgetInstance.setPosition(i);
-			widgetPageWidgetInstance.setWidgetConfig(() -> _getWidgetConfig());
-			widgetPageWidgetInstance.setWidgetInstanceId(widgetInstanceId);
-			widgetPageWidgetInstance.setWidgetLookAndFeelConfig(
-				() -> _getWidgetLookAndFeelConfig());
-			widgetPageWidgetInstance.setWidgetName(widgetName);
-			widgetPageWidgetInstance.setWidgetPermissions(
-				() -> _getWidgetPermissions());
+			else {
+				widgetPageWidgetInstance = _getBasicWidgetPageWidgetInstance(
+					column, i);
+			}
 
 			widgetPageWidgetInstances.add(widgetPageWidgetInstance);
 		}

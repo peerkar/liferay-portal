@@ -6,10 +6,12 @@
 package com.liferay.osb.faro.web.internal.controller.contacts;
 
 import com.liferay.osb.faro.engine.client.constants.FieldMappingConstants;
+import com.liferay.osb.faro.engine.client.model.DataSource;
 import com.liferay.osb.faro.engine.client.model.Field;
 import com.liferay.osb.faro.engine.client.model.FieldMapping;
 import com.liferay.osb.faro.engine.client.model.FieldMappingMap;
 import com.liferay.osb.faro.engine.client.model.Results;
+import com.liferay.osb.faro.engine.client.model.provider.LiferayProvider;
 import com.liferay.osb.faro.engine.client.util.OrderByField;
 import com.liferay.osb.faro.model.FaroProject;
 import com.liferay.osb.faro.web.internal.controller.BaseFaroController;
@@ -38,6 +40,7 @@ import jakarta.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -67,7 +70,7 @@ public class FieldMappingController extends BaseFaroController {
 			FieldMappingUtil.getNewFieldMappingMaps(
 				contactsEngineClient, faroProject,
 				FieldMappingConstants.CONTEXT_ORGANIZATION,
-				FieldMappingConstants.getSalesforceAccountFieldMappingMaps()));
+				FieldMappingConstants.getAccountFieldMappingMaps()));
 
 		List<FieldMappingMap> fieldMappingMaps = new ArrayList<>();
 
@@ -122,6 +125,7 @@ public class FieldMappingController extends BaseFaroController {
 	@SuppressWarnings("unchecked")
 	public FaroResultsDisplay search(
 			@PathParam("groupId") long groupId,
+			@QueryParam("channelId") long channelId,
 			@QueryParam("context") String context,
 			@QueryParam("displayName") String displayName,
 			@QueryParam("ownerType") String ownerType,
@@ -135,6 +139,43 @@ public class FieldMappingController extends BaseFaroController {
 		if (Validator.isNotNull(orderByType)) {
 			orderByFields = Collections.singletonList(
 				new OrderByField("displayName", orderByType, true));
+		}
+
+		if (Objects.equals(context, FieldMappingConstants.CONTEXT_ACCOUNT)) {
+			List<DataSource> dataSources = contactsEngineClient.getDataSources(
+				faroProjectLocalService.getFaroProjectByGroupId(groupId),
+				channelId, LiferayProvider.TYPE);
+
+			if (dataSources.isEmpty()) {
+				return new FaroResultsDisplay();
+			}
+
+			List<FieldMapping> fieldMappings = new ArrayList<>();
+
+			for (FieldMappingMap fieldMappingMap :
+					FieldMappingConstants.getAccountFieldMappingMaps()) {
+
+				FieldMapping fieldMapping = new FieldMapping();
+
+				fieldMapping.setContext(context);
+				fieldMapping.setDisplayName(
+					FieldMappingConstants.getAccountFieldMappingLanguageKey(
+						fieldMappingMap.getName()));
+				fieldMapping.setDisplayType("input-field");
+				fieldMapping.setFieldName(fieldMappingMap.getName());
+				fieldMapping.setFieldType(fieldMappingMap.getType());
+				fieldMapping.setOwnerType(ownerType);
+
+				fieldMappings.add(fieldMapping);
+			}
+
+			Results<FieldMapping> results = new Results<>(
+				fieldMappings, fieldMappings.size());
+
+			Function<FieldMapping, FieldMappingDisplay> function =
+				FieldMappingDisplay::new;
+
+			return new FaroResultsDisplay(results, function);
 		}
 
 		Results<FieldMapping> results = contactsEngineClient.getFieldMappings(
@@ -161,7 +202,7 @@ public class FieldMappingController extends BaseFaroController {
 		throws Exception {
 
 		return search(
-			groupId, context, displayName, ownerType, query, cur, delta,
+			groupId, 0L, context, displayName, ownerType, query, cur, delta,
 			orderByType);
 	}
 

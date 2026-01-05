@@ -6,6 +6,7 @@
 package com.liferay.document.library.web.internal.portlet.action;
 
 import com.liferay.document.library.constants.DLPortletKeys;
+import com.liferay.document.library.kernel.exception.DuplicateDLFolderExternalReferenceCodeException;
 import com.liferay.document.library.kernel.exception.DuplicateFileEntryException;
 import com.liferay.document.library.kernel.exception.DuplicateFolderNameException;
 import com.liferay.document.library.kernel.exception.FolderNameException;
@@ -110,7 +111,8 @@ public class EditFolderMVCActionCommand extends BaseMVCActionCommand {
 			actionResponse.setRenderParameter(
 				"mvcPath", "/document_library/error.jsp");
 		}
-		catch (DuplicateFileEntryException | DuplicateFolderNameException |
+		catch (DuplicateDLFolderExternalReferenceCodeException |
+			   DuplicateFileEntryException | DuplicateFolderNameException |
 			   FolderNameException | RequiredFileEntryTypeException exception) {
 
 			SessionErrors.add(actionRequest, exception.getClass());
@@ -218,14 +220,16 @@ public class EditFolderMVCActionCommand extends BaseMVCActionCommand {
 
 			// Add folder
 
+			String externalReferenceCode = ParamUtil.getString(
+				actionRequest, "externalReferenceCode");
 			long repositoryId = ParamUtil.getLong(
 				actionRequest, "repositoryId");
 			long parentFolderId = ParamUtil.getLong(
 				actionRequest, "parentFolderId");
 
 			_dlAppService.addFolder(
-				null, repositoryId, parentFolderId, name, description,
-				serviceContext);
+				externalReferenceCode, repositoryId, parentFolderId, name,
+				description, serviceContext);
 		}
 		else {
 

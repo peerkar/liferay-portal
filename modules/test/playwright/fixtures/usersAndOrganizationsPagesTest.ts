@@ -23,6 +23,7 @@ import {UserAssociatedDataSiteStagingPage} from '../pages/user-associated-data-w
 import {AssignUsersPage} from '../pages/users-admin-web/AssignUsersPage';
 import {EditOrganizationPage} from '../pages/users-admin-web/EditOrganizationPage';
 import {EditUserPage} from '../pages/users-admin-web/EditUserPage';
+import {OnDemandAdminPage} from '../pages/users-admin-web/OnDemandAdminPage';
 import {OrganizationUsersPage} from '../pages/users-admin-web/OrganizationUsersPage';
 import {SMTPMockServerPage} from '../pages/users-admin-web/SMTPMockServerPage';
 import {ServiceAccountsPage} from '../pages/users-admin-web/ServiceAccountsPage';
@@ -31,6 +32,7 @@ import {UserPersonalSitePage} from '../pages/users-admin-web/UserPersonalSitePag
 import {UsersAndOrganizationsPage} from '../pages/users-admin-web/UsersAndOrganizationsPage';
 import {DocumentLibraryPage} from '../pages/users-admin-web/document-library-web/DocumentLibraryPage';
 import {SiteMembershipsPage} from '../pages/users-admin-web/site-admin-web/SiteMembershipsPage';
+import {SitesAdminPage} from '../pages/users-admin-web/site-admin-web/SitesAdminPage';
 import {TagsEditPage} from '../tests/asset-tags-admin-web/main/pages/TagsEditPage';
 import {NotificationsPage} from '../tests/notifications-web/main/pages/NotificationsPage';
 
@@ -40,12 +42,14 @@ const usersAndOrganizationsPagesTest = test.extend<{
 	editUserPage: EditUserPage;
 	exportUserDataPage: ExportUserDataPage;
 	notificationsPage: NotificationsPage;
+	onDemandAdminPage: OnDemandAdminPage;
 	organizationUsersPage: OrganizationUsersPage;
 	personalDataErasurePage: PersonalDataErasurePage;
 	serviceAccountsPage: ServiceAccountsPage;
 	siteConfigurationDetailsPage: SiteConfigurationDetailsPage;
 	siteMembershipsPage: SiteMembershipsPage;
 	siteSettingsPage: SiteSettingsPage;
+	sitesAdminPage: SitesAdminPage;
 	smtpMockServerPage: SMTPMockServerPage;
 	tagsEditPage: TagsEditPage;
 	teamsPage: TeamsPage;
@@ -79,6 +83,9 @@ const usersAndOrganizationsPagesTest = test.extend<{
 	notificationsPage: async ({page}, use) => {
 		await use(new NotificationsPage(page));
 	},
+	onDemandAdminPage: async ({page}, use) => {
+		await use(new OnDemandAdminPage(page));
+	},
 	organizationUsersPage: async ({page}, use) => {
 		await use(new OrganizationUsersPage(page));
 	},
@@ -96,6 +103,9 @@ const usersAndOrganizationsPagesTest = test.extend<{
 	},
 	siteSettingsPage: async ({page}, use) => {
 		await use(new SiteSettingsPage(page));
+	},
+	sitesAdminPage: async ({page}, use) => {
+		await use(new SitesAdminPage(page));
 	},
 	smtpMockServerPage: async ({page}, use) => {
 		await use(new SMTPMockServerPage(page));

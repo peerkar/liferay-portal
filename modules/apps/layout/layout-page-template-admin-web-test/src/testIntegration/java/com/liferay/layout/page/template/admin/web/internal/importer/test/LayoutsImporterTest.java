@@ -47,6 +47,7 @@ import com.liferay.layout.page.template.service.LayoutPageTemplateCollectionLoca
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureRelLocalService;
+import com.liferay.layout.page.template.service.LayoutPageTemplateStructureService;
 import com.liferay.layout.page.template.test.util.DisplayPageTemplateTestUtil;
 import com.liferay.layout.page.template.test.util.LayoutPageTemplateTestUtil;
 import com.liferay.layout.provider.LayoutStructureProvider;
@@ -54,6 +55,7 @@ import com.liferay.layout.test.util.ContentLayoutTestUtil;
 import com.liferay.layout.test.util.LayoutTestUtil;
 import com.liferay.layout.util.structure.ColumnLayoutStructureItem;
 import com.liferay.layout.util.structure.ContainerStyledLayoutStructureItem;
+import com.liferay.layout.util.structure.FormStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.FragmentStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
@@ -106,6 +108,7 @@ import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.SetUtil;
@@ -276,10 +279,10 @@ public class LayoutsImporterTest {
 		Layout draftLayout = layout.fetchDraftLayout();
 
 		ContentLayoutTestUtil.publishLayout(
-			_layoutLocalService.updateMasterLayoutPlid(
+			_layoutLocalService.updateMasterLayoutPageTemplateEntryERC(
 				draftLayout.getGroupId(), draftLayout.isPrivateLayout(),
 				draftLayout.getLayoutId(),
-				masterLayoutPageTemplateEntry.getPlid()),
+				masterLayoutPageTemplateEntry.getExternalReferenceCode()),
 			layout);
 
 		File file = _layoutsExporter.exportLayoutPageTemplateEntries(
@@ -484,23 +487,17 @@ public class LayoutsImporterTest {
 		FragmentEntryLink fragmentEntryLink = _addInputFragmentEntryLink(
 			layoutPageTemplateEntry);
 
-		FragmentEntry fragmentEntry = _addFragmentEntry(
-			_fragmentEntryLocalService.getFragmentEntryByExternalReferenceCode(
-				fragmentEntryLink.getFragmentEntryERC(),
-				fragmentEntryLink.getFragmentEntryGroupId()),
-			_serviceContext2);
-
 		File file = _layoutsExporter.exportLayoutPageTemplateEntries(
 			new long[] {layoutPageTemplateEntry.getLayoutPageTemplateEntryId()},
 			LayoutPageTemplateEntryTypeConstants.BASIC);
 
 		List<LayoutsImporterResultEntry> layoutsImporterResultEntries =
 			_layoutsImporter.importFile(
-				TestPropsValues.getUserId(), _group2.getGroupId(), 0, file,
-				LayoutsImportStrategy.DO_NOT_OVERWRITE, true);
+				TestPropsValues.getUserId(), _group1.getGroupId(), 0, file,
+				LayoutsImportStrategy.OVERWRITE, true);
 
 		_assertLayoutPageTemplateEntry(
-			fragmentEntry, fragmentEntryLink,
+			fragmentEntryLink,
 			_getLayoutPageTemplateEntryKey(layoutsImporterResultEntries));
 	}
 
@@ -1434,7 +1431,41 @@ public class LayoutsImporterTest {
 				_jsonFactory.createJSONObject(
 					fragmentEntryLink.getEditableValues())));
 
-		return fragmentEntryLink;
+		LayoutPageTemplateStructure layoutPageTemplateStructure =
+			_layoutPageTemplateStructureLocalService.
+				fetchLayoutPageTemplateStructure(
+					layoutPageTemplateEntry.getGroupId(),
+					layoutPageTemplateEntry.getPlid());
+
+		LayoutStructure layoutStructure = LayoutStructure.of(
+			layoutPageTemplateStructure.getData(
+				fragmentEntryLink.getSegmentsExperienceId()));
+
+		List<FormStyledLayoutStructureItem> formStyledLayoutStructureItems =
+			layoutStructure.getFormStyledLayoutStructureItems();
+
+		FormStyledLayoutStructureItem formStyledLayoutStructureItem =
+			formStyledLayoutStructureItems.get(0);
+
+		_successMessageJSONObject = _getSuccessMessageJSONObject();
+
+		layoutStructure.updateItemConfig(
+			_successMessageJSONObject,
+			formStyledLayoutStructureItem.getItemId());
+
+		_layoutPageTemplateStructureService.
+			updateLayoutPageTemplateStructureData(
+				layoutPageTemplateEntry.getGroupId(),
+				layoutPageTemplateEntry.getPlid(),
+				fragmentEntryLink.getSegmentsExperienceId(),
+				layoutStructure.toString());
+
+		fragmentEntryLinks =
+			_fragmentEntryLinkLocalService.getFragmentEntryLinksByPlid(
+				layoutPageTemplateEntry.getGroupId(),
+				layoutPageTemplateEntry.getPlid());
+
+		return fragmentEntryLinks.get(0);
 	}
 
 	private LayoutPageTemplateEntry _addLayoutPageTemplateEntry()
@@ -1557,7 +1588,8 @@ public class LayoutsImporterTest {
 				ObjectFieldUtil.createObjectField(
 					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
 					ObjectFieldConstants.DB_TYPE_STRING, "myTextField",
-					"myTextField", false)));
+					"myTextField", false)),
+			false);
 	}
 
 	private StyleBookEntry _addStyleBookEntry(
@@ -1567,7 +1599,7 @@ public class LayoutsImporterTest {
 		return _styleBookEntryLocalService.addStyleBookEntry(
 			null, TestPropsValues.getUserId(), serviceContext.getScopeGroupId(),
 			false, StringPool.BLANK, RandomTestUtil.randomString(),
-			styleBookEntryKey, StringPool.BLANK, serviceContext);
+			styleBookEntryKey, RandomTestUtil.randomString(), serviceContext);
 	}
 
 	private void _assertExportedFileItemSelector(
@@ -1643,13 +1675,13 @@ public class LayoutsImporterTest {
 	}
 
 	private void _assertLayoutPageTemplateEntry(
-			FragmentEntry fragmentEntry, FragmentEntryLink fragmentEntryLink,
+			FragmentEntryLink fragmentEntryLink,
 			String layoutPageTemplateEntryKey)
 		throws Exception {
 
 		LayoutPageTemplateEntry layoutPageTemplateEntry =
 			_layoutPageTemplateEntryLocalService.fetchLayoutPageTemplateEntry(
-				_group2.getGroupId(), layoutPageTemplateEntryKey);
+				_group1.getGroupId(), layoutPageTemplateEntryKey);
 
 		List<FragmentEntryLink> fragmentEntryLinks =
 			_fragmentEntryLinkLocalService.getFragmentEntryLinksByPlid(
@@ -1661,13 +1693,6 @@ public class LayoutsImporterTest {
 
 		FragmentEntryLink curFragmentEntryLink = fragmentEntryLinks.get(0);
 
-		Assert.assertEquals(
-			fragmentEntry.getExternalReferenceCode(),
-			curFragmentEntryLink.getFragmentEntryERC());
-		Assert.assertEquals(
-			fragmentEntry.getGroupId(),
-			curFragmentEntryLink.getFragmentEntryGroupId());
-
 		Assert.assertTrue(
 			curFragmentEntryLink.getEditableValues(),
 			JSONUtil.equals(
@@ -1675,6 +1700,33 @@ public class LayoutsImporterTest {
 					fragmentEntryLink.getEditableValues()),
 				_jsonFactory.createJSONObject(
 					curFragmentEntryLink.getEditableValues())));
+
+		LayoutPageTemplateStructure layoutPageTemplateStructure =
+			_layoutPageTemplateStructureLocalService.
+				fetchLayoutPageTemplateStructure(
+					layoutPageTemplateEntry.getGroupId(),
+					layoutPageTemplateEntry.getPlid());
+
+		LayoutStructure layoutStructure = LayoutStructure.of(
+			layoutPageTemplateStructure.getData(
+				curFragmentEntryLink.getSegmentsExperienceId()));
+
+		List<FormStyledLayoutStructureItem> formStyledLayoutStructureItems =
+			layoutStructure.getFormStyledLayoutStructureItems();
+
+		FormStyledLayoutStructureItem formStyledLayoutStructureItem =
+			formStyledLayoutStructureItems.get(0);
+
+		JSONObject expectedSuccessMessageJSONObject =
+			_successMessageJSONObject.getJSONObject("successMessage");
+
+		JSONObject actualSuccessMessageJSONObject =
+			formStyledLayoutStructureItem.getSuccessMessageJSONObject();
+
+		Assert.assertTrue(
+			JSONUtil.equals(
+				expectedSuccessMessageJSONObject,
+				actualSuccessMessageJSONObject));
 	}
 
 	private void _assertLayoutPageTemplateEntry(
@@ -2006,6 +2058,30 @@ public class LayoutsImporterTest {
 		}
 
 		return null;
+	}
+
+	private JSONObject _getSuccessMessageJSONObject() throws Exception {
+		JSONObject notificationTextJSONObject = JSONUtil.put(
+			String.valueOf(LocaleUtil.US), RandomTestUtil.randomString());
+
+		JSONObject successMessageJSONObject = JSONUtil.put(
+			"notificationText", notificationTextJSONObject);
+
+		LayoutPageTemplateEntry layoutPageTemplateEntry =
+			_addLayoutPageTemplateEntry();
+
+		successMessageJSONObject.put(
+			"displayPage",
+			LayoutPageTemplateEntry.class.getSimpleName() +
+				StringPool.UNDERLINE +
+					layoutPageTemplateEntry.getLayoutPageTemplateEntryId()
+		).put(
+			"showNotification", true
+		).put(
+			"type", "displayPage"
+		);
+
+		return JSONUtil.put("successMessage", successMessageJSONObject);
 	}
 
 	private String _read(String fileName) throws Exception {
@@ -2370,6 +2446,10 @@ public class LayoutsImporterTest {
 		_layoutPageTemplateStructureRelLocalService;
 
 	@Inject
+	private LayoutPageTemplateStructureService
+		_layoutPageTemplateStructureService;
+
+	@Inject
 	private LayoutsExporter _layoutsExporter;
 
 	@Inject
@@ -2392,6 +2472,8 @@ public class LayoutsImporterTest {
 
 	@Inject
 	private StyleBookEntryLocalService _styleBookEntryLocalService;
+
+	private JSONObject _successMessageJSONObject;
 
 	@Inject
 	private ZipReaderFactory _zipReaderFactory;

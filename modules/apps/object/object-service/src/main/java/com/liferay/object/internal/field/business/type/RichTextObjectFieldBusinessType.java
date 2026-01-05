@@ -7,6 +7,7 @@ package com.liferay.object.internal.field.business.type;
 
 import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
 import com.liferay.object.constants.ObjectFieldConstants;
+import com.liferay.object.constants.ObjectFieldSettingConstants;
 import com.liferay.object.exception.ObjectEntryValuesException;
 import com.liferay.object.field.business.type.ObjectFieldBusinessType;
 import com.liferay.object.model.ObjectDefinition;
@@ -20,11 +21,13 @@ import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.HtmlParser;
 import com.liferay.portal.kernel.util.HtmlUtil;
+import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.extension.PropertyDefinition;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -37,7 +40,14 @@ import org.osgi.service.component.annotations.Reference;
 	service = ObjectFieldBusinessType.class
 )
 public class RichTextObjectFieldBusinessType
-	implements ObjectFieldBusinessType {
+	extends BaseObjectFieldBusinessType {
+
+	@Override
+	public Set<String> getAllowedObjectFieldSettingsNames() {
+		return SetUtil.fromArray(
+			ObjectFieldSettingConstants.NAME_DEFAULT_VALUE,
+			ObjectFieldSettingConstants.NAME_DEFAULT_VALUE_TYPE);
+	}
 
 	@Override
 	public String getDBType() {
@@ -60,6 +70,26 @@ public class RichTextObjectFieldBusinessType
 	}
 
 	@Override
+	public Map<String, Object> getLocalizedValues(
+			ObjectField objectField, Long userId, Map<String, Object> values)
+		throws PortalException {
+
+		Map<String, Object> localizedValues = super.getLocalizedValues(
+			objectField, userId, values);
+
+		if (localizedValues == null) {
+			return null;
+		}
+
+		for (Map.Entry<String, Object> entry : localizedValues.entrySet()) {
+			localizedValues.put(
+				entry.getKey(), _getValue(objectField, entry.getValue()));
+		}
+
+		return localizedValues;
+	}
+
+	@Override
 	public String getName() {
 		return ObjectFieldConstants.BUSINESS_TYPE_RICH_TEXT;
 	}
@@ -75,14 +105,23 @@ public class RichTextObjectFieldBusinessType
 			Map<String, Object> values)
 		throws PortalException {
 
-		Object value = ObjectFieldBusinessType.super.getValue(
-			groupId, objectField, userId, values);
+		Object value = super.getValue(groupId, objectField, userId, values);
+
+		return _getValue(objectField, value);
+	}
+
+	private Object _getValue(ObjectField objectField, Object value)
+		throws PortalException {
 
 		if (Validator.isNull(value)) {
 			return value;
 		}
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-31212")) {
+		if (!FeatureFlagManagerUtil.isEnabled(
+				objectField.getCompanyId(), "LPD-11235") &&
+			!FeatureFlagManagerUtil.isEnabled(
+				objectField.getCompanyId(), "LPD-31212")) {
+
 			ObjectDefinition objectDefinition =
 				objectField.getObjectDefinition();
 

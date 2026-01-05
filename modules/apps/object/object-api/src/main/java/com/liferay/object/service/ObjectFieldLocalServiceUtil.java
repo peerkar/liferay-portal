@@ -89,6 +89,12 @@ public class ObjectFieldLocalServiceUtil {
 			readOnlyConditionExpression, required, state, objectFieldSettings);
 	}
 
+	public static void addOrUpdateObjectFieldPLOEntries(ObjectField objectField)
+		throws PortalException {
+
+		getService().addOrUpdateObjectFieldPLOEntries(objectField);
+	}
+
 	public static ObjectField addOrUpdateSystemObjectField(
 			String externalReferenceCode, long userId,
 			long listTypeDefinitionId, long objectDefinitionId,
@@ -509,6 +515,12 @@ public class ObjectFieldLocalServiceUtil {
 		long companyId) {
 
 		return getService().getObjectFieldsMap(companyId);
+	}
+
+	public static Map<Long, List<ObjectField>> getObjectFieldsMap(
+		long companyId, String businessType) {
+
+		return getService().getObjectFieldsMap(companyId, businessType);
 	}
 
 	/**

@@ -17,6 +17,7 @@ import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.model.ObjectEntryFolder;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.ObjectFolder;
+import com.liferay.object.model.bag.ObjectFieldBag;
 import com.liferay.object.rest.dto.v1_0.ListEntry;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryFolderLocalService;
@@ -38,7 +39,6 @@ import com.liferay.portal.kernel.util.BigDecimalUtil;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
-import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -323,61 +323,68 @@ public class ObjectEntryModelDocumentContributor
 		document.addKeyword(
 			"objectDefinitionId", objectEntry.getObjectDefinitionId());
 
-		ObjectDefinition objectDefinition =
-			_objectDefinitionLocalService.fetchObjectDefinition(
-				objectEntry.getObjectDefinitionId());
+		ObjectDefinition objectDefinition = objectEntry.getObjectDefinition();
 
 		document.addKeyword(
 			"objectDefinitionName", objectDefinition.getShortName());
 
-		Map<String, Serializable> values = objectEntry.getValues();
+		ObjectFieldBag objectFieldBag = objectDefinition.getObjectFieldBag();
 
-		List<ObjectField> objectFields =
-			_objectFieldLocalService.getObjectFields(
-				objectEntry.getObjectDefinitionId(), false);
+		List<ObjectField> objectFields = null;
 
-		ObjectContentHelper objectContentHelper = new ObjectContentHelper(
-			objectDefinition.isEnableLocalization(), objectEntry, objectFields,
-			_textEmbeddingDocumentContributor);
+		if (objectDefinition.isModifiableAndSystem()) {
+			objectFields = ListUtil.filter(
+				objectFieldBag.getIndexedObjectFields(),
+				objectField -> !objectField.isMetadata());
+		}
+		else {
+			objectFields = objectFieldBag.getNonsystemIndexedObjectFields();
+		}
 
-		for (ObjectField objectField : objectFields) {
-			if (objectField.isLocalized()) {
-				Map<String, Object> localizedValues =
-					(Map<String, Object>)values.get(
-						objectField.getI18nObjectFieldName());
+		ObjectContentHelper objectContentHelper = null;
+		Map<String, Serializable> values = null;
 
-				if (MapUtil.isEmpty(localizedValues)) {
-					continue;
+		if (!objectFields.isEmpty()) {
+			values = objectEntry.getIndexedValues();
+
+			objectContentHelper = new ObjectContentHelper(
+				objectEntry, objectFields, _textEmbeddingDocumentContributor);
+
+			for (ObjectField objectField : objectFields) {
+				if (objectField.isLocalized()) {
+					Map<String, Object> localizedValues =
+						(Map<String, Object>)values.get(
+							objectField.getI18nObjectFieldName());
+
+					if (MapUtil.isEmpty(localizedValues)) {
+						continue;
+					}
+
+					for (Map.Entry<String, Object> entry :
+							localizedValues.entrySet()) {
+
+						_contribute(
+							document, fieldArray, objectField.getName(),
+							entry.getValue(), entry.getKey(),
+							objectContentHelper, objectDefinition, objectEntry,
+							objectField, values);
+					}
 				}
-
-				for (Map.Entry<String, Object> localeMap :
-						localizedValues.entrySet()) {
-
+				else {
 					_contribute(
 						document, fieldArray, objectField.getName(),
-						localizedValues.get(localeMap.getKey()),
-						LocaleUtil.fromLanguageId(
-							localeMap.getKey(), true, false
-						).toString(),
+						values.get(objectField.getName()), null,
 						objectContentHelper, objectDefinition, objectEntry,
 						objectField, values);
 				}
 			}
-			else {
-				_contribute(
-					document, fieldArray, objectField.getName(),
-					values.get(objectField.getName()), null,
-					objectContentHelper, objectDefinition, objectEntry,
-					objectField, values);
-			}
+
+			objectContentHelper.trim();
+
+			document.add(
+				new Field(
+					"objectEntryContent", objectContentHelper.getContent()));
 		}
-
-		objectContentHelper.trim();
-
-		document.add(
-			new Field("objectEntryContent", objectContentHelper.getContent()));
-
-		objectContentHelper.getLocalizedContentMap();
 
 		document.addKeyword("objectEntryId", objectEntry.getObjectEntryId());
 		document.add(
@@ -396,6 +403,10 @@ public class ObjectEntryModelDocumentContributor
 			_contributeObjectEntryFolder(
 				document, objectEntry.getObjectEntryFolderId());
 
+			if (values == null) {
+				values = objectEntry.getIndexedValues();
+			}
+
 			long fileEntryId = GetterUtil.getLong(values.get("file"));
 
 			if (fileEntryId != 0) {
@@ -407,7 +418,7 @@ public class ObjectEntryModelDocumentContributor
 				objectEntry.getCompanyId(), "LPS-122920")) {
 
 			_contributeTextEmbeddings(
-				document, objectContentHelper, objectDefinition, objectEntry);
+				document, objectContentHelper, objectEntry);
 		}
 	}
 
@@ -457,12 +468,9 @@ public class ObjectEntryModelDocumentContributor
 
 	private void _contributeTextEmbeddings(
 		Document document, ObjectContentHelper objectContentHelper,
-		ObjectDefinition objectDefinition, ObjectEntry objectEntry) {
+		ObjectEntry objectEntry) {
 
-		if (!objectDefinition.isEnableLocalization()) {
-			_textEmbeddingDocumentContributor.contribute(
-				document, objectEntry, objectContentHelper.getContent());
-
+		if (objectContentHelper == null) {
 			return;
 		}
 
@@ -622,14 +630,12 @@ public class ObjectEntryModelDocumentContributor
 		}
 
 		private ObjectContentHelper(
-			boolean localizationEnabled, ObjectEntry objectEntry,
-			List<ObjectField> objectFields,
+			ObjectEntry objectEntry, List<ObjectField> objectFields,
 			TextEmbeddingDocumentContributor textEmbeddingDocumentContributor) {
 
 			_contentSB = new StringBundler(objectFields.size());
 
-			if (!localizationEnabled ||
-				!FeatureFlagManagerUtil.isEnabled(
+			if (!FeatureFlagManagerUtil.isEnabled(
 					objectEntry.getCompanyId(), "LPS-122920")) {
 
 				return;

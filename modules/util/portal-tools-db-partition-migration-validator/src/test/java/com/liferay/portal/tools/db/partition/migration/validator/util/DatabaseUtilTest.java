@@ -12,8 +12,6 @@ import com.liferay.portal.tools.db.partition.migration.validator.Company;
 import com.liferay.portal.tools.db.partition.migration.validator.LiferayDatabase;
 import com.liferay.portal.tools.db.partition.migration.validator.Release;
 
-import java.sql.SQLException;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +26,7 @@ import org.junit.Test;
 public class DatabaseUtilTest extends BaseTestCase {
 
 	@Before
-	public void setUp() throws SQLException {
+	public void setUp() throws Exception {
 		mockGetColumns(
 			Arrays.asList("Table1", "Company", "Table2", "Object_x_25000"));
 		mockGetCompanies(Arrays.asList(_company1, _company2));

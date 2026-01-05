@@ -86,6 +86,10 @@ export class StyleBooksPage {
 
 		await this.page.getByLabel('More actions').click();
 
+		this.page.once('dialog', (dialog) => {
+			dialog.accept();
+		});
+
 		await this.page
 			.getByRole('menuitem', {exact: false, name: 'Mark as Default'})
 			.click();
@@ -130,7 +134,7 @@ export class StyleBooksPage {
 			.filter({hasText: label})
 			.locator('input');
 
-		if (section && input.isHidden()) {
+		if (section && (await input.isHidden())) {
 			await this.page.getByRole('button', {name: section}).click();
 		}
 

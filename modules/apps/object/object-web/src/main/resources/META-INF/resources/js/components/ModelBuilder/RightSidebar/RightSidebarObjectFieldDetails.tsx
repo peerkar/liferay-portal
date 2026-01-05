@@ -35,6 +35,8 @@ export function RightSidebarObjectFieldDetails() {
 	const [
 		{
 			baseResourceURL,
+			ckEditor5Config,
+			decimalSeparator,
 			filterOperators,
 			forbiddenChars,
 			forbiddenLastChars,
@@ -53,6 +55,9 @@ export function RightSidebarObjectFieldDetails() {
 
 	const objectDefinitionNodeData =
 		selectedObjectDefinitionNode?.data as ObjectDefinitionNodeData;
+
+	const isDefaultStorageType =
+		(objectDefinitionNodeData.storageType ?? 'default') === 'default';
 
 	const {errors, handleChange, handleValidate, setValues, values} =
 		useObjectFieldForm({
@@ -199,17 +204,16 @@ export function RightSidebarObjectFieldDetails() {
 					{selectedObjectField?.id && (
 						<EditObjectFieldContent
 							baseResourceURL={baseResourceURL}
+							ckEditor5Config={ckEditor5Config}
 							containerWrapper={ClayPanel}
 							creationLanguageId={
 								objectDefinitionNodeData.defaultLanguageId
 							}
+							decimalSeparator={decimalSeparator}
 							errors={errors}
 							filterOperators={filterOperators}
 							handleChange={handleChange}
-							isDefaultStorageType={
-								objectDefinitionNodeData.storageType ===
-								'default'
-							}
+							isDefaultStorageType={isDefaultStorageType}
 							isRootDescendantNode={isRootDescendantNode}
 							learnResources={learnResourceContext}
 							modelBuilder

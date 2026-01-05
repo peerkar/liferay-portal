@@ -442,6 +442,18 @@ public class ObjectEntryVersionLocalServiceWrapper
 			objectEntryId, start, end);
 	}
 
+	@Override
+	public java.util.List<com.liferay.object.model.ObjectEntryVersion>
+		getObjectEntryVersions(
+			long objectEntryId, int start, int end,
+			com.liferay.portal.kernel.util.OrderByComparator
+				<com.liferay.object.model.ObjectEntryVersion>
+					orderByComparator) {
+
+		return _objectEntryVersionLocalService.getObjectEntryVersions(
+			objectEntryId, start, end, orderByComparator);
+	}
+
 	/**
 	 * Returns the number of object entry versions.
 	 *
@@ -495,6 +507,17 @@ public class ObjectEntryVersionLocalServiceWrapper
 
 		return _objectEntryVersionLocalService.updateLatestObjectEntryVersion(
 			objectEntry);
+	}
+
+	@Override
+	public com.liferay.object.model.ObjectEntryVersion
+			updateLatestObjectEntryVersionModifiedDate(
+				java.util.Date modifiedDate, long objectEntryId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _objectEntryVersionLocalService.
+			updateLatestObjectEntryVersionModifiedDate(
+				modifiedDate, objectEntryId);
 	}
 
 	/**

@@ -33,6 +33,7 @@ test('Add a new tag', {tag: '@LPD-51250'}, async ({page, tagsPage}) => {
 	await checkAccessibility({
 		page,
 		selectors: ['.categorization-section'],
+		selectorsToExclude: ['.management-bar-wrapper'],
 	});
 
 	await tagsPage.deleteTag(tagName);
@@ -164,11 +165,11 @@ test(
 
 		await expect(tag).toBeVisible();
 
-		await expect(
-			page
-				.locator('[data-testid="visualization-mode-table"]')
-				.getByText('Default')
-		).toBeVisible();
+		const tagRow = page
+			.locator('.fds tbody tr')
+			.filter({has: page.getByText(name)});
+
+		await expect(tagRow.getByRole('cell', {name: 'Default'})).toBeVisible();
 
 		await tagsPage.deleteTag(name);
 	}
@@ -223,6 +224,7 @@ test('Bulk Merge tags', {tag: '@LPD-43388'}, async ({page, tagsPage}) => {
 	await checkAccessibility({
 		page,
 		selectors: ['.merge-tags'],
+		selectorsToExclude: ['.management-bar-wrapper'],
 	});
 
 	await page
@@ -261,8 +263,6 @@ test('Merge tags', {tag: '@LPD-43388'}, async ({page, tagsPage}) => {
 	await expect(tag1).toBeVisible();
 	await expect(tag2).toBeVisible();
 
-	await page.reload();
-
 	await tagsPage.execItemAction({
 		action: 'Merge',
 		filter: tagName1,
@@ -281,14 +281,14 @@ test('Merge tags', {tag: '@LPD-43388'}, async ({page, tagsPage}) => {
 		page.getByRole('gridcell', {exact: true, name: tagName1})
 	).toBeVisible();
 
-	await page.getByLabel('Merge Tags').getByRole('combobox').click();
+	await page.getByLabel('Merge Tags').getByRole('combobox').nth(0).click();
 
 	await expect(async () => {
-		await page.getByRole('option', {name: tagName2}).click({timeout: 1000});
+		await page.getByRole('option', {name: tagName2}).click();
 
 		await expect(
 			page.locator('.label-secondary', {hasText: tagName2})
-		).toBeVisible({timeout: 1000});
+		).toBeVisible();
 	}).toPass();
 
 	await clickAndExpectToBeVisible({
@@ -408,3 +408,39 @@ test(
 		await expect(tagsPage.getItem('<Tag>')).not.toBeVisible();
 	}
 );
+
+test('Validate tag inputs', {tag: ['@LPD-69687']}, async ({page, tagsPage}) => {
+	await tagsPage.goto();
+
+	await clickAndExpectToBeVisible({
+		target: page.locator('.modal-title', {
+			hasText: 'New Tag',
+		}),
+		timeout: 2000,
+		trigger: tagsPage.newTagButton,
+	});
+
+	// Check we can't publish an empty name
+
+	await expect(tagsPage.saveButton).toBeDisabled();
+
+	await expect(tagsPage.saveAndAddAnotherButton).toBeDisabled();
+
+	await page.getByLabel('NameRequired').fill('');
+
+	await clickAndExpectToBeVisible({
+		target: page.getByText('This field is required'),
+		trigger: page.locator('.modal-body'),
+	});
+
+	await page.getByLabel('NameRequired').fill(`Tag${getRandomInt()}`);
+
+	// Check we can't publish without selecting a space
+
+	await clickAndExpectToBeVisible({
+		target: page.getByText('The Space field is required'),
+		trigger: tagsPage.spaceCheckbox,
+	});
+
+	await expect(tagsPage.saveButton).toBeDisabled();
+});

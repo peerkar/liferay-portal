@@ -11,6 +11,9 @@ import com.liferay.staging.taglib.internal.servlet.ServletContextUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.jsp.PageContext;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Péter Borkuti
  */
@@ -44,8 +47,16 @@ public class CheckboxTag extends BaseCssTag {
 		return _popover;
 	}
 
+	public List<String> getSubtitles() {
+		return _subtitles;
+	}
+
 	public String getSuggestion() {
 		return _suggestion;
+	}
+
+	public String getTag() {
+		return _tag;
 	}
 
 	@Override
@@ -108,8 +119,16 @@ public class CheckboxTag extends BaseCssTag {
 		_popover = popover;
 	}
 
+	public void setSubtitles(List<String> subtitles) {
+		_subtitles = subtitles;
+	}
+
 	public void setSuggestion(String suggestion) {
 		_suggestion = suggestion;
+	}
+
+	public void setTag(String tag) {
+		_tag = tag;
 	}
 
 	public void setWarning(String warning) {
@@ -129,7 +148,9 @@ public class CheckboxTag extends BaseCssTag {
 		_label = StringPool.BLANK;
 		_name = StringPool.BLANK;
 		_popover = StringPool.BLANK;
+		_subtitles = new ArrayList<>();
 		_suggestion = StringPool.BLANK;
+		_tag = StringPool.BLANK;
 		_warning = StringPool.BLANK;
 	}
 
@@ -157,7 +178,10 @@ public class CheckboxTag extends BaseCssTag {
 		httpServletRequest.setAttribute(
 			"liferay-staging:checkbox:popover", _popover);
 		httpServletRequest.setAttribute(
+			"liferay-staging:checkbox:subtitles", _subtitles);
+		httpServletRequest.setAttribute(
 			"liferay-staging:checkbox:suggestion", _suggestion);
+		httpServletRequest.setAttribute("liferay-staging:checkbox:tag", _tag);
 		httpServletRequest.setAttribute(
 			"liferay-staging:checkbox:warning", _warning);
 	}
@@ -173,7 +197,9 @@ public class CheckboxTag extends BaseCssTag {
 	private String _label = StringPool.BLANK;
 	private String _name = StringPool.BLANK;
 	private String _popover = StringPool.BLANK;
+	private List<String> _subtitles = new ArrayList<>();
 	private String _suggestion = StringPool.BLANK;
+	private String _tag = StringPool.BLANK;
 	private String _warning = StringPool.BLANK;
 
 }

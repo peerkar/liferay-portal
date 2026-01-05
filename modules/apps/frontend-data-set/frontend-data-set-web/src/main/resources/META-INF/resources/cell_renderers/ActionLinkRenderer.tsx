@@ -5,6 +5,7 @@
 
 import ClayIcon from '@clayui/icon';
 import ClayLink from '@clayui/link';
+import classNames from 'classnames';
 import {openConfirmModal} from 'frontend-js-components-web';
 import {navigate} from 'frontend-js-web';
 import React, {useContext} from 'react';
@@ -22,8 +23,18 @@ interface IActionLinkRendererProps {
 	itemId: number | string;
 	options?: {
 		actionId?: string;
+		decoration?: React.ComponentProps<typeof ClayLink>['decoration'];
+		displayType?: React.ComponentProps<typeof ClayLink>['displayType'];
 	};
-	value: number | string;
+	value: number | string | null | undefined;
+}
+
+function hasValue(value: any): boolean {
+	if (value === null || value === undefined) {
+		return false;
+	}
+
+	return typeof value === 'string' ? value.trim() !== '' : true;
 }
 
 const findAction = (
@@ -65,7 +76,7 @@ function ActionLinkRenderer({
 	} = useContext(FrontendDataSetContext);
 
 	if (!actions || !actions.length) {
-		return value ? <DefaultContent value={value} /> : null;
+		return hasValue(value) ? <DefaultContent value={value} /> : null;
 	}
 
 	const formattedActions = filterItemActions({
@@ -84,7 +95,7 @@ function ActionLinkRenderer({
 			: formattedActions[0];
 
 	if (!currentAction) {
-		return value ? <DefaultContent value={value} /> : null;
+		return hasValue(value) ? <DefaultContent value={value} /> : null;
 	}
 
 	const formattedHref =
@@ -169,9 +180,13 @@ function ActionLinkRenderer({
 	}
 
 	return (
-		<div className="table-list-title">
+		<div
+			className={classNames({'table-list-title': !options?.displayType})}
+		>
 			<ClayLink
 				data-senna-off
+				decoration={options?.decoration}
+				displayType={options?.displayType}
 				href={formattedHref || '#'}
 				onClick={
 					isNotALink()
@@ -198,10 +213,11 @@ function ActionLinkRenderer({
 							}
 				}
 			>
-				{value ||
-					(currentAction.icon && (
-						<ClayIcon symbol={currentAction.icon} />
-					))}
+				{hasValue(value)
+					? value
+					: currentAction.icon && (
+							<ClayIcon symbol={currentAction.icon} />
+						)}
 			</ClayLink>
 		</div>
 	);

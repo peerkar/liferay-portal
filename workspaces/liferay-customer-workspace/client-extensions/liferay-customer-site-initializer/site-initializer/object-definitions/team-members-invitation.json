@@ -1,0 +1,60 @@
+{
+	"externalReferenceCode": "C_TEAM_MEMBERS_INVITATION",
+	"label": {
+		"en_US": "Team Members Invitation"
+	},
+	"name": "TeamMembersInvitation",
+	"objectFields": [
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_TEAM_MEMBERS_INVITATION_email",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Email"
+			},
+			"name": "email",
+			"required": false
+		},
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_TEAM_MEMBERS_INVITATION_familyName",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Family Name"
+			},
+			"name": "familyName",
+			"required": false
+		},
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_TEAM_MEMBERS_INVITATION_givenName",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Given Name"
+			},
+			"name": "givenName",
+			"required": false
+		},
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_TEAM_MEMBERS_INVITATION_role",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Role"
+			},
+			"name": "role",
+			"required": false
+		}
+	],
+	"panelCategoryKey": "applications_menu.applications.content",
+	"pluralLabel": {
+		"en_US": "Team Members Invitation"
+	},
+	"portlet": true,
+	"scope": "company",
+	"system": false
+}

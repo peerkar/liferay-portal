@@ -89,6 +89,10 @@ public class ObjectEntryVersionLocalServiceImpl
 			_configurationProvider.getCompanyConfiguration(
 				ObjectEntryVersionConfiguration.class, companyId);
 
+		if (objectEntryVersionConfiguration.maximumRetentionPeriod() <= 0) {
+			return;
+		}
+
 		Date endDate = Date.from(
 			LocalDate.now(
 			).minusMonths(
@@ -257,6 +261,15 @@ public class ObjectEntryVersionLocalServiceImpl
 	}
 
 	@Override
+	public List<ObjectEntryVersion> getObjectEntryVersions(
+		long objectEntryId, int start, int end,
+		OrderByComparator<ObjectEntryVersion> orderByComparator) {
+
+		return objectEntryVersionPersistence.findByObjectEntryId(
+			objectEntryId, start, end, orderByComparator);
+	}
+
+	@Override
 	public int getObjectEntryVersionsCount(long objectEntryId) {
 		return objectEntryVersionPersistence.countByObjectEntryId(
 			objectEntryId);
@@ -287,6 +300,21 @@ public class ObjectEntryVersionLocalServiceImpl
 				objectEntry.getObjectEntryId(),
 				ObjectEntryVersionVersionComparator.getInstance(false)),
 			objectEntry.getVersion());
+	}
+
+	@Override
+	public ObjectEntryVersion updateLatestObjectEntryVersionModifiedDate(
+			Date modifiedDate, long objectEntryId)
+		throws PortalException {
+
+		ObjectEntryVersion objectEntryVersion =
+			objectEntryVersionPersistence.findByObjectEntryId_First(
+				objectEntryId,
+				ObjectEntryVersionVersionComparator.getInstance(false));
+
+		objectEntryVersion.setModifiedDate(modifiedDate);
+
+		return objectEntryVersionPersistence.update(objectEntryVersion);
 	}
 
 	private boolean _exceedsMaximumVersions(long objectEntryId) {

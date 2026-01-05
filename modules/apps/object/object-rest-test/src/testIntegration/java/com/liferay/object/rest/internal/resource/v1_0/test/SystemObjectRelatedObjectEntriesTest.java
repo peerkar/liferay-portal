@@ -91,7 +91,8 @@ public class SystemObjectRelatedObjectEntriesTest {
 					ObjectFieldConstants.BUSINESS_TYPE_INTEGER,
 					ObjectFieldConstants.DB_TYPE_INTEGER, true, true, null,
 					RandomTestUtil.randomString(), _OBJECT_FIELD_NAME_2,
-					false)));
+					false)),
+			false);
 
 		_objectEntry = ObjectEntryTestUtil.addObjectEntry(
 			_objectDefinition, _OBJECT_FIELD_NAME_1, _OBJECT_FIELD_VALUE);
@@ -269,10 +270,9 @@ public class SystemObjectRelatedObjectEntriesTest {
 		_objectRelationships.add(objectRelationship);
 
 		_testGetManyToOneSystemObjectRelatedObjectEntries(
-			StringPool.BLANK, 0, objectRelationship, _user.getUserId());
+			null, 0, objectRelationship, _user.getUserId());
 		_testGetManyToOneSystemObjectRelatedObjectEntries(
-			StringPool.BLANK, 0, objectRelationship,
-			_userAccountJSONObject.getLong("id"));
+			null, 0, objectRelationship, _userAccountJSONObject.getLong("id"));
 
 		ObjectRelationshipTestUtil.relateObjectEntries(
 			_objectEntry.getObjectEntryId(), _user.getUserId(),

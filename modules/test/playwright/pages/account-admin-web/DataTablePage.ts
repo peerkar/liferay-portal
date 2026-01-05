@@ -168,7 +168,9 @@ export class DataTablePage {
 			return null;
 		};
 		this.searchButton = page.getByLabel('Search for', {exact: true});
-		this.searchInput = page.getByPlaceholder('Search for', {exact: true});
+		this.searchInput = page
+			.getByPlaceholder('Search for', {exact: true})
+			.or(page.getByPlaceholder('Search', {exact: true}));
 		this.selectAllItemsCheckbox = page.getByLabel(
 			'Select All Items on the Page'
 		);
@@ -194,7 +196,7 @@ export class DataTablePage {
 				await expect(this.selectViewListButton).toBeVisible({
 					timeout: 100,
 				});
-			}).toPass();
+			}).toPass({timeout: 1000});
 
 			await this.selectViewListButton.click();
 			await expect(this.viewStatus(view)).toBeVisible();
@@ -208,7 +210,7 @@ export class DataTablePage {
 				await expect(this.selectViewCardButton).toBeVisible({
 					timeout: 100,
 				});
-			}).toPass();
+			}).toPass({timeout: 1000});
 
 			await this.selectViewCardButton.click();
 			await expect(this.viewStatus(view)).toBeVisible();
@@ -222,7 +224,7 @@ export class DataTablePage {
 			await expect(this.selectViewTableButton).toBeVisible({
 				timeout: 100,
 			});
-		}).toPass();
+		}).toPass({timeout: 1000});
 
 		await this.selectViewTableButton.click();
 		await expect(this.viewStatus(view)).toBeVisible();

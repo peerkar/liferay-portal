@@ -5,7 +5,9 @@ import SegmentGrowthWithList from 'segment/components/Growth';
 import {connect} from 'react-redux';
 import {mapGrowthHistory} from 'shared/hoc/mappers/segment';
 import {PropTypes} from 'prop-types';
+import {ReportContainer} from 'shared/components/download-report/DownloadPDFReport';
 import {Segment} from 'shared/util/records';
+import {SegmentTypes} from 'shared/util/constants';
 import {withRequest} from 'shared/hoc';
 
 export const MembershipChart = withRequest(
@@ -26,6 +28,7 @@ export const MembershipChart = withRequest(
 				anonymousCount: PropTypes.number,
 				knownCount: PropTypes.number
 			}),
+			segmentType: PropTypes.oneOf(Object.values(SegmentTypes)),
 			timeZoneId: PropTypes.string
 		};
 
@@ -36,6 +39,7 @@ export const MembershipChart = withRequest(
 				groupId,
 				id,
 				individualCounts,
+				segmentType,
 				timeZoneId
 			} = this.props;
 
@@ -46,6 +50,9 @@ export const MembershipChart = withRequest(
 					groupId={groupId}
 					id={id}
 					individualCounts={individualCounts}
+					shouldShowMembershipList={
+						segmentType !== SegmentTypes.RealTime
+					}
 					timeZoneId={timeZoneId}
 				/>
 			);
@@ -73,16 +80,27 @@ export default class Membership extends React.Component {
 		const {
 			channelId,
 			groupId,
-			segment: {anonymousIndividualCount, id, knownIndividualCount},
+			segment: {
+				anonymousIndividualCount,
+				id,
+				knownIndividualCount,
+				segmentType
+			},
 			timeZoneId
 		} = this.props;
 
 		return (
-			<Card className='segment-membership-root'>
-				<Card.Header>
+			<Card
+				className='segment-membership-root'
+				reportContainer={ReportContainer.SegmentMembershipCard}
+			>
+				<Card.Header className='align-items-center d-flex justify-content-between'>
 					<Card.Title>
-						{Liferay.Language.get('segment-membership')}
+						{Liferay.Language.get('segment-membership-trend')}
 					</Card.Title>
+					<span className='text-secondary text-uppercase'>
+						<strong>{Liferay.Language.get('last-30-days')}</strong>
+					</span>
 				</Card.Header>
 
 				<MembershipChart
@@ -94,6 +112,7 @@ export default class Membership extends React.Component {
 						anonymousCount: anonymousIndividualCount,
 						knownCount: knownIndividualCount
 					}}
+					segmentType={segmentType}
 					timeZoneId={timeZoneId}
 				/>
 			</Card>

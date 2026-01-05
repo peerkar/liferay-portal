@@ -9,9 +9,10 @@ import com.liferay.asset.display.page.portlet.BaseAssetDisplayPageFriendlyURLRes
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.petra.string.CharPool;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.portlet.FriendlyURLResolver;
 import com.liferay.portal.kernel.portlet.constants.FriendlyURLResolverConstants;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import org.osgi.service.component.annotations.Component;
@@ -27,6 +28,18 @@ public class ObjectEntryDisplayPageFriendlyURLResolver
 	@Override
 	public String getDefaultURLSeparator() {
 		if (_objectDefinition == null) {
+			return FriendlyURLResolverConstants.URL_SEPARATOR_OBJECT_ENTRY;
+		}
+
+		ServiceContext serviceContext =
+			ServiceContextThreadLocal.getServiceContext();
+
+		if (serviceContext == null) {
+			return StringUtil.quote(
+				_objectDefinition.getFriendlyURLSeparator(), CharPool.SLASH);
+		}
+
+		if (_objectDefinition.getCompanyId() != serviceContext.getCompanyId()) {
 			return FriendlyURLResolverConstants.URL_SEPARATOR_OBJECT_ENTRY;
 		}
 
@@ -46,8 +59,7 @@ public class ObjectEntryDisplayPageFriendlyURLResolver
 
 	@Override
 	public boolean isURLSeparatorConfigurable() {
-		return !FeatureFlagManagerUtil.isEnabled(
-			portal.getDefaultCompanyId(), "LPD-21926");
+		return false;
 	}
 
 	public void setObjectDefinition(ObjectDefinition objectDefinition) {

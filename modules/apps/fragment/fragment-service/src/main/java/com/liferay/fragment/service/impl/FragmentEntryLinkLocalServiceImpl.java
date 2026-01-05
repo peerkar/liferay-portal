@@ -7,7 +7,6 @@ package com.liferay.fragment.service.impl;
 
 import com.liferay.document.library.util.DLURLHelper;
 import com.liferay.fragment.constants.FragmentEntryLinkConstants;
-import com.liferay.fragment.entry.processor.constants.FragmentEntryProcessorConstants;
 import com.liferay.fragment.listener.FragmentEntryLinkListener;
 import com.liferay.fragment.listener.FragmentEntryLinkListenerRegistry;
 import com.liferay.fragment.model.FragmentCollection;
@@ -33,7 +32,6 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.LockedLayoutException;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
@@ -51,6 +49,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -64,7 +63,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -144,29 +142,11 @@ public class FragmentEntryLinkLocalServiceImpl
 		fragmentEntryLink.setRendererKey(rendererKey);
 		fragmentEntryLink.setType(type);
 
-		String processedHTML = html;
-
-		HttpServletRequest httpServletRequest = serviceContext.getRequest();
-		HttpServletResponse httpServletResponse = serviceContext.getResponse();
-
-		if ((httpServletRequest != null) && (httpServletResponse != null)) {
-			DefaultFragmentEntryProcessorContext
-				defaultFragmentEntryProcessorContext =
-					new DefaultFragmentEntryProcessorContext(
-						httpServletRequest, httpServletResponse,
-						FragmentEntryLinkConstants.EDIT,
-						LocaleUtil.getMostRelevantLocale());
-
-			processedHTML =
-				_fragmentEntryProcessorRegistry.processFragmentEntryLinkHTML(
-					fragmentEntryLink, defaultFragmentEntryProcessorContext);
-		}
-
 		if (Validator.isNull(editableValues)) {
 			editableValues = String.valueOf(
 				_fragmentEntryProcessorRegistry.
 					getDefaultEditableValuesJSONObject(
-						processedHTML,
+						_getProcessedHTML(fragmentEntryLink, serviceContext),
 						_jsonFactory.safeCreateJSONObject(configuration)));
 		}
 
@@ -818,21 +798,19 @@ public class FragmentEntryLinkLocalServiceImpl
 			fragmentEntry.getGroupId(), fragmentEntry.getHtml());
 
 		if (!Objects.equals(fragmentEntryLink.getHtml(), html)) {
-			String editableValues = fragmentEntryLink.getEditableValues();
+			JSONObject editableValuesJSONObject =
+				fragmentEntryLink.getEditableValuesJSONObject();
 
 			fragmentEntryLink.setHtml(html);
 			fragmentEntryLink.setEditableValues(null);
 
-			String defaultEditableValues = String.valueOf(
-				_fragmentEntryProcessorRegistry.
-					getDefaultEditableValuesJSONObject(
-						_getProcessedHTML(
-							fragmentEntryLink,
-							ServiceContextThreadLocal.getServiceContext()),
-						fragmentEntryLink.getConfigurationJSONObject()));
-
 			fragmentEntryLink.setEditableValues(
-				_mergeEditableValues(defaultEditableValues, editableValues));
+				_fragmentEntryProcessorRegistry.mergeDefaultEditableValues(
+					fragmentEntryLink.getConfigurationJSONObject(),
+					editableValuesJSONObject,
+					_getProcessedHTML(
+						fragmentEntryLink,
+						ServiceContextThreadLocal.getServiceContext())));
 
 			modified = true;
 		}
@@ -888,13 +866,20 @@ public class FragmentEntryLinkLocalServiceImpl
 		FragmentEntryLink fragmentEntryLink =
 			fragmentEntryLinkPersistence.findByPrimaryKey(fragmentEntryLinkId);
 
-		long groupId = _getFragmentEntryGroupId(
-			fragmentEntryLink.getCompanyId(), fragmentEntryLink.getGroupId(),
-			fragmentEntryLink.getFragmentEntryScopeERC());
-
 		FragmentEntry fragmentEntry =
 			_fragmentEntryPersistence.fetchByERC_G_Head(
-				fragmentEntryLink.getFragmentEntryERC(), groupId, true);
+				fragmentEntryLink.getFragmentEntryERC(),
+				_getFragmentEntryGroupId(
+					fragmentEntryLink.getCompanyId(),
+					fragmentEntryLink.getGroupId(),
+					fragmentEntryLink.getFragmentEntryScopeERC()),
+				true);
+
+		if (fragmentEntry == null) {
+			throw new UnsupportedOperationException(
+				"Unable to propagate fragment entry link " +
+					fragmentEntryLinkId);
+		}
 
 		updateLatestChanges(fragmentEntry, fragmentEntryLink);
 	}
@@ -910,20 +895,21 @@ public class FragmentEntryLinkLocalServiceImpl
 	}
 
 	private long _getFragmentEntryGroupId(
-			long companyId, long groupId, String fragmentEntryScopeERC)
-		throws PortalException {
+		long companyId, long groupId, String fragmentEntryScopeERC) {
 
-		long fragmentEntryGroupId = groupId;
-
-		if (Validator.isNotNull(fragmentEntryScopeERC)) {
-			Group fragmentEntryGroup =
-				_groupLocalService.getGroupByExternalReferenceCode(
-					fragmentEntryScopeERC, companyId);
-
-			fragmentEntryGroupId = fragmentEntryGroup.getGroupId();
+		if (Validator.isNull(fragmentEntryScopeERC)) {
+			return groupId;
 		}
 
-		return fragmentEntryGroupId;
+		Group fragmentEntryGroup =
+			_groupLocalService.fetchGroupByExternalReferenceCode(
+				fragmentEntryScopeERC, companyId);
+
+		if (fragmentEntryGroup == null) {
+			return 0;
+		}
+
+		return fragmentEntryGroup.getGroupId();
 	}
 
 	private String _getProcessedHTML(
@@ -935,7 +921,18 @@ public class FragmentEntryLinkLocalServiceImpl
 		}
 
 		HttpServletRequest httpServletRequest = serviceContext.getRequest();
+
+		ThemeDisplay themeDisplay = serviceContext.getThemeDisplay();
+
+		if ((httpServletRequest == null) && (themeDisplay != null)) {
+			httpServletRequest = themeDisplay.getRequest();
+		}
+
 		HttpServletResponse httpServletResponse = serviceContext.getResponse();
+
+		if ((httpServletResponse == null) && (themeDisplay != null)) {
+			httpServletResponse = themeDisplay.getResponse();
+		}
 
 		if ((httpServletRequest == null) || (httpServletResponse == null)) {
 			return fragmentEntryLink.getHtml();
@@ -949,91 +946,6 @@ public class FragmentEntryLinkLocalServiceImpl
 
 		return _fragmentEntryProcessorRegistry.processFragmentEntryLinkHTML(
 			fragmentEntryLink, fragmentEntryProcessorContext);
-	}
-
-	private String _mergeEditableValues(
-		String defaultEditableValues, String editableValues) {
-
-		try {
-			JSONObject defaultEditableValuesJSONObject =
-				_jsonFactory.createJSONObject(defaultEditableValues);
-
-			JSONObject editableValuesJSONObject = _jsonFactory.createJSONObject(
-				editableValues);
-
-			for (String fragmentEntryProcessorKey :
-					_FRAGMENT_ENTRY_PROCESSOR_KEYS) {
-
-				JSONObject editableFragmentEntryProcessorJSONObject =
-					editableValuesJSONObject.getJSONObject(
-						fragmentEntryProcessorKey);
-
-				if (editableFragmentEntryProcessorJSONObject == null) {
-					editableFragmentEntryProcessorJSONObject =
-						_jsonFactory.createJSONObject();
-				}
-
-				JSONObject defaultEditableFragmentEntryProcessorJSONObject =
-					defaultEditableValuesJSONObject.getJSONObject(
-						fragmentEntryProcessorKey);
-
-				if (defaultEditableFragmentEntryProcessorJSONObject == null) {
-					continue;
-				}
-
-				Iterator<String> defaultEditableValuesIterator =
-					defaultEditableFragmentEntryProcessorJSONObject.keys();
-
-				while (defaultEditableValuesIterator.hasNext()) {
-					String key = defaultEditableValuesIterator.next();
-
-					if (editableFragmentEntryProcessorJSONObject.has(key)) {
-						JSONObject editableValueJSONObject =
-							editableFragmentEntryProcessorJSONObject.
-								getJSONObject(key);
-
-						JSONObject defaultEditableValueJSONObject =
-							defaultEditableFragmentEntryProcessorJSONObject.
-								getJSONObject(key);
-
-						editableValueJSONObject.put(
-							"defaultValue",
-							defaultEditableValueJSONObject.get("defaultValue"));
-
-						defaultEditableFragmentEntryProcessorJSONObject.put(
-							key, editableValueJSONObject);
-					}
-				}
-
-				Iterator<String> editableValuesIterator =
-					editableFragmentEntryProcessorJSONObject.keys();
-
-				while (editableValuesIterator.hasNext()) {
-					String key = editableValuesIterator.next();
-
-					if (!defaultEditableFragmentEntryProcessorJSONObject.has(
-							key)) {
-
-						defaultEditableFragmentEntryProcessorJSONObject.put(
-							key,
-							editableFragmentEntryProcessorJSONObject.get(key));
-					}
-				}
-
-				editableValuesJSONObject.put(
-					fragmentEntryProcessorKey,
-					defaultEditableFragmentEntryProcessorJSONObject);
-			}
-
-			return editableValuesJSONObject.toString();
-		}
-		catch (JSONException jsonException) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(jsonException);
-			}
-		}
-
-		return editableValues;
 	}
 
 	private String _replaceResources(
@@ -1086,10 +998,6 @@ public class FragmentEntryLinkLocalServiceImpl
 
 		_layoutLocalService.updateLayout(layout);
 	}
-
-	private static final String[] _FRAGMENT_ENTRY_PROCESSOR_KEYS = {
-		FragmentEntryProcessorConstants.KEY_EDITABLE_FRAGMENT_ENTRY_PROCESSOR
-	};
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		FragmentEntryLinkLocalServiceImpl.class);

@@ -96,6 +96,19 @@
 							<execute dir="${project.dir}">
 								docker save --output ${project.dir}/dist/liferay-docker-asah.tar ${analytics.cloud.asah.image.names.list}
 							</execute>
+
+							<if>
+								<available file="${project.dir}/dist/liferay-docker-asah.tar" />
+								<then>
+									<execute failonerror="false">
+										<![CDATA[
+											docker system prune --all --force &> /dev/null
+
+											docker system df
+										]]>
+									</execute>
+								</then>
+							</if>
 						</else>
 					</if>
 
@@ -818,7 +831,7 @@ OSB_FARO_FRONTEND_URL=${analytics.cloud.faro.frontend.url}</echo>
 
 										while [[ -n $(docker ps | grep "health: starting") ]] || [[ -n $(docker ps | grep "unhealthy") ]]
 										do
-											echo "Waiting for docker compose to be healthy."
+											echo "Waiting for Docker compose to be healthy."
 
 											sleep 30
 										done

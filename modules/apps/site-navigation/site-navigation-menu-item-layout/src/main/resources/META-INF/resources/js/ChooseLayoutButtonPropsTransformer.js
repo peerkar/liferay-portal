@@ -16,8 +16,8 @@ export default function propsTransformer({
 	return {
 		...props,
 		onClick() {
-			const groupIdInput = document.getElementById(
-				`${portletNamespace}groupId`
+			const externalReferenceCodeInput = document.getElementById(
+				`${portletNamespace}externalReferenceCode`
 			);
 
 			const layoutItemRemoveButton = document.getElementById(
@@ -26,10 +26,6 @@ export default function propsTransformer({
 
 			const layoutNameInput = document.getElementById(
 				`${portletNamespace}layoutNameInput`
-			);
-
-			const layoutUuidInput = document.getElementById(
-				`${portletNamespace}layoutUuid`
 			);
 
 			const privateLayoutInput = document.getElementById(
@@ -42,16 +38,16 @@ export default function propsTransformer({
 				multiple: true,
 				onSelect: (selectedItem) => {
 					if (selectedItem) {
-						groupIdInput.value = selectedItem.groupId;
-						layoutUuidInput.value = selectedItem.id;
+						externalReferenceCodeInput.value =
+							selectedItem.externalReferenceCode;
 						layoutNameInput.textContent = selectedItem.name;
 						privateLayoutInput.value = selectedItem.privateLayout;
 
 						url.searchParams.set(
 							`${getPortletNamespace(
 								Liferay.PortletKeys.ITEM_SELECTOR
-							)}layoutUuid`,
-							selectedItem.id
+							)}externalReferenceCode`,
+							selectedItem.externalReferenceCode
 						);
 
 						layoutItemRemoveButton.classList.remove('hide');

@@ -84,7 +84,7 @@ components:
                     readOnly: true
                     type: string
                 scope:
-                    $ref: ../../headless/headless-object/headless-object-impl/rest-openapi.yaml#Scope
+                    type: scope
                 thumbnailURL:
                     # @review
                     description:
@@ -152,6 +152,13 @@ components:
                     items:
                         $ref: "#/components/schemas/AuditEvent"
                     readOnly: true
+                    type: array
+                comments:
+                    description:
+                        Optional field with the comments associated with this object entry, can be embedded with
+                        nestedFields
+                    items:
+                        $ref: ../../headless/headless-delivery/headless-delivery-impl/rest-openapi.yaml#Comment
                     type: array
                 creator:
                     $ref: ../../headless/headless-delivery/headless-delivery-impl/rest-openapi.yaml#Creator
@@ -260,7 +267,7 @@ components:
                 objectDefinitionBrief:
                     $ref: "#/components/schemas/ObjectDefinitionBrief"
                 scope:
-                    $ref: ../../headless/headless-object/headless-object-impl/rest-openapi.yaml#Scope
+                    type: scope
                 version:
                     $ref: "#/components/schemas/Version"
             type: object
@@ -281,8 +288,8 @@ components:
                             description:
                                 The parent taxonomy category's external reference code.
                             type: string
+                    readOnly: true
                     type: object
-                    writeOnly: true
                 parentTaxonomyVocabulary:
                     description:
                         The parent category's `TaxonomyVocabulary`.
@@ -292,10 +299,10 @@ components:
                             description:
                                 The parent category's `TaxonomyVocabulary` external reference code.
                             type: string
+                    readOnly: true
                     type: object
-                    writeOnly: true
                 scope:
-                    $ref: ../../headless/headless-object/headless-object-impl/rest-openapi.yaml#Scope
+                    type: scope
                 taxonomyCategoryExternalReferenceCode:
                     # @review
                     description:
@@ -747,6 +754,256 @@ paths:
                             schema:
                                 $ref: "#/components/schemas/ObjectEntry"
             tags: ["ObjectEntry"]
+    "/by-external-reference-code/{externalReferenceCode}/comments":
+        get:
+            operationId: getByExternalReferenceCodeCommentsPage
+            parameters:
+                -   in: path
+                    name: externalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    name: aggregationTerms
+                    schema:
+                        items:
+                            type: string
+                        type: array
+                -   in: query
+                    name: fields
+                    schema:
+                        type: string
+                -   in: query
+                    name: nestedFields
+                    schema:
+                        type: string
+                -   in: query
+                    name: page
+                    schema:
+                        type: integer
+                -   in: query
+                    name: pageSize
+                    schema:
+                        type: integer
+                -   in: query
+                    name: restrictFields
+                    schema:
+                        type: string
+                -   in: query
+                    name: search
+                    schema:
+                        type: string
+                -   in: query
+                    name: sort
+                    schema:
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: ../../headless/headless-delivery/headless-delivery-impl/rest-openapi.yaml#Comment
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: ../../headless/headless-delivery/headless-delivery-impl/rest-openapi.yaml#Comment
+                                type: array
+            tags: ["Comment"]
+        post:
+            operationId: postByExternalReferenceCodeComment
+            parameters:
+                -   in: path
+                    name: externalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Comment"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/Comment"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Comment"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Comment"
+            tags: ["Comment"]
+    "/by-external-reference-code/{externalReferenceCode}/comments/{commentExternalReferenceCode}":
+        delete:
+            operationId: deleteByExternalReferenceCodeComment
+            parameters:
+                -   in: path
+                    name: externalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: commentExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            responses:
+                204:
+                    content:
+                        application/json: {}
+                        application/xml: {}
+            tags: ["Comment"]
+        get:
+            operationId: getByExternalReferenceCodeComment
+            parameters:
+                -   in: path
+                    name: externalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: commentExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Comment"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Comment"
+            tags: ["Comment"]
+        put:
+            operationId: putByExternalReferenceCodeComment
+            parameters:
+                -   in: path
+                    name: externalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: commentExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Comment"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/Comment"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Comment"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Comment"
+            tags: ["Comment"]
+    "/by-external-reference-code/{externalReferenceCode}/comments/{commentExternalReferenceCode}/child-comments":
+        get:
+            operationId: getByExternalReferenceCodeCommentChildCommentsPage
+            parameters:
+                -   in: path
+                    name: externalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: commentExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    name: aggregationTerms
+                    schema:
+                        items:
+                            type: string
+                        type: array
+                -   in: query
+                    name: fields
+                    schema:
+                        type: string
+                -   in: query
+                    name: nestedFields
+                    schema:
+                        type: string
+                -   in: query
+                    name: page
+                    schema:
+                        type: integer
+                -   in: query
+                    name: pageSize
+                    schema:
+                        type: integer
+                -   in: query
+                    name: restrictFields
+                    schema:
+                        type: string
+                -   in: query
+                    name: search
+                    schema:
+                        type: string
+                -   in: query
+                    name: sort
+                    schema:
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Comment"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Comment"
+                                type: array
+            tags: ["Comment"]
+        post:
+            operationId: postByExternalReferenceCodeCommentChildComment
+            parameters:
+                -   in: path
+                    name: externalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: commentExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Comment"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/Comment"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Comment"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Comment"
+            tags: ["Comment"]
     "/by-external-reference-code/{externalReferenceCode}/object-actions/{objectActionName}":
         put:
             operationId: putByExternalReferenceCodeObjectActionObjectActionName
@@ -837,6 +1094,10 @@ paths:
                     name: pageSize
                     schema:
                         type: integer
+                -   in: query
+                    name: sort
+                    schema:
+                        type: string
             responses:
                 200:
                     content:
@@ -1367,6 +1628,291 @@ paths:
                             schema:
                                 $ref: ../../headless/headless-object/headless-object-impl/rest-openapi.yaml#Collaborator
             tags: ["Collaborator"]
+    "/scopes/{scopeKey}/by-external-reference-code/{externalReferenceCode}/comments":
+        get:
+            operationId: getScopeScopeKeyByExternalReferenceCodeCommentsPage
+            parameters:
+                -   in: path
+                    name: scopeKey
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: externalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    name: aggregationTerms
+                    schema:
+                        items:
+                            type: string
+                        type: array
+                -   in: query
+                    name: fields
+                    schema:
+                        type: string
+                -   in: query
+                    name: nestedFields
+                    schema:
+                        type: string
+                -   in: query
+                    name: page
+                    schema:
+                        type: integer
+                -   in: query
+                    name: pageSize
+                    schema:
+                        type: integer
+                -   in: query
+                    name: restrictFields
+                    schema:
+                        type: string
+                -   in: query
+                    name: search
+                    schema:
+                        type: string
+                -   in: query
+                    name: sort
+                    schema:
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: ../../headless/headless-delivery/headless-delivery-impl/rest-openapi.yaml#Comment
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: ../../headless/headless-delivery/headless-delivery-impl/rest-openapi.yaml#Comment
+                                type: array
+            tags: ["Comment"]
+        post:
+            operationId: postScopeScopeKeyByExternalReferenceCodeComment
+            parameters:
+                -   in: path
+                    name: scopeKey
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: externalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Comment"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/Comment"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Comment"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Comment"
+            tags: ["Comment"]
+    "/scopes/{scopeKey}/by-external-reference-code/{externalReferenceCode}/comments/{commentExternalReferenceCode}":
+        delete:
+            operationId: deleteScopeScopeKeyByExternalReferenceCodeComment
+            parameters:
+                -   in: path
+                    name: scopeKey
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: externalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: commentExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            responses:
+                204:
+                    content:
+                        application/json: {}
+                        application/xml: {}
+            tags: ["Comment"]
+        get:
+            operationId: getScopeScopeKeyByExternalReferenceCodeComment
+            parameters:
+                -   in: path
+                    name: scopeKey
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: externalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: commentExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Comment"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Comment"
+            tags: ["Comment"]
+        put:
+            operationId: putScopeScopeKeyByExternalReferenceCodeComment
+            parameters:
+                -   in: path
+                    name: scopeKey
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: externalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: commentExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Comment"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/Comment"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Comment"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Comment"
+            tags: ["Comment"]
+    "/scopes/{scopeKey}/by-external-reference-code/{externalReferenceCode}/comments/{commentExternalReferenceCode}/child-comments":
+        get:
+            operationId: getScopeScopeKeyByExternalReferenceCodeCommentChildCommentsPage
+            parameters:
+                -   in: path
+                    name: scopeKey
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: externalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: commentExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    name: aggregationTerms
+                    schema:
+                        items:
+                            type: string
+                        type: array
+                -   in: query
+                    name: fields
+                    schema:
+                        type: string
+                -   in: query
+                    name: nestedFields
+                    schema:
+                        type: string
+                -   in: query
+                    name: page
+                    schema:
+                        type: integer
+                -   in: query
+                    name: pageSize
+                    schema:
+                        type: integer
+                -   in: query
+                    name: restrictFields
+                    schema:
+                        type: string
+                -   in: query
+                    name: search
+                    schema:
+                        type: string
+                -   in: query
+                    name: sort
+                    schema:
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Comment"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Comment"
+                                type: array
+            tags: ["Comment"]
+        post:
+            operationId: postScopeScopeKeyByExternalReferenceCodeCommentChildComment
+            parameters:
+                -   in: path
+                    name: scopeKey
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: externalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: commentExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Comment"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/Comment"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Comment"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Comment"
+            tags: ["Comment"]
     "/scopes/{scopeKey}/by-external-reference-code/{externalReferenceCode}/expire":
         post:
             operationId: postScopeScopeKeyByExternalReferenceCodeExpire
@@ -1459,6 +2005,91 @@ paths:
                         application/json: {}
                         application/xml: {}
             tags: ["ObjectEntry"]
+    "/scopes/{scopeKey}/by-external-reference-code/{externalReferenceCode}/translations":
+        get:
+            operationId: getScopeScopeKeyByExternalReferenceCodeTranslation
+            parameters:
+                -   in: path
+                    name: scopeKey
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: externalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    description:
+                        The required language ID of the source text (e.g., "en_US").
+                    name: sourceLanguageId
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    description:
+                        A required list of language IDs for the target translations (e.g., "es_ES", "fr_FR").
+                    name: targetLanguageIds
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    description:
+                        The XLIFF specification version to export.
+                    name: version
+                    schema:
+                        enum:
+                            -   '1.2'
+                            -   '2.0'
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/zip:
+                            schema:
+                                format: binary
+                                type: string
+            tags: ["ObjectEntry"]
+    "/scopes/{scopeKey}/by-external-reference-code/{externalReferenceCode}/translations/{languageId}":
+        get:
+            operationId: getScopeScopeKeyByExternalReferenceCodeTranslationLanguage
+            parameters:
+                -   in: path
+                    name: scopeKey
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: externalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    description:
+                        The required language ID of the source text (e.g., "en_US").
+                    name: languageId
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    description:
+                        The required language ID for the target translation (e.g., "en_US").
+                    name: targetLanguageId
+                    required: true
+                    schema:
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/x-xliff+xml:
+                            schema:
+                                format: binary
+                                type: string
+                        application/xliff+xml:
+                            schema:
+                                format: binary
+                                type: string
+            tags: ["ObjectEntry"]
     "/scopes/{scopeKey}/by-external-reference-code/{externalReferenceCode}/unsubscribe":
         post:
             operationId: postScopeScopeKeyByExternalReferenceCodeUnsubscribe
@@ -1505,6 +2136,10 @@ paths:
                     name: pageSize
                     schema:
                         type: integer
+                -   in: query
+                    name: sort
+                    schema:
+                        type: string
             responses:
                 200:
                     content:
@@ -1774,133 +2409,6 @@ paths:
                             schema:
                                 $ref: "#/components/schemas/ObjectEntry"
             tags: ["ObjectEntry"]
-    "/{objectEntryId}/by-version/{version}":
-        delete:
-            operationId: deleteObjectEntryByVersion
-            parameters:
-                -   in: path
-                    name: objectEntryId
-                    required: true
-                    schema:
-                        format: int64
-                        type: integer
-                -   in: path
-                    name: version
-                    required: true
-                    schema:
-                        format: int32
-                        type: integer
-            responses:
-                204:
-                    content:
-                        application/json: {}
-                        application/xml: {}
-            tags: ["ObjectEntry"]
-        get:
-            operationId: getObjectEntryByVersion
-            parameters:
-                -   in: path
-                    name: objectEntryId
-                    required: true
-                    schema:
-                        format: int64
-                        type: integer
-                -   in: path
-                    name: version
-                    required: true
-                    schema:
-                        format: int32
-                        type: integer
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/ObjectEntry"
-                        application/xml:
-                            schema:
-                                $ref: "#/components/schemas/ObjectEntry"
-            tags: ["ObjectEntry"]
-    "/{objectEntryId}/by-version/{version}/copy":
-        post:
-            operationId: postObjectEntryByVersionCopy
-            parameters:
-                -   in: path
-                    name: objectEntryId
-                    required: true
-                    schema:
-                        format: int64
-                        type: integer
-                -   in: path
-                    name: version
-                    required: true
-                    schema:
-                        format: int32
-                        type: integer
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/ObjectEntry"
-                        application/xml:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/ObjectEntry"
-            tags: ["ObjectEntry"]
-    "/{objectEntryId}/by-version/{version}/expire":
-        post:
-            operationId: postObjectEntryByVersionExpire
-            parameters:
-                -   in: path
-                    name: objectEntryId
-                    required: true
-                    schema:
-                        format: int64
-                        type: integer
-                -   in: path
-                    name: version
-                    required: true
-                    schema:
-                        format: int32
-                        type: integer
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/ObjectEntry"
-                        application/xml:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/ObjectEntry"
-            tags: ["ObjectEntry"]
-    "/{objectEntryId}/by-version/{version}/restore":
-        put:
-            operationId: putObjectEntryByVersionRestore
-            parameters:
-                -   in: path
-                    name: objectEntryId
-                    required: true
-                    schema:
-                        format: int64
-                        type: integer
-                -   in: path
-                    name: version
-                    required: true
-                    schema:
-                        format: int32
-                        type: integer
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/ObjectEntry"
-                        application/xml:
-                            schema:
-                                $ref: "#/components/schemas/ObjectEntry"
-            tags: ["ObjectEntry"]
     "/{objectEntryId}/collaborators":
         get:
             description:
@@ -1940,12 +2448,12 @@ paths:
                             schema:
                                 items:
                                     $ref: ../../headless/headless-object/headless-object-impl/rest-openapi.yaml#Collaborator
-                                type: array
+                                    type: array
                         application/xml:
                             schema:
                                 items:
                                     $ref: ../../headless/headless-object/headless-object-impl/rest-openapi.yaml#Collaborator
-                                type: array
+                                    type: array
             tags: ["Collaborator"]
         post:
             description:
@@ -2190,9 +2698,9 @@ paths:
                         application/json: {}
                         application/xml: {}
             tags: ["ObjectEntry"]
-    "/{objectEntryId}/versions":
+    "/{objectEntryId}/translations":
         get:
-            operationId: getObjectEntriesVersionsPage
+            operationId: getObjectEntryTranslation
             parameters:
                 -   in: path
                     name: objectEntryId
@@ -2201,30 +2709,71 @@ paths:
                         format: int64
                         type: integer
                 -   in: query
-                    name: nestedFields
+                    description:
+                        The required language ID of the source text (e.g., "en_US").
+                    name: sourceLanguageId
+                    required: true
                     schema:
                         type: string
                 -   in: query
-                    name: page
+                    description:
+                        A required list of language IDs for the target translations (e.g., "es_ES", "fr_FR").
+                    name: targetLanguageIds
+                    required: true
                     schema:
-                        type: integer
+                        type: string
                 -   in: query
-                    name: pageSize
+                    description:
+                        The XLIFF specification version to export.
+                    name: version
                     schema:
-                        type: integer
+                        enum:
+                            -   '1.2'
+                            -   '2.0'
+                        type: string
             responses:
                 200:
                     content:
-                        application/json:
+                        application/zip:
                             schema:
-                                items:
-                                    $ref: "#/components/schemas/ObjectEntry"
-                                type: array
-                        application/xml:
+                                format: binary
+                                type: string
+            tags: ["ObjectEntry"]
+    "/{objectEntryId}/translations/{languageId}":
+        get:
+            operationId: getObjectEntryTranslationLanguage
+            parameters:
+                -   in: path
+                    name: objectEntryId
+                    required: true
+                    schema:
+                        format: int64
+                        type: integer
+                -   in: path
+                    description:
+                        The required language ID of the source text (e.g., "en_US").
+                    name: languageId
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    description:
+                        The required language ID for the target translation (e.g., "en_US").
+                    name: targetLanguageId
+                    required: true
+                    schema:
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/x-xliff+xml:
                             schema:
-                                items:
-                                    $ref: "#/components/schemas/ObjectEntry"
-                                type: array
+                                format: binary
+                                type: string
+                        application/xliff+xml:
+                            schema:
+                                format: binary
+                                type: string
             tags: ["ObjectEntry"]
     /scopes/{scopeKey}:
         get:

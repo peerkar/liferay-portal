@@ -9,6 +9,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.ResourceAction;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.Role;
+import com.liferay.portal.kernel.model.role.RoleConstants;
+import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.service.ResourceActionLocalService;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.service.RoleLocalService;
@@ -38,6 +40,20 @@ public class ModelPermissionsUtil {
 			new String[0], new String[0], resourceName);
 
 		for (Permission permission : permissions) {
+			Role role = null;
+
+			if (permission.getRoleExternalReferenceCode() != null) {
+				role = roleLocalService.getOrAddEmptyRole(
+					permission.getRoleExternalReferenceCode(), companyId,
+					PrincipalThreadLocal.getUserId(), null, 0,
+					permission.getRoleName(),
+					RoleConstants.getLabelType(permission.getRoleType()));
+			}
+			else {
+				role = roleLocalService.getRole(
+					companyId, permission.getRoleName());
+			}
+
 			String[] actionIds = permission.getActionIds();
 
 			if (actionIds.length > 0) {
@@ -49,9 +65,6 @@ public class ModelPermissionsUtil {
 
 			List<ResourceAction> resourceActions =
 				resourceActionLocalService.getResourceActions(resourceName);
-
-			Role role = roleLocalService.getRole(
-				companyId, permission.getRoleName());
 
 			for (ResourceAction resourceAction : resourceActions) {
 				resourcePermissionLocalService.removeResourcePermission(

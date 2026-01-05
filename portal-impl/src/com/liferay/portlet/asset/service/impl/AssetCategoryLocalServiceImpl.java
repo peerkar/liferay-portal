@@ -9,8 +9,11 @@ import com.liferay.asset.kernel.exception.AssetCategoryNameException;
 import com.liferay.asset.kernel.exception.DuplicateCategoryException;
 import com.liferay.asset.kernel.exception.DuplicateCategoryExternalReferenceCodeException;
 import com.liferay.asset.kernel.exception.InvalidAssetCategoryException;
+import com.liferay.asset.kernel.exception.NoSuchCategoryException;
+import com.liferay.asset.kernel.exception.NoSuchVocabularyException;
 import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.model.AssetCategoryConstants;
+import com.liferay.asset.kernel.model.AssetVocabulary;
 import com.liferay.asset.kernel.model.AssetVocabularyConstants;
 import com.liferay.asset.kernel.service.persistence.AssetVocabularyPersistence;
 import com.liferay.exportimport.kernel.empty.model.EmptyModelManagerUtil;
@@ -19,6 +22,7 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.cache.thread.local.ThreadLocalCachable;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.model.ModelHintsUtil;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.SystemEventConstants;
@@ -120,7 +124,7 @@ public class AssetCategoryLocalServiceImpl
 
 		String name = trimmedTitleMap.get(defaultLocale);
 
-		validate(0, parentCategoryId, name, vocabularyId);
+		validate(0, groupId, parentCategoryId, name, vocabularyId);
 
 		AssetCategory parentCategory = null;
 
@@ -611,16 +615,23 @@ public class AssetCategoryLocalServiceImpl
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public AssetCategory updateCategory(
-			long userId, long categoryId, long parentCategoryId,
-			Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
-			long vocabularyId, String[] categoryProperties,
-			ServiceContext serviceContext)
+			String externalReferenceCode, long userId, long categoryId,
+			long parentCategoryId, Map<Locale, String> titleMap,
+			Map<Locale, String> descriptionMap, long vocabularyId,
+			String[] categoryProperties, ServiceContext serviceContext)
 		throws PortalException {
 
 		// Category
 
 		AssetCategory category = assetCategoryPersistence.findByPrimaryKey(
 			categoryId);
+
+		if (Validator.isNotNull(externalReferenceCode) &&
+			FeatureFlagManagerUtil.isEnabled(
+				category.getCompanyId(), "LPD-31228")) {
+
+			category.setExternalReferenceCode(externalReferenceCode);
+		}
 
 		Map<Locale, String> trimmedTitleMap = _getTrimmedTitleMap(titleMap);
 
@@ -719,7 +730,7 @@ public class AssetCategoryLocalServiceImpl
 	}
 
 	protected void validate(
-			long categoryId, long parentCategoryId, String name,
+			long categoryId, long groupId, long parentCategoryId, String name,
 			long vocabularyId)
 		throws PortalException {
 
@@ -738,6 +749,29 @@ public class AssetCategoryLocalServiceImpl
 				StringBundler.concat(
 					"There is another category named ", name,
 					" as a child of category ", parentCategoryId));
+		}
+
+		if (vocabularyId != AssetVocabularyConstants.EMPTY_VOCABULARY_ID) {
+			AssetVocabulary assetVocabulary =
+				_assetVocabularyPersistence.findByPrimaryKey(vocabularyId);
+
+			if (assetVocabulary.getGroupId() != groupId) {
+				throw new NoSuchVocabularyException(
+					StringBundler.concat(
+						"Vocabulary ", vocabularyId,
+						" does not exist in group ", groupId));
+			}
+		}
+
+		if (parentCategoryId > 0) {
+			AssetCategory parentAssetCategory = getCategory(parentCategoryId);
+
+			if (parentAssetCategory.getGroupId() != groupId) {
+				throw new NoSuchCategoryException(
+					StringBundler.concat(
+						"Category ", parentCategoryId,
+						" does not exist in group ", groupId));
+			}
 		}
 	}
 
@@ -761,8 +795,8 @@ public class AssetCategoryLocalServiceImpl
 		throws PortalException {
 
 		validate(
-			category.getCategoryId(), parentCategoryId, category.getName(),
-			vocabularyId);
+			category.getCategoryId(), category.getGroupId(), parentCategoryId,
+			category.getName(), vocabularyId);
 
 		if (category.getCategoryId() == parentCategoryId) {
 			throw new InvalidAssetCategoryException(

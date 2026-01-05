@@ -17,12 +17,12 @@ import com.liferay.headless.admin.site.client.dto.v1_0.Site;
 import com.liferay.headless.admin.site.client.http.HttpInvoker;
 import com.liferay.headless.admin.site.client.pagination.Page;
 import com.liferay.headless.admin.site.client.pagination.Pagination;
+import com.liferay.headless.admin.site.client.permission.Permission;
 import com.liferay.headless.admin.site.client.resource.v1_0.SiteResource;
 import com.liferay.headless.admin.site.client.serdes.v1_0.SiteSerDes;
 import com.liferay.headless.batch.engine.client.dto.v1_0.ImportTask;
 import com.liferay.headless.batch.engine.client.http.HttpInvoker.HttpResponse;
 import com.liferay.headless.batch.engine.client.resource.v1_0.ImportTaskResource;
-import com.liferay.oauth2.provider.scope.ScopeChecker;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.petra.string.StringBundler;
@@ -30,15 +30,11 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.RoleConstants;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
-import com.liferay.portal.kernel.service.GroupLocalService;
-import com.liferay.portal.kernel.service.ResourceActionLocalService;
-import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
-import com.liferay.portal.kernel.service.RoleLocalService;
-import com.liferay.portal.kernel.service.UserLocalService;
-import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.test.util.RoleTestUtil;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
@@ -50,27 +46,15 @@ import com.liferay.portal.odata.entity.EntityField;
 import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
-import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
-import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
-import com.liferay.portal.vulcan.crud.VulcanCRUDItemDelegate;
-import com.liferay.portal.vulcan.crud.VulcanCRUDItemDelegateBuilderRegistry;
 import com.liferay.portal.vulcan.resource.EntityModelResource;
 
 import jakarta.annotation.Generated;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import jakarta.ws.rs.core.MultivaluedHashMap;
-import jakarta.ws.rs.core.MultivaluedMap;
-import jakarta.ws.rs.core.PathSegment;
-import jakarta.ws.rs.core.UriBuilder;
-import jakarta.ws.rs.core.UriInfo;
 
 import java.io.File;
 
 import java.lang.reflect.Method;
-
-import java.net.URI;
 
 import java.text.Format;
 
@@ -81,7 +65,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -94,9 +77,6 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-
 /**
  * @author Rubén Pulido
  * @generated
@@ -106,10 +86,8 @@ public abstract class BaseSiteResourceTestCase {
 
 	@ClassRule
 	@Rule
-	public static final AggregateTestRule aggregateTestRule =
-		new AggregateTestRule(
-			new LiferayIntegrationTestRule(),
-			PermissionCheckerMethodTestRule.INSTANCE);
+	public static final LiferayIntegrationTestRule liferayIntegrationTestRule =
+		new LiferayIntegrationTestRule();
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -148,6 +126,18 @@ public abstract class BaseSiteResourceTestCase {
 			testCompany.getVirtualHostname(), 8080, "http"
 		).locale(
 			LocaleUtil.getDefault()
+		).build();
+
+		permissionsSiteResource = SiteResource.builder(
+		).authentication(
+			_testCompanyAdminUser.getEmailAddress(),
+			PropsValues.DEFAULT_ADMIN_PASSWORD
+		).endpoint(
+			testCompany.getVirtualHostname(), 8080, "http"
+		).locale(
+			LocaleUtil.getDefault()
+		).parameter(
+			"nestedFields", "permissions"
 		).build();
 	}
 
@@ -207,12 +197,14 @@ public abstract class BaseSiteResourceTestCase {
 
 		Site site = randomSite();
 
+		site.setDefaultLanguageId(regex);
+		site.setDescription(regex);
+		site.setDescriptiveName(regex);
 		site.setExternalReferenceCode(regex);
 		site.setFriendlyUrlPath(regex);
 		site.setKey(regex);
 		site.setName(regex);
 		site.setParentSiteExternalReferenceCode(regex);
-		site.setParentSiteKey(regex);
 		site.setTemplateKey(regex);
 
 		String json = SiteSerDes.toJSON(site);
@@ -221,12 +213,14 @@ public abstract class BaseSiteResourceTestCase {
 
 		site = SiteSerDes.toDTO(json);
 
+		Assert.assertEquals(regex, site.getDefaultLanguageId());
+		Assert.assertEquals(regex, site.getDescription());
+		Assert.assertEquals(regex, site.getDescriptiveName());
 		Assert.assertEquals(regex, site.getExternalReferenceCode());
 		Assert.assertEquals(regex, site.getFriendlyUrlPath());
 		Assert.assertEquals(regex, site.getKey());
 		Assert.assertEquals(regex, site.getName());
 		Assert.assertEquals(regex, site.getParentSiteExternalReferenceCode());
-		Assert.assertEquals(regex, site.getParentSiteKey());
 		Assert.assertEquals(regex, site.getTemplateKey());
 	}
 
@@ -236,11 +230,15 @@ public abstract class BaseSiteResourceTestCase {
 		Site site = testDeleteSite_addSite();
 
 		assertHttpResponseStatusCode(
-			204, siteResource.deleteSiteHttpResponse(site.getId()));
+			204,
+			siteResource.deleteSiteHttpResponse(
+				site.getExternalReferenceCode()));
 
 		assertHttpResponseStatusCode(
-			404, siteResource.getSiteHttpResponse(site.getId()));
-		assertHttpResponseStatusCode(404, siteResource.getSiteHttpResponse(0L));
+			404,
+			siteResource.getSiteHttpResponse(site.getExternalReferenceCode()));
+		assertHttpResponseStatusCode(
+			404, siteResource.getSiteHttpResponse("-"));
 	}
 
 	protected Site testDeleteSite_addSite() throws Exception {
@@ -256,31 +254,8 @@ public abstract class BaseSiteResourceTestCase {
 			202, site1.getExternalReferenceCode(), null);
 
 		assertHttpResponseStatusCode(
-			404, siteResource.getSiteHttpResponse(site1.getId()));
-
-		site1 = testDeleteSiteBatch_addSite();
-
-		testDeleteSiteBatch_deleteSite(202, null, site1.getId());
-
-		assertHttpResponseStatusCode(
-			404, siteResource.getSiteHttpResponse(site1.getId()));
-
-		site1 = testDeleteSiteBatch_addSite();
-		Site site2 = testDeleteSiteBatch_addSite();
-
-		testDeleteSiteBatch_deleteSite(
-			202, site2.getExternalReferenceCode(), site1.getId());
-
-		assertHttpResponseStatusCode(
-			404, siteResource.getSiteHttpResponse(site1.getId()));
-		assertHttpResponseStatusCode(
-			200, siteResource.getSiteHttpResponse(site2.getId()));
-
-		testDeleteSiteBatch_deleteSite(
-			202, site2.getExternalReferenceCode(), site1.getId());
-
-		assertHttpResponseStatusCode(
-			404, siteResource.getSiteHttpResponse(site2.getId()));
+			404,
+			siteResource.getSiteHttpResponse(site1.getExternalReferenceCode()));
 	}
 
 	protected Site testDeleteSiteBatch_addSite() throws Exception {
@@ -309,224 +284,21 @@ public abstract class BaseSiteResourceTestCase {
 	}
 
 	@Test
-	public void testDeleteSiteByExternalReferenceCode() throws Exception {
-		@SuppressWarnings("PMD.UnusedLocalVariable")
-		Site site = testDeleteSiteByExternalReferenceCode_addSite();
-
-		assertHttpResponseStatusCode(
-			204,
-			siteResource.deleteSiteByExternalReferenceCodeHttpResponse(
-				site.getExternalReferenceCode()));
-
-		assertHttpResponseStatusCode(
-			404,
-			siteResource.getSiteByExternalReferenceCodeHttpResponse(
-				site.getExternalReferenceCode()));
-		assertHttpResponseStatusCode(
-			404, siteResource.getSiteByExternalReferenceCodeHttpResponse("-"));
-	}
-
-	protected Site testDeleteSiteByExternalReferenceCode_addSite()
-		throws Exception {
-
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
-	}
-
-	@Test
 	public void testGetSite() throws Exception {
 		Site postSite = testGetSite_addSite();
 
-		Site getSite = siteResource.getSite(postSite.getId());
+		Site getSite = siteResource.getSite(
+			postSite.getExternalReferenceCode());
 
 		assertEquals(postSite, getSite);
 		assertValid(getSite);
-	}
 
-	@Test
-	public void testVulcanCRUDItemDelegateGetItem() throws Exception {
-		Site postSite = testGetSite_addSite();
+		Assert.assertNull(getSite.getPermissions());
 
-		Site getSite = siteResource.getSite(postSite.getId());
+		getSite = permissionsSiteResource.getSite(
+			postSite.getExternalReferenceCode());
 
-		VulcanCRUDItemDelegate vulcanCRUDItemDelegate =
-			_vulcanCRUDItemDelegateBuilderRegistry.builder(
-				testCompany, "com.liferay.headless.admin.site.dto.v1_0.Site"
-			).acceptLanguage(
-				new AcceptLanguage() {
-
-					@Override
-					public List<Locale> getLocales() {
-						return Arrays.asList(LocaleUtil.getDefault());
-					}
-
-					@Override
-					public String getPreferredLanguageId() {
-						return LocaleUtil.toLanguageId(LocaleUtil.getDefault());
-					}
-
-					@Override
-					public Locale getPreferredLocale() {
-						return LocaleUtil.getDefault();
-					}
-
-				}
-			).groupLocalService(
-				_groupLocalService
-			).httpServletRequest(
-				testVulcanCRUDItemDelegate_getHttpServletRequest()
-			).httpServletResponse(
-				new MockHttpServletResponse()
-			).resourceActionLocalService(
-				_resourceActionLocalService
-			).resourcePermissionLocalService(
-				_resourcePermissionLocalService
-			).roleLocalService(
-				_roleLocalService
-			).scopeChecker(
-				_scopeChecker
-			).uriInfo(
-				testVulcanCRUDItemDelegate_getUriInfo()
-			).user(
-				testVulcanCRUDItemDelegate_getUser()
-			).build();
-
-		Object item = vulcanCRUDItemDelegate.getItem(postSite.getId());
-
-		assertEquals(getSite, SiteSerDes.toDTO(item.toString()));
-	}
-
-	protected HttpServletRequest
-		testVulcanCRUDItemDelegate_getHttpServletRequest() {
-
-		return new MockHttpServletRequest() {
-
-			@Override
-			public StringBuffer getRequestURL() {
-				return new StringBuffer(
-					StringBundler.concat(
-						"http://localhost:8080/o/v1.0/",
-						RandomTestUtil.randomString(), "/",
-						RandomTestUtil.randomString()));
-			}
-
-		};
-	}
-
-	protected UriInfo testVulcanCRUDItemDelegate_getUriInfo() {
-		String applicationPath = RandomTestUtil.randomString() + "/";
-		String resourcePath = RandomTestUtil.randomString();
-
-		return new UriInfo() {
-
-			@Override
-			public String getPath() {
-				return resourcePath;
-			}
-
-			@Override
-			public String getPath(boolean decode) {
-				return getPath();
-			}
-
-			@Override
-			public List<PathSegment> getPathSegments() {
-				return Collections.emptyList();
-			}
-
-			@Override
-			public List<PathSegment> getPathSegments(boolean decode) {
-				return getPathSegments();
-			}
-
-			@Override
-			public URI getRequestUri() {
-				return URI.create(
-					"http://localhost:8080/o/" + applicationPath +
-						resourcePath);
-			}
-
-			@Override
-			public UriBuilder getRequestUriBuilder() {
-				return UriBuilder.fromUri(getRequestUri());
-			}
-
-			@Override
-			public URI getAbsolutePath() {
-				return getRequestUri();
-			}
-
-			@Override
-			public UriBuilder getAbsolutePathBuilder() {
-				return getRequestUriBuilder();
-			}
-
-			@Override
-			public URI getBaseUri() {
-				return URI.create("http://localhost:8080/o/" + applicationPath);
-			}
-
-			@Override
-			public UriBuilder getBaseUriBuilder() {
-				return UriBuilder.fromUri(getBaseUri());
-			}
-
-			@Override
-			public MultivaluedMap<String, String> getPathParameters() {
-				return new MultivaluedHashMap<>();
-			}
-
-			@Override
-			public MultivaluedMap<String, String> getPathParameters(
-				boolean decode) {
-
-				return getPathParameters();
-			}
-
-			@Override
-			public MultivaluedMap<String, String> getQueryParameters() {
-				return new MultivaluedHashMap<>();
-			}
-
-			@Override
-			public MultivaluedMap<String, String> getQueryParameters(
-				boolean decode) {
-
-				return getQueryParameters();
-			}
-
-			@Override
-			public List<String> getMatchedURIs() {
-				return Collections.emptyList();
-			}
-
-			@Override
-			public List<String> getMatchedURIs(boolean decode) {
-				return getMatchedURIs();
-			}
-
-			@Override
-			public List<Object> getMatchedResources() {
-				return Collections.emptyList();
-			}
-
-			@Override
-			public URI resolve(URI requestUri) {
-				return getBaseUri().resolve(requestUri);
-			}
-
-			@Override
-			public URI relativize(URI uri) {
-				return getBaseUri().relativize(uri);
-			}
-
-		};
-	}
-
-	protected com.liferay.portal.kernel.model.User
-		testVulcanCRUDItemDelegate_getUser() {
-
-		return _testCompanyAdminUser;
+		Assert.assertNotNull(getSite.getPermissions());
 	}
 
 	protected Site testGetSite_addSite() throws Exception {
@@ -535,27 +307,23 @@ public abstract class BaseSiteResourceTestCase {
 	}
 
 	@Test
-	public void testGetSiteByExternalReferenceCode() throws Exception {
-		Site postSite = testGetSiteByExternalReferenceCode_addSite();
+	public void testGetSitePermissionsPage() throws Exception {
+		@SuppressWarnings("PMD.UnusedLocalVariable")
+		Site postSite = testGetSitePermissionsPage_addSite();
 
-		Site getSite = siteResource.getSiteByExternalReferenceCode(
-			postSite.getExternalReferenceCode());
+		Page<Permission> page = siteResource.getSitePermissionsPage(
+			postSite.getExternalReferenceCode(), RoleConstants.GUEST);
 
-		assertEquals(postSite, getSite);
-		assertValid(getSite);
+		Assert.assertNotNull(page);
 	}
 
-	protected Site testGetSiteByExternalReferenceCode_addSite()
-		throws Exception {
-
+	protected Site testGetSitePermissionsPage_addSite() throws Exception {
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
 	}
 
 	@Test
-	public void testGetSiteByExternalReferenceCodeSiteInitializer()
-		throws Exception {
-
+	public void testGetSiteSiteInitializer() throws Exception {
 		Assert.assertTrue(false);
 	}
 
@@ -578,9 +346,20 @@ public abstract class BaseSiteResourceTestCase {
 		assertContains(site2, (List<Site>)page.getItems());
 		assertValid(page, testGetSitesPage_getExpectedActions());
 
-		siteResource.deleteSite(site1.getId());
+		for (Site site : page.getItems()) {
+			Assert.assertNull(site.getPermissions());
+		}
 
-		siteResource.deleteSite(site2.getId());
+		page = permissionsSiteResource.getSitesPage(
+			null, null, Pagination.of(1, 10));
+
+		for (Site site : page.getItems()) {
+			Assert.assertNotNull(site.getPermissions());
+		}
+
+		siteResource.deleteSite(site1.getExternalReferenceCode());
+
+		siteResource.deleteSite(site2.getExternalReferenceCode());
 	}
 
 	protected Map<String, Map<String, String>>
@@ -675,9 +454,28 @@ public abstract class BaseSiteResourceTestCase {
 
 		assertEquals(randomSite, postSite);
 		assertValid(postSite);
+
+		Site randomPermissionsSite1 = randomPermissionsSite();
+
+		Site postPermissionsSite1 = testPostSite_addSite(
+			randomPermissionsSite1);
+
+		Assert.assertNull(postPermissionsSite1.getPermissions());
+
+		Site randomPermissionsSite2 = randomPermissionsSite();
+
+		Site postPermissionsSite2 = testPostSite_addPermissionsSite(
+			randomPermissionsSite2);
+
+		Assert.assertNotNull(postPermissionsSite2.getPermissions());
 	}
 
 	protected Site testPostSite_addSite(Site site) throws Exception {
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	protected Site testPostSite_addPermissionsSite(Site site) throws Exception {
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
 	}
@@ -711,15 +509,33 @@ public abstract class BaseSiteResourceTestCase {
 
 		Site randomSite = randomSite();
 
-		Site putSite = siteResource.putSite(randomSite);
+		Site putSite = siteResource.putSite(
+			postSite.getExternalReferenceCode(), randomSite);
 
 		assertEquals(randomSite, putSite);
 		assertValid(putSite);
 
-		Site getSite = siteResource.getSite(putSite.getId());
+		Assert.assertNull(putSite.getPermissions());
+
+		Site getSite = siteResource.getSite(putSite.getExternalReferenceCode());
 
 		assertEquals(randomSite, getSite);
 		assertValid(getSite);
+
+		Site randomPermissionsSite = randomPermissionsSite();
+
+		putSite = siteResource.putSite(
+			postSite.getExternalReferenceCode(), randomPermissionsSite);
+
+		assertEquals(randomPermissionsSite, putSite);
+		assertValid(putSite);
+
+		Assert.assertNull(putSite.getPermissions());
+
+		putSite = permissionsSiteResource.putSite(
+			postSite.getExternalReferenceCode(), randomPermissionsSite);
+
+		Assert.assertNotNull(putSite.getPermissions());
 	}
 
 	protected Site testPutSite_addSite() throws Exception {
@@ -728,56 +544,79 @@ public abstract class BaseSiteResourceTestCase {
 	}
 
 	@Test
-	public void testPutSiteByExternalReferenceCode() throws Exception {
-		Site postSite = testPutSiteByExternalReferenceCode_addSite();
+	public void testPutSitePermissionsPage() throws Exception {
+		@SuppressWarnings("PMD.UnusedLocalVariable")
+		Site site = testPutSitePermissionsPage_addSite();
+
+		@SuppressWarnings("PMD.UnusedLocalVariable")
+		com.liferay.portal.kernel.model.Role role = RoleTestUtil.addRole(
+			RoleConstants.TYPE_REGULAR);
+
+		assertHttpResponseStatusCode(
+			200,
+			siteResource.putSitePermissionsPageHttpResponse(
+				site.getExternalReferenceCode(),
+				new Permission[] {
+					new Permission() {
+						{
+							setActionIds(new String[] {"PERMISSIONS"});
+							setRoleName(role.getName());
+						}
+					}
+				}));
+
+		assertHttpResponseStatusCode(
+			404,
+			siteResource.putSitePermissionsPageHttpResponse(
+				site.getExternalReferenceCode(),
+				new Permission[] {
+					new Permission() {
+						{
+							setActionIds(new String[] {"-"});
+							setRoleName("-");
+						}
+					}
+				}));
+	}
+
+	protected Site testPutSitePermissionsPage_addSite() throws Exception {
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	@Test
+	public void testPutSiteSiteInitializer() throws Exception {
+		Site postSite = testPutSiteSiteInitializer_addSite();
 
 		Site randomSite = randomSite();
 
 		Map<String, File> multipartFiles = getMultipartFiles();
 
-		Site putSite = siteResource.putSiteByExternalReferenceCode(
+		Site putSite = siteResource.putSiteSiteInitializer(
 			postSite.getExternalReferenceCode(), randomSite, multipartFiles);
 
 		assertEquals(randomSite, putSite);
 		assertValid(putSite);
 
-		Site getSite = siteResource.getSiteByExternalReferenceCode(
+		Site getSite = testPutSiteSiteInitializer_getSite(
 			putSite.getExternalReferenceCode());
 
 		assertEquals(randomSite, getSite);
 		assertValid(getSite);
 
 		assertValid(getSite, multipartFiles);
-
-		Site newSite = testPutSiteByExternalReferenceCode_createSite();
-
-		putSite = siteResource.putSiteByExternalReferenceCode(
-			newSite.getExternalReferenceCode(), newSite, getMultipartFiles());
-
-		assertEquals(newSite, putSite);
-		assertValid(putSite);
-
-		getSite = siteResource.getSiteByExternalReferenceCode(
-			putSite.getExternalReferenceCode());
-
-		assertEquals(newSite, getSite);
-
-		Assert.assertEquals(
-			newSite.getExternalReferenceCode(),
-			putSite.getExternalReferenceCode());
 	}
 
-	protected Site testPutSiteByExternalReferenceCode_addSite()
-		throws Exception {
+	protected Site testPutSiteSiteInitializer_getSite(
+		String siteExternalReferenceCode) {
 
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
 	}
 
-	protected Site testPutSiteByExternalReferenceCode_createSite()
-		throws Exception {
-
-		return randomSite();
+	protected Site testPutSiteSiteInitializer_addSite() throws Exception {
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
 	}
 
 	@Test
@@ -785,34 +624,11 @@ public abstract class BaseSiteResourceTestCase {
 		Site site1 = testBatchEngineDeleteImportTask_addSite();
 
 		testBatchEngineDeleteImportTask_deleteSite(
-			200, site1.getExternalReferenceCode(), null);
+			200, site1.getExternalReferenceCode());
 
 		assertHttpResponseStatusCode(
-			404, siteResource.getSiteHttpResponse(site1.getId()));
-
-		site1 = testBatchEngineDeleteImportTask_addSite();
-
-		testBatchEngineDeleteImportTask_deleteSite(200, null, site1.getId());
-
-		assertHttpResponseStatusCode(
-			404, siteResource.getSiteHttpResponse(site1.getId()));
-
-		site1 = testBatchEngineDeleteImportTask_addSite();
-		Site site2 = testBatchEngineDeleteImportTask_addSite();
-
-		testBatchEngineDeleteImportTask_deleteSite(
-			200, site2.getExternalReferenceCode(), site1.getId());
-
-		assertHttpResponseStatusCode(
-			404, siteResource.getSiteHttpResponse(site1.getId()));
-		assertHttpResponseStatusCode(
-			200, siteResource.getSiteHttpResponse(site2.getId()));
-
-		testBatchEngineDeleteImportTask_deleteSite(
-			200, site2.getExternalReferenceCode(), site1.getId());
-
-		assertHttpResponseStatusCode(
-			404, siteResource.getSiteHttpResponse(site2.getId()));
+			404,
+			siteResource.getSiteHttpResponse(site1.getExternalReferenceCode()));
 	}
 
 	protected Site testBatchEngineDeleteImportTask_addSite() throws Exception {
@@ -820,7 +636,7 @@ public abstract class BaseSiteResourceTestCase {
 	}
 
 	protected void testBatchEngineDeleteImportTask_deleteSite(
-			int expectedStatusCode, String externalReferenceCode, Long id,
+			int expectedStatusCode, String externalReferenceCode,
 			String... parameters)
 		throws Exception {
 
@@ -840,10 +656,7 @@ public abstract class BaseSiteResourceTestCase {
 				null, null,
 				JSONUtil.putAll(
 					JSONUtil.put(
-						"externalReferenceCode", () -> externalReferenceCode
-					).put(
-						"id", () -> id
-					)));
+						"externalReferenceCode", () -> externalReferenceCode)));
 
 		Assert.assertEquals(expectedStatusCode, httpResponse.getStatusCode());
 
@@ -930,8 +743,85 @@ public abstract class BaseSiteResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals(
+					"analyticsConfiguration", additionalAssertFieldName)) {
+
+				if (site.getAnalyticsConfiguration() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"assetAutoTaggingEnabled", additionalAssertFieldName)) {
+
+				if (site.getAssetAutoTaggingEnabled() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"contentSharingWithChildrenEnabled",
+					additionalAssertFieldName)) {
+
+				if (site.getContentSharingWithChildrenEnabled() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"defaultLanguageId", additionalAssertFieldName)) {
+
+				if (site.getDefaultLanguageId() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("description", additionalAssertFieldName)) {
 				if (site.getDescription() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("description_i18n", additionalAssertFieldName)) {
+				if (site.getDescription_i18n() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("descriptiveName", additionalAssertFieldName)) {
+				if (site.getDescriptiveName() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"descriptiveName_i18n", additionalAssertFieldName)) {
+
+				if (site.getDescriptiveName_i18n() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"directoryIndexingEnabled", additionalAssertFieldName)) {
+
+				if (site.getDirectoryIndexingEnabled() == null) {
 					valid = false;
 				}
 
@@ -956,6 +846,14 @@ public abstract class BaseSiteResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("inheritLocales", additionalAssertFieldName)) {
+				if (site.getInheritLocales() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("key", additionalAssertFieldName)) {
 				if (site.getKey() == null) {
 					valid = false;
@@ -964,8 +862,24 @@ public abstract class BaseSiteResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("locales", additionalAssertFieldName)) {
+				if (site.getLocales() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("manualMembership", additionalAssertFieldName)) {
 				if (site.getManualMembership() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("mapProviderKey", additionalAssertFieldName)) {
+				if (site.getMapProviderKey() == null) {
 					valid = false;
 				}
 
@@ -984,6 +898,14 @@ public abstract class BaseSiteResourceTestCase {
 
 			if (Objects.equals("membershipType", additionalAssertFieldName)) {
 				if (site.getMembershipType() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("mentionsEnabled", additionalAssertFieldName)) {
+				if (site.getMentionsEnabled() == null) {
 					valid = false;
 				}
 
@@ -1017,8 +939,24 @@ public abstract class BaseSiteResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals("parentSiteKey", additionalAssertFieldName)) {
-				if (site.getParentSiteKey() == null) {
+			if (Objects.equals("permissions", additionalAssertFieldName)) {
+				if (site.getPermissions() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("ratingsTypes", additionalAssertFieldName)) {
+				if (site.getRatingsTypes() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("sharingEnabled", additionalAssertFieldName)) {
+				if (site.getSharingEnabled() == null) {
 					valid = false;
 				}
 
@@ -1041,8 +979,18 @@ public abstract class BaseSiteResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals("typeSettings", additionalAssertFieldName)) {
-				if (site.getTypeSettings() == null) {
+			if (Objects.equals("trashEnabled", additionalAssertFieldName)) {
+				if (site.getTrashEnabled() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"trashEntriesMaxAge", additionalAssertFieldName)) {
+
+				if (site.getTrashEntriesMaxAge() == null) {
 					valid = false;
 				}
 
@@ -1183,10 +1131,110 @@ public abstract class BaseSiteResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals(
+					"analyticsConfiguration", additionalAssertFieldName)) {
+
+				if (!Objects.deepEquals(
+						site1.getAnalyticsConfiguration(),
+						site2.getAnalyticsConfiguration())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"assetAutoTaggingEnabled", additionalAssertFieldName)) {
+
+				if (!Objects.deepEquals(
+						site1.getAssetAutoTaggingEnabled(),
+						site2.getAssetAutoTaggingEnabled())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"contentSharingWithChildrenEnabled",
+					additionalAssertFieldName)) {
+
+				if (!Objects.deepEquals(
+						site1.getContentSharingWithChildrenEnabled(),
+						site2.getContentSharingWithChildrenEnabled())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"defaultLanguageId", additionalAssertFieldName)) {
+
+				if (!Objects.deepEquals(
+						site1.getDefaultLanguageId(),
+						site2.getDefaultLanguageId())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("description", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						site1.getDescription(), site2.getDescription())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("description_i18n", additionalAssertFieldName)) {
 				if (!equals(
-						(Map)site1.getDescription(),
-						(Map)site2.getDescription())) {
+						(Map)site1.getDescription_i18n(),
+						(Map)site2.getDescription_i18n())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("descriptiveName", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						site1.getDescriptiveName(),
+						site2.getDescriptiveName())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"descriptiveName_i18n", additionalAssertFieldName)) {
+
+				if (!equals(
+						(Map)site1.getDescriptiveName_i18n(),
+						(Map)site2.getDescriptiveName_i18n())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"directoryIndexingEnabled", additionalAssertFieldName)) {
+
+				if (!Objects.deepEquals(
+						site1.getDirectoryIndexingEnabled(),
+						site2.getDirectoryIndexingEnabled())) {
 
 					return false;
 				}
@@ -1226,8 +1274,28 @@ public abstract class BaseSiteResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("inheritLocales", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						site1.getInheritLocales(), site2.getInheritLocales())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("key", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(site1.getKey(), site2.getKey())) {
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("locales", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						site1.getLocales(), site2.getLocales())) {
+
 					return false;
 				}
 
@@ -1238,6 +1306,16 @@ public abstract class BaseSiteResourceTestCase {
 				if (!Objects.deepEquals(
 						site1.getManualMembership(),
 						site2.getManualMembership())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("mapProviderKey", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						site1.getMapProviderKey(), site2.getMapProviderKey())) {
 
 					return false;
 				}
@@ -1261,6 +1339,17 @@ public abstract class BaseSiteResourceTestCase {
 			if (Objects.equals("membershipType", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
 						site1.getMembershipType(), site2.getMembershipType())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("mentionsEnabled", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						site1.getMentionsEnabled(),
+						site2.getMentionsEnabled())) {
 
 					return false;
 				}
@@ -1300,9 +1389,29 @@ public abstract class BaseSiteResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals("parentSiteKey", additionalAssertFieldName)) {
+			if (Objects.equals("permissions", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
-						site1.getParentSiteKey(), site2.getParentSiteKey())) {
+						site1.getPermissions(), site2.getPermissions())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("ratingsTypes", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						site1.getRatingsTypes(), site2.getRatingsTypes())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("sharingEnabled", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						site1.getSharingEnabled(), site2.getSharingEnabled())) {
 
 					return false;
 				}
@@ -1330,10 +1439,22 @@ public abstract class BaseSiteResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals("typeSettings", additionalAssertFieldName)) {
-				if (!equals(
-						(Map)site1.getTypeSettings(),
-						(Map)site2.getTypeSettings())) {
+			if (Objects.equals("trashEnabled", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						site1.getTrashEnabled(), site2.getTrashEnabled())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"trashEntriesMaxAge", additionalAssertFieldName)) {
+
+				if (!Objects.deepEquals(
+						site1.getTrashEntriesMaxAge(),
+						site2.getTrashEntriesMaxAge())) {
 
 					return false;
 				}
@@ -1453,7 +1574,170 @@ public abstract class BaseSiteResourceTestCase {
 				"Invalid entity field " + entityFieldName);
 		}
 
+		if (entityFieldName.equals("analyticsConfiguration")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
+		if (entityFieldName.equals("assetAutoTaggingEnabled")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
+		if (entityFieldName.equals("contentSharingWithChildrenEnabled")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
+		if (entityFieldName.equals("defaultLanguageId")) {
+			Object object = site.getDefaultLanguageId();
+
+			String value = String.valueOf(object);
+
+			if (operator.equals("contains")) {
+				sb = new StringBundler();
+
+				sb.append("contains(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 2)) {
+					sb.append(value.substring(1, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else if (operator.equals("startswith")) {
+				sb = new StringBundler();
+
+				sb.append("startswith(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 1)) {
+					sb.append(value.substring(0, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else {
+				sb.append("'");
+				sb.append(value);
+				sb.append("'");
+			}
+
+			return sb.toString();
+		}
+
 		if (entityFieldName.equals("description")) {
+			Object object = site.getDescription();
+
+			String value = String.valueOf(object);
+
+			if (operator.equals("contains")) {
+				sb = new StringBundler();
+
+				sb.append("contains(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 2)) {
+					sb.append(value.substring(1, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else if (operator.equals("startswith")) {
+				sb = new StringBundler();
+
+				sb.append("startswith(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 1)) {
+					sb.append(value.substring(0, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else {
+				sb.append("'");
+				sb.append(value);
+				sb.append("'");
+			}
+
+			return sb.toString();
+		}
+
+		if (entityFieldName.equals("description_i18n")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
+		if (entityFieldName.equals("descriptiveName")) {
+			Object object = site.getDescriptiveName();
+
+			String value = String.valueOf(object);
+
+			if (operator.equals("contains")) {
+				sb = new StringBundler();
+
+				sb.append("contains(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 2)) {
+					sb.append(value.substring(1, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else if (operator.equals("startswith")) {
+				sb = new StringBundler();
+
+				sb.append("startswith(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 1)) {
+					sb.append(value.substring(0, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else {
+				sb.append("'");
+				sb.append(value);
+				sb.append("'");
+			}
+
+			return sb.toString();
+		}
+
+		if (entityFieldName.equals("descriptiveName_i18n")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
+		if (entityFieldName.equals("directoryIndexingEnabled")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
 		}
@@ -1555,6 +1839,11 @@ public abstract class BaseSiteResourceTestCase {
 				"Invalid entity field " + entityFieldName);
 		}
 
+		if (entityFieldName.equals("inheritLocales")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
 		if (entityFieldName.equals("key")) {
 			Object object = site.getKey();
 
@@ -1601,7 +1890,17 @@ public abstract class BaseSiteResourceTestCase {
 			return sb.toString();
 		}
 
+		if (entityFieldName.equals("locales")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
 		if (entityFieldName.equals("manualMembership")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
+		if (entityFieldName.equals("mapProviderKey")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
 		}
@@ -1613,6 +1912,11 @@ public abstract class BaseSiteResourceTestCase {
 		}
 
 		if (entityFieldName.equals("membershipType")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
+		if (entityFieldName.equals("mentionsEnabled")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
 		}
@@ -1714,50 +2018,19 @@ public abstract class BaseSiteResourceTestCase {
 			return sb.toString();
 		}
 
-		if (entityFieldName.equals("parentSiteKey")) {
-			Object object = site.getParentSiteKey();
+		if (entityFieldName.equals("permissions")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
 
-			String value = String.valueOf(object);
+		if (entityFieldName.equals("ratingsTypes")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
 
-			if (operator.equals("contains")) {
-				sb = new StringBundler();
-
-				sb.append("contains(");
-				sb.append(entityFieldName);
-				sb.append(",'");
-
-				if ((object != null) && (value.length() > 2)) {
-					sb.append(value.substring(1, value.length() - 1));
-				}
-				else {
-					sb.append(value);
-				}
-
-				sb.append("')");
-			}
-			else if (operator.equals("startswith")) {
-				sb = new StringBundler();
-
-				sb.append("startswith(");
-				sb.append(entityFieldName);
-				sb.append(",'");
-
-				if ((object != null) && (value.length() > 1)) {
-					sb.append(value.substring(0, value.length() - 1));
-				}
-				else {
-					sb.append(value);
-				}
-
-				sb.append("')");
-			}
-			else {
-				sb.append("'");
-				sb.append(value);
-				sb.append("'");
-			}
-
-			return sb.toString();
+		if (entityFieldName.equals("sharingEnabled")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
 		}
 
 		if (entityFieldName.equals("templateKey")) {
@@ -1811,9 +2084,15 @@ public abstract class BaseSiteResourceTestCase {
 				"Invalid entity field " + entityFieldName);
 		}
 
-		if (entityFieldName.equals("typeSettings")) {
+		if (entityFieldName.equals("trashEnabled")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
+		}
+
+		if (entityFieldName.equals("trashEntriesMaxAge")) {
+			sb.append(String.valueOf(site.getTrashEntriesMaxAge()));
+
+			return sb.toString();
 		}
 
 		throw new IllegalArgumentException(
@@ -1867,21 +2146,34 @@ public abstract class BaseSiteResourceTestCase {
 		return new Site() {
 			{
 				active = RandomTestUtil.randomBoolean();
+				assetAutoTaggingEnabled = RandomTestUtil.randomBoolean();
+				contentSharingWithChildrenEnabled =
+					RandomTestUtil.randomBoolean();
+				defaultLanguageId = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
+				description = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
+				descriptiveName = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
+				directoryIndexingEnabled = RandomTestUtil.randomBoolean();
 				externalReferenceCode = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
 				friendlyUrlPath = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
 				id = RandomTestUtil.randomLong();
+				inheritLocales = RandomTestUtil.randomBoolean();
 				key = StringUtil.toLowerCase(RandomTestUtil.randomString());
 				manualMembership = RandomTestUtil.randomBoolean();
 				membershipRestriction = RandomTestUtil.randomInt();
+				mentionsEnabled = RandomTestUtil.randomBoolean();
 				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
 				parentSiteExternalReferenceCode = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
-				parentSiteKey = StringUtil.toLowerCase(
-					RandomTestUtil.randomString());
+				sharingEnabled = RandomTestUtil.randomBoolean();
 				templateKey = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
+				trashEnabled = RandomTestUtil.randomBoolean();
+				trashEntriesMaxAge = RandomTestUtil.randomInt();
 			}
 		};
 	}
@@ -1894,6 +2186,25 @@ public abstract class BaseSiteResourceTestCase {
 
 	protected Site randomPatchSite() throws Exception {
 		return randomSite();
+	}
+
+	protected Site randomPermissionsSite() throws Exception {
+		Site site = randomSite();
+
+		com.liferay.portal.kernel.model.Role role = RoleTestUtil.addRole(
+			RoleConstants.TYPE_REGULAR);
+
+		site.setPermissions(
+			new Permission[] {
+				new Permission() {
+					{
+						setActionIds(new String[] {"VIEW"});
+						setRoleName(role.getName());
+					}
+				}
+			});
+
+		return site;
 	}
 
 	protected final JSONObject waitForFinish(
@@ -1921,6 +2232,7 @@ public abstract class BaseSiteResourceTestCase {
 	protected SiteResource siteResource;
 	protected ImportTaskResource importTaskResource;
 	protected com.liferay.portal.kernel.model.Group irrelevantGroup;
+	protected SiteResource permissionsSiteResource;
 	protected com.liferay.portal.kernel.model.Company testCompany;
 	protected com.liferay.portal.kernel.model.Group testGroup;
 
@@ -2127,27 +2439,5 @@ public abstract class BaseSiteResourceTestCase {
 	@Inject
 	private com.liferay.headless.admin.site.resource.v1_0.SiteResource
 		_siteResource;
-
-	@Inject
-	private GroupLocalService _groupLocalService;
-
-	@Inject
-	private ResourceActionLocalService _resourceActionLocalService;
-
-	@Inject
-	private ResourcePermissionLocalService _resourcePermissionLocalService;
-
-	@Inject
-	private RoleLocalService _roleLocalService;
-
-	@Inject
-	private ScopeChecker _scopeChecker;
-
-	@Inject
-	private UserLocalService _userLocalService;
-
-	@Inject
-	private VulcanCRUDItemDelegateBuilderRegistry
-		_vulcanCRUDItemDelegateBuilderRegistry;
 
 }

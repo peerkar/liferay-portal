@@ -99,7 +99,7 @@ function AssetVocabularyContextualSidebar({
 
 					setSelectedVocabulary({
 						...item,
-						classPK: item.assetVocabularyId,
+						externalReferenceCode: item.externalReferenceCode,
 					});
 
 					const namespacedItem = Liferay.Util.ns(namespace, item);
@@ -315,11 +315,10 @@ function AssetVocabularyContextualSidebar({
 
 AssetVocabularyContextualSidebar.propTypes = {
 	assetVocabulary: PropTypes.shape({
-		classPK: PropTypes.string,
-		groupId: PropTypes.string,
+		externalReferenceCode: PropTypes.string,
+		scopeExternalReferenceCode: PropTypes.string,
 		title: PropTypes.string,
 		type: PropTypes.string,
-		uuid: PropTypes.string,
 	}).isRequired,
 	chooseAssetVocabularyProps: PropTypes.shape({
 		assetVocabularySelectorURL: PropTypes.string,
@@ -346,22 +345,16 @@ function FormValues({
 	return (
 		<>
 			<input
-				name={getFieldName(namespace, 'classPK')}
-				readOnly
-				type="hidden"
-				value={selectedVocabulary.classPK || ''}
-			/>
-			<input
-				name={getFieldName(namespace, 'groupId')}
-				readOnly
-				type="hidden"
-				value={selectedVocabulary.groupId || ''}
-			/>
-			<input
 				name={getFieldName(namespace, 'externalReferenceCode')}
 				readOnly
 				type="hidden"
 				value={selectedVocabulary.externalReferenceCode || ''}
+			/>
+			<input
+				name={getFieldName(namespace, 'scopeExternalReferenceCode')}
+				readOnly
+				type="hidden"
+				value={selectedVocabulary.scopeExternalReferenceCode || ''}
 			/>
 			<input
 				name={getFieldName(namespace, 'title')}
@@ -393,12 +386,6 @@ function FormValues({
 				type="hidden"
 				value={useCustomName}
 			/>
-			<input
-				name={getFieldName(namespace, 'uuid')}
-				readOnly
-				type="hidden"
-				value={selectedVocabulary.uuid || ''}
-			/>
 		</>
 	);
 }
@@ -407,11 +394,10 @@ FormValues.propTypes = {
 	localizedNames: PropTypes.object.isRequired,
 	namespace: PropTypes.string.isRequired,
 	selectedVocabulary: PropTypes.shape({
-		classPK: PropTypes.string,
-		groupId: PropTypes.string,
+		externalReferenceCode: PropTypes.string,
+		scopeExternalReferenceCode: PropTypes.string,
 		title: PropTypes.string,
 		type: PropTypes.string,
-		uuid: PropTypes.string,
 	}).isRequired,
 	showAssetVocabularyLevel: PropTypes.bool,
 	useCustomName: PropTypes.bool,

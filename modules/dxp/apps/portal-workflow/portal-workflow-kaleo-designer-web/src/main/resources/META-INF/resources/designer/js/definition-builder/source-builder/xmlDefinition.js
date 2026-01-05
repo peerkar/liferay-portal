@@ -360,6 +360,7 @@ XMLDefinition.prototype = {
 			resultFields: [
 				'description',
 				'id',
+				'input-variables',
 				'initial',
 				{
 					key: 'labels',
@@ -367,6 +368,12 @@ XMLDefinition.prototype = {
 				},
 				'metadata',
 				'name',
+				{
+					key: 'prompt',
+					locator: 'prompt',
+				},
+				'output-variables',
+				'rag',
 				'script',
 				{
 					key: 'scriptLanguage',
@@ -376,6 +383,8 @@ XMLDefinition.prototype = {
 					key: 'transitions',
 					locator: 'transitions',
 				},
+				'tools',
+				'user-message',
 				instance.getSchemaActions(),
 				instance.getSchemaAssignments(),
 				instance.getSchemaNotifications(),

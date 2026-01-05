@@ -1,0 +1,36 @@
+{
+	"externalReferenceCode": "C_AC_DATA_CENTER_LOCATION",
+	"label": {
+		"en_US": "Analytics Cloud Data Center Location"
+	},
+	"name": "AnalyticsCloudDataCenterLocation",
+	"objectFields": [
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_AC_DATA_CENTER_LOCATION_name",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Name"
+			},
+			"name": "name",
+			"required": true
+		},
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_AC_DATA_CENTER_LOCATION_value",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Value"
+			},
+			"name": "value",
+			"required": true
+		}
+	],
+	"pluralLabel": {
+		"en_US": "Analytics Cloud Data Center Locations"
+	},
+	"scope": "company",
+	"system": false
+}

@@ -18,6 +18,7 @@ import com.liferay.commerce.product.model.CommerceCatalog;
 import com.liferay.commerce.product.service.CPDefinitionLocalService;
 import com.liferay.commerce.product.service.CommerceCatalogLocalService;
 import com.liferay.commerce.product.test.util.CPTestUtil;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Company;
@@ -26,15 +27,12 @@ import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.CompanyTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
-import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.frutilla.FrutillaRule;
@@ -111,22 +109,17 @@ public class CPDefinitionHelperTest {
 				_commerceCatalog.getGroup()),
 			new CPQuery(), QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
-		List<CPCatalogEntry> cpCatalogEntries =
-			cpDataSourceResult.getCPCatalogEntries();
+		List<Long> actualCPDefinitionIds = TransformUtil.transform(
+			cpDataSourceResult.getCPCatalogEntries(),
+			cpCatalogEntry -> cpCatalogEntry.getCPDefinitionId());
 
-		List<Long> cpDefinitionIds = new ArrayList<>();
+		List<Long> cpDefinitionIds = TransformUtil.transformToList(
+			cpInstances,
+			cpInstance -> {
+				CPDefinition cpDefinition = cpInstance.getCPDefinition();
 
-		for (CPInstance cpInstance : cpInstances) {
-			CPDefinition cpDefinition = cpInstance.getCPDefinition();
-
-			cpDefinitionIds.add(cpDefinition.getCPDefinitionId());
-		}
-
-		List<Long> actualCPDefinitionIds = new ArrayList<>();
-
-		for (CPCatalogEntry cpCatalogEntry : cpCatalogEntries) {
-			actualCPDefinitionIds.add(cpCatalogEntry.getCPDefinitionId());
-		}
+				return cpDefinition.getCPDefinitionId();
+			});
 
 		Assert.assertTrue(actualCPDefinitionIds.containsAll(cpDefinitionIds));
 	}
@@ -189,16 +182,12 @@ public class CPDefinitionHelperTest {
 			cpCatalogEntries.toString(), cpDefinitionIds.length,
 			cpCatalogEntries.size());
 
-		List<Long> actualCPDefinitionIds = new ArrayList<>();
+		List<Long> actualCPDefinitionIds = TransformUtil.transform(
+			cpCatalogEntries,
+			cpCatalogEntry -> cpCatalogEntry.getCPDefinitionId());
 
-		for (CPCatalogEntry cpCatalogEntry : cpCatalogEntries) {
-			actualCPDefinitionIds.add(cpCatalogEntry.getCPDefinitionId());
-		}
-
-		Long[] cpDefinitionIdsLong = ArrayUtil.toArray(cpDefinitionIds);
-
-		List<Long> cpDefinitionIdsList = ListUtil.fromArray(
-			cpDefinitionIdsLong);
+		List<Long> cpDefinitionIdsList = TransformUtil.transformToList(
+			cpDefinitionIds, cpDefinitionId -> cpDefinitionId);
 
 		Assert.assertTrue(
 			actualCPDefinitionIds.containsAll(cpDefinitionIdsList));

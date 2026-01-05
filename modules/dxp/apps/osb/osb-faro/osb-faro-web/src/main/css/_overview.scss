@@ -57,3 +57,16 @@
 		display: block;
 	}
 }
+
+.overview-root {
+	.card-root {
+		> .panel-header {
+			padding: 1.5rem;
+		}
+	}
+
+	.panel-body {
+		padding: 1.5rem;
+		padding-top: 0.5rem;
+	}
+}

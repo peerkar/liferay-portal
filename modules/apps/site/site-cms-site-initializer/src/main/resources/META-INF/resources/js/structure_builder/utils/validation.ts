@@ -7,11 +7,11 @@ import {isNullOrUndefined} from '@liferay/layout-js-components-web';
 import {sub} from 'frontend-js-web';
 import {useCallback} from 'react';
 
+import {ObjectDefinitions} from '../../common/types/ObjectDefinition';
 import focusInvalidElement from '../../common/utils/focusInvalidElement';
 import {State, useSelector, useStateDispatch} from '../contexts/StateContext';
 import selectState from '../selectors/selectState';
 import selectStructureChildren from '../selectors/selectStructureChildren';
-import {ObjectDefinitions} from '../types/ObjectDefinition';
 import {RepeatableGroup, Structure, StructureChild} from '../types/Structure';
 import {Field, MultiselectField, SingleSelectField} from './field';
 
@@ -33,6 +33,7 @@ export type ValidationError =
 	| 'in-use'
 	| 'lowercase'
 	| 'max-length'
+	| 'default-language-label'
 	| 'prefix-reserved'
 	| 'unexpected'
 	| 'uppercase';
@@ -148,17 +149,19 @@ export function validateRepeatableGroup({
 export function validateStructure({
 	currentErrors,
 	data,
+	isGlobalValidation = false,
 	objectDefinitions,
 }: {
 	currentErrors?: ErrorMap;
 	data: Partial<Structure>;
+	isGlobalValidation?: boolean;
 	objectDefinitions?: ObjectDefinitions;
 }): ErrorMap {
 	const {erc, label, name, spaces} = data;
 
 	const errors = new Map(currentErrors);
 
-	if (!isNullOrUndefined(erc)) {
+	if (!isNullOrUndefined(erc) && !data.system) {
 		if (!erc) {
 			errors.set('erc', 'empty');
 		}
@@ -173,7 +176,7 @@ export function validateStructure({
 		}
 	}
 
-	if (!isNullOrUndefined(name)) {
+	if (!isNullOrUndefined(name) && !data.system) {
 		const names = getStructureNames(objectDefinitions);
 
 		if (!name) {
@@ -197,6 +200,9 @@ export function validateStructure({
 	}
 
 	if (!isNullOrUndefined(label)) {
+		const defaultLanguageValue =
+			label[Liferay.ThemeDisplay.getDefaultLanguageId()];
+
 		const values = Object.values(label ?? {});
 
 		if (!!values.length && values.every(Boolean)) {
@@ -204,6 +210,13 @@ export function validateStructure({
 		}
 		else {
 			errors.set('label', 'empty');
+		}
+
+		if (isGlobalValidation && !defaultLanguageValue) {
+			errors.set('global', 'default-language-label');
+		}
+		else if (defaultLanguageValue) {
+			errors.delete('global');
 		}
 	}
 
@@ -228,6 +241,15 @@ export function getErrorMessage(
 		if (error === 'unexpected') {
 			return Liferay.Language.get(
 				'an-unexpected-error-occurred-while-saving-or-publishing-the-content-structure'
+			);
+		}
+
+		if (error === 'default-language-label') {
+			return sub(
+				Liferay.Language.get(
+					'please-enter-a-valid-label-for-the-default-language-x'
+				),
+				Liferay.ThemeDisplay.getDefaultLanguageId()
 			);
 		}
 	}
@@ -355,7 +377,7 @@ export function useValidate() {
 
 		const invalids = new Map(state.invalids);
 
-		errors = validateStructure({data: structure});
+		errors = validateStructure({data: structure, isGlobalValidation: true});
 
 		if (errors.size) {
 			invalids.set(structure.uuid, errors);

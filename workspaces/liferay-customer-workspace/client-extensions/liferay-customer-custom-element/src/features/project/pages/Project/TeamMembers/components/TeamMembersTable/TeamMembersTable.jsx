@@ -12,7 +12,7 @@ import useProvisioningLicenseKeys from '~/hooks/useProvisioningLicenseKeys';
 import {assignUserAccountWithAccountAndAccountRole} from '~/services/liferay/graphql/queries';
 import {getRolesFiltered} from '~/utils/getProjectRoles';
 import isSupportSeatRole from '~/utils/isSupportSeatRole';
-import {rolesHighPriorityContacts} from '~/features/project/utils/getHighPriorityContacts';
+import {rolesHighPriorityContact} from '~/features/project/utils/getHighPriorityContacts';
 
 import i18n from '~/utils/I18n';
 import StatusTag from '~/components/StatusTag';
@@ -45,7 +45,6 @@ const TeamMembersTable = ({
 	const {
 		articleAccountSupportURL,
 		articleNotifiedWhenMyActivationKeyIsAboutToExpireURL,
-		gravatarAPI,
 		importDate,
 		provisioningServerAPI,
 	} = useAppPropertiesContext();
@@ -157,7 +156,7 @@ const TeamMembersTable = ({
 		const fetchHighPriorityContacts = async () => {
 			try {
 				const highPriorityContactsResults = await Promise.all(
-					rolesHighPriorityContacts.map((role) =>
+					rolesHighPriorityContact.map((role) =>
 						getHighPriorityContactsByFilter(role)
 					)
 				);
@@ -459,7 +458,6 @@ const TeamMembersTable = ({
 									),
 									name: (
 										<NameColumn
-											gravatarAPI={gravatarAPI}
 											userAccount={userAccount}
 										/>
 									),

@@ -5,6 +5,7 @@
 
 package com.liferay.headless.admin.site.internal.resource.v1_0;
 
+import com.liferay.fragment.processor.FragmentEntryProcessorRegistry;
 import com.liferay.headless.admin.site.dto.v1_0.PageElement;
 import com.liferay.headless.admin.site.internal.resource.v1_0.layout.structure.item.importer.context.LayoutStructureItemImporterContext;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.GroupUtil;
@@ -13,6 +14,7 @@ import com.liferay.headless.admin.site.resource.v1_0.PageElementResource;
 import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
+import com.liferay.layout.util.LayoutServiceContextHelperUtil;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructureItemUtil;
@@ -360,24 +362,30 @@ public class PageElementResourceImpl extends BasePageElementResourceImpl {
 			PageElement pageElement, long segmentsExperienceId)
 		throws Exception {
 
-		LayoutStructureItem layoutStructureItem =
-			LayoutStructureUtil.addLayoutStructureItem(
-				layoutStructure,
-				new LayoutStructureItemImporterContext(
-					contextCompany.getCompanyId(), groupId,
-					_infoItemServiceRegistry, layout, segmentsExperienceId,
-					contextUser.getUserId()),
-				pageElement);
+		try (AutoCloseable autoCloseable =
+				LayoutServiceContextHelperUtil.getServiceContextAutoCloseable(
+					layout, contextUser)) {
 
-		_layoutPageTemplateStructureLocalService.
-			updateLayoutPageTemplateStructureData(
-				contextUser.getUserId(), layout.getGroupId(), layout.getPlid(),
-				layoutStructure.toString());
+			LayoutStructureItem layoutStructureItem =
+				LayoutStructureUtil.addLayoutStructureItem(
+					layoutStructure,
+					new LayoutStructureItemImporterContext(
+						contextCompany.getCompanyId(),
+						_fragmentEntryProcessorRegistry, groupId,
+						_infoItemServiceRegistry, layout, segmentsExperienceId,
+						contextUser.getUserId()),
+					pageElement);
 
-		return _pageElementDTOConverter.toDTO(
-			_getDTOConverterContext(
-				layout.getCompanyId(), layoutStructure, groupId),
-			layoutStructureItem);
+			_layoutPageTemplateStructureLocalService.
+				updateLayoutPageTemplateStructureData(
+					contextUser.getUserId(), layout.getGroupId(),
+					layout.getPlid(), layoutStructure.toString());
+
+			return _pageElementDTOConverter.toDTO(
+				_getDTOConverterContext(
+					layout.getCompanyId(), layoutStructure, groupId),
+				layoutStructureItem);
+		}
 	}
 
 	private DTOConverterContext _getDTOConverterContext(
@@ -393,6 +401,9 @@ public class PageElementResourceImpl extends BasePageElementResourceImpl {
 
 		return dtoConverterContext;
 	}
+
+	@Reference
+	private FragmentEntryProcessorRegistry _fragmentEntryProcessorRegistry;
 
 	@Reference
 	private InfoItemServiceRegistry _infoItemServiceRegistry;

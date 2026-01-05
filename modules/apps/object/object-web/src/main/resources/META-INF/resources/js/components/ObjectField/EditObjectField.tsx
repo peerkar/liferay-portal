@@ -20,7 +20,9 @@ import './EditObjectField.scss';
 
 export interface EditObjectFieldProps {
 	baseResourceURL: string;
+	ckEditor5Config?: object;
 	creationLanguageId: Liferay.Language.Locale;
+	decimalSeparator: string;
 	filterOperators: TFilterOperators;
 	forbiddenChars: string[];
 	forbiddenLastChars: string[];
@@ -36,7 +38,7 @@ export interface EditObjectFieldProps {
 
 export const objectFieldInitialValues: Partial<ObjectField> = {
 	DBType: '',
-	businessType: 'Text',
+	businessType: undefined,
 	externalReferenceCode: '',
 	id: 0,
 	indexed: true,
@@ -55,7 +57,9 @@ export const objectFieldInitialValues: Partial<ObjectField> = {
 
 export default function EditObjectField({
 	baseResourceURL,
+	ckEditor5Config,
 	creationLanguageId,
+	decimalSeparator,
 	filterOperators,
 	forbiddenChars,
 	forbiddenLastChars,
@@ -137,8 +141,10 @@ export default function EditObjectField({
 		>
 			<EditObjectFieldContent
 				baseResourceURL={baseResourceURL}
+				ckEditor5Config={ckEditor5Config}
 				containerWrapper={Card}
 				creationLanguageId={creationLanguageId}
+				decimalSeparator={decimalSeparator}
 				errors={errors}
 				filterOperators={filterOperators}
 				handleChange={handleChange}

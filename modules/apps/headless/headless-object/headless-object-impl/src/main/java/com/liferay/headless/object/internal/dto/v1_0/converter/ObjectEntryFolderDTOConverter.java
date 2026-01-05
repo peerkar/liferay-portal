@@ -8,7 +8,6 @@ package com.liferay.headless.object.internal.dto.v1_0.converter;
 import com.liferay.headless.delivery.dto.v1_0.util.CreatorUtil;
 import com.liferay.headless.object.dto.v1_0.ObjectEntryFolder;
 import com.liferay.headless.object.dto.v1_0.ParentObjectEntryFolderBrief;
-import com.liferay.headless.object.dto.v1_0.Scope;
 import com.liferay.headless.object.dto.v1_0.Status;
 import com.liferay.object.service.ObjectEntryFolderLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
@@ -23,6 +22,7 @@ import com.liferay.portal.language.LanguageResources;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
 import com.liferay.portal.vulcan.fields.NestedFieldsSupplier;
+import com.liferay.portal.vulcan.scope.Scope;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 import com.liferay.trash.model.TrashEntry;
 import com.liferay.trash.service.TrashEntryLocalService;
@@ -158,22 +158,12 @@ public class ObjectEntryFolderDTOConverter
 							return null;
 						}
 
-						Scope scope = new Scope();
+						Scope.Type type =
+							(group.getType() == GroupConstants.TYPE_DEPOT) ?
+								Scope.Type.ASSET_LIBRARY : Scope.Type.SITE;
 
-						scope.setExternalReferenceCode(
-							group::getExternalReferenceCode);
-						scope.setType(
-							() -> {
-								if (group.getType() ==
-										GroupConstants.TYPE_DEPOT) {
-
-									return Scope.Type.ASSET_LIBRARY;
-								}
-
-								return Scope.Type.SITE;
-							});
-
-						return scope;
+						return Scope.ofReference(
+							group.getExternalReferenceCode(), type);
 					});
 				setScopeId(objectEntryFolder::getGroupId);
 				setScopeKey(

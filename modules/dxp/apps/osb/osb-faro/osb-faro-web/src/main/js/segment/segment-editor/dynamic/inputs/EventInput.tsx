@@ -1,3 +1,4 @@
+import Alert from '@clayui/alert';
 import AttributeConjunctionInput from './components/attribute-conjunction-input';
 import DateFilterConjunctionInput from './components/DateFilterConjunctionInput';
 import EventPropertiesQuery, {
@@ -6,8 +7,11 @@ import EventPropertiesQuery, {
 } from '../queries/EventPropertiesQuery';
 import Form from 'shared/components/form';
 import OccurenceConjunctionInput from './components/OccurenceConjunctionInput';
-import React from 'react';
-import {Criterion, ISegmentEditorCustomInputBase} from '../utils/types';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import RealTimePeriodInput, {
+	DEFAULT_OPTIONS
+} from './components/RealTimePeriodInput';
+import {Attribute, DataTypes} from 'event-analysis/utils/types';
 import {CustomValue} from 'shared/util/records';
 import {fromJS, Map} from 'immutable';
 import {FunctionalOperators, RelationalOperators} from '../utils/constants';
@@ -16,8 +20,9 @@ import {
 	getIndexFromPropertyName
 } from '../utils/custom-inputs';
 import {isBoolean, isNil} from 'lodash';
+import {ISegmentEditorCustomInputBase} from '../utils/types';
 import {NAME} from 'shared/util/pagination';
-import {OrderByDirections} from 'shared/util/constants';
+import {OrderByDirections, SegmentTypes} from 'shared/util/constants';
 import {SafeResults} from 'shared/hoc/util';
 import {useQuery} from '@apollo/react-hooks';
 
@@ -38,6 +43,7 @@ type Valid = {
 interface IEventInputProps extends ISegmentEditorCustomInputBase {
 	touched: Touched;
 	valid: Valid;
+	segmentType: SegmentTypes;
 }
 
 const EventInput: React.FC<IEventInputProps> = ({
@@ -45,103 +51,235 @@ const EventInput: React.FC<IEventInputProps> = ({
 	onChange,
 	operatorRenderer: OperatorDropdown,
 	property,
+	segmentType,
 	touched,
 	valid,
 	value: valueIMap
 }) => {
+	const [
+		selectedCustomAttribute,
+		setSelectedCustomAttribute
+	] = useState<Attribute | null>(null);
 	const {id: eventId, options} = property;
 
+	const getRealTimePeriodFromCriterion = useCallback((): {
+		interval: number;
+		timeWindow: string;
+	} | null => {
+		const dayCriterion = valueIMap.getIn(['criterionGroup', 'items', 2]);
+
+		if (!dayCriterion) {
+			return null;
+		}
+
+		const dayValue: string = dayCriterion.get('value');
+
+		if (!dayValue || typeof dayValue !== 'string') {
+			return null;
+		}
+
+		const parts = dayValue.split('_');
+
+		if (parts.length !== 2) {
+			return null;
+		}
+
+		const [intervalStr, timeWindow] = parts;
+		const interval = parseInt(intervalStr, 10);
+
+		if (isNaN(interval)) {
+			return null;
+		}
+
+		return {interval, timeWindow};
+	}, [valueIMap]);
+
+	const handleRealTimePeriodChange = useCallback(
+		(interval: number, timeWindow: string) => {
+			const newDayValue = `${interval}_${timeWindow}`;
+
+			const conjunctionDateFilterIndex = getIndexFromPropertyName(
+				valueIMap,
+				'day'
+			);
+
+			let dayCriterion;
+			if (conjunctionDateFilterIndex >= 0) {
+				const existingDayIMap = getFilterCriterionIMap(
+					valueIMap,
+					conjunctionDateFilterIndex
+				);
+
+				dayCriterion = existingDayIMap.merge({
+					operatorName: RelationalOperators.GT,
+					touched: true,
+					valid: true,
+					value: newDayValue
+				});
+			} else {
+				dayCriterion = fromJS({
+					operatorName: RelationalOperators.GT,
+					propertyName: 'day',
+					touched: true,
+					valid: true,
+					value: newDayValue
+				});
+			}
+
+			const updatedValue = valueIMap.mergeIn(
+				['criterionGroup', 'items', 2],
+				dayCriterion
+			);
+
+			onChange({
+				touched: {...touched, dateFilter: true},
+				valid: {...valid, dateFilter: true},
+				value: updatedValue
+			});
+		},
+		[onChange, valueIMap, touched, valid]
+	);
+
+	useEffect(() => {
+		if (segmentType === SegmentTypes.RealTime) {
+			const currentPeriod = getRealTimePeriodFromCriterion();
+
+			if (!currentPeriod) {
+				handleRealTimePeriodChange(
+					DEFAULT_OPTIONS.interval,
+					DEFAULT_OPTIONS.timeWindow
+				);
+			}
+		}
+	}, [
+		segmentType,
+		getRealTimePeriodFromCriterion,
+		handleRealTimePeriodChange
+	]);
+
 	const getConjunctionDateFilterIMap = value => {
-		const conjunctionDateFilterIndex = getIndexFromPropertyName(
-			value,
-			'day'
-		);
+		const conjunctionCriterion = value.getIn([
+			'criterionGroup',
+			'items',
+			2
+		]);
 
-		if (conjunctionDateFilterIndex >= 0) {
-			return getFilterCriterionIMap(value, conjunctionDateFilterIndex);
+		if (conjunctionCriterion) {
+			return conjunctionCriterion;
 		}
 	};
 
-	const handleAttributeConjunctionChange = ({
-		criterion,
-		touched: conjunctionTouched,
-		valid: conjunctionValid
-	}) => {
-		onChange({
-			touched: {...touched, ...conjunctionTouched},
-			valid: {...valid, ...conjunctionValid},
-			value: valueIMap.mergeIn(
-				['criterionGroup', 'items', 1],
-				fromJS(criterion)
-			)
-		});
-	};
-
-	const handleDateFilterConjunctionChange = criterion => {
-		onChange({
-			touched: {...touched, dateFilter: criterion && criterion.touched},
-			valid: {...valid, dateFilter: isNil(criterion) || criterion.valid},
-			value: isNil(criterion)
-				? valueIMap.deleteIn(['criterionGroup', 'items', 2])
-				: valueIMap.mergeIn(
-						['criterionGroup', 'items', 2],
-						fromJS(criterion)
-				  )
-		});
-	};
-
-	const handleOccurenceConjunctionChange = ({
-		criterion,
-		touched: occurenceCountTouched,
-		valid: occurenceCountValid
-	}: {
-		criterion?: Criterion;
-		touched?: boolean;
-		valid?: boolean;
-	}) => {
-		let params: {touched?: Touched; valid?: Valid; value?: CustomValue} = {
-			touched,
-			valid
-		};
-
-		if (criterion?.operatorName) {
-			params = {
-				...params,
+	const handleAttributeConjunctionChange = useCallback(
+		({
+			attribute,
+			criterion,
+			touched: conjunctionTouched,
+			valid: conjunctionValid
+		}) => {
+			onChange({
+				touched: {...touched, ...conjunctionTouched},
+				valid: {...valid, ...conjunctionValid},
 				value: valueIMap.mergeIn(
-					['operator'],
-					criterion.operatorName
-				) as CustomValue
-			};
-		} else if (!isNil(criterion?.value)) {
-			params = {
-				...params,
-				value: valueIMap.mergeIn(
-					['value'],
-					criterion.value
-				) as CustomValue
-			};
-		}
+					['criterionGroup', 'items', 1],
+					fromJS(criterion)
+				)
+			});
 
-		if (isBoolean(occurenceCountTouched)) {
-			params = {
-				...params,
-				touched: {...touched, occurenceCount: occurenceCountTouched}
+			if (attribute) {
+				setSelectedCustomAttribute(attribute);
+			}
+		},
+		[onChange, valueIMap, touched, valid]
+	);
+
+	const handleDateFilterConjunctionChange = useCallback(
+		criterion => {
+			let value: Map<string, any>;
+
+			if (isNil(criterion)) {
+				value = valueIMap.deleteIn(['criterionGroup', 'items', 2]);
+			} else {
+				value = valueIMap.mergeIn(
+					['criterionGroup', 'items', 2],
+					fromJS(criterion)
+				);
+			}
+
+			onChange({
+				touched: {
+					...touched,
+					dateFilter: criterion && criterion.touched
+				},
+				valid: {
+					...valid,
+					dateFilter: isNil(criterion) || criterion.valid
+				},
+				value
+			});
+		},
+		[onChange, valueIMap, touched, valid]
+	);
+
+	const handleOccurenceConjunctionChange = useCallback(
+		({
+			criterion,
+			touched: occurenceCountTouched,
+			valid: occurenceCountValid
+		}) => {
+			let params: {
+				touched?: Touched;
+				valid?: Valid;
+				value?: CustomValue;
+			} = {
+				touched,
+				valid
 			};
-		}
 
-		if (isBoolean(occurenceCountValid)) {
-			params = {
-				...params,
-				valid: {...valid, occurenceCount: occurenceCountValid}
-			};
-		}
+			if (criterion?.operatorName) {
+				params = {
+					...params,
+					value: valueIMap.mergeIn(
+						['operator'],
+						criterion.operatorName
+					) as CustomValue
+				};
+			} else if (!isNil(criterion?.value)) {
+				params = {
+					...params,
+					value: valueIMap.mergeIn(
+						['value'],
+						criterion.value
+					) as CustomValue
+				};
+			}
 
-		onChange(params);
-	};
+			if (isBoolean(occurenceCountTouched)) {
+				params = {
+					...params,
+					touched: {...touched, occurenceCount: occurenceCountTouched}
+				};
+			}
 
-	const dateFilterConjunctionCriterion = (
-		getConjunctionDateFilterIMap(valueIMap) || Map({propertyName: 'day'})
-	).toJS();
+			if (isBoolean(occurenceCountValid)) {
+				params = {
+					...params,
+					valid: {...valid, occurenceCount: occurenceCountValid}
+				};
+			}
+
+			onChange(params);
+		},
+		[onChange, valueIMap, touched, valid]
+	);
+
+	const dateFilterConjunctionCriterion = useMemo(
+		() =>
+			(
+				getConjunctionDateFilterIMap(valueIMap) ||
+				Map({propertyName: 'day'})
+			).toJS(),
+		[valueIMap]
+	);
 
 	if (
 		options.length &&
@@ -171,6 +309,12 @@ const EventInput: React.FC<IEventInputProps> = ({
 			}
 		}
 	);
+
+	const isRealTime = segmentType === SegmentTypes.RealTime;
+	const isSelectedAttributeDateType =
+		selectedCustomAttribute?.dataType === DataTypes.Date;
+
+	const initialPeriod = getRealTimePeriodFromCriterion();
 
 	return (
 		<div className='criteria-statement'>
@@ -221,12 +365,26 @@ const EventInput: React.FC<IEventInputProps> = ({
 									value={valueIMap.get('value')}
 								/>
 
-								<DateFilterConjunctionInput
-									conjunctionCriterion={
-										dateFilterConjunctionCriterion
-									}
-									onChange={handleDateFilterConjunctionChange}
-								/>
+								{isRealTime ? (
+									<RealTimePeriodInput
+										initialInterval={
+											initialPeriod?.interval
+										}
+										initialTimeWindow={
+											initialPeriod?.timeWindow
+										}
+										onChange={handleRealTimePeriodChange}
+									/>
+								) : (
+									<DateFilterConjunctionInput
+										conjunctionCriterion={
+											dateFilterConjunctionCriterion
+										}
+										onChange={
+											handleDateFilterConjunctionChange
+										}
+									/>
+								)}
 							</Form.Group>
 
 							{!!attributes.length && (
@@ -261,6 +419,18 @@ const EventInput: React.FC<IEventInputProps> = ({
 										}}
 									/>
 								</Form.Group>
+							)}
+
+							{isRealTime && isSelectedAttributeDateType && (
+								<Alert
+									className='mt-2'
+									displayType='info'
+									variant='feedback'
+								>
+									{Liferay.Language.get(
+										'event-date-attributes-may-create-time-conflicts-and-reduce-matching-users.-review-your-criteria-to-ensure-the-segment-behaves-as-expected'
+									)}
+								</Alert>
 							)}
 						</>
 					);

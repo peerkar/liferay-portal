@@ -21,7 +21,7 @@ import {
 import React, {Suspense} from 'react';
 import {DndProvider} from 'react-dnd';
 import {HTML5Backend} from 'react-dnd-html5-backend';
-import {HashRouter as Router, Route, Switch} from 'react-router-dom';
+import {HashRouter as Router, Route, Routes} from 'react-router';
 
 import {NavigationBar} from './components/NavigationBar.es';
 import {INITIAL_CONFIG_STATE} from './config/initialConfigState.es';
@@ -82,31 +82,27 @@ export default function App({autosaveInterval, autosaveURL, ...otherProps}) {
 										interval={autosaveInterval}
 										url={autosaveURL}
 									>
-										<Route
-											component={NavigationBar}
-											path="/"
-										/>
+										<NavigationBar />
 
 										<Suspense
 											fallback={<ClayLoadingIndicator />}
 										>
-											<Switch>
+											<Routes>
 												<Route
-													component={FormBuilder}
-													exact
+													element={<FormBuilder />}
 													path="/"
 												/>
 
 												<Route
-													component={RuleBuilder}
-													path="/rules"
+													element={<RuleBuilder />}
+													path="/rules/*"
 												/>
 
 												<Route
-													component={Report}
+													element={<Report />}
 													path="/report"
 												/>
-											</Switch>
+											</Routes>
 										</Suspense>
 									</AutoSaveProvider>
 								</Router>

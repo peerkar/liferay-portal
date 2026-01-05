@@ -132,6 +132,7 @@ public class ContentStructureUtil {
 		return new ContentStructureField() {
 			{
 				setDataType(() -> toDataType(ddmFormField));
+				setFieldReference(ddmFormField::getFieldReference);
 				setInputControl(() -> toInputControl(ddmFormField));
 				setLabel(() -> _toString(labelLocalizedValue, locale));
 				setLabel_i18n(
@@ -139,7 +140,7 @@ public class ContentStructureUtil {
 						acceptAllLanguage, labelLocalizedValue.getValues()));
 				setLocalizable(ddmFormField::isLocalizable);
 				setMultiple(ddmFormField::isMultiple);
-				setName(ddmFormField::getFieldReference);
+				setName(ddmFormField::getName);
 				setNestedContentStructureFields(
 					() -> TransformUtil.transformToArray(
 						ddmFormField.getNestedDDMFormFields(),

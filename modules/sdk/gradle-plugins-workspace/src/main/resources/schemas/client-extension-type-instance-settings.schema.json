@@ -774,7 +774,7 @@
 				},
 				"unapprovedChangesAllowed": {
 					"default": false,
-					"title": "Allow Unapproved Changes",
+					"title": "Allow Publishing Unapproved Changes",
 					"type": "boolean"
 				}
 			},
@@ -1638,13 +1638,13 @@
 		{
 			"properties": {
 				"cacheControl": {
-					"default": "private, no-cache, no-store, must-revalidate",
+					"default": "must-revalidate",
 					"description": "Set the cache control policy for documents with view permissions for guests.",
 					"title": "Cache Control",
 					"type": "string"
 				},
 				"maxAge": {
-					"default": 0,
+					"default": 600,
 					"description": "Set the number of seconds after a response is generated in which a response will be considered fresh.",
 					"title": "Max Age",
 					"type": "number"
@@ -2029,6 +2029,24 @@
 				"pid"
 			],
 			"title": "Frontend Caching"
+		},
+		{
+			"properties": {
+				"disableGetRemoteMethods": {
+					"default": false,
+					"description": "If checked, the methods getRemoteAddr() and getRemoteHost() will be undefined within the Liferay.ThemeDisplay global object. This configuration is primarily implemented to mitigate privacy risks by avoiding the exposure of client IP/host information and to optimize performance by allowing public caching of pages for unauthenticated users. Note that checking this option will make custom code that relies on these methods fail.",
+					"title": "Disable getRemoteAddr() and getRemoteHost() Methods",
+					"type": "boolean"
+				},
+				"pid": {
+					"const": "com.liferay.frontend.js.web.internal.configuration.LiferayGlobalObjectConfiguration",
+					"title": "Liferay Global Object"
+				}
+			},
+			"required": [
+				"pid"
+			],
+			"title": "Liferay Global Object"
 		},
 		{
 			"properties": {
@@ -2813,38 +2831,6 @@
 					"default": "",
 					"type": "string"
 				},
-				"helpCenterApiPassword": {
-					"default": "",
-					"type": "string"
-				},
-				"helpCenterApiUserName": {
-					"default": "",
-					"type": "string"
-				},
-				"helpCenterFileRepoId": {
-					"default": "",
-					"type": "string"
-				},
-				"helpCenterFileRepoURL": {
-					"default": "",
-					"type": "string"
-				},
-				"helpCenterGetAccountApiEndpoint": {
-					"default": "",
-					"type": "string"
-				},
-				"helpCenterJsonwsURL": {
-					"default": "",
-					"type": "string"
-				},
-				"helpCenterTicketAttachmentApiEndpoint": {
-					"default": "",
-					"type": "string"
-				},
-				"helpCenterTokenTicketDir": {
-					"default": "",
-					"type": "string"
-				},
 				"helpCenterURL": {
 					"default": "",
 					"type": "string"
@@ -2974,6 +2960,30 @@
 				},
 				"pid": {
 					"const": "com.liferay.osb.patcher.configuration.PatcherConfiguration"
+				},
+				"supportLiferayAPIClientId": {
+					"default": "",
+					"type": "string"
+				},
+				"supportLiferayAPIClientSecret": {
+					"default": "",
+					"type": "string"
+				},
+				"supportLiferayAccountSearchAPIEndpoint": {
+					"default": "",
+					"type": "string"
+				},
+				"supportLiferayLFUURL": {
+					"default": "",
+					"type": "string"
+				},
+				"supportLiferayTicketAttachmentAPIEndpoint": {
+					"default": "",
+					"type": "string"
+				},
+				"supportLiferayURL": {
+					"default": "",
+					"type": "string"
 				},
 				"troubleshootingURL": {
 					"default": "",
@@ -3298,6 +3308,30 @@
 				},
 				"pid": {
 					"const": "com.liferay.portal.search.elasticsearch7.configuration.DeepPaginationConfiguration",
+					"title": "Deep Pagination Configuration"
+				},
+				"pointInTimeKeepAliveSeconds": {
+					"default": 60,
+					"description": "The amount of time in seconds the search engine will keep a point in time alive (between 1 and 60).",
+					"title": "Point in Time Keep Alive",
+					"type": "number"
+				}
+			},
+			"required": [
+				"pid"
+			],
+			"title": "Deep Pagination Configuration"
+		},
+		{
+			"properties": {
+				"enableDeepPagination": {
+					"default": false,
+					"description": "Enable deep pagination to paginate through all the results of a search query.",
+					"title": "Enable Deep Pagination",
+					"type": "boolean"
+				},
+				"pid": {
+					"const": "com.liferay.portal.search.elasticsearch8.configuration.DeepPaginationConfiguration",
 					"title": "Deep Pagination Configuration"
 				},
 				"pointInTimeKeepAliveSeconds": {
@@ -4026,6 +4060,24 @@
 		},
 		{
 			"properties": {
+				"enableESModulesHashing": {
+					"default": true,
+					"description": "Enable this to generate import map entries that point to hashed file names for ES modules. This makes infinite caching for ES modules possible.",
+					"title": "Enable ES Modules Hashing",
+					"type": "boolean"
+				},
+				"pid": {
+					"const": "com.liferay.portal.url.builder.configuration.PortalURLBuilderConfiguration",
+					"title": "Portal URL Builder"
+				}
+			},
+			"required": [
+				"pid"
+			],
+			"title": "Portal URL Builder"
+		},
+		{
+			"properties": {
 				"pageSizeLimit": {
 					"default": 500,
 					"description": "Set the page size limit of elements that can be recovered through REST. Enter a negative number or zero for unlimited page size.",
@@ -4440,14 +4492,6 @@
 		},
 		{
 			"properties": {
-				"authorizationGrantEndpoint": {
-					"title": "Authorization Grant Endpoint",
-					"type": "string"
-				},
-				"authorizationTokenEndpoint": {
-					"title": "Authorization Token Endpoint",
-					"type": "string"
-				},
 				"clientId": {
 					"title": "Client ID",
 					"type": "string"
@@ -4464,16 +4508,8 @@
 					"const": "com.liferay.sharepoint.rest.repository.internal.configuration.SharepointRepositoryConfiguration",
 					"title": "Sharepoint OAuth2"
 				},
-				"resource": {
-					"title": "Resource",
-					"type": "string"
-				},
 				"scope": {
 					"title": "Scope",
-					"type": "string"
-				},
-				"siteDomain": {
-					"title": "Site Domain",
 					"type": "string"
 				},
 				"tenantId": {
@@ -4870,6 +4906,7 @@
 				"com.liferay.frontend.js.spa.web.internal.configuration.SPAConfiguration",
 				"com.liferay.frontend.js.web.internal.configuration.CustomDialogsSettingsConfiguration",
 				"com.liferay.frontend.js.web.internal.configuration.FrontendCachingConfiguration",
+				"com.liferay.frontend.js.web.internal.configuration.LiferayGlobalObjectConfiguration",
 				"com.liferay.journal.configuration.JournalServiceConfiguration",
 				"com.liferay.layout.content.page.editor.web.internal.configuration.PageEditorConfiguration",
 				"com.liferay.layout.locked.layouts.web.internal.configuration.LockedLayoutsCompanyConfiguration",
@@ -4896,6 +4933,7 @@
 				"com.liferay.portal.remote.cors.configuration.PortalCORSConfiguration",
 				"com.liferay.portal.search.configuration.SemanticSearchConfiguration",
 				"com.liferay.portal.search.elasticsearch7.configuration.DeepPaginationConfiguration",
+				"com.liferay.portal.search.elasticsearch8.configuration.DeepPaginationConfiguration",
 				"com.liferay.portal.search.internal.configuration.SiteActivityAsahConfiguration",
 				"com.liferay.portal.search.internal.configuration.UserActivityAsahConfiguration",
 				"com.liferay.portal.search.opensearch2.configuration.DeepPaginationConfiguration",
@@ -4909,6 +4947,7 @@
 				"com.liferay.portal.security.ldap.exportimport.configuration.LDAPExportConfiguration",
 				"com.liferay.portal.security.ldap.exportimport.configuration.LDAPImportConfiguration",
 				"com.liferay.portal.security.sso.openid.connect.internal.configuration.OpenIdConnectProviderConfiguration",
+				"com.liferay.portal.url.builder.configuration.PortalURLBuilderConfiguration",
 				"com.liferay.portal.vulcan.internal.configuration.HeadlessAPICompanyConfiguration",
 				"com.liferay.portal.vulcan.internal.configuration.VulcanCompanyConfiguration",
 				"com.liferay.product.navigation.applications.menu.configuration.ApplicationsMenuInstanceConfiguration",

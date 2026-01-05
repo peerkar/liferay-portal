@@ -35,6 +35,26 @@ if (Validator.isNull(titlePage)) {
 				<liferay-ui:message key="<%= titlePage %>" />
 			</h2>
 		</div>
+
+		<div class="autofit-col">
+			<div class="float-right">
+
+				<%
+				String updateLanguageFormAction = HttpComponentsUtil.addParameter(themeDisplay.getPathMain() + "/portal/update_language", "p_l_id", themeDisplay.getPlid());
+
+				String updateLanguageRedirect = HttpComponentsUtil.addParameters(PortalUtil.getCurrentURL(originalHttpServletRequest), "ticketId", ParamUtil.getString(originalHttpServletRequest, "ticketId"), "ticketKey", ParamUtil.getString(originalHttpServletRequest, "ticketKey"));
+
+				updateLanguageFormAction = HttpComponentsUtil.addParameter(updateLanguageFormAction, "redirect", updateLanguageRedirect);
+				%>
+
+				<liferay-site-navigation:language
+					formAction="<%= updateLanguageFormAction %>"
+					languageId="<%= themeDisplay.getLanguageId() %>"
+					languageIds="<%= LocaleUtil.toLanguageIds(LanguageUtil.getAvailableLocales(themeDisplay.getSiteGroupId())) %>"
+					useNamespace="<%= false %>"
+				/>
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -50,6 +70,21 @@ if (Validator.isNull(titlePage)) {
 						<liferay-ui:message key="your-password-reset-link-is-no-longer-valid" />
 					</c:otherwise>
 				</c:choose>
+
+				<%
+				LayoutUtilityPageEntry layoutUtilityPageEntry = LayoutUtilityPageEntryLocalServiceUtil.getDefaultLayoutUtilityPageEntry(themeDisplay.getScopeGroupId(), LayoutUtilityPageEntryConstants.TYPE_FORGOT_PASSWORD);
+				%>
+
+				<liferay-portlet:renderURL plid="<%= layoutUtilityPageEntry.getPlid() %>" var="requestNewPasswordURL">
+					<portlet:param name="mvcRenderCommandName" value="/login/forgot_password" />
+				</liferay-portlet:renderURL>
+
+				<div class="reset-link-container">
+					<clay:link
+						href="<%= requestNewPasswordURL %>"
+						label="request-a-new-password-reset-link"
+					/>
+				</div>
 			</div>
 		</c:when>
 		<c:when test="<%= MultiSessionErrors.contains(liferayPortletRequest, UserLockoutException.LDAPLockout.class.getName()) %>">
@@ -61,7 +96,7 @@ if (Validator.isNull(titlePage)) {
 			<div class="alert alert-danger">
 
 				<%
-				UserLockoutException.PasswordPolicyLockout ule = (UserLockoutException.PasswordPolicyLockout)SessionErrors.get(request, UserLockoutException.PasswordPolicyLockout.class.getName());
+				UserLockoutException.PasswordPolicyLockout ule = (UserLockoutException.PasswordPolicyLockout)MultiSessionErrors.get(liferayPortletRequest, UserLockoutException.PasswordPolicyLockout.class.getName());
 
 				Format dateFormat = FastDateFormatFactoryUtil.getDateTime(FastDateFormatConstants.SHORT, FastDateFormatConstants.LONG, locale, TimeZone.getTimeZone(ule.user.getTimeZoneId()));
 				%>

@@ -131,7 +131,11 @@ public class ${schemaName}SerDes {
 
 					<#assign propertyType = properties[propertyName] />
 
-					<#if allSchemas[propertyType]??>
+					<#if enumSchemas?keys?seq_contains(propertyType)>
+						sb.append("\"");
+						sb.append(${schemaVarName}.get${capitalizedPropertyName}());
+						sb.append("\"");
+					<#elseif allSchemas[propertyType]??>
 						sb.append(String.valueOf(${schemaVarName}.get${capitalizedPropertyName}()));
 					<#elseif stringUtil.equals(propertyType, "Object")>
 						if (${schemaVarName}.get${capitalizedPropertyName}() instanceof String) {
@@ -172,15 +176,13 @@ public class ${schemaName}SerDes {
 
 							sb.append("]");
 						<#else>
-							<#if stringUtil.equals(propertyType, "Date") || stringUtil.equals(propertyType, "Object") || stringUtil.equals(propertyType, "String") || enumSchemas?keys?seq_contains(propertyType)>
+							<#if stringUtil.equals(propertyType, "Date") || stringUtil.equals(propertyType, "Object") || stringUtil.equals(propertyType, "String")>
 								sb.append("\"");
 
 								<#if stringUtil.equals(propertyType, "Date")>
 									sb.append(liferayToJSONDateFormat.format(${schemaVarName}.get${capitalizedPropertyName}()));
 								<#elseif stringUtil.equals(propertyType, "Object") || stringUtil.equals(propertyType, "String")>
 									sb.append(_escape(${schemaVarName}.get${capitalizedPropertyName}()));
-								<#else>
-									sb.append(${schemaVarName}.get${capitalizedPropertyName}());
 								</#if>
 
 								sb.append("\"");
@@ -390,7 +392,7 @@ public class ${schemaName}SerDes {
 							${schemaVarName}.set${capitalizedPropertyName}(toIntegers((Object[])jsonParserFieldValue));
 						<#elseif stringUtil.equals(propertyType, "String[]")>
 							${schemaVarName}.set${capitalizedPropertyName}(toStrings((Object[])jsonParserFieldValue));
-						<#elseif stringUtil.equals(propertyType, "${configYAML.apiPackagePath}.client.custom.field.CustomField") || stringUtil.equals(propertyType, "${configYAML.apiPackagePath}.client.permission.Permission")>
+						<#elseif stringUtil.equals(propertyType, "${configYAML.apiPackagePath}.client.custom.field.CustomField") || stringUtil.equals(propertyType, "${configYAML.apiPackagePath}.client.permission.Permission") || stringUtil.equals(propertyType, "${configYAML.apiPackagePath}.client.scope.Scope")>
 							${schemaVarName}.set${capitalizedPropertyName}(${propertyType}.toDTO((String)jsonParserFieldValue));
 						<#elseif stringUtil.equals(propertyType, "${configYAML.apiPackagePath}.client.custom.field.CustomField[]") || stringUtil.equals(propertyType, "${configYAML.apiPackagePath}.client.permission.Permission[]")>
 							Object[] jsonParserFieldValues = (Object[])jsonParserFieldValue;
@@ -402,6 +404,10 @@ public class ${schemaName}SerDes {
 							}
 
 							${schemaVarName}.set${capitalizedPropertyName}(${propertyName}Array);
+						<#elseif enumSchemas?keys?seq_contains(properties[propertyName])>
+							${schemaVarName}.set${capitalizedPropertyName}(${schemaName}.${propertyType}.create((String)jsonParserFieldValue));
+						<#elseif globalEnumSchemas?keys?seq_contains(propertyType)>
+							${schemaVarName}.set${capitalizedPropertyName}(${propertyType}.create((String)jsonParserFieldValue));
 						<#elseif allExternalSchemas?keys?seq_contains(propertyType) || allSchemas?keys?seq_contains(propertyType)>
 							${schemaVarName}.set${capitalizedPropertyName}(${propertyType}SerDes.toDTO((String)jsonParserFieldValue));
 						<#elseif propertyType?ends_with("[]") && (allExternalSchemas?keys?seq_contains(propertyType?remove_ending("[]")) || allSchemas?keys?seq_contains(propertyType?remove_ending("[]")))>
@@ -414,10 +420,6 @@ public class ${schemaName}SerDes {
 							}
 
 							${schemaVarName}.set${capitalizedPropertyName}(${propertyName}Array);
-						<#elseif enumSchemas?keys?seq_contains(properties[propertyName])>
-							${schemaVarName}.set${capitalizedPropertyName}(${schemaName}.${propertyType}.create((String)jsonParserFieldValue));
-						<#elseif globalEnumSchemas?keys?seq_contains(propertyType)>
-							${schemaVarName}.set${capitalizedPropertyName}(${propertyType}.create((String)jsonParserFieldValue));
 						<#else>
 							${schemaVarName}.set${capitalizedPropertyName}((${propertyType})jsonParserFieldValue);
 						</#if>

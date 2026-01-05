@@ -16,16 +16,18 @@ import com.liferay.object.model.ObjectFolder;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
+import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.rule.Sync;
+import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.FeatureFlag;
-import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
@@ -47,9 +49,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 /**
  * @author Mikel Lorza
  */
-@FeatureFlags(
-	featureFlags = {@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-32050")}
-)
+@FeatureFlag("LPD-17564")
 @RunWith(Arquillian.class)
 @Sync
 public class ViewVersionHistoryDisplayContextTest
@@ -67,6 +67,8 @@ public class ViewVersionHistoryDisplayContextTest
 	public void setUp() throws Exception {
 		super.setUp();
 
+		_group = GroupTestUtil.addGroup();
+
 		ObjectFolder objectFolder =
 			objectFolderLocalService.fetchObjectFolderByExternalReferenceCode(
 				ObjectFolderConstants.EXTERNAL_REFERENCE_CODE_FILE_TYPES,
@@ -78,7 +80,7 @@ public class ViewVersionHistoryDisplayContextTest
 			WorkflowConstants.STATUS_APPROVED);
 
 		_objectEntry = _objectEntryLocalService.addObjectEntry(
-			group.getGroupId(), TestPropsValues.getUserId(),
+			_group.getGroupId(), TestPropsValues.getUserId(),
 			_objectDefinition.getObjectDefinitionId(),
 			ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
 			null,
@@ -135,6 +137,9 @@ public class ViewVersionHistoryDisplayContextTest
 		filter = "component.name=com.liferay.site.cms.site.initializer.internal.fragment.renderer.ViewVersionHistoryJSPFragmentRenderer"
 	)
 	private FragmentRenderer _fragmentRenderer;
+
+	@DeleteAfterTestRun
+	private Group _group;
 
 	private ObjectDefinition _objectDefinition;
 	private ObjectEntry _objectEntry;

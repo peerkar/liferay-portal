@@ -564,6 +564,10 @@ public abstract class BaseObjectEntryFolderResourceImpl
 				objectEntryFolder.getPermissions());
 		}
 
+		if (objectEntryFolder.getScope() != null) {
+			existingObjectEntryFolder.setScope(objectEntryFolder.getScope());
+		}
+
 		if (objectEntryFolder.getTitle() != null) {
 			existingObjectEntryFolder.setTitle(objectEntryFolder.getTitle());
 		}
@@ -661,6 +665,10 @@ public abstract class BaseObjectEntryFolderResourceImpl
 		if (objectEntryFolder.getPermissions() != null) {
 			existingObjectEntryFolder.setPermissions(
 				objectEntryFolder.getPermissions());
+		}
+
+		if (objectEntryFolder.getScope() != null) {
+			existingObjectEntryFolder.setScope(objectEntryFolder.getScope());
 		}
 
 		if (objectEntryFolder.getTitle() != null) {
@@ -1563,6 +1571,9 @@ public abstract class BaseObjectEntryFolderResourceImpl
 			Permission permission = new Permission() {
 				{
 					actionIds = actionsIdsSet.toArray(new String[0]);
+
+					roleExternalReferenceCode = role.getExternalReferenceCode();
+
 					roleName = role.getName();
 				}
 			};

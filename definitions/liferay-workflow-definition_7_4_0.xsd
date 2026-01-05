@@ -196,6 +196,24 @@
 			<xs:element minOccurs="0" name="email-address" type="email-address-type" />
 		</xs:choice>
 	</xs:complexType>
+	<xs:element name="ai-decision">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="abstract-workflow-node-complex-type">
+					<xs:sequence>
+						<xs:element minOccurs="0" ref="labels" />
+						<xs:element minOccurs="0" name="input-variables" type="xs:string" />
+						<xs:element minOccurs="0" name="output-variables" type="xs:string" />
+						<xs:element name="prompt" type="xs:string" />
+						<xs:element minOccurs="0" name="rag" type="xs:string" />
+						<xs:element minOccurs="0" name="tools" type="xs:string" />
+						<xs:element minOccurs="0" ref="transitions" />
+						<xs:element name="user-message" type="xs:string" />
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
 	<xs:element name="condition">
 		<xs:complexType>
 			<xs:complexContent>
@@ -260,6 +278,24 @@
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="llm">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="abstract-workflow-node-complex-type">
+					<xs:sequence>
+						<xs:element minOccurs="0" ref="labels" />
+						<xs:element minOccurs="0" name="input-variables" type="xs:string" />
+						<xs:element minOccurs="0" name="output-variables" type="xs:string" />
+						<xs:element name="prompt" type="xs:string" />
+						<xs:element minOccurs="0" name="rag" type="xs:string" />
+						<xs:element minOccurs="0" name="tools" type="xs:string" />
+						<xs:element minOccurs="0" ref="transitions" />
+						<xs:element name="user-message" type="xs:string" />
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="state">
@@ -389,10 +425,12 @@
 	</xs:group>
 	<xs:group name="nodes-group">
 		<xs:choice>
+			<xs:element ref="ai-decision" />
 			<xs:element ref="condition" />
 			<xs:element ref="fork" />
 			<xs:element ref="join" />
 			<xs:element ref="join-xor" />
+			<xs:element ref="llm" />
 			<xs:element ref="state" />
 			<xs:element ref="task" />
 		</xs:choice>

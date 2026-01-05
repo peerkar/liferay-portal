@@ -2741,7 +2741,6 @@ war.path=${app.server.portal.dir}/</echo>
 	<macrodef name="prepare-aws-s3-configuration">
 		<sequential>
 			<echo file="${liferay.home}/osgi/configs/com.liferay.portal.store.s3.configuration.S3StoreConfiguration.config">
-ntlmProxyDomain=&quot;&quot;
 proxyAuthType=&quot;none&quot;
 httpClientMaxConnections=&quot;50&quot;
 secretKey=&quot;${aws.s3.secret.access.key}&quot;
@@ -2757,10 +2756,9 @@ proxyUsername=&quot;&quot;
 proxyPort=&quot;12345&quot;
 s3Region=&quot;us-west-1&quot;
 proxyHost=&quot;&quot;
-ntlmProxyWorkstation=&quot;&quot;
 corePoolSize=&quot;7&quot;
 s3StorageClass=&quot;STANDARD&quot;
-s3Endpoint=&quot;s3.us-west-1.amazonaws.com&quot;</echo>
+s3Endpoint=&quot;https://s3.us-west-1.amazonaws.com&quot;</echo>
 		</sequential>
 	</macrodef>
 
@@ -3122,23 +3120,11 @@ server.detector.server.id=tomcat</echo>
 				<elseif>
 					<equals arg1="${app.server.type}" arg2="weblogic" />
 					<then>
-						<if>
-							<equals arg1="${app.server.weblogic.version}" arg2="12.2.1" />
-							<then>
-								<echo file="${liferay.home}/tools/portal-tools-db-upgrade-client/app-server.properties">dir=${app.server.dir}
+						<echo file="${liferay.home}/tools/portal-tools-db-upgrade-client/app-server.properties">dir=${app.server.weblogic.dir}
 extra.lib.dirs=wlserver/modules
 global.lib.dir=domains/liferay/lib
 portal.dir=domains/liferay/autodeploy/ROOT
 server.detector.server.id=weblogic</echo>
-							</then>
-							<else>
-								<echo file="${liferay.home}/tools/portal-tools-db-upgrade-client/app-server.properties">dir=${app.server.weblogic.dir}
-extra.lib.dirs=oracle/wlserver/modules
-global.lib.dir=domains/liferay/lib
-portal.dir=/domains/liferay/autodeploy/ROOT
-server.detector.server.id=weblogic</echo>
-							</else>
-						</if>
 					</then>
 				</elseif>
 				<elseif>
@@ -3158,32 +3144,9 @@ server.detector.server.id=wildfly</echo>
 			<get-database-property property.name="database.url" />
 			<get-database-property property.name="database.username" />
 
-			<if>
-				<or>
-					<equals arg1="${database.type}" arg2="mariadb" />
-					<equals arg1="${database.type}" arg2="mysql" />
-				</or>
-				<then>
-					<property name="database.url.upgrade" value="${database.url}" />
-				</then>
-				<elseif>
-					<equals arg1="${database.type}" arg2="postgresql" />
-					<then>
-						<property name="database.url.upgrade" value="${database.url}?reWriteBatchedInserts=true" />
-					</then>
-				</elseif>
-				<elseif>
-					<equals arg1="${database.type}" arg2="sqlserver" />
-					<then>
-						<property name="database.url.upgrade" value="${database.url};useBulkCopyForBatchInsert=true" />
-					</then>
-				</elseif>
-				<else>
-					<property name="database.url.upgrade" value="${database.url}" />
-				</else>
-			</if>
+			<property name="database.url.upgrade" value="${database.url}" />
 
-			<echo file="${liferay.home}/tools/portal-tools-db-upgrade-client/portal-upgrade-database.properties">jdbc.default.driverClassName=${database.driver}
+			<echo file="${liferay.home}/tools/portal-tools-db-upgrade-client/portal-upgrade-ext.properties">jdbc.default.driverClassName=${database.driver}
 jdbc.default.url=${database.url.upgrade}
 jdbc.default.username=${database.username}
 jdbc.default.password=${database.password}</echo>
@@ -5236,11 +5199,17 @@ tell application "Safari" to quit
 
 	<macrodef name="prepare-test-app-server-custom">
 		<sequential>
-			<ant antfile="build-dist.xml" inheritAll="false" target="unzip-${app.server.type}-custom" />
-
 			<if>
 				<equals arg1="${app.server.type}" arg2="weblogic" />
 				<then>
+					<local name="java.jdk.home" />
+
+					<get-java-jdk-home type="oracle" version="17" />
+
+					<ant antfile="build-dist.xml" inheritAll="false" target="unzip-${app.server.type}-custom">
+						<property name="weblogic.java.jdk.home" value="${java.jdk.home}" />
+					</ant>
+
 					<chmod
 						perm="a+x"
 					>
@@ -5309,6 +5278,9 @@ tell application "Safari" to quit
 
 					<delete file="${weblogic.fix.sh}" />
 				</then>
+				<else>
+					<ant antfile="build-dist.xml" inheritAll="false" target="unzip-${app.server.type}-custom" />
+				</else>
 			</if>
 		</sequential>
 	</macrodef>
@@ -5421,7 +5393,13 @@ tell application "Safari" to quit
 							app.server.type=weblogic
 						</app-server-properties-update>
 
-						<ant antfile="build-dist.xml" inheritAll="false" target="unzip-weblogic-custom" />
+						<local name="java.jdk.home" />
+
+						<get-java-jdk-home type="oracle" version="17" />
+
+						<ant antfile="build-dist.xml" inheritAll="false" target="unzip-weblogic-custom">
+							<property name="weblogic.java.jdk.home" value="${java.jdk.home}" />
+						</ant>
 
 						<antcall inheritAll="false" target="deploy" />
 
@@ -5576,12 +5554,12 @@ include-and-override=portal-liferay-online.properties</echo>
 						<equals arg1="${database.type}" arg2="mysql" />
 						<then>
 							<replace
-								file="${liferay.home}/tools/portal-tools-db-upgrade-client/portal-upgrade-database.properties"
+								file="${liferay.home}/tools/portal-tools-db-upgrade-client/portal-upgrade-ext.properties"
 								token="${database.mysql.driver}"
 								value="${database.mariadb.driver}"
 							/>
 							<replace
-								file="${liferay.home}/tools/portal-tools-db-upgrade-client/portal-upgrade-database.properties"
+								file="${liferay.home}/tools/portal-tools-db-upgrade-client/portal-upgrade-ext.properties"
 								token="jdbc:mysql:"
 								value="jdbc:mariadb:"
 							/>
@@ -7179,7 +7157,7 @@ log.sanitizer.enabled=false</echo>
 					</then>
 				</elseif>
 				<else>
-					<var name="app.server.tomcat.version" value="10.1.43" />
+					<var name="app.server.tomcat.version" value="10.1.48" />
 				</else>
 			</if>
 
@@ -7579,6 +7557,7 @@ org.apache.catalina.startup.ClassLoaderFactory.level=INFO]]>
 		<attribute default="0" name="app.server.bundle.index" />
 		<attribute default="true" name="delete.liferay.home" />
 		<attribute default="" name="testable.portal.started.marker.file" />
+		<attribute default="false" name="skip.wait.server.startup" />
 
 		<sequential>
 			<lstopwatch action="start" name="start.app.server.@{app.server.bundle.index}" />
@@ -7586,6 +7565,7 @@ org.apache.catalina.startup.ClassLoaderFactory.level=INFO]]>
 			<start-app-server-cmd
 				app.server.bundle.index="@{app.server.bundle.index}"
 				delete.liferay.home="@{delete.liferay.home}"
+				skip.wait.server.startup="@{skip.wait.server.startup}"
 				test.docker.environment="${test.docker.environment}"
 				testable.portal.started.marker.file="@{testable.portal.started.marker.file}"
 			/>
@@ -7610,6 +7590,7 @@ org.apache.catalina.startup.ClassLoaderFactory.level=INFO]]>
 		<attribute default="0" name="app.server.bundle.index" />
 		<attribute default="true" name="delete.liferay.home" />
 		<attribute default="host" name="docker.network.name" />
+		<attribute default="false" name="skip.wait.server.startup" />
 		<attribute default="false" name="test.docker.environment" />
 		<attribute default="" name="testable.portal.started.marker.file" />
 
@@ -7676,7 +7657,12 @@ org.apache.catalina.startup.ClassLoaderFactory.level=INFO]]>
 					<get-operating-system-property property.name="operating.system.docker.image" />
 
 					<parallel>
-						<wait-for-app-server app.server.bin.dir="@{app.server.bin.dir}" app.server.bundle.index="@{app.server.bundle.index}" />
+						<if>
+							<equals arg1="@{skip.wait.server.startup}" arg2="false" />
+							<then>
+								<wait-for-app-server app.server.bin.dir="@{app.server.bin.dir}" app.server.bundle.index="@{app.server.bundle.index}" />
+							</then>
+						</if>
 
 						<daemons>
 							<if>
@@ -7836,6 +7822,8 @@ org.apache.catalina.startup.ClassLoaderFactory.level=INFO]]>
 
 			<property name="docker.start.script" value="docker_start.sh" />
 
+			<echo>Starting Docker container for @{image} on host @{name} with run options: @{run.options}.</echo>
+
 			<if>
 				<or>
 					<contains string="@{name}" substring="amazonlinux2022" />
@@ -7916,7 +7904,7 @@ org.apache.catalina.startup.ClassLoaderFactory.level=INFO]]>
 					</not>
 				</or>
 				<then>
-					<fail>Unable to start docker container:
+					<fail>Unable to start Docker container:
 ${docker.start.error}</fail>
 				</then>
 			</if>
@@ -12469,6 +12457,7 @@ ${update.properties}</echo>
 		<Logger level="${dialect.detector.log.level}" name="com.liferay.portal.spring.hibernate.DialectDetector" />
 		<Logger level="ERROR" name="com.zaxxer.hikari.pool.PoolBase" />
 		<Logger level="ERROR" name="org.apache.http.client.protocol.ResponseProcessCookies" />
+		<Logger level="OFF" name="org.hibernate.engine.jdbc.spi.SqlExceptionHelper" />
 		${log4j.logggers.root}
 	</Loggers>
 </Configuration>]]></echo>
@@ -13131,37 +13120,6 @@ portal.proxy.path=/${portal.proxy.path}</echo>
 					token="web.server.http.port=8080"
 					value="web.server.http.port=88"
 				/>
-			</then>
-		</if>
-
-		<get-testcase-property property.name="rewrite.batch.statements" />
-
-		<if>
-			<equals arg1="${rewrite.batch.statements}" arg2="true" />
-			<then>
-				<if>
-					<equals arg1="${database.type}" arg2="postgresql" />
-					<then>
-						<replace
-							file="portal-impl/src/portal-ext.properties"
-							token="${database.url}"
-							value="${database.url}?reWriteBatchedInserts=true"
-						/>
-					</then>
-					<elseif>
-						<equals arg1="${database.type}" arg2="sqlserver" />
-						<then>
-							<replace
-								file="portal-impl/src/portal-ext.properties"
-								token="${database.url}"
-								value="${database.url};useBulkCopyForBatchInsert=true"
-							/>
-						</then>
-					</elseif>
-					<else>
-						<property name="database.url" value="${database.url}" />
-					</else>
-				</if>
 			</then>
 		</if>
 
@@ -15335,6 +15293,8 @@ cluster.link.bind.addr["cluster-link-udp"]=127.0.0.1</echo>
 					dest="${liferay.home}"
 					src="${liferay.home}/data-archive-portal-partition-large.zip"
 				/>
+
+				<delete file="${liferay.home}/data-archive-portal-partition-large.zip" />
 			</then>
 			<else>
 				<unzip
@@ -17411,8 +17371,18 @@ CATALINA_OPTS="$CATALINA_OPTS -Dcom.sun.management.jmxremote -Dcom.sun.managemen
 			</then>
 		</if>
 
+		<if>
+			<not>
+				<isset property="skip.wait.server.startup" />
+			</not>
+			<then>
+				<var name="skip.wait.server.startup" value="false" />
+			</then>
+		</if>
+
 		<start-app-server
 			app.server.bundle.index="${app.server.bundle.index}"
+			skip.wait.server.startup="${skip.wait.server.startup}"
 			testable.portal.started.marker.file="${testable.portal.started.marker.file}"
 		/>
 	</target>

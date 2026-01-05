@@ -52,11 +52,16 @@ public interface Rels {
 
 	public static final String CHANNEL_CLEAR = "channel-clear";
 
+	public static final String CHANNEL_DATA_SOURCES = "channel-data-sources";
+
 	public static final String CHANNELS = "channels";
 
 	public static final String CSV_INDIVIDUALS = "csv-individuals";
 
 	public static final String DATA_SOURCE = "data-source";
+
+	public static final String DATA_SOURCE_CHANNEL_CONNECTED =
+		"data-sources-connected";
 
 	public static final String DATA_SOURCE_DISCONNECT =
 		"data-source-disconnect";
@@ -95,6 +100,9 @@ public interface Rels {
 	public static final String DEFINITIONS_INDIVIDUAL_ATTRIBUTES =
 		"definitions-individual-attributes";
 
+	public static final String DXP_ENTITIES_USERS_COUNT =
+		"dxp-entities-users-count";
+
 	public static final String FIELD = "field";
 
 	public static final String FIELD_MAPPING = "field-mapping";
@@ -131,6 +139,9 @@ public interface Rels {
 
 	public static final String INDIVIDUAL_SEGMENT_MEMBERSHIPS =
 		"individual-segment-memberships";
+
+	public static final String INDIVIDUAL_SEGMENT_REAL_TIME_MEMBERSHIPS =
+		"individual-segment-real-time-memberships";
 
 	public static final String INDIVIDUAL_SEGMENTS = "individual-segments";
 
@@ -200,6 +211,12 @@ public interface Rels {
 
 	public static final String REPORTS_EXPORT_CSV_COUNT =
 		"reports-export-csv-count";
+
+	public static final String SALESFORCE_ENTITIES_ACCOUNTS_COUNT =
+		"salesforce-entities-accounts-count";
+
+	public static final String SALESFORCE_ENTITIES_USERS_COUNT =
+		"salesforce-entities-users-count";
 
 	public static final String SESSION_VALUES = "session-values";
 

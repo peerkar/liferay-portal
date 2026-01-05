@@ -9,6 +9,7 @@ import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
+import com.liferay.layout.page.template.test.util.LayoutPageTemplateTestUtil;
 import com.liferay.layout.test.util.LayoutTestUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.Group;
@@ -19,6 +20,7 @@ import com.liferay.portal.kernel.model.LayoutTypeController;
 import com.liferay.portal.kernel.model.Theme;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.LayoutSetLocalService;
+import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
@@ -67,6 +69,33 @@ public class LayoutImplTest {
 	}
 
 	@Test
+	@TestInfo("LPD-72415")
+	public void testGetMasterLayoutPlid() throws Exception {
+		LayoutPageTemplateEntry layoutPageTemplateEntry =
+			LayoutPageTemplateTestUtil.addLayoutPageTemplateEntry(
+				_group.getGroupId(),
+				LayoutPageTemplateEntryTypeConstants.WIDGET_PAGE,
+				WorkflowConstants.STATUS_APPROVED);
+
+		Layout layout = _layoutLocalService.getLayout(
+			layoutPageTemplateEntry.getPlid());
+
+		LayoutPageTemplateEntry masterLayoutPageTemplateEntry =
+			LayoutPageTemplateTestUtil.addLayoutPageTemplateEntry(
+				_group.getGroupId(),
+				LayoutPageTemplateEntryTypeConstants.MASTER_LAYOUT,
+				WorkflowConstants.STATUS_APPROVED);
+
+		layout = _layoutLocalService.updateMasterLayoutPageTemplateEntryERC(
+			layout.getGroupId(), layout.isPrivateLayout(), layout.getLayoutId(),
+			masterLayoutPageTemplateEntry.getExternalReferenceCode());
+
+		Assert.assertEquals(
+			masterLayoutPageTemplateEntry.getPlid(),
+			layout.getMasterLayoutPlid());
+	}
+
+	@Test
 	public void testGetThemeSetting() throws Exception {
 		LayoutSet layoutSet = _group.getPublicLayoutSet();
 
@@ -96,7 +125,10 @@ public class LayoutImplTest {
 
 		Assert.assertEquals(value, _layout.getThemeSetting(key, "regular"));
 
-		Layout masterLayout = _addMasterLayout();
+		String masterLayoutPageTemplateEntryERC = RandomTestUtil.randomString();
+
+		Layout masterLayout = _addMasterLayout(
+			masterLayoutPageTemplateEntryERC);
 
 		masterLayout = _layoutLocalService.updateLookAndFeel(
 			masterLayout.getGroupId(), masterLayout.isPrivateLayout(),
@@ -105,14 +137,14 @@ public class LayoutImplTest {
 
 		value = RandomTestUtil.randomString();
 
-		masterLayout = _layoutLocalService.updateTypeSettings(
+		_layoutLocalService.updateTypeSettings(
 			masterLayout,
 			_addThemeSettingProperty(
 				key, masterLayout.getTypeSettingsProperties(), value));
 
-		_layout = _layoutLocalService.updateMasterLayoutPlid(
+		_layout = _layoutLocalService.updateMasterLayoutPageTemplateEntryERC(
 			_group.getGroupId(), false, _layout.getLayoutId(),
-			masterLayout.getPlid());
+			masterLayoutPageTemplateEntryERC);
 
 		Assert.assertEquals(value, _layout.getThemeSetting(key, "regular"));
 	}
@@ -127,9 +159,12 @@ public class LayoutImplTest {
 			_group.getGroupId(), false, "dialect_WAR_dialecttheme", "01",
 			StringPool.BLANK);
 
-		Layout masterLayout = _addMasterLayout();
+		String masterLayoutPageTemplateEntryERC = RandomTestUtil.randomString();
 
-		masterLayout = _layoutLocalService.updateLookAndFeel(
+		Layout masterLayout = _addMasterLayout(
+			masterLayoutPageTemplateEntryERC);
+
+		_layoutLocalService.updateLookAndFeel(
 			masterLayout.getGroupId(), masterLayout.isPrivateLayout(),
 			masterLayout.getLayoutId(), StringPool.BLANK, StringPool.BLANK,
 			StringPool.BLANK);
@@ -137,18 +172,20 @@ public class LayoutImplTest {
 		Layout privateLayout = LayoutTestUtil.addTypePortletLayout(
 			_group, true);
 
-		privateLayout = _layoutLocalService.updateMasterLayoutPlid(
-			privateLayout.getGroupId(), privateLayout.isPrivateLayout(),
-			privateLayout.getLayoutId(), masterLayout.getPlid());
+		privateLayout =
+			_layoutLocalService.updateMasterLayoutPageTemplateEntryERC(
+				privateLayout.getGroupId(), privateLayout.isPrivateLayout(),
+				privateLayout.getLayoutId(), masterLayoutPageTemplateEntryERC);
 
 		_assertThemeId(privateLayout, "admin_WAR_admintheme");
 
 		Layout publicLayout = LayoutTestUtil.addTypePortletLayout(
 			_group, false);
 
-		publicLayout = _layoutLocalService.updateMasterLayoutPlid(
-			publicLayout.getGroupId(), publicLayout.isPrivateLayout(),
-			publicLayout.getLayoutId(), masterLayout.getPlid());
+		publicLayout =
+			_layoutLocalService.updateMasterLayoutPageTemplateEntryERC(
+				publicLayout.getGroupId(), publicLayout.isPrivateLayout(),
+				publicLayout.getLayoutId(), masterLayoutPageTemplateEntryERC);
 
 		_assertThemeId(publicLayout, "dialect_WAR_dialecttheme");
 	}
@@ -382,11 +419,13 @@ public class LayoutImplTest {
 		_assertGetTheme(LayoutTestUtil.addTypePortletLayout(_group, false));
 	}
 
-	private Layout _addMasterLayout() throws Exception {
+	private Layout _addMasterLayout(String masterLayoutPageTemplateEntryERC)
+		throws Exception {
+
 		LayoutPageTemplateEntry masterLayoutPageTemplateEntry =
 			_layoutPageTemplateEntryLocalService.addLayoutPageTemplateEntry(
-				null, TestPropsValues.getUserId(), _group.getGroupId(), 0, null,
-				RandomTestUtil.randomString(),
+				masterLayoutPageTemplateEntryERC, TestPropsValues.getUserId(),
+				_group.getGroupId(), 0, null, RandomTestUtil.randomString(),
 				LayoutPageTemplateEntryTypeConstants.MASTER_LAYOUT, 0,
 				WorkflowConstants.STATUS_APPROVED,
 				ServiceContextTestUtil.getServiceContext(_group.getGroupId()));
@@ -420,16 +459,19 @@ public class LayoutImplTest {
 
 		_assertThemeId(layout, "classic_WAR_classictheme");
 
-		Layout masterLayout = _addMasterLayout();
+		String masterLayoutPageTemplateEntryERC = RandomTestUtil.randomString();
+
+		Layout masterLayout = _addMasterLayout(
+			masterLayoutPageTemplateEntryERC);
 
 		masterLayout = _layoutLocalService.updateLookAndFeel(
 			masterLayout.getGroupId(), masterLayout.isPrivateLayout(),
 			masterLayout.getLayoutId(), StringPool.BLANK, StringPool.BLANK,
 			StringPool.BLANK);
 
-		layout = _layoutLocalService.updateMasterLayoutPlid(
+		layout = _layoutLocalService.updateMasterLayoutPageTemplateEntryERC(
 			layout.getGroupId(), layout.isPrivateLayout(), layout.getLayoutId(),
-			masterLayout.getPlid());
+			masterLayoutPageTemplateEntryERC);
 
 		_assertThemeId(layout, "admin_WAR_admintheme");
 

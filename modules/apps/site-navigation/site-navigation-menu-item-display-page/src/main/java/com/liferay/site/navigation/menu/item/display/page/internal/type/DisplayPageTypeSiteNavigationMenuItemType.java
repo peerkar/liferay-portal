@@ -9,9 +9,14 @@ import com.liferay.asset.display.page.portlet.AssetDisplayPageFriendlyURLProvide
 import com.liferay.asset.display.page.util.AssetDisplayPageUtil;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.frontend.taglib.servlet.taglib.util.JSPRenderer;
+import com.liferay.info.item.ClassPKInfoItemIdentifier;
 import com.liferay.info.item.ERCInfoItemIdentifier;
+import com.liferay.info.item.InfoItemDetails;
 import com.liferay.info.item.InfoItemIdentifier;
 import com.liferay.info.item.InfoItemReference;
+import com.liferay.info.item.InfoItemServiceRegistry;
+import com.liferay.info.item.provider.InfoItemDetailsProvider;
+import com.liferay.info.item.provider.InfoItemObjectProvider;
 import com.liferay.info.item.provider.InfoItemPermissionProvider;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.item.selector.criteria.InfoItemItemSelectorReturnType;
@@ -27,26 +32,30 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.ClassedModel;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.xml.Element;
+import com.liferay.site.navigation.constants.SiteNavigationMenuPortletKeys;
 import com.liferay.site.navigation.menu.item.display.page.internal.display.context.DisplayPageTypeSiteNavigationMenuTypeDisplayContext;
 import com.liferay.site.navigation.model.SiteNavigationMenuItem;
 import com.liferay.site.navigation.type.SiteNavigationMenuItemType;
 import com.liferay.site.navigation.type.SiteNavigationMenuItemTypeContext;
+import com.liferay.staging.StagingGroupHelper;
+import com.liferay.staging.StagingGroupHelperUtil;
 
 import jakarta.portlet.PortletURL;
 import jakarta.portlet.RenderRequest;
@@ -59,7 +68,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * @author Lourdes Fernández Besada
@@ -70,12 +78,16 @@ public class DisplayPageTypeSiteNavigationMenuItemType
 	public DisplayPageTypeSiteNavigationMenuItemType(
 		AssetDisplayPageFriendlyURLProvider assetDisplayPageFriendlyURLProvider,
 		DisplayPageTypeContext displayPageTypeContext,
+		GroupLocalService groupLocalService,
+		InfoItemServiceRegistry infoItemServiceRegistry,
 		ItemSelector itemSelector, JSPRenderer jspRenderer, Portal portal,
 		ServletContext servletContext) {
 
 		_assetDisplayPageFriendlyURLProvider =
 			assetDisplayPageFriendlyURLProvider;
 		_displayPageTypeContext = displayPageTypeContext;
+		_groupLocalService = groupLocalService;
+		_infoItemServiceRegistry = infoItemServiceRegistry;
 		_itemSelector = itemSelector;
 		_jspRenderer = jspRenderer;
 		_portal = portal;
@@ -93,13 +105,16 @@ public class DisplayPageTypeSiteNavigationMenuItemType
 				siteNavigationMenuItem.getTypeSettings()
 			).build();
 
-		long classPK = GetterUtil.getLong(
-			typeSettingsUnicodeProperties.get("classPK"));
+		String externalReferenceCode = GetterUtil.getString(
+			typeSettingsUnicodeProperties.get("externalReferenceCode"));
+		String scopeExternalReferenceCode = typeSettingsUnicodeProperties.get(
+			"scopeExternalReferenceCode");
 
 		try {
 			LayoutDisplayPageObjectProvider<?> layoutDisplayPageObjectProvider =
 				_displayPageTypeContext.getLayoutDisplayPageObjectProvider(
-					classPK);
+					externalReferenceCode, siteNavigationMenuItem.getGroupId(),
+					scopeExternalReferenceCode);
 
 			if (layoutDisplayPageObjectProvider == null) {
 				return false;
@@ -109,12 +124,13 @@ public class DisplayPageTypeSiteNavigationMenuItemType
 				"display-page-class-name",
 				_displayPageTypeContext.getClassName());
 			siteNavigationMenuItemElement.addAttribute(
-				"display-page-class-pk", String.valueOf(classPK));
-			siteNavigationMenuItemElement.addAttribute(
 				"display-page-external-reference-code",
 				GetterUtil.getString(
 					typeSettingsUnicodeProperties.get(
 						"externalReferenceCode")));
+			siteNavigationMenuItemElement.addAttribute(
+				"display-page-scope-external-reference-code",
+				scopeExternalReferenceCode);
 
 			portletDataContext.addReferenceElement(
 				siteNavigationMenuItem, siteNavigationMenuItemElement,
@@ -286,8 +302,10 @@ public class DisplayPageTypeSiteNavigationMenuItemType
 
 		LayoutDisplayPageObjectProvider<?> layoutDisplayPageObjectProvider =
 			_displayPageTypeContext.getLayoutDisplayPageObjectProvider(
-				GetterUtil.getLong(
-					typeSettingsUnicodeProperties.get("classPK")));
+				typeSettingsUnicodeProperties.get("externalReferenceCode"),
+				siteNavigationMenuItem.getGroupId(),
+				typeSettingsUnicodeProperties.get(
+					"scopeExternalReferenceCode"));
 
 		String defaultTitle = typeSettingsUnicodeProperties.getProperty(
 			"title");
@@ -346,10 +364,35 @@ public class DisplayPageTypeSiteNavigationMenuItemType
 			return true;
 		}
 
+		UnicodeProperties typeSettingsUnicodeProperties =
+			UnicodePropertiesBuilder.fastLoad(
+				siteNavigationMenuItem.getTypeSettings()
+			).build();
+
+		String className = typeSettingsUnicodeProperties.get("className");
+
+		InfoItemObjectProvider<?> infoItemObjectProvider =
+			_infoItemServiceRegistry.getFirstInfoItemService(
+				InfoItemObjectProvider.class, className,
+				ClassPKInfoItemIdentifier.INFO_ITEM_SERVICE_FILTER);
+
+		Object infoItem = infoItemObjectProvider.getInfoItem(
+			new ERCInfoItemIdentifier(
+				typeSettingsUnicodeProperties.get("externalReferenceCode"),
+				typeSettingsUnicodeProperties.get(
+					"scopeExternalReferenceCode")));
+
+		InfoItemDetailsProvider infoItemDetailsProvider =
+			_infoItemServiceRegistry.getFirstInfoItemService(
+				InfoItemDetailsProvider.class, className);
+
+		InfoItemDetails infoItemDetails =
+			infoItemDetailsProvider.getInfoItemDetails(
+				siteNavigationMenuItem.getGroupId(),
+				ClassPKInfoItemIdentifier.class, infoItem);
+
 		return infoItemPermissionProvider.hasPermission(
-			permissionChecker,
-			_displayPageTypeContext.getInfoItemReference(
-				siteNavigationMenuItem),
+			permissionChecker, infoItemDetails.getInfoItemReference(),
 			ActionKeys.VIEW);
 	}
 
@@ -369,27 +412,54 @@ public class DisplayPageTypeSiteNavigationMenuItemType
 			return false;
 		}
 
+		String scopeExternalReferenceCode = GetterUtil.getString(
+			element.attributeValue(
+				"display-page-scope-external-reference-code"));
+
+		if (Validator.isNull(scopeExternalReferenceCode)) {
+			StagingGroupHelper stagingGroupHelper =
+				StagingGroupHelperUtil.getStagingGroupHelper();
+
+			if (stagingGroupHelper.isStagedPortlet(
+					portletDataContext.getGroupId(),
+					SiteNavigationMenuPortletKeys.SITE_NAVIGATION_MENU) &&
+				!stagingGroupHelper.isStagedPortletData(
+					portletDataContext.getGroupId(),
+					_displayPageTypeContext.getClassName())) {
+
+				Group group = _groupLocalService.fetchGroup(
+					importedSiteNavigationMenuItem.getGroupId());
+
+				if (group == null) {
+					return false;
+				}
+
+				Group liveGroup = group.getLiveGroup();
+
+				scopeExternalReferenceCode =
+					liveGroup.getExternalReferenceCode();
+			}
+		}
+		else {
+			Group group = _groupLocalService.fetchGroupByExternalReferenceCode(
+				scopeExternalReferenceCode,
+				importedSiteNavigationMenuItem.getCompanyId());
+
+			if ((group == null) ||
+				(group.getGroupId() ==
+					importedSiteNavigationMenuItem.getGroupId())) {
+
+				scopeExternalReferenceCode = null;
+			}
+		}
+
 		importedSiteNavigationMenuItem.setTypeSettings(
 			UnicodePropertiesBuilder.fastLoad(
 				siteNavigationMenuItem.getTypeSettings()
 			).put(
-				"classNameId",
-				String.valueOf(
-					_portal.getClassNameId(
-						_displayPageTypeContext.getClassName()))
-			).put(
-				"classPK",
-				String.valueOf(
-					MapUtil.getLong(
-						(Map<Long, Long>)
-							portletDataContext.getNewPrimaryKeysMap(
-								_displayPageTypeContext.getClassName()),
-						GetterUtil.getLong(
-							element.attributeValue("display-page-class-pk")),
-						GetterUtil.getLong(
-							element.attributeValue("display-page-class-pk"))))
-			).put(
 				"externalReferenceCode", externalReferenceCode
+			).put(
+				"scopeExternalReferenceCode", scopeExternalReferenceCode
 			).buildString());
 
 		return true;
@@ -436,7 +506,8 @@ public class DisplayPageTypeSiteNavigationMenuItemType
 		httpServletRequest.setAttribute(
 			DisplayPageTypeSiteNavigationMenuTypeDisplayContext.class.getName(),
 			new DisplayPageTypeSiteNavigationMenuTypeDisplayContext(
-				_displayPageTypeContext, httpServletRequest, _itemSelector,
+				_displayPageTypeContext, httpServletRequest,
+				_infoItemServiceRegistry, _itemSelector,
 				siteNavigationMenuItem));
 
 		_jspRenderer.renderJSP(
@@ -454,7 +525,8 @@ public class DisplayPageTypeSiteNavigationMenuItemType
 
 		InfoItemIdentifier infoItemIdentifier = new ERCInfoItemIdentifier(
 			GetterUtil.getString(
-				typeSettingsUnicodeProperties.get("externalReferenceCode")));
+				typeSettingsUnicodeProperties.get("externalReferenceCode")),
+			typeSettingsUnicodeProperties.get("scopeExternalReferenceCode"));
 
 		return AssetDisplayPageUtil.hasAssetDisplayPage(
 			siteNavigationMenuItem.getGroupId(),
@@ -470,6 +542,8 @@ public class DisplayPageTypeSiteNavigationMenuItemType
 	private final AssetDisplayPageFriendlyURLProvider
 		_assetDisplayPageFriendlyURLProvider;
 	private final DisplayPageTypeContext _displayPageTypeContext;
+	private final GroupLocalService _groupLocalService;
+	private final InfoItemServiceRegistry _infoItemServiceRegistry;
 	private final ItemSelector _itemSelector;
 	private final JSPRenderer _jspRenderer;
 	private final Portal _portal;

@@ -32,6 +32,7 @@ export class DataSetManagerApiHelpers extends ApiHelpers {
 		restApplication = API_ENDPOINT_PATH,
 		restEndpoint = `/by-external-reference-code/${erc}/dataSetToDataSetTableSections`,
 		restSchema = 'DataSetTableSection',
+		snapshotsEnabled,
 	}: {
 		additionalAPIURLParameters?: string;
 		defaultItemsPerPage?: number;
@@ -43,6 +44,7 @@ export class DataSetManagerApiHelpers extends ApiHelpers {
 		restApplication?: string;
 		restEndpoint?: string;
 		restSchema?: string;
+		snapshotsEnabled?: boolean;
 	}) {
 		const url = getDataSetResourceURL({});
 
@@ -57,6 +59,7 @@ export class DataSetManagerApiHelpers extends ApiHelpers {
 			restApplication,
 			restEndpoint,
 			restSchema,
+			snapshotsEnabled,
 		};
 
 		return this.post(url, {data});
@@ -390,6 +393,35 @@ export class DataSetManagerApiHelpers extends ApiHelpers {
 		return this.delete(url);
 	}
 
+	async createDataSetSnapshot({
+		dataSetERC,
+		snapshotName,
+	}: {
+		dataSetERC: string;
+		snapshotName: string;
+	}) {
+		const url = '/o/data-set-admin/snapshots';
+
+		const data = {
+			fdsName: dataSetERC,
+			label: snapshotName,
+		};
+
+		return this.post(url, {data});
+	}
+
+	async getDataSetSnapshots({
+		creatorId,
+		dataSetERC,
+	}: {
+		creatorId?: number;
+		dataSetERC: string;
+	}) {
+		const url = `/o/data-set-admin/snapshots/?filter=fdsName eq '${dataSetERC}' and creatorId eq ${creatorId}`;
+
+		return this.get(url);
+	}
+
 	async updateDataSet({
 		additionalAPIURLParameters,
 		defaultItemsPerPage,
@@ -398,6 +430,7 @@ export class DataSetManagerApiHelpers extends ApiHelpers {
 		filtersOrder,
 		label,
 		listOfItemsPerPage,
+		snapshotsEnabled,
 	}: {
 		additionalAPIURLParameters?: string;
 		defaultItemsPerPage?: number;
@@ -406,6 +439,7 @@ export class DataSetManagerApiHelpers extends ApiHelpers {
 		filtersOrder?: string;
 		label?: string;
 		listOfItemsPerPage?: string;
+		snapshotsEnabled?: boolean;
 	}) {
 		const url = getDataSetResourceURL({
 			dataSetERC: erc,
@@ -418,6 +452,7 @@ export class DataSetManagerApiHelpers extends ApiHelpers {
 			filtersOrder,
 			label,
 			listOfItemsPerPage,
+			snapshotsEnabled,
 		};
 
 		return this.patch(url, data);

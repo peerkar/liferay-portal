@@ -13,7 +13,12 @@ import getPageDefinition from '../../../layout-content-page-editor-web/main/util
 import getWidgetDefinition from '../../../layout-content-page-editor-web/main/utils/getWidgetDefinition';
 
 export class FDSSamplePage {
-	readonly activeFiltersToolbar: Locator;
+	readonly activeFiltersToolbar: {
+		clearButton: Locator;
+		clearSearchButton: Locator;
+		container: Locator;
+		searchResume: Locator;
+	};
 	private readonly apiHelpers: ApiHelpers;
 	readonly bulkActions: {
 		actionsDropdownButton: Locator;
@@ -24,10 +29,6 @@ export class FDSSamplePage {
 		itemActionButtons: Locator;
 		items: Locator;
 	};
-	readonly customViewsActionsButton: Locator;
-	readonly customViewsDeleteAlert: Locator;
-	readonly customViewsSaveModal: Locator;
-	readonly customViewsSelectorButton: Locator;
 	readonly emptyStateContainer: Locator;
 	readonly fdsWrapper: Locator;
 	readonly fileDropModal: Locator;
@@ -65,10 +66,29 @@ export class FDSSamplePage {
 		manageColumnsVisibilityButton: Locator;
 	};
 	readonly toggleInfoPanelButton: Locator;
+	readonly userViewsActionsButton: Locator;
+	readonly userViewsDeleteAlert: Locator;
+	readonly userViewsSaveModal: Locator;
+	readonly userViewsSelectorButton: Locator;
 	readonly visualizationModeSelector: Locator;
 
 	constructor(page: Page) {
-		this.activeFiltersToolbar = page.getByTestId('activeFiltersToolbar');
+		const activeFiltersToolbarContainer: Locator = page.getByTestId(
+			'activeFiltersToolbar'
+		);
+
+		const searchResume =
+			activeFiltersToolbarContainer.locator('.search-resume');
+		this.activeFiltersToolbar = {
+			clearButton: activeFiltersToolbarContainer.getByRole('button', {
+				name: 'Clear',
+			}),
+			clearSearchButton: searchResume.getByRole('button', {
+				name: 'Clear Search',
+			}),
+			container: activeFiltersToolbarContainer,
+			searchResume,
+		};
 		this.apiHelpers = new ApiHelpers(page);
 		this.bulkActions = {
 			actionsDropdownButton: page
@@ -86,18 +106,6 @@ export class FDSSamplePage {
 			itemActionButtons: cardItems.getByLabel('More actions'),
 			items: cardItems,
 		};
-		this.customViewsActionsButton = page.getByLabel('Show View Actions', {
-			exact: true,
-		});
-		this.customViewsDeleteAlert = page.getByRole('dialog', {
-			name: 'Delete View',
-		});
-		this.customViewsSaveModal = page.getByRole('dialog', {
-			name: 'Save New View As',
-		});
-		this.customViewsSelectorButton = page.getByLabel('Views', {
-			exact: true,
-		});
 		this.emptyStateContainer = page.locator('.fds .c-empty-state');
 		this.fdsWrapper = page.locator('div.data-set-wrapper').first();
 		this.fileDropModal = page.getByRole('dialog', {
@@ -176,7 +184,22 @@ export class FDSSamplePage {
 			),
 		};
 
-		this.toggleInfoPanelButton = page.getByLabel('Toggle Info Panel');
+		this.toggleInfoPanelButton = page
+			.getByLabel('Show Info Panel')
+			.or(page.getByLabel('Hide Info Panel'));
+
+		this.userViewsActionsButton = page.getByLabel('Show View Actions', {
+			exact: true,
+		});
+		this.userViewsDeleteAlert = page.getByRole('dialog', {
+			name: 'Delete View',
+		});
+		this.userViewsSaveModal = page.getByRole('dialog', {
+			name: 'Save New View As',
+		});
+		this.userViewsSelectorButton = page.getByLabel('Views', {
+			exact: true,
+		});
 
 		this.visualizationModeSelector = page.getByLabel(/View Selected/);
 	}
@@ -218,7 +241,9 @@ export class FDSSamplePage {
 		const menuItems = dropdownMenu.getByRole('menuitem');
 
 		for (const menuItem of await menuItems.all()) {
-			await expect.soft(menuItem.locator('.lexicon-icon')).toBeVisible();
+			await expect
+				.soft(menuItem.locator('.lexicon-icon').first())
+				.toBeVisible();
 		}
 
 		await this.page.keyboard.press('Escape');

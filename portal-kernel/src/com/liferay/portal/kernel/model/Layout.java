@@ -162,6 +162,8 @@ public interface Layout extends LayoutModel, PersistedModel {
 
 	public java.util.List<Portlet> getEmbeddedPortlets(long groupId);
 
+	public long getFaviconFileEntryGroupId();
+
 	public String getFaviconURL();
 
 	/**
@@ -248,6 +250,8 @@ public interface Layout extends LayoutModel, PersistedModel {
 	 linked layout could be found
 	 */
 	public Layout getLinkedToLayout();
+
+	public long getMasterLayoutPlid();
 
 	public String getRegularURL(
 			jakarta.servlet.http.HttpServletRequest httpServletRequest)

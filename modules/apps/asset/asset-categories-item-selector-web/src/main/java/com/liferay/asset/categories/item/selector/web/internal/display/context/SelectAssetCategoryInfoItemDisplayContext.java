@@ -257,6 +257,24 @@ public class SelectAssetCategoryInfoItemDisplayContext {
 			).put(
 				"nodePath",
 				assetCategory.getPath(_themeDisplay.getLocale(), true)
+			).put(
+				"scopeExternalReferenceCode",
+				() -> {
+					long scopeGroupId = _themeDisplay.getRefererGroupId();
+
+					if (scopeGroupId <= 0) {
+						scopeGroupId = _themeDisplay.getScopeGroupId();
+					}
+
+					if (assetCategory.getGroupId() == scopeGroupId) {
+						return null;
+					}
+
+					Group group = GroupLocalServiceUtil.getGroup(
+						assetCategory.getGroupId());
+
+					return group.getExternalReferenceCode();
+				}
 			));
 	}
 

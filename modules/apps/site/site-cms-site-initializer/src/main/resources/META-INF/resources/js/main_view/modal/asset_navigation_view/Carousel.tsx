@@ -7,10 +7,8 @@ import {ClayButtonWithIcon} from '@clayui/button';
 import classNames from 'classnames';
 import React from 'react';
 
+import AssetPreview from '../../../common/components/AssetPreview';
 import {ISearchAssetObjectEntry} from '../../../common/types/AssetType';
-import formatActionURL from '../../../common/utils/formatActionURL';
-import ContentPreview from './ContentPreview';
-import FilePreview from './FilePreview';
 
 const Arrow = ({
 	ariaLabel,
@@ -72,13 +70,7 @@ export default function Carousel({
 			)}
 
 			<div className="h-100 justify-content-center mx-6 preview-container py-4 w-100">
-				{currentItem.embedded?.file ? (
-					<FilePreview file={currentItem.embedded.file} />
-				) : (
-					<ContentPreview
-						url={formatActionURL(currentItem, contentViewURL)}
-					/>
-				)}
+				<AssetPreview item={currentItem} url={contentViewURL} />
 			</div>
 		</div>
 	);

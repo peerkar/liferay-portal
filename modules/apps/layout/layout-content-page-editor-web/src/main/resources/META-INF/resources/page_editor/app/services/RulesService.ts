@@ -3,9 +3,10 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {Action} from '../../plugins/page_rules/components/Action';
-import {Condition} from '../../plugins/page_rules/components/Condition';
+import {isNullOrUndefined} from '@liferay/layout-js-components-web';
+
 import {ConditionType} from '../../plugins/page_rules/components/RuleBuilderSection';
+import {Action, Condition, Rule} from '../../types/Rule';
 import {LayoutData} from '../../types/layout_data/LayoutData';
 import {config} from '../config/index';
 import draftServiceFetch, {OnNetworkStatus} from './draftServiceFetch';
@@ -16,10 +17,11 @@ import serviceFetch from './serviceFetch';
  */
 type AddRuleProps = {
 	actions: Action[];
-	conditionType: ConditionType;
-	conditions: Condition[];
+	conditionType?: ConditionType;
+	conditions?: Condition[];
 	name: string;
 	onNetworkStatus: OnNetworkStatus;
+	script?: string;
 	segmentsExperienceId: string;
 };
 
@@ -29,6 +31,7 @@ function addRule({
 	conditions,
 	name,
 	onNetworkStatus,
+	script,
 	segmentsExperienceId,
 }: AddRuleProps): Promise<{addedRuleId: string; layoutData: LayoutData}> {
 	return draftServiceFetch(
@@ -39,6 +42,7 @@ function addRule({
 				conditionType,
 				conditions: JSON.stringify(conditions),
 				name,
+				...(isNullOrUndefined(script) ? {} : {script}),
 				segmentsExperienceId,
 			},
 		},
@@ -76,14 +80,24 @@ function deleteRule({
  * Get roles
  */
 function getRoles(): Promise<Array<{name: string; roleId: string}>> {
-	return serviceFetch(config.getRolesURL, {});
+	return serviceFetch(config.getRolesURL, {method: 'GET'});
 }
 
 /**
  * Get users
  */
 function getUsers(): Promise<Array<{screenName: string; userId: string}>> {
-	return serviceFetch(config.getUsersURL, {});
+	return serviceFetch(config.getUsersURL, {method: 'GET'});
+}
+
+/**
+ * Validate advanced rule script
+ */
+function validateScript(script: string): Promise<{valid: boolean}> {
+	return serviceFetch(config.validateExpressionURL, {
+		body: {expression: script},
+		method: 'POST',
+	});
 }
 
 /**
@@ -91,11 +105,12 @@ function getUsers(): Promise<Array<{screenName: string; userId: string}>> {
  */
 type UpdateRuleProps = {
 	actions: Action[];
-	conditionType: ConditionType;
-	conditions: Condition[];
+	conditionType?: ConditionType;
+	conditions?: Condition[];
 	name: string;
 	onNetworkStatus: OnNetworkStatus;
 	ruleId: string;
+	script?: string;
 	segmentsExperienceId: string;
 };
 
@@ -106,6 +121,7 @@ function updateRule({
 	name,
 	onNetworkStatus,
 	ruleId,
+	script,
 	segmentsExperienceId,
 }: UpdateRuleProps): Promise<{layoutData: LayoutData}> {
 	return draftServiceFetch(
@@ -117,6 +133,7 @@ function updateRule({
 				conditions: JSON.stringify(conditions),
 				name,
 				ruleId,
+				...(isNullOrUndefined(script) ? {} : {script}),
 				segmentsExperienceId,
 			},
 		},
@@ -124,4 +141,35 @@ function updateRule({
 	);
 }
 
-export default {addRule, deleteRule, getRoles, getUsers, updateRule};
+type UpdateRulesProps = {
+	onNetworkStatus: OnNetworkStatus;
+	rules: Rule[];
+	segmentsExperienceId: string;
+};
+
+function updateRules({
+	onNetworkStatus,
+	rules,
+	segmentsExperienceId,
+}: UpdateRulesProps): Promise<{layoutData: LayoutData}> {
+	return draftServiceFetch(
+		config.updateRulesURL,
+		{
+			body: {
+				rules: JSON.stringify(rules),
+				segmentsExperienceId,
+			},
+		},
+		onNetworkStatus
+	);
+}
+
+export default {
+	addRule,
+	deleteRule,
+	getRoles,
+	getUsers,
+	updateRule,
+	updateRules,
+	validateScript,
+};

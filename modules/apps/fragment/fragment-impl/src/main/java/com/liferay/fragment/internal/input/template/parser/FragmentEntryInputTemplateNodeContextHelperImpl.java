@@ -69,6 +69,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.KeyValuePair;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -349,6 +350,21 @@ public class FragmentEntryInputTemplateNodeContextHelperImpl
 			else {
 				value = String.valueOf(infoFieldValue);
 			}
+		}
+
+		if (infoFieldType instanceof LongTextInfoFieldType ||
+			infoFieldType instanceof TextInfoFieldType) {
+
+			value = HtmlUtil.escape(value);
+
+			Map<Locale, String> escapedValueI18n = new HashMap<>();
+
+			for (Map.Entry<Locale, String> entry : valueI18n.entrySet()) {
+				escapedValueI18n.put(
+					entry.getKey(), HtmlUtil.escape(entry.getValue()));
+			}
+
+			valueI18n = escapedValueI18n;
 		}
 
 		InputTemplateNode inputTemplateNode = new InputTemplateNode(

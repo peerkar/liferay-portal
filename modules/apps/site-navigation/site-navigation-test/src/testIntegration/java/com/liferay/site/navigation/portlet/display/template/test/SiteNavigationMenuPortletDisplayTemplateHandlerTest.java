@@ -117,9 +117,7 @@ public class SiteNavigationMenuPortletDisplayTemplateHandlerTest {
 				UnicodePropertiesBuilder.create(
 					true
 				).put(
-					"groupId", String.valueOf(_group.getGroupId())
-				).put(
-					"layoutUuid", layout.getUuid()
+					"externalReferenceCode", layout.getExternalReferenceCode()
 				).put(
 					"privateLayout", String.valueOf(layout.isPrivateLayout())
 				).put(

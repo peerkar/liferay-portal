@@ -6,14 +6,27 @@
 package com.liferay.document.library.internal.search.spi.model.index.contributor;
 
 import com.liferay.document.library.kernel.model.DLFileEntry;
-import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.document.library.kernel.model.DLFolder;
+import com.liferay.document.library.kernel.model.DLFolderTable;
+import com.liferay.document.library.kernel.service.DLFolderLocalService;
+import com.liferay.message.boards.model.MBMessage;
+import com.liferay.message.boards.model.MBMessageTable;
+import com.liferay.message.boards.service.MBMessageLocalService;
+import com.liferay.petra.sql.dsl.DSLFunctionFactoryUtil;
+import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
+import com.liferay.petra.sql.dsl.query.DSLQuery;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.DocumentHelper;
 import com.liferay.portal.kernel.search.Field;
-import com.liferay.portal.kernel.search.RelatedEntryIndexer;
+import com.liferay.portal.kernel.search.ReindexCacheThreadLocal;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.repository.liferayrepository.model.LiferayFileEntry;
 import com.liferay.portal.search.spi.model.index.contributor.ModelDocumentContributor;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -34,29 +47,95 @@ public class DLFileEntryRelatedEntryModelDocumentContributor
 			return;
 		}
 
-		try {
-			relatedEntryIndexer.addRelatedEntryFields(
-				document, new LiferayFileEntry(dlFileEntry));
+		long[] mbMessageValues = _getMBMessageValues(dlFileEntry.getFolderId());
 
-			DocumentHelper documentHelper = new DocumentHelper(document);
-
-			documentHelper.setAttachmentOwnerKey(
-				portal.getClassNameId(dlFileEntry.getClassName()),
-				dlFileEntry.getClassPK());
-
-			document.addKeyword(Field.RELATED_ENTRY, true);
+		if (mbMessageValues != null) {
+			document.addKeyword(Field.CATEGORY_ID, mbMessageValues[0]);
+			document.addKeyword("discussion", false);
+			document.addKeyword("threadId", mbMessageValues[1]);
 		}
-		catch (Exception exception) {
-			throw new SystemException(exception);
+
+		DocumentHelper documentHelper = new DocumentHelper(document);
+
+		documentHelper.setAttachmentOwnerKey(
+			_portal.getClassNameId(dlFileEntry.getClassName()),
+			dlFileEntry.getClassPK());
+
+		document.addKeyword(Field.RELATED_ENTRY, true);
+	}
+
+	private long[] _getMBMessageValues(long dlFolderId) {
+		Map<Long, long[]> mbMessageValuesMap =
+			ReindexCacheThreadLocal.getGlobalReindexCache(
+				() -> -1,
+				DLFileEntryRelatedEntryModelDocumentContributor.class.getName(),
+				count -> {
+					DSLQuery dslQuery = DSLQueryFactoryUtil.select(
+						DLFolderTable.INSTANCE.folderId,
+						MBMessageTable.INSTANCE.categoryId,
+						MBMessageTable.INSTANCE.threadId
+					).from(
+						DLFolderTable.INSTANCE
+					).innerJoinON(
+						MBMessageTable.INSTANCE,
+						DLFolderTable.INSTANCE.name.eq(
+							DSLFunctionFactoryUtil.castText(
+								MBMessageTable.INSTANCE.messageId))
+					);
+
+					List<Object[]> valuesList = _dlFolderLocalService.dslQuery(
+						dslQuery, false);
+
+					if (valuesList.isEmpty()) {
+						return Collections.emptyMap();
+					}
+
+					Map<Long, long[]> localMBMessageValuesMap = new HashMap<>();
+
+					for (Object[] values : valuesList) {
+						localMBMessageValuesMap.put(
+							(Long)values[0],
+							new long[] {(long)values[1], (long)values[2]});
+					}
+
+					return localMBMessageValuesMap;
+				});
+
+		if (mbMessageValuesMap == null) {
+			DLFolder dlFolder = _dlFolderLocalService.fetchDLFolder(dlFolderId);
+
+			if (dlFolder == null) {
+				return null;
+			}
+
+			long messageId = GetterUtil.getLong(dlFolder.getName());
+
+			if (messageId == 0) {
+				return null;
+			}
+
+			MBMessage mbMessage = _mbMessageLocalService.fetchMBMessage(
+				messageId);
+
+			if (mbMessage == null) {
+				return null;
+			}
+
+			return new long[] {
+				mbMessage.getCategoryId(), mbMessage.getThreadId()
+			};
 		}
+
+		return mbMessageValuesMap.get(dlFolderId);
 	}
 
 	@Reference
-	protected Portal portal;
+	private DLFolderLocalService _dlFolderLocalService;
 
-	@Reference(
-		target = "(related.entry.indexer.class.name=com.liferay.message.boards.model.MBMessage)"
-	)
-	protected RelatedEntryIndexer relatedEntryIndexer;
+	@Reference
+	private MBMessageLocalService _mbMessageLocalService;
+
+	@Reference
+	private Portal _portal;
 
 }

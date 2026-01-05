@@ -18,7 +18,6 @@ import com.liferay.petra.concurrent.DCLSingleton;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.json.validator.JSONValidatorException;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.log.Log;
@@ -69,28 +68,23 @@ public class FrontendTokenDefinitionRegistryImpl
 
 	@Override
 	public FrontendTokenDefinition getFrontendTokenDefinition(Layout layout) {
-		String cetExternalReferenceCode = null;
+		long classNameId = _portal.getClassNameId(Layout.class);
 
-		if (FeatureFlagManagerUtil.isEnabled(
-				layout.getCompanyId(), "LPD-30204")) {
+		String cetExternalReferenceCode = _getCETExternalReferenceCode(
+			classNameId, layout.getPlid());
 
+		if (cetExternalReferenceCode != null) {
+			return _getThemeCSSCETFrontendTokenDefinition(
+				layout.getCompanyId(), cetExternalReferenceCode);
+		}
+
+		if (layout.getMasterLayoutPlid() > 0) {
 			cetExternalReferenceCode = _getCETExternalReferenceCode(
-				layout.getClassNameId(), layout.getPlid());
+				classNameId, layout.getMasterLayoutPlid());
 
 			if (cetExternalReferenceCode != null) {
 				return _getThemeCSSCETFrontendTokenDefinition(
 					layout.getCompanyId(), cetExternalReferenceCode);
-			}
-
-			if (layout.getMasterLayoutPlid() > 0) {
-				cetExternalReferenceCode = _getCETExternalReferenceCode(
-					_portal.getClassNameId(Layout.class),
-					layout.getMasterLayoutPlid());
-
-				if (cetExternalReferenceCode != null) {
-					return _getThemeCSSCETFrontendTokenDefinition(
-						layout.getCompanyId(), cetExternalReferenceCode);
-				}
 			}
 		}
 

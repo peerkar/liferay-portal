@@ -149,7 +149,7 @@ testWithPrivatePages(
 		await productMenuPage.openProductMenuIfClosed();
 
 		await productMenuPage.goToPages();
-		await pagesAdminPage.newButton.click();
+		await pagesAdminPage.clickNewButtonAndWaitForBlankTemplate();
 
 		const secondPageNameOnSiteTemplate = getRandomString();
 		await pagesAdminPage.addPage({

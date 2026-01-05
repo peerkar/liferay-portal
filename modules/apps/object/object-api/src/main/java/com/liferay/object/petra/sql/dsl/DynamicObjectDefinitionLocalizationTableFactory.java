@@ -8,9 +8,10 @@ package com.liferay.object.petra.sql.dsl;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.service.ObjectFieldLocalService;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * @author Feliphe Marinho
@@ -18,31 +19,33 @@ import java.util.List;
 public class DynamicObjectDefinitionLocalizationTableFactory {
 
 	public static DynamicObjectDefinitionLocalizationTable create(
+		ObjectDefinition objectDefinition, List<ObjectField> objectFields) {
+
+		return _create(objectDefinition, objectFields);
+	}
+
+	public static DynamicObjectDefinitionLocalizationTable create(
 		ObjectDefinition objectDefinition,
 		ObjectFieldLocalService objectFieldLocalService) {
 
-		List<ObjectField> localizedObjectFields = null;
+		return _create(
+			objectDefinition,
+			objectFieldLocalService.getLocalizedObjectFields(
+				objectDefinition.getObjectDefinitionId()));
+	}
+
+	private static DynamicObjectDefinitionLocalizationTable _create(
+		ObjectDefinition objectDefinition, List<ObjectField> objectFields) {
+
+		List<ObjectField> localizedObjectFields = ListUtil.filter(
+			objectFields, ObjectField::isLocalized);
 
 		if (objectDefinition.isUnmodifiableSystemObject()) {
-			localizedObjectFields =
-				objectFieldLocalService.getLocalizedObjectFields(
-					objectDefinition.getObjectDefinitionId(), false);
-
-			if (localizedObjectFields.isEmpty()) {
-				return null;
-			}
-		}
-		else {
-			localizedObjectFields =
-				objectFieldLocalService.getLocalizedObjectFields(
-					objectDefinition.getObjectDefinitionId());
+			localizedObjectFields = ListUtil.filter(
+				objectFields, Predicate.not(ObjectField::isSystem));
 		}
 
-		if (!objectDefinition.isEnableLocalization() ||
-			(FeatureFlagManagerUtil.isEnabled(
-				objectDefinition.getCompanyId(), "LPD-32050") &&
-			 localizedObjectFields.isEmpty())) {
-
+		if (localizedObjectFields.isEmpty()) {
 			return null;
 		}
 

@@ -57,7 +57,6 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.FeatureFlag;
-import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
@@ -112,9 +111,7 @@ public class ObjectEntryFolderLocalServiceTest {
 		}
 	}
 
-	@FeatureFlags(
-		featureFlags = {@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-32050")}
-	)
+	@FeatureFlag("LPD-17564")
 	@Test
 	public void testAddObjectEntryFolder() throws Exception {
 		String externalReferenceCode = StringUtil.randomString();
@@ -218,9 +215,7 @@ public class ObjectEntryFolderLocalServiceTest {
 				role.getRoleId(), ActionKeys.ADD_ENTRY));
 	}
 
-	@FeatureFlags(
-		featureFlags = {@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-32050")}
-	)
+	@FeatureFlag("LPD-17564")
 	@Test
 	public void testCopyObjectEntryFolder() throws Exception {
 		Group group1 = GroupTestUtil.addGroup();
@@ -427,9 +422,7 @@ public class ObjectEntryFolderLocalServiceTest {
 		}
 	}
 
-	@FeatureFlags(
-		featureFlags = {@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-32050")}
-	)
+	@FeatureFlag("LPD-17564")
 	@Test
 	public void testMoveObjectEntryFolder() throws Exception {
 		Group group1 = GroupTestUtil.addGroup();
@@ -442,9 +435,7 @@ public class ObjectEntryFolderLocalServiceTest {
 			group1.getGroupId(), group2.getGroupId());
 	}
 
-	@FeatureFlags(
-		featureFlags = {@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-32050")}
-	)
+	@FeatureFlag("LPD-17564")
 	@Test
 	public void testMoveObjectEntryFolderToTrash() throws Exception {
 		Group group = GroupTestUtil.addGroup();
@@ -521,9 +512,7 @@ public class ObjectEntryFolderLocalServiceTest {
 				objectEntryFolder2.getObjectEntryFolderId()));
 	}
 
-	@FeatureFlags(
-		featureFlags = {@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-32050")}
-	)
+	@FeatureFlag("LPD-17564")
 	@Test
 	public void testRestoreObjectEntryFolderFromTrash() throws Exception {
 		Group group = GroupTestUtil.addGroup();
@@ -722,7 +711,7 @@ public class ObjectEntryFolderLocalServiceTest {
 		ObjectDefinition objectDefinition =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
 				null, TestPropsValues.getUserId(), 0, null, false, true, false,
-				false, true, false, false, false, false, null,
+				false, false, false, false, false, null,
 				LocalizedMapUtil.getLocalizedMap(StringUtil.randomString()),
 				"A" + StringUtil.randomString(), null, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
@@ -734,7 +723,7 @@ public class ObjectEntryFolderLocalServiceTest {
 						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
 						ObjectFieldConstants.DB_TYPE_STRING,
 						RandomTestUtil.randomString(), "fieldName")),
-				Collections.emptyList());
+				Collections.emptyList(), new ServiceContext());
 
 		return _objectDefinitionLocalService.publishCustomObjectDefinition(
 			TestPropsValues.getUserId(),

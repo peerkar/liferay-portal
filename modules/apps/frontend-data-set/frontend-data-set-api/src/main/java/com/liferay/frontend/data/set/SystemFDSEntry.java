@@ -7,12 +7,16 @@ package com.liferay.frontend.data.set;
 
 import com.liferay.portal.kernel.util.PropsValues;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 /**
  * @author Daniel Sanz
  */
 public interface SystemFDSEntry {
 
-	public default String getAdditionalAPIURLParameters() {
+	public default String getAdditionalAPIURLParameters(
+		HttpServletRequest httpServletRequest) {
+
 		return null;
 	}
 
@@ -21,6 +25,10 @@ public interface SystemFDSEntry {
 	}
 
 	public String getDescription();
+
+	public default boolean getHideManagementBarInEmptyState() {
+		return false;
+	}
 
 	public default int[] getListOfItemsPerPage() {
 		return PropsValues.SEARCH_CONTAINER_PAGE_DELTA_VALUES;
@@ -37,6 +45,10 @@ public interface SystemFDSEntry {
 	public String getRESTEndpoint();
 
 	public String getRESTSchema();
+
+	public default boolean getSnapshotsEnabled() {
+		return false;
+	}
 
 	public default String getSymbol() {
 		return "dynamic-data-list";

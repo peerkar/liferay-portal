@@ -1,0 +1,108 @@
+/**
+ * SPDX-FileCopyrightText: (c) 2025 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
+
+package com.liferay.source.formatter.dependencies;
+
+import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.dao.jdbc.AutoBatchPreparedStatementUtil;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+/**
+ * @author Alan Huang
+ */
+public class SQLBooleanValues {
+
+	protected void method1() throws Exception {
+		runSQL("update CTCollection set shareable = true");
+	}
+
+	protected ResultSet method2(Connection connection, long siteGroupId)
+		throws SQLException {
+
+		PreparedStatement preparedStatement =
+			AutoBatchPreparedStatementUtil.autoBatch(
+				connection,
+				"select plid from Layout where groupId = ? and privateLayout " +
+					"= true");
+
+		preparedStatement.setLong(1, siteGroupId);
+
+		return preparedStatement.executeQuery();
+	}
+
+	protected ResultSet method3(Connection connection, long siteGroupId)
+		throws SQLException {
+
+		PreparedStatement preparedStatement =
+			AutoBatchPreparedStatementUtil.concurrentAutoBatch(
+				connection,
+				"select plid from Layout where groupId = ? and privateLayout " +
+					"= true");
+
+		preparedStatement.setLong(1, siteGroupId);
+
+		return preparedStatement.executeQuery();
+	}
+
+	protected ResultSet method4(Connection connection) throws SQLException {
+		PreparedStatement preparedStatement = connection.prepareStatement(
+			StringBundler.concat(
+				"update AssetListEntryUsage set containerKey = portletId, ",
+				"key_ = CAST_TEXT(assetListEntryId), plid = classPK, enabled ",
+				"= false"));
+
+		return preparedStatement.execute();
+	}
+
+	protected ResultSet method5(Connection connection) throws SQLException {
+		PreparedStatement preparedStatement = connection.prepareStatement(
+			"select groupId, companyId, typeSettings from Group_ where " +
+				"liveGroupId = 0 and site = [$TRUE$] and typeSettings like " +
+					"'%staged=true%'");
+
+		return preparedStatement.executeQuery();
+	}
+
+	protected ResultSet method6(Connection connection) throws SQLException {
+		String s = StringBundler.concat(
+			"update AssetListEntryUsage set containerKey = portletId, key_ = ",
+			"CAST_TEXT(assetListEntryId), plid = classPK, enabledForUpdate = ",
+			"false");
+
+		PreparedStatement preparedStatement = connection.prepareStatement(s);
+
+		return preparedStatement.executeQuery();
+	}
+
+	protected ResultSet method7(Connection connection) throws SQLException {
+		PreparedStatement preparedStatement = connection.prepareStatement(
+			StringBundler.concat(
+				"update AssetListEntryUsage set containerKey = portletId, ",
+				"key_ = CAST_TEXT(assetListEntryId), plid = classPK, enabled ",
+				"= [$FALSE$]"));
+
+		return preparedStatement.executeQuery();
+	}
+
+	protected ResultSet method8(Connection connection, long classNameId)
+		throws SQLException {
+
+		PreparedStatement preparedStatement = connection.prepareStatement(
+			SQLTransformer.transform(
+				StringBundler.concat(
+					"update Subscription set classNameId = ? where ",
+					"classNameId = ? and classPK not in (select groupId from ",
+					"Group_ where site = [$TRUE$])")));
+
+		preparedStatement.setLong(1, classNameId);
+		preparedStatement.setLong(2, classNameId);
+
+		return preparedStatement.executeQuery();
+	}
+
+}

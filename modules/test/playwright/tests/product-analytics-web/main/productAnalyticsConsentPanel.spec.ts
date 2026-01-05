@@ -12,14 +12,26 @@ import {loginTest} from '../../../fixtures/loginTest';
 import {productAnalyticsPagesTest} from '../../../fixtures/productAnalyticsPagesTest';
 import {siteSettingsPagesTest} from '../../../fixtures/siteSettingsPagesTest';
 import {systemSettingsPageTest} from '../../../fixtures/systemSettingsPageTest';
+import {usersAndOrganizationsPagesTest} from '../../../fixtures/usersAndOrganizationsPagesTest';
 import {ApiHelpers} from '../../../helpers/ApiHelpers';
 import {AccountSettingsPage} from '../../../pages/users-admin-web/AccountSettingsPage';
+import {clickAndExpectToBeVisible} from '../../../utils/clickAndExpectToBeVisible';
 import performLogin, {userData} from '../../../utils/performLogin';
 import {
+	OptionalProductAnalyticsCookieTypes,
 	clearProductAnalyticsCookies,
 	expectAllCookiesAccepted,
 	expectAllCookiesDeclined,
 } from './utils/cookies';
+
+export const disabledTest = mergeTests(
+	accountSettingsPagesTest,
+	featureFlagsTest({
+		'LPD-51356': {enabled: false},
+	}),
+	loginTest(),
+	systemSettingsPageTest
+);
 
 export const test = mergeTests(
 	accountSettingsPagesTest,
@@ -30,30 +42,108 @@ export const test = mergeTests(
 	loginTest(),
 	productAnalyticsPagesTest,
 	siteSettingsPagesTest,
-	systemSettingsPageTest
+	systemSettingsPageTest,
+	usersAndOrganizationsPagesTest
 );
-
-export enum OptionalProductAnalyticsCookieTypes {
-	Functional = 'PRODUCT_ANALYTICS_CONSENT_TYPE_FUNCTIONAL',
-	Performance = 'PRODUCT_ANALYTICS_CONSENT_TYPE_PERFORMANCE',
-	Personalization = 'PRODUCT_ANALYTICS_CONSENT_TYPE_PERSONALIZATION',
-	ProductAnalytics = 'PRODUCT_ANALYTICS_CONSENT_TYPE_PRODUCT_ANALYTICS',
-}
-
-export type ProductAnalyticsCookie = {
-	name: string;
-	value: boolean;
-};
-
-export enum RequiredProductAnalyticsCookieTypes {
-	Necessary = 'PRODUCT_ANALYTICS_CONSENT_TYPE_NECESSARY',
-}
 
 test.afterEach(async ({page}) => {
 	await test.step('Clear Product Analytics cookies if present', async () => {
 		await clearProductAnalyticsCookies(page);
 	});
 });
+
+test.beforeEach(async ({page, systemSettingsPage}) => {
+	const productAnalyticsHeading = await page.getByRole('heading', {
+		name: 'Product Analytics',
+	});
+
+	await test.step('Verify Product Analytics Instance Level Configuration', async () => {
+		await systemSettingsPage.goToSystemSetting('Privacy', 'Cookie Manager');
+
+		if (!(await page.getByText('Product Analytics').isVisible())) {
+			return;
+		}
+
+		await systemSettingsPage.goToSystemSetting(
+			'Privacy',
+			'Product Analytics'
+		);
+
+		await productAnalyticsHeading.waitFor();
+
+		const enabledButton = await page.getByLabel('Enabled');
+
+		await enabledButton.setChecked(true);
+
+		if (await page.getByRole('button', {name: 'Save'}).isVisible()) {
+			await page.getByRole('button', {name: 'Save'}).click();
+		}
+		else {
+			await page.getByRole('button', {name: 'Update'}).click();
+		}
+
+		await page.waitForTimeout(1000);
+	});
+});
+
+disabledTest(
+	'Data and Privacy tab is not visible',
+	{tag: '@LPD-72749'},
+	async ({accountSettingsPage}) => {
+		await accountSettingsPage.goToAccountSettings();
+
+		const dataAndPrivacyTab = await accountSettingsPage.page.locator(
+			'.nav-link',
+			{
+				hasText: 'Data And Privacy',
+			}
+		);
+
+		await expect(await dataAndPrivacyTab).not.toBeVisible();
+	}
+);
+
+test(
+	'Data and Privacy tab is visible',
+	{tag: '@LPD-72749'},
+	async ({accountSettingsPage}) => {
+		await accountSettingsPage.goToAccountSettings();
+
+		const dataAndPrivacyTab = await accountSettingsPage.page.locator(
+			'.nav-link',
+			{
+				hasText: 'Data And Privacy',
+			}
+		);
+
+		await expect(await dataAndPrivacyTab).toBeVisible();
+	}
+);
+
+test(
+	'Verify back button is showing on the top left of the Data and Privacy screen',
+	{tag: '@LPD-73820'},
+	async ({page, usersAndOrganizationsPage}) => {
+		await usersAndOrganizationsPage.goToUsers();
+
+		await usersAndOrganizationsPage.goToUser('Test Test');
+
+		await usersAndOrganizationsPage.page
+			.locator('.nav-link', {
+				hasText: 'Data And Privacy',
+			})
+			.click();
+
+		await clickAndExpectToBeVisible({
+			target: page.getByText('Edit User Test Test', {
+				exact: true,
+			}),
+			trigger: usersAndOrganizationsPage.page.locator('.nav-link', {
+				hasText: 'Data And Privacy',
+			}),
+		});
+	}
+);
 
 test(
 	'Verify Product Analytics Consent Panel buttons and order from Account Settings',
@@ -65,13 +155,7 @@ test(
 	}) => {
 		await productAnalyticsBannerPage.acceptAllButton.click();
 
-		await test.step('Go to Product Analytics Account Settings', async () => {
-			await accountSettingsPage.goToDataAndPrivacy();
-
-			await accountSettingsPage.productAnalyticsMenuItem.waitFor();
-
-			await accountSettingsPage.productAnalyticsMenuItem.click();
-		});
+		await accountSettingsPage.goToDataAndPrivacy();
 
 		await test.step('Verify Customize button displays Consent Panel', async () => {
 			await expectProductAnalyticsConsentPanelButtons(
@@ -214,10 +298,6 @@ test(
 		await test.step('AC3: Verify Product Analytics Account Settings', async () => {
 			await accountSettingsPage.goToDataAndPrivacy();
 
-			await accountSettingsPage.productAnalyticsMenuItem.waitFor();
-
-			await accountSettingsPage.productAnalyticsMenuItem.click();
-
 			await productAnalyticsConsentPanelPage.consentPanelFormLocator.waitFor();
 		});
 
@@ -326,19 +406,20 @@ async function expectProductAnalyticsAccountSettingsVisibility(
 
 	const accountSettingsPage = new AccountSettingsPage(newPage);
 
-	await accountSettingsPage.goToDataAndPrivacy();
+	await accountSettingsPage.goToAccountSettings();
 
-	await accountSettingsPage.page.waitForLoadState();
+	const dataAndPrivacyTab = await accountSettingsPage.page.locator(
+		'.nav-link',
+		{
+			hasText: 'Data And Privacy',
+		}
+	);
 
 	if (isVisible) {
-		await expect(
-			await accountSettingsPage.productAnalyticsMenuItem
-		).toBeVisible();
+		await expect(await dataAndPrivacyTab).toBeVisible();
 	}
 	else {
-		await expect(
-			await accountSettingsPage.productAnalyticsMenuItem
-		).not.toBeVisible();
+		await expect(await dataAndPrivacyTab).not.toBeVisible();
 	}
 }
 

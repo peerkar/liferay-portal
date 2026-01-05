@@ -47,7 +47,13 @@ export function validateSegmentEditor(criteria) {
 }
 
 const CriteriaBuilderForm = withField(
-	({channelId, field: {name, value}, groupId, ...fieldProps}) => {
+	({
+		channelId,
+		field: {name, value},
+		groupId,
+		segmentType,
+		...fieldProps
+	}) => {
 		const handleChange = criteria => {
 			const {
 				form: {setFieldValue}
@@ -63,6 +69,7 @@ const CriteriaBuilderForm = withField(
 				criteria={value}
 				groupId={groupId}
 				onChange={handleChange}
+				segmentType={segmentType}
 			/>
 		);
 	}
@@ -86,6 +93,7 @@ interface ISegmentEditorProps {
 	) => void;
 	propertyGroupsIList: List<PropertyGroup>;
 	segment: Segment;
+	type: SegmentTypes;
 }
 
 class SegmentEditor extends React.Component<ISegmentEditorProps> {
@@ -98,11 +106,12 @@ class SegmentEditor extends React.Component<ISegmentEditorProps> {
 	_formRef = React.createRef<Formik>();
 
 	@autobind
-	createBatchSegment({criteria, includeAnonymousUsers, name}) {
+	createSegment({criteria, includeAnonymousUsers, name}) {
 		const {
 			channelId,
 			groupId,
-			segment: {id}
+			segment: {id},
+			type
 		} = this.props;
 
 		const request = id
@@ -114,7 +123,7 @@ class SegmentEditor extends React.Component<ISegmentEditorProps> {
 			description: '',
 			includeAnonymousUsers,
 			name: name.trim(),
-			segmentType: SegmentTypes.Batch
+			segmentType: type
 		};
 
 		return request({...requestData, channelId, groupId, id});
@@ -137,7 +146,7 @@ class SegmentEditor extends React.Component<ISegmentEditorProps> {
 	handleSubmit(form) {
 		const {onSubmit} = this.props;
 
-		onSubmit(form, this._formRef, this.createBatchSegment);
+		onSubmit(form, this._formRef, this.createSegment);
 	}
 
 	render() {
@@ -154,7 +163,8 @@ class SegmentEditor extends React.Component<ISegmentEditorProps> {
 					includeAnonymousUsers,
 					name,
 					state: segmentState
-				}
+				},
+				type
 			}
 		} = this;
 
@@ -215,6 +225,7 @@ class SegmentEditor extends React.Component<ISegmentEditorProps> {
 										includeAnonymousUsers={
 											includeAnonymousUsers
 										}
+										segmentType={type}
 										valid={isValid && hasChanges}
 									/>
 
@@ -261,6 +272,9 @@ class SegmentEditor extends React.Component<ISegmentEditorProps> {
 																}
 																id={id}
 																name='criteria'
+																segmentType={
+																	type
+																}
 																validate={
 																	validateSegmentEditor
 																}

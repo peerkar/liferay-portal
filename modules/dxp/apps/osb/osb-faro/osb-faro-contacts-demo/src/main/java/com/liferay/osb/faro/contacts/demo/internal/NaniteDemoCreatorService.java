@@ -459,11 +459,6 @@ public class NaniteDemoCreatorService extends DemoCreatorService {
 
 		createFieldMappings(
 			dataSource.getId(),
-			FieldMappingConstants.getSalesforceAccountFieldMappingMaps(),
-			FieldMappingConstants.CONTEXT_ORGANIZATION,
-			FieldMappingConstants.OWNER_TYPE_ACCOUNT);
-		createFieldMappings(
-			dataSource.getId(),
 			FieldMappingConstants.getSalesforceIndividualFieldMappingMaps(),
 			FieldMappingConstants.CONTEXT_DEMOGRAPHICS,
 			FieldMappingConstants.OWNER_TYPE_INDIVIDUAL);
@@ -542,6 +537,13 @@ public class NaniteDemoCreatorService extends DemoCreatorService {
 		accountsConfiguration.setEnableAllAccounts(true);
 
 		salesforceProvider.setAccountsConfiguration(accountsConfiguration);
+
+		SalesforceProvider.ChannelsConfiguration channelsConfiguration =
+			new SalesforceProvider.ChannelsConfiguration();
+
+		channelsConfiguration.setEnableAllChannels(false);
+
+		salesforceProvider.setChannelsConfiguration(channelsConfiguration);
 
 		SalesforceProvider.ContactsConfiguration contactsConfiguration =
 			new SalesforceProvider.ContactsConfiguration();

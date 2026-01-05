@@ -9,8 +9,11 @@ import {accountSettingsPagesTest} from '../../../fixtures/accountSettingsPagesTe
 import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {systemSettingsPageTest} from '../../../fixtures/systemSettingsPageTest';
-import {clickAndExpectToBeVisible} from '../../../utils/clickAndExpectToBeVisible';
 import {waitForAlert} from '../../../utils/waitForAlert';
+import {
+	clearConsentCookies,
+	resetAllCookieManagerConfigurations,
+} from './utils/cookieManagerAfterEach';
 
 const cookieHeadingNames = [
 	'Functional Cookies',
@@ -34,47 +37,12 @@ export const test = mergeTests(
 );
 
 test.afterEach(async ({systemSettingsPage}) => {
-	await systemSettingsPage.goToSystemSetting('Privacy', 'Cookie Manager');
-
-	const menuItems = await systemSettingsPage.page.getByRole('menuitem').all();
-
-	await test.step('In reverse order, reset each configuration if previously set. We use reverse order since the latter entries will be hidden if the first "Preference Handling" entry is reset.', async () => {
-		for (const menuItem of menuItems.reverse()) {
-			if (await menuItem.getByText('Product Analytics').isVisible()) {
-				continue;
-			}
-
-			await menuItem.click();
-
-			await systemSettingsPage.page.waitForTimeout(1000);
-
-			await systemSettingsPage.page.waitForLoadState();
-
-			if (
-				await systemSettingsPage.page
-					.getByRole('button', {name: 'Actions'})
-					.isVisible()
-			) {
-				await clickAndExpectToBeVisible({
-					autoClick: true,
-					target: systemSettingsPage.page.getByRole('menuitem', {
-						name: 'Reset Default Values',
-					}),
-					trigger: systemSettingsPage.page.getByRole('button', {
-						name: 'Actions',
-					}),
-				});
-			}
-		}
+	await test.step('Reset All Cookie Manager Configurations', async () => {
+		await resetAllCookieManagerConfigurations(systemSettingsPage);
 	});
 
 	await test.step('Clear Consent Cookies if present', async () => {
-		await systemSettingsPage.page
-			.context()
-			.clearCookies({name: /^CONSENT_TYPE_/});
-		await systemSettingsPage.page
-			.context()
-			.clearCookies({name: 'USER_CONSENT_CONFIGURED'});
+		await clearConsentCookies(systemSettingsPage);
 	});
 });
 
@@ -243,6 +211,78 @@ test(
 				await expect(actualCookie.value).toEqual('true');
 			}
 		});
+	}
+);
+
+test(
+	'Escape texts in Cookie Banner to avoid XSS injections',
+	{tag: '@LPD-69398'},
+	async ({page, systemSettingsPage}) => {
+		const script = '<script>alert("Hello world!")</script>';
+
+		page.on('dialog', async (dialog) => {
+			if (dialog.type() === 'alert') {
+				throw new Error('XSS detected');
+			}
+		});
+
+		await systemSettingsPage.goToSystemSetting('Privacy', 'Cookie Banner');
+
+		await page.getByLabel('Title', {exact: true}).fill(script);
+		await page.getByLabel('Content', {exact: true}).fill(script);
+		await page.getByLabel('Privacy Policy Link').fill(script);
+		await page.getByLabel('Link Display Text', {exact: true}).fill(script);
+
+		await page.getByRole('button', {name: 'Save'}).dispatchEvent('click');
+
+		await waitForAlert(page);
+	}
+);
+
+test(
+	'Escape texts in Cookie Panel to avoid XSS injections',
+	{tag: '@LPD-69399'},
+	async ({page, systemSettingsPage}) => {
+		const script = '<script>alert("Hello world!")</script>';
+
+		page.on('dialog', async (dialog) => {
+			if (dialog.type() === 'alert') {
+				throw new Error('XSS detected');
+			}
+		});
+
+		await systemSettingsPage.goToSystemSetting('Privacy', 'Cookie Panel');
+
+		await page.getByLabel('Title', {exact: true}).fill(script);
+		await page.getByLabel('Description', {exact: true}).fill(script);
+		await page.getByLabel('Cookie Policy Link').fill(script);
+		await page.getByLabel('Link Display Text', {exact: true}).fill(script);
+		await page
+			.getByLabel('Strictly Necessary Cookies Description', {exact: true})
+			.fill(script);
+		await page
+			.getByLabel('Functional Cookies Description', {exact: true})
+			.fill(script);
+		await page
+			.getByLabel('Performance Cookies Description', {exact: true})
+			.fill(script);
+		await page
+			.getByLabel('Personalization Cookies Description', {exact: true})
+			.fill(script);
+
+		await page.getByRole('button', {name: 'Save'}).dispatchEvent('click');
+
+		await waitForAlert(page);
+
+		const cookiesBanner = await page.locator(
+			'#p_p_id_com_liferay_cookies_banner_web_portlet_CookiesBannerPortlet_'
+		);
+
+		await cookiesBanner.waitFor();
+
+		await cookiesBanner
+			.getByRole('button', {name: 'Configuration'})
+			.click();
 	}
 );
 

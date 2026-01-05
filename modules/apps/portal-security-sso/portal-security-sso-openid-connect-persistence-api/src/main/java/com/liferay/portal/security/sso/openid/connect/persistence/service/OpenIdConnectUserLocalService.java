@@ -114,6 +114,8 @@ public interface OpenIdConnectUserLocalService
 	public OpenIdConnectUser deleteOpenIdConnectUser(
 		OpenIdConnectUser openIdConnectUser);
 
+	public void deleteOpenIdConnectUsers(long companyId, long userId);
+
 	/**
 	 * @throws PortalException
 	 */
@@ -215,6 +217,11 @@ public interface OpenIdConnectUserLocalService
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public OpenIdConnectUser getOpenIdConnectUser(long openIdConnectUserId)
+		throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public OpenIdConnectUser getOpenIdConnectUser(
+			long companyId, String issuer, String subject)
 		throws PortalException;
 
 	/**

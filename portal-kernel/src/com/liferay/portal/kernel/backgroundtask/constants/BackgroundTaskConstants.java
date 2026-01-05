@@ -29,6 +29,9 @@ public class BackgroundTaskConstants {
 
 	public static final String LABEL_CANCELLED = "cancelled";
 
+	public static final String LABEL_COMPLETED_WITH_ERRORS =
+		"completed-with-errors";
+
 	public static final String LABEL_FAILED = "failed";
 
 	public static final String LABEL_IN_PROGRESS = "in-progress";
@@ -44,6 +47,8 @@ public class BackgroundTaskConstants {
 
 	public static final int STATUS_CANCELLED = 5;
 
+	public static final int STATUS_COMPLETED_WITH_ERRORS = 6;
+
 	public static final int STATUS_FAILED = 2;
 
 	public static final int STATUS_IN_PROGRESS = 1;
@@ -55,14 +60,14 @@ public class BackgroundTaskConstants {
 	public static final int STATUS_SUCCESSFUL = 3;
 
 	public static String getStatusCssClass(int status) {
-		if (status == STATUS_CANCELLED) {
+		if ((status == STATUS_CANCELLED) || (status == STATUS_IN_PROGRESS)) {
 			return "text-info";
+		}
+		else if (status == STATUS_COMPLETED_WITH_ERRORS) {
+			return "text-warning";
 		}
 		else if (status == STATUS_FAILED) {
 			return "text-danger";
-		}
-		else if (status == STATUS_IN_PROGRESS) {
-			return "text-warning";
 		}
 		else if ((status == BackgroundTaskConstants.STATUS_NEW) ||
 				 (status == BackgroundTaskConstants.STATUS_QUEUED)) {
@@ -79,6 +84,9 @@ public class BackgroundTaskConstants {
 	public static String getStatusLabel(int status) {
 		if (status == STATUS_CANCELLED) {
 			return LABEL_CANCELLED;
+		}
+		else if (status == STATUS_COMPLETED_WITH_ERRORS) {
+			return LABEL_COMPLETED_WITH_ERRORS;
 		}
 		else if (status == STATUS_FAILED) {
 			return LABEL_FAILED;

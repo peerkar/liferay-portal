@@ -855,6 +855,8 @@ export function setSessionValue(
 
 export function isReducedMotion(): boolean;
 
+export {default as deepClone} from './util/deepClone';
+
 /**
  * Client Extensions API
  */
@@ -865,6 +867,7 @@ export {
 	loadClientExtensions,
 } from './utils/client_extensions/loadClientExtensions';
 export {default as loadEditorClientExtensions} from './utils/client_extensions/loadEditorClientExtensions';
+
 export {loadModule} from './utils/client_extensions/loadModule';
 
 /**
@@ -872,3 +875,4 @@ export {loadModule} from './utils/client_extensions/loadModule';
  */
 export {default as dateUtils} from './utils/dateUtils';
 export {getObjectValueFromPath} from './utils/object/getObjectValueFromPath';
+export {default as pkceChallenge} from './utils/pkceChallenge';

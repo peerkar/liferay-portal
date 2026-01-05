@@ -1,0 +1,36 @@
+{
+	"externalReferenceCode": "C_DXPC_DATA_CENTER_REGION",
+	"label": {
+		"en_US": "DXPC Data Center Region"
+	},
+	"name": "DXPCDataCenterRegion",
+	"objectFields": [
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_DXPC_DATA_CENTER_REGION_name",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Name"
+			},
+			"name": "name",
+			"required": true
+		},
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_DXPC_DATA_CENTER_REGION_value",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Value"
+			},
+			"name": "value",
+			"required": true
+		}
+	],
+	"pluralLabel": {
+		"en_US": "DXPC Data Center Regions"
+	},
+	"scope": "company",
+	"system": false
+}

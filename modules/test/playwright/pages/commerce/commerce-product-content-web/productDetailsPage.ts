@@ -38,6 +38,7 @@ export class ProductDetailsPage {
 		container?: Locator | Page
 	) => Promise<Locator>;
 	readonly productNameHeading: (productName: string) => Promise<Locator>;
+	readonly productOptionUploadFormFeedback: Locator;
 	readonly promoPriceField: (
 		promoPrice: string,
 		container?: Locator | Page
@@ -46,6 +47,9 @@ export class ProductDetailsPage {
 	readonly replacementsSearchButton: Locator;
 	readonly replacementsTab: Locator;
 	readonly replacementsTableCell: (cellValue: string) => Locator;
+	readonly requestAQuoteButton: Locator;
+	readonly requestAQuoteModal: Locator;
+	readonly requestAQuoteModalSubmit: Locator;
 	readonly selectDocumentFrame: FrameLocator;
 	readonly selectedDocumentLabel: Locator;
 	readonly selectOption: (
@@ -118,6 +122,9 @@ export class ProductDetailsPage {
 		this.productNameHeading = async (productName) => {
 			return page.getByRole('heading', {name: productName});
 		};
+		this.productOptionUploadFormFeedback = page.locator(
+			'.product-option-upload'
+		);
 		this.promoPriceField = async (
 			promoPrice: string,
 			container = this.page
@@ -133,6 +140,18 @@ export class ProductDetailsPage {
 		this.replacementsTab = page.getByRole('tab', {name: 'Replacements'});
 		this.replacementsTableCell = (cellValue: string) =>
 			page.getByRole('cell', {name: cellValue});
+		this.requestAQuoteButton = page
+			.locator('.product-detail-actions')
+			.getByRole('button', {
+				name: 'Request A Quote',
+			});
+		this.requestAQuoteModal = page.locator('.modal-content');
+		this.requestAQuoteModalSubmit = this.requestAQuoteModal.getByRole(
+			'button',
+			{
+				name: 'Submit',
+			}
+		);
 		this.selectDocumentFrame = page.frameLocator(
 			'iframe[title="Select Document"]'
 		);

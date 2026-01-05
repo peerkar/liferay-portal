@@ -33,20 +33,17 @@ import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.container.ContainerResponseContext;
 import jakarta.ws.rs.container.ContainerResponseFilter;
-import jakarta.ws.rs.core.MultivaluedMap;
-import jakarta.ws.rs.core.PathSegment;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.UriBuilder;
-import jakarta.ws.rs.core.UriInfo;
 import jakarta.ws.rs.ext.Provider;
+import jakarta.ws.rs.sse.Sse;
+import jakarta.ws.rs.sse.SseBroadcaster;
+import jakarta.ws.rs.sse.SseEventSink;
 
 import java.io.IOException;
 
 import java.lang.reflect.Method;
 
-import java.net.URI;
-
-import java.util.List;
 import java.util.Set;
 
 import org.apache.cxf.interceptor.Fault;
@@ -109,8 +106,27 @@ public class ContextContainerRequestFilter
 			ContainerResponseContext containerResponseContext)
 		throws IOException {
 
-		ContextProviderUtil.releaseResourceInstance(
-			JAXRSUtils.getContextMessage(JAXRSUtils.getCurrentMessage()));
+		Message message = JAXRSUtils.getContextMessage(
+			JAXRSUtils.getCurrentMessage());
+
+		SseEventSink sseEventSink = message.get(SseEventSink.class);
+
+		if (sseEventSink != null) {
+			SseBroadcaster sseBroadcaster = _sse.newBroadcaster();
+
+			sseBroadcaster.register(sseEventSink);
+
+			sseBroadcaster.onClose(
+				__ -> {
+					ContextProviderUtil.releaseResourceInstance(message);
+
+					sseBroadcaster.close();
+				});
+
+			return;
+		}
+
+		ContextProviderUtil.releaseResourceInstance(message);
 	}
 
 	public void handleMessage(
@@ -151,116 +167,6 @@ public class ContextContainerRequestFilter
 					"Conflict with " + method.getName()
 				).build());
 		}
-	}
-
-	private UriInfo _getVulcanUriInfo(
-		HttpServletRequest httpServletRequest, Message message) {
-
-		UriInfo uriInfo = new UriInfoImpl(message);
-
-		return new UriInfo() {
-
-			@Override
-			public URI getAbsolutePath() {
-				return uriInfo.getAbsolutePath();
-			}
-
-			@Override
-			public UriBuilder getAbsolutePathBuilder() {
-				return uriInfo.getAbsolutePathBuilder();
-			}
-
-			@Override
-			public URI getBaseUri() {
-				return uriInfo.getBaseUri();
-			}
-
-			@Override
-			public UriBuilder getBaseUriBuilder() {
-				return UriInfoUtil.getBaseUriBuilder(
-					httpServletRequest, uriInfo);
-			}
-
-			@Override
-			public List<Object> getMatchedResources() {
-				return uriInfo.getMatchedResources();
-			}
-
-			@Override
-			public List<String> getMatchedURIs() {
-				return uriInfo.getMatchedURIs();
-			}
-
-			@Override
-			public List<String> getMatchedURIs(boolean decode) {
-				return uriInfo.getMatchedURIs(decode);
-			}
-
-			@Override
-			public String getPath() {
-				return uriInfo.getPath();
-			}
-
-			@Override
-			public String getPath(boolean decode) {
-				return uriInfo.getPath(decode);
-			}
-
-			@Override
-			public MultivaluedMap<String, String> getPathParameters() {
-				return uriInfo.getPathParameters();
-			}
-
-			@Override
-			public MultivaluedMap<String, String> getPathParameters(
-				boolean decode) {
-
-				return uriInfo.getPathParameters(decode);
-			}
-
-			@Override
-			public List<PathSegment> getPathSegments() {
-				return uriInfo.getPathSegments();
-			}
-
-			@Override
-			public List<PathSegment> getPathSegments(boolean decode) {
-				return uriInfo.getPathSegments(decode);
-			}
-
-			@Override
-			public MultivaluedMap<String, String> getQueryParameters() {
-				return uriInfo.getQueryParameters();
-			}
-
-			@Override
-			public MultivaluedMap<String, String> getQueryParameters(
-				boolean decode) {
-
-				return uriInfo.getQueryParameters(decode);
-			}
-
-			@Override
-			public URI getRequestUri() {
-				return uriInfo.getRequestUri();
-			}
-
-			@Override
-			public UriBuilder getRequestUriBuilder() {
-				return uriInfo.getRequestUriBuilder();
-			}
-
-			@Override
-			public URI relativize(URI uri) {
-				return uriInfo.relativize(uri);
-			}
-
-			@Override
-			public URI resolve(URI uri) {
-				return uriInfo.resolve(uri);
-			}
-
-		};
 	}
 
 	private void _handleMessage(
@@ -307,7 +213,8 @@ public class ContextContainerRequestFilter
 			).sortParserProvider(
 				_sortParserProvider
 			).uriInfo(
-				_getVulcanUriInfo(httpServletRequest, message)
+				UriInfoUtil.getVulcanUriInfo(
+					httpServletRequest, new UriInfoImpl(message))
 			).user(
 				_portal.getUser(httpServletRequest)
 			).vulcanBatchEngineExportTaskResource(
@@ -333,6 +240,10 @@ public class ContextContainerRequestFilter
 	private final RoleLocalService _roleLocalService;
 	private final Object _scopeChecker;
 	private final SortParserProvider _sortParserProvider;
+
+	@Context
+	private Sse _sse;
+
 	private final VulcanBatchEngineExportTaskResourceFactory
 		_vulcanBatchEngineExportTaskResourceFactory;
 	private final VulcanBatchEngineImportTaskResourceFactory

@@ -86,6 +86,9 @@ public class DataCleanupPreupgradeProcessSuite {
 			new CompanyDataCleanupPreupgradeProcess();
 		DataCleanupPreupgradeProcess configurationDataCleanupPreupgradeProcess =
 			new ConfigurationDataCleanupPreupgradeProcess();
+		DataCleanupPreupgradeProcess
+			databaseTableAndColumnCaseDataCleanupPreupgradeProcess =
+				new DatabaseTableAndColumnCaseDataCleanupPreupgradeProcess();
 		DataCleanupPreupgradeProcess ddmDataCleanupPreupgradeProcess =
 			new DDMDataCleanupPreupgradeProcess();
 		DataCleanupPreupgradeProcess
@@ -100,6 +103,12 @@ public class DataCleanupPreupgradeProcessSuite {
 		DataCleanupPreupgradeProcess
 			nullUnicodeContentDataCleanupPreupgradeProcess =
 				new NullUnicodeContentDataCleanupPreupgradeProcess();
+		DataCleanupPreupgradeProcess
+			portalPreferencesDataCleanupPreupgradeProcess =
+				new PortalPreferencesDataCleanupPreupgradeProcess();
+		DataCleanupPreupgradeProcess
+			portletPreferencesDataCleanupPreupgradeProcess =
+				new PortletPreferencesDataCleanupPreupgradeProcess();
 		DataCleanupPreupgradeProcess
 			quartzJobDetailsDataCleanupPreupgradeProcess =
 				new QuartzJobDetailsDataCleanupPreupgradeProcess();
@@ -120,15 +129,18 @@ public class DataCleanupPreupgradeProcessSuite {
 			<DataCleanupPreupgradeProcess, List<DataCleanupPreupgradeProcess>>
 				put(
 					analyticsMessageDataCleanupPreupgradeProcess,
-					DataCleanupPreupgradeProcess.dependsOn()
+					DataCleanupPreupgradeProcess.dependsOn(
+						databaseTableAndColumnCaseDataCleanupPreupgradeProcess)
 			).put(
 				companyDataCleanupPreupgradeProcess,
 				DataCleanupPreupgradeProcess.dependsOn(
 					analyticsMessageDataCleanupPreupgradeProcess,
+					databaseTableAndColumnCaseDataCleanupPreupgradeProcess,
 					updateAllPrimaryKeysDataCleanupPreupgradeProcess)
 			).put(
 				configurationDataCleanupPreupgradeProcess,
 				DataCleanupPreupgradeProcess.dependsOn(
+					databaseTableAndColumnCaseDataCleanupPreupgradeProcess,
 					userDataCleanupPreupgradeProcess)
 			).put(
 				new CounterDataCleanupPreupgradeProcess(),
@@ -136,51 +148,78 @@ public class DataCleanupPreupgradeProcessSuite {
 					analyticsMessageDataCleanupPreupgradeProcess,
 					companyDataCleanupPreupgradeProcess,
 					configurationDataCleanupPreupgradeProcess,
+					databaseTableAndColumnCaseDataCleanupPreupgradeProcess,
 					ddmDataCleanupPreupgradeProcess,
 					ddmStorageLinkDataCleanupPreupgradeProcess,
 					dlFileEntryDataCleanupPreupgradeProcess,
 					groupDataCleanupPreupgradeProcess,
 					journalDataCleanupPreupgradeProcess,
 					nullUnicodeContentDataCleanupPreupgradeProcess,
+					portalPreferencesDataCleanupPreupgradeProcess,
+					portletPreferencesDataCleanupPreupgradeProcess,
 					quartzJobDetailsDataCleanupPreupgradeProcess,
 					updateAllPrimaryKeysDataCleanupPreupgradeProcess,
 					userDataCleanupPreupgradeProcess)
 			).put(
+				databaseTableAndColumnCaseDataCleanupPreupgradeProcess,
+				DataCleanupPreupgradeProcess.dependsOn()
+			).put(
 				ddmDataCleanupPreupgradeProcess,
 				DataCleanupPreupgradeProcess.dependsOn(
+					databaseTableAndColumnCaseDataCleanupPreupgradeProcess,
 					groupDataCleanupPreupgradeProcess)
 			).put(
 				ddmStorageLinkDataCleanupPreupgradeProcess,
 				DataCleanupPreupgradeProcess.dependsOn(
+					databaseTableAndColumnCaseDataCleanupPreupgradeProcess,
 					ddmDataCleanupPreupgradeProcess,
 					dlFileEntryDataCleanupPreupgradeProcess,
 					journalDataCleanupPreupgradeProcess)
 			).put(
 				dlFileEntryDataCleanupPreupgradeProcess,
 				DataCleanupPreupgradeProcess.dependsOn(
+					databaseTableAndColumnCaseDataCleanupPreupgradeProcess,
 					groupDataCleanupPreupgradeProcess)
 			).put(
 				groupDataCleanupPreupgradeProcess,
 				DataCleanupPreupgradeProcess.dependsOn(
+					databaseTableAndColumnCaseDataCleanupPreupgradeProcess,
 					userDataCleanupPreupgradeProcess)
 			).put(
 				journalDataCleanupPreupgradeProcess,
 				DataCleanupPreupgradeProcess.dependsOn(
+					databaseTableAndColumnCaseDataCleanupPreupgradeProcess,
 					ddmDataCleanupPreupgradeProcess)
 			).put(
 				nullUnicodeContentDataCleanupPreupgradeProcess,
 				DataCleanupPreupgradeProcess.dependsOn(
+					databaseTableAndColumnCaseDataCleanupPreupgradeProcess,
 					ddmDataCleanupPreupgradeProcess)
 			).put(
+				portalPreferencesDataCleanupPreupgradeProcess,
+				DataCleanupPreupgradeProcess.dependsOn(
+					companyDataCleanupPreupgradeProcess,
+					groupDataCleanupPreupgradeProcess,
+					userDataCleanupPreupgradeProcess)
+			).put(
+				portletPreferencesDataCleanupPreupgradeProcess,
+				DataCleanupPreupgradeProcess.dependsOn(
+					companyDataCleanupPreupgradeProcess,
+					groupDataCleanupPreupgradeProcess,
+					userDataCleanupPreupgradeProcess)
+			).put(
 				quartzJobDetailsDataCleanupPreupgradeProcess,
-				DataCleanupPreupgradeProcess.dependsOn()
+				DataCleanupPreupgradeProcess.dependsOn(
+					databaseTableAndColumnCaseDataCleanupPreupgradeProcess)
 			).put(
 				updateAllPrimaryKeysDataCleanupPreupgradeProcess,
-				DataCleanupPreupgradeProcess.dependsOn()
+				DataCleanupPreupgradeProcess.dependsOn(
+					databaseTableAndColumnCaseDataCleanupPreupgradeProcess)
 			).put(
 				userDataCleanupPreupgradeProcess,
 				DataCleanupPreupgradeProcess.dependsOn(
-					companyDataCleanupPreupgradeProcess)
+					companyDataCleanupPreupgradeProcess,
+					databaseTableAndColumnCaseDataCleanupPreupgradeProcess)
 			).build();
 	}
 

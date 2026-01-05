@@ -8,21 +8,25 @@ package com.liferay.layout.admin.web.internal.change.tracking.spi.display;
 import com.liferay.change.tracking.spi.display.BaseCTDisplayRenderer;
 import com.liferay.change.tracking.spi.display.CTDisplayRenderer;
 import com.liferay.change.tracking.spi.display.context.DisplayContext;
+import com.liferay.exportimport.kernel.staging.Staging;
 import com.liferay.layout.admin.constants.LayoutAdminPortletKeys;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.ColorScheme;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.model.Theme;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.permission.LayoutPermission;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -30,11 +34,11 @@ import com.liferay.style.book.model.StyleBookEntry;
 import com.liferay.style.book.service.StyleBookEntryLocalService;
 
 import jakarta.portlet.PortletRequest;
-import jakarta.portlet.PortletURL;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Locale;
+import java.util.Objects;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -72,25 +76,37 @@ public class LayoutCTDisplayRenderer extends BaseCTDisplayRenderer<Layout> {
 			return null;
 		}
 
-		PortletURL portletURL = PortletURLBuilder.create(
+		String currentURL = _portal.getCurrentURL(httpServletRequest);
+
+		if (layout.isTypeContent()) {
+			return HttpComponentsUtil.addParameters(
+				PortalUtil.getLayoutFullURL(
+					layout.fetchDraftLayout(), themeDisplay),
+				"p_l_back_url", currentURL, "p_l_mode", Constants.EDIT);
+		}
+
+		if (layout.isTypePortlet() &&
+			!Objects.equals(
+				layout.getType(), LayoutConstants.TYPE_FULL_PAGE_APPLICATION)) {
+
+			return HttpComponentsUtil.addParameters(
+				PortalUtil.getLayoutFullURL(layout, themeDisplay),
+				"p_l_back_url", currentURL);
+		}
+
+		return PortletURLBuilder.create(
 			_portal.getControlPanelPortletURL(
 				httpServletRequest, LayoutAdminPortletKeys.GROUP_PAGES,
 				PortletRequest.RENDER_PHASE)
 		).setMVCRenderCommandName(
 			"/layout_admin/edit_layout"
-		).buildPortletURL();
-
-		String currentURL = _portal.getCurrentURL(httpServletRequest);
-
-		portletURL.setParameter("redirect", currentURL);
-		portletURL.setParameter("backURL", currentURL);
-
-		portletURL.setParameter("groupId", String.valueOf(layout.getGroupId()));
-		portletURL.setParameter("selPlid", String.valueOf(layout.getPlid()));
-		portletURL.setParameter(
-			"privateLayout", String.valueOf(layout.isPrivateLayout()));
-
-		return portletURL.toString();
+		).setParameter(
+			"groupId", layout.getGroupId()
+		).setParameter(
+			"privateLayout", layout.isPrivateLayout()
+		).setParameter(
+			"selPlid", layout.getPlid()
+		).buildString();
 	}
 
 	@Override
@@ -119,6 +135,10 @@ public class LayoutCTDisplayRenderer extends BaseCTDisplayRenderer<Layout> {
 		throws Exception {
 
 		Layout layout = displayContext.getModel();
+
+		if (layout.isTypeURL()) {
+			return null;
+		}
 
 		HttpServletRequest httpServletRequest =
 			displayContext.getHttpServletRequest();
@@ -228,7 +248,8 @@ public class LayoutCTDisplayRenderer extends BaseCTDisplayRenderer<Layout> {
 				StyleBookEntry styleBookEntry =
 					_styleBookEntryLocalService.
 						fetchStyleBookEntryByExternalReferenceCode(
-							layout.getStyleBookEntryERC(), layout.getGroupId());
+							layout.getStyleBookEntryERC(),
+							_staging.getLiveGroupId(layout.getGroupId()));
 
 				if (styleBookEntry == null) {
 					return null;
@@ -264,6 +285,9 @@ public class LayoutCTDisplayRenderer extends BaseCTDisplayRenderer<Layout> {
 
 	@Reference
 	private Portal _portal;
+
+	@Reference
+	private Staging _staging;
 
 	@Reference
 	private StyleBookEntryLocalService _styleBookEntryLocalService;

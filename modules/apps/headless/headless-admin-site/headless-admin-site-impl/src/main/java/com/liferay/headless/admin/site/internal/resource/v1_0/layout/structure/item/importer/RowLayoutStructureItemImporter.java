@@ -9,13 +9,13 @@ import com.liferay.headless.admin.site.dto.v1_0.GridPageElementDefinition;
 import com.liferay.headless.admin.site.dto.v1_0.GridViewport;
 import com.liferay.headless.admin.site.dto.v1_0.GridViewportDefinition;
 import com.liferay.headless.admin.site.dto.v1_0.PageElement;
+import com.liferay.headless.admin.site.internal.dto.v1_0.util.FragmentViewportStyleUtil;
 import com.liferay.headless.admin.site.internal.dto.v1_0.util.ViewportIdUtil;
 import com.liferay.headless.admin.site.internal.resource.v1_0.layout.structure.item.importer.context.LayoutStructureItemImporterContext;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.LayoutStructureUtil;
 import com.liferay.layout.converter.VerticalAlignmentConverter;
 import com.liferay.layout.responsive.ViewportSize;
 import com.liferay.layout.util.constants.LayoutDataItemTypeConstants;
-import com.liferay.layout.util.constants.StyledLayoutStructureConstants;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.layout.util.structure.RowStyledLayoutStructureItem;
@@ -62,17 +62,12 @@ public class RowLayoutStructureItemImporter
 
 		rowStyledLayoutStructureItem.setCssClasses(
 			_getCssClasses(gridPageElementDefinition.getCssClasses()));
-		rowStyledLayoutStructureItem.setCustomCSS(
-			gridPageElementDefinition.getCustomCSS());
 		rowStyledLayoutStructureItem.setGutters(
 			GetterUtil.getBoolean(
 				gridPageElementDefinition.getGutters(), Boolean.TRUE));
 		rowStyledLayoutStructureItem.setIndexed(
 			GetterUtil.getBoolean(
 				gridPageElementDefinition.getIndexed(), Boolean.TRUE));
-		rowStyledLayoutStructureItem.setModulesPerRow(
-			GetterUtil.getInteger(
-				gridPageElementDefinition.getModulesPerRow(), 1));
 		rowStyledLayoutStructureItem.setName(
 			gridPageElementDefinition.getName());
 		rowStyledLayoutStructureItem.setNumberOfColumns(
@@ -83,29 +78,27 @@ public class RowLayoutStructureItemImporter
 			gridPageElementDefinition.getGridViewports();
 
 		if (ArrayUtil.isEmpty(gridViewports)) {
-			rowStyledLayoutStructureItem.setViewportConfiguration(
-				ViewportSize.MOBILE_LANDSCAPE.getViewportSizeId(),
-				JSONUtil.put("modulesPerRow", 1));
+			rowStyledLayoutStructureItem.updateItemConfig(
+				JSONUtil.put(
+					ViewportSize.MOBILE_LANDSCAPE.getViewportSizeId(),
+					JSONUtil.put("modulesPerRow", 1)));
 		}
 		else {
-			_setViewportConfiguration(
+			_updateItemConfig(
+				JSONUtil.put("modulesPerRow", 1), GridViewport.Id.DESKTOP,
+				gridViewports, rowStyledLayoutStructureItem);
+			_updateItemConfig(
 				JSONUtil.put("modulesPerRow", 1),
 				GridViewport.Id.LANDSCAPE_MOBILE, gridViewports,
 				rowStyledLayoutStructureItem);
-			_setViewportConfiguration(
+			_updateItemConfig(
 				JSONFactoryUtil.createJSONObject(),
 				GridViewport.Id.PORTRAIT_MOBILE, gridViewports,
 				rowStyledLayoutStructureItem);
-			_setViewportConfiguration(
+			_updateItemConfig(
 				JSONFactoryUtil.createJSONObject(), GridViewport.Id.TABLET,
 				gridViewports, rowStyledLayoutStructureItem);
 		}
-
-		rowStyledLayoutStructureItem.setVerticalAlignment(
-			VerticalAlignmentConverter.convertToInternalValue(
-				GetterUtil.getString(
-					gridPageElementDefinition.getVerticalAlignmentAsString(),
-					StyledLayoutStructureConstants.VERTICAL_ALIGNMENT_TOP)));
 
 		return rowStyledLayoutStructureItem;
 	}
@@ -130,27 +123,6 @@ public class RowLayoutStructureItemImporter
 		return null;
 	}
 
-	private void _setViewportConfiguration(
-		JSONObject defaultViewportJSONObject, GridViewport.Id gridViewportId,
-		GridViewport[] gridViewports,
-		RowStyledLayoutStructureItem rowStyledLayoutStructureItem) {
-
-		GridViewport gridViewport = _getGridViewport(
-			gridViewportId, gridViewports);
-
-		String viewportId = ViewportIdUtil.toInternalValue(
-			gridViewportId.getValue());
-
-		if (gridViewport != null) {
-			rowStyledLayoutStructureItem.setViewportConfiguration(
-				viewportId, _toViewportJSONObject(gridViewport));
-		}
-		else {
-			rowStyledLayoutStructureItem.setViewportConfiguration(
-				viewportId, defaultViewportJSONObject);
-		}
-	}
-
 	private JSONObject _toViewportJSONObject(GridViewport gridViewport) {
 		if (gridViewport == null) {
 			return JSONFactoryUtil.createJSONObject();
@@ -160,6 +132,7 @@ public class RowLayoutStructureItemImporter
 			gridViewport.getGridViewportDefinition();
 
 		if (Validator.isNull(gridViewport.getCustomCSS()) &&
+			(gridViewport.getFragmentViewportStyle() == null) &&
 			((gridViewportDefinition == null) ||
 			 ((gridViewportDefinition.getModulesPerRow() == null) &&
 			  (gridViewportDefinition.getVerticalAlignment() == null)))) {
@@ -179,6 +152,16 @@ public class RowLayoutStructureItemImporter
 				return gridViewportDefinition.getModulesPerRow();
 			}
 		).put(
+			"styles",
+			() -> {
+				if (gridViewport.getFragmentViewportStyle() == null) {
+					return null;
+				}
+
+				return FragmentViewportStyleUtil.toJSONObject(
+					gridViewport.getFragmentViewportStyle());
+			}
+		).put(
 			"verticalAlignment",
 			() -> {
 				if (gridViewportDefinition == null) {
@@ -196,6 +179,29 @@ public class RowLayoutStructureItemImporter
 					verticalAlignment.getValue());
 			}
 		);
+	}
+
+	private void _updateItemConfig(
+		JSONObject defaultViewportJSONObject, GridViewport.Id gridViewportId,
+		GridViewport[] gridViewports,
+		RowStyledLayoutStructureItem rowStyledLayoutStructureItem) {
+
+		GridViewport gridViewport = _getGridViewport(
+			gridViewportId, gridViewports);
+
+		JSONObject viewportJSONObject = defaultViewportJSONObject;
+
+		if (gridViewport != null) {
+			viewportJSONObject = _toViewportJSONObject(gridViewport);
+		}
+
+		if (!Objects.equals(gridViewportId, GridViewport.Id.DESKTOP)) {
+			viewportJSONObject = JSONUtil.put(
+				ViewportIdUtil.toInternalValue(gridViewportId.getValue()),
+				viewportJSONObject);
+		}
+
+		rowStyledLayoutStructureItem.updateItemConfig(viewportJSONObject);
 	}
 
 }

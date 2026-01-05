@@ -12,15 +12,20 @@ import classNames from 'classnames';
 import {useFormik} from 'formik';
 import {sub} from 'frontend-js-web';
 import React, {useState} from 'react';
-import {useDropzone} from 'react-dropzone';
+import {Accept, useDropzone} from 'react-dropzone';
+import {v4 as uuidv4} from 'uuid';
 
-import {FieldPicker} from '../../common/components/forms';
 import DragZoneBackground from './DragZoneBackground';
 import {LoadingMessage} from './LoadingMessage';
 
 import '../../../css/components/MultipleFileUploader.scss';
+
+import {FieldBase} from 'frontend-js-components-web';
+
+import SpaceSelector from '../../common/components/SpaceSelector';
 import {required, validate} from '../../common/components/forms/validations';
 import {AssetLibrary} from '../../common/types/AssetLibrary';
+import {Space} from '../../common/types/Space';
 import FailedFiles from './FailedFiles';
 export interface FileData {
 	errorMessage?: string;
@@ -29,23 +34,50 @@ export interface FileData {
 	name: string;
 	size: number;
 }
+export interface UploadMessages {
+	anotherFileButton: string;
+	filesToUpload: string;
+	loadingMessageDescription: string;
+	loadingMessageTitle: string;
+	xFilesNotUploaded: string;
+}
 
+const DEFAULT_MESSAGES: UploadMessages = {
+	anotherFileButton: Liferay.Language.get('upload-another-file'),
+	filesToUpload: Liferay.Language.get('files-to-upload'),
+	loadingMessageDescription: Liferay.Language.get(
+		'closing-the-window-will-cancel-the-upload-process'
+	),
+	loadingMessageTitle: Liferay.Language.get(
+		'the-upload-process-may-take-some-time'
+	),
+	xFilesNotUploaded: Liferay.Language.get('x-files-could-not-be-uploaded'),
+};
 export default function MultipleFileUploader({
 	assetLibraries,
+	buttonLabel,
+	description,
 	filesToUpload: initialFilesToUpload,
+	groupId: initialGroupId,
+	messages,
 	onModalClose,
 	onUploadComplete,
 	uploadRequest,
+	validExtensions = '*',
 }: {
-	assetLibraries: AssetLibrary[];
+	assetLibraries?: AssetLibrary[];
+	buttonLabel?: string;
+	description?: string;
 	filesToUpload?: FileData[];
+	groupId?: number;
+	messages?: Partial<UploadMessages>;
 	onModalClose: () => void;
 	onUploadComplete: ({
 		assetLibrary,
 		failedFiles,
 		successFiles,
 	}: {
-		assetLibrary: AssetLibrary;
+		assetLibrary: AssetLibrary | null;
 		failedFiles: string[];
 		successFiles: string[];
 	}) => void;
@@ -56,15 +88,24 @@ export default function MultipleFileUploader({
 		fileData: FileData;
 		groupId: string;
 	}) => Promise<any>;
+	validExtensions?: string;
 }) {
 	const [filesToUpload, setFilesToUpload] = useState<FileData[]>(
 		initialFilesToUpload || []
 	);
 	const [failedFiles, setFiledFiles] = useState<FileData[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
+	const [space, setSpace] = useState<Space>();
+
+	const groupIdInputId = `${uuidv4()}groupId`;
 
 	const {getInputProps, getRootProps, isDragActive} = useDropzone({
+		accept:
+			validExtensions === '*'
+				? undefined
+				: (validExtensions as unknown as Accept),
 		multiple: true,
+		noKeyboard: true,
 		onDropAccepted: (acceptedFiles) => {
 			const newFilesToUpload = acceptedFiles.map((file) => ({
 				errorMessage: '',
@@ -87,8 +128,10 @@ export default function MultipleFileUploader({
 		},
 	});
 
+	const mergedMessages = {...DEFAULT_MESSAGES, ...messages};
+
 	const findAssetLibrary = (groupId: string) =>
-		assetLibraries.find(
+		assetLibraries?.find(
 			(assetLibrary) => assetLibrary.groupId.toString() === groupId
 		);
 
@@ -98,10 +141,13 @@ export default function MultipleFileUploader({
 		);
 	};
 
-	const {errors, handleSubmit, setFieldValue, touched, values} = useFormik({
+	const {errors, handleSubmit, setFieldValue, touched} = useFormik({
 		initialValues: {
 			groupId:
-				assetLibraries.length === 1 ? assetLibraries[0].groupId : 0,
+				initialGroupId ||
+				(assetLibraries?.length === 1
+					? assetLibraries?.[0].groupId
+					: 0),
 		},
 		onSubmit: async (values) => {
 			setIsLoading(true);
@@ -137,9 +183,10 @@ export default function MultipleFileUploader({
 
 				if (onUploadComplete) {
 					onUploadComplete({
-						assetLibrary:
-							findAssetLibrary(String(values.groupId)) ||
-							assetLibraries[0],
+						assetLibrary: assetLibraries
+							? findAssetLibrary(String(values.groupId)) ||
+								assetLibraries?.[0]
+							: null,
 						failedFiles: failedFiles.map((file) => file.name),
 						successFiles: uploadedFiles,
 					});
@@ -159,10 +206,30 @@ export default function MultipleFileUploader({
 		<form className="multiple-file-uploader" onSubmit={handleSubmit}>
 			<ClayModal.Body scrollable>
 				{failedFiles.length ? (
-					<FailedFiles failedFiles={failedFiles} />
+					<FailedFiles
+						errorMessage={mergedMessages.xFilesNotUploaded}
+						failedFiles={failedFiles}
+					/>
 				) : (
 					<>
-						{isLoading && <LoadingMessage />}
+						{isLoading && (
+							<LoadingMessage
+								description={
+									mergedMessages.loadingMessageDescription
+								}
+								title={mergedMessages.loadingMessageTitle}
+							/>
+						)}
+
+						{description && (
+							<div className="mb-1">
+								<p className="text-secondary">{description}</p>
+
+								<span className="font-weight-semi-bold text-3">
+									{Liferay.Language.get('file')}
+								</span>
+							</div>
+						)}
 
 						<div
 							{...getRootProps({
@@ -176,9 +243,9 @@ export default function MultipleFileUploader({
 							<DragZoneBackground />
 						</div>
 
-						{assetLibraries.length > 1 && (
+						{assetLibraries && assetLibraries.length > 1 && (
 							<div className="mt-4">
-								<FieldPicker
+								<FieldBase
 									errorMessage={
 										touched.groupId
 											? errors.groupId
@@ -187,24 +254,22 @@ export default function MultipleFileUploader({
 									helpMessage={Liferay.Language.get(
 										'select-the-space-to-upload-the-file'
 									)}
-									items={assetLibraries.map(
-										({groupId, name}) => ({
-											label: name,
-											value: groupId,
-										})
-									)}
+									id={groupIdInputId}
 									label={Liferay.Language.get('space')}
-									name="groupId"
-									onSelectionChange={(value: string) => {
-										setFieldValue('groupId', value);
-									}}
-									placeholder={`--${Liferay.Language.get('not-selected')}--`}
 									required
-									selectedKey={values.groupId}
-									title={Liferay.Language.get(
-										'select-the-space-to-upload-the-file'
-									)}
-								/>
+								>
+									<SpaceSelector
+										id={groupIdInputId}
+										onSpaceChange={(space) => {
+											setFieldValue(
+												'groupId',
+												space ? space.siteId : null
+											);
+											setSpace(space);
+										}}
+										space={space}
+									/>
+								</FieldBase>
 							</div>
 						)}
 
@@ -215,11 +280,11 @@ export default function MultipleFileUploader({
 								})}
 							>
 								<h2 className="font-weight-semi-bold mb-3 text-3 text-secondary text-uppercase">
-									{Liferay.Language.get('files-to-upload')}
+									{mergedMessages.filesToUpload}
 								</h2>
 
 								{filesToUpload.map((fileData, index) => (
-									<>
+									<div key={fileData.name}>
 										<ClayLayout.ContentRow
 											className={classNames(
 												'align-items-center',
@@ -230,12 +295,11 @@ export default function MultipleFileUploader({
 															1,
 												}
 											)}
-											key={fileData.name}
 											padded
 										>
 											<ClayLayout.ContentCol>
 												<ClaySticker
-													className="border border-secondary"
+													className="sticker-border-secondary"
 													displayType="secondary"
 													size="lg"
 												>
@@ -285,7 +349,7 @@ export default function MultipleFileUploader({
 												{fileData.errorMessage}
 											</span>
 										)}
-									</>
+									</div>
 								))}
 							</div>
 						)}
@@ -305,10 +369,11 @@ export default function MultipleFileUploader({
 							</ClayButton>
 
 							<ClayButton disabled={isLoading} type="submit">
-								{sub(
-									Liferay.Language.get('upload-x'),
-									`(${filesToUpload.length})`
-								)}
+								{buttonLabel ||
+									sub(
+										Liferay.Language.get('upload-x'),
+										`(${filesToUpload.length})`
+									)}
 							</ClayButton>
 						</ClayButton.Group>
 					}
@@ -323,7 +388,7 @@ export default function MultipleFileUploader({
 								displayType="secondary"
 								onClick={() => setFiledFiles([])}
 							>
-								{Liferay.Language.get('upload-another-file')}
+								{mergedMessages.anotherFileButton}
 							</ClayButton>
 
 							<ClayButton onClick={onModalClose}>

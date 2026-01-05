@@ -7,7 +7,6 @@ package com.liferay.object.internal.field.business.type;
 
 import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
-import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.list.type.model.ListTypeEntry;
 import com.liferay.list.type.service.ListTypeEntryLocalService;
 import com.liferay.object.constants.ObjectFieldConstants;
@@ -25,7 +24,6 @@ import com.liferay.object.service.ObjectStateFlowLocalService;
 import com.liferay.object.service.ObjectStateLocalService;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -53,7 +51,7 @@ import org.osgi.service.component.annotations.Reference;
 	service = ObjectFieldBusinessType.class
 )
 public class PicklistObjectFieldBusinessType
-	implements ObjectFieldBusinessType {
+	extends BaseObjectFieldBusinessType {
 
 	@Override
 	public Set<String> getAllowedObjectFieldSettingsNames() {
@@ -87,8 +85,7 @@ public class PicklistObjectFieldBusinessType
 			return getLocalizedValues(objectField, userId, values);
 		}
 
-		return ObjectFieldBusinessType.super.getDisplayContextValue(
-			objectField, userId, values);
+		return super.getDisplayContextValue(objectField, userId, values);
 	}
 
 	@Override
@@ -101,9 +98,8 @@ public class PicklistObjectFieldBusinessType
 			ObjectField objectField, Long userId, Map<String, Object> values)
 		throws PortalException {
 
-		Map<String, Object> localizedValues =
-			ObjectFieldBusinessType.super.getLocalizedValues(
-				objectField, userId, values);
+		Map<String, Object> localizedValues = super.getLocalizedValues(
+			objectField, userId, values);
 
 		if (localizedValues == null) {
 			return null;
@@ -135,37 +131,8 @@ public class PicklistObjectFieldBusinessType
 		).put(
 			"options",
 			_getDDMFormFieldOptions(objectField, objectFieldRenderingContext)
-		).put(
-			"predefinedValue",
-			() -> {
-				LocalizedValue localizedValue = new LocalizedValue(
-					objectFieldRenderingContext.getLocale());
-
-				Locale defaultLocale = objectFieldRenderingContext.getLocale();
-				String defaultValue = String.valueOf(
-					ObjectFieldSettingUtil.getDefaultValue(
-						null, objectField, null));
-
-				if (objectField.isLocalized() &&
-					Validator.isNotNull(defaultValue)) {
-
-					localizedValue.addString(
-						defaultLocale,
-						_jsonFactory.createJSONObject(
-							HashMapBuilder.put(
-								defaultLocale, defaultValue
-							).build()
-						).toJSONString());
-				}
-				else {
-					localizedValue.addString(defaultLocale, defaultValue);
-				}
-
-				return localizedValue;
-			}
 		).putAll(
-			ObjectFieldBusinessType.super.getProperties(
-				objectField, objectFieldRenderingContext)
+			super.getProperties(objectField, objectFieldRenderingContext)
 		).build();
 	}
 
@@ -195,9 +162,24 @@ public class PicklistObjectFieldBusinessType
 
 		return _getValue(
 			objectField.getName(),
-			ObjectFieldBusinessType.super.getValue(
-				groupId, objectField, userId, values),
-			values);
+			super.getValue(groupId, objectField, userId, values), values);
+	}
+
+	@Override
+	public boolean isAllowedObjectFieldSettingValue(
+		String objectFieldSettingName, String objectFieldSettingValue) {
+
+		if (super.isAllowedObjectFieldSettingValue(
+				objectFieldSettingName, objectFieldSettingValue) ||
+			(objectFieldSettingName.equals(
+				ObjectFieldSettingConstants.NAME_DEFAULT_VALUE_TYPE) &&
+			 objectFieldSettingValue.equals(
+				 ObjectFieldSettingConstants.VALUE_EXPRESSION_BUILDER))) {
+
+			return true;
+		}
+
+		return false;
 	}
 
 	@Override
@@ -255,7 +237,7 @@ public class PicklistObjectFieldBusinessType
 			return;
 		}
 
-		ObjectFieldBusinessType.super.validateObjectFieldSettingsDefaultValue(
+		super.validateObjectFieldSettingsDefaultValue(
 			objectField, objectFieldSettingsValuesMap);
 
 		String defaultValueType = objectFieldSettingsValuesMap.get(
@@ -392,9 +374,6 @@ public class PicklistObjectFieldBusinessType
 
 		return value;
 	}
-
-	@Reference
-	private JSONFactory _jsonFactory;
 
 	@Reference
 	private Language _language;

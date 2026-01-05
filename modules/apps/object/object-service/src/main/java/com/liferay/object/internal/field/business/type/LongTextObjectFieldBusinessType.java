@@ -12,10 +12,12 @@ import com.liferay.object.field.business.type.ObjectFieldBusinessType;
 import com.liferay.object.field.render.ObjectFieldRenderingContext;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.ObjectFieldSetting;
+import com.liferay.object.petra.sql.dsl.DynamicObjectDefinitionTableUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.SetUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.extension.PropertyDefinition;
 
 import java.util.List;
@@ -39,6 +41,8 @@ public class LongTextObjectFieldBusinessType
 	@Override
 	public Set<String> getAllowedObjectFieldSettingsNames() {
 		return SetUtil.fromArray(
+			ObjectFieldSettingConstants.NAME_DEFAULT_VALUE,
+			ObjectFieldSettingConstants.NAME_DEFAULT_VALUE_TYPE,
 			ObjectFieldSettingConstants.NAME_MAX_LENGTH,
 			ObjectFieldSettingConstants.NAME_SHOW_COUNTER);
 	}
@@ -107,6 +111,32 @@ public class LongTextObjectFieldBusinessType
 			objectField, ObjectFieldSettingConstants.NAME_SHOW_COUNTER,
 			ObjectFieldSettingConstants.NAME_MAX_LENGTH,
 			getObjectFieldSettingsValues(objectFieldSettings));
+	}
+
+	@Override
+	public void validateObjectFieldSettingsDefaultValue(
+			ObjectField objectField,
+			Map<String, String> objectFieldSettingsValuesMap)
+		throws PortalException {
+
+		if (objectFieldSettingsValuesMap.isEmpty()) {
+			return;
+		}
+
+		super.validateObjectFieldSettingsDefaultValue(
+			objectField, objectFieldSettingsValuesMap);
+
+		String defaultValue = objectFieldSettingsValuesMap.get(
+			ObjectFieldSettingConstants.NAME_DEFAULT_VALUE);
+
+		if (Validator.isNull(defaultValue)) {
+			return;
+		}
+
+		validateMaxLength(
+			DynamicObjectDefinitionTableUtil.getMaxLength(
+				objectField.getBusinessType()),
+			ObjectFieldSettingConstants.NAME_DEFAULT_VALUE, defaultValue);
 	}
 
 	@Reference

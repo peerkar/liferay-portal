@@ -17,6 +17,7 @@ import com.liferay.layout.display.page.LayoutDisplayPageProviderRegistry;
 import com.liferay.layout.page.template.info.item.capability.DisplayPageInfoItemCapability;
 import com.liferay.osgi.util.ServiceTrackerFactory;
 import com.liferay.petra.reflect.GenericUtil;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.Portal;
@@ -78,6 +79,9 @@ public class DisplayPageSiteNavigationMenuItemTypeProviderTracker {
 		target = "(info.item.capability.key=" + DisplayPageInfoItemCapability.KEY + ")"
 	)
 	private InfoItemCapability _displayPageInfoItemCapability;
+
+	@Reference
+	private GroupLocalService _groupLocalService;
 
 	@Reference
 	private InfoItemServiceRegistry _infoItemServiceRegistry;
@@ -171,6 +175,7 @@ public class DisplayPageSiteNavigationMenuItemTypeProviderTracker {
 								_layoutDisplayPageInfoItemFieldValuesProviderRegistry,
 								_layoutDisplayPageMultiSelectionProviderRegistry,
 								_layoutDisplayPageProviderRegistry),
+							_groupLocalService, _infoItemServiceRegistry,
 							_itemSelector, _jspRenderer, _portal,
 							_servletContext),
 						HashMapDictionaryBuilder.<String, Object>put(

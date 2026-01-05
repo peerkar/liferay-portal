@@ -37,6 +37,7 @@ import {HeadlessCommerceDeliveryCartApiHelper} from './HeadlessCommerceDeliveryC
 import {HeadlessCommerceDeliveryCatalogApiHelper} from './HeadlessCommerceDeliveryCatalogApiHelper';
 import {HeadlessCommerceReturnApiHelper} from './HeadlessCommerceReturnApiHelper';
 import {HeadlessDeliveryApiHelper} from './HeadlessDeliveryApiHelper';
+import {HeadlessDigitalSalesRoomApiHelper} from './HeadlessDigitalSalesRoomApiHelper';
 import {HeadlessPortalInstanceApiHelper} from './HeadlessPortalInstanceApiHelper';
 import {HeadlessSiteApiHelper} from './HeadlessSiteApiHelper';
 import {ListTypeAdminApiHelper} from './ListTypeAdminApiHelper';
@@ -75,6 +76,7 @@ import {JSONWebServicesSiteNavigationMenuApiHelper} from './json-web-services/JS
 import {JSONWebServicesStagingApiHelper} from './json-web-services/JSONWebServicesStagingApiHelper';
 import {JSONWebServicesTeamApiHelper} from './json-web-services/JSONWebServicesTeamApiHelper';
 import {JSONWebServicesUserApiHelper} from './json-web-services/JSONWebServicesUserApiHelper';
+import {JSONWebServicesUserGroupApiHelper} from './json-web-services/JSONWebServicesUserGroupApiHelper';
 
 type ContentType = 'application/json' | 'application/x-www-form-urlencoded';
 
@@ -139,6 +141,7 @@ export class ApiHelpers {
 	readonly headlessCommerceDeliveryCart: HeadlessCommerceDeliveryCartApiHelper;
 	readonly headlessCommerceReturn: HeadlessCommerceReturnApiHelper;
 	readonly headlessDelivery: HeadlessDeliveryApiHelper;
+	readonly headlessDigitalSalesRoom: HeadlessDigitalSalesRoomApiHelper;
 	readonly headlessSite: HeadlessSiteApiHelper;
 	readonly headlessPortalInstance: HeadlessPortalInstanceApiHelper;
 	readonly jsonWebServicesAnnouncementsEntryApiHelper: JSONWebServicesAnnouncementsEntryApiHelper;
@@ -170,6 +173,7 @@ export class ApiHelpers {
 	readonly jsonWebServicesStaging: JSONWebServicesStagingApiHelper;
 	readonly jsonWebServicesTeam: JSONWebServicesTeamApiHelper;
 	readonly jsonWebServicesUser: JSONWebServicesUserApiHelper;
+	readonly jsonWebServicesUserGroup: JSONWebServicesUserGroupApiHelper;
 	readonly listTypeAdmin: ListTypeAdminApiHelper;
 	readonly notification: NotificationApiHelper;
 	readonly objectAdmin: ObjectAdminApiHelper;
@@ -222,6 +226,9 @@ export class ApiHelpers {
 			new HeadlessCommerceDeliveryCartApiHelper(this);
 		this.headlessCommerceReturn = new HeadlessCommerceReturnApiHelper(this);
 		this.headlessDelivery = new HeadlessDeliveryApiHelper(this);
+		this.headlessDigitalSalesRoom = new HeadlessDigitalSalesRoomApiHelper(
+			this
+		);
 		this.headlessSite = new HeadlessSiteApiHelper(this);
 		this.headlessPortalInstance = new HeadlessPortalInstanceApiHelper(this);
 		this.jsonWebServicesAnnouncementsEntryApiHelper =
@@ -272,6 +279,9 @@ export class ApiHelpers {
 		this.jsonWebServicesStaging = new JSONWebServicesStagingApiHelper(this);
 		this.jsonWebServicesTeam = new JSONWebServicesTeamApiHelper(this);
 		this.jsonWebServicesUser = new JSONWebServicesUserApiHelper(this);
+		this.jsonWebServicesUserGroup = new JSONWebServicesUserGroupApiHelper(
+			this
+		);
 		this.listTypeAdmin = new ListTypeAdminApiHelper(this);
 		this.notification = new NotificationApiHelper(this);
 		this.objectAdmin = new ObjectAdminApiHelper(this);
@@ -484,6 +494,9 @@ export class DataApiHelpers extends ApiHelpers {
 			}
 			else if (item.type === 'ctCollection') {
 				await this.headlessChangeTracking.deleteCTCollection(item.id);
+			}
+			else if (item.type === 'currency') {
+				await this.headlessCommerceAdminCatalog.deleteCurrency(item.id);
 			}
 			else if (item.type === 'discount') {
 				await this.headlessCommerceAdminPricing.deleteDiscount(item.id);

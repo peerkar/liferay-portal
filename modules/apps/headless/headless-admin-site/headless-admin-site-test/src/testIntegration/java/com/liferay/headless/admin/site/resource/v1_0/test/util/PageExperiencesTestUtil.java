@@ -57,27 +57,36 @@ public class PageExperiencesTestUtil {
 	}
 
 	public static PageExperience[] getPageExperiences(
-		String contentPageSpecificationExternalReferenceCode) {
+		String contentPageSpecificationExternalReferenceCode,
+		long scopeGroupId) {
 
-		return new PageExperience[] {
-			new PageExperience() {
-				{
-					setExternalReferenceCode(RandomTestUtil::randomString);
-					setKey(SegmentsExperienceConstants.KEY_DEFAULT);
-					setName_i18n(
-						Collections.singletonMap(
-							"en-US", RandomTestUtil.randomString()));
-					setPageElements(
-						PageElementsTestUtil.getPageElements(
-							RandomTestUtil.randomInt(1, 3), StringPool.BLANK));
-					setPageSpecificationExternalReferenceCode(
-						contentPageSpecificationExternalReferenceCode);
-				}
-			}
-		};
+		return getPageExperiences(
+			contentPageSpecificationExternalReferenceCode,
+			PageElementsTestUtil.getPageElements(
+				RandomTestUtil.randomInt(1, 3), StringPool.BLANK,
+				scopeGroupId));
 	}
 
-	public static void modifyPageExperiences(PageExperience[] pageExperiences) {
+	public static PageExperience[] getPageExperiences(
+		String contentPageSpecificationExternalReferenceCode,
+		PageElement[] pageElements) {
+
+		PageExperience pageExperience = new PageExperience();
+
+		pageExperience.setExternalReferenceCode(RandomTestUtil::randomString);
+		pageExperience.setKey(SegmentsExperienceConstants.KEY_DEFAULT);
+		pageExperience.setName_i18n(
+			Collections.singletonMap("en-US", RandomTestUtil.randomString()));
+		pageExperience.setPageElements(pageElements);
+		pageExperience.setPageSpecificationExternalReferenceCode(
+			contentPageSpecificationExternalReferenceCode);
+
+		return new PageExperience[] {pageExperience};
+	}
+
+	public static void modifyPageExperiences(
+		PageExperience[] pageExperiences, long scopeGroupId) {
+
 		for (PageExperience pageExperience : pageExperiences) {
 			List<PageElement> dropZonePageElements =
 				TransformUtil.transformToList(
@@ -100,7 +109,8 @@ public class PageExperiencesTestUtil {
 				() -> {
 					PageElement[] pageElements =
 						PageElementsTestUtil.getPageElements(
-							RandomTestUtil.randomInt(1, 3), StringPool.BLANK);
+							RandomTestUtil.randomInt(1, 3), StringPool.BLANK,
+							scopeGroupId);
 
 					if (ListUtil.isEmpty(dropZonePageElements)) {
 						return pageElements;

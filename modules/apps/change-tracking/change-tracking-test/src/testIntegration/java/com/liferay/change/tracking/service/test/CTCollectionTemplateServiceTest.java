@@ -6,13 +6,27 @@
 package com.liferay.change.tracking.service.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.change.tracking.constants.CTActionKeys;
+import com.liferay.change.tracking.constants.CTConstants;
 import com.liferay.change.tracking.model.CTCollectionTemplate;
+import com.liferay.change.tracking.service.CTCollectionTemplateLocalService;
 import com.liferay.change.tracking.service.CTCollectionTemplateService;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.model.ResourceConstants;
+import com.liferay.portal.kernel.model.Role;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.role.RoleConstants;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
+import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.test.context.ContextUserReplace;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.test.util.RoleTestUtil;
+import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
@@ -21,7 +35,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,12 +53,80 @@ public class CTCollectionTemplateServiceTest {
 			new LiferayIntegrationTestRule(),
 			PermissionCheckerMethodTestRule.INSTANCE);
 
-	@Before
-	public void setUp() throws Exception {
-		_name = RandomTestUtil.randomString();
+	@Test
+	public void testAddCTCollectionTemplate() throws Exception {
+		User user = UserTestUtil.addUser();
 
-		_ctCollectionTemplateService.addCTCollectionTemplate(
-			_name, RandomTestUtil.randomString(),
+		try (ContextUserReplace contextUserReplace = new ContextUserReplace(
+				user, PermissionCheckerFactoryUtil.create(user))) {
+
+			_addCTCollectionTemplate(RandomTestUtil.randomString());
+
+			Assert.fail();
+		}
+		catch (PrincipalException.MustHavePermission principalException) {
+			Assert.assertNotNull(principalException);
+		}
+
+		Role role = RoleTestUtil.addRole(RoleConstants.TYPE_REGULAR);
+
+		RoleTestUtil.addResourcePermission(
+			role, CTConstants.RESOURCE_NAME, ResourceConstants.SCOPE_COMPANY,
+			String.valueOf(TestPropsValues.getCompanyId()),
+			CTActionKeys.ADD_TEMPLATE);
+
+		UserLocalServiceUtil.addRoleUser(role.getRoleId(), user.getUserId());
+
+		try (ContextUserReplace contextUserReplace = new ContextUserReplace(
+				user, PermissionCheckerFactoryUtil.create(user))) {
+
+			CTCollectionTemplate ctCollectionTemplate =
+				_addCTCollectionTemplate(RandomTestUtil.randomString());
+
+			Assert.assertNotNull(ctCollectionTemplate);
+		}
+	}
+
+	@Test
+	public void testGetCTCollectionTemplates() throws Exception {
+		_addCTCollectionTemplate(RandomTestUtil.randomString());
+
+		String name = RandomTestUtil.randomString();
+
+		CTCollectionTemplate ctCollectionTemplate = _addCTCollectionTemplate(
+			name);
+
+		_assertGetCTCollectionTemplates(
+			_ctCollectionTemplateLocalService.getCTCollectionTemplates(
+				TestPropsValues.getCompanyId(), QueryUtil.ALL_POS,
+				QueryUtil.ALL_POS),
+			StringPool.BLANK);
+		_assertGetCTCollectionTemplates(
+			Collections.singletonList(ctCollectionTemplate), name);
+	}
+
+	@Test
+	public void testGetCTCollectionTemplatesCount() throws Exception {
+		_addCTCollectionTemplate(RandomTestUtil.randomString());
+
+		String name = RandomTestUtil.randomString();
+
+		_addCTCollectionTemplate(name);
+
+		Assert.assertEquals(
+			_ctCollectionTemplateLocalService.getCTCollectionTemplatesCount(),
+			_ctCollectionTemplateService.getCTCollectionTemplatesCount(
+				StringPool.BLANK));
+		Assert.assertEquals(
+			1,
+			_ctCollectionTemplateService.getCTCollectionTemplatesCount(name));
+	}
+
+	private CTCollectionTemplate _addCTCollectionTemplate(String name)
+		throws Exception {
+
+		return _ctCollectionTemplateService.addCTCollectionTemplate(
+			name, RandomTestUtil.randomString(),
 			JSONUtil.put(
 				"description", RandomTestUtil.randomString()
 			).put(
@@ -59,42 +140,26 @@ public class CTCollectionTemplateServiceTest {
 			).toString());
 	}
 
-	@Test
-	public void testGetCTCollectionTemplates() {
-		_testGetCTCollectionTemplates(StringPool.BLANK);
-		_testGetCTCollectionTemplates(_name);
-	}
+	private void _assertGetCTCollectionTemplates(
+		List<CTCollectionTemplate> expectedCTCollectionTemplates,
+		String keywords) {
 
-	@Test
-	public void testGetCTCollectionTemplatesCount() {
-		_testGetCTCollectionTemplatesCount(StringPool.BLANK);
-		_testGetCTCollectionTemplatesCount(_name);
-	}
-
-	private void _testGetCTCollectionTemplates(String keywords) {
 		List<CTCollectionTemplate> ctCollectionTemplates =
 			_ctCollectionTemplateService.getCTCollectionTemplates(
 				keywords, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 
+		Assert.assertTrue(
+			ctCollectionTemplates.containsAll(expectedCTCollectionTemplates));
 		Assert.assertEquals(
-			ctCollectionTemplates.toString(), 1, ctCollectionTemplates.size());
-
-		CTCollectionTemplate ctCollectionTemplate = ctCollectionTemplates.get(
-			0);
-
-		Assert.assertEquals(_name, ctCollectionTemplate.getName());
-	}
-
-	private void _testGetCTCollectionTemplatesCount(String keywords) {
-		long count = _ctCollectionTemplateService.getCTCollectionTemplatesCount(
-			keywords);
-
-		Assert.assertEquals(1, count);
+			ctCollectionTemplates.toString(),
+			expectedCTCollectionTemplates.size(), ctCollectionTemplates.size());
 	}
 
 	@Inject
-	private static CTCollectionTemplateService _ctCollectionTemplateService;
+	private static CTCollectionTemplateLocalService
+		_ctCollectionTemplateLocalService;
 
-	private String _name;
+	@Inject
+	private static CTCollectionTemplateService _ctCollectionTemplateService;
 
 }

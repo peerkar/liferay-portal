@@ -69,8 +69,10 @@ const IncidentContactCard = ({
 		setModalMonitoring(false);
 	};
 
-	const isLXCEnvironment = accountSubscriptionGroupsNames?.includes(
-		'Liferay SaaS'
+	const lxcProductNames = ['Liferay Cloud', 'Liferay SaaS'];
+
+	const isLXCEnvironment = accountSubscriptionGroupsNames?.some(name =>
+		lxcProductNames.includes(name)
 	);
 
 	const getHighPriorityContactsByFilterRAYSOURCE = async (filter) => {
@@ -169,8 +171,8 @@ const IncidentContactCard = ({
 	const hasSecurityBreachContact = !!currentHighPriorityContacts
 		.securityBreach?.length;
 
-	const handleOnClick = (highPriorityContactsCategory) => {
-		setModalFilter(highPriorityContactsCategory);
+	const handleOnClick = (highPriorityContactCategory) => {
+		setModalFilter(highPriorityContactCategory);
 		openModal();
 	};
 

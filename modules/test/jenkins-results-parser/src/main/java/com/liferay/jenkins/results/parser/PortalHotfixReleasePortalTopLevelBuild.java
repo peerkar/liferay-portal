@@ -19,9 +19,9 @@ public class PortalHotfixReleasePortalTopLevelBuild
 	implements PortalHotfixReleaseBuild, PortalWorkspaceBuild {
 
 	public PortalHotfixReleasePortalTopLevelBuild(
-		String url, TopLevelBuild topLevelBuild) {
+		String buildURL, TopLevelBuild topLevelBuild) {
 
-		super(url, topLevelBuild);
+		super(buildURL, topLevelBuild);
 	}
 
 	@Override
@@ -333,7 +333,9 @@ public class PortalHotfixReleasePortalTopLevelBuild
 			String patcherPortalVersion = getParameterValue(
 				"PATCHER_BUILD_PATCHER_PORTAL_VERSION");
 
-			if (JenkinsResultsParserUtil.isNullOrEmpty(patcherPortalVersion)) {
+			if (JenkinsResultsParserUtil.isNullOrEmpty(patcherPortalVersion) ||
+				PortalRelease.isQuarterlyRelease(patcherPortalVersion)) {
+
 				return null;
 			}
 

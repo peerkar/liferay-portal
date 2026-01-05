@@ -447,10 +447,15 @@ components:
                         The number of child comments on this comment.
                     readOnly: true
                     type: integer
+                parentCommentExternalReferenceCode:
+                    # @review
+                    description:
+                        The parent comment's external reference code.
+                    type: string
                 parentCommentId:
                     # @review
                     description:
-                        the ID of the comment's parent, if it exists.
+                        The ID of the comment's parent, if it exists.
                     format: int64
                     type: integer
                 text:
@@ -499,6 +504,10 @@ components:
                         The document's content type (e.g., `application/pdf`, etc.).
                     readOnly: true
                     type: string
+                externalReferenceCode:
+                    description:
+                        The document's externalReferenceCode.
+                    type: string
                 fileExtension:
                     description:
                         The document's file extension.
@@ -509,6 +518,10 @@ components:
                         The document's ID.
                     format: int64
                     type: integer
+                scopeExternalReferenceCode:
+                    description:
+                        The document's scopeExternalReferenceCode.
+                    type: string
                 sizeInBytes:
                     description:
                         The document's file size in bytes.
@@ -570,6 +583,12 @@ components:
                     description:
                         The field type (e.g., image, text, etc.).
                     readOnly: true
+                    type: string
+                fieldReference:
+                    # @review
+                    description:
+                        The field's friendly reference name. This is used by developers when referencing the field in
+                        custom implementations.
                     type: string
                 inputControl:
                     description:
@@ -793,6 +812,13 @@ components:
                         The form field's type (e.g., date, geolocation, text, etc.).
                     readOnly: true
                     type: string
+                fieldReference:
+                    # @review
+                    description:
+                        The field's friendly reference name. This is used by developers when referencing the field in
+                        custom implementations.
+                    readOnly: true
+                    type: string
                 inputControl:
                     description:
                         The form field's input control type (e.g., text, textarea, select field, etc.).
@@ -943,14 +969,14 @@ components:
                 description:
                     # @review
                     description:
-                        the content template's description.
+                        The content template's description.
                     type: string
                 description_i18n:
                     # @review
                     additionalProperties:
                         type: string
                     description:
-                        the localized content template's descriptions.
+                        The localized content template's descriptions.
                     type: object
                 id:
                     # @review
@@ -961,19 +987,19 @@ components:
                 name:
                     # @review
                     description:
-                        the content template's name.
+                        The content template's name.
                     type: string
                 name_i18n:
                     additionalProperties:
                         type: string
                     # @review
                     description:
-                        the localized content template's name.
+                        The localized content template's name.
                     type: object
                 programmingLanguage:
                     # @review
                     description:
-                        the content template's programming language.
+                        The content template's programming language.
                     type: string
                 siteId:
                     # @review
@@ -1146,6 +1172,34 @@ components:
                                 The mapping's field key.
                             type: string
                     type: object
+            type: object
+        DisplayPageFormSubmissionResult:
+            # @review
+            description:
+                Represents a definition of a submission result of type display page template.
+            properties:
+                defaultDisplayPage:
+                    # @review
+                    description:
+                        Default display page when a form container submission is successful.
+                    type: boolean
+                mapping:
+                    # @review
+                    description:
+                        The mapping of the display page template submission result.
+                    properties:
+                        fieldKey:
+                            # @review
+                            description:
+                                The mapping's field key.
+                            type: string
+                    type: object
+                notificationTextFragmentInlineValue:
+                    $ref: "#/components/schemas/FragmentInlineValue"
+                    description:
+                        The localized display page template form submission result's notification text.
+                showNotification:
+                    type: boolean
             type: object
         DisplayPageTemplate:
             description:
@@ -1760,7 +1814,7 @@ components:
                         type: string
                     # @review
                     description:
-                        the localized Document Metadata Set's names.
+                        The localized Document Metadata Set's names.
                     type: object
                 siteId:
                     description:
@@ -1852,19 +1906,19 @@ components:
                 key:
                     # @review
                     description:
-                        the experience's key.
+                        The experience's key.
                     type: string
                 name:
                     # @review
                     description:
-                        the experience's name.
+                        The experience's name.
                     type: string
                 name_i18n:
                     additionalProperties:
                         type: string
                     # @review
                     description:
-                        the localized experience's names.
+                        The localized experience's names.
                     type: object
                 segments:
                     # @review
@@ -1915,6 +1969,7 @@ components:
                     anyOf:
                         -   $ref: "#/components/schemas/FragmentFieldAction"
                         -   $ref: "#/components/schemas/FragmentFieldBackgroundImage"
+                        -   $ref: "#/components/schemas/FragmentFieldDate"
                         -   $ref: "#/components/schemas/FragmentFieldHTML"
                         -   $ref: "#/components/schemas/FragmentFieldImage"
                         -   $ref: "#/components/schemas/FragmentFieldText"
@@ -1977,6 +2032,24 @@ components:
                                 -   $ref: "#/components/schemas/FragmentInlineValue"
                                 -   $ref: "#/components/schemas/FragmentMappedValue"
                     type: object
+            type: object
+        FragmentFieldDate:
+            # @review
+            description:
+                Represents a fragment field with a date.
+            properties:
+                date:
+                    # @review
+                    description:
+                        The fragment field's date.
+                    oneOf:
+                        -   $ref: "#/components/schemas/FragmentMappedValue"
+                dateFormat:
+                    # @review
+                    description:
+                        The fragment editable element's date format.
+                    oneOf:
+                        -   $ref: "#/components/schemas/FragmentInlineValue"
             type: object
         FragmentFieldHTML:
             # @review
@@ -3400,6 +3473,10 @@ components:
                         The message form submission type (embedded, none).
                     enum: [Embedded, None]
                     type: string
+                notificationTextFragmentInlineValue:
+                    $ref: "#/components/schemas/FragmentInlineValue"
+                    description:
+                        The localized message form submission result's notification text.
                 showNotification:
                     type: boolean
             type: object
@@ -3718,7 +3795,7 @@ components:
                 layout:
                     # @review
                     description:
-                        the page section's layout.
+                        The page section's layout.
                     properties:
                         align:
                             enum: [Baseline, Center, End, None, Start, Stretch]
@@ -3973,6 +4050,7 @@ components:
                             description:
                                 The definition for the success message of the form.
                             oneOf:
+                                -   $ref: "#/components/schemas/DisplayPageFormSubmissionResult"
                                 -   $ref: "#/components/schemas/MessageFormSubmissionResult"
                                 -   $ref: "#/components/schemas/SitePageFormSubmissionResult"
                                 -   $ref: "#/components/schemas/URLFormSubmissionResult"
@@ -4024,7 +4102,7 @@ components:
                 layout:
                     # @review
                     description:
-                        the page section's layout.
+                        The page section's layout.
                     properties:
                         align:
                             enum: [Baseline, Center, End, None, Start, Stretch]
@@ -4532,7 +4610,7 @@ components:
                 layout:
                     # @review
                     description:
-                        the page section's layout.
+                        The page section's layout.
                     properties:
                         align:
                             deprecated: true
@@ -5402,6 +5480,12 @@ components:
                     # @review
                     description:
                         The localized submission of page type.
+                notificationTextFragmentInlineValue:
+                    $ref: "#/components/schemas/FragmentInlineValue"
+                    description:
+                        The localized site page form submission result's notification text.
+                showNotification:
+                    type: boolean
             type: object
         SitePageNavigationMenuSettings:
             # @review
@@ -6171,7 +6255,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.headless.delivery.client', and version '4.0.99'."
+        'com.liferay.headless.delivery.client', and version '4.0.102'."
     license:
         name: Apache 2.0
         url: http://www.apache.org/licenses/LICENSE-2.0.html

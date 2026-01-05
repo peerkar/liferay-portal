@@ -9,7 +9,7 @@ exports[`SearchableEntityTable should render 1`] = `
       class="toolbar-root"
     >
       <nav
-        class="navbar navbar-root my-2 management-bar management-bar-light navbar-expand"
+        class="navbar navbar-root management-bar management-bar-light navbar-expand"
       >
         <div
           class="container-fluid"
@@ -64,7 +64,7 @@ exports[`SearchableEntityTable should render 1`] = `
         class="table-responsive"
       >
         <table
-          class="table table-autofit table-striped table-list table-nowrap table-head-bordered table-hover"
+          class="table table-autofit table-list table-nowrap table-head-bordered table-hover table-striped"
         >
           <thead>
             <tr>

@@ -1,0 +1,43 @@
+@import 'atlas-variables';
+
+.fds-gallery-view {
+	&__preview {
+		height: 570px;
+
+		&-wrapper > * {
+			margin: 0;
+			padding: 0;
+			width: 100%;
+		}
+	}
+
+	.preview-file .preview-file-container.preview-file-max-height {
+		height: 570px;
+		max-height: 100%;
+	}
+
+	.fds-gallery-view__thumbnails {
+		min-width: 0;
+	}
+
+	.fds-gallery-view__thumbnail {
+		max-width: 20%;
+
+		&.selected {
+			.card {
+				box-shadow: 0 0 0 2px $primary-l1;
+			}
+		}
+	}
+
+	.card-type-asset {
+		.card-row {
+			align-items: center;
+		}
+
+		.card-subtitle,
+		.card-detail {
+			display: none;
+		}
+	}
+}

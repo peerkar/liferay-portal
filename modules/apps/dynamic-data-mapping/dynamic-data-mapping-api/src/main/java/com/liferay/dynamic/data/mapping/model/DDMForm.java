@@ -11,6 +11,7 @@ import com.liferay.portal.kernel.json.JSONArray;
 import java.io.Serializable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -60,6 +61,8 @@ public class DDMForm implements Serializable {
 		ddmFormField.setDDMForm(this);
 
 		_ddmFormFields.add(ddmFormField);
+
+		_ddmFormFieldMap.put(ddmFormField.getName(), ddmFormField);
 	}
 
 	public void addDDMFormRule(DDMFormRule ddmFormRule) {
@@ -102,6 +105,27 @@ public class DDMForm implements Serializable {
 		return _availableLocales;
 	}
 
+	public DDMFormField getDDMFormField(
+		String name, boolean includeNestedDDMFormFields) {
+
+		DDMFormField ddmFormField = _ddmFormFieldMap.get(name);
+
+		if ((ddmFormField != null) || !includeNestedDDMFormFields) {
+			return ddmFormField;
+		}
+
+		for (DDMFormField curDDMFormField : _ddmFormFields) {
+			DDMFormField nestedDDMFormField =
+				curDDMFormField.getNestedDDMFormFieldsMap(name);
+
+			if (nestedDDMFormField != null) {
+				return nestedDDMFormField;
+			}
+		}
+
+		return null;
+	}
+
 	public List<DDMFormField> getDDMFormFields() {
 		return _ddmFormFields;
 	}
@@ -115,8 +139,13 @@ public class DDMForm implements Serializable {
 			ddmFormFieldsMap.put(ddmFormField.getName(), ddmFormField);
 
 			if (includeNestedDDMFormFields) {
-				ddmFormFieldsMap.putAll(
-					ddmFormField.getNestedDDMFormFieldsMap());
+				List<DDMFormField> nestedDDMFormFields =
+					ddmFormField.getNestedDDMFormFields();
+
+				if (!nestedDDMFormFields.isEmpty()) {
+					ddmFormFieldsMap.putAll(
+						ddmFormField.getNestedDDMFormFieldsMap());
+				}
 			}
 		}
 
@@ -229,6 +258,8 @@ public class DDMForm implements Serializable {
 	public void setDDMFormFields(List<DDMFormField> ddmFormFields) {
 		for (DDMFormField ddmFormField : ddmFormFields) {
 			ddmFormField.setDDMForm(this);
+
+			_ddmFormFieldMap.put(ddmFormField.getName(), ddmFormField);
 		}
 
 		_ddmFormFields = ddmFormFields;
@@ -259,6 +290,7 @@ public class DDMForm implements Serializable {
 
 	private boolean _allowInvalidAvailableLocalesForProperty;
 	private Set<Locale> _availableLocales;
+	private final Map<String, DDMFormField> _ddmFormFieldMap = new HashMap<>();
 	private List<DDMFormField> _ddmFormFields;
 	private List<DDMFormRule> _ddmFormRules;
 	private DDMFormSuccessPageSettings _ddmFormSuccessPageSettings;

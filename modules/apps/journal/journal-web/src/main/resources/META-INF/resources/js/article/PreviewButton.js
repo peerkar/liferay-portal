@@ -5,7 +5,7 @@
 
 import ClayButton from '@clayui/button';
 import {openModal, openToast} from 'frontend-js-components-web';
-import React from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 
 export default function PreviewButton({
 	disabled,
@@ -14,14 +14,54 @@ export default function PreviewButton({
 	newArticle,
 	saveAsDraftURL,
 }) {
+	const [articleId, setArticleId] = useState(
+		document.getElementById(`${namespace}articleId`).value
+	);
+
+	const lockRef = useRef(null);
+
+	useEffect(() => {
+		if (Liferay.FeatureFlags['LPD-11228']) {
+			const updateArticleId = ({articleId}) => {
+				setArticleId(articleId);
+
+				document.getElementById(
+					`${namespace}jakarta-portlet-action`
+				).value = '/journal/update_article';
+			};
+
+			Liferay.on('asyncFormSubmission', updateArticleId);
+
+			Liferay.componentReady(`${namespace}publishing`).then(
+				(publishLock) => {
+					lockRef.current = publishLock;
+				}
+			);
+
+			return () => {
+				Liferay.detach('asyncFormSubmission', updateArticleId);
+			};
+		}
+	}, [namespace]);
+
+	const disableInAutosave = Liferay.FeatureFlags['LPD-11228'] && !articleId;
+
 	return (
 		<ClayButton
 			aria-label={Liferay.Language.get(
 				'a-draft-will-be-saved-before-displaying-the-preview'
 			)}
-			disabled={disabled}
+			disabled={disabled || disableInAutosave}
 			displayType="secondary"
 			onClick={() => {
+				if (Liferay.FeatureFlags['LPD-11228']) {
+					if (lockRef.current?.isLocked()) {
+						return;
+					}
+
+					lockRef.current?.lock();
+				}
+
 				const futureDate = new Date(new Date().getTime() + 1000);
 
 				updateJournalInput({
@@ -34,13 +74,9 @@ export default function PreviewButton({
 
 				const formData = new FormData(form);
 
-				const articleId = document.getElementById(
-					`${namespace}articleId`
-				);
-
 				formData.append(
 					`${namespace}cmd`,
-					newArticle && !articleId.value ? 'add' : 'update'
+					newArticle && !articleId ? 'add' : 'update'
 				);
 
 				return Liferay.Util.fetch(saveAsDraftURL, {
@@ -96,7 +132,9 @@ export default function PreviewButton({
 							});
 						}
 					})
-					.catch(() => {
+					.catch((error) => {
+						console.error(error);
+
 						openToast({
 							message: Liferay.Language.get(
 								'web-content-could-not-be-previewed-due-to-an-unexpected-error-while-generating-the-draft'
@@ -104,6 +142,11 @@ export default function PreviewButton({
 							title: Liferay.Language.get('error'),
 							type: 'danger',
 						});
+					})
+					.finally(() => {
+						if (Liferay.FeatureFlags['LPD-11228']) {
+							lockRef.current?.unlock();
+						}
 					});
 			}}
 			title={

@@ -1,0 +1,5 @@
+if (Boolean.getBoolean("gradle.s3.build.cache.enabled")) {
+	dependencies {
+		classpath group: "com.github.burrunan.s3-build-cache", name: "com.github.burrunan.s3-build-cache.gradle.plugin", version: "1.9.4"
+	}
+}

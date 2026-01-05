@@ -23,12 +23,14 @@ import com.liferay.object.model.ObjectField;
 import com.liferay.object.rest.dto.v1_0.util.LinkUtil;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
+import com.liferay.object.service.ObjectEntryService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.security.auth.GuestOrUserUtil;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -39,6 +41,8 @@ import com.liferay.portal.repository.liferayrepository.model.LiferayFileEntry;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
 import com.liferay.portal.vulcan.fields.NestedFieldsSupplier;
+import com.liferay.sharing.configuration.SharingConfiguration;
+import com.liferay.sharing.configuration.SharingConfigurationFactory;
 import com.liferay.sharing.interpreter.SharingEntryInterpreter;
 import com.liferay.sharing.interpreter.SharingEntryInterpreterProvider;
 import com.liferay.sharing.model.SharingEntry;
@@ -79,8 +83,10 @@ public class SharedAssetDTOConverter
 
 	@Override
 	public SharedAsset toDTO(
-		DTOConverterContext dtoConverterContext, SharingEntry sharingEntry) {
+			DTOConverterContext dtoConverterContext, SharingEntry sharingEntry)
+		throws PortalException {
 
+		Group group = _groupLocalService.getGroup(sharingEntry.getGroupId());
 		String mimeType = _getMimeType(sharingEntry);
 		SharingEntryInterpreter sharingEntryInterpreter =
 			_sharingEntryInterpreterProvider.getSharingEntryInterpreter(
@@ -154,12 +160,7 @@ public class SharedAssetDTOConverter
 				setId(sharingEntry::getSharingEntryId);
 				setShareable(sharingEntry::isShareable);
 				setSiteName(
-					() -> {
-						Group group = _groupLocalService.getGroup(
-							sharingEntry.getGroupId());
-
-						return group.getName(dtoConverterContext.getLocale());
-					});
+					() -> group.getName(dtoConverterContext.getLocale()));
 				setTitle(
 					() -> {
 						if (sharingEntryInterpreter == null) {
@@ -169,13 +170,27 @@ public class SharedAssetDTOConverter
 						return sharingEntryInterpreter.getTitle(
 							sharingEntry, dtoConverterContext.getLocale());
 					});
+				setVisible(
+					() -> {
+						if ((sharingEntryInterpreter == null) ||
+							!sharingEntryInterpreter.isVisible(sharingEntry)) {
+
+							return false;
+						}
+
+						SharingConfiguration groupSharingConfiguration =
+							_sharingConfigurationFactory.
+								getGroupSharingConfiguration(group);
+
+						return groupSharingConfiguration.isEnabled();
+					});
 			}
 		};
 	}
 
 	private FileEntry _getFileEntry(
-		ObjectDefinition objectDefinition, ObjectEntry objectEntry,
-		long fileEntryId) {
+		long fileEntryId, ObjectDefinition objectDefinition,
+		ObjectEntry objectEntry, ObjectField objectField) {
 
 		FileEntry fileEntry = new FileEntry();
 
@@ -188,15 +203,15 @@ public class SharedAssetDTOConverter
 
 		fileEntry.setExternalReferenceCode(
 			dlFileEntry::getExternalReferenceCode);
-
 		fileEntry.setId(dlFileEntry::getFileEntryId);
 		fileEntry.setLink(
 			() -> toLink(
 				LinkUtil.toLink(
 					_dlAppService, dlFileEntry, _dlURLHelper,
 					objectEntry.getGroupId(),
-					objectDefinition.getExternalReferenceCode(),
-					objectEntry.getExternalReferenceCode(), _portal)));
+					objectDefinition.getExternalReferenceCode(), objectEntry,
+					_objectEntryService, objectField,
+					GuestOrUserUtil.getPermissionChecker(), _portal)));
 		fileEntry.setName(dlFileEntry::getFileName);
 		fileEntry.setThumbnailURL(
 			() -> {
@@ -259,8 +274,8 @@ public class SharedAssetDTOConverter
 
 				if (serializable instanceof Long) {
 					return _getFileEntry(
-						objectDefinition, objectEntry,
-						GetterUtil.getLong(serializable));
+						GetterUtil.getLong(serializable), objectDefinition,
+						objectEntry, objectField);
 				}
 			}
 		}
@@ -368,10 +383,16 @@ public class SharedAssetDTOConverter
 	private ObjectEntryLocalService _objectEntryLocalService;
 
 	@Reference
+	private ObjectEntryService _objectEntryService;
+
+	@Reference
 	private ObjectFieldLocalService _objectFieldLocalService;
 
 	@Reference
 	private Portal _portal;
+
+	@Reference
+	private SharingConfigurationFactory _sharingConfigurationFactory;
 
 	@Reference
 	private SharingEntryInterpreterProvider _sharingEntryInterpreterProvider;

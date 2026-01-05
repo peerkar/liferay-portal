@@ -101,9 +101,7 @@ public class ContentPageEditorDefaultEditorConfigurationTest {
 	private void _assertItemSelectorURL(String eventName, String url) {
 		Assert.assertTrue(
 			url,
-			url.contains(
-				"_com_liferay_item_selector_web_portlet_ItemSelectorPortlet_" +
-					"itemSelectedEventName=_EDITOR_NAME_" + eventName));
+			url.contains("/_EDITOR_NAME_" + eventName + StringPool.QUESTION));
 	}
 
 	private void _assertTextEditorConfigJSONObject(
@@ -261,9 +259,9 @@ public class ContentPageEditorDefaultEditorConfigurationTest {
 	private static final String _ALLOWED_CONTENT = StringBundler.concat(
 		"b code em h1 h2 h3 h4 h5 h6 hr i p pre strong u [*](*){*}; a[*](*); ",
 		"div[*](*){text-align}; img[*](*){*}; p[*](*); li ol ul ",
-		"[*](*){*};table[border, cellpadding, cellspacing] {width}; tbody td ",
-		"th[scope, colspan, rowspan]; td[colspan, rowspan]; thead tr[scope]; ",
-		"span[*](*){*}; ");
+		"[*](*){*};table[border, cellpadding, cellspacing]",
+		"{table-layout,width}; tbody td{width}; th[scope, colspan, rowspan]; ",
+		"td[colspan, rowspan]; thead tr[scope]; span[*](*){*}; ");
 
 	private static final String _EXTRA_PLUGINS = StringBundler.concat(
 		"autolink,ae_dragresize,ae_addimages,ae_imagealignment,",

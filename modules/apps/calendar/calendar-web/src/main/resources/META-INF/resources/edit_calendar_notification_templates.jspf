@@ -78,14 +78,32 @@ String body = BeanPropertiesUtil.getString(calendarNotificationTemplate, "body",
 
 		<aui:input name="subject" value='<%= BeanPropertiesUtil.getString(calendarNotificationTemplate, "subject", NotificationUtil.getDefaultTemplate(notificationType, notificationTemplateType, NotificationField.SUBJECT)) %>' />
 
-		<aui:field-wrapper label="body">
-			<liferay-editor:editor
-				contents="<%= body %>"
-				editorName="ckeditor"
-			/>
+		<c:choose>
+			<c:when test='<%= FeatureFlagManagerUtil.isEnabled("LPD-11235") %>'>
+				<div data-testid="bodyEditorContainer">
+					<label for="<portlet:namespace />body">
+						<liferay-ui:message key="body" />
+					</label>
 
-			<aui:input name="body" type="hidden" value="<%= body %>" />
-		</aui:field-wrapper>
+					<liferay-editor:editor
+						contents="<%= body %>"
+						editorName="ckeditor5_classic"
+						formInputEnabled="<%= true %>"
+						formInputName="body"
+					/>
+				</div>
+			</c:when>
+			<c:otherwise>
+				<aui:field-wrapper label="body">
+					<liferay-editor:editor
+						contents="<%= body %>"
+						editorName="ckeditor"
+					/>
+
+					<aui:input name="body" type="hidden" value="<%= body %>" />
+				</aui:field-wrapper>
+			</c:otherwise>
+		</c:choose>
 	</aui:fieldset>
 
 	<div class="definition-of-terms">
@@ -188,13 +206,15 @@ String body = BeanPropertiesUtil.getString(calendarNotificationTemplate, "body",
 
 <aui:script>
 	function <portlet:namespace />updateCalendarNotificationTemplate() {
-		var notificationTemplateContentBody = document.getElementById(
-			'<portlet:namespace />body'
-		);
+		if (!Liferay.FeatureFlags['LPD-11235']) {
+			var notificationTemplateContentBody = document.getElementById(
+				'<portlet:namespace />body'
+			);
 
-		if (notificationTemplateContentBody) {
-			notificationTemplateContentBody.value =
-				window.<portlet:namespace />editor.getHTML();
+			if (notificationTemplateContentBody) {
+				notificationTemplateContentBody.value =
+					window.<portlet:namespace />editor.getHTML();
+			}
 		}
 
 		submitForm(document.<portlet:namespace />fm);

@@ -6,6 +6,7 @@
 import {Page, expect} from '@playwright/test';
 
 import {faroConfig} from '../faro.config';
+import {ACPage, navigateToACSettingsViaURL} from './navigation';
 
 export async function checkDataSourceStatus({
 	dataSourceName,
@@ -40,9 +41,9 @@ export async function createDataSource(page) {
 
 	await page.getByRole('link', {name: 'Settings'}).click();
 
-	await page.getByRole('link', {name: 'Add Data Source'}).click();
+	await page.getByRole('button', {name: 'Add Data Source'}).click();
 
-	await page.getByRole('button', {name: 'Liferay DXP'}).click();
+	await page.getByRole('menuitem', {name: 'Liferay DXP'}).click();
 
 	await page.waitForTimeout(1000);
 
@@ -67,6 +68,20 @@ export async function findDataSource({
 	await page.getByRole('textbox', {name: 'Search'}).press('Enter');
 
 	return page.getByRole('link', {exact: true, name: dataSourceName});
+}
+
+export async function gotoLatestLiferayDXPDataSource(page, project) {
+	await navigateToACSettingsViaURL({
+		acPage: ACPage.dataSourcePage,
+		page,
+		projectID: project.groupId,
+	});
+
+	await page
+		.locator('td')
+		.filter({exact: false, hasText: 'Liferay DXP'})
+		.first()
+		.click();
 }
 
 export async function renameDataSource({

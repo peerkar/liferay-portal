@@ -6,15 +6,20 @@
 import {expect, mergeTests} from '@playwright/test';
 
 import {apiHelpersTest} from '../../../fixtures/apiHelpersTest';
+import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {isolatedSiteTest} from '../../../fixtures/isolatedSiteTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {createCategories} from '../../../helpers/CreateCategories';
+import {clickAndExpectToBeVisible} from '../../../utils/clickAndExpectToBeVisible';
 import {waitForAlert} from '../../../utils/waitForAlert';
 import {assetCategoriesPagesTest} from './fixtures/assetCategoriesAdminPagesTest';
 
 const test = mergeTests(
 	apiHelpersTest,
 	assetCategoriesPagesTest,
+	featureFlagsTest({
+		'LPD-31228': {enabled: true},
+	}),
 	isolatedSiteTest,
 	loginTest()
 );
@@ -36,6 +41,7 @@ test('Add, edit and delete a vocabulary', async ({
 	await assetCategoriesAdminPage.goto(site.friendlyUrlPath);
 
 	const vocabularyDescription = 'Vocabulary Description';
+	const vocabularyExternalReferenceCode = 'vocabulary-erc-vocabulary-1';
 	const vocabularyName = 'Vocabulary 1';
 
 	await test.step('Add a vocabulary with description', async () => {
@@ -43,6 +49,7 @@ test('Add, edit and delete a vocabulary', async ({
 
 		await vocabulariesEditPage.add({
 			description: vocabularyDescription,
+			externalReferenceCode: vocabularyExternalReferenceCode,
 			name: vocabularyName,
 		});
 
@@ -60,6 +67,10 @@ test('Add, edit and delete a vocabulary', async ({
 
 		await vocabulariesEditPage.fillName(newVocabularyName);
 
+		await expect(
+			vocabulariesEditPage.externalReferenceCodeInput
+		).toHaveValue(vocabularyExternalReferenceCode);
+
 		await vocabulariesEditPage.saveButton.click();
 
 		await waitForAlert(page);
@@ -67,6 +78,28 @@ test('Add, edit and delete a vocabulary', async ({
 		await expect(
 			page.getByRole('heading', {name: newVocabularyName})
 		).toBeVisible();
+	});
+
+	await test.step('Add a vocabulary with existing external reference code', async () => {
+		await assetCategoriesAdminPage.newVocabularyButton.click();
+
+		await vocabulariesEditPage.fillName('Vocabulary 2');
+		await vocabulariesEditPage.fillExternalReferenceCode(
+			vocabularyExternalReferenceCode
+		);
+
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: vocabulariesEditPage.saveButton,
+			trigger: page.getByText(
+				'Please enter a unique external reference code.',
+				{
+					exact: true,
+				}
+			),
+		});
+
+		await assetCategoriesAdminPage.goto(site.friendlyUrlPath);
 	});
 
 	await test.step('Delete the vocabulary', async () => {

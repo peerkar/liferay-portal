@@ -577,3 +577,81 @@ export function localizeField(field, defaultLanguageId, editingLanguageId) {
 		value,
 	};
 }
+
+export function updatePagesOnFieldChange(
+	pages,
+	{
+		fieldUpdateContext,
+		focusedField,
+		newFocusedField,
+		propertyName,
+		propertyValue,
+		repeatableHandler,
+	}
+) {
+	const visitor = new PagesVisitor(pages);
+
+	return visitor.mapFields(
+		(field) => {
+			if (field.fieldName === focusedField.fieldName) {
+				return newFocusedField;
+			}
+
+			if (
+				propertyName === 'name' &&
+				focusedField.fieldName !== newFocusedField.fieldName
+			) {
+				if (field.type === FIELD_TYPE_FIELDSET && field.rows) {
+					const rowsPages = [
+						{
+							rows:
+								typeof field.rows === 'string'
+									? JSON.parse(field.rows)
+									: field.rows,
+						},
+					];
+
+					const rowsVisitor = new PagesVisitor(rowsPages);
+
+					let updateColumn = false;
+
+					const updatedPages = rowsVisitor.mapColumns((column) => ({
+						...column,
+						fields: column.fields.map((nestedFieldName) => {
+							if (nestedFieldName === focusedField.fieldName) {
+								updateColumn = true;
+
+								return newFocusedField.fieldName;
+							}
+
+							return nestedFieldName;
+						}),
+					}));
+
+					if (!updateColumn) {
+						return field;
+					}
+
+					field = updateField(
+						fieldUpdateContext,
+						field,
+						'rows',
+						updatedPages[0].rows
+					);
+				}
+			}
+
+			if (
+				propertyValue &&
+				propertyName === 'repeatable' &&
+				repeatableHandler
+			) {
+				return repeatableHandler(field);
+			}
+
+			return field;
+		},
+		false,
+		true
+	);
+}

@@ -763,13 +763,16 @@ public class LayoutStagedModelDataHandler
 			long masterLayoutPlid = GetterUtil.getLong(
 				layoutElement.attributeValue("master-layout-plid"));
 
-			long importedMasterLayoutPlid = MapUtil.getLong(
-				layoutPlids, masterLayoutPlid, masterLayoutPlid);
+			LayoutPageTemplateEntry layoutPageTemplateEntry =
+				_layoutPageTemplateEntryLocalService.
+					fetchLayoutPageTemplateEntryByPlid(
+						MapUtil.getLong(
+							layoutPlids, masterLayoutPlid, masterLayoutPlid));
 
-			importedLayout.setMasterLayoutPlid(importedMasterLayoutPlid);
-		}
-		else {
-			importedLayout.setMasterLayoutPlid(0);
+			if (layoutPageTemplateEntry != null) {
+				importedLayout.setMasterLayoutPageTemplateEntryERC(
+					layoutPageTemplateEntry.getExternalReferenceCode());
+			}
 		}
 
 		long parentPlid = layout.getParentPlid();
@@ -942,8 +945,7 @@ public class LayoutStagedModelDataHandler
 
 		importedLayout.setExpandoBridgeAttributes(serviceContext);
 
-		_importFaviconFileEntry(
-			layout, layoutElement, importedLayout, portletDataContext);
+		_importFaviconFileEntry(layout, layoutElement, importedLayout);
 
 		_importClientExtensionEntryRels(
 			importedLayout, layout, portletDataContext);
@@ -1311,15 +1313,17 @@ public class LayoutStagedModelDataHandler
 			PortletDataContext portletDataContext)
 		throws Exception {
 
-		if (layout.getFaviconFileEntryId() <= 0) {
+		if (Validator.isNull(layout.getFaviconFileEntryERC())) {
 			return;
 		}
 
 		FileEntry faviconFileEntry = null;
 
 		try {
-			faviconFileEntry = _dlAppLocalService.getFileEntry(
-				layout.getFaviconFileEntryId());
+			faviconFileEntry =
+				_dlAppLocalService.getFileEntryByExternalReferenceCode(
+					layout.getFaviconFileEntryERC(),
+					layout.getFaviconFileEntryGroupId());
 		}
 		catch (PortalException portalException) {
 			if (_log.isWarnEnabled()) {
@@ -1781,7 +1785,8 @@ public class LayoutStagedModelDataHandler
 
 		return _styleBookEntryLocalService.
 			fetchStyleBookEntryByExternalReferenceCode(
-				layout.getStyleBookEntryERC(), layout.getGroupId());
+				layout.getStyleBookEntryERC(),
+				_staging.getLiveGroupId(layout.getGroupId()));
 	}
 
 	private void _fixExportTypeSettings(Layout layout) throws Exception {
@@ -2071,22 +2076,15 @@ public class LayoutStagedModelDataHandler
 	}
 
 	private void _importFaviconFileEntry(
-		Layout layout, Element layoutElement, Layout importedLayout,
-		PortletDataContext portletDataContext) {
+		Layout layout, Element layoutElement, Layout importedLayout) {
 
-		Map<Long, Long> fileEntryIds =
-			(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
-				FileEntry.class);
-
-		long faviconFileEntryId = MapUtil.getLong(
-			fileEntryIds, layout.getFaviconFileEntryId(), 0);
+		String faviconFileEntryERC = layout.getFaviconFileEntryERC();
+		String faviconFileEntryScopeERC = layout.getFaviconFileEntryScopeERC();
 
 		String faviconFileEntryUuid = layoutElement.attributeValue(
 			"favicon-file-entry-uuid");
 
-		if ((faviconFileEntryId == 0) &&
-			Validator.isNotNull(faviconFileEntryUuid)) {
-
+		if (Validator.isNotNull(faviconFileEntryUuid)) {
 			long faviconFileEntryGroupId = GetterUtil.getLong(
 				layoutElement.attributeValue("favicon-file-entry-group-id"));
 
@@ -2095,7 +2093,19 @@ public class LayoutStagedModelDataHandler
 					_dlAppLocalService.getFileEntryByUuidAndGroupId(
 						faviconFileEntryUuid, faviconFileEntryGroupId);
 
-				faviconFileEntryId = faviconFileEntry.getFileEntryId();
+				faviconFileEntryERC =
+					faviconFileEntry.getExternalReferenceCode();
+
+				if (layout.getGroupId() != faviconFileEntryGroupId) {
+					Group faviconFileEntryGroup = _groupLocalService.getGroup(
+						faviconFileEntryGroupId);
+
+					faviconFileEntryScopeERC =
+						faviconFileEntryGroup.getExternalReferenceCode();
+				}
+				else {
+					faviconFileEntryScopeERC = null;
+				}
 			}
 			catch (PortalException portalException) {
 				if (_log.isDebugEnabled()) {
@@ -2104,7 +2114,8 @@ public class LayoutStagedModelDataHandler
 			}
 		}
 
-		importedLayout.setFaviconFileEntryId(faviconFileEntryId);
+		importedLayout.setFaviconFileEntryERC(faviconFileEntryERC);
+		importedLayout.setFaviconFileEntryScopeERC(faviconFileEntryScopeERC);
 	}
 
 	private void _importFriendlyURLEntries(

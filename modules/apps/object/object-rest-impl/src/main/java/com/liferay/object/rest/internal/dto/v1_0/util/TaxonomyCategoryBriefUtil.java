@@ -6,13 +6,17 @@
 package com.liferay.object.rest.internal.dto.v1_0.util;
 
 import com.liferay.asset.kernel.model.AssetCategory;
+import com.liferay.asset.kernel.model.AssetVocabulary;
+import com.liferay.asset.kernel.service.AssetVocabularyLocalServiceUtil;
+import com.liferay.object.rest.dto.v1_0.ParentTaxonomyCategory;
+import com.liferay.object.rest.dto.v1_0.ParentTaxonomyVocabulary;
 import com.liferay.object.rest.dto.v1_0.TaxonomyCategoryBrief;
-import com.liferay.object.rest.dto.v1_0.util.ScopeUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
+import com.liferay.portal.vulcan.scope.Scope;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 
 import jakarta.ws.rs.core.MultivaluedMap;
@@ -35,7 +39,41 @@ public class TaxonomyCategoryBriefUtil {
 				setEmbeddedTaxonomyCategory(
 					() -> _toTaxonomyCategory(
 						assetCategory.getCategoryId(), dtoConverterContext));
-				setScope(() -> ScopeUtil.toScope(assetCategory.getGroupId()));
+				setParentTaxonomyCategory(
+					() -> {
+						AssetCategory parentAssetCategory =
+							assetCategory.getParentCategory();
+
+						if (parentAssetCategory == null) {
+							return null;
+						}
+
+						return new ParentTaxonomyCategory() {
+							{
+								setExternalReferenceCode(
+									parentAssetCategory::
+										getExternalReferenceCode);
+							}
+						};
+					});
+				setParentTaxonomyVocabulary(
+					() -> {
+						AssetVocabulary parentAssetVocabulary =
+							AssetVocabularyLocalServiceUtil.getAssetVocabulary(
+								assetCategory.getVocabularyId());
+
+						return new ParentTaxonomyVocabulary() {
+							{
+								setExternalReferenceCode(
+									parentAssetVocabulary::
+										getExternalReferenceCode);
+							}
+						};
+					});
+				setScope(
+					() -> Scope.of(
+						assetCategory.getGroupId(),
+						dtoConverterContext.getLocale()));
 				setTaxonomyCategoryExternalReferenceCode(
 					assetCategory::getExternalReferenceCode);
 				setTaxonomyCategoryId(assetCategory::getCategoryId);

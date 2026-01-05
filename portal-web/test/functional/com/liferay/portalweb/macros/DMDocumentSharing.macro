@@ -113,14 +113,10 @@ definition {
 
 	@summary = "Default summary"
 	macro viewDocumentViaSharedContent(dmDocumentTitle = null, contentSharingPermission = null) {
-		AssertTextEquals(
-			locator1 = "Portlet#HEADER",
-			value1 = "Shared Content");
-
 		if (${contentSharingPermission} == "View") {
 			AssertElementNotPresent(locator1 = "CKEditor#BODY_FIELD_IFRAME");
 
-			Click.waitForMenuToggleJSClick(locator1 = "Icon#VERTICAL_ELLIPSIS_BUTTON");
+			Click.waitForMenuToggleJSClick(locator1 = "DocumentsAndMediaDocument#DOCUMENT_ENTRY_ACTIONS");
 
 			MenuItem.viewNotPresent(menuItem = "Edit");
 		}
@@ -131,7 +127,7 @@ definition {
 
 			SelectFrame(value1 = "relative=top");
 
-			Click.waitForMenuToggleJSClick(locator1 = "Icon#VERTICAL_ELLIPSIS_BUTTON");
+			Click.waitForMenuToggleJSClick(locator1 = "DocumentsAndMediaDocument#DOCUMENT_ENTRY_ACTIONS");
 
 			MenuItem.viewNotPresent(menuItem = "Edit");
 		}
@@ -142,10 +138,12 @@ definition {
 
 			SelectFrame(value1 = "relative=top");
 
-			Click.waitForMenuToggleJSClick(locator1 = "Icon#VERTICAL_ELLIPSIS_BUTTON");
+			Click.waitForMenuToggleJSClick(locator1 = "DocumentsAndMediaDocument#DOCUMENT_ENTRY_ACTIONS");
 
 			MenuItem.viewPresent(menuItem = "Edit");
 		}
+
+		Click.waitForMenuToggleJSClick(locator1 = "Icon#INFO_DM");
 
 		var key_dmDocumentTitle = ${dmDocumentTitle};
 

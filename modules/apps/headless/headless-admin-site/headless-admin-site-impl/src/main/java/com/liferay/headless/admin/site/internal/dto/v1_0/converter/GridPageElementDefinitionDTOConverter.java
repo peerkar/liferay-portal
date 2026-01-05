@@ -9,13 +9,13 @@ import com.liferay.headless.admin.site.dto.v1_0.GridPageElementDefinition;
 import com.liferay.headless.admin.site.dto.v1_0.GridViewport;
 import com.liferay.headless.admin.site.dto.v1_0.GridViewportDefinition;
 import com.liferay.headless.admin.site.dto.v1_0.PageElementDefinition;
+import com.liferay.headless.admin.site.internal.dto.v1_0.util.FragmentViewportStyleUtil;
 import com.liferay.headless.admin.site.internal.dto.v1_0.util.ViewportIdUtil;
 import com.liferay.layout.converter.VerticalAlignmentConverter;
 import com.liferay.layout.util.structure.RowStyledLayoutStructureItem;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
@@ -23,7 +23,7 @@ import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
@@ -70,71 +70,54 @@ public class GridPageElementDefinitionDTOConverter
 
 						return ArrayUtil.toStringArray(cssClasses);
 					});
-				setCustomCSS(
-					() -> {
-						String customCSS =
-							rowStyledLayoutStructureItem.getCustomCSS();
-
-						if (Validator.isNotNull(customCSS)) {
-							return customCSS;
-						}
-
-						return null;
-					});
 				setGridViewports(
 					() -> _toGridViewports(rowStyledLayoutStructureItem));
 				setGutters(rowStyledLayoutStructureItem::isGutters);
 				setIndexed(rowStyledLayoutStructureItem::isIndexed);
-				setModulesPerRow(
-					rowStyledLayoutStructureItem::getModulesPerRow);
 				setName(rowStyledLayoutStructureItem::getName);
 				setNumberOfModules(
 					rowStyledLayoutStructureItem::getNumberOfColumns);
 				setReverseOrder(rowStyledLayoutStructureItem::isReverseOrder);
-				setType(PageElementDefinition.Type.GRID);
-				setVerticalAlignment(
-					() -> {
-						String itemVerticalAlignment =
-							rowStyledLayoutStructureItem.getVerticalAlignment();
-
-						if (Validator.isNull(itemVerticalAlignment)) {
-							return null;
-						}
-
-						return VerticalAlignment.create(
-							VerticalAlignmentConverter.convertToExternalValue(
-								itemVerticalAlignment));
-					});
+				setType(() -> PageElementDefinition.Type.GRID);
 			}
 		};
 	}
 
-	private GridViewport _toGridViewport(
-		GridViewport.Id gridViewportId,
-		Map<String, JSONObject> rowViewportConfigurationJSONObjects) {
+	private JSONObject _getViewportJSONObject(
+		GridViewport.Id gridViewportId, JSONObject jsonObject) {
+
+		if (Objects.equals(gridViewportId, GridViewport.Id.DESKTOP)) {
+			return jsonObject;
+		}
 
 		String viewportId = ViewportIdUtil.toInternalValue(
 			gridViewportId.getValue());
 
-		if (!rowViewportConfigurationJSONObjects.containsKey(viewportId)) {
+		if (!jsonObject.has(viewportId)) {
 			return null;
 		}
 
-		JSONObject rowViewportConfigurationJSONObject =
-			rowViewportConfigurationJSONObjects.get(viewportId);
+		return jsonObject.getJSONObject(viewportId);
+	}
 
-		if (JSONUtil.isEmpty(rowViewportConfigurationJSONObject)) {
+	private GridViewport _toGridViewport(
+		GridViewport.Id gridViewportId, JSONObject jsonObject) {
+
+		JSONObject viewportJSONObject = _getViewportJSONObject(
+			gridViewportId, jsonObject);
+
+		if (JSONUtil.isEmpty(viewportJSONObject)) {
 			return null;
 		}
 
 		return new GridViewport() {
 			{
-				setCustomCSS(
-					() -> rowViewportConfigurationJSONObject.getString(
-						"customCSS"));
+				setCustomCSS(() -> viewportJSONObject.getString("customCSS"));
+				setFragmentViewportStyle(
+					() -> FragmentViewportStyleUtil.toFragmentViewportStyle(
+						viewportJSONObject.getJSONObject("styles")));
 				setGridViewportDefinition(
-					() -> _toGridViewportDefinition(
-						rowViewportConfigurationJSONObject));
+					() -> _toGridViewportDefinition(viewportJSONObject));
 				setId(() -> gridViewportId);
 			}
 		};
@@ -177,18 +160,19 @@ public class GridPageElementDefinitionDTOConverter
 	private GridViewport[] _toGridViewports(
 		RowStyledLayoutStructureItem rowStyledLayoutStructureItem) {
 
-		Map<String, JSONObject> rowViewportConfigurationJSONObjects =
-			rowStyledLayoutStructureItem.getViewportConfigurationJSONObjects();
-
-		if (MapUtil.isEmpty(rowViewportConfigurationJSONObjects)) {
-			return null;
-		}
-
 		List<GridViewport> gridViewports = new ArrayList<>() {
 			{
 				GridViewport gridViewport = _toGridViewport(
+					GridViewport.Id.DESKTOP,
+					rowStyledLayoutStructureItem.getItemConfigJSONObject());
+
+				if (gridViewport != null) {
+					add(gridViewport);
+				}
+
+				gridViewport = _toGridViewport(
 					GridViewport.Id.LANDSCAPE_MOBILE,
-					rowViewportConfigurationJSONObjects);
+					rowStyledLayoutStructureItem.getItemConfigJSONObject());
 
 				if (gridViewport != null) {
 					add(gridViewport);
@@ -196,7 +180,7 @@ public class GridPageElementDefinitionDTOConverter
 
 				gridViewport = _toGridViewport(
 					GridViewport.Id.PORTRAIT_MOBILE,
-					rowViewportConfigurationJSONObjects);
+					rowStyledLayoutStructureItem.getItemConfigJSONObject());
 
 				if (gridViewport != null) {
 					add(gridViewport);
@@ -204,7 +188,7 @@ public class GridPageElementDefinitionDTOConverter
 
 				gridViewport = _toGridViewport(
 					GridViewport.Id.TABLET,
-					rowViewportConfigurationJSONObjects);
+					rowStyledLayoutStructureItem.getItemConfigJSONObject());
 
 				if (gridViewport != null) {
 					add(gridViewport);

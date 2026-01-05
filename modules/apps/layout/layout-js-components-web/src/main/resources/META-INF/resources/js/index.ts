@@ -28,6 +28,10 @@ export {default as ScreenReaderAnnouncer} from './components/screen_reader_annou
 export {default as SearchForm} from './components/search_form/SearchForm';
 export {default as SearchResultsMessage} from './components/search_results_message/SearchResultsMessage';
 export {
+	DragAndDropContextProvider,
+	useKeyboardDragPreviewProps,
+} from './contexts/DragAndDropContext';
+export {
 	ScreenReaderAnnouncerContext,
 	ScreenReaderAnnouncerContextProvider,
 	ScreenReaderAnnouncerContextType,
@@ -36,6 +40,7 @@ export {
 	StyleErrorsContextProvider,
 	useHasStyleErrors,
 } from './contexts/StyleErrorsContext';
+export {default as useDragAndDrop} from './hooks/drag_and_drop/useDragAndDrop';
 export {default as useControlledState} from './hooks/useControlledState';
 export {default as SegmentExperience} from './types/SegmentExperience';
 export {default as convertRGBtoHex} from './utils/convertRGBtoHex';

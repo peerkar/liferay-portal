@@ -11,6 +11,7 @@ import {DashboardPage} from '../../../../components/DashBoardPage/DashboardPage'
 import {DashboardEmptyTable} from '../../../../components/DashboardTable/DashboardEmptyTable';
 import Page from '../../../../components/Page';
 import {OrderTypes} from '../../../../enums/Order';
+import i18n from '../../../../i18n';
 import {Liferay} from '../../../../liferay/liferay';
 import {getSiteURL} from '../../../../utils/site';
 import {useCustomerDashboardOutletContext} from '../../CustomerDashboardOutlet';
@@ -30,9 +31,9 @@ const Apps = () => {
 		channelId: Number(Liferay.CommerceContext.commerceChannelId),
 		orderTypeExternalReferenceCodes: [
 			OrderTypes.CLIENT_EXTENSION,
-			OrderTypes.CLOUDAPP,
+			OrderTypes.CLOUD_APP,
 			OrderTypes.COMPOSITE_APP,
-			OrderTypes.DXPAPP,
+			OrderTypes.DXP_APP,
 			OrderTypes.LOW_CODE_CONFIGURATION,
 			OrderTypes.OTHER,
 		],
@@ -81,7 +82,7 @@ const Apps = () => {
 				<ClayButton
 					onClick={() => Liferay.Util.navigate(getSiteURL() || '/')}
 				>
-					Add Apps
+					{i18n.translate('browse-catalog')}
 				</ClayButton>
 			}
 			title="My Apps"

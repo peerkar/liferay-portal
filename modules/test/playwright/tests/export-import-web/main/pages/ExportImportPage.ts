@@ -4,15 +4,28 @@
  */
 
 import {Locator, Page, expect} from '@playwright/test';
+import path from 'path';
 
 import {ProductMenuPage} from '../../../../pages/product-navigation-control-menu-web/ProductMenuPage';
 import {clickAndExpectToBeHidden} from '../../../../utils/clickAndExpectToBeHidden';
 import {clickAndExpectToBeVisible} from '../../../../utils/clickAndExpectToBeVisible';
+import getRandomString from '../../../../utils/getRandomString';
 import {PORTLET_URLS} from '../../../../utils/portletUrls';
 import {getTempDir} from '../../../../utils/temp';
 
+type DateFilter = {
+	endDate?: string;
+	endTime?: string;
+	rangeLast?: string;
+	startDate?: string;
+	startTime?: string;
+};
+
+export type taskStatus = 'success' | 'completedWithErrors';
+
 export class ExportImportPage {
 	readonly cancelButton: Locator;
+	readonly clearMenuItem: Locator;
 	readonly continueButton: Locator;
 	readonly copyAsNewRadioButton: Locator;
 	readonly deleteApplicationDataAlert: Locator;
@@ -22,6 +35,10 @@ export class ExportImportPage {
 	readonly downloadButton: Locator;
 	readonly exportButton: Locator;
 	readonly exportPermissionsButton: Locator;
+	readonly exportReportEntriesMenuItem: Locator;
+	readonly exportReportEntriesModal: Locator;
+	readonly exportReportEntriesModalDownloadButton: Locator;
+	readonly exportReportEntriesModalProgressbar: Locator;
 	readonly fileSelector: Locator;
 	readonly importButton: Locator;
 	readonly importModalButton: Locator;
@@ -30,18 +47,32 @@ export class ExportImportPage {
 	readonly newExportButton: Locator;
 	readonly newImportButton: Locator;
 	readonly page: Page;
+	readonly pagesCheckbox: Locator;
+	readonly portletListContainer: Locator;
 	readonly productMenuPage: ProductMenuPage;
-	readonly taskMenu: (taskName: string) => Locator;
-	readonly taskSuccessLabel: (taskName: string) => Locator;
+	readonly rangeDateRangeEndDate: Locator;
+	readonly rangeDateRangeEndTime: Locator;
+	readonly rangeDateRangeRadioButton: Locator;
+	readonly rangeDateRangeStartDate: Locator;
+	readonly rangeDateRangeStartTime: Locator;
+	readonly rangeLast: Locator;
+	readonly rangeLastRadioButton: Locator;
+	readonly taskActionsMenu: (taskName: string) => Locator;
+	readonly taskRow: (taskName: string) => Locator;
+	readonly taskStatusLabel: (
+		taskName: string,
+		taskStatus?: taskStatus
+	) => Locator;
 	readonly title: Locator;
 	readonly updateDataAlert: Locator;
 	readonly updateDataMirrorWarningLabel: Locator;
 	readonly useCurrentUserAsAuthorCheckbox: Locator;
-	readonly viewDetails: Locator;
+	readonly viewReportEntriesMenuItem: Locator;
 	readonly warningHeader: Locator;
 
 	constructor(page: Page) {
 		this.cancelButton = page.getByRole('button', {name: 'Cancel'});
+		this.clearMenuItem = page.getByRole('link', {name: 'Clear'});
 		this.continueButton = page.getByRole('button', {name: 'Continue'});
 		this.copyAsNewRadioButton = page.getByLabel('Copy as new');
 		this.deleteApplicationDataAlert = page.locator('[role="alert"]', {
@@ -60,7 +91,19 @@ export class ExportImportPage {
 			.locator('label');
 		this.downloadButton = page.getByRole('button', {name: 'Download'});
 		this.exportButton = page.getByRole('button', {name: 'Export'});
+		this.exportReportEntriesMenuItem = page.getByRole('menuitem', {
+			name: 'Export Report Entries',
+		});
 		this.exportPermissionsButton = page.getByLabel('Export Permissions');
+		this.exportReportEntriesModal = page.getByRole('dialog', {
+			name: 'Export Report Entries',
+		});
+		this.exportReportEntriesModalDownloadButton =
+			this.exportReportEntriesModal.getByRole('button', {
+				name: 'Download',
+			});
+		this.exportReportEntriesModalProgressbar =
+			this.exportReportEntriesModal.getByRole('progressbar');
 		this.fileSelector = page.getByRole('button', {name: 'Select File'});
 		this.importButton = page.getByRole('button', {name: 'Import'});
 		this.importModalButton = page
@@ -73,19 +116,54 @@ export class ExportImportPage {
 		this.newExportButton = page.getByRole('link', {name: 'Custom Export'});
 		this.newImportButton = page.getByRole('link', {name: 'Import'});
 		this.page = page;
+		this.pagesCheckbox = page.locator(
+			'[id="_com_liferay_exportimport_web_portlet_ImportPortlet_contentLink_com_liferay_layout_admin_web_portlet_GroupPagesPortlet"]'
+		);
+		this.portletListContainer = page
+			.locator(
+				'#_com_liferay_exportimport_web_portlet_ExportPortlet_selectContents .portlet-list'
+			)
+			.or(
+				page.locator(
+					'#_com_liferay_exportimport_web_portlet_CompanyExportPortlet_selectContents .portlet-list'
+				)
+			);
 		this.productMenuPage = new ProductMenuPage(page);
-		this.taskMenu = (taskName: string) =>
-			this.page
-				.locator('[data-qa-id="row"]', {
-					hasText: taskName,
-				})
-				.getByRole('button');
-		this.taskSuccessLabel = (taskName: string) =>
-			this.page
-				.locator('[data-qa-id="row"]', {
-					hasText: taskName,
-				})
-				.getByText('Successful');
+		this.rangeDateRangeEndDate = page.locator(
+			'[id="_com_liferay_exportimport_web_portlet_CompanyExportPortlet_endDate"]'
+		);
+		this.rangeDateRangeEndTime = page.locator(
+			'[id="_com_liferay_exportimport_web_portlet_CompanyExportPortlet_endTime"]'
+		);
+		this.rangeDateRangeRadioButton = page.getByRole('radio', {
+			name: 'Date Range',
+		});
+		this.rangeDateRangeStartDate = page.locator(
+			'[id="_com_liferay_exportimport_web_portlet_CompanyExportPortlet_startDate"]'
+		);
+		this.rangeDateRangeStartTime = page.locator(
+			'[id="_com_liferay_exportimport_web_portlet_CompanyExportPortlet_startTime"]'
+		);
+		this.rangeLast = page.locator(
+			'[id="_com_liferay_exportimport_web_portlet_CompanyExportPortlet_last"]'
+		);
+		this.rangeLastRadioButton = page.getByRole('radio', {name: 'Last'});
+		this.taskActionsMenu = (taskName) =>
+			this.taskRow(taskName).getByRole('button');
+		this.taskRow = (taskName) =>
+			page.locator('[data-qa-id="row"]', {
+				hasText: taskName,
+			});
+		this.taskStatusLabel = (taskName, taskStatus = 'success') => {
+			const taskStatusTexts: Record<taskStatus, string> = {
+				completedWithErrors: 'Completed with errors',
+				success: 'Successful',
+			};
+
+			return this.taskRow(taskName).getByText(
+				taskStatusTexts[taskStatus]
+			);
+		};
 		this.title = page.getByPlaceholder('Enter the name of the process');
 		this.updateDataAlert = page.locator('[role="alert"]', {
 			hasText:
@@ -99,48 +177,96 @@ export class ExportImportPage {
 		this.useCurrentUserAsAuthorCheckbox = page.getByLabel(
 			'Use the Current User as Author: Assign the current user as the author of all'
 		);
-		this.viewDetails = page.getByRole('menuitem', {name: 'View Details'});
+		this.viewReportEntriesMenuItem = page.getByRole('menuitem', {
+			name: 'View Report Entries',
+		});
 		this.warningHeader = page.getByRole('heading', {
 			name: 'Important Info About Your Import',
 		});
 	}
 
-	async export(title: string, itemLabel?: string) {
-		await this.newExportButton.click();
+	async uncheckPortlets() {
+		const portletListContainer = await this.portletListContainer;
 
-		await this.title.fill(title);
-
-		if (itemLabel) {
-			await this.page.getByLabel(itemLabel, {exact: true}).click();
-		}
-
-		await this.exportButton.click();
-	}
-
-	async exportAll(title: string, itemLabel?: string) {
-		await this.newExportButton.click();
-
-		await this.title.fill(title);
-
-		if (itemLabel) {
-			await this.page.getByLabel(itemLabel, {exact: true}).click();
-		}
-
-		const portletListContainer = this.page.locator(
-			'#_com_liferay_exportimport_web_portlet_ExportPortlet_selectContents .portlet-list'
-		);
-
-		await portletListContainer.waitFor();
+		await portletListContainer.waitFor({state: 'attached'});
 
 		const checkBoxes = portletListContainer.locator(
-			'input[type="checkbox"]'
+			'input[type="checkbox"]:visible'
 		);
 
 		for (const checkbox of await checkBoxes.all()) {
-			await checkbox.check();
+			await checkbox.uncheck();
+		}
+	}
+
+	async export({
+		dateFilter,
+		includePermissions = false,
+		portletLabels,
+		taskName = `Export-${getRandomString()}`,
+	}: {
+		dateFilter?: DateFilter;
+		includePermissions?: boolean;
+		portletLabels?: string[];
+		taskName?: string;
+	} = {}): Promise<string> {
+		await this.newExportButton.click();
+
+		await this.title.fill(taskName);
+
+		if (portletLabels) {
+			await this.uncheckPortlets();
+
+			for (const portletLabel of portletLabels) {
+				await this.page.getByLabel(portletLabel, {exact: true}).check();
+			}
+		}
+
+		if (includePermissions) {
+			await this.exportPermissionsButton.check();
+		}
+
+		if (dateFilter?.endDate || dateFilter?.startDate) {
+			await this.rangeDateRangeRadioButton.check();
+
+			if (dateFilter.endDate) {
+				await this.rangeDateRangeEndDate.fill(dateFilter.endDate);
+			}
+
+			if (dateFilter.endTime) {
+				await this.rangeDateRangeEndTime.fill(dateFilter.endTime);
+			}
+
+			if (dateFilter.startDate) {
+				await this.rangeDateRangeStartDate.fill(dateFilter.startDate);
+			}
+
+			if (dateFilter.startTime) {
+				await this.rangeDateRangeStartTime.fill(dateFilter.startTime);
+			}
+		}
+		else if (dateFilter?.rangeLast) {
+			await this.rangeLastRadioButton.check();
+
+			await this.rangeLast.selectOption(dateFilter.rangeLast);
 		}
 
 		await this.exportButton.click();
+
+		await this.taskStatusLabel(taskName).waitFor();
+
+		return await this.downloadExportProcess(taskName);
+	}
+
+	async clickTaskAction(
+		taskName: string,
+		action: 'Clear' | 'View Report Entries' | 'Export Report Entries'
+	) {
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: this.page.getByRole('menuitem', {name: action}),
+			trigger: this.taskActionsMenu(taskName),
+		});
 	}
 
 	async checkItemInNewlyCreatedImportProcess(
@@ -166,7 +292,17 @@ export class ExportImportPage {
 		expect(wikiLabelCount).toBe(0);
 	}
 
-	async import(filePath: string, expectedUploadErrorMessage?: string) {
+	async import({
+		expectedUploadErrorMessage,
+		filePath,
+		taskStatus = 'success',
+		timeout,
+	}: {
+		expectedUploadErrorMessage?: string;
+		filePath: string;
+		taskStatus?: taskStatus;
+		timeout?: number;
+	}) {
 		await this.newImportButton.click();
 
 		const fileChooserPromise = this.page.waitForEvent('filechooser');
@@ -190,11 +326,9 @@ export class ExportImportPage {
 		await this.page.waitForLoadState('domcontentloaded');
 		await this.page.waitForTimeout(1000);
 
-		await this.page
-			.locator(
-				'[id="_com_liferay_exportimport_web_portlet_ImportPortlet_contentLink_com_liferay_layout_admin_web_portlet_GroupPagesPortlet"]'
-			)
-			.click();
+		if (await this.pagesCheckbox.isVisible()) {
+			await this.pagesCheckbox.click();
+		}
 
 		const utilityPages = this.page
 			.locator('#PagesContent')
@@ -225,16 +359,19 @@ export class ExportImportPage {
 			.click();
 
 		await this.importButton.click();
+
+		const fileName = path.basename(filePath);
+		await expect(this.taskStatusLabel(fileName, taskStatus)).toBeVisible({
+			timeout,
+		});
 	}
 
 	async getExportableItems() {
 		await this.newExportButton.click();
 
-		const portletListContainer = this.page.locator(
-			'#_com_liferay_exportimport_web_portlet_ExportPortlet_selectContents .portlet-list'
-		);
+		const portletListContainer = await this.portletListContainer;
 
-		await portletListContainer.waitFor();
+		await portletListContainer.waitFor({state: 'attached'});
 
 		const itemsLocator = portletListContainer.locator(
 			'.custom-control-label-text:has(strong)'
@@ -291,13 +428,7 @@ export class ExportImportPage {
 	}
 
 	async goToImportDetails(exportName: string) {
-		await expect(this.taskSuccessLabel(exportName)).toBeVisible();
-
-		await clickAndExpectToBeVisible({
-			autoClick: true,
-			target: this.viewDetails,
-			trigger: this.taskMenu(exportName),
-		});
+		await this.clickTaskAction(exportName, 'View Report Entries');
 	}
 
 	async goToImportOptions(
@@ -329,12 +460,20 @@ export class ExportImportPage {
 		this.page.getByText('File Summary');
 	}
 
-	async goToImportErrorDetails(externalReferenceCode: string) {
+	async goToImportReportEntryDetails(externalReferenceCode: string) {
 		await this.page
 			.getByRole('row', {name: externalReferenceCode})
 			.getByLabel('view')
 			.click();
 
-		expect(this.page.getByText('Error Details').first()).toBeVisible();
+		expect(
+			this.page.getByText('Report Entry Details').first()
+		).toBeVisible();
+	}
+
+	async openExportReportEntriesModal(exportName) {
+		await this.clickTaskAction(exportName, 'Export Report Entries');
+
+		await this.exportReportEntriesModal.waitFor();
 	}
 }

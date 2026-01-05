@@ -11,6 +11,7 @@ import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
 import com.liferay.osb.faro.contacts.model.constants.ContactsConstants;
 import com.liferay.osb.faro.engine.client.constants.FieldMappingConstants;
 import com.liferay.osb.faro.engine.client.exception.InvalidFilterException;
+import com.liferay.osb.faro.engine.client.model.ChannelDataSource;
 import com.liferay.osb.faro.engine.client.model.Credentials;
 import com.liferay.osb.faro.engine.client.model.DXPGroup;
 import com.liferay.osb.faro.engine.client.model.DXPOrganization;
@@ -44,11 +45,13 @@ import com.liferay.osb.faro.web.internal.controller.FaroController;
 import com.liferay.osb.faro.web.internal.exception.FaroException;
 import com.liferay.osb.faro.web.internal.exception.FaroValidationException;
 import com.liferay.osb.faro.web.internal.model.display.FaroResultsDisplay;
+import com.liferay.osb.faro.web.internal.model.display.contacts.ChannelDataSourceDisplay;
 import com.liferay.osb.faro.web.internal.model.display.contacts.DXPGroupDisplay;
 import com.liferay.osb.faro.web.internal.model.display.contacts.DXPOrganizationDisplay;
 import com.liferay.osb.faro.web.internal.model.display.contacts.DXPUserGroupDisplay;
 import com.liferay.osb.faro.web.internal.model.display.contacts.DataSourceDisplay;
 import com.liferay.osb.faro.web.internal.model.display.contacts.DataSourceMappingDisplay;
+import com.liferay.osb.faro.web.internal.model.display.contacts.DataSourceMetricsDisplay;
 import com.liferay.osb.faro.web.internal.model.display.contacts.FieldMappingValuesDisplay;
 import com.liferay.osb.faro.web.internal.model.display.contacts.FieldValuesDisplay;
 import com.liferay.osb.faro.web.internal.model.display.contacts.LiferaySyncCountsDisplay;
@@ -75,6 +78,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
+import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -231,6 +235,9 @@ public class DataSourceController extends BaseFaroController {
 			@DefaultValue(StringPool.BLANK) @FormParam("accountsConfiguration")
 				FaroParam<SalesforceProvider.AccountsConfiguration>
 					accountsConfigurationFaroParam,
+			@DefaultValue(StringPool.BLANK) @FormParam("channelsConfiguration")
+				FaroParam<SalesforceProvider.ChannelsConfiguration>
+					channelsConfigurationFaroParam,
 			@DefaultValue(StringPool.BLANK) @FormParam("contactsConfiguration")
 				FaroParam<SalesforceProvider.ContactsConfiguration>
 					contactsConfigurationFaroParam,
@@ -241,27 +248,13 @@ public class DataSourceController extends BaseFaroController {
 
 		salesforceProvider.setAccountsConfiguration(
 			accountsConfigurationFaroParam.getValue());
+		salesforceProvider.setChannelsConfiguration(
+			channelsConfigurationFaroParam.getValue());
 		salesforceProvider.setContactsConfiguration(
 			contactsConfigurationFaroParam.getValue());
 
-		DataSourceDisplay dataSourceDisplay = create(
+		return create(
 			groupId, credentials, salesforceProvider, name, url, null, status);
-
-		FaroProject faroProject =
-			faroProjectLocalService.getFaroProjectByGroupId(groupId);
-
-		createFieldMappings(
-			faroProject, dataSourceDisplay.getId(),
-			FieldMappingConstants.CONTEXT_ORGANIZATION,
-			FieldMappingConstants.OWNER_TYPE_ACCOUNT,
-			FieldMappingConstants.getSalesforceAccountFieldMappingMaps());
-		createFieldMappings(
-			faroProject, dataSourceDisplay.getId(),
-			FieldMappingConstants.CONTEXT_DEMOGRAPHICS,
-			FieldMappingConstants.OWNER_TYPE_INDIVIDUAL,
-			FieldMappingConstants.getSalesforceIndividualFieldMappingMaps());
-
-		return dataSourceDisplay;
 	}
 
 	@DELETE
@@ -349,6 +342,34 @@ public class DataSourceController extends BaseFaroController {
 		faroProject.setDataSourceConnected(false);
 
 		faroProjectLocalService.updateFaroProject(faroProject);
+	}
+
+	@GET
+	@Path("/{id}/channel-data-sources")
+	@RolesAllowed(RoleConstants.SITE_ADMINISTRATOR)
+	public FaroResultsDisplay getChannelDataSourceDisplay(
+			@PathParam("groupId") long groupId, @PathParam("id") String id,
+			@QueryParam("enabled") Boolean enabled,
+			@QueryParam("name") String name, @QueryParam("cur") int cur,
+			@DefaultValue("20") @QueryParam("delta") int delta,
+			@DefaultValue(StringPool.BLANK) @QueryParam("orderByFields")
+				FaroParam<List<OrderByField>> orderByFieldsFaroParam)
+		throws Exception {
+
+		FaroProject faroProject =
+			faroProjectLocalService.getFaroProjectByGroupId(groupId);
+
+		Results<ChannelDataSource> results =
+			contactsEngineClient.getChannelDataSources(
+				faroProject, Long.valueOf(id), enabled, name, cur, delta,
+				orderByFieldsFaroParam.getValue());
+		Function<ChannelDataSource, ChannelDataSourceDisplay> function =
+			channelDataSource -> new ChannelDataSourceDisplay(
+				contactsEngineClient.getChannel(
+					faroProject, channelDataSource.getChannelId()),
+				channelDataSource);
+
+		return new FaroResultsDisplay(results, function);
 	}
 
 	@GET
@@ -580,6 +601,84 @@ public class DataSourceController extends BaseFaroController {
 						item, fieldsMap.get(item.getFieldName())),
 					Collections.emptyList());
 			});
+	}
+
+	@GET
+	@Path("/{id}/metrics")
+	@RolesAllowed(RoleConstants.SITE_ADMINISTRATOR)
+	public DataSourceMetricsDisplay getDataSourceMetricsDisplay(
+			@PathParam("groupId") long groupId, @PathParam("id") String id)
+		throws Exception {
+
+		long channelsCount = 0;
+		long groupsCount = 0;
+		long usersCount = 0;
+
+		FaroProject faroProject =
+			faroProjectLocalService.getFaroProjectByGroupId(groupId);
+
+		DataSource dataSource = contactsEngineClient.getDataSource(
+			faroProject, id);
+
+		Provider provider = dataSource.getProvider();
+
+		if (StringUtil.equals(provider.getType(), LiferayProvider.TYPE)) {
+			LiferayProvider liferayProvider = (LiferayProvider)provider;
+
+			LiferayProvider.ChannelsConfiguration channelsConfiguration =
+				liferayProvider.getChannelsConfiguration();
+
+			if (channelsConfiguration != null) {
+				List<LiferayProvider.Channel> channels =
+					channelsConfiguration.getChannels();
+
+				if (ListUtil.isNotEmpty(channels)) {
+					channelsCount = channels.size();
+				}
+
+				for (LiferayProvider.Channel channel : channels) {
+					Set<Long> groupIds = channel.getGroupIds();
+
+					if (SetUtil.isNotEmpty(groupIds)) {
+						groupsCount += groupIds.size();
+					}
+				}
+			}
+
+			usersCount = contactsEngineClient.getDXPUsersCount(faroProject, id);
+		}
+		else if (StringUtil.equals(
+					provider.getType(), SalesforceProvider.TYPE)) {
+
+			SalesforceProvider salesforceProvider =
+				(SalesforceProvider)provider;
+
+			SalesforceProvider.ChannelsConfiguration channelsConfiguration =
+				salesforceProvider.getChannelsConfiguration();
+
+			if (channelsConfiguration != null) {
+				List<SalesforceProvider.Channel> channels =
+					channelsConfiguration.getChannels();
+
+				if (ListUtil.isNotEmpty(channels)) {
+					channelsCount = channels.size();
+				}
+
+				for (SalesforceProvider.Channel channel : channels) {
+					Set<Long> groupIds = channel.getGroupIds();
+
+					if (SetUtil.isNotEmpty(groupIds)) {
+						groupsCount += groupIds.size();
+					}
+				}
+			}
+
+			usersCount = contactsEngineClient.getSalesforceUsersCount(
+				id, faroProject);
+		}
+
+		return new DataSourceMetricsDisplay(
+			channelsCount, groupsCount, usersCount);
 	}
 
 	@GET
@@ -925,6 +1024,9 @@ public class DataSourceController extends BaseFaroController {
 			@DefaultValue(StringPool.BLANK) @FormParam("analyticsConfiguration")
 				FaroParam<LiferayProvider.AnalyticsConfiguration>
 					analyticsConfigurationFaroParam,
+			@DefaultValue(StringPool.BLANK) @FormParam("channelsConfiguration")
+				FaroParam<LiferayProvider.ChannelsConfiguration>
+					channelsConfigurationFaroParam,
 			@DefaultValue(StringPool.BLANK) @FormParam("contactsConfiguration")
 				FaroParam<LiferayProvider.ContactsConfiguration>
 					contactsConfigurationFaroParam,
@@ -937,18 +1039,23 @@ public class DataSourceController extends BaseFaroController {
 
 		LiferayProvider.AnalyticsConfiguration analyticsConfiguration =
 			analyticsConfigurationFaroParam.getValue();
+		LiferayProvider.ChannelsConfiguration channelsConfiguration =
+			channelsConfigurationFaroParam.getValue();
 		LiferayProvider.ContactsConfiguration contactsConfiguration =
 			contactsConfigurationFaroParam.getValue();
 
 		if ((analyticsConfiguration != null) &&
+			(channelsConfiguration != null) &&
 			(contactsConfiguration != null)) {
 
 			liferayProvider = new LiferayProvider();
 
 			liferayProvider.setAnalyticsConfiguration(analyticsConfiguration);
+			liferayProvider.setChannelsConfiguration(channelsConfiguration);
 			liferayProvider.setContactsConfiguration(contactsConfiguration);
 		}
 		else if ((analyticsConfiguration != null) ||
+				 (channelsConfiguration != null) ||
 				 (contactsConfiguration != null)) {
 
 			DataSource dataSource = contactsEngineClient.getDataSource(
@@ -959,6 +1066,10 @@ public class DataSourceController extends BaseFaroController {
 			if (analyticsConfiguration != null) {
 				liferayProvider.setAnalyticsConfiguration(
 					analyticsConfiguration);
+			}
+
+			if (channelsConfiguration != null) {
+				liferayProvider.setChannelsConfiguration(channelsConfiguration);
 			}
 
 			if (contactsConfiguration != null) {
@@ -982,6 +1093,9 @@ public class DataSourceController extends BaseFaroController {
 			@DefaultValue(StringPool.BLANK) @FormParam("accountsConfiguration")
 				FaroParam<SalesforceProvider.AccountsConfiguration>
 					accountsConfigurationFaroParam,
+			@DefaultValue(StringPool.BLANK) @FormParam("channelsConfiguration")
+				FaroParam<SalesforceProvider.ChannelsConfiguration>
+					channelsConfigurationFaroParam,
 			@DefaultValue(StringPool.BLANK) @FormParam("contactsConfiguration")
 				FaroParam<SalesforceProvider.ContactsConfiguration>
 					contactsConfigurationFaroParam,
@@ -992,18 +1106,23 @@ public class DataSourceController extends BaseFaroController {
 
 		SalesforceProvider.AccountsConfiguration accountsConfiguration =
 			accountsConfigurationFaroParam.getValue();
+		SalesforceProvider.ChannelsConfiguration channelsConfiguration =
+			channelsConfigurationFaroParam.getValue();
 		SalesforceProvider.ContactsConfiguration contactsConfiguration =
 			contactsConfigurationFaroParam.getValue();
 
 		if ((accountsConfiguration != null) &&
+			(channelsConfiguration != null) &&
 			(contactsConfiguration != null)) {
 
 			salesforceProvider = new SalesforceProvider();
 
 			salesforceProvider.setAccountsConfiguration(accountsConfiguration);
+			salesforceProvider.setChannelsConfiguration(channelsConfiguration);
 			salesforceProvider.setContactsConfiguration(contactsConfiguration);
 		}
 		else if ((accountsConfiguration != null) ||
+				 (channelsConfiguration != null) ||
 				 (contactsConfiguration != null)) {
 
 			DataSource dataSource = contactsEngineClient.getDataSource(
@@ -1014,6 +1133,11 @@ public class DataSourceController extends BaseFaroController {
 			if (accountsConfiguration != null) {
 				salesforceProvider.setAccountsConfiguration(
 					accountsConfiguration);
+			}
+
+			if (channelsConfiguration != null) {
+				salesforceProvider.setChannelsConfiguration(
+					channelsConfiguration);
 			}
 
 			if (contactsConfiguration != null) {
@@ -1160,6 +1284,9 @@ public class DataSourceController extends BaseFaroController {
 			@DefaultValue(StringPool.BLANK) @FormParam("accountsConfiguration")
 				FaroParam<SalesforceProvider.AccountsConfiguration>
 					accountsConfigurationFaroParam,
+			@DefaultValue(StringPool.BLANK) @FormParam("channelsConfiguration")
+				FaroParam<SalesforceProvider.ChannelsConfiguration>
+					channelsConfigurationFaroParam,
 			@DefaultValue(StringPool.BLANK) @FormParam("contactsConfiguration")
 				FaroParam<SalesforceProvider.ContactsConfiguration>
 					contactsConfigurationFaroParam,
@@ -1170,6 +1297,8 @@ public class DataSourceController extends BaseFaroController {
 
 		salesforceProvider.setAccountsConfiguration(
 			accountsConfigurationFaroParam.getValue());
+		salesforceProvider.setChannelsConfiguration(
+			channelsConfigurationFaroParam.getValue());
 		salesforceProvider.setContactsConfiguration(
 			contactsConfigurationFaroParam.getValue());
 

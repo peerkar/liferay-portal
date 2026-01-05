@@ -51,6 +51,7 @@ definition {
 	@priority = 4
 	test AllowedAccountTypeIsSiteWide {
 		property app.server.types = "jboss,tomcat,weblogic,wildfly";
+		property browser.chrome.version = "139.0";
 		property database.types = "db2,hypersonic,mariadb,mysql,oracle,postgresql,sqlserver";
 		property test.liferay.virtual.instance = "false";
 
@@ -211,6 +212,7 @@ definition {
 	@description = "This test asserts that only person accounts can be added when the allowed account type is person"
 	@priority = 4
 	test CanOnlyAddPersonAccountsWhenAllowedAccountTypeIsPerson {
+		property browser.chrome.version = "139.0";
 		property portal.acceptance = "true";
 
 		task ("Given a non admin user has permissions to add an account entry") {
@@ -301,6 +303,8 @@ definition {
 	@description = "This test asserts the correct search results when searching via Account Management widget"
 	@priority = 4
 	test CanSearchForAccount {
+		property browser.chrome.version = "139.0";
+
 		task ("Given business accounts exist") {
 			for (var accountName : list "Acme Inc,Liferay,South Bay Auto Parts") {
 				JSONAccountEntry.addAccountEntry(

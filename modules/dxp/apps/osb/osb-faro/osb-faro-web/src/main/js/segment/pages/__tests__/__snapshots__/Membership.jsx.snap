@@ -4,15 +4,23 @@ exports[`Membership should render 1`] = `
 <div>
   <div
     class="card card-root segment-membership-root"
+    id="container.report.segmentMembershipCard"
   >
     <div
-      class="card-header"
+      class="card-header align-items-center d-flex justify-content-between"
     >
       <div
         class="card-title"
       >
-        Segment Membership
+        Segment Membership Trend
       </div>
+      <span
+        class="text-secondary text-uppercase"
+      >
+        <strong>
+          Last 30 days
+        </strong>
+      </span>
     </div>
     <div
       class="card-body segment-growth-root no-padding"
@@ -45,7 +53,7 @@ exports[`Membership should render 1`] = `
           class="toolbar-root"
         >
           <nav
-            class="navbar navbar-root my-2 management-bar management-bar-light navbar-expand"
+            class="navbar navbar-root management-bar management-bar-light navbar-expand"
           >
             <div
               class="container-fluid"
@@ -100,7 +108,7 @@ exports[`Membership should render 1`] = `
             class="table-responsive"
           >
             <table
-              class="table table-autofit table-striped table-list table-nowrap table-head-bordered table-hover"
+              class="table table-autofit table-list table-nowrap table-head-bordered table-hover table-striped"
             >
               <thead>
                 <tr>
@@ -337,7 +345,7 @@ exports[`MembershipChart should render 1`] = `
         class="toolbar-root"
       >
         <nav
-          class="navbar navbar-root my-2 management-bar management-bar-light navbar-expand"
+          class="navbar navbar-root management-bar management-bar-light navbar-expand"
         >
           <div
             class="container-fluid"
@@ -392,7 +400,7 @@ exports[`MembershipChart should render 1`] = `
           class="table-responsive"
         >
           <table
-            class="table table-autofit table-striped table-list table-nowrap table-head-bordered table-hover"
+            class="table table-autofit table-list table-nowrap table-head-bordered table-hover table-striped"
           >
             <thead>
               <tr>

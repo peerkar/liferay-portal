@@ -69,10 +69,24 @@ public class OpenIdConnectUserLocalServiceImpl
 	}
 
 	@Override
+	public void deleteOpenIdConnectUsers(long companyId, long userId) {
+		openIdConnectUserPersistence.removeByC_U(companyId, userId);
+	}
+
+	@Override
 	public OpenIdConnectUser fetchOpenIdConnectUser(
 		long companyId, String issuer, String subject) {
 
 		return openIdConnectUserPersistence.fetchByC_I_S(
+			companyId, issuer, subject);
+	}
+
+	@Override
+	public OpenIdConnectUser getOpenIdConnectUser(
+			long companyId, String issuer, String subject)
+		throws PortalException {
+
+		return openIdConnectUserPersistence.findByC_I_S(
 			companyId, issuer, subject);
 	}
 

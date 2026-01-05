@@ -11,3 +11,23 @@ export async function readCSVFile(path) {
 		.split('\n')
 		.map((event) => event.trim());
 }
+
+export function sortCSVHeaderAndSingleRow(csvLines: string[]): string[] {
+	if (csvLines.length < 2) {
+		return csvLines;
+	}
+
+	const headers = csvLines[0].split(',');
+	const dataRow = csvLines[1].split(',');
+
+	const headerValuePairs = headers.map((header, index) => [
+		header,
+		dataRow[index],
+	]);
+	headerValuePairs.sort((a, b) => a[0].localeCompare(b[0]));
+
+	return [
+		headerValuePairs.map((pair) => pair[0]).join(','),
+		headerValuePairs.map((pair) => pair[1]).join(','),
+	];
+}

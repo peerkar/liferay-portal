@@ -1,6 +1,7 @@
 @component-name = "portal-publications"
 definition {
 
+	property browser.chrome.version = "139.0";
 	property osgi.module.configuration.file.names = "com.liferay.change.tracking.configuration.CTSettingsConfiguration.config";
 	property osgi.module.configurations = "enabled=B\"true\"";
 	property portal.release = "true";
@@ -123,6 +124,8 @@ definition {
 	@description = "This is the use case for LPS-199845. Deletion Modification Conflict for DDM Structures should not be edited"
 	@priority = 3
 	test DeletionModificationConflictForDDMStructuresShouldNotBeEdited {
+		property custom.properties = "change.tracking.deletion.protection.enabled=false";
+
 		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
 
 		NavItem.gotoStructures();

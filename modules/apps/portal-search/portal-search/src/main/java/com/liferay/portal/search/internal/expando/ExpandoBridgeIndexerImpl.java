@@ -8,11 +8,14 @@ package com.liferay.portal.search.internal.expando;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.model.ExpandoColumn;
 import com.liferay.expando.kernel.model.ExpandoColumnConstants;
+import com.liferay.expando.kernel.model.ExpandoColumnTable;
 import com.liferay.expando.kernel.model.ExpandoTableConstants;
+import com.liferay.expando.kernel.model.ExpandoTableTable;
 import com.liferay.expando.kernel.model.ExpandoValue;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
+import com.liferay.expando.kernel.service.ExpandoTableLocalService;
 import com.liferay.expando.kernel.service.ExpandoValueLocalService;
-import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -20,16 +23,21 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.model.ClassName;
+import com.liferay.portal.kernel.model.ShardedModel;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.ReindexCacheThreadLocal;
+import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.search.expando.ExpandoBridgeIndexer;
+import com.liferay.portal.search.expando.ExpandoBridgeUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,70 +52,17 @@ import org.osgi.service.component.annotations.Reference;
 public class ExpandoBridgeIndexerImpl implements ExpandoBridgeIndexer {
 
 	@Override
-	public void addAttributes(Document document, ExpandoBridge expandoBridge) {
-		if (expandoBridge == null) {
+	public void addAttributes(Document document, BaseModel<?> baseModel) {
+		if (baseModel == null) {
 			return;
 		}
 
 		try {
-			doAddAttributes(document, expandoBridge);
+			doAddAttributes(document, baseModel);
 		}
 		catch (SystemException systemException) {
 			_log.error(systemException);
 		}
-	}
-
-	@Override
-	public String encodeFieldName(ExpandoColumn expandoColumn) {
-		StringBundler sb = new StringBundler(7);
-
-		sb.append(FIELD_NAMESPACE);
-		sb.append(StringPool.DOUBLE_UNDERLINE);
-
-		if (_getIndexType(expandoColumn) ==
-				ExpandoColumnConstants.INDEX_TYPE_KEYWORD) {
-
-			sb.append("keyword__");
-		}
-
-		sb.append(
-			StringUtil.toLowerCase(ExpandoTableConstants.DEFAULT_TABLE_NAME));
-		sb.append(StringPool.DOUBLE_UNDERLINE);
-		sb.append(expandoColumn.getName());
-		sb.append(getNumericSuffix(expandoColumn.getType()));
-
-		return sb.toString();
-	}
-
-	@Override
-	public String getNumericSuffix(int columnType) {
-		if ((columnType == ExpandoColumnConstants.DOUBLE) ||
-			(columnType == ExpandoColumnConstants.DOUBLE_ARRAY)) {
-
-			return "_double";
-		}
-		else if ((columnType == ExpandoColumnConstants.FLOAT) ||
-				 (columnType == ExpandoColumnConstants.FLOAT_ARRAY)) {
-
-			return "_float";
-		}
-		else if ((columnType == ExpandoColumnConstants.INTEGER) ||
-				 (columnType == ExpandoColumnConstants.INTEGER_ARRAY)) {
-
-			return "_integer";
-		}
-		else if ((columnType == ExpandoColumnConstants.LONG) ||
-				 (columnType == ExpandoColumnConstants.LONG_ARRAY)) {
-
-			return "_long";
-		}
-		else if ((columnType == ExpandoColumnConstants.SHORT) ||
-				 (columnType == ExpandoColumnConstants.SHORT_ARRAY)) {
-
-			return "_short";
-		}
-
-		return StringPool.BLANK;
 	}
 
 	protected void addAttribute(
@@ -128,8 +83,8 @@ public class ExpandoBridgeIndexerImpl implements ExpandoBridgeIndexer {
 			hasValue = false;
 		}
 
-		String fieldName = encodeFieldName(expandoColumn);
-		int indexType = _getIndexType(expandoColumn);
+		String fieldName = ExpandoBridgeUtil.encodeFieldName(expandoColumn);
+		int indexType = ExpandoBridgeUtil.getIndexType(expandoColumn);
 		int type = expandoColumn.getType();
 
 		if (type == ExpandoColumnConstants.BOOLEAN) {
@@ -313,30 +268,21 @@ public class ExpandoBridgeIndexerImpl implements ExpandoBridgeIndexer {
 		}
 	}
 
-	protected void doAddAttributes(
-		Document document, ExpandoBridge expandoBridge) {
+	protected void doAddAttributes(Document document, BaseModel<?> baseModel) {
+		long companyId = 0;
 
-		List<ExpandoColumn> expandoColumns =
-			_expandoColumnLocalService.getDefaultTableColumns(
-				expandoBridge.getCompanyId(), expandoBridge.getClassName());
+		if (baseModel instanceof ShardedModel shardedModel) {
+			companyId = shardedModel.getCompanyId();
+		}
 
-		if (ListUtil.isEmpty(expandoColumns)) {
+		List<ExpandoColumn> indexedColumns = _getIndexedExpandoColumns(
+			companyId, baseModel.getModelClassName());
+
+		if (ListUtil.isEmpty(indexedColumns)) {
 			return;
 		}
 
-		List<ExpandoColumn> indexedColumns = new ArrayList<>();
-
-		for (ExpandoColumn expandoColumn : expandoColumns) {
-			int indexType = _getIndexType(expandoColumn);
-
-			if (indexType != ExpandoColumnConstants.INDEX_TYPE_NONE) {
-				indexedColumns.add(expandoColumn);
-			}
-		}
-
-		if (indexedColumns.isEmpty()) {
-			return;
-		}
+		ExpandoBridge expandoBridge = baseModel.getExpandoBridge();
 
 		List<ExpandoValue> expandoValues =
 			_expandoValueLocalService.getRowValues(
@@ -361,21 +307,155 @@ public class ExpandoBridgeIndexerImpl implements ExpandoBridgeIndexer {
 		}
 	}
 
-	protected static final String FIELD_NAMESPACE = "expando";
+	private List<ExpandoColumn> _getIndexedExpandoColumns(
+		long companyId, String className) {
 
-	private int _getIndexType(ExpandoColumn expandoColumn) {
-		UnicodeProperties unicodeProperties =
-			expandoColumn.getTypeSettingsProperties();
+		Map<Long, Map<String, List<ExpandoColumn>>> expandoColumnsMaps =
+			ReindexCacheThreadLocal.getGlobalReindexCache(
+				() -> -1, ExpandoBridgeIndexerImpl.class.getName(),
+				count -> {
+					List<ExpandoColumn> expandoColumns = new ArrayList<>();
 
-		return GetterUtil.getInteger(
-			unicodeProperties.getProperty(ExpandoColumnConstants.INDEX_TYPE));
+					for (ExpandoColumn expandoColumn :
+							_expandoColumnLocalService.
+								<List<ExpandoColumn>>dslQuery(
+									DSLQueryFactoryUtil.select(
+										ExpandoColumnTable.INSTANCE
+									).from(
+										ExpandoColumnTable.INSTANCE
+									).where(
+										ExpandoColumnTable.INSTANCE.
+											typeSettings.isNotNull(
+											).and(
+												ExpandoColumnTable.INSTANCE.
+													typeSettings.notLike("")
+											)
+									),
+									false)) {
+
+						int indexType = ExpandoBridgeUtil.getIndexType(
+							expandoColumn);
+
+						if (indexType !=
+								ExpandoColumnConstants.INDEX_TYPE_NONE) {
+
+							expandoColumns.add(expandoColumn);
+						}
+					}
+
+					if (expandoColumns.isEmpty()) {
+						return Collections.emptyMap();
+					}
+
+					Map<Long, Object[]> tableInfos = new HashMap<>();
+
+					for (Object[] values :
+							_expandoTableLocalService.<List<Object[]>>dslQuery(
+								DSLQueryFactoryUtil.select(
+									ExpandoTableTable.INSTANCE.tableId,
+									ExpandoTableTable.INSTANCE.companyId,
+									ExpandoTableTable.INSTANCE.classNameId
+								).from(
+									ExpandoTableTable.INSTANCE
+								).where(
+									ExpandoTableTable.INSTANCE.name.eq(
+										ExpandoTableConstants.
+											DEFAULT_TABLE_NAME)
+								),
+								false)) {
+
+						tableInfos.put((Long)values[0], values);
+					}
+
+					Map<Long, Map<String, List<ExpandoColumn>>>
+						localExpandoColumnsMaps = new HashMap<>();
+
+					Map<Long, String> classNames = new HashMap<>();
+
+					for (ExpandoColumn expandoColumn : expandoColumns) {
+						Object[] tableInfo = tableInfos.get(
+							expandoColumn.getTableId());
+
+						if (tableInfo == null) {
+							continue;
+						}
+
+						String localClassName = classNames.computeIfAbsent(
+							(Long)tableInfo[2],
+							classNameId -> {
+								ClassName classNameObject =
+									_classNameLocalService.fetchByClassNameId(
+										companyId);
+
+								if (classNameObject == null) {
+									return null;
+								}
+
+								return classNameObject.getClassName();
+							});
+
+						if (localClassName == null) {
+							continue;
+						}
+
+						Map<String, List<ExpandoColumn>>
+							localExpandoColumnsMap =
+								localExpandoColumnsMaps.computeIfAbsent(
+									(Long)tableInfo[1], key -> new HashMap<>());
+
+						List<ExpandoColumn> localExpandoColumns =
+							localExpandoColumnsMap.computeIfAbsent(
+								localClassName, key -> new ArrayList<>());
+
+						localExpandoColumns.add(expandoColumn);
+					}
+
+					return localExpandoColumnsMaps;
+				});
+
+		if (expandoColumnsMaps == null) {
+			List<ExpandoColumn> expandoColumns =
+				_expandoColumnLocalService.getDefaultTableColumns(
+					companyId, className);
+
+			if (expandoColumns.isEmpty()) {
+				return expandoColumns;
+			}
+
+			List<ExpandoColumn> indexedExpandoColumns = new ArrayList<>();
+
+			for (ExpandoColumn expandoColumn : expandoColumns) {
+				int indexType = ExpandoBridgeUtil.getIndexType(expandoColumn);
+
+				if (indexType != ExpandoColumnConstants.INDEX_TYPE_NONE) {
+					indexedExpandoColumns.add(expandoColumn);
+				}
+			}
+
+			return indexedExpandoColumns;
+		}
+
+		Map<String, List<ExpandoColumn>> expandoColumnsMap =
+			expandoColumnsMaps.get(companyId);
+
+		if (expandoColumnsMap == null) {
+			return null;
+		}
+
+		return expandoColumnsMap.get(className);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		ExpandoBridgeIndexerImpl.class);
 
 	@Reference
+	private ClassNameLocalService _classNameLocalService;
+
+	@Reference
 	private ExpandoColumnLocalService _expandoColumnLocalService;
+
+	@Reference
+	private ExpandoTableLocalService _expandoTableLocalService;
 
 	@Reference
 	private ExpandoValueLocalService _expandoValueLocalService;

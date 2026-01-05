@@ -8,7 +8,6 @@ import {expect, mergeTests} from '@playwright/test';
 import {apiHelpersTest} from '../../../fixtures/apiHelpersTest';
 import {changeTrackingPagesTest} from '../../../fixtures/changeTrackingPagesTest';
 import {documentLibraryPagesTest} from '../../../fixtures/documentLibraryPages.fixtures';
-import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {isolatedSiteTest} from '../../../fixtures/isolatedSiteTest';
 import {clickAndExpectToBeVisible} from '../../../utils/clickAndExpectToBeVisible';
 import {getRandomInt} from '../../../utils/getRandomInt';
@@ -26,9 +25,6 @@ export const test = mergeTests(
 	isolatedSiteTest,
 	journalPagesTest,
 	apiHelpersTest,
-	featureFlagsTest({
-		'LPD-20556': {enabled: true},
-	}),
 	changeTrackingPagesTest
 );
 
@@ -259,9 +255,13 @@ test('LPD-25853 Move Change is added in the timeline dropdown actions', async ({
 
 	await moveButton.click();
 
-	await page.getByText('Move Changes').waitFor();
+	const moveChangesHeader = page
+		.getByTestId('headerTitle')
+		.filter({hasText: 'Move Changes'});
 
-	await expect(page.getByText('Move Changes')).toBeVisible();
+	await moveChangesHeader.waitFor();
+
+	await expect(moveChangesHeader).toBeVisible();
 });
 
 test('LPD-25853 Timeline actions are not visible to user without permissions', async ({
@@ -534,6 +534,7 @@ test('LPD-39412 Assert publication timeline history is enabled for templates', a
 
 	const timelineActionsButton = page.locator('.publication-timeline button');
 
+	await timelineActionsButton.waitFor();
 	await expect(timelineActionsButton).toBeVisible();
 
 	await journalEditTemplatePage.goto(site.friendlyUrlPath);

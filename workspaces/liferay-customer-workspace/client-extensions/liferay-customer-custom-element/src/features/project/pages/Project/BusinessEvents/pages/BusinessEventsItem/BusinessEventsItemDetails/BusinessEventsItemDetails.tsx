@@ -25,15 +25,18 @@ import getKebabCase from '~/utils/getKebabCase';
 import AssociatedTicketsContainer from '../../../components/AssociatedTicketsContainer';
 import ManageEventModal from '../../../components/ManageEventModal';
 import useAccountsTickets from '../../../hooks/useAccountsTickets';
+import usecanViewTickets from '../../../hooks/useCanViewTickets';
 import useGetBusinessEvent from '../../../hooks/useGetBusinessEvent';
 import useHasAllEventsPermissions from '../../../hooks/useHasAllEventsPermissions';
 
 const BusinessEventsItemDetails = () => {
 	const {accountKey, id} = useParams<{accountKey: string; id: string}>();
 
-	const {businessEvent, fetchBusinessEvent, loading} = useGetBusinessEvent(
-		id || ''
-	);
+	const {
+		businessEvent,
+		fetchBusinessEvent,
+		loading: loadingBusinessEvents,
+	} = useGetBusinessEvent(id || '');
 
 	const {client} = useAppPropertiesContext();
 
@@ -43,10 +46,17 @@ const BusinessEventsItemDetails = () => {
 	const {loading: loadingTickets, tickets} = useAccountsTickets(
 		businessEvent,
 		accountKey,
-		loading ||
+		loadingBusinessEvents ||
 			!businessEvent?.associatedTickets ||
 			businessEvent?.associatedTickets === '[]'
 	);
+
+	const {
+		canViewTickets: canViewTickets,
+		loading: loadingJiraAccountChecking,
+	} = usecanViewTickets(accountKey || '');
+
+	const loading = loadingBusinessEvents || loadingJiraAccountChecking;
 
 	const location = useLocation();
 	const navigate = useNavigate();
@@ -329,18 +339,32 @@ const BusinessEventsItemDetails = () => {
 					)}
 
 					{!loadingTickets ? (
-						Boolean(ticketOptions.length) && (
-							<div className="event-detail-item mb-4">
-								<div className="event-detail-title font-weight-semi-bold mb-1 text-neutral-8">
-									{i18n.translate('associated-tickets')}
-								</div>
+						!canViewTickets ? (
+							<p
+								dangerouslySetInnerHTML={{
+									__html: i18n.sub(
+										'we-apologize-for-the-inconvenience-but-we-ve-detected-a-system-error-with-this-project',
+										[
+											'<a href="https://liferay.atlassian.net/servicedesk/customer/portals">',
+											'</a>',
+										]
+									),
+								}}
+							/>
+						) : (
+							Boolean(ticketOptions.length) && (
+								<div className="event-detail-item mb-4">
+									<div className="event-detail-title font-weight-semi-bold mb-1 text-neutral-8">
+										{i18n.translate('associated-tickets')}
+									</div>
 
-								<div className="w-50">
-									<AssociatedTicketsContainer
-										ticketOptions={ticketOptions}
-									/>
+									<div className="w-50">
+										<AssociatedTicketsContainer
+											ticketOptions={ticketOptions}
+										/>
+									</div>
 								</div>
-							</div>
+							)
 						)
 					) : (
 						<div className="w-25">

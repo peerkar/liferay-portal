@@ -26,6 +26,14 @@ import java.util.Objects;
  */
 public class DDMFormFieldValue implements Serializable {
 
+	public DDMFormFieldValue() {
+		this(StringUtil.randomString());
+	}
+
+	public DDMFormFieldValue(String instanceId) {
+		_instanceId = instanceId;
+	}
+
 	public void addNestedDDMFormFieldValue(
 		DDMFormFieldValue nestedDDMFormFieldValue) {
 
@@ -66,10 +74,7 @@ public class DDMFormFieldValue implements Serializable {
 	public DDMFormField getDDMFormField() {
 		DDMForm ddmForm = _ddmFormValues.getDDMForm();
 
-		Map<String, DDMFormField> ddmFormFieldsMap =
-			ddmForm.getDDMFormFieldsMap(true);
-
-		return ddmFormFieldsMap.get(_name);
+		return ddmForm.getDDMFormField(_name, true);
 	}
 
 	public DDMFormValues getDDMFormValues() {
@@ -96,6 +101,25 @@ public class DDMFormFieldValue implements Serializable {
 
 	public String getName() {
 		return _name;
+	}
+
+	public DDMFormFieldValue getNestedDDMFormFieldValue(String name) {
+		for (DDMFormFieldValue nestedDDMFormFieldValue :
+				_nestedDDMFormFieldValues) {
+
+			if (Objects.equals(name, nestedDDMFormFieldValue.getName())) {
+				return nestedDDMFormFieldValue;
+			}
+
+			DDMFormFieldValue matchedDDMFormFieldValue =
+				nestedDDMFormFieldValue.getNestedDDMFormFieldValue(name);
+
+			if (matchedDDMFormFieldValue != null) {
+				return matchedDDMFormFieldValue;
+			}
+		}
+
+		return null;
 	}
 
 	public List<DDMFormFieldValue> getNestedDDMFormFieldValues() {
@@ -147,6 +171,21 @@ public class DDMFormFieldValue implements Serializable {
 		hash = HashUtil.hash(hash, _nestedDDMFormFieldValues);
 
 		return HashUtil.hash(hash, _value);
+	}
+
+	public void populateNestedDDMFormFieldValues(
+		String name, List<DDMFormFieldValue> nestedDDMFormFieldValues) {
+
+		for (DDMFormFieldValue nestedDDMFormFieldValue :
+				_nestedDDMFormFieldValues) {
+
+			if (Objects.equals(name, nestedDDMFormFieldValue.getName())) {
+				nestedDDMFormFieldValues.add(nestedDDMFormFieldValue);
+			}
+
+			nestedDDMFormFieldValue.populateNestedDDMFormFieldValues(
+				name, nestedDDMFormFieldValues);
+		}
 	}
 
 	public void populateNestedDDMFormFieldValuesMap(
@@ -240,7 +279,7 @@ public class DDMFormFieldValue implements Serializable {
 	private Object _confirmationValue;
 	private DDMFormValues _ddmFormValues;
 	private String _fieldReference;
-	private String _instanceId = StringUtil.randomString();
+	private String _instanceId;
 	private String _name;
 	private List<DDMFormFieldValue> _nestedDDMFormFieldValues =
 		new ArrayList<>();

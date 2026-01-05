@@ -8,7 +8,6 @@ package com.liferay.headless.admin.site.internal.dto.v1_0.converter;
 import com.liferay.client.extension.constants.ClientExtensionEntryConstants;
 import com.liferay.client.extension.model.ClientExtensionEntryRel;
 import com.liferay.client.extension.service.ClientExtensionEntryRelLocalService;
-import com.liferay.document.library.kernel.service.DLAppService;
 import com.liferay.headless.admin.site.dto.v1_0.ClientExtension;
 import com.liferay.headless.admin.site.dto.v1_0.ContentPageSpecification;
 import com.liferay.headless.admin.site.dto.v1_0.FavIconClientExtension;
@@ -22,6 +21,7 @@ import com.liferay.headless.admin.site.dto.v1_0.WidgetPageSpecification;
 import com.liferay.headless.admin.site.dto.v1_0.WidgetPageWidgetInstance;
 import com.liferay.headless.admin.site.internal.dto.v1_0.util.ItemScopeUtil;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.LayoutUtil;
+import com.liferay.layout.admin.kernel.model.LayoutTypePortletConstants;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
@@ -47,6 +47,7 @@ import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.segments.service.SegmentsExperienceService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
@@ -221,17 +222,7 @@ public class PageSpecificationDTOConverter
 							};
 						}
 
-						long faviconFileEntryId =
-							layout.getFaviconFileEntryId();
-
-						if (faviconFileEntryId == 0) {
-							return null;
-						}
-
-						FileEntry fileEntry = _dlAppService.getFileEntry(
-							faviconFileEntryId);
-
-						if (fileEntry == null) {
+						if (Validator.isNull(layout.getFaviconFileEntryERC())) {
 							return null;
 						}
 
@@ -239,12 +230,13 @@ public class PageSpecificationDTOConverter
 							{
 								setClassName(FileEntry.class::getName);
 								setExternalReferenceCode(
-									fileEntry::getExternalReferenceCode);
+									layout::getFaviconFileEntryERC);
 								setFavIconType(
 									() -> FavIconType.ITEM_EXTERNAL_REFERENCE);
 								setScope(
 									() -> ItemScopeUtil.getItemScope(
-										fileEntry.getGroupId(),
+										layout.getCompanyId(),
+										layout.getFaviconFileEntryScopeERC(),
 										layout.getGroupId()));
 							}
 						};
@@ -261,24 +253,17 @@ public class PageSpecificationDTOConverter
 					() -> unicodeProperties.getProperty("javascript", null));
 				setMasterPageItemExternalReference(
 					() -> {
-						if (layout.getMasterLayoutPlid() == 0) {
-							return null;
-						}
+						if (Validator.isNull(
+								layout.getMasterLayoutPageTemplateEntryERC())) {
 
-						LayoutPageTemplateEntry layoutPageTemplateEntry =
-							_layoutPageTemplateEntryLocalService.
-								fetchLayoutPageTemplateEntryByPlid(
-									layout.getMasterLayoutPlid());
-
-						if (layoutPageTemplateEntry == null) {
 							return null;
 						}
 
 						return new ItemExternalReference() {
 							{
 								setExternalReferenceCode(
-									layoutPageTemplateEntry::
-										getExternalReferenceCode);
+									layout::
+										getMasterLayoutPageTemplateEntryERC);
 							}
 						};
 					});
@@ -339,18 +324,28 @@ public class PageSpecificationDTOConverter
 
 		LayoutTypePortlet layoutTypePortlet =
 			(LayoutTypePortlet)layout.getLayoutType();
+		List<String> nestedColumnIds = StringUtil.split(
+			layout.getTypeSettingsProperty(
+				LayoutTypePortletConstants.NESTED_COLUMN_IDS));
 
 		return TransformUtil.transformToArray(
 			layoutTypePortlet.getColumns(),
-			column -> new WidgetPageSection() {
-				{
-					setCustomizable(
-						() -> layoutTypePortlet.isColumnCustomizable(column));
-					setId(() -> column);
-					setWidgetPageWidgetInstances(
-						() -> _getWidgetPageWidgetInstances(
-							column, dtoConverterContext, layout));
+			column -> {
+				if (nestedColumnIds.contains(column)) {
+					return null;
 				}
+
+				return new WidgetPageSection() {
+					{
+						setCustomizable(
+							() -> layoutTypePortlet.isColumnCustomizable(
+								column));
+						setId(() -> column);
+						setWidgetPageWidgetInstances(
+							() -> _getWidgetPageWidgetInstances(
+								column, dtoConverterContext, layout));
+					}
+				};
 			},
 			WidgetPageSection.class);
 	}
@@ -482,9 +477,6 @@ public class PageSpecificationDTOConverter
 	@Reference
 	private ClientExtensionEntryRelLocalService
 		_clientExtensionEntryRelLocalService;
-
-	@Reference
-	private DLAppService _dlAppService;
 
 	@Reference
 	private LayoutPageTemplateEntryLocalService

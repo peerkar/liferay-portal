@@ -12,6 +12,7 @@ import com.google.ical.values.RDateList;
 import com.google.ical.values.RRule;
 import com.google.ical.values.WeekdayNum;
 
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -25,7 +26,6 @@ import com.liferay.portal.kernel.util.Validator;
 
 import java.text.ParseException;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -77,18 +77,15 @@ public class RecurrenceSerializer {
 				recurrence.setUntilJCalendar(jCalendar);
 			}
 
-			List<PositionalWeekday> positionalWeekdays = new ArrayList<>();
+			recurrence.setPositionalWeekdays(
+				TransformUtil.transform(
+					rRule.getByDay(),
+					weekdayNum -> {
+						Weekday weekday = Weekday.parse(
+							weekdayNum.wday.toString());
 
-			for (WeekdayNum weekdayNum : rRule.getByDay()) {
-				Weekday weekday = Weekday.parse(weekdayNum.wday.toString());
-
-				PositionalWeekday positionalWeekday = new PositionalWeekday(
-					weekday, weekdayNum.num);
-
-				positionalWeekdays.add(positionalWeekday);
-			}
-
-			recurrence.setPositionalWeekdays(positionalWeekdays);
+						return new PositionalWeekday(weekday, weekdayNum.num);
+					}));
 			recurrence.setMonths(ListUtil.fromArray(rRule.getByMonth()));
 
 			return recurrence;
@@ -107,21 +104,12 @@ public class RecurrenceSerializer {
 
 		RRule rRule = new RRule();
 
-		List<WeekdayNum> weekdayNums = new ArrayList<>();
-
-		for (PositionalWeekday positionalWeekday :
-				recurrence.getPositionalWeekdays()) {
-
-			com.google.ical.values.Weekday wday = _weekdaysMap.get(
-				positionalWeekday.getWeekday());
-
-			WeekdayNum weekdayNum = new WeekdayNum(
-				positionalWeekday.getPosition(), wday);
-
-			weekdayNums.add(weekdayNum);
-		}
-
-		rRule.setByDay(weekdayNums);
+		rRule.setByDay(
+			TransformUtil.transform(
+				recurrence.getPositionalWeekdays(),
+				positionalWeekday -> new WeekdayNum(
+					positionalWeekday.getPosition(),
+					_weekdaysMap.get(positionalWeekday.getWeekday()))));
 
 		List<Integer> months = recurrence.getMonths();
 
@@ -153,29 +141,27 @@ public class RecurrenceSerializer {
 			rRule.setUntil(dateValue);
 		}
 
-		String data = rRule.toIcal();
-
 		List<Calendar> exceptionJCalendars =
 			recurrence.getExceptionJCalendars();
 
-		if (!exceptionJCalendars.isEmpty()) {
-			DateValue[] dateValues = new DateValue[exceptionJCalendars.size()];
-
-			for (int i = 0; i < exceptionJCalendars.size(); i++) {
-				dateValues[i] = _toDateValue(exceptionJCalendars.get(i));
-			}
-
-			RDateList rDateList = new RDateList(
-				TimeZone.getTimeZone(StringPool.UTC));
-
-			rDateList.setDatesUtc(dateValues);
-			rDateList.setName(_EXDATE);
-
-			data = StringBundler.concat(
-				data, StringPool.NEW_LINE, rDateList.toIcal());
+		if (exceptionJCalendars.isEmpty()) {
+			return rRule.toIcal();
 		}
 
-		return data;
+		DateValue[] dateValues = new DateValue[exceptionJCalendars.size()];
+
+		for (int i = 0; i < exceptionJCalendars.size(); i++) {
+			dateValues[i] = _toDateValue(exceptionJCalendars.get(i));
+		}
+
+		RDateList rDateList = new RDateList(
+			TimeZone.getTimeZone(StringPool.UTC));
+
+		rDateList.setDatesUtc(dateValues);
+		rDateList.setName(_EXDATE);
+
+		return StringBundler.concat(
+			rRule.toIcal(), StringPool.NEW_LINE, rDateList.toIcal());
 	}
 
 	private static DateValue _toDateValue(Calendar jCalendar) {

@@ -20,6 +20,13 @@ PortletURL portletURL = PortletURLBuilder.create(
 	"tabs3", "current-and-previous"
 ).buildPortletURL();
 
+String redirect = ParamUtil.getString(request, "redirect");
+
+if (Validator.isNotNull(redirect)) {
+	portletDisplay.setShowBackIcon(true);
+	portletDisplay.setURLBack(redirect);
+}
+
 String orderByCol = ParamUtil.getString(request, "orderByCol");
 String orderByType = ParamUtil.getString(request, "orderByType");
 
@@ -125,6 +132,7 @@ else {
 						<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.EXPORT %>" />
 						<portlet:param name="tabs2" value="export" />
 						<portlet:param name="tabs3" value="current-and-previous" />
+						<portlet:param name="redirect" value="<%= redirect %>" />
 						<portlet:param name="portletResource" value="<%= portletResource %>" />
 					</liferay-portlet:renderURL>
 

@@ -7,8 +7,14 @@ package com.liferay.marketplace;
 
 import com.liferay.client.extension.util.spring.boot3.BaseRestController;
 import com.liferay.client.extension.util.spring.boot3.client.LiferayOAuth2AccessTokenManager;
+import com.liferay.headless.admin.user.client.dto.v1_0.Account;
+import com.liferay.headless.admin.user.client.dto.v1_0.AccountBrief;
+import com.liferay.headless.admin.user.client.dto.v1_0.Role;
+import com.liferay.headless.admin.user.client.dto.v1_0.RoleBrief;
 import com.liferay.headless.admin.user.client.dto.v1_0.UserAccount;
 import com.liferay.headless.admin.user.client.dto.v1_0.UserGroup;
+import com.liferay.headless.admin.user.client.resource.v1_0.AccountResource;
+import com.liferay.headless.admin.user.client.resource.v1_0.RoleResource;
 import com.liferay.headless.admin.user.client.resource.v1_0.UserAccountResource;
 import com.liferay.headless.admin.user.client.resource.v1_0.UserGroupResource;
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Catalog;
@@ -23,6 +29,7 @@ import com.liferay.headless.commerce.admin.order.client.pagination.Page;
 import com.liferay.headless.commerce.admin.order.client.pagination.Pagination;
 import com.liferay.headless.commerce.admin.order.client.resource.v1_0.OrderResource;
 import com.liferay.petra.function.UnsafeConsumer;
+import com.liferay.petra.function.UnsafeRunnable;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -61,17 +68,56 @@ public class MarketplaceCommandLineRunner
 	extends BaseRestController implements CommandLineRunner {
 
 	public void run(String... args) throws Exception {
-		_processInProgressTrials();
+		_invoke(this::_processInProgressTrials, "In Progress Trials");
 
-		_processOnHoldTrials();
+		_invoke(
+			this::_processLiferayStaffUserGroups, "Liferay Staff User Groups");
 
-		_processPendingOrders();
+		_invoke(this::_processOnHoldTrials, "On Hold Trials");
 
-		_processOrdersTotalAmount();
+		_invoke(this::_processOrdersTotalAmount, "Orders Total Amount");
 
-		_processProjectsUsingMarketplaceApps();
+		_invoke(this::_processPendingOrders, "Pending Orders");
 
-		_processPublisherSalesSummary();
+		_invoke(
+			this::_processProjectsUsingMarketplaceApps,
+			"Projects Using Marketplace Apps");
+
+		_invoke(this::_processPublisherSalesSummary, "Publisher Sales Summary");
+	}
+
+	private void _assignAccountToUserAccount(
+			Account account, UserAccount userAccount)
+		throws Exception {
+
+		for (AccountBrief accountBrief : userAccount.getAccountBriefs()) {
+			if (Objects.equals(
+					accountBrief.getExternalReferenceCode(),
+					account.getExternalReferenceCode())) {
+
+				return;
+			}
+		}
+
+		UserAccountResource userAccountResource = _getUserAccountResource();
+
+		userAccountResource.postAccountUserAccountByEmailAddress(
+			account.getId(), userAccount.getEmailAddress());
+	}
+
+	private void _assignRoleToUserAccount(Role role, UserAccount userAccount)
+		throws Exception {
+
+		for (RoleBrief roleBrief : userAccount.getRoleBriefs()) {
+			if (Objects.equals(roleBrief.getName(), role.getName())) {
+				return;
+			}
+		}
+
+		RoleResource roleResource = _getRoleResource();
+
+		roleResource.postRoleUserAccountAssociation(
+			role.getId(), userAccount.getId());
 	}
 
 	private JSONObject _createPublisherSalesSummary(
@@ -119,6 +165,17 @@ public class MarketplaceCommandLineRunner
 				break;
 			}
 		}
+	}
+
+	private AccountResource _getAccountResource() throws Exception {
+		return AccountResource.builder(
+		).endpoint(
+			new URL(_lxcDXPServerProtocol + "://" + _lxcDXPMainDomain)
+		).header(
+			HttpHeaders.AUTHORIZATION,
+			_liferayOAuth2AccessTokenManager.getAuthorization(
+				_liferayOAuthApplicationExternalReferenceCodes)
+		).build();
 	}
 
 	private JSONObject _getAvailabilityJSONObject() {
@@ -176,35 +233,6 @@ public class MarketplaceCommandLineRunner
 		int quarter = ((localDate.getMonthValue() - 1) / 3) + 1;
 
 		return localDate.getYear() + " Q" + quarter;
-	}
-
-	private Collection<UserAccount> _getCustomerUserAccounts()
-		throws Exception {
-
-		UserGroupResource userGroupResource = _getUserGroupResource();
-
-		UserGroup userGroup = userGroupResource.getUserGroupsPage(
-			"", "name eq 'Customers'",
-			com.liferay.headless.admin.user.client.pagination.Pagination.of(
-				-1, -1),
-			""
-		).fetchFirstItem();
-
-		if (userGroup == null) {
-			return Collections.emptyList();
-		}
-
-		UserAccountResource userAccountResource = _getUserAccountResource();
-
-		com.liferay.headless.admin.user.client.pagination.Page<UserAccount>
-			userAccountPage = userAccountResource.getUserGroupUsersPage(
-				userGroup.getId(), "",
-				"not contains(emailAddress, '@liferay.com')",
-				com.liferay.headless.admin.user.client.pagination.Pagination.of(
-					-1, -1),
-				"");
-
-		return userAccountPage.getItems();
 	}
 
 	private String _getKoroneikiProject(Order order) {
@@ -324,6 +352,17 @@ public class MarketplaceCommandLineRunner
 		return publisherSummaryJSONObject.getLong("id");
 	}
 
+	private RoleResource _getRoleResource() throws Exception {
+		return RoleResource.builder(
+		).endpoint(
+			new URL(_lxcDXPServerProtocol + "://" + _lxcDXPMainDomain)
+		).header(
+			HttpHeaders.AUTHORIZATION,
+			_liferayOAuth2AccessTokenManager.getAuthorization(
+				_liferayOAuthApplicationExternalReferenceCodes)
+		).build();
+	}
+
 	private SkuResource _getSkuResource() throws Exception {
 		return SkuResource.builder(
 		).endpoint(
@@ -358,6 +397,37 @@ public class MarketplaceCommandLineRunner
 		).build();
 	}
 
+	private Collection<UserAccount> _getUserAccounts(
+			String userAccountFilterString, String userGroupFilterString)
+		throws Exception {
+
+		UserGroupResource userGroupResource = _getUserGroupResource();
+
+		com.liferay.headless.admin.user.client.pagination.Page<UserGroup>
+			userGroupsPage = userGroupResource.getUserGroupsPage(
+				"", userGroupFilterString,
+				com.liferay.headless.admin.user.client.pagination.Pagination.of(
+					-1, -1),
+				"");
+
+		UserGroup userGroup = userGroupsPage.fetchFirstItem();
+
+		if (userGroup == null) {
+			return Collections.emptyList();
+		}
+
+		UserAccountResource userAccountResource = _getUserAccountResource();
+
+		com.liferay.headless.admin.user.client.pagination.Page<UserAccount>
+			userAccountsPage = userAccountResource.getUserGroupUsersPage(
+				userGroup.getId(), "", userAccountFilterString,
+				com.liferay.headless.admin.user.client.pagination.Pagination.of(
+					-1, -1),
+				"");
+
+		return userAccountsPage.getItems();
+	}
+
 	private UserGroupResource _getUserGroupResource() throws Exception {
 		return UserGroupResource.builder(
 		).header(
@@ -367,6 +437,15 @@ public class MarketplaceCommandLineRunner
 		).endpoint(
 			new URL(lxcDXPServerProtocol + "://" + lxcDXPMainDomain)
 		).build();
+	}
+
+	private void _invoke(UnsafeRunnable<?> task, String name) {
+		try {
+			task.run();
+		}
+		catch (Throwable throwable) {
+			_log.error("Unable to process " + name, throwable);
+		}
 	}
 
 	private void _patchOrder(long orderId, long publisherSalesSummaryId) {
@@ -441,8 +520,10 @@ public class MarketplaceCommandLineRunner
 
 	private void _processInProgressTrials() throws Exception {
 		Page<Order> page = _getOrdersPage(
-			"orderStatus/any(x:(x eq " + _ORDER_STATUS_IN_PROGRESS +
-				")) and orderTypeExternalReferenceCode eq 'SOLUTIONS7'",
+			StringBundler.concat(
+				"orderStatus/any(x:(x eq ", _ORDER_STATUS_IN_PROGRESS,
+				")) and orderTypeExternalReferenceCode in (",
+				"'SSA_SAAS', 'SOLUTIONS7')"),
 			-1, -1);
 
 		if (page.getTotalCount() == 0) {
@@ -494,6 +575,38 @@ public class MarketplaceCommandLineRunner
 			catch (Exception exception) {
 				_log.error(exception);
 			}
+		}
+	}
+
+	private void _processLiferayStaffUserGroups() throws Exception {
+		AccountResource accountResource = _getAccountResource();
+
+		Account account = accountResource.getAccountByExternalReferenceCode(
+			"SSA-ACCOUNT");
+
+		if (account == null) {
+			return;
+		}
+
+		RoleResource roleResource = _getRoleResource();
+
+		com.liferay.headless.admin.user.client.pagination.Page<Role> rolesPage =
+			roleResource.getRolesPage(
+				null, null, "name eq 'Liferay Staff'",
+				com.liferay.headless.admin.user.client.pagination.Pagination.of(
+					-1, -1));
+
+		Role role = rolesPage.fetchFirstItem();
+
+		if (role == null) {
+			return;
+		}
+
+		for (UserAccount userAccount :
+				_getUserAccounts(null, "name eq 'Employees'")) {
+
+			_assignRoleToUserAccount(role, userAccount);
+			_assignAccountToUserAccount(account, userAccount);
 		}
 	}
 
@@ -555,7 +668,7 @@ public class MarketplaceCommandLineRunner
 		_forEachOrder(
 			StringBundler.concat(
 				"orderStatus/any(x:(x eq ", _ORDER_STATUS_COMPLETED,
-				")) and orderTypeExternalReferenceCode eq 'DXPAPP'"),
+				")) and orderTypeExternalReferenceCode eq 'DXP_APP'"),
 			order -> {
 				String currencyCode = order.getCurrencyCode();
 
@@ -622,7 +735,10 @@ public class MarketplaceCommandLineRunner
 		Map<String, JSONObject> projectsUsingMarketplace = new HashMap<>();
 
 		OrderResource orderResource = _getOrderResource();
-		Collection<UserAccount> userAccounts = _getCustomerUserAccounts();
+
+		Collection<UserAccount> userAccounts = _getUserAccounts(
+			"not contains(emailAddress, '@liferay.com')",
+			"name eq 'Customers'");
 
 		_forEachOrder(
 			StringBundler.concat(

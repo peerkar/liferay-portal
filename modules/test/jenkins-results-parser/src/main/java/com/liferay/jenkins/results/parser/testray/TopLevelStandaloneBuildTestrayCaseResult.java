@@ -5,7 +5,6 @@
 
 package com.liferay.jenkins.results.parser.testray;
 
-import com.liferay.jenkins.results.parser.BuildReport;
 import com.liferay.jenkins.results.parser.JenkinsMaster;
 import com.liferay.jenkins.results.parser.JenkinsResultsParserUtil;
 import com.liferay.jenkins.results.parser.TopLevelBuildReport;
@@ -20,11 +19,8 @@ public class TopLevelStandaloneBuildTestrayCaseResult
 		TestrayBuild testrayBuild, TopLevelBuildReport topLevelBuildReport) {
 
 		super(testrayBuild, topLevelBuildReport);
-	}
 
-	@Override
-	public BuildReport getBuildReport() {
-		return getTopLevelBuildReport();
+		initBuildReport();
 	}
 
 	@Override
@@ -48,6 +44,11 @@ public class TopLevelStandaloneBuildTestrayCaseResult
 			topLevelBuildReport.getJobName(), "_",
 			String.valueOf(topLevelBuildReport.getBuildNumber()), "_",
 			getBatchName(), ".xml");
+	}
+
+	@Override
+	protected void initBuildReport() {
+		setBuildReport(getTopLevelBuildReport());
 	}
 
 }

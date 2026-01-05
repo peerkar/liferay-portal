@@ -4,17 +4,18 @@
  */
 
 import CMSAssetPermissionService from '../../common/services/CMSAssetPermissionService';
+import {openCMSModal} from '../../common/utils/openCMSModal';
 
 export default function openResetAssetPermissionModal({
 	className,
 	classPK,
 	loadData,
 }: {
-	className: string;
-	classPK: number;
+	className?: string;
+	classPK?: number;
 	loadData: () => void;
 }) {
-	Liferay.Util.openModal({
+	openCMSModal({
 		bodyHTML: `<p>${Liferay.Language.get(
 			'are-you-sure-you-want-to-reset-the-permissions-to-the-default-values'
 		)}</p>`,
@@ -25,28 +26,30 @@ export default function openResetAssetPermissionModal({
 				type: 'cancel',
 			},
 			{
-				displayType: 'primary',
-				label: Liferay.Language.get('ok'),
+				displayType: 'warning',
+				label: Liferay.Language.get('confirm'),
 				onClick: async ({processClose}: {processClose: () => void}) => {
 					try {
-						const response =
-							await CMSAssetPermissionService.resetAssetPermission(
-								{
-									className,
-									classPK,
-								}
-							);
+						if (className && classPK !== undefined) {
+							const response =
+								await CMSAssetPermissionService.resetAssetPermission(
+									{
+										className,
+										classPK,
+									}
+								);
 
-						if (response.error) {
-							throw new Error(response.error);
+							if (response.error) {
+								throw new Error(response.error);
+							}
+
+							Liferay.Util.openToast({
+								message: Liferay.Language.get(
+									'permissions-reset-successfully'
+								),
+								type: 'success',
+							});
 						}
-
-						Liferay.Util.openToast({
-							message: Liferay.Language.get(
-								'permissions-reset-successfully'
-							),
-							type: 'success',
-						});
 
 						loadData();
 					}
@@ -64,8 +67,7 @@ export default function openResetAssetPermissionModal({
 				},
 			},
 		],
-		size: 'md',
 		status: 'warning',
-		title: Liferay.Language.get('confirm-reset-permissions'),
+		title: Liferay.Language.get('confirm-reset-to-default-permissions'),
 	});
 }

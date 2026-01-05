@@ -50,10 +50,8 @@ public class ExportImportReportEntryWrapper
 			"exportImportConfigurationId", getExportImportConfigurationId());
 		attributes.put("errorMessage", getErrorMessage());
 		attributes.put("errorStacktrace", getErrorStacktrace());
-		attributes.put("modelName", getModelName());
+		attributes.put("modelNameLanguageKey", getModelNameLanguageKey());
 		attributes.put("origin", getOrigin());
-		attributes.put("scope", getScope());
-		attributes.put("scopeKey", getScopeKey());
 		attributes.put("type", getType());
 		attributes.put("status", getStatus());
 
@@ -137,28 +135,17 @@ public class ExportImportReportEntryWrapper
 			setErrorStacktrace(errorStacktrace);
 		}
 
-		String modelName = (String)attributes.get("modelName");
+		String modelNameLanguageKey = (String)attributes.get(
+			"modelNameLanguageKey");
 
-		if (modelName != null) {
-			setModelName(modelName);
+		if (modelNameLanguageKey != null) {
+			setModelNameLanguageKey(modelNameLanguageKey);
 		}
 
 		Integer origin = (Integer)attributes.get("origin");
 
 		if (origin != null) {
 			setOrigin(origin);
-		}
-
-		String scope = (String)attributes.get("scope");
-
-		if (scope != null) {
-			setScope(scope);
-		}
-
-		String scopeKey = (String)attributes.get("scopeKey");
-
-		if (scopeKey != null) {
-			setScopeKey(scopeKey);
 		}
 
 		Integer type = (Integer)attributes.get("type");
@@ -290,13 +277,13 @@ public class ExportImportReportEntryWrapper
 	}
 
 	/**
-	 * Returns the model name of this export import report entry.
+	 * Returns the model name language key of this export import report entry.
 	 *
-	 * @return the model name of this export import report entry
+	 * @return the model name language key of this export import report entry
 	 */
 	@Override
-	public String getModelName() {
-		return model.getModelName();
+	public String getModelNameLanguageKey() {
+		return model.getModelNameLanguageKey();
 	}
 
 	/**
@@ -337,26 +324,6 @@ public class ExportImportReportEntryWrapper
 	@Override
 	public long getPrimaryKey() {
 		return model.getPrimaryKey();
-	}
-
-	/**
-	 * Returns the scope of this export import report entry.
-	 *
-	 * @return the scope of this export import report entry
-	 */
-	@Override
-	public String getScope() {
-		return model.getScope();
-	}
-
-	/**
-	 * Returns the scope key of this export import report entry.
-	 *
-	 * @return the scope key of this export import report entry
-	 */
-	@Override
-	public String getScopeKey() {
-		return model.getScopeKey();
 	}
 
 	/**
@@ -494,13 +461,13 @@ public class ExportImportReportEntryWrapper
 	}
 
 	/**
-	 * Sets the model name of this export import report entry.
+	 * Sets the model name language key of this export import report entry.
 	 *
-	 * @param modelName the model name of this export import report entry
+	 * @param modelNameLanguageKey the model name language key of this export import report entry
 	 */
 	@Override
-	public void setModelName(String modelName) {
-		model.setModelName(modelName);
+	public void setModelNameLanguageKey(String modelNameLanguageKey) {
+		model.setModelNameLanguageKey(modelNameLanguageKey);
 	}
 
 	/**
@@ -541,26 +508,6 @@ public class ExportImportReportEntryWrapper
 	@Override
 	public void setPrimaryKey(long primaryKey) {
 		model.setPrimaryKey(primaryKey);
-	}
-
-	/**
-	 * Sets the scope of this export import report entry.
-	 *
-	 * @param scope the scope of this export import report entry
-	 */
-	@Override
-	public void setScope(String scope) {
-		model.setScope(scope);
-	}
-
-	/**
-	 * Sets the scope key of this export import report entry.
-	 *
-	 * @param scopeKey the scope key of this export import report entry
-	 */
-	@Override
-	public void setScopeKey(String scopeKey) {
-		model.setScopeKey(scopeKey);
 	}
 
 	/**

@@ -45,6 +45,7 @@ renderResponse.setTitle(dlEditFolderDisplayContext.getHeaderTitle());
 		<aui:input name="repositoryId" type="hidden" value="<%= dlEditFolderDisplayContext.getRepositoryId() %>" />
 		<aui:input name="parentFolderId" type="hidden" value="<%= dlEditFolderDisplayContext.getParentFolderId() %>" />
 
+		<liferay-ui:error exception="<%= DuplicateDLFolderExternalReferenceCodeException.class %>" message="please-enter-a-unique-external-reference-code" />
 		<liferay-ui:error exception="<%= DuplicateFileEntryException.class %>" message="please-enter-a-unique-folder-name" />
 		<liferay-ui:error exception="<%= DuplicateFolderNameException.class %>" message="please-enter-a-unique-folder-name" />
 
@@ -79,6 +80,16 @@ renderResponse.setTitle(dlEditFolderDisplayContext.getHeaderTitle());
 						<c:if test="<%= dlEditFolderDisplayContext.isShowDescription() %>">
 							<aui:input disabled="<%= !dlEditFolderDisplayContext.hasUpdateDLFolderPermission() %>" name="description" />
 						</c:if>
+
+						<aui:field-wrapper cssClass="form-group" label="external-reference-code" name="externalReferenceCode">
+							<div class="small text-secondary"><liferay-ui:message key="unique-key-for-referencing-the-folder-definition" /></div>
+
+							<div class="input-group">
+								<div class="input-group-item">
+									<aui:input disabled="<%= dlEditFolderDisplayContext.isERCFieldEnabled() %>" label="" name="externalReferenceCode" type="text" />
+								</div>
+							</div>
+						</aui:field-wrapper>
 					</c:if>
 				</aui:fieldset>
 

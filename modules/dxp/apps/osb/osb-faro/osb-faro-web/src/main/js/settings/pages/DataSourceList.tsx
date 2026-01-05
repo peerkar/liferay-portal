@@ -1,5 +1,5 @@
 import * as API from 'shared/api';
-import BasePage from 'settings/components/BasePage';
+import BasePage from 'settings/components/base-page/BasePage';
 import Card from 'shared/components/Card';
 import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
@@ -13,9 +13,6 @@ import NoResultsDisplay, {
 import React, {useEffect, useState} from 'react';
 import URLConstants from 'shared/util/url-constants';
 import {ClayDropDownWithItems} from '@clayui/drop-down';
-import {close, modalTypes, open} from 'shared/actions/modals';
-import {compose} from 'shared/hoc';
-import {connect, ConnectedProps} from 'react-redux';
 import {
 	CREATE_DATE,
 	createOrderIOMap,
@@ -92,8 +89,7 @@ export const DataSourceName: React.FC<IDataSourceNameProps> = ({
 
 export const StatusRenderer: React.FC<ICellProps> = ({data}) => {
 	const {display, label} = getDataSourceDisplayObject(
-		new DataSource(fromJS(data)),
-		true
+		new DataSource(fromJS(data))
 	);
 
 	return (
@@ -169,19 +165,9 @@ const typeFormatter = (type: DataSourceTypes): string => {
 	}
 };
 
-const connector = connect(null, {close, open});
+interface IDataSourceListProps extends React.HTMLAttributes<HTMLElement> {}
 
-type PropsFromRedux = ConnectedProps<typeof connector>;
-
-interface IDataSourceListProps
-	extends PropsFromRedux,
-		React.HTMLAttributes<HTMLElement> {}
-
-const DataSourceList: React.FC<IDataSourceListProps> = ({
-	className,
-	close,
-	open
-}) => {
+const DataSourceList: React.FC<IDataSourceListProps> = ({className}) => {
 	const currentUser = useCurrentUser();
 	const history = useHistory();
 	const {groupId} = useParams();
@@ -244,21 +230,22 @@ const DataSourceList: React.FC<IDataSourceListProps> = ({
 					label: Liferay.Language.get('liferay-dxp'),
 
 					onClick: () => {
-						open(modalTypes.CONNECT_DXP_MODAL, {
-							groupId,
-							onClose: close
-						});
+						history.push(
+							toRoute(Routes.SETTINGS_DATA_SOURCE_ONBOARDING, {
+								groupId,
+								id: DataSourceTypes.Liferay
+							})
+						);
 					}
 				},
 				{
 					label: Liferay.Language.get('salesforce'),
 
 					onClick: () => {
-						// TODO: create salesforce connection page to be loaded in the route below
-
 						history.push(
-							toRoute(Routes.SETTINGS_SALESFORCE_ADD, {
-								groupId
+							toRoute(Routes.SETTINGS_DATA_SOURCE_ONBOARDING, {
+								groupId,
+								id: DataSourceTypes.Salesforce
 							})
 						);
 					}
@@ -412,4 +399,4 @@ const DataSourceList: React.FC<IDataSourceListProps> = ({
 	);
 };
 
-export default compose<any>(connector)(DataSourceList);
+export default DataSourceList;

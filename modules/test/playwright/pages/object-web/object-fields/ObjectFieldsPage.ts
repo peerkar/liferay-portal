@@ -3,12 +3,15 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {Locator, Page} from '@playwright/test';
+import {FrameLocator, Locator, Page} from '@playwright/test';
 
+import {waitForAlert} from '../../../utils/waitForAlert';
 import {ViewObjectDefinitionsPage} from '../ViewObjectDefinitionsPage';
 
 export class ObjectFieldsPage {
+	readonly iframeLocator: FrameLocator;
 	readonly addObjectFieldButton: Locator;
+	readonly advancedTab: Locator;
 	readonly aggregationFieldDropdown: Locator;
 	readonly aggregationFunctionDropdown: Locator;
 	readonly agreggationRelationshipDropdown: Locator;
@@ -21,10 +24,16 @@ export class ObjectFieldsPage {
 	readonly objectFieldOptionsDropdown: Locator;
 	readonly page: Page;
 	readonly saveButton: Locator;
+	readonly selectOptionButton: Locator;
+	readonly useDefaultValueToggle: Locator;
 	readonly viewObjectDefinitionsPage: ViewObjectDefinitionsPage;
 
 	constructor(page: Page) {
+		this.iframeLocator = page.frameLocator('iframe');
 		this.addObjectFieldButton = page.getByLabel('Add Object Field');
+		this.advancedTab = this.iframeLocator.getByRole('tab', {
+			name: 'Advanced',
+		});
 		this.aggregationFieldDropdown = page.getByLabel('FieldMandatory');
 		this.aggregationFunctionDropdown = page.getByLabel('FunctionMandatory');
 		this.agreggationRelationshipDropdown = page.getByLabel(
@@ -49,6 +58,10 @@ export class ObjectFieldsPage {
 		this.objectFieldOptionsDropdown = page.getByText('Select an Option');
 		this.page = page;
 		this.saveButton = page.getByRole('button', {name: 'Save'});
+		this.selectOptionButton = this.iframeLocator.getByRole('combobox');
+		this.useDefaultValueToggle = this.iframeLocator.getByRole('switch', {
+			name: 'Use Default Value',
+		});
 		this.viewObjectDefinitionsPage = new ViewObjectDefinitionsPage(page);
 	}
 
@@ -155,17 +168,19 @@ export class ObjectFieldsPage {
 		await this.page.getByRole('button', {name: 'Delete'}).click();
 	}
 
-	getMaximumFileSizeErrorMessage({
-		maximumFileSizeAllowed,
-	}: {
-		maximumFileSizeAllowed: string;
-	}) {
-		return this.page
-			.frameLocator('iframe')
-			.getByText(
-				`File size is larger than the allowed overall maximum upload request size ${maximumFileSizeAllowed} MB.`,
-				{exact: true}
-			);
+	async disableDefaultValue(objectFieldName: string) {
+		await this.openObjectField(objectFieldName);
+
+		await this.advancedTab.click();
+
+		await this.useDefaultValueToggle.uncheck();
+
+		await this.editFieldSaveButton.click();
+
+		await waitForAlert(
+			this.page,
+			'The object field was updated successfully'
+		);
 	}
 
 	async goto(objectDefinitionLabel: string) {
@@ -184,5 +199,95 @@ export class ObjectFieldsPage {
 			.getByRole('link')
 			.filter({hasText: fieldLabel})
 			.click();
+	}
+
+	async selectDefaultValue(value: string) {
+		await this.selectOptionButton.click();
+
+		const selectOptionLocator = this.iframeLocator.getByRole('option', {
+			exact: true,
+			name: value,
+		});
+
+		await selectOptionLocator.click();
+	}
+
+	async setDefaultValue({
+		defaultValue,
+		objectFieldBusinessType,
+		objectFieldName,
+	}: {
+		defaultValue: string;
+		objectFieldBusinessType: string;
+		objectFieldName: string;
+	}) {
+		await this.openObjectField(objectFieldName);
+
+		await this.advancedTab.click();
+
+		await this.useDefaultValueToggle.check({timeout: 1000});
+
+		if (objectFieldBusinessType === 'Boolean') {
+			await this.selectDefaultValue(defaultValue);
+		}
+
+		if (objectFieldBusinessType === 'Date') {
+			await this.iframeLocator
+				.getByPlaceholder('__/__/____')
+				.fill(defaultValue);
+		}
+
+		if (objectFieldBusinessType === 'DateTime') {
+			await this.iframeLocator
+				.getByPlaceholder('__/__/____ __:__ _')
+				.fill(defaultValue);
+		}
+
+		if (
+			objectFieldBusinessType === 'Decimal' ||
+			objectFieldBusinessType === 'Integer' ||
+			objectFieldBusinessType === 'LongInteger' ||
+			objectFieldBusinessType === 'PrecisionDecimal'
+		) {
+			await this.iframeLocator
+				.getByPlaceholder('Enter a default value.')
+				.fill(defaultValue);
+		}
+
+		if (
+			objectFieldBusinessType === 'LongText' ||
+			objectFieldBusinessType === 'Text'
+		) {
+			await this.iframeLocator
+				.getByLabel('Default ValueMandatory')
+				.fill(defaultValue);
+		}
+
+		if (objectFieldBusinessType === 'RichText') {
+			await this.iframeLocator
+				.getByLabel('Rich Text Editor')
+				.nth(1)
+				.fill(defaultValue);
+		}
+
+		await this.editFieldSaveButton.click();
+
+		await waitForAlert(
+			this.page,
+			'The object field was updated successfully'
+		);
+	}
+
+	getMaximumFileSizeErrorMessage({
+		maximumFileSizeAllowed,
+	}: {
+		maximumFileSizeAllowed: string;
+	}) {
+		return this.page
+			.frameLocator('iframe')
+			.getByText(
+				`File size is larger than the allowed overall maximum upload request size ${maximumFileSizeAllowed} MB.`,
+				{exact: true}
+			);
 	}
 }

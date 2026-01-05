@@ -5,9 +5,14 @@
 
 package com.liferay.portal.db;
 
+import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerList;
+import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerListFactory;
+import com.liferay.petra.concurrent.DCLSingleton;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.db.DBInspector;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.ReleaseConstants;
@@ -26,10 +31,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -89,6 +97,46 @@ public class DBResourceUtil {
 		return _read(bundle, "/META-INF/sql/tables.sql");
 	}
 
+	public static Map<String, String[]>
+			getNonserviceBuilderPrimaryKeyColumnNames(long companyId)
+		throws PortalException {
+
+		Map<String, String[]> nonserviceBuildPrimaryKeyColumnNames =
+			new HashMap<>();
+
+		ServiceTrackerList<DBResourceProvider> serviceTrackerList =
+			_serviceTrackerListDCLSingleton.getSingleton(
+				() -> ServiceTrackerListFactory.open(
+					SystemBundleUtil.getBundleContext(),
+					DBResourceProvider.class));
+
+		for (DBResourceProvider dbResourceProvider : serviceTrackerList) {
+			nonserviceBuildPrimaryKeyColumnNames.putAll(
+				dbResourceProvider.getTablesPrimaryKeyColumnNames(companyId));
+		}
+
+		return nonserviceBuildPrimaryKeyColumnNames;
+	}
+
+	public static List<String> getNonserviceBuilderTableNames(long companyId)
+		throws PortalException {
+
+		List<String> nonserviceBuildTableNames = new ArrayList<>();
+
+		ServiceTrackerList<DBResourceProvider> serviceTrackerList =
+			_serviceTrackerListDCLSingleton.getSingleton(
+				() -> ServiceTrackerListFactory.open(
+					SystemBundleUtil.getBundleContext(),
+					DBResourceProvider.class));
+
+		for (DBResourceProvider dbResourceProvider : serviceTrackerList) {
+			nonserviceBuildTableNames.addAll(
+				dbResourceProvider.getTableNames(companyId));
+		}
+
+		return nonserviceBuildTableNames;
+	}
+
 	public static String getPortalIndexesSQL() {
 		return StringUtil.read(
 			DBResourceUtil.class,
@@ -120,12 +168,30 @@ public class DBResourceUtil {
 			"/com/liferay/portal/tools/sql/dependencies/portal-tables.sql");
 	}
 
+	public static Map<String, List<String>>
+			getServiceComponentModuleColumnDefinitionsMap(Connection connection)
+		throws Exception {
+
+		return _getServiceComponentColumnDefinitionsMap(
+			connection, "buildNamespace like 'com.liferay%'");
+	}
+
 	public static Set<String> getServiceComponentModuleTableNames(
 			Connection connection)
 		throws Exception {
 
 		return _getServiceComponentTableNames(
 			connection, "buildNamespace like 'com.liferay%'");
+	}
+
+	public static Map<String, List<String>>
+			getServiceComponentPortalColumnDefinitionsMap(Connection connection)
+		throws Exception {
+
+		return _getServiceComponentColumnDefinitionsMap(
+			connection,
+			"buildNamespace = '" +
+				ReleaseConstants.DEFAULT_SERVLET_CONTEXT_NAME + "'");
 	}
 
 	public static Set<String> getServiceComponentPortalTableNames(
@@ -153,6 +219,26 @@ public class DBResourceUtil {
 		return tableNames;
 	}
 
+	private static Map<String, List<String>>
+			_getServiceComponentColumnDefinitionsMap(
+				Connection connection, String sqlCondition)
+		throws Exception {
+
+		Map<String, List<String>> columnDefinitionsMap = new HashMap<>();
+
+		try (PreparedStatement preparedStatement = connection.prepareStatement(
+				_SQL_SERVICE_COMPONENT + sqlCondition);
+			ResultSet resultSet = preparedStatement.executeQuery()) {
+
+			while (resultSet.next()) {
+				columnDefinitionsMap.putAll(
+					_parseColumnDefinitionsMap(resultSet.getString(1)));
+			}
+		}
+
+		return columnDefinitionsMap;
+	}
+
 	private static Set<String> _getServiceComponentTableNames(
 			Connection connection, String sqlCondition)
 		throws Exception {
@@ -160,20 +246,14 @@ public class DBResourceUtil {
 		Set<String> tableNames = new HashSet<>();
 
 		try (PreparedStatement preparedStatement = connection.prepareStatement(
-				StringBundler.concat(
-					"select data_ from ServiceComponent where buildNumber = ",
-					"(select max(buildNumber) from ServiceComponent ",
-					"TEMP_TABLE where ServiceComponent.buildNamespace = ",
-					"TEMP_TABLE.buildNamespace) and ", sqlCondition))) {
+				_SQL_SERVICE_COMPONENT + sqlCondition);
+			ResultSet resultSet = preparedStatement.executeQuery()) {
 
 			DBInspector dbInspector = new DBInspector(connection);
 
-			try (ResultSet resultSet = preparedStatement.executeQuery()) {
-				while (resultSet.next()) {
-					tableNames.addAll(
-						parseCreateTableSQL(
-							dbInspector, resultSet.getString(1)));
-				}
+			while (resultSet.next()) {
+				tableNames.addAll(
+					parseCreateTableSQL(dbInspector, resultSet.getString(1)));
 			}
 		}
 
@@ -207,6 +287,50 @@ public class DBResourceUtil {
 		).build();
 	}
 
+	private static Map<String, List<String>> _parseColumnDefinitionsMap(
+		String sql) {
+
+		Map<String, List<String>> columnDefinitionsMap = new TreeMap<>();
+
+		String tableName = null;
+
+		for (String line : StringUtil.splitLines(sql)) {
+			line = line.trim();
+
+			if (line.contains("create table ")) {
+				String createTableSQL = line.substring(
+					line.indexOf("create table "));
+
+				tableName =
+					StringUtil.split(createTableSQL, StringPool.SPACE)[2];
+
+				columnDefinitionsMap.put(tableName, new ArrayList<>());
+
+				continue;
+			}
+
+			if (line.isEmpty() || line.startsWith(")") ||
+				line.startsWith(";") || line.startsWith("<") ||
+				line.startsWith("]]>") || line.startsWith("create ") ||
+				line.startsWith("primary key")) {
+
+				continue;
+			}
+
+			line = StringUtil.replaceLast(
+				line, CharPool.COMMA, StringPool.BLANK);
+			line = StringUtil.removeSubstring(line, "primary key");
+
+			columnDefinitionsMap.get(
+				tableName
+			).add(
+				line.trim()
+			);
+		}
+
+		return columnDefinitionsMap;
+	}
+
 	private static String _read(Bundle bundle, String path) {
 		URL resource = bundle.getResource(path);
 
@@ -228,6 +352,12 @@ public class DBResourceUtil {
 		}
 	}
 
+	private static final String _SQL_SERVICE_COMPONENT = StringBundler.concat(
+		"select data_ from ServiceComponent where buildNumber = (select ",
+		"max(buildNumber) from ServiceComponent ServiceComponent2 where ",
+		"ServiceComponent.buildNamespace = ServiceComponent2.buildNamespace) ",
+		"and ");
+
 	private static final Log _log = LogFactoryUtil.getLog(DBResourceUtil.class);
 
 	private static final Pattern _composedPrimaryKeyPattern = Pattern.compile(
@@ -240,5 +370,7 @@ public class DBResourceUtil {
 			"(?:\\s+\\w+)*\\s+primary key\\b",
 		Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 	private static volatile Set<String> _portalTableNames;
+	private static final DCLSingleton<ServiceTrackerList<DBResourceProvider>>
+		_serviceTrackerListDCLSingleton = new DCLSingleton<>();
 
 }

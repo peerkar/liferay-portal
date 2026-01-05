@@ -7,6 +7,7 @@ import {Page, expect} from '@playwright/test';
 
 import {ApiHelpers} from '../../../../helpers/ApiHelpers';
 import {liferayConfig} from '../../../../liferay.config';
+import {PORTLET_URLS} from '../../../../utils/portletUrls';
 import {createChannel} from '../../../osb-faro-web/main/utils/channel';
 import {createDataSource} from '../../../osb-faro-web/main/utils/data-source';
 import {acceptsCookiesBanner} from '../../../osb-faro-web/main/utils/portal';
@@ -14,12 +15,28 @@ import {acceptsCookiesBanner} from '../../../osb-faro-web/main/utils/portal';
 export const PROPERTY_COMMERCE_CHANNEL_COLUMN_INDEX = 1;
 export const PROPERTY_SITE_COLUMN_INDEX = 2;
 
-async function switchToTab({page, tabName}: {page: Page; tabName: string}) {
-	const sitesTab = await page.getByRole('tab', {name: tabName});
+enum TabName {
+	Channel = 'Channel',
+	Sites = 'Sites',
+}
 
-	await sitesTab.click();
+async function switchToTab({page, tabName}: {page: Page; tabName: TabName}) {
+	await page.getByRole('tab', {name: tabName}).click();
 
-	await page.waitForTimeout(3000);
+	if (tabName === TabName.Channel) {
+		await page
+			.getByText(
+				'Channels can only be assigned to a single property at a time'
+			)
+			.waitFor({state: 'visible'});
+	}
+	else {
+		await page
+			.getByText(
+				'Sites can only be assigned to a single property at a time'
+			)
+			.waitFor({state: 'visible'});
+	}
 }
 
 export async function connectToAnalyticsCloud(
@@ -124,17 +141,9 @@ export async function findChannel({
 export async function goToAnalyticsCloudInstanceSettings(page: Page) {
 	await page.goto(liferayConfig.environment.baseUrl);
 
-	await page.getByLabel('Open Applications MenuCtrl+Alt+A').click();
+	await page.goto(`${PORTLET_URLS.analyticsCloudConnection}`);
 
-	await page.getByRole('tab', {name: 'Control Panel'}).click();
-
-	await page.getByRole('menuitem', {name: 'Instance Settings'}).click();
-
-	await page.getByRole('link', {name: 'Analytics Cloud'}).click();
-
-	await expect(page.getByText('Analytics Cloud Token')).toBeVisible({
-		timeout: 100 * 1000,
-	});
+	await page.getByText('Analytics Cloud Token').waitFor({state: 'visible'});
 }
 
 export async function goToSettingsStep({
@@ -202,7 +211,7 @@ export async function syncAnalyticsCloud({
 
 	await connectToAnalyticsCloud(page, {token});
 
-	await syncSite({
+	await toggleSiteSync({
 		channelName,
 		page,
 		siteName,
@@ -300,7 +309,7 @@ export async function syncCommerce({
 
 	await assignButton.click();
 
-	await switchToTab({page, tabName: 'Channel'});
+	await switchToTab({page, tabName: TabName.Channel});
 
 	await page
 		.locator('.active')
@@ -332,14 +341,16 @@ export async function syncCommerce({
 	).toBeVisible();
 }
 
-export async function syncSite({
+export async function toggleSiteSync({
 	channelName,
 	page,
 	siteName = 'Liferay DXP',
+	synced = true,
 }: {
 	channelName: string;
 	page: Page;
 	siteName?: string;
+	synced?: boolean;
 }) {
 	const channel = await findChannel({channelName, page});
 
@@ -347,7 +358,7 @@ export async function syncSite({
 
 	await assignButton.click();
 
-	await switchToTab({page, tabName: 'Sites'});
+	await switchToTab({page, tabName: TabName.Sites});
 
 	await page.locator('.active').getByPlaceholder('Search').fill(siteName);
 
@@ -363,7 +374,12 @@ export async function syncSite({
 		'tbody tr:first-child input[type="checkbox"]'
 	);
 
-	await checkbox.check();
+	if (synced) {
+		await checkbox.check();
+	}
+	else {
+		await checkbox.uncheck();
+	}
 
 	const submitButton = await page.$(
 		'.modal .modal-item-last button.btn-primary'

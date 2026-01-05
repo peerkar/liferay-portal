@@ -34,6 +34,15 @@ public class ExportImportContentProcessorRegistryUtil {
 			_getExportImportContentProcessor(className);
 	}
 
+	public static ExportImportContentProcessor<String>
+		getExportImportContentProcessorByContentProcessorType(
+			String contentProcessorType) {
+
+		return _exportImportContentProcessorRegistryUtil.
+			_getExportImportContentProcessorByContentProcessorType(
+				contentProcessorType);
+	}
+
 	public static List<ExportImportContentProcessor<String>>
 		getExportImportContentProcessors() {
 
@@ -57,7 +66,15 @@ public class ExportImportContentProcessorRegistryUtil {
 	private ExportImportContentProcessor<String>
 		_getExportImportContentProcessor(String className) {
 
-		return _exportImportContentProcessors.get(className);
+		return _modelClassNameExportImportContentProcessors.get(className);
+	}
+
+	private ExportImportContentProcessor<String>
+		_getExportImportContentProcessorByContentProcessorType(
+			String contentProcessorType) {
+
+		return _contentProcessorTypeExportImportContentProcessors.get(
+			contentProcessorType);
 	}
 
 	private List<ExportImportContentProcessor<String>>
@@ -65,7 +82,7 @@ public class ExportImportContentProcessorRegistryUtil {
 
 		Collection<ExportImportContentProcessor<String>>
 			exportImportContentProcessors =
-				_exportImportContentProcessors.values();
+				_modelClassNameExportImportContentProcessors.values();
 
 		return ListUtil.fromCollection(exportImportContentProcessors);
 	}
@@ -76,7 +93,11 @@ public class ExportImportContentProcessorRegistryUtil {
 
 	private final BundleContext _bundleContext;
 	private final Map<String, ExportImportContentProcessor<String>>
-		_exportImportContentProcessors = new ConcurrentHashMap<>();
+		_contentProcessorTypeExportImportContentProcessors =
+			new ConcurrentHashMap<>();
+	private final Map<String, ExportImportContentProcessor<String>>
+		_modelClassNameExportImportContentProcessors =
+			new ConcurrentHashMap<>();
 	private final ServiceTracker
 		<ExportImportContentProcessor<String>,
 		 ExportImportContentProcessor<String>> _serviceTracker;
@@ -94,11 +115,19 @@ public class ExportImportContentProcessorRegistryUtil {
 			ExportImportContentProcessor<String> exportImportContentProcessor =
 				_bundleContext.getService(serviceReference);
 
+			List<String> contentProcessorTypes = StringPlus.asList(
+				serviceReference.getProperty("content.processor.type"));
+
+			for (String processorType : contentProcessorTypes) {
+				_contentProcessorTypeExportImportContentProcessors.put(
+					processorType, exportImportContentProcessor);
+			}
+
 			List<String> modelClassNames = StringPlus.asList(
 				serviceReference.getProperty("model.class.name"));
 
 			for (String modelClassName : modelClassNames) {
-				_exportImportContentProcessors.put(
+				_modelClassNameExportImportContentProcessors.put(
 					modelClassName, exportImportContentProcessor);
 			}
 
@@ -124,11 +153,20 @@ public class ExportImportContentProcessorRegistryUtil {
 
 			_bundleContext.ungetService(serviceReference);
 
+			List<String> contentProcessorTypes = StringPlus.asList(
+				serviceReference.getProperty("content.processor.type"));
+
+			for (String contentProcessorType : contentProcessorTypes) {
+				_contentProcessorTypeExportImportContentProcessors.remove(
+					contentProcessorType);
+			}
+
 			List<String> modelClassNames = StringPlus.asList(
 				serviceReference.getProperty("model.class.name"));
 
 			for (String modelClassName : modelClassNames) {
-				_exportImportContentProcessors.remove(modelClassName);
+				_modelClassNameExportImportContentProcessors.remove(
+					modelClassName);
 			}
 		}
 

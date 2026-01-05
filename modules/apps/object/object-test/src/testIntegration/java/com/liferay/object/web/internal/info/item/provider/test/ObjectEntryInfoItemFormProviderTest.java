@@ -31,6 +31,7 @@ import com.liferay.object.field.builder.AttachmentObjectFieldBuilder;
 import com.liferay.object.field.builder.PicklistObjectFieldBuilder;
 import com.liferay.object.field.builder.TextObjectFieldBuilder;
 import com.liferay.object.field.setting.builder.ObjectFieldSettingBuilder;
+import com.liferay.object.field.util.ObjectFieldUtil;
 import com.liferay.object.model.ObjectAction;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
@@ -41,6 +42,7 @@ import com.liferay.object.model.ObjectState;
 import com.liferay.object.model.ObjectStateFlow;
 import com.liferay.object.related.models.test.util.ObjectEntryTestUtil;
 import com.liferay.object.service.ObjectDefinitionLocalService;
+import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectFieldSettingLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
@@ -50,17 +52,24 @@ import com.liferay.object.service.ObjectStateTransitionLocalService;
 import com.liferay.object.test.util.ObjectActionTestUtil;
 import com.liferay.object.test.util.ObjectDefinitionTestUtil;
 import com.liferay.object.test.util.ObjectRelationshipTestUtil;
+import com.liferay.object.test.util.TreeTestUtil;
+import com.liferay.object.tree.Edge;
+import com.liferay.object.tree.Node;
+import com.liferay.object.tree.Tree;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
+import com.liferay.portal.props.test.util.PropsTemporarySwapper;
 import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
@@ -76,6 +85,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -90,7 +100,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
  */
 @FeatureFlags(
 	featureFlags = {
-		@FeatureFlag(value = "LPD-17564"), @FeatureFlag(value = "LPD-50377")
+		@FeatureFlag(value = "LPD-17564"), @FeatureFlag(value = "LPD-34594")
 	}
 )
 @RunWith(Arquillian.class)
@@ -109,7 +119,7 @@ public class ObjectEntryInfoItemFormProviderTest {
 			_listTypeDefinitionLocalService.addListTypeDefinition(
 				null, TestPropsValues.getUserId(),
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
-				false, Collections.emptyList());
+				false, Collections.emptyList(), new ServiceContext());
 
 		_listTypeEntry1 = _addListTypeEntry();
 		_listTypeEntry2 = _addListTypeEntry();
@@ -207,9 +217,40 @@ public class ObjectEntryInfoItemFormProviderTest {
 							RandomTestUtil.randomString())
 					).name(
 						"parentTextObjectFieldName"
-					).build()));
+					).build()),
+				false);
 
 		_parentInfoForm = _getInfoForm(_parentObjectDefinition);
+
+		_tree = TreeTestUtil.createObjectDefinitionTree(
+			_objectDefinitionLocalService, _objectRelationshipLocalService,
+			true,
+			LinkedHashMapBuilder.put(
+				"A", new String[] {"AA"}
+			).put(
+				"AA", new String[] {"AAA"}
+			).put(
+				"AAA", new String[0]
+			).build());
+
+		_objectDefinitionA = _objectDefinitionLocalService.getObjectDefinition(
+			TestPropsValues.getCompanyId(), "C_A");
+		_objectDefinitionAA = _objectDefinitionLocalService.getObjectDefinition(
+			TestPropsValues.getCompanyId(), "C_AA");
+		_objectDefinitionAAA =
+			_objectDefinitionLocalService.getObjectDefinition(
+				TestPropsValues.getCompanyId(), "C_AAA");
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		TreeTestUtil.deleteObjectDefinitionHierarchy(
+			_objectDefinitionLocalService,
+			new String[] {
+				_objectDefinitionA.getName(), _objectDefinitionAA.getName(),
+				_objectDefinitionAAA.getName()
+			},
+			_objectEntryLocalService, _objectRelationshipLocalService);
 	}
 
 	@Test
@@ -219,6 +260,7 @@ public class ObjectEntryInfoItemFormProviderTest {
 		_testGetInfoFormWithObjectAction();
 		_testGetInfoFormWithObjectRelationship();
 		_testGetInfoFormWithPicklistObjectField();
+		_testGetInfoFormWithRootObjectDefinition();
 	}
 
 	private ListTypeEntry _addListTypeEntry() throws Exception {
@@ -236,14 +278,14 @@ public class ObjectEntryInfoItemFormProviderTest {
 
 		return _objectDefinitionLocalService.addCustomObjectDefinition(
 			null, TestPropsValues.getUserId(), 0, null, false, true, false,
-			true, false, false, false, false, false, null,
+			true, false, false, false, false, null,
 			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 			ObjectDefinitionTestUtil.getRandomName(), null, null,
 			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 			true, ObjectDefinitionConstants.SCOPE_SITE,
 			ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT,
 			Collections.emptyList(), Arrays.asList(objectFields),
-			Collections.emptyList());
+			Collections.emptyList(), new ServiceContext());
 	}
 
 	private void _addObjectStateTransition(
@@ -387,7 +429,13 @@ public class ObjectEntryInfoItemFormProviderTest {
 			_childObjectDefinition);
 
 		_childInfoForm = _getInfoForm(_childObjectDefinition);
-		_parentInfoForm = _getInfoForm(_parentObjectDefinition);
+
+		try (PropsTemporarySwapper propsTemporarySwapper =
+				new PropsTemporarySwapper(
+					"feature.flag.LPD-60546", Boolean.FALSE.toString())) {
+
+			_parentInfoForm = _getInfoForm(_parentObjectDefinition);
+		}
 
 		_assertInfoField("parentTextObjectFieldName", _childInfoForm);
 		_assertInfoField("parentTextObjectFieldName", _parentInfoForm);
@@ -445,6 +493,79 @@ public class ObjectEntryInfoItemFormProviderTest {
 		finally {
 			ServiceContextThreadLocal.popServiceContext();
 		}
+	}
+
+	@TestInfo("LPD-66678")
+	private void _testGetInfoFormWithRootObjectDefinition() throws Exception {
+		_parentInfoForm = _getInfoForm(_objectDefinitionA);
+
+		_assertInfoField("able", _parentInfoForm);
+
+		String objectFieldName = "a" + RandomTestUtil.randomString();
+
+		ObjectField objectField = ObjectFieldUtil.addCustomObjectField(
+			new TextObjectFieldBuilder(
+			).labelMap(
+				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString())
+			).name(
+				objectFieldName
+			).objectDefinitionId(
+				_objectDefinitionAA.getObjectDefinitionId()
+			).userId(
+				TestPropsValues.getUserId()
+			).build());
+
+		Assert.assertNull(_parentInfoForm.getInfoField(objectField.getName()));
+
+		_childInfoForm = _getInfoForm(_objectDefinitionAA);
+
+		_assertInfoField(objectFieldName, _childInfoForm);
+
+		Node node = _tree.getNode(_objectDefinitionAA.getObjectDefinitionId());
+
+		Edge edge = node.getEdge();
+
+		_objectRelationship =
+			_objectRelationshipLocalService.getObjectRelationship(
+				edge.getObjectRelationshipId());
+
+		objectField = _objectFieldLocalService.getObjectField(
+			_objectRelationship.getObjectFieldId2());
+
+		Assert.assertNull(_childInfoForm.getInfoField(objectField.getName()));
+
+		objectFieldName = "a" + RandomTestUtil.randomString();
+
+		objectField = ObjectFieldUtil.addCustomObjectField(
+			new TextObjectFieldBuilder(
+			).labelMap(
+				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString())
+			).name(
+				objectFieldName
+			).objectDefinitionId(
+				_objectDefinitionAAA.getObjectDefinitionId()
+			).userId(
+				TestPropsValues.getUserId()
+			).build());
+
+		Assert.assertNull(_childInfoForm.getInfoField(objectField.getName()));
+
+		_childInfoForm = _getInfoForm(_objectDefinitionAAA);
+
+		_assertInfoField(objectFieldName, _childInfoForm);
+
+		node = _tree.getNode(_objectDefinitionAAA.getObjectDefinitionId());
+
+		edge = node.getEdge();
+
+		_objectRelationship =
+			_objectRelationshipLocalService.getObjectRelationship(
+				edge.getObjectRelationshipId());
+
+		objectField = _objectFieldLocalService.getObjectField(
+			_objectRelationship.getObjectFieldId2());
+
+		Assert.assertNull(_childInfoForm.getInfoField(objectField.getName()));
 	}
 
 	private ServiceContext _updateServiceContext(
@@ -506,8 +627,15 @@ public class ObjectEntryInfoItemFormProviderTest {
 	@Inject
 	private ListTypeEntryLocalService _listTypeEntryLocalService;
 
+	private ObjectDefinition _objectDefinitionA;
+	private ObjectDefinition _objectDefinitionAA;
+	private ObjectDefinition _objectDefinitionAAA;
+
 	@Inject
 	private ObjectDefinitionLocalService _objectDefinitionLocalService;
+
+	@Inject
+	private ObjectEntryLocalService _objectEntryLocalService;
 
 	@Inject
 	private ObjectFieldLocalService _objectFieldLocalService;
@@ -533,5 +661,6 @@ public class ObjectEntryInfoItemFormProviderTest {
 
 	private InfoForm _parentInfoForm;
 	private ObjectDefinition _parentObjectDefinition;
+	private Tree _tree;
 
 }

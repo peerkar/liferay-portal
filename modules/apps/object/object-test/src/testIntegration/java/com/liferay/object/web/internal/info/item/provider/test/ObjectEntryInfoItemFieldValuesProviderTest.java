@@ -62,7 +62,6 @@ import com.liferay.portal.kernel.util.TimeZoneUtil;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.test.rule.FeatureFlag;
-import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
@@ -127,7 +126,8 @@ public class ObjectEntryInfoItemFieldValuesProviderTest {
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				false,
 				Collections.singletonList(
-					ListTypeEntryUtil.createListTypeEntry(_listTypeEntryKey)));
+					ListTypeEntryUtil.createListTypeEntry(_listTypeEntryKey)),
+				new ServiceContext());
 
 		_childObjectDefinition = _addObjectDefinition(
 			new AttachmentObjectFieldBuilder(
@@ -183,9 +183,7 @@ public class ObjectEntryInfoItemFieldValuesProviderTest {
 			ObjectRelationshipConstants.TYPE_ONE_TO_MANY, null);
 	}
 
-	@FeatureFlags(
-		featureFlags = {@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-32050")}
-	)
+	@FeatureFlag("LPD-17564")
 	@Test
 	public void testObjectEntryInfoItemFieldValuesProvider() throws Exception {
 		FileEntry fileEntry = _dlAppLocalService.addFileEntry(
@@ -265,14 +263,14 @@ public class ObjectEntryInfoItemFieldValuesProviderTest {
 
 		return _objectDefinitionLocalService.addCustomObjectDefinition(
 			null, TestPropsValues.getUserId(), 0, null, false, true, false,
-			true, true, false, false, false, false, null,
+			true, false, false, false, false, null,
 			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 			ObjectDefinitionTestUtil.getRandomName(), null, null,
 			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 			true, ObjectDefinitionConstants.SCOPE_SITE,
 			ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT,
 			Collections.emptyList(), Arrays.asList(objectFields),
-			Collections.emptyList());
+			Collections.emptyList(), new ServiceContext());
 	}
 
 	private void _assertInfoFieldValue(

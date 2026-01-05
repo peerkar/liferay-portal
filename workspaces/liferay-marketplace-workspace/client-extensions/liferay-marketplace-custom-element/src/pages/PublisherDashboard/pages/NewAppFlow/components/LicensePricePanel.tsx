@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {ClayButtonWithIcon} from '@clayui/button';
 import Panel from '@clayui/panel';
 import React from 'react';
 
+import ButtonWithIcon from '../../../../../components/ButtonWithIcon';
 import {Section} from '../../../../../components/Section/Section';
 import {
 	LicensePrice,
@@ -21,7 +21,6 @@ import {
 import i18n from '../../../../../i18n';
 import {currenciesCode} from '../../../../../utils/currencies';
 import {CurrencyFlag} from '../pages/Licensing/components/CurrencyModal';
-import IconButton from './IconButton';
 import LicensePriceCard from './LicensePriceCard';
 
 const licensePrices = [
@@ -117,7 +116,7 @@ const LicensePricePanel: React.FC<LicensePricePanelProps> = ({
 					</div>
 
 					{currencyCode !== 'USD' && (
-						<ClayButtonWithIcon
+						<ButtonWithIcon
 							aria-label={`Delete all prices for ${currencyCode}`}
 							className="h-auto ml-auto"
 							displayType="unstyled"
@@ -190,7 +189,7 @@ const LicensePricePanel: React.FC<LicensePricePanelProps> = ({
 										}
 									/>
 								) : (
-									<IconButton
+									<ButtonWithIcon
 										className="license-icon-button py-3 w-100"
 										displayType={null}
 										onClick={() =>
@@ -199,9 +198,10 @@ const LicensePricePanel: React.FC<LicensePricePanelProps> = ({
 												licenseType
 											)
 										}
+										symbol="plus"
 									>
 										<span className="text-capitalize">{`Add ${licenseType} Licenses`}</span>
-									</IconButton>
+									</ButtonWithIcon>
 								)}
 							</Section>
 						);

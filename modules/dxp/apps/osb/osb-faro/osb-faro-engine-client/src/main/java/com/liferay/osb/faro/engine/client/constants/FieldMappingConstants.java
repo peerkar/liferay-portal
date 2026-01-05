@@ -19,6 +19,8 @@ import java.util.Map;
  */
 public class FieldMappingConstants {
 
+	public static final String CONTEXT_ACCOUNT = "account";
+
 	public static final String CONTEXT_CUSTOM = "custom";
 
 	public static final String CONTEXT_DEMOGRAPHICS = "demographics";
@@ -51,6 +53,14 @@ public class FieldMappingConstants {
 	public static final String TYPE_NUMBER = "Number";
 
 	public static final String TYPE_TEXT = "Text";
+
+	public static String getAccountFieldMappingLanguageKey(String fieldName) {
+		return _accountFieldMappingLanguageKeys.get(fieldName);
+	}
+
+	public static List<FieldMappingMap> getAccountFieldMappingMaps() {
+		return _accountFieldMappingMaps;
+	}
 
 	public static Map<String, String> getContexts() {
 		return _contexts;
@@ -92,10 +102,6 @@ public class FieldMappingConstants {
 		return _ownerTypes;
 	}
 
-	public static List<FieldMappingMap> getSalesforceAccountFieldMappingMaps() {
-		return _salesforceAccountFieldMappingMaps;
-	}
-
 	public static List<FieldMappingMap>
 		getSalesforceIndividualFieldMappingMaps() {
 
@@ -106,6 +112,48 @@ public class FieldMappingConstants {
 		return _searchFieldMappingNames;
 	}
 
+	private static final Map<String, String> _accountFieldMappingLanguageKeys =
+		HashMapBuilder.put(
+			"accountName", "account-name"
+		).put(
+			"accountType", "account-type"
+		).put(
+			"annualRevenue", "annual-revenue"
+		).put(
+			"country", "country"
+		).put(
+			"createDate", "created-date"
+		).put(
+			"currencyCode", "currency-code"
+		).put(
+			"id", "id"
+		).put(
+			"industry", "industry"
+		).put(
+			"lastActivityDate", "last-activity-date"
+		).put(
+			"numberOfEmployees", "number-of-employees"
+		).put(
+			"state", "state"
+		).put(
+			"yearStarted", "customer-since"
+		).build();
+	private static final List<FieldMappingMap> _accountFieldMappingMaps =
+		Arrays.asList(
+			new FieldMappingMap("accountName", "accountName", TYPE_TEXT),
+			new FieldMappingMap("accountType", "accountType", TYPE_TEXT),
+			new FieldMappingMap("annualRevenue", "annualRevenue", TYPE_NUMBER),
+			new FieldMappingMap("country", "country", TYPE_TEXT),
+			new FieldMappingMap("createDate", "createDate", TYPE_DATE),
+			new FieldMappingMap("currencyCode", "currencyCode", TYPE_TEXT),
+			new FieldMappingMap("id", "id", TYPE_TEXT),
+			new FieldMappingMap("industry", "industry", TYPE_TEXT),
+			new FieldMappingMap(
+				"lastActivityDate", "lastActivityDate", TYPE_DATE),
+			new FieldMappingMap(
+				"numberOfEmployees", "numberOfEmployees", TYPE_NUMBER),
+			new FieldMappingMap("state", "state", TYPE_TEXT),
+			new FieldMappingMap("yearStarted", "yearStarted", TYPE_NUMBER));
 	private static final Map<String, String> _contexts = HashMapBuilder.put(
 		CONTEXT_CUSTOM, CONTEXT_CUSTOM
 	).put(
@@ -172,37 +220,6 @@ public class FieldMappingConstants {
 	).put(
 		OWNER_TYPE_ORGANIZATION, OWNER_TYPE_ORGANIZATION
 	).build();
-	private static final List<FieldMappingMap>
-		_salesforceAccountFieldMappingMaps = Arrays.asList(
-			new FieldMappingMap("id", "accountId", TYPE_TEXT),
-			new FieldMappingMap("AnnualRevenue", "annualRevenue", TYPE_NUMBER),
-			new FieldMappingMap("BillingCity", "billingCity", TYPE_TEXT),
-			new FieldMappingMap("BillingCountry", "billingCountry", TYPE_TEXT),
-			new FieldMappingMap(
-				"BillingPostalCode", "billingPostalCode", TYPE_TEXT),
-			new FieldMappingMap("BillingState", "billingState", TYPE_TEXT),
-			new FieldMappingMap("BillingStreet", "billingStreet", TYPE_TEXT),
-			new FieldMappingMap(
-				"CurrencyIsoCode", "currencyIsoCode", TYPE_TEXT),
-			new FieldMappingMap("Description", "description", TYPE_TEXT),
-			new FieldMappingMap("Fax", "fax", TYPE_TEXT),
-			new FieldMappingMap("Industry", "industry", TYPE_TEXT),
-			new FieldMappingMap("Name", "accountName", TYPE_TEXT),
-			new FieldMappingMap(
-				"NumberOfEmployees", "numberOfEmployees", TYPE_NUMBER),
-			new FieldMappingMap("Ownership", "ownership", TYPE_TEXT),
-			new FieldMappingMap("Phone", "phone", TYPE_TEXT),
-			new FieldMappingMap("Rating", "rating", TYPE_TEXT),
-			new FieldMappingMap("ShippingCity", "shippingCity", TYPE_TEXT),
-			new FieldMappingMap(
-				"ShippingCountry", "shippingCountry", TYPE_TEXT),
-			new FieldMappingMap(
-				"ShippingPostalCode", "shippingPostalCode", TYPE_TEXT),
-			new FieldMappingMap("ShippingState", "shippingState", TYPE_TEXT),
-			new FieldMappingMap("ShippingStreet", "shippingStreet", TYPE_TEXT),
-			new FieldMappingMap("Type", "accountType", TYPE_TEXT),
-			new FieldMappingMap("Website", "website", TYPE_TEXT),
-			new FieldMappingMap("YearStarted", "yearStarted", TYPE_NUMBER));
 	private static final List<FieldMappingMap>
 		_salesforceIndividualFieldMappingMaps = Arrays.asList(
 			new FieldMappingMap("birthDate", "birthDate", TYPE_DATE),

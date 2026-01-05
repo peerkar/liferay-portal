@@ -4,7 +4,7 @@
  */
 
 import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
-import ClayDropDown from '@clayui/drop-down';
+import {ClayDropDownWithItems} from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {LinkOrButton} from '@clayui/shared';
@@ -19,46 +19,13 @@ import formatActionURL from '../utils/actionItems/formatActionURL';
 import isLink from '../utils/isLink';
 import {IActionsDropdown, IItemsActions} from '../utils/types';
 
-interface IDropdownItem {
-	action: IItemsActions;
-	className?: string;
-	closeMenu: Function;
-	onClick: Function;
-	setLoading: Function;
-	url: string | undefined;
-}
+type TClayDropDownItem = NonNullable<
+	React.ComponentProps<typeof ClayDropDownWithItems>['items']
+>[number] &
+	React.HTMLAttributes<HTMLLIElement>;
 
-function DropdownItem({
-	action,
-	className,
-	closeMenu,
-	onClick,
-	url,
-}: IDropdownItem) {
-	const {icon, label, target} = action;
-
-	return (
-		<ClayDropDown.Item
-			className={className}
-			disabled={action.disabled}
-			href={isLink(target, null) ? url : undefined}
-			onClick={(event) =>
-				onClick({
-					action,
-					closeMenu,
-					event,
-				})
-			}
-		>
-			{icon && (
-				<span className="dropdown-item-indicator-start">
-					<ClayIcon symbol={icon} />
-				</span>
-			)}
-
-			{label}
-		</ClayDropDown.Item>
-	);
+function isDefined(value: any) {
+	return value !== null && value !== undefined;
 }
 
 function ActionsDropdown({
@@ -79,44 +46,89 @@ function ActionsDropdown({
 		uniformActionsDisplay,
 	}: IFrontendDataSetContext = useContext(FrontendDataSetContext);
 
+	const isMounted = useIsMounted();
+
+	const items = useMemo(() => {
+		const mapActionsToItems = (currentActions: IItemsActions[]): any[] => {
+			const hasIconsInGroup = currentActions.some(
+				(action) => !!action.icon
+			);
+
+			return currentActions.flatMap((action, index) => {
+				const {
+					className,
+					disabled,
+					icon,
+					items: nestedItems,
+					label,
+					separator,
+					type,
+				} = action;
+
+				const newItem: TClayDropDownItem = {};
+
+				if (isDefined(className)) {
+					newItem.className = className;
+				}
+
+				if (isDefined(disabled)) {
+					newItem.disabled = disabled;
+				}
+
+				if (isDefined(action.href)) {
+					newItem.href = formatActionURL(
+						action.href,
+						itemData,
+						action.target
+					);
+				}
+
+				if (nestedItems?.length) {
+					newItem.items = mapActionsToItems(nestedItems);
+				}
+
+				if (isDefined(label)) {
+					newItem.label = label;
+				}
+
+				newItem.onClick = (event: any) => {
+					onClick({
+						action,
+						closeMenu: () =>
+							onMenuActiveChange && onMenuActiveChange(false),
+						event,
+					});
+				};
+
+				if (hasIconsInGroup) {
+					newItem.symbolLeft = icon;
+				}
+
+				if (isDefined(type)) {
+					newItem.type = type;
+				}
+
+				if (separator && index > 0 && nestedItems?.length) {
+					return [{type: 'divider'}, newItem];
+				}
+
+				return [newItem];
+			});
+		};
+
+		return mapActionsToItems(actions);
+	}, [actions, itemData, onClick, onMenuActiveChange]);
+
 	const inlineEditingAvailable =
 		inlineEditingSettings && itemData.actions?.update;
 
 	const inlineEditingAlwaysOn =
 		inlineEditingAvailable && inlineEditingSettings.alwaysOn;
 
-	const isMounted = useIsMounted();
+	const parsedItemId: number =
+		typeof itemId === 'string' ? parseInt(itemId, 10) : itemId;
 
-	let parsedItemId: number;
-
-	if (typeof itemId === 'string') {
-		parsedItemId = parseInt(itemId, 10);
-	}
-	else {
-		parsedItemId = itemId;
-	}
-
-	const editModeActive = !!itemsChanges![parsedItemId];
-
-	const hasIcons = useMemo(() => {
-		const checkHasIcon = (currentActions: IItemsActions[]): boolean => {
-			for (const action of currentActions) {
-				if (action.icon) {
-					return true;
-				}
-
-				if (action.type === 'group' && action.items?.length) {
-					if (checkHasIcon(action.items)) {
-						return true;
-					}
-				}
-			}
-
-			return false;
-		};
-
-		return checkHasIcon(actions);
-	}, [actions]);
+	const editModeActive = !!itemsChanges?.[parsedItemId];
 
 	const itemChanges =
 		editModeActive && Object.keys(itemsChanges![parsedItemId]).length
@@ -213,56 +225,23 @@ function ActionsDropdown({
 		return <ClayLoadingIndicator className="mb-2 mt-2" />;
 	}
 
-	const renderItems = (items: IItemsActions[]) =>
-		items.map(({items: nestedItems = [], separator, type, ...item}, i) => {
-			if (type === 'group') {
-				if (!nestedItems.length) {
-					return;
-				}
-
-				return (
-					<ClayDropDown.Group {...item} key={i}>
-						{separator && i !== 0 && <ClayDropDown.Divider />}
-
-						{renderItems(nestedItems)}
-					</ClayDropDown.Group>
-				);
-			}
-
-			return (
-				<DropdownItem
-					action={item}
-					className={item.className}
-					closeMenu={() =>
-						onMenuActiveChange && onMenuActiveChange(false)
-					}
-					key={i}
-					onClick={onClick}
-					setLoading={setLoading}
-					url={
-						item.href &&
-						formatActionURL(item.href, itemData, item.target)
-					}
-				/>
-			);
-		});
-
 	return (
 		<div className="d-flex">
 			{inlineEditingAlwaysOn && inlineEditingActions}
 
-			<ClayDropDown
+			<ClayDropDownWithItems
 				active={menuActive}
-				hasLeftSymbols={hasIcons}
+				items={items}
+				menuElementAttrs={{onClick: (event) => event.stopPropagation()}}
 				onActiveChange={() =>
 					onMenuActiveChange && onMenuActiveChange(!menuActive)
 				}
-				onClick={(event) => event.stopPropagation()}
 				trigger={
 					<ClayButton
 						className="component-action dropdown-toggle"
 						disabled={loading}
 						displayType="unstyled"
+						onClick={(event) => event.stopPropagation()}
 					>
 						<ClayIcon symbol="ellipsis-v" />
 
@@ -271,11 +250,7 @@ function ActionsDropdown({
 						</span>
 					</ClayButton>
 				}
-			>
-				<ClayDropDown.ItemList>
-					{renderItems(actions)}
-				</ClayDropDown.ItemList>
-			</ClayDropDown>
+			/>
 		</div>
 	);
 }

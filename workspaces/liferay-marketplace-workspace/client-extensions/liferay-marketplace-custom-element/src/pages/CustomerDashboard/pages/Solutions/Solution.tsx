@@ -9,6 +9,7 @@ import {differenceInDays, format} from 'date-fns';
 import {useOutletContext, useParams} from 'react-router-dom';
 import useSWR from 'swr';
 
+import {breadcrumbStore} from '../../../../components/Breadcrumb/BreadcrumbStore';
 import {DetailedCard} from '../../../../components/DetailedCard/DetailedCard';
 import Loading from '../../../../components/Loading';
 import QATable from '../../../../components/QATable';
@@ -21,6 +22,7 @@ import i18n from '../../../../i18n';
 import analyticsOAuth2 from '../../../../services/oauth/Analytics';
 import {formatDate} from '../../../../utils/date';
 import {removeHTMLTags} from '../../../../utils/string';
+import {safeJSONParse} from '../../../../utils/util';
 import TrialAlert from '../../components/Solution/TrialAlert';
 
 const NEXT_TO_EXPIRE_LEFT_DAYS = 2;
@@ -171,6 +173,11 @@ const Solution = () => {
 		product: DeliveryProduct;
 	}>();
 
+	breadcrumbStore.send({
+		replacements: {[orderId as string]: product.name},
+		type: 'setReplacements',
+	});
+
 	const orderStatusCode = placedOrder.orderStatusInfo
 		?.code as OrderWorkflowStatusCode;
 
@@ -182,8 +189,12 @@ const Solution = () => {
 		OrderTypes.SOLUTIONS30,
 	].includes(placedOrder.orderTypeExternalReferenceCode as OrderTypes);
 
-	const analyticsGroupId =
-		placedOrder.customFields[OrderCustomFields.ANALYTICS_GROUP_ID];
+	const orderMetadata = safeJSONParse(
+		placedOrder.customFields[OrderCustomFields.ORDER_METADATA],
+		{analyticsProject: {groupId: ''}}
+	);
+
+	const analyticsGroupId = orderMetadata.analyticsProject?.groupId;
 
 	const getOrderDetails = () => {
 		if (

@@ -24,8 +24,10 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Ticket;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Portal;
@@ -120,13 +122,19 @@ public class CTCollectionResourceImpl extends BaseCTCollectionResourceImpl {
 
 	@Override
 	public Page<CTCollection> getCTCollectionsPage(
-			String search, Integer[] statuses, Pagination pagination,
-			Sort[] sorts)
+			String search, Integer[] statuses, Filter filter,
+			Pagination pagination, Sort[] sorts)
 		throws Exception {
+
+		if (ArrayUtil.isEmpty(sorts)) {
+			sorts = new Sort[] {
+				new Sort(Field.getSortableFieldName(Field.MODIFIED_DATE), true)
+			};
+		}
 
 		return SearchUtil.search(
 			Collections.emptyMap(),
-			booleanQuery -> booleanQuery.getPreBooleanFilter(), null,
+			booleanQuery -> booleanQuery.getPreBooleanFilter(), filter,
 			com.liferay.change.tracking.model.CTCollection.class.getName(),
 			search, pagination,
 			queryConfig -> queryConfig.setSelectedFieldNames(
@@ -220,15 +228,15 @@ public class CTCollectionResourceImpl extends BaseCTCollectionResourceImpl {
 	@Override
 	public void postCTCollectionSchedulePublish(
 			Long ctCollectionId, Date publishDate)
-		throws PortalException {
+		throws Exception {
 
 		_schedulePublish(ctCollectionId, publishDate);
 	}
 
 	@Override
 	public Response postCTCollectionsPageExportBatch(
-		String search, Integer[] status, Sort[] sorts, String callbackURL,
-		String contentType, String fieldNames) {
+		String search, Integer[] status, Filter filter, Sort[] sorts,
+		String callbackURL, String contentType, String fieldNames) {
 
 		return null;
 	}
@@ -253,8 +261,7 @@ public class CTCollectionResourceImpl extends BaseCTCollectionResourceImpl {
 			HashMapBuilder.put(
 				"checkout",
 				() -> {
-					if ((ctCollection.getStatus() !=
-							WorkflowConstants.STATUS_DRAFT) ||
+					if (!ctCollection.isInProgress() ||
 						(ctCollection.getCtCollectionId() ==
 							CTCollectionThreadLocal.getCTCollectionId())) {
 
@@ -279,9 +286,7 @@ public class CTCollectionResourceImpl extends BaseCTCollectionResourceImpl {
 			).put(
 				"permissions",
 				() -> {
-					if (ctCollection.getStatus() !=
-							WorkflowConstants.STATUS_DRAFT) {
-
+					if (!ctCollection.isInProgress()) {
 						return null;
 					}
 
@@ -333,9 +338,7 @@ public class CTCollectionResourceImpl extends BaseCTCollectionResourceImpl {
 			).put(
 				"update",
 				() -> {
-					if (ctCollection.getStatus() !=
-							WorkflowConstants.STATUS_DRAFT) {
-
+					if (!ctCollection.isInProgress()) {
 						return null;
 					}
 
@@ -385,15 +388,11 @@ public class CTCollectionResourceImpl extends BaseCTCollectionResourceImpl {
 		com.liferay.change.tracking.model.CTCollection ctCollection =
 			_ctCollectionLocalService.fetchCTCollection(ctCollectionId);
 
-		if (ctCollection.getStatus() == WorkflowConstants.STATUS_DRAFT) {
-			return true;
-		}
-
-		return false;
+		return ctCollection.isInProgress();
 	}
 
 	private void _schedulePublish(long ctCollectionId, Date publishDate)
-		throws PortalException {
+		throws Exception {
 
 		if (publishDate == null) {
 			_ctCollectionService.publishCTCollection(

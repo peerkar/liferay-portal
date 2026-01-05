@@ -10,7 +10,7 @@
  */
 
 module.exports = {
-	hash: 'a51de2eb56ac4846952bb87882733472258f9f9a8846ac88d76f302defdf879f',
+	hash: '8eed4a8c86d4a756e5a87f1ebb3604572a9102ece36c3aa215881b50f19a2e6b',
 	imports: {
 		'@liferay/accessibility-menu-web': [],
 		'@liferay/accessibility-settings-state-web': [],
@@ -62,6 +62,7 @@ module.exports = {
 		'@liferay/cookies-banner-web': [],
 		'@liferay/cookies-sample-web': [],
 		'@liferay/dialect-theme': [],
+		'@liferay/digital-sales-room-web': [],
 		'@liferay/digital-signature-web': [],
 		'@liferay/dispatch-web': [],
 		'@liferay/document-library-opener-google-drive-web': [],
@@ -80,7 +81,6 @@ module.exports = {
 		'@liferay/fragment-video-streaming': [],
 		'@liferay/friendly-url-taglib': [],
 		'@liferay/friendly-url-web': [],
-		'@liferay/frontend-css-cadmin-sample-web': [],
 		'@liferay/frontend-css-cadmin-web': [],
 		'@liferay/frontend-css-common': [],
 		'@liferay/frontend-data-set-admin-web': [],
@@ -110,7 +110,6 @@ module.exports = {
 			'uuid',
 			'react-flow-renderer',
 			'react-helmet',
-			'react-router-dom',
 			'graphiql',
 			'graphiql/graphiql.css',
 			'axe-core',
@@ -129,7 +128,6 @@ module.exports = {
 			'moment/min/moment-with-locales',
 			'numeral',
 			'object-hash',
-			'pkce-challenge',
 			'qs',
 			'react-text-mask',
 			'text-mask-addons',
@@ -334,6 +332,7 @@ module.exports = {
 			'@ckeditor/ckeditor5-widget/dist/index.js',
 			'@ckeditor/ckeditor5-word-count/dist/index.js',
 			'ckeditor5/ckeditor5.css',
+			'eventsource',
 		],
 		'frontend-js-aui-web': [],
 		'frontend-js-clay-sample-web': [],

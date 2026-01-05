@@ -47,21 +47,19 @@ import org.osgi.annotation.versioning.ProviderType;
 @ProviderType
 public interface SiteResource {
 
-	public void deleteSite(Long siteId) throws Exception;
+	public void deleteSite(String siteExternalReferenceCode) throws Exception;
 
 	public Response deleteSiteBatch(String callbackURL, Object object)
 		throws Exception;
 
-	public void deleteSiteByExternalReferenceCode(String externalReferenceCode)
+	public Site getSite(String siteExternalReferenceCode) throws Exception;
+
+	public Page<com.liferay.portal.vulcan.permission.Permission>
+			getSitePermissionsPage(
+				String siteExternalReferenceCode, String roleNames)
 		throws Exception;
 
-	public Site getSite(Long siteId) throws Exception;
-
-	public Site getSiteByExternalReferenceCode(String externalReferenceCode)
-		throws Exception;
-
-	public Response getSiteByExternalReferenceCodeSiteInitializer(
-			String externalReferenceCode)
+	public Response getSiteSiteInitializer(String siteExternalReferenceCode)
 		throws Exception;
 
 	public Page<Site> getSitesPage(
@@ -81,13 +79,20 @@ public interface SiteResource {
 			String contentType, String fieldNames)
 		throws Exception;
 
-	public Site putSite(Site site) throws Exception;
+	public Site putSite(String siteExternalReferenceCode, Site site)
+		throws Exception;
 
 	public Response putSiteBatch(String callbackURL, Object object)
 		throws Exception;
 
-	public Site putSiteByExternalReferenceCode(
-			String externalReferenceCode, MultipartBody multipartBody)
+	public Page<com.liferay.portal.vulcan.permission.Permission>
+			putSitePermissionsPage(
+				String siteExternalReferenceCode,
+				com.liferay.portal.vulcan.permission.Permission[] permissions)
+		throws Exception;
+
+	public Site putSiteSiteInitializer(
+			String siteExternalReferenceCode, MultipartBody multipartBody)
 		throws Exception;
 
 	public default void setContextAcceptLanguage(

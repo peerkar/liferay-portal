@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {ClayButtonWithIcon} from '@clayui/button';
 import ClayDropDown from '@clayui/drop-down';
 import {useOutletContext} from 'react-router-dom';
 
+import ButtonWithIcon from '../../../../../../../components/ButtonWithIcon';
 import Loading from '../../../../../../../components/Loading';
 import Table from '../../../../../../../components/Table/Table';
 import i18n from '../../../../../../../i18n';
@@ -158,7 +158,7 @@ const ProvisioningTable: React.FC<ProvisioningTableProps> = ({
 							>
 								<ClayDropDown
 									trigger={
-										<ClayButtonWithIcon
+										<ButtonWithIcon
 											aria-label="Kebab Button"
 											displayType={null}
 											symbol="ellipsis-v"

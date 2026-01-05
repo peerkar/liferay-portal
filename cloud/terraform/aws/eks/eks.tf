@@ -27,43 +27,12 @@ module "eks" {
 		}
 	}
 	cloudwatch_log_group_retention_in_days=90
+	compute_config={
+		enabled=true
+		node_pools=["general-purpose"]
+	}
 	create_cloudwatch_log_group=true
 	create_kms_key=false
-	eks_managed_node_groups={
-		"${var.deployment_name}"={
-			ami_type=var.node_group_ami_type
-			block_device_mappings={
-				xvda={
-					device_name="/dev/xvda"
-					ebs={
-						encrypted=true
-						volume_size=var.root_volume_size
-						volume_type=var.root_volume_type
-					}
-				}
-			}
-			cluster_primary_security_group_id=module.eks.cluster_primary_security_group_id
-			desired_size=var.node_group_desired_size
-			disk_size=var.root_volume_size
-			iam_role_additional_policies={
-				AmazonEBSCSIDriverPolicy="arn:${var.arn_partition}:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
-				CloudWatchAgentServerPolicy="arn:${var.arn_partition}:iam::aws:policy/CloudWatchAgentServerPolicy"
-			}
-			instance_types=[var.node_instance_type]
-			max_size=var.node_group_max_size
-			min_size=var.node_group_min_size
-			tags={
-				DeploymentName=var.deployment_name
-				"kubernetes.io/cluster/${module.eks.cluster_name}"="owned"
-				"liferay.cloud/nodegroup/name"=var.deployment_name
-				"liferay.cloud/nodegroup/type"=var.node_instance_type
-			}
-			vpc_security_group_ids=[
-				aws_security_group.cluster.id,
-				aws_security_group.nodes.id
-			]
-		}
-	}
 	enable_cluster_creator_admin_permissions=true
 	enable_irsa=true
 	encryption_config={
@@ -71,6 +40,12 @@ module "eks" {
 	}
 	endpoint_private_access=true
 	endpoint_public_access=true
+	iam_role_additional_policies={
+		AmazonEKSBlockStoragePolicy="arn:${var.arn_partition}:iam::aws:policy/AmazonEKSBlockStoragePolicy"
+		AmazonEKSComputePolicy="arn:${var.arn_partition}:iam::aws:policy/AmazonEKSComputePolicy"
+		AmazonEKSLoadBalancingPolicy="arn:${var.arn_partition}:iam::aws:policy/AmazonEKSLoadBalancingPolicy"
+		AmazonEKSNetworkingPolicy="arn:${var.arn_partition}:iam::aws:policy/AmazonEKSNetworkingPolicy"
+	}
 	kubernetes_version=data.aws_eks_cluster_versions.available.cluster_versions[0].cluster_version
 	name="${var.deployment_name}-eks"
 	node_security_group_id=aws_security_group.nodes.id

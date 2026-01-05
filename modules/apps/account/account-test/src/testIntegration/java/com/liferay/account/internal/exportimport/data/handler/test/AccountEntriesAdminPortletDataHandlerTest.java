@@ -26,7 +26,6 @@ import com.liferay.exportimport.portlet.data.handler.provider.PortletDataHandler
 import com.liferay.exportimport.report.constants.ExportImportReportEntryConstants;
 import com.liferay.exportimport.report.model.ExportImportReportEntry;
 import com.liferay.exportimport.report.service.ExportImportReportEntryLocalService;
-import com.liferay.mail.kernel.model.Account;
 import com.liferay.object.field.builder.TextObjectFieldBuilder;
 import com.liferay.object.field.util.ObjectFieldUtil;
 import com.liferay.object.model.ObjectDefinition;
@@ -51,6 +50,7 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.log.LogCapture;
 import com.liferay.portal.test.log.LoggerTestUtil;
 import com.liferay.portal.test.rule.FeatureFlag;
+import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
@@ -75,7 +75,9 @@ import org.junit.runner.RunWith;
 /**
  * @author Stefano Motta
  */
-@FeatureFlag("LPD-35914")
+@FeatureFlags(
+	featureFlags = {@FeatureFlag("LPD-35443"), @FeatureFlag("LPD-35914")}
+)
 @RunWith(Arquillian.class)
 public class AccountEntriesAdminPortletDataHandlerTest {
 
@@ -371,14 +373,15 @@ public class AccountEntriesAdminPortletDataHandlerTest {
 				TestPropsValues.getCompanyId(),
 				AccountPortletKeys.ACCOUNT_ENTRIES_ADMIN);
 
-		Assert.assertThat(
-			ClassUtil.getClassName(portletDataHandler),
-			CoreMatchers.containsString("BatchEnginePortletDataHandler"));
 		Assert.assertEquals(
-			Account.class.getName(), portletDataHandler.getClassNames()[0]);
+			AccountEntry.class.getName(),
+			portletDataHandler.getClassNames()[0]);
 		Assert.assertEquals(
 			AccountPortletKeys.ACCOUNT_ENTRIES_ADMIN,
 			portletDataHandler.getName());
+		Assert.assertThat(
+			ClassUtil.getClassName(portletDataHandler),
+			CoreMatchers.containsString("BatchEnginePortletDataHandler"));
 	}
 
 	@Inject

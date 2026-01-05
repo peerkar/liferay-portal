@@ -5,34 +5,43 @@
 
 import useSWR from 'swr';
 
-import {ProductVocabulary} from '../../enums/Product';
+import {useMarketplaceContext} from '../../context/MarketplaceContext';
 import HeadlessAdminTaxonomy from '../../services/rest/HeadlessAdminTaxonomy';
 
 const useGetVocabulariesAndCategories = (vocabulariesName: string[]) => {
-	return useSWR({key: 'vocabularies/', vocabulariesName}, async () => {
-		const {items} = await HeadlessAdminTaxonomy.getTaxonomyVocabularies();
+	const {properties} = useMarketplaceContext();
 
-		const _vocabularies = items.filter((vocabulary: ProductCategories) =>
-			vocabulariesName.includes(vocabulary.name as ProductVocabulary)
-		);
+	return useSWR({key: 'vocabularies', vocabulariesName}, async () => {
+		const fn = properties.useSiteTaxonomyVocabularyQuery
+			? HeadlessAdminTaxonomy.getSiteTaxonomyVocabulariesGraphQL
+			: HeadlessAdminTaxonomy.getTaxonomyVocabulariesGraphQL;
 
-		const vocabularies: any = {};
+		const response = await fn();
 
-		for (const vocabulary of _vocabularies) {
-			const categories =
-				await HeadlessAdminTaxonomy.getTaxonomyCategories(
-					vocabulary.id,
-					new URLSearchParams({
-						fields: 'id,name',
-					})
-				);
+		const vocabularies: Record<
+			string,
+			{
+				categories: {label: string; value: unknown}[];
+				id: unknown;
+				name: string;
+			}
+		> = {};
 
-			vocabularies[vocabulary.name] = {
+		for (const vocabularyName of vocabulariesName) {
+			const vocabulary = response.items.find(
+				({name}) => name === vocabularyName
+			);
+
+			if (!vocabulary) {
+				continue;
+			}
+
+			vocabularies[vocabularyName] = {
 				...vocabulary,
-				categories: categories?.items?.map(
-					(category: ProductCategories) => ({
-						label: category.name,
-						value: category.id,
+				categories: vocabulary.taxonomyCategories.items.map(
+					(taxonomyCategory) => ({
+						label: taxonomyCategory.name,
+						value: taxonomyCategory.id,
 					})
 				),
 			};

@@ -126,7 +126,6 @@ import com.liferay.object.web.internal.object.entries.portlet.action.UploadAttac
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
@@ -415,6 +414,7 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 				new ObjectEntryInfoItemPermissionProvider(
 					objectDefinition,
 					_objectEntryManagerRegistry.getObjectEntryManager(
+						objectDefinition.getCompanyId(),
 						objectDefinition.getStorageType()),
 					_objectEntryService),
 				HashMapDictionaryBuilder.<String, Object>put(
@@ -427,6 +427,7 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 				new ObjectEntryRowInfoItemRenderer(
 					_assetDisplayPageFriendlyURLProvider, objectDefinition,
 					_objectEntryManagerRegistry.getObjectEntryManager(
+						objectDefinition.getCompanyId(),
 						objectDefinition.getStorageType()),
 					_objectFieldLocalService, _objectScopeProviderRegistry,
 					_servletContext),
@@ -479,6 +480,7 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 					_groupLocalService, infoPermissionProvider,
 					_itemSelectorViewDescriptorRenderer, objectDefinition,
 					_objectEntryManagerRegistry.getObjectEntryManager(
+						objectDefinition.getCompanyId(),
 						objectDefinition.getStorageType()),
 					_objectRelatedModelsProviderRegistry,
 					_objectScopeProviderRegistry, _portal),
@@ -488,9 +490,11 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 			_bundleContext.registerService(
 				LayoutDisplayPageProvider.class,
 				new ObjectEntryLayoutDisplayPageProvider(
-					_assetHelper, infoItemFriendlyURLProvider, objectDefinition,
+					_assetHelper, _groupLocalService,
+					infoItemFriendlyURLProvider, objectDefinition,
 					_objectDefinitionLocalService, _objectEntryLocalService,
 					_objectEntryManagerRegistry.getObjectEntryManager(
+						objectDefinition.getCompanyId(),
 						objectDefinition.getStorageType()),
 					_objectRelationshipLocalService, _userLocalService),
 				HashMapDictionaryBuilder.<String, Object>put(
@@ -618,54 +622,49 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 					"jakarta.portlet.name", objectDefinition.getPortletId()
 				).build()));
 
-		if (FeatureFlagManagerUtil.isEnabled(
-				objectDefinition.getCompanyId(), "LPD-21926")) {
+		if (Validator.isNotNull(objectDefinition.getFriendlyURLSeparator()) &&
+			!ObjectDefinitionUtil.isDefaultFriendlyURLSeparator(
+				objectDefinition.getFriendlyURLSeparator())) {
 
-			if (Validator.isNotNull(
-					objectDefinition.getFriendlyURLSeparator()) &&
-				!ObjectDefinitionUtil.isDefaultFriendlyURLSeparator(
-					objectDefinition.getFriendlyURLSeparator())) {
+			ObjectEntryDisplayPageFriendlyURLResolver
+				objectEntryDisplayPageFriendlyURLResolver =
+					(ObjectEntryDisplayPageFriendlyURLResolver)
+						_friendlyURLResolverComponentServiceObjects.
+							getService();
 
-				ObjectEntryDisplayPageFriendlyURLResolver
-					objectEntryDisplayPageFriendlyURLResolver =
-						(ObjectEntryDisplayPageFriendlyURLResolver)
-							_friendlyURLResolverComponentServiceObjects.
-								getService();
+			objectEntryDisplayPageFriendlyURLResolver.setObjectDefinition(
+				objectDefinition);
 
-				objectEntryDisplayPageFriendlyURLResolver.setObjectDefinition(
-					objectDefinition);
-
-				serviceRegistrations.add(
-					_bundleContext.registerService(
-						FriendlyURLResolver.class,
-						objectEntryDisplayPageFriendlyURLResolver,
-						HashMapDictionaryBuilder.<String, Object>put(
-							"company.id", objectDefinition.getCompanyId()
-						).put(
-							"item.class.name", objectDefinition.getClassName()
-						).build()));
-			}
-
-			Collections.addAll(
-				serviceRegistrations,
+			serviceRegistrations.add(
 				_bundleContext.registerService(
-					InfoItemFriendlyURLUpdater.class,
-					new ObjectEntryInfoItemFriendlyURLUpdater(
-						_friendlyURLEntryLocalService),
-					HashMapDictionaryBuilder.<String, Object>put(
-						"company.id", objectDefinition.getCompanyId()
-					).put(
-						"item.class.name", objectDefinition.getClassName()
-					).build()),
-				_bundleContext.registerService(
-					InfoItemLanguagesProvider.class,
-					new ObjectEntryInfoItemLanguagesProvider(),
+					FriendlyURLResolver.class,
+					objectEntryDisplayPageFriendlyURLResolver,
 					HashMapDictionaryBuilder.<String, Object>put(
 						"company.id", objectDefinition.getCompanyId()
 					).put(
 						"item.class.name", objectDefinition.getClassName()
 					).build()));
 		}
+
+		Collections.addAll(
+			serviceRegistrations,
+			_bundleContext.registerService(
+				InfoItemFriendlyURLUpdater.class,
+				new ObjectEntryInfoItemFriendlyURLUpdater(
+					_friendlyURLEntryLocalService),
+				HashMapDictionaryBuilder.<String, Object>put(
+					"company.id", objectDefinition.getCompanyId()
+				).put(
+					"item.class.name", objectDefinition.getClassName()
+				).build()),
+			_bundleContext.registerService(
+				InfoItemLanguagesProvider.class,
+				new ObjectEntryInfoItemLanguagesProvider(),
+				HashMapDictionaryBuilder.<String, Object>put(
+					"company.id", objectDefinition.getCompanyId()
+				).put(
+					"item.class.name", objectDefinition.getClassName()
+				).build()));
 
 		// Register ObjectEntriesPanelApp after ObjectEntriesPortlet. See
 		// LPS-140379.

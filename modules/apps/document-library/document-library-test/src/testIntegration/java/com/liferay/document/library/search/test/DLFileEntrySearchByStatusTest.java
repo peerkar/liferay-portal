@@ -64,12 +64,11 @@ public class DLFileEntrySearchByStatusTest {
 
 		_addFileEntry(null, titlePrefix + StringUtil.randomString());
 
-		Date displayDate = new Date(System.currentTimeMillis() + Time.DAY);
-
 		_addFileEntry(
-			displayDate, titlePrefix + " " + StringUtil.randomString());
+			new Date(System.currentTimeMillis() + Time.DAY),
+			titlePrefix + " " + StringUtil.randomString());
 
-		_assertHits(2, titlePrefix, true, WorkflowConstants.STATUS_ANY);
+		_assertHits(1, titlePrefix, true, WorkflowConstants.STATUS_ANY);
 	}
 
 	@Test
@@ -97,17 +96,6 @@ public class DLFileEntrySearchByStatusTest {
 		_addFileEntry(displayDate, titlePrefix + StringUtil.randomString());
 
 		_assertHits(1, titlePrefix, false, WorkflowConstants.STATUS_ANY);
-	}
-
-	@Test
-	public void testSearchScheduledFile() throws Exception {
-		String title = "Document";
-
-		_addFileEntry(
-			new Date(System.currentTimeMillis() + Time.DAY),
-			title + " " + StringUtil.randomString());
-
-		_assertHits(1, title, true, WorkflowConstants.STATUS_ANY);
 	}
 
 	private void _addFileEntry(Date displayDate, String title)

@@ -36,6 +36,7 @@ import com.liferay.commerce.product.model.CPDefinitionLocalization;
 import com.liferay.commerce.product.model.CPDefinitionOptionRel;
 import com.liferay.commerce.product.model.CPDefinitionOptionValueRel;
 import com.liferay.commerce.product.model.CPDefinitionSpecificationOptionValue;
+import com.liferay.commerce.product.model.CPDefinitionTable;
 import com.liferay.commerce.product.model.CPDisplayLayout;
 import com.liferay.commerce.product.model.CPInstance;
 import com.liferay.commerce.product.model.CPInstanceOptionValueRel;
@@ -80,6 +81,7 @@ import com.liferay.friendly.url.model.FriendlyURLEntryLocalization;
 import com.liferay.friendly.url.service.FriendlyURLEntryLocalService;
 import com.liferay.object.action.util.ObjectActionThreadLocal;
 import com.liferay.petra.function.transform.TransformUtil;
+import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
@@ -1481,8 +1483,8 @@ public class CPDefinitionLocalServiceImpl
 			return cpDefinition;
 		}
 
-		return cpDefinitionPersistence.fetchByC_V(
-			cProduct.getCProductId(), cProduct.getLatestVersion());
+		return cpDefinitionPersistence.fetchByC_V_First(
+			cProduct.getCProductId(), cProduct.getLatestVersion(), null);
 	}
 
 	@Override
@@ -1500,8 +1502,8 @@ public class CPDefinitionLocalServiceImpl
 			return cpDefinition;
 		}
 
-		return cpDefinitionPersistence.fetchByC_V(
-			cProduct.getCProductId(), cProduct.getLatestVersion());
+		return cpDefinitionPersistence.fetchByC_V_First(
+			cProduct.getCProductId(), cProduct.getLatestVersion(), null);
 	}
 
 	@Override
@@ -1522,6 +1524,36 @@ public class CPDefinitionLocalServiceImpl
 	}
 
 	@Override
+	public List<CPDefinition> findByExpirationDate(
+		Date expirationDate, QueryDefinition<CPDefinition> queryDefinition) {
+
+		return dslQuery(
+			DSLQueryFactoryUtil.select(
+				CPDefinitionTable.INSTANCE
+			).from(
+				CPDefinitionTable.INSTANCE
+			).where(
+				CPDefinitionTable.INSTANCE.expirationDate.isNotNull(
+				).and(
+					CPDefinitionTable.INSTANCE.expirationDate.lt(expirationDate)
+				).and(
+					() -> {
+						int status = queryDefinition.getStatus();
+
+						if (status == WorkflowConstants.STATUS_ANY) {
+							return CPDefinitionTable.INSTANCE.status.neq(
+								WorkflowConstants.STATUS_IN_TRASH);
+						}
+
+						return CPDefinitionTable.INSTANCE.status.eq(status);
+					}
+				)
+			).limit(
+				queryDefinition.getStart(), queryDefinition.getEnd()
+			));
+	}
+
+	@Override
 	public CPDefinition getCPDefinitionByCProductId(long cProductId)
 		throws PortalException {
 
@@ -1534,8 +1566,8 @@ public class CPDefinitionLocalServiceImpl
 			return cpDefinition;
 		}
 
-		return cpDefinitionPersistence.findByC_V(
-			cProduct.getCProductId(), cProduct.getLatestVersion());
+		return cpDefinitionPersistence.findByC_V_First(
+			cProduct.getCProductId(), cProduct.getLatestVersion(), null);
 	}
 
 	@Override
@@ -1694,18 +1726,6 @@ public class CPDefinitionLocalServiceImpl
 	}
 
 	@Override
-	public List<CPDefinition> getCPDefinitions(
-		long groupId, String productTypeName, String languageId, int status,
-		int start, int end, OrderByComparator<CPDefinition> orderByComparator) {
-
-		QueryDefinition<CPDefinition> queryDefinition = new QueryDefinition<>(
-			status, start, end, orderByComparator);
-
-		return cpDefinitionFinder.findByG_P_S(
-			groupId, productTypeName, languageId, queryDefinition);
-	}
-
-	@Override
 	public int getCPDefinitionsCount(
 		long groupId, boolean subscriptionEnabled) {
 
@@ -1720,17 +1740,6 @@ public class CPDefinitionLocalServiceImpl
 		}
 
 		return cpDefinitionPersistence.countByG_S(groupId, status);
-	}
-
-	@Override
-	public int getCPDefinitionsCount(
-		long groupId, String productTypeName, String languageId, int status) {
-
-		QueryDefinition<CPDefinition> queryDefinition = new QueryDefinition<>(
-			status);
-
-		return cpDefinitionFinder.countByG_P_S(
-			groupId, productTypeName, languageId, queryDefinition);
 	}
 
 	@Override
@@ -1760,7 +1769,8 @@ public class CPDefinitionLocalServiceImpl
 	public CPDefinition getCProductCPDefinition(long cProductId, int version)
 		throws PortalException {
 
-		return cpDefinitionPersistence.findByC_V(cProductId, version);
+		return cpDefinitionPersistence.findByC_V_First(
+			cProductId, version, null);
 	}
 
 	@Override
@@ -2917,7 +2927,7 @@ public class CPDefinitionLocalServiceImpl
 
 	private void _checkCPDefinitionsByExpirationDate() throws PortalException {
 		List<CPDefinition> cpDefinitions =
-			cpDefinitionFinder.findByExpirationDate(
+			cpDefinitionLocalService.findByExpirationDate(
 				new Date(),
 				new QueryDefinition<>(WorkflowConstants.STATUS_APPROVED));
 

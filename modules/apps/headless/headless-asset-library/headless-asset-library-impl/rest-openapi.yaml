@@ -306,7 +306,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.headless.asset.library.client', and version '1.0.10'."
+        'com.liferay.headless.asset.library.client', and version '1.0.12'."
     license:
         name: Apache 2.0
         url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -388,390 +388,44 @@ paths:
                     description:
                         default response
             tags: ["AssetLibrary"]
-    "/asset-libraries/by-external-reference-code/{assetLibraryExternalReferenceCode}/connected-sites/by-external-reference-code/{connectedSiteExternalReferenceCode}":
-        delete:
-            description:
-                Disconnects the site with the given external reference code from the asset library.
-            operationId: deleteAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeConnectedSiteByExternalReferenceCodeConnectedSiteExternalReferenceCode
-            parameters:
-                -   in: path
-                    name: assetLibraryExternalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-                -   in: path
-                    name: connectedSiteExternalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-            responses:
-                204:
-                    content:
-                        application/json: {}
-                        application/xml: {}
-                    description:
-                        default response
-            tags: ["ConnectedSite"]
+    "/asset-libraries/pinned-by-me":
         get:
             description:
-                Gets a connected site from the asset library using the provided external reference codes.
-            operationId: getAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeConnectedSiteByExternalReferenceCodeConnectedSiteExternalReferenceCode
+                Retrieves the pinned asset libraries.
+            operationId: getAssetLibrariesPinnedByMePage
             parameters:
-                -   in: path
-                    name: assetLibraryExternalReferenceCode
-                    required: true
+                -   in: query
+                    name: page
                     schema:
-                        type: string
-                -   in: path
-                    name: connectedSiteExternalReferenceCode
-                    required: true
+                        type: integer
+                -   in: query
+                    name: pageSize
                     schema:
-                        type: string
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/ConnectedSite"
-                        application/xml:
-                            schema:
-                                $ref: "#/components/schemas/ConnectedSite"
-                    description:
-                        default response
-            tags: ["ConnectedSite"]
-        put:
-            description:
-                Connects the site with the given external reference code to the asset library.
-            operationId: putAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeConnectedSiteByExternalReferenceCodeConnectedSiteExternalReferenceCode
-            parameters:
-                -   in: path
-                    name: assetLibraryExternalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-                -   in: path
-                    name: connectedSiteExternalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: "#/components/schemas/ConnectedSite"
-                    application/xml:
-                        schema:
-                            $ref: "#/components/schemas/ConnectedSite"
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/ConnectedSite"
-                        application/xml:
-                            schema:
-                                $ref: "#/components/schemas/ConnectedSite"
-                    description:
-                        default response
-            tags: ["ConnectedSite"]
-    "/asset-libraries/by-external-reference-code/{assetLibraryExternalReferenceCode}/user-accounts/by-external-reference-code/{userAccountExternalReferenceCode}":
-        delete:
-            description:
-                Removes the user account from the asset library using the provided external reference codes.
-            operationId: deleteAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeUserAccountByExternalReferenceCodeUserAccountExternalReferenceCode
-            parameters:
-                -   in: path
-                    name: assetLibraryExternalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-                -   in: path
-                    name: userAccountExternalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-            responses:
-                204:
-                    content:
-                        application/json: {}
-                        application/xml: {}
-                    description:
-                        default response
-            tags: ["UserAccount"]
-        get:
-            description:
-                Gets a user account connected to the asset library using the provided external reference codes.
-            operationId: getAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeUserAccountByExternalReferenceCodeUserAccountExternalReferenceCode
-            parameters:
-                -   in: path
-                    name: assetLibraryExternalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-                -   in: path
-                    name: userAccountExternalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/UserAccount"
-                        application/xml:
-                            schema:
-                                $ref: "#/components/schemas/UserAccount"
-                    description:
-                        default response
-            tags: ["UserAccount"]
-        put:
-            description:
-                Adds the user account to the asset library using the provided external reference codes.
-            operationId: putAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeUserAccountByExternalReferenceCodeUserAccountExternalReferenceCode
-            parameters:
-                -   in: path
-                    name: assetLibraryExternalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-                -   in: path
-                    name: userAccountExternalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/UserAccount"
-                        application/xml:
-                            schema:
-                                $ref: "#/components/schemas/UserAccount"
-                    description:
-                        default response
-            tags: ["UserAccount"]
-    "/asset-libraries/by-external-reference-code/{assetLibraryExternalReferenceCode}/user-accounts/by-external-reference-code/{userAccountExternalReferenceCode}/roles":
-        get:
-            operationId: getAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeUserAccountByExternalReferenceCodeUserAccountExternalReferenceCodeRolesPage
-            parameters:
-                -   in: path
-                    name: assetLibraryExternalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-                -   in: path
-                    name: userAccountExternalReferenceCode
-                    required: true
-                    schema:
-                        type: string
+                        type: integer
             responses:
                 200:
                     content:
                         application/json:
                             schema:
                                 items:
-                                    $ref: "#/components/schemas/Role"
+                                    $ref: "#/components/schemas/AssetLibrary"
                                 type: array
                         application/xml:
                             schema:
                                 items:
-                                    $ref: "#/components/schemas/Role"
+                                    $ref: "#/components/schemas/AssetLibrary"
                                 type: array
-            tags: ["Role"]
-        put:
-            operationId: putAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeUserAccountByExternalReferenceCodeUserAccountExternalReferenceCodeRolesPage
-            parameters:
-                -   in: path
-                    name: assetLibraryExternalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-                -   in: path
-                    name: userAccountExternalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            items:
-                                $ref: "#/components/schemas/Role"
-                            type: array
-                    application/xml:
-                        schema:
-                            items:
-                                $ref: "#/components/schemas/Role"
-                            type: array
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/Role"
-                                type: array
-                        application/xml:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/Role"
-                                type: array
-            tags: ["Role"]
-    "/asset-libraries/by-external-reference-code/{assetLibraryExternalReferenceCode}/user-groups/by-external-reference-code/{userGroupExternalReferenceCode}":
-        delete:
-            description:
-                Removes a user group from the asset library using the provided external reference codes.
-            operationId: deleteAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeUserGroupByExternalReferenceCodeUserGroupExternalReferenceCode
-            parameters:
-                -   in: path
-                    name: assetLibraryExternalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-                -   in: path
-                    name: userGroupExternalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-            responses:
-                204:
-                    content:
-                        application/json: {}
-                        application/xml: {}
                     description:
                         default response
-            tags: ["UserGroup"]
-        get:
-            description:
-                Gets a user group from the asset library.
-            operationId: getAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeUserGroupByExternalReferenceCodeUserGroupExternalReferenceCode
-            parameters:
-                -   in: path
-                    name: assetLibraryExternalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-                -   in: path
-                    name: userGroupExternalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/UserGroup"
-                        application/xml:
-                            schema:
-                                $ref: "#/components/schemas/UserGroup"
-                    description:
-                        default response
-            tags: ["UserGroup"]
-        put:
-            description:
-                Associates the user group with the given external reference code to the asset library.
-            operationId: putAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeUserGroupByExternalReferenceCodeUserGroupExternalReferenceCode
-            parameters:
-                -   in: path
-                    name: assetLibraryExternalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-                -   in: path
-                    name: userGroupExternalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/UserGroup"
-                        application/xml:
-                            schema:
-                                $ref: "#/components/schemas/UserGroup"
-                    description:
-                        default response
-            tags: ["UserGroup"]
-    "/asset-libraries/by-external-reference-code/{assetLibraryExternalReferenceCode}/user-groups/by-external-reference-code/{userGroupExternalReferenceCode}/roles":
-        get:
-            operationId: getAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeUserGroupByExternalReferenceCodeUserGroupExternalReferenceCodeRolesPage
-            parameters:
-                -   in: path
-                    name: assetLibraryExternalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-                -   in: path
-                    name: userGroupExternalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/Role"
-                                type: array
-                        application/xml:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/Role"
-                                type: array
-            tags: ["Role"]
-        put:
-            operationId: putAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeUserGroupByExternalReferenceCodeUserGroupExternalReferenceCodeRolesPage
-            parameters:
-                -   in: path
-                    name: assetLibraryExternalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-                -   in: path
-                    name: userGroupExternalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            items:
-                                $ref: "#/components/schemas/Role"
-                            type: array
-                    application/xml:
-                        schema:
-                            items:
-                                $ref: "#/components/schemas/Role"
-                            type: array
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/Role"
-                                type: array
-                        application/xml:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/Role"
-                                type: array
-            tags: ["Role"]
-    "/asset-libraries/by-external-reference-code/{externalReferenceCode}":
+            tags: ["AssetLibrary"]
+    "/asset-libraries/{assetLibraryExternalReferenceCode}":
         delete:
             description:
                 Deletes the asset library by external reference code.
-            operationId: deleteAssetLibraryByExternalReferenceCode
+            operationId: deleteAssetLibrary
             parameters:
                 -   in: path
-                    name: externalReferenceCode
+                    name: assetLibraryExternalReferenceCode
                     required: true
                     schema:
                         type: string
@@ -786,10 +440,10 @@ paths:
         get:
             description:
                 Retrieves the asset library by external reference code.
-            operationId: getAssetLibraryByExternalReferenceCode
+            operationId: getAssetLibrary
             parameters:
                 -   in: path
-                    name: externalReferenceCode
+                    name: assetLibraryExternalReferenceCode
                     required: true
                     schema:
                         type: string
@@ -821,10 +475,10 @@ paths:
             description:
                 Updates the asset library using only the fields received in the request body with the given external
                 reference code. Any other fields are left untouched.
-            operationId: patchAssetLibraryByExternalReferenceCode
+            operationId: patchAssetLibrary
             parameters:
                 -   in: path
-                    name: externalReferenceCode
+                    name: assetLibraryExternalReferenceCode
                     required: true
                     schema:
                         type: string
@@ -852,10 +506,10 @@ paths:
             description:
                 Replaces the asset library with information sent in the request body with the given external reference
                 code. Any missing fields are deleted unless they are required.
-            operationId: putAssetLibraryByExternalReferenceCode
+            operationId: putAssetLibrary
             parameters:
                 -   in: path
-                    name: externalReferenceCode
+                    name: assetLibraryExternalReferenceCode
                     required: true
                     schema:
                         type: string
@@ -879,365 +533,18 @@ paths:
                     description:
                         default response
             tags: ["AssetLibrary"]
-    "/asset-libraries/by-external-reference-code/{externalReferenceCode}/connected-sites":
+    "/asset-libraries/{assetLibraryExternalReferenceCode}/connected-sites":
         get:
             description:
                 Get the asset library's with the provided external reference code connected sites. Results can be
                 paginated.
-            operationId: getAssetLibraryByExternalReferenceCodeConnectedSitesPage
-            parameters:
-                -   in: path
-                    name: externalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-                -   in: query
-                    name: nestedFields
-                    schema:
-                        type: string
-                -   in: query
-                    name: page
-                    schema:
-                        type: integer
-                -   in: query
-                    name: pageSize
-                    schema:
-                        type: integer
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/ConnectedSite"
-                                type: array
-                        application/xml:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/ConnectedSite"
-                                type: array
-                    description:
-                        default response
-            tags: ["ConnectedSite"]
-    "/asset-libraries/by-external-reference-code/{externalReferenceCode}/permissions":
-        get:
-            operationId: getAssetLibraryByExternalReferenceCodePermissionsPage
-            parameters:
-                -   in: path
-                    name: externalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-                -   in: query
-                    name: fields
-                    schema:
-                        type: string
-                -   in: query
-                    name: restrictFields
-                    schema:
-                        type: string
-                -   in: query
-                    name: roleNames
-                    schema:
-                        type: string
-            responses:
-                204:
-                    content:
-                        application/json: {}
-                        application/xml: {}
-            tags: ["AssetLibrary"]
-        put:
-            operationId: putAssetLibraryByExternalReferenceCodePermissionsPage
-            parameters:
-                -   in: path
-                    name: externalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-            requestBody:
-                content:
-                    application/json: {}
-                    application/xml: {}
-            responses:
-                204:
-                    content:
-                        application/json: {}
-                        application/xml: {}
-            tags: ["AssetLibrary"]
-    "/asset-libraries/by-external-reference-code/{externalReferenceCode}/pins":
-        delete:
-            description:
-                Unpins the asset library.
-            operationId: deleteAssetLibraryByExternalReferenceCodePin
-            parameters:
-                -   in: path
-                    name: externalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-            responses:
-                204:
-                    content:
-                        application/json: {}
-                        application/xml: {}
-                    description:
-                        default response
-            tags: ["AssetLibrary"]
-        put:
-            description:
-                Pins the asset library.
-            operationId: putAssetLibraryByExternalReferenceCodePin
-            parameters:
-                -   in: path
-                    name: externalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/AssetLibrary"
-                        application/xml:
-                            schema:
-                                $ref: "#/components/schemas/AssetLibrary"
-                    description:
-                        default response
-            tags: ["AssetLibrary"]
-    "/asset-libraries/by-external-reference-code/{externalReferenceCode}/user-accounts":
-        get:
-            description:
-                Get the asset library with the provided external reference code associated user accounts. Results can be
-                paginated, filtered, searched, and sorted.
-            operationId: getAssetLibraryByExternalReferenceCodeUserAccountsPage
-            parameters:
-                -   in: path
-                    name: externalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-                -   in: query
-                    name: keywords
-                    schema:
-                        type: string
-                -   in: query
-                    name: nestedFields
-                    schema:
-                        type: string
-                -   in: query
-                    name: page
-                    schema:
-                        type: integer
-                -   in: query
-                    name: pageSize
-                    schema:
-                        type: integer
-                -   in: query
-                    name: search
-                    schema:
-                        type: string
-                -   in: query
-                    name: sort
-                    schema:
-                        type: string
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/UserAccount"
-                                type: array
-                        application/xml:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/UserAccount"
-                                type: array
-                    description:
-                        default response
-            tags: ["UserAccount"]
-    "/asset-libraries/by-external-reference-code/{externalReferenceCode}/user-groups":
-        get:
-            description:
-                Get the asset library associated with the provided external reference code user groups. Results can be
-                paginated, filtered, searched, and sorted.
-            operationId: getAssetLibraryByExternalReferenceCodeUserGroupsPage
-            parameters:
-                -   in: path
-                    name: externalReferenceCode
-                    required: true
-                    schema:
-                        type: string
-                -   in: query
-                    name: keywords
-                    schema:
-                        type: string
-                -   in: query
-                    name: nestedFields
-                    schema:
-                        type: string
-                -   in: query
-                    name: page
-                    schema:
-                        type: integer
-                -   in: query
-                    name: pageSize
-                    schema:
-                        type: integer
-                -   in: query
-                    name: search
-                    schema:
-                        type: string
-                -   in: query
-                    name: sort
-                    schema:
-                        type: string
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/UserGroup"
-                                type: array
-                        application/xml:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/UserGroup"
-                                type: array
-                    description:
-                        default response
-            tags: ["UserGroup"]
-    "/asset-libraries/pinned-by-me":
-        get:
-            description:
-                Retrieves the pinned asset libraries.
-            operationId: getAssetLibrariesPinnedByMePage
-            parameters:
-                -   in: query
-                    name: page
-                    schema:
-                        type: integer
-                -   in: query
-                    name: pageSize
-                    schema:
-                        type: integer
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/AssetLibrary"
-                                type: array
-                        application/xml:
-                            schema:
-                                items:
-                                    $ref: "#/components/schemas/AssetLibrary"
-                                type: array
-                    description:
-                        default response
-            tags: ["AssetLibrary"]
-    "/asset-libraries/{assetLibraryId}":
-        delete:
-            description:
-                Deletes the asset library.
-            operationId: deleteAssetLibrary
-            parameters:
-                -   in: path
-                    name: assetLibraryId
-                    required: true
-                    schema:
-                        format: int64
-                        type: integer
-            responses:
-                204:
-                    content:
-                        application/json: {}
-                        application/xml: {}
-                    description:
-                        default response
-            tags: ["AssetLibrary"]
-        get:
-            description:
-                Retrieves the asset library.
-            operationId: getAssetLibrary
-            parameters:
-                -   in: path
-                    name: assetLibraryId
-                    required: true
-                    schema:
-                        format: int64
-                        type: integer
-                -   in: query
-                    name: fields
-                    schema:
-                        type: string
-                -   in: query
-                    name: nestedFields
-                    schema:
-                        type: string
-                -   in: query
-                    name: restrictFields
-                    schema:
-                        type: string
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/AssetLibrary"
-                        application/xml:
-                            schema:
-                                $ref: "#/components/schemas/AssetLibrary"
-                    description:
-                        default response
-            tags: ["AssetLibrary"]
-        patch:
-            description:
-                Updates the asset library using only the fields received in the request body. Any other fields are left
-                untouched.
-            operationId: patchAssetLibrary
-            parameters:
-                -   in: path
-                    name: assetLibraryId
-                    required: true
-                    schema:
-                        format: int64
-                        type: integer
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: "#/components/schemas/AssetLibrary"
-                    application/xml:
-                        schema:
-                            $ref: "#/components/schemas/AssetLibrary"
-            responses:
-                200:
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/AssetLibrary"
-                        application/xml:
-                            schema:
-                                $ref: "#/components/schemas/AssetLibrary"
-                    description:
-                        default response
-            tags: ["AssetLibrary"]
-    "/asset-libraries/{assetLibraryId}/connected-sites":
-        get:
-            description:
-                Get the asset library's connected sites. Results can be paginated.
             operationId: getAssetLibraryConnectedSitesPage
             parameters:
                 -   in: path
-                    name: assetLibraryId
+                    name: assetLibraryExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
                 -   in: query
                     name: nestedFields
                     schema:
@@ -1266,24 +573,22 @@ paths:
                     description:
                         default response
             tags: ["ConnectedSite"]
-    "/asset-libraries/{assetLibraryId}/connected-sites/{connectedSiteId}":
+    "/asset-libraries/{assetLibraryExternalReferenceCode}/connected-sites/{connectedSiteExternalReferenceCode}":
         delete:
             description:
-                Disconnects the site from the asset library.
+                Disconnects the site with the given external reference code from the asset library.
             operationId: deleteAssetLibraryConnectedSite
             parameters:
                 -   in: path
-                    name: assetLibraryId
+                    name: assetLibraryExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
                 -   in: path
-                    name: connectedSiteId
+                    name: connectedSiteExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
             responses:
                 204:
                     content:
@@ -1294,21 +599,19 @@ paths:
             tags: ["ConnectedSite"]
         get:
             description:
-                Gets a site connected to the asset library.
+                Gets a connected site from the asset library using the provided external reference codes.
             operationId: getAssetLibraryConnectedSite
             parameters:
                 -   in: path
-                    name: assetLibraryId
+                    name: assetLibraryExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
                 -   in: path
-                    name: connectedSiteId
+                    name: connectedSiteExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
             responses:
                 200:
                     content:
@@ -1323,21 +626,19 @@ paths:
             tags: ["ConnectedSite"]
         put:
             description:
-                Connects the site to the asset library.
+                Connects the site with the given external reference code to the asset library.
             operationId: putAssetLibraryConnectedSite
             parameters:
                 -   in: path
-                    name: assetLibraryId
+                    name: assetLibraryExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
                 -   in: path
-                    name: connectedSiteId
+                    name: connectedSiteExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
             requestBody:
                 content:
                     application/json:
@@ -1358,16 +659,15 @@ paths:
                     description:
                         default response
             tags: ["ConnectedSite"]
-    "/asset-libraries/{assetLibraryId}/permissions":
+    "/asset-libraries/{assetLibraryExternalReferenceCode}/permissions":
         get:
             operationId: getAssetLibraryPermissionsPage
             parameters:
                 -   in: path
-                    name: assetLibraryId
+                    name: assetLibraryExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
                 -   in: query
                     name: fields
                     schema:
@@ -1390,11 +690,10 @@ paths:
             operationId: putAssetLibraryPermissionsPage
             parameters:
                 -   in: path
-                    name: assetLibraryId
+                    name: assetLibraryExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
             requestBody:
                 content:
                     application/json: {}
@@ -1405,18 +704,17 @@ paths:
                         application/json: {}
                         application/xml: {}
             tags: ["AssetLibrary"]
-    "/asset-libraries/{assetLibraryId}/pins":
+    "/asset-libraries/{assetLibraryExternalReferenceCode}/pins":
         delete:
             description:
                 Unpins the asset library.
             operationId: deleteAssetLibraryPin
             parameters:
                 -   in: path
-                    name: assetLibraryId
+                    name: assetLibraryExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
             responses:
                 204:
                     content:
@@ -1431,11 +729,10 @@ paths:
             operationId: putAssetLibraryPin
             parameters:
                 -   in: path
-                    name: assetLibraryId
+                    name: assetLibraryExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
             responses:
                 200:
                     content:
@@ -1448,19 +745,18 @@ paths:
                     description:
                         default response
             tags: ["AssetLibrary"]
-    "/asset-libraries/{assetLibraryId}/user-accounts":
+    "/asset-libraries/{assetLibraryExternalReferenceCode}/user-accounts":
         get:
             description:
-                Get the asset library associated user accounts. Results can be paginated, filtered, searched, and
-                sorted.
+                Get the asset library with the provided external reference code associated user accounts. Results can be
+                paginated, filtered, searched, and sorted.
             operationId: getAssetLibraryUserAccountsPage
             parameters:
                 -   in: path
-                    name: assetLibraryId
+                    name: assetLibraryExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
                 -   in: query
                     name: keywords
                     schema:
@@ -1501,24 +797,22 @@ paths:
                     description:
                         default response
             tags: ["UserAccount"]
-    "/asset-libraries/{assetLibraryId}/user-accounts/{userAccountId}":
+    "/asset-libraries/{assetLibraryExternalReferenceCode}/user-accounts/{userAccountExternalReferenceCode}":
         delete:
             description:
-                Removes the user account from the asset library.
+                Removes the user account from the asset library using the provided external reference codes.
             operationId: deleteAssetLibraryUserAccount
             parameters:
                 -   in: path
-                    name: assetLibraryId
+                    name: assetLibraryExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
                 -   in: path
-                    name: userAccountId
+                    name: userAccountExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
             responses:
                 204:
                     content:
@@ -1529,21 +823,19 @@ paths:
             tags: ["UserAccount"]
         get:
             description:
-                Gets a user account connected to the asset library.
+                Gets a user account connected to the asset library using the provided external reference codes.
             operationId: getAssetLibraryUserAccount
             parameters:
                 -   in: path
-                    name: assetLibraryId
+                    name: assetLibraryExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
                 -   in: path
-                    name: userAccountId
+                    name: userAccountExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
             responses:
                 200:
                     content:
@@ -1558,21 +850,19 @@ paths:
             tags: ["UserAccount"]
         put:
             description:
-                Adds the user to the asset library.
+                Adds the user account to the asset library using the provided external reference codes.
             operationId: putAssetLibraryUserAccount
             parameters:
                 -   in: path
-                    name: assetLibraryId
+                    name: assetLibraryExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
                 -   in: path
-                    name: userAccountId
+                    name: userAccountExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
             responses:
                 200:
                     content:
@@ -1585,22 +875,20 @@ paths:
                     description:
                         default response
             tags: ["UserAccount"]
-    "/asset-libraries/{assetLibraryId}/user-accounts/{userAccountId}/roles":
+    "/asset-libraries/{assetLibraryExternalReferenceCode}/user-accounts/{userAccountExternalReferenceCode}/roles":
         get:
             operationId: getAssetLibraryUserAccountRolesPage
             parameters:
                 -   in: path
-                    name: assetLibraryId
+                    name: assetLibraryExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
                 -   in: path
-                    name: userAccountId
+                    name: userAccountExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
             responses:
                 200:
                     content:
@@ -1619,17 +907,15 @@ paths:
             operationId: putAssetLibraryUserAccountRolesPage
             parameters:
                 -   in: path
-                    name: assetLibraryId
+                    name: assetLibraryExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
                 -   in: path
-                    name: userAccountId
+                    name: userAccountExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
             requestBody:
                 content:
                     application/json:
@@ -1656,18 +942,18 @@ paths:
                                     $ref: "#/components/schemas/Role"
                                 type: array
             tags: ["Role"]
-    "/asset-libraries/{assetLibraryId}/user-groups":
+    "/asset-libraries/{assetLibraryExternalReferenceCode}/user-groups":
         get:
             description:
-                Get the asset library associated user groups. Results can be paginated, filtered, searched, and sorted.
+                Get the asset library associated with the provided external reference code user groups. Results can be
+                paginated, filtered, searched, and sorted.
             operationId: getAssetLibraryUserGroupsPage
             parameters:
                 -   in: path
-                    name: assetLibraryId
+                    name: assetLibraryExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
                 -   in: query
                     name: keywords
                     schema:
@@ -1708,24 +994,22 @@ paths:
                     description:
                         default response
             tags: ["UserGroup"]
-    "/asset-libraries/{assetLibraryId}/user-groups/{userGroupId}":
+    "/asset-libraries/{assetLibraryExternalReferenceCode}/user-groups/{userGroupExternalReferenceCode}":
         delete:
             description:
-                Removes a user group from the asset library.
+                Removes a user group from the asset library using the provided external reference codes.
             operationId: deleteAssetLibraryUserGroup
             parameters:
                 -   in: path
-                    name: assetLibraryId
+                    name: assetLibraryExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
                 -   in: path
-                    name: userGroupId
+                    name: userGroupExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
             responses:
                 204:
                     content:
@@ -1740,17 +1024,15 @@ paths:
             operationId: getAssetLibraryUserGroup
             parameters:
                 -   in: path
-                    name: assetLibraryId
+                    name: assetLibraryExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
                 -   in: path
-                    name: userGroupId
+                    name: userGroupExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
             responses:
                 200:
                     content:
@@ -1765,21 +1047,19 @@ paths:
             tags: ["UserGroup"]
         put:
             description:
-                Associates the user group to the asset library.
+                Associates the user group with the given external reference code to the asset library.
             operationId: putAssetLibraryUserGroup
             parameters:
                 -   in: path
-                    name: assetLibraryId
+                    name: assetLibraryExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
                 -   in: path
-                    name: userGroupId
+                    name: userGroupExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
             responses:
                 200:
                     content:
@@ -1792,22 +1072,20 @@ paths:
                     description:
                         default response
             tags: ["UserGroup"]
-    "/asset-libraries/{assetLibraryId}/user-groups/{userGroupId}/roles":
+    "/asset-libraries/{assetLibraryExternalReferenceCode}/user-groups/{userGroupExternalReferenceCode}/roles":
         get:
             operationId: getAssetLibraryUserGroupRolesPage
             parameters:
                 -   in: path
-                    name: assetLibraryId
+                    name: assetLibraryExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
                 -   in: path
-                    name: userGroupId
+                    name: userGroupExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
             responses:
                 200:
                     content:
@@ -1826,17 +1104,15 @@ paths:
             operationId: putAssetLibraryUserGroupRolesPage
             parameters:
                 -   in: path
-                    name: assetLibraryId
+                    name: assetLibraryExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
                 -   in: path
-                    name: userGroupId
+                    name: userGroupExternalReferenceCode
                     required: true
                     schema:
-                        format: int64
-                        type: integer
+                        type: string
             requestBody:
                 content:
                     application/json:

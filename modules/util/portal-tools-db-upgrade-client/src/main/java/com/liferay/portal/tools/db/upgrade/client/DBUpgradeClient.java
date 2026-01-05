@@ -21,6 +21,7 @@ import java.net.InetAddress;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -30,6 +31,7 @@ import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -72,15 +74,16 @@ public class DBUpgradeClient {
 			if (commandLine.hasOption("jvm-opts")) {
 				String optionValue = commandLine.getOptionValue("jvm-opts");
 
-				Collections.addAll(jvmOpts, optionValue.split(" "));
+				if (optionValue != null) {
+					optionValue = optionValue.trim();
+
+					if (!optionValue.isEmpty()) {
+						Collections.addAll(jvmOpts, optionValue.split(" "));
+					}
+				}
 			}
-			else {
-				jvmOpts.add("-Dfile.encoding=UTF8");
-				jvmOpts.add("-Duser.country=US");
-				jvmOpts.add("-Duser.language=en");
-				jvmOpts.add("-Duser.timezone=GMT");
-				jvmOpts.add("-Xmx4096m");
-			}
+
+			_addDefaultJVMOpts(jvmOpts);
 
 			if (commandLine.hasOption("debug")) {
 				jvmOpts.add(
@@ -154,12 +157,6 @@ public class DBUpgradeClient {
 		_appServerProperties = _readProperties(_appServerPropertiesFile);
 
 		_fileOutputStream = new FileOutputStream(_logFile);
-
-		_portalUpgradeDatabasePropertiesFile = new File(
-			_jarDir, "portal-upgrade-database.properties");
-
-		_portalUpgradeDatabaseProperties = _readProperties(
-			_portalUpgradeDatabasePropertiesFile);
 
 		_portalUpgradeExtPropertiesFile = new File(
 			_jarDir, "portal-upgrade-ext.properties");
@@ -301,21 +298,54 @@ public class DBUpgradeClient {
 				"Remove " + file + " prior to running an upgrade to prevent " +
 					"possible conflicts.");
 
-			System.exit(0);
+			System.exit(1);
 		}
 
 		try {
-			_verifyPortalUpgradeExtProperties();
+			_verifyPortalUpgradeExtPropertiesLiferayHome();
 
 			_verifyAppServerProperties();
 
-			_verifyPortalUpgradeDatabaseProperties();
+			_verifyPortalUpgradeExtPropertiesDatabase();
 
 			_saveProperties();
 		}
 		catch (IOException ioException) {
-			ioException.printStackTrace();
+			System.err.println(ioException.getMessage());
+			System.err.println(
+				"Stopping the upgrade process. Please fix the errors and try " +
+					"again.");
+
+			System.exit(1);
 		}
+	}
+
+	private static void _addDefaultJVMOpts(List<String> jvmOpts) {
+		Map<String, String> defaultJVMOpts = new LinkedHashMap<>();
+
+		defaultJVMOpts.put("-Dfile.encoding=", "-Dfile.encoding=UTF8");
+		defaultJVMOpts.put("-Duser.country=", "-Duser.country=US");
+		defaultJVMOpts.put("-Duser.language=", "-Duser.language=en");
+		defaultJVMOpts.put("-Duser.timezone=", "-Duser.timezone=GMT");
+		defaultJVMOpts.put("-Xmx", "-Xmx4096m");
+
+		for (Map.Entry<String, String> entry : defaultJVMOpts.entrySet()) {
+			if (!_containsPrefix(jvmOpts, entry.getKey())) {
+				jvmOpts.add(entry.getValue());
+			}
+		}
+	}
+
+	private static boolean _containsPrefix(
+		List<String> jvmOpts, String prefix) {
+
+		for (String jvmOpt : jvmOpts) {
+			if ((jvmOpt != null) && jvmOpt.startsWith(prefix)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private static Options _getOptions() {
@@ -419,6 +449,25 @@ public class DBUpgradeClient {
 		return sb.toString();
 	}
 
+	private String[] _getDBTypes() {
+		if (_appServer == null) {
+			return _DATABASE_TYPES_PORTAL;
+		}
+
+		File portalShieldedContainerLibDir =
+			_appServer.getPortalShieldedContainerLibDir();
+
+		if (portalShieldedContainerLibDir != null) {
+			Path path = portalShieldedContainerLibDir.toPath();
+
+			if (Files.exists(path.resolve("com.liferay.portal.dao.db.jar"))) {
+				return _DATABASE_TYPES_DXP;
+			}
+		}
+
+		return _DATABASE_TYPES_PORTAL;
+	}
+
 	private File _getResolvedDir(
 		boolean allowAbsolutePaths, File baseDir, String dirName) {
 
@@ -457,6 +506,14 @@ public class DBUpgradeClient {
 		return new GogoShellClient(host, port);
 	}
 
+	private boolean _isEmpty(String value) {
+		if ((value == null) || value.isEmpty()) {
+			return true;
+		}
+
+		return false;
+	}
+
 	private boolean _isGTJDK8() {
 		String javaVersion = System.getProperty("java.version");
 
@@ -484,13 +541,13 @@ public class DBUpgradeClient {
 		return true;
 	}
 
-	private boolean _isValidDir(File dir) {
+	private boolean _isValidDir(File dir) throws IOException {
 		if (dir.exists() && dir.isDirectory()) {
 			return true;
 		}
 
 		System.err.println(
-			dir.getAbsolutePath() + " does not exist or is not a directory.");
+			dir.getCanonicalPath() + " does not exist or is not a directory.");
 
 		return false;
 	}
@@ -687,8 +744,6 @@ public class DBUpgradeClient {
 
 	private void _saveProperties() throws IOException {
 		_appServerProperties.store(_appServerPropertiesFile);
-		_portalUpgradeDatabaseProperties.store(
-			_portalUpgradeDatabasePropertiesFile);
 		_portalUpgradeExtProperties.store(_portalUpgradeExtPropertiesFile);
 	}
 
@@ -696,7 +751,7 @@ public class DBUpgradeClient {
 		String value = _appServerProperties.getProperty(
 			"server.detector.server.id");
 
-		if ((value == null) || value.isEmpty()) {
+		if (_isEmpty(value)) {
 			String response = null;
 
 			while (_appServer == null) {
@@ -782,52 +837,234 @@ public class DBUpgradeClient {
 				_appServer.getServerDetectorServerId());
 		}
 		else {
+			File liferayHome = new File(
+				_portalUpgradeExtProperties.getProperty("liferay.home"));
+
+			_appServer = AppServer.getAppServer(liferayHome, value);
+
+			if (_appServer == null) {
+				System.err.println(
+					value + " is an unsupported application server.");
+
+				throw new IOException(
+					"Invalid configuration in " +
+						_appServerPropertiesFile.getName());
+			}
+
 			String dirName = _appServerProperties.getProperty("dir");
+
+			if (!_verifyDirName(
+					true, liferayHome, dirName,
+					_appServerPropertiesFile.getName(), "dir")) {
+
+				throw new IOException(
+					"Invalid configuration in " +
+						_appServerPropertiesFile.getName());
+			}
 
 			File dir = new File(dirName);
 
 			if (!dir.isAbsolute()) {
-				dir = new File(_jarDir, dirName);
+				dir = new File(liferayHome, dirName);
 			}
 
 			dirName = dir.getCanonicalPath();
 
+			_appServer.setDirName(dirName);
+
 			_appServerProperties.setProperty("dir", dirName);
 
-			_appServer = new AppServer(
-				dirName, _appServerProperties.getProperty("extra.lib.dirs"),
-				_appServerProperties.getProperty("global.lib.dir"),
-				_appServerProperties.getProperty("portal.dir"), value);
+			String extraLibDirNames = _appServerProperties.getProperty(
+				"extra.lib.dirs");
+			String globalLibDirName = _appServerProperties.getProperty(
+				"global.lib.dir");
+			String portalDirName = _appServerProperties.getProperty(
+				"portal.dir");
+
+			if (!_verifyDirNames(
+					false, dir, extraLibDirNames,
+					_appServerPropertiesFile.getName(), "extra.lib.dirs") |
+				!_verifyDirName(
+					false, dir, globalLibDirName,
+					_appServerPropertiesFile.getName(), "global.lib.dir") |
+				!_verifyDirName(
+					false, dir, portalDirName,
+					_appServerPropertiesFile.getName(), "portal.dir")) {
+
+				throw new IOException(
+					"Invalid configuration in " +
+						_appServerPropertiesFile.getName());
+			}
+
+			_appServer.setExtraLibDirNames(extraLibDirNames);
+			_appServer.setGlobalLibDirName(globalLibDirName);
+			_appServer.setPortalDirName(portalDirName);
 		}
 	}
 
-	private void _verifyPortalUpgradeDatabaseProperties() throws IOException {
-		String value = _portalUpgradeDatabaseProperties.getProperty(
+	private boolean _verifyDirName(
+			boolean allowAbsolutePaths, File baseDir, String dirName,
+			String propertiesFileName, String propertyName)
+		throws IOException {
+
+		if (dirName != null) {
+			dirName = dirName.trim();
+		}
+
+		if ((dirName == null) || dirName.isEmpty()) {
+			System.err.println(
+				"Property \"" + propertyName + "\" is not set in " +
+					propertiesFileName + ".");
+
+			return false;
+		}
+
+		File testDir = _getResolvedDir(allowAbsolutePaths, baseDir, dirName);
+
+		if (testDir == null) {
+			System.err.println(
+				"Property '" + propertyName + "' in " + propertiesFileName +
+					" contains an invalid path: " + dirName);
+
+			return false;
+		}
+
+		return _isValidDir(testDir);
+	}
+
+	private boolean _verifyDirNames(
+			boolean allowAbsolutePaths, File baseDir, String dirNames,
+			String propertiesFileName, String propertyName)
+		throws IOException {
+
+		if ((dirNames == null) ||
+			dirNames.trim(
+			).isEmpty()) {
+
+			return true;
+		}
+
+		boolean hasErrors = false;
+
+		for (String dirName : dirNames.split(",")) {
+			dirName = dirName.trim();
+
+			if (dirName.isEmpty()) {
+				continue;
+			}
+
+			File testDir = _getResolvedDir(
+				allowAbsolutePaths, baseDir, dirName);
+
+			if (testDir == null) {
+				System.err.println(
+					"Property \"" + propertyName + "\" in " +
+						propertiesFileName + " contains an invalid path: " +
+							dirName);
+
+				hasErrors = true;
+			}
+			else if (!_isValidDir(testDir)) {
+				hasErrors = true;
+			}
+		}
+
+		return !hasErrors;
+	}
+
+	private void _verifyPortalUpgradeExtPropertiesDatabase()
+		throws IOException {
+
+		File portalUpgradeDatabasePropertiesFile = new File(
+			_jarDir, "portal-upgrade-database.properties");
+
+		if (portalUpgradeDatabasePropertiesFile.exists()) {
+			System.err.println(
+				"The portal-upgrade-database.properties file is deprecated " +
+					"and will be ignored. Please move all database " +
+						"configuration properties to " +
+							"portal-upgrade-ext.properties.");
+		}
+
+		String driverClassName = _portalUpgradeExtProperties.getProperty(
 			"jdbc.default.driverClassName");
 
-		if ((value != null) && !value.isEmpty()) {
+		if (!_isEmpty(driverClassName)) {
 			return;
 		}
 
 		String response = null;
+
+		File portalExtPropertiesFile = new File(
+			_portalUpgradeExtProperties.getProperty("liferay.home"),
+			"portal-ext.properties");
+
+		Properties portalExtProperties = _readProperties(
+			portalExtPropertiesFile);
+
+		driverClassName = portalExtProperties.getProperty(
+			"jdbc.default.driverClassName");
+
+		String password = null;
+		String url = null;
+		String userName = null;
+
+		if (!_isEmpty(driverClassName)) {
+			password = portalExtProperties.getProperty("jdbc.default.password");
+			url = portalExtProperties.getProperty("jdbc.default.url");
+			userName = portalExtProperties.getProperty("jdbc.default.username");
+		}
+
+		if (!_isEmpty(driverClassName) && !_isEmpty(password) &&
+			!_isEmpty(url) && !_isEmpty(userName)) {
+
+			System.out.println(
+				"An existing database configuration was found in: " +
+					portalExtPropertiesFile.getAbsolutePath());
+			System.out.println(
+				"\tjdbc.default.driverClassName=" + driverClassName);
+			System.out.println("\tjdbc.default.url=" + url);
+			System.out.println("\tjdbc.default.username=" + userName);
+			System.out.println(
+				"\tjdbc.default.password=" + password.replaceAll(".", "*"));
+
+			System.out.println("\nUse existing JDBC properties (y/N):");
+
+			response = _consoleReader.readLine();
+
+			if (response.equalsIgnoreCase("y") ||
+				response.equalsIgnoreCase("yes")) {
+
+				_portalUpgradeExtProperties.setProperty(
+					"jdbc.default.driverClassName", driverClassName);
+				_portalUpgradeExtProperties.setProperty(
+					"jdbc.default.password", password);
+				_portalUpgradeExtProperties.setProperty(
+					"jdbc.default.url", url);
+				_portalUpgradeExtProperties.setProperty(
+					"jdbc.default.username", userName);
+
+				return;
+			}
+		}
 
 		Database dataSource = null;
 
 		while (dataSource == null) {
 			System.out.print("[ ");
 
-			for (String databaseType : _DATABASE_TYPES) {
+			for (String databaseType : _getDBTypes()) {
 				System.out.print(databaseType + " ");
 			}
 
 			System.out.println("]");
 
-			System.out.println("Please enter your database (mysql): ");
+			System.out.println("Please enter your database (postgresql): ");
 
 			response = _consoleReader.readLine();
 
 			if (response.isEmpty()) {
-				response = "mysql";
+				response = "postgresql";
 			}
 
 			dataSource = Database.getDatabase(response);
@@ -883,28 +1120,30 @@ public class DBUpgradeClient {
 
 		System.out.println("Please enter your database username: ");
 
-		String userName = _consoleReader.readLine();
+		userName = _consoleReader.readLine();
 
 		System.out.println("Please enter your database password: ");
 
-		String password = _consoleReader.readLine('*');
+		password = _consoleReader.readLine('*');
 
-		_portalUpgradeDatabaseProperties.setProperty(
+		_portalUpgradeExtProperties.setProperty(
 			"jdbc.default.driverClassName", dataSource.getClassName());
-		_portalUpgradeDatabaseProperties.setProperty(
+		_portalUpgradeExtProperties.setProperty(
 			"jdbc.default.password", password);
-		_portalUpgradeDatabaseProperties.setProperty(
+		_portalUpgradeExtProperties.setProperty(
 			"jdbc.default.url", dataSource.getURL());
-		_portalUpgradeDatabaseProperties.setProperty(
+		_portalUpgradeExtProperties.setProperty(
 			"jdbc.default.username", userName);
 	}
 
-	private void _verifyPortalUpgradeExtProperties() throws IOException {
+	private void _verifyPortalUpgradeExtPropertiesLiferayHome()
+		throws IOException {
+
 		String value = _portalUpgradeExtProperties.getProperty("liferay.home");
 
 		File baseDir = new File(".");
 
-		if ((value == null) || value.isEmpty()) {
+		if (_isEmpty(value)) {
 			File defaultLiferayHomeDir = new File(_jarDir, "../../");
 
 			String liferayHomeDirName = _requestDirName(
@@ -920,6 +1159,16 @@ public class DBUpgradeClient {
 		}
 		else {
 			baseDir = _jarDir;
+
+			if (!_verifyDirName(
+					true, baseDir, value,
+					_portalUpgradeExtPropertiesFile.getName(),
+					"liferay.home")) {
+
+				throw new IOException(
+					"Invalid configuration in " +
+						_portalUpgradeExtPropertiesFile.getName());
+			}
 		}
 
 		File liferayHome = new File(value);
@@ -936,8 +1185,12 @@ public class DBUpgradeClient {
 		"jboss", "tomcat", "weblogic", "wildfly"
 	};
 
-	private static final String[] _DATABASE_TYPES = {
+	private static final String[] _DATABASE_TYPES_DXP = {
 		"db2", "mariadb", "mysql", "oracle", "postgresql", "sqlserver"
+	};
+
+	private static final String[] _DATABASE_TYPES_PORTAL = {
+		"mariadb", "mysql", "postgresql"
 	};
 
 	private static final String _GOGO_SHELL_PREFIX = "g! ";
@@ -985,8 +1238,6 @@ public class DBUpgradeClient {
 	private final FileOutputStream _fileOutputStream;
 	private List<String> _jvmOpts = new ArrayList<>();
 	private final File _logFile;
-	private final Properties _portalUpgradeDatabaseProperties;
-	private final File _portalUpgradeDatabasePropertiesFile;
 	private final Properties _portalUpgradeExtProperties;
 	private final File _portalUpgradeExtPropertiesFile;
 	private final boolean _shell;

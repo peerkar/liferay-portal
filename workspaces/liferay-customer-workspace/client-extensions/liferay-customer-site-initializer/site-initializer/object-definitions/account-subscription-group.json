@@ -1,0 +1,106 @@
+{
+	"accountEntryRestricted": true,
+	"accountEntryRestrictedObjectFieldName": "r_accountEntryToAccountSubscriptionGroup_accountEntryId",
+	"externalReferenceCode": "C_ACCNT_SUB_GROUP",
+	"label": {
+		"en_US": "Account Subscription Group"
+	},
+	"name": "AccountSubscriptionGroup",
+	"objectFields": [
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_ACCNT_SUB_GROUP_accountKey",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Account Key"
+			},
+			"name": "accountKey",
+			"required": true
+		},
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_ACCNT_SUB_GROUP_activationProductName",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Activation Product Name"
+			},
+			"name": "activationProductName",
+			"required": false
+		},
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_ACCNT_SUB_GROUP_activationStatus",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Activation Status"
+			},
+			"name": "activationStatus",
+			"required": false
+		},
+		{
+			"DBType": "Boolean",
+			"externalReferenceCode": "C_ACCNT_SUB_GROUP_hasActivation",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Has Activation"
+			},
+			"name": "hasActivation",
+			"required": false
+		},
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_ACCNT_SUB_GROUP_manageContactsURL",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Manage Contacts URL"
+			},
+			"name": "manageContactsURL",
+			"required": false
+		},
+		{
+			"DBType": "Integer",
+			"externalReferenceCode": "C_ACCNT_SUB_GROUP_menuOrder",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Menu Order"
+			},
+			"name": "menuOrder",
+			"required": false
+		},
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_ACCNT_SUB_GROUP_name",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Name"
+			},
+			"name": "name",
+			"required": false
+		},
+		{
+			"DBType": "Integer",
+			"externalReferenceCode": "C_ACCNT_SUB_GROUP_tabOrder",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Tab Order"
+			},
+			"name": "tabOrder",
+			"required": false
+		}
+	],
+	"panelCategoryKey": "applications_menu.applications.content",
+	"pluralLabel": {
+		"en_US": "Account Subscription Groups"
+	},
+	"portlet": true,
+	"scope": "company",
+	"system": false
+}

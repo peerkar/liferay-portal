@@ -29,7 +29,9 @@ export class CommerceMiniCartPage {
 	readonly proceedAsGuest: Locator;
 	readonly quickAddToCartButton: Locator;
 	readonly quickAddToCartSku: (sku: string) => Locator;
+	readonly requestAQuoteButton: Locator;
 	readonly reviewOrderButton: Locator;
+	readonly resubmitButton: Locator;
 	readonly searchProductsInput: Locator;
 	readonly selectOption: (
 		optionLabel: string,
@@ -81,6 +83,15 @@ export class CommerceMiniCartPage {
 		};
 		this.proceedAsGuest = page.getByRole('button', {
 			name: 'Proceed as Guest',
+		});
+		this.requestAQuoteButton = page
+			.locator('.mini-cart-wrapper')
+			.getByRole('button', {
+				name: 'Request A Quote',
+			});
+		this.resubmitButton = page.getByRole('button', {
+			exact: true,
+			name: 'Resubmit',
 		});
 		this.reviewOrderButton = page.getByRole('button', {
 			exact: true,

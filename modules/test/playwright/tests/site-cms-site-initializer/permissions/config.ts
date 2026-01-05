@@ -4,6 +4,7 @@
  */
 
 export const config = {
+	dependencies: ['site-cms-site.main'],
 	expect: {
 		timeout: 10 * 1000,
 	},

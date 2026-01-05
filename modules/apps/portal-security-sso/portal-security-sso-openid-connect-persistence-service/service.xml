@@ -23,7 +23,9 @@
 		<column name="authServerWellKnownURI" type="String" />
 		<column name="clientId" type="String" />
 		<column name="idToken" type="String" />
+		<column name="issuer" type="String" />
 		<column name="refreshToken" type="String" />
+		<column name="sessionId" type="String" />
 
 		<!-- Finder methods -->
 
@@ -32,6 +34,14 @@
 		</finder>
 		<finder name="LtAccessTokenExpirationDate" return-type="Collection">
 			<finder-column comparator="&lt;" name="accessTokenExpirationDate" />
+		</finder>
+		<finder name="U_I" return-type="OpenIdConnectSession" unique="true">
+			<finder-column name="userId" />
+			<finder-column name="issuer" />
+		</finder>
+		<finder name="I_S" return-type="OpenIdConnectSession" unique="true">
+			<finder-column name="issuer" />
+			<finder-column name="sessionId" />
 		</finder>
 		<finder name="C_A_C" return-type="Collection">
 			<finder-column name="companyId" />

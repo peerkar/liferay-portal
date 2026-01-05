@@ -95,7 +95,10 @@ export enum DataSourceStates {
 }
 export enum DataSourceStatuses {
 	Active = 'ACTIVE',
-	Inactive = 'INACTIVE'
+	Authenticated = 'AUTHENTICATED',
+	Configuring = 'CONFIGURING',
+	Inactive = 'INACTIVE',
+	OauthExpired = 'OAUTH_EXPIRED'
 }
 
 export enum DataSourceTypes {
@@ -128,6 +131,7 @@ export enum FaroEnv {
 }
 
 export enum FieldContexts {
+	Account = 'account',
 	Custom = 'custom',
 	Demographics = 'demographics',
 	Interests = 'interests',

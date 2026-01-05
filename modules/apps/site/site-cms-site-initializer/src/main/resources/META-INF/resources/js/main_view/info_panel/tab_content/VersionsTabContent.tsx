@@ -28,6 +28,12 @@ const VersionsTabContent = () => {
 	}>({count: 0, items: []});
 
 	const getObjectEntriesVersions = useCallback(async () => {
+		if (!objectEntries.length) {
+			return null;
+		}
+
+		setObjectEntryVersions({count: 0, items: []});
+
 		const [
 			{
 				actions: {
@@ -38,7 +44,7 @@ const VersionsTabContent = () => {
 
 		try {
 			const response = await fetch(
-				`${href}?page=1&pageSize=${MAX_LIST_SIZE}`
+				`${href}?page=1&pageSize=${MAX_LIST_SIZE}&sort=version:desc`
 			);
 
 			if (response.ok) {
@@ -55,7 +61,7 @@ const VersionsTabContent = () => {
 				type: 'danger',
 			});
 		}
-	}, [objectEntries, setObjectEntryVersions]);
+	}, [objectEntries]);
 
 	useEffect(() => {
 		getObjectEntriesVersions();
@@ -65,7 +71,11 @@ const VersionsTabContent = () => {
 		<>
 			{objectEntryVersions.count > 0 && (
 				<List>
-					<AssetVersionsListItem {...objectEntryVersions} />
+					<AssetVersionsListItem
+						{...objectEntryVersions}
+						file={objectEntries[0]?.embedded?.file}
+						getObjectEntriesVersions={getObjectEntriesVersions}
+					/>
 				</List>
 			)}
 

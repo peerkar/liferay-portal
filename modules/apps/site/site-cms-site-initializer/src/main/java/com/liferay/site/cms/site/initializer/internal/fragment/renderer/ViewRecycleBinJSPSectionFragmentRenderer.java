@@ -53,7 +53,8 @@ public class ViewRecycleBinJSPSectionFragmentRenderer
 			httpServletRequest, language, _objectDefinitionService,
 			_objectDefinitionSettingLocalService,
 			_objectEntryFolderLocalService,
-			_objectEntryFolderModelResourcePermission, _portal, _trashHelper);
+			_objectEntryFolderModelResourcePermission, _portal,
+			translationInfoItemFieldValuesExporterRegistry, _trashHelper);
 	}
 
 	@Override

@@ -146,15 +146,11 @@ public class CommerceDiscountIndexer extends BaseIndexer<CommerceDiscount> {
 			termsSetFilterBuilder.setFieldName("commerceAccountGroupIds");
 			termsSetFilterBuilder.setMinimumShouldMatchField(
 				"commerceAccountGroupIds_required_matches");
-
-			List<String> values = new ArrayList<>(
-				commerceAccountGroupIds.length);
-
-			for (long commerceAccountGroupId : commerceAccountGroupIds) {
-				values.add(String.valueOf(commerceAccountGroupId));
-			}
-
-			termsSetFilterBuilder.setValues(values);
+			termsSetFilterBuilder.setValues(
+				TransformUtil.transformToList(
+					commerceAccountGroupIds,
+					commerceAccountGroupId -> String.valueOf(
+						commerceAccountGroupId)));
 
 			BooleanFilter fieldBooleanFilter = new BooleanFilter();
 
@@ -370,6 +366,7 @@ public class CommerceDiscountIndexer extends BaseIndexer<CommerceDiscount> {
 			groupIdList.add(commerceChannel.getGroupId());
 		}
 
+		document.addNumber(FIELD_GROUP_IDS, ArrayUtil.toLongArray(groupIdList));
 		document.addNumber(
 			"commerceChannelId", ArrayUtil.toLongArray(channelIdList));
 		document.addNumber(
@@ -379,7 +376,6 @@ public class CommerceDiscountIndexer extends BaseIndexer<CommerceDiscount> {
 					getCommerceDiscountOrderTypeRels(
 						commerceDiscount.getCommerceDiscountId()),
 				CommerceDiscountOrderTypeRel::getCommerceOrderTypeId));
-		document.addNumber(FIELD_GROUP_IDS, ArrayUtil.toLongArray(groupIdList));
 
 		if (_log.isDebugEnabled()) {
 			_log.debug(

@@ -182,7 +182,8 @@ public class BackgroundTaskLocalServiceImpl
 			backgroundTask.setTaskContextMap(taskContextMap);
 		}
 
-		if ((status == BackgroundTaskConstants.STATUS_FAILED) ||
+		if ((status == BackgroundTaskConstants.STATUS_COMPLETED_WITH_ERRORS) ||
+			(status == BackgroundTaskConstants.STATUS_FAILED) ||
 			(status == BackgroundTaskConstants.STATUS_SUCCESSFUL)) {
 
 			backgroundTask.setCompleted(true);

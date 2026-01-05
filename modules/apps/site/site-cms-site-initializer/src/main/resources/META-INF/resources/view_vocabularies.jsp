@@ -25,8 +25,7 @@ ViewVocabulariesDisplayContext viewVocabulariesDisplayContext = (ViewVocabularie
 			creationMenu="<%= viewVocabulariesDisplayContext.getCreationMenu() %>"
 			emptyState="<%= viewVocabulariesDisplayContext.getEmptyState() %>"
 			fdsActionDropdownItems="<%= viewVocabulariesDisplayContext.getFDSActionDropdownItems() %>"
-			fdsFilters="<%= viewVocabulariesDisplayContext.getFDSFilters() %>"
-			id="test"
+			id="<%= CMSSiteInitializerFDSNames.VOCABULARIES %>"
 			propsTransformer="{VocabularyFDSPropsTransformer} from site-cms-site-initializer"
 		/>
 	</div>

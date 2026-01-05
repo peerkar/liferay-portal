@@ -2228,6 +2228,14 @@ public abstract class BaseListTypeEntryResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("creator", additionalAssertFieldName)) {
+				if (listTypeEntry.getCreator() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals(
 					"externalReferenceCode", additionalAssertFieldName)) {
 
@@ -2256,6 +2264,14 @@ public abstract class BaseListTypeEntryResourceTestCase {
 
 			if (Objects.equals("name_i18n", additionalAssertFieldName)) {
 				if (listTypeEntry.getName_i18n() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("status", additionalAssertFieldName)) {
+				if (listTypeEntry.getStatus() == null) {
 					valid = false;
 				}
 
@@ -2412,6 +2428,17 @@ public abstract class BaseListTypeEntryResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("creator", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						listTypeEntry1.getCreator(),
+						listTypeEntry2.getCreator())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("dateCreated", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
 						listTypeEntry1.getDateCreated(),
@@ -2481,6 +2508,17 @@ public abstract class BaseListTypeEntryResourceTestCase {
 				if (!equals(
 						(Map)listTypeEntry1.getName_i18n(),
 						(Map)listTypeEntry2.getName_i18n())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("status", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						listTypeEntry1.getStatus(),
+						listTypeEntry2.getStatus())) {
 
 					return false;
 				}
@@ -2617,6 +2655,11 @@ public abstract class BaseListTypeEntryResourceTestCase {
 		sb.append(" ");
 
 		if (entityFieldName.equals("actions")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
+		if (entityFieldName.equals("creator")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
 		}
@@ -2823,6 +2866,11 @@ public abstract class BaseListTypeEntryResourceTestCase {
 		}
 
 		if (entityFieldName.equals("name_i18n")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
+		if (entityFieldName.equals("status")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
 		}

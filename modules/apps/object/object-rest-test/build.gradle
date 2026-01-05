@@ -4,7 +4,7 @@ dependencies {
 	testIntegrationImplementation group: "com.fasterxml.jackson.core", name: "jackson-databind", version: "2.18.2"
 	testIntegrationImplementation group: "com.fasterxml.jackson.dataformat", name: "jackson-dataformat-yaml", version: "2.18.2"
 	testIntegrationImplementation group: "com.liferay", name: "jakarta.ws.rs", version: "3.1.0.LIFERAY-PATCHED-1"
-	testIntegrationImplementation group: "com.liferay", name: "org.apache.cxf.core", version: "3.5.11.JAKARTA-LIFERAY-PATCHED-1"
+	testIntegrationImplementation group: "com.liferay", name: "org.apache.cxf.core", version: "3.6.9.JAKARTA-LIFERAY-PATCHED-1"
 	testIntegrationImplementation group: "io.swagger.core.v3", name: "swagger-models-jakarta", version: "2.2.28"
 	testIntegrationImplementation group: "org.skyscreamer", name: "jsonassert", version: "1.2.3"
 	testIntegrationImplementation group: "org.yaml", name: "snakeyaml", version: "2.3"
@@ -13,6 +13,7 @@ dependencies {
 	testIntegrationImplementation project(":apps:depot:depot-api")
 	testIntegrationImplementation project(":apps:document-library:document-library-api")
 	testIntegrationImplementation project(":apps:document-library:document-library-test-util")
+	testIntegrationImplementation project(":apps:expando:expando-test-util")
 	testIntegrationImplementation project(":apps:headless:headless-admin-taxonomy:headless-admin-taxonomy-client")
 	testIntegrationImplementation project(":apps:headless:headless-admin-user:headless-admin-user-api")
 	testIntegrationImplementation project(":apps:headless:headless-batch-engine:headless-batch-engine-client")

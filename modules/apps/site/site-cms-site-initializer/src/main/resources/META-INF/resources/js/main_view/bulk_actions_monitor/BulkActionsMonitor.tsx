@@ -25,19 +25,24 @@ import {START_TASK} from '../../common/utils/events';
 import {displaySystemErrorToast} from '../../common/utils/toastUtil';
 import BulkActionsMonitorItemList from './components/BulkActionsMonitorItemList';
 import {BulkActionTaskStarter} from './services/BulkActionTaskStarter';
-import {INTERVAL_TASK_POLLING_MS, URL_TASKS_REPORT} from './util/constants';
+import {
+	INTERVAL_TASK_POLLING_MS,
+	TASK_REPORT_FDS_ID,
+	URL_TASKS_REPORT,
+} from './util/constants';
 
-function BulkActionsMonitor({
-	bulkActionTaskClassNameId: classNameId,
-}: {
-	bulkActionTaskClassNameId: number;
-}) {
+const FDS_EVENT_UPDATE_DISPLAY = 'fds-update-display';
+
+function BulkActionsMonitor() {
 	const [active, setActive] = useState<boolean>(false);
+	const [dataSetLoading, setDataSetLoading] = useState(
+		new Set([TASK_REPORT_FDS_ID])
+	);
+	const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 	const [processingTasks, setProcessingTask] = useState(0);
+	const processingTasksRef = useRef(0);
 	const [tasks, setTasks] = useState<IBulkActionTask[]>([]);
 	const [tasksLoading, setTasksLoading] = useState<boolean>(false);
-
-	const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
 	const getTasks = useCallback(
 		() =>
@@ -89,7 +94,23 @@ function BulkActionsMonitor({
 					stopPolling();
 				}
 
-				setProcessingTask(data?.totalCount || 0);
+				const dataTotalCount = data?.totalCount || 0;
+
+				if (dataTotalCount < processingTasksRef.current) {
+					dataSetLoading.forEach((dataSetId) => {
+						Liferay.fire(FDS_EVENT_UPDATE_DISPLAY, {
+							id: dataSetId,
+						});
+					});
+
+					if (dataTotalCount === 0) {
+						setDataSetLoading(new Set([TASK_REPORT_FDS_ID]));
+					}
+				}
+
+				processingTasksRef.current = dataTotalCount;
+
+				setProcessingTask(dataTotalCount);
 			}
 			catch {
 				stopPolling();
@@ -102,17 +123,14 @@ function BulkActionsMonitor({
 			getProcessingTasks,
 			INTERVAL_TASK_POLLING_MS
 		);
-	}, [setProcessingTask, stopPolling]);
+	}, [dataSetLoading, setProcessingTask, stopPolling]);
 
 	const postBulkAction = useCallback(
 		async (
 			bulkActionDTO: IBulkActionTaskStarterDTO<keyof IBulkActionTaskType>
 		) => {
 			const bulkAction: IBulkActionTaskStarter =
-				new BulkActionTaskStarter({
-					classNameId,
-					...bulkActionDTO,
-				});
+				new BulkActionTaskStarter(bulkActionDTO);
 
 			try {
 				const response = await AssetBulkActionTaskService.createTask(
@@ -122,6 +140,17 @@ function BulkActionsMonitor({
 
 				if (response.data) {
 					bulkAction.onCreateSuccess(response);
+
+					setDataSetLoading((prevState) => {
+						if (bulkActionDTO.dataSetId) {
+							const newDataSet = new Set(prevState);
+							newDataSet.add(bulkActionDTO.dataSetId);
+
+							return newDataSet;
+						}
+
+						return prevState;
+					});
 
 					pollProcessingTasks();
 				}
@@ -138,7 +167,7 @@ function BulkActionsMonitor({
 				}
 			}
 		},
-		[classNameId, pollProcessingTasks]
+		[pollProcessingTasks, setDataSetLoading]
 	);
 
 	useEffect(() => {
@@ -202,10 +231,7 @@ function BulkActionsMonitor({
 			}
 		>
 			<>
-				<BulkActionsMonitorItemList
-					classNameId={classNameId}
-					items={tasks}
-				/>
+				<BulkActionsMonitorItemList items={tasks} />
 
 				{tasksLoading ? (
 					<div className="task-status-loading">
@@ -213,14 +239,16 @@ function BulkActionsMonitor({
 					</div>
 				) : null}
 
-				<ClayLink
-					block
-					className="btn btn-block btn-secondary task-status-view-all text-3"
-					displayType="secondary"
-					href={URL_TASKS_REPORT}
-				>
-					{Liferay.Language.get('view-all-tasks')}
-				</ClayLink>
+				<div className="p-1">
+					<ClayLink
+						block
+						className="btn btn-block btn-secondary task-status-view-all text-3"
+						displayType="secondary"
+						href={URL_TASKS_REPORT}
+					>
+						{Liferay.Language.get('view-all-tasks')}
+					</ClayLink>
+				</div>
 			</>
 		</DropDown>
 	) : null;

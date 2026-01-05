@@ -27,23 +27,34 @@ import {
 	getUpdatedDefaultValueType,
 } from '../../../../utils/defaultValues';
 import {removeFieldSettings} from '../../../../utils/fieldSettings';
+import BooleanDefaultValueSelect from '../../DefaultValueFields/BooleanDefaultValueSelect';
+import DateDefaultValueInput from '../../DefaultValueFields/DateDefaultValueInput';
 import ListTypeDefaultValueSelect from '../../DefaultValueFields/ListTypeDefaultValueSelect';
+import NumericDefaultValueInput from '../../DefaultValueFields/NumericDefaultValueInput';
+import RichTextDefaultValue from '../../DefaultValueFields/RichTextDefaultValue';
+import TextDefaultValueInput from '../../DefaultValueFields/TextDefaultValueInput';
 import {ObjectFieldErrors} from '../../ObjectFieldFormBase';
 interface DefaultValueContainerProps {
+	ckEditor5Config?: object;
 	creationLanguageId: Liferay.Language.Locale;
+	decimalSeparator: string;
+	defaultValueSidebarElements: SidebarCategory[];
 	errors: ObjectFieldErrors;
 	learnResources: ILearnResourceContext;
 	modelBuilder?: boolean;
 	onSubmit?: (values?: Partial<ObjectField>) => void;
 	setValues: (value: Partial<ObjectField>) => void;
-	sidebarElements: SidebarCategory[];
 	values: Partial<ObjectField>;
 }
 
 export interface InputAsValueFieldComponentProps {
+	ckEditor5Config?: object;
 	creationLanguageId: Liferay.Language.Locale;
+	dataType?: string;
+	decimalSeparator?: string;
 	defaultValue?: ObjectFieldSettingValue;
 	error?: string;
+	id?: string;
 	label: string;
 	onSubmit?: (values?: Partial<ObjectField>) => void;
 	placeholder?: string;
@@ -57,17 +68,31 @@ type InputAsValueFieldComponents = {
 };
 
 const InputAsValueFieldComponents: Partial<InputAsValueFieldComponents> = {
+	...(Liferay.FeatureFlags['LPD-46451'] && {
+		Boolean: BooleanDefaultValueSelect,
+		Date: DateDefaultValueInput,
+		DateTime: DateDefaultValueInput,
+		Decimal: NumericDefaultValueInput,
+		Integer: NumericDefaultValueInput,
+		LongInteger: NumericDefaultValueInput,
+		LongText: TextDefaultValueInput,
+		PrecisionDecimal: NumericDefaultValueInput,
+		RichText: RichTextDefaultValue,
+		Text: TextDefaultValueInput,
+	}),
 	Picklist: ListTypeDefaultValueSelect,
 };
 
 export function DefaultValueContainer({
+	ckEditor5Config,
 	creationLanguageId,
+	decimalSeparator,
+	defaultValueSidebarElements,
 	errors,
 	learnResources,
 	modelBuilder = false,
 	onSubmit,
 	setValues,
-	sidebarElements,
 	values,
 }: DefaultValueContainerProps) {
 	const {defaultValue, defaultValueType} =
@@ -81,13 +106,17 @@ export function DefaultValueContainer({
 		defaultValueType || 'inputAsValue'
 	);
 
+	const dataType =
+		values.businessType === 'Decimal' ||
+		values.businessType === 'PrecisionDecimal'
+			? 'double'
+			: '';
+
 	useEffect(() => {
 		if (values.state) {
 			setDefaultValueToggleEnabled(true);
 			setDefaultValueTypeSelection('inputAsValue');
 		}
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [values]);
 
 	const handleToggle = (toggled: boolean) => {
@@ -150,7 +179,14 @@ export function DefaultValueContainer({
 			)}
 
 			{!values.state && (
-				<ClayForm.Group>
+				<ClayForm.Group
+					className={classNames({
+						'lfr-objects__object-field-default-value-disabled':
+							!defaultValueToggleEnabled,
+						'lfr-objects__object-field-default-value-enabled':
+							defaultValueToggleEnabled,
+					})}
+				>
 					<Toggle
 						label={Liferay.Language.get('use-default-value')}
 						onToggle={(toggled) => {
@@ -183,26 +219,31 @@ export function DefaultValueContainer({
 						{Liferay.Language.get('input-as-value')}
 					</ClayButton>
 
-					<ClayButton
-						className={classNames({
-							active:
-								defaultValueTypeSelection ===
-								'expressionBuilder',
-						})}
-						displayType="secondary"
-						onClick={() => {
-							setDefaultValueTypeSelection('expressionBuilder');
-							setValues({
-								objectFieldSettings: getUpdatedDefaultValueType(
-									values,
+					{defaultValueSidebarElements && (
+						<ClayButton
+							className={classNames({
+								active:
+									defaultValueTypeSelection ===
+									'expressionBuilder',
+							})}
+							displayType="secondary"
+							onClick={() => {
+								setDefaultValueTypeSelection(
 									'expressionBuilder'
-								),
-							});
-						}}
-						size="sm"
-					>
-						{Liferay.Language.get('expression-builder')}
-					</ClayButton>
+								);
+								setValues({
+									objectFieldSettings:
+										getUpdatedDefaultValueType(
+											values,
+											'expressionBuilder'
+										),
+								});
+							}}
+							size="sm"
+						>
+							{Liferay.Language.get('expression-builder')}
+						</ClayButton>
+					)}
 				</ClayButton.Group>
 			)}
 
@@ -210,11 +251,15 @@ export function DefaultValueContainer({
 				defaultValueTypeSelection === 'inputAsValue' &&
 				InputAsValueFieldComponent && (
 					<InputAsValueFieldComponent
+						ckEditor5Config={ckEditor5Config}
 						creationLanguageId={creationLanguageId}
+						dataType={dataType}
+						decimalSeparator={decimalSeparator}
 						defaultValue={
 							defaultValueType === 'inputAsValue' && defaultValue
 						}
 						error={errors.defaultValue}
+						id="default_value_container_input"
 						label={
 							!values.state
 								? Liferay.Language.get('default-value')
@@ -232,7 +277,7 @@ export function DefaultValueContainer({
 					<ExpressionBuilder
 						error={errors.defaultValue}
 						feedbackMessage={Liferay.Language.get(
-							'use-expressions-to-create-a-condition'
+							'click-on-the-button-to-expand-the-expression-input-area'
 						)}
 						label={Liferay.Language.get('default-value')}
 						onBlur={(event) => {
@@ -258,7 +303,8 @@ export function DefaultValueContainer({
 							parentWindow.Liferay.fire(
 								'openExpressionBuilderModal',
 								{
-									eventSidebarElements: sidebarElements,
+									eventSidebarElements:
+										defaultValueSidebarElements,
 									onSave: (script: string) => {
 										setValues({
 											objectFieldSettings:

@@ -144,6 +144,49 @@ autoSaveTest(
 );
 
 autoSaveTest(
+	'Web Content version, status and ID are hidden when updating default values',
+	{
+		tag: '@LPD-72347',
+	},
+	async ({apiHelpers, journalEditStructureDefaultValuesPage, page, site}) => {
+		const fieldName = 'Text1';
+		const structureName = 'Structure1';
+
+		const dataDefinition = getDataStructureDefinition({
+			defaultLanguageId: 'en_US',
+			fields: [{name: fieldName, repeatable: true}],
+			name: structureName,
+		});
+
+		await apiHelpers.dataEngine.createStructure(site.id, dataDefinition);
+
+		await journalEditStructureDefaultValuesPage.goto({
+			siteUrl: site.friendlyUrlPath,
+			structureName,
+		});
+
+		await expect(page.getByText('1.0')).toBeHidden();
+
+		await expect(page.getByText('Approved', {exact: true})).toBeHidden();
+
+		await expect(page.getByText('ID', {exact: true})).toBeHidden();
+
+		await journalEditStructureDefaultValuesPage.save();
+
+		await journalEditStructureDefaultValuesPage.goto({
+			siteUrl: site.friendlyUrlPath,
+			structureName,
+		});
+
+		await expect(page.getByText('1.0')).toBeHidden();
+
+		await expect(page.getByText('Approved', {exact: true})).toBeHidden();
+
+		await expect(page.getByText('ID', {exact: true})).toBeHidden();
+	}
+);
+
+autoSaveTest(
 	'Info message appears when autosave is failed due to missing required fields',
 	{
 		tag: '@LPD-34375',
@@ -515,14 +558,15 @@ autoSaveTest(
 			target: page.getByRole('menuitem', {
 				name: 'Publish With Permissions',
 			}),
-			trigger: page.getByRole('button', {
-				name: 'Select and Confirm Publish Settings',
-			}),
+			trigger: journalEditArticlePage.publishDropdown,
 		});
 
 		await page.getByLabel('Viewable by').selectOption('Site Members');
 
-		await page.getByRole('button', {exact: true, name: 'Publish'}).click();
+		await page
+			.getByLabel('Publish With Permissions')
+			.getByRole('button', {name: 'Publish'})
+			.click();
 
 		await journalPage.changeView('list');
 
@@ -586,6 +630,70 @@ autoSaveTest(
 		await expect(page.getByText('1.1')).toBeVisible();
 
 		await expect(page.getByText('Draft', {exact: true})).toBeVisible();
+	}
+);
+
+autoSaveTest(
+	'Web Content version and ID for structures with default value are hidden until auto save',
+	{
+		tag: '@LPD-70290',
+	},
+	async ({
+		apiHelpers,
+		journalEditArticlePage,
+		journalEditStructureDefaultValuesPage,
+		page,
+		site,
+	}) => {
+		const fieldName = 'Text1';
+		const structureName = getRandomString();
+
+		const dataDefinition = getDataStructureDefinition({
+			defaultLanguageId: 'en_US',
+			fields: [{name: fieldName, repeatable: true}],
+			name: structureName,
+		});
+
+		await apiHelpers.dataEngine.createStructure(site.id, dataDefinition);
+
+		await journalEditStructureDefaultValuesPage.goto({
+			siteUrl: site.friendlyUrlPath,
+			structureName,
+		});
+
+		const content = getRandomString();
+
+		await journalEditStructureDefaultValuesPage.fillTextField(
+			fieldName,
+			content
+		);
+
+		await journalEditStructureDefaultValuesPage.save();
+
+		await journalEditArticlePage.goto({
+			siteUrl: site.friendlyUrlPath,
+			structureName,
+		});
+
+		await expect(page.getByText('Version', {exact: true})).toBeHidden();
+
+		await expect(page.getByText('0.0', {exact: true})).toBeHidden();
+
+		await expect(page.getByText('ID', {exact: true})).toBeHidden();
+
+		const title = getRandomString();
+
+		await journalEditArticlePage.fillTitle(title);
+
+		await journalEditArticlePage.changesSavedIndicator.waitFor();
+
+		await openFieldset(page, 'Basic Information');
+
+		await expect(page.getByText('1.0')).toBeVisible();
+
+		await expect(page.getByText('Draft', {exact: true})).toBeVisible();
+
+		await expect(page.getByText('ID', {exact: true})).toBeVisible();
 	}
 );
 
@@ -716,16 +824,7 @@ autosaveWithoutPermissionsTest(
 
 		const articleTitle = 'Web Content Title';
 
-		await journalEditArticlePage.page
-			.getByRole('button', {
-				name: 'select and confirm publish settings',
-			})
-			.click();
-		await journalEditArticlePage.page
-			.getByRole('menuitem', {
-				name: 'publish with permissions',
-			})
-			.click();
+		await journalEditArticlePage.publishButton.click();
 
 		await expect(
 			page.getByText('The Title field is required.')
@@ -738,5 +837,62 @@ autosaveWithoutPermissionsTest(
 		await journalPage.changeView('list');
 
 		await expect(page.getByTitle(articleTitle)).toBeVisible();
+	}
+);
+
+autoSaveTest(
+	'Preview button is disabled until first autosave',
+	{
+		tag: '@LPD-72082',
+	},
+	async ({displayPageTemplatesPage, journalEditArticlePage, page, site}) => {
+		const articleTitle = getRandomString();
+		const displayPageTemplateName = getRandomString();
+
+		await autoSaveTest.step('Create Display Page Template', async () => {
+			await displayPageTemplatesPage.goto(site.friendlyUrlPath);
+
+			await displayPageTemplatesPage.createTemplate({
+				contentSubtype: 'Basic Web Content',
+				contentType: 'Web Content Article',
+				name: displayPageTemplateName,
+			});
+		});
+
+		await autoSaveTest.step('Create WC with DPT', async () => {
+			await journalEditArticlePage.goto({siteUrl: site.friendlyUrlPath});
+			await journalEditArticlePage.selectSpecificDisplayPage(
+				displayPageTemplateName
+			);
+
+			expect(journalEditArticlePage.previewButton).toBeDisabled();
+		});
+
+		await autoSaveTest.step(
+			'Wait for autosave and click Preview',
+			async () => {
+				await journalEditArticlePage.fillTitle(articleTitle);
+				await expect(
+					journalEditArticlePage.changesSavedIndicator
+				).toHaveText('Saved');
+
+				await journalEditArticlePage.previewButton.click();
+				await expect(
+					page.getByRole('heading', {name: 'Preview'})
+				).toBeVisible();
+				await page.getByLabel('Close', {exact: true}).click();
+			}
+		);
+
+		await autoSaveTest.step('Publish WC and Edit', async () => {
+			await journalEditArticlePage.publishArticle();
+
+			await page
+				.getByTestId('row')
+				.getByRole('link', {name: articleTitle})
+				.click();
+
+			await expect(journalEditArticlePage.previewButton).toBeEnabled();
+		});
 	}
 );

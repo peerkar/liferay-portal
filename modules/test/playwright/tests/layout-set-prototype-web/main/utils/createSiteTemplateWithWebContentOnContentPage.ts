@@ -47,7 +47,7 @@ export default async function createSiteTemplateWithWebContentOnContentPage({
 	});
 
 	await productMenuPage.goToPages();
-	await pagesAdminPage.newButton.click();
+	await pagesAdminPage.clickNewButtonAndWaitForBlankTemplate();
 	await pagesAdminPage.addPage({
 		name: templateName,
 	});

@@ -28,6 +28,31 @@ public class FragmentInstancePageElementDefinition
 		return FragmentInstancePageElementDefinitionSerDes.toDTO(json);
 	}
 
+	public FragmentImage getBackgroundFragmentImage() {
+		return backgroundFragmentImage;
+	}
+
+	public void setBackgroundFragmentImage(
+		FragmentImage backgroundFragmentImage) {
+
+		this.backgroundFragmentImage = backgroundFragmentImage;
+	}
+
+	public void setBackgroundFragmentImage(
+		UnsafeSupplier<FragmentImage, Exception>
+			backgroundFragmentImageUnsafeSupplier) {
+
+		try {
+			backgroundFragmentImage =
+				backgroundFragmentImageUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected FragmentImage backgroundFragmentImage;
+
 	public String getConfiguration() {
 		return configuration;
 	}
@@ -89,49 +114,6 @@ public class FragmentInstancePageElementDefinition
 
 	protected String[] cssClasses;
 
-	public String getCustomCSS() {
-		return customCSS;
-	}
-
-	public void setCustomCSS(String customCSS) {
-		this.customCSS = customCSS;
-	}
-
-	public void setCustomCSS(
-		UnsafeSupplier<String, Exception> customCSSUnsafeSupplier) {
-
-		try {
-			customCSS = customCSSUnsafeSupplier.get();
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	protected String customCSS;
-
-	public CustomCSSViewport[] getCustomCSSViewports() {
-		return customCSSViewports;
-	}
-
-	public void setCustomCSSViewports(CustomCSSViewport[] customCSSViewports) {
-		this.customCSSViewports = customCSSViewports;
-	}
-
-	public void setCustomCSSViewports(
-		UnsafeSupplier<CustomCSSViewport[], Exception>
-			customCSSViewportsUnsafeSupplier) {
-
-		try {
-			customCSSViewports = customCSSViewportsUnsafeSupplier.get();
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	protected CustomCSSViewport[] customCSSViewports;
-
 	public Date getDatePropagated() {
 		return datePropagated;
 	}
@@ -179,49 +161,60 @@ public class FragmentInstancePageElementDefinition
 
 	protected String draftFragmentInstanceExternalReferenceCode;
 
-	public Map<String, Object> getFragmentConfig() {
-		return fragmentConfig;
+	public Map<String, FragmentConfigurationFieldValue>
+		getFragmentConfigurationFieldValues() {
+
+		return fragmentConfigurationFieldValues;
 	}
 
-	public void setFragmentConfig(Map<String, Object> fragmentConfig) {
-		this.fragmentConfig = fragmentConfig;
+	public void setFragmentConfigurationFieldValues(
+		Map<String, FragmentConfigurationFieldValue>
+			fragmentConfigurationFieldValues) {
+
+		this.fragmentConfigurationFieldValues =
+			fragmentConfigurationFieldValues;
 	}
 
-	public void setFragmentConfig(
-		UnsafeSupplier<Map<String, Object>, Exception>
-			fragmentConfigUnsafeSupplier) {
+	public void setFragmentConfigurationFieldValues(
+		UnsafeSupplier<Map<String, FragmentConfigurationFieldValue>, Exception>
+			fragmentConfigurationFieldValuesUnsafeSupplier) {
 
 		try {
-			fragmentConfig = fragmentConfigUnsafeSupplier.get();
+			fragmentConfigurationFieldValues =
+				fragmentConfigurationFieldValuesUnsafeSupplier.get();
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	protected Map<String, Object> fragmentConfig;
+	protected Map<String, FragmentConfigurationFieldValue>
+		fragmentConfigurationFieldValues;
 
-	public FragmentField[] getFragmentFields() {
-		return fragmentFields;
+	public FragmentEditableElement[] getFragmentEditableElements() {
+		return fragmentEditableElements;
 	}
 
-	public void setFragmentFields(FragmentField[] fragmentFields) {
-		this.fragmentFields = fragmentFields;
+	public void setFragmentEditableElements(
+		FragmentEditableElement[] fragmentEditableElements) {
+
+		this.fragmentEditableElements = fragmentEditableElements;
 	}
 
-	public void setFragmentFields(
-		UnsafeSupplier<FragmentField[], Exception>
-			fragmentFieldsUnsafeSupplier) {
+	public void setFragmentEditableElements(
+		UnsafeSupplier<FragmentEditableElement[], Exception>
+			fragmentEditableElementsUnsafeSupplier) {
 
 		try {
-			fragmentFields = fragmentFieldsUnsafeSupplier.get();
+			fragmentEditableElements =
+				fragmentEditableElementsUnsafeSupplier.get();
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	protected FragmentField[] fragmentFields;
+	protected FragmentEditableElement[] fragmentEditableElements;
 
 	public String getFragmentInstanceExternalReferenceCode() {
 		return fragmentInstanceExternalReferenceCode;
@@ -270,27 +263,6 @@ public class FragmentInstancePageElementDefinition
 	}
 
 	protected FragmentReference fragmentReference;
-
-	public FragmentStyle getFragmentStyle() {
-		return fragmentStyle;
-	}
-
-	public void setFragmentStyle(FragmentStyle fragmentStyle) {
-		this.fragmentStyle = fragmentStyle;
-	}
-
-	public void setFragmentStyle(
-		UnsafeSupplier<FragmentStyle, Exception> fragmentStyleUnsafeSupplier) {
-
-		try {
-			fragmentStyle = fragmentStyleUnsafeSupplier.get();
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	protected FragmentStyle fragmentStyle;
 
 	public FragmentType getFragmentType() {
 		return fragmentType;

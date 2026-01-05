@@ -14,6 +14,7 @@ import com.liferay.blogs.service.BlogsEntryLocalService;
 import com.liferay.blogs.service.BlogsEntryService;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.function.UnsafeFunction;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.portal.kernel.dao.orm.QueryDefinition;
 import com.liferay.portal.kernel.lazy.referencing.LazyReferencingThreadLocal;
 import com.liferay.portal.kernel.model.User;
@@ -383,8 +384,6 @@ public class BaseBatchEngineTaskExecutorTest {
 				};
 			}
 
-			List<BlogPosting> blogPostings = new ArrayList<>();
-
 			Indexer<?> indexer = IndexerRegistryUtil.getIndexer(
 				(Class<?>)BlogsEntry.class);
 
@@ -396,18 +395,11 @@ public class BaseBatchEngineTaskExecutorTest {
 
 			Hits hits = indexer.search(searchContext);
 
-			for (Document document : hits.getDocs()) {
-				BlogPosting item = transformUnsafeFunction.apply(document);
-
-				if (item == null) {
-					continue;
-				}
-
-				blogPostings.add(item);
-			}
-
 			return Page.of(
-				blogPostings, pagination, indexer.searchCount(searchContext));
+				TransformUtil.transformToList(
+					hits.getDocs(),
+					document -> transformUnsafeFunction.apply(document)),
+				pagination, indexer.searchCount(searchContext));
 		}
 
 		private BlogPosting _toBlogPosting(BlogsEntry blogsEntry) {

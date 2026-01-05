@@ -9,11 +9,32 @@ export type TFolder = {
 	description: string;
 	externalReferenceCode?: string;
 	id: number;
+	scope?: {
+		externalReferenceCode: string;
+	};
 	scopeKey?: string;
 	title: string;
 };
 
 const OBJECT_ENTRY_FOLDER_URL = '/o/headless-object/v1.0/object-entry-folders';
+
+async function copyFolder<DataType = unknown>(
+	objectEntryFolderId: number,
+	parentObjectEntryFolderId: number
+) {
+	return await ApiHelper.post<DataType>(
+		`${OBJECT_ENTRY_FOLDER_URL}/${objectEntryFolderId}/by-parent-object-entry-folder-id/${parentObjectEntryFolderId}/copy`
+	);
+}
+
+async function copyReplaceFolder<DataType = unknown>(
+	objectEntryFolderId: number,
+	parentObjectEntryFolderId: number
+) {
+	return await ApiHelper.post<DataType>(
+		`${OBJECT_ENTRY_FOLDER_URL}/${objectEntryFolderId}/by-parent-object-entry-folder-id/${parentObjectEntryFolderId}/copy-replace`
+	);
+}
 
 async function createFolder<DataType = unknown>(
 	groupId: number,
@@ -41,6 +62,34 @@ async function getFolder(folderId: string): Promise<TFolder> {
 	throw new Error(error);
 }
 
+async function moveFolder<DataType = unknown>(
+	objectEntryFolderId: number,
+	parentObjectEntryFolderId: number
+) {
+	return await ApiHelper.post<DataType>(
+		`${OBJECT_ENTRY_FOLDER_URL}/${objectEntryFolderId}/by-parent-object-entry-folder-id/${parentObjectEntryFolderId}/move`
+	);
+}
+
+async function moveReplaceFolder<DataType = unknown>(
+	objectEntryFolderId: number,
+	parentObjectEntryFolderId: number
+) {
+	return await ApiHelper.post<DataType>(
+		`${OBJECT_ENTRY_FOLDER_URL}/${objectEntryFolderId}/by-parent-object-entry-folder-id/${parentObjectEntryFolderId}/move-replace`
+	);
+}
+
+async function searchFolder<DataType = unknown>(
+	groupId: number,
+	folderName: string,
+	parentFolderId: number
+) {
+	return await ApiHelper.get<DataType>(
+		`/o/headless-object/v1.0/scopes/${groupId}/object-entry-folders?filter=title eq '${folderName}' and folderId eq ${parentFolderId}`
+	);
+}
+
 async function updateFolder(folderData: TFolder) {
 	return await ApiHelper.patch(
 		folderData,
@@ -48,4 +97,13 @@ async function updateFolder(folderData: TFolder) {
 	);
 }
 
-export default {createFolder, getFolder, updateFolder};
+export default {
+	copyFolder,
+	copyReplaceFolder,
+	createFolder,
+	getFolder,
+	moveFolder,
+	moveReplaceFolder,
+	searchFolder,
+	updateFolder,
+};

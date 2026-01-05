@@ -22,7 +22,6 @@ import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.style.book.model.StyleBookEntry;
@@ -57,17 +56,51 @@ public class StyleBookUtilTest {
 	}
 
 	@Test
-	public void testGetStyleFromThemeStyleBookEntry1() throws Exception {
-		_testGetStyleFromThemeStyleBookEntry("styles-from-theme");
+	public void testGetStyleFromThemeStyleBookEntry() throws Exception {
+		StyleBookEntry styleFromThemeStyleBookEntry =
+			StyleBookUtil.getStyleFromThemeStyleBookEntry(
+				null, _group.getGroupId(), null);
+
+		Assert.assertEquals(-1, styleFromThemeStyleBookEntry.getHeadId());
+		Assert.assertEquals(
+			0, styleFromThemeStyleBookEntry.getStyleBookEntryId());
+		Assert.assertEquals(
+			StringPool.BLANK, styleFromThemeStyleBookEntry.getThemeId());
+		Assert.assertFalse(
+			styleFromThemeStyleBookEntry.isDefaultStyleBookEntry());
+
+		FrontendTokenDefinition frontendTokenDefinition =
+			_frontendTokenDefinitionRegistry.getFrontendTokenDefinition(
+				_layout);
+
+		styleFromThemeStyleBookEntry =
+			StyleBookUtil.getStyleFromThemeStyleBookEntry(
+				frontendTokenDefinition, _group.getGroupId(), null);
+
+		Assert.assertEquals(
+			"styles-from-x", styleFromThemeStyleBookEntry.getName());
+		Assert.assertEquals(
+			frontendTokenDefinition.getThemeId(),
+			styleFromThemeStyleBookEntry.getThemeId());
+		Assert.assertTrue(
+			styleFromThemeStyleBookEntry.isDefaultStyleBookEntry());
+
+		_styleBookEntryLocalService.addStyleBookEntry(
+			RandomTestUtil.randomString(), TestPropsValues.getUserId(),
+			_group.getGroupId(), true, null, RandomTestUtil.randomString(),
+			null, frontendTokenDefinition.getThemeId(), null);
+
+		styleFromThemeStyleBookEntry =
+			StyleBookUtil.getStyleFromThemeStyleBookEntry(
+				frontendTokenDefinition, _group.getGroupId(), LocaleUtil.US);
+
+		Assert.assertEquals(
+			frontendTokenDefinition.getThemeId(),
+			styleFromThemeStyleBookEntry.getThemeId());
+		Assert.assertFalse(
+			styleFromThemeStyleBookEntry.isDefaultStyleBookEntry());
 	}
 
-	@FeatureFlag("LPD-30204")
-	@Test
-	public void testGetStyleFromThemeStyleBookEntry2() throws Exception {
-		_testGetStyleFromThemeStyleBookEntry("styles-from-x");
-	}
-
-	@FeatureFlag("LPD-30204")
 	@Test
 	public void testGetThemeName() {
 		Locale locale = LocaleUtil.US;
@@ -104,7 +137,6 @@ public class StyleBookUtilTest {
 		}
 	}
 
-	@FeatureFlag("LPD-30204")
 	@Test
 	public void testIsThemeInactive() throws PortalException {
 		Assert.assertTrue(
@@ -116,53 +148,6 @@ public class StyleBookUtilTest {
 		Assert.assertFalse(
 			StyleBookUtil.isThemeInactive(
 				_layout.getCompanyId(), theme.getThemeId()));
-	}
-
-	private void _testGetStyleFromThemeStyleBookEntry(String expectedName)
-		throws Exception {
-
-		StyleBookEntry styleFromThemeStyleBookEntry =
-			StyleBookUtil.getStyleFromThemeStyleBookEntry(
-				null, _group.getGroupId(), null);
-
-		Assert.assertEquals(-1, styleFromThemeStyleBookEntry.getHeadId());
-		Assert.assertEquals(
-			0, styleFromThemeStyleBookEntry.getStyleBookEntryId());
-		Assert.assertEquals(
-			StringPool.BLANK, styleFromThemeStyleBookEntry.getThemeId());
-		Assert.assertFalse(
-			styleFromThemeStyleBookEntry.isDefaultStyleBookEntry());
-
-		FrontendTokenDefinition frontendTokenDefinition =
-			_frontendTokenDefinitionRegistry.getFrontendTokenDefinition(
-				_layout);
-
-		styleFromThemeStyleBookEntry =
-			StyleBookUtil.getStyleFromThemeStyleBookEntry(
-				frontendTokenDefinition, _group.getGroupId(), null);
-
-		Assert.assertEquals(
-			expectedName, styleFromThemeStyleBookEntry.getName());
-		Assert.assertEquals(
-			frontendTokenDefinition.getThemeId(),
-			styleFromThemeStyleBookEntry.getThemeId());
-		Assert.assertTrue(
-			styleFromThemeStyleBookEntry.isDefaultStyleBookEntry());
-
-		_styleBookEntryLocalService.addStyleBookEntry(
-			RandomTestUtil.randomString(), TestPropsValues.getUserId(),
-			_group.getGroupId(), true, null, RandomTestUtil.randomString(),
-			null, frontendTokenDefinition.getThemeId(), null);
-
-		styleFromThemeStyleBookEntry =
-			StyleBookUtil.getStyleFromThemeStyleBookEntry(
-				frontendTokenDefinition, _group.getGroupId(), LocaleUtil.US);
-
-		Assert.assertEquals(
-			frontendTokenDefinition.getThemeId(),
-			styleFromThemeStyleBookEntry.getThemeId());
-		Assert.assertFalse(
-			styleFromThemeStyleBookEntry.isDefaultStyleBookEntry());
 	}
 
 	@Inject

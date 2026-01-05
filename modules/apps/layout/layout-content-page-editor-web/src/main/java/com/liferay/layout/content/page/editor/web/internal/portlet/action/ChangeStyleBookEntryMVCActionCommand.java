@@ -5,19 +5,16 @@
 
 package com.liferay.layout.content.page.editor.web.internal.portlet.action;
 
-import com.liferay.frontend.token.definition.FrontendTokenDefinition;
+import com.liferay.exportimport.kernel.staging.Staging;
 import com.liferay.frontend.token.definition.FrontendTokenDefinitionRegistry;
 import com.liferay.layout.constants.LayoutTypeSettingsConstants;
 import com.liferay.layout.content.page.editor.constants.ContentPageEditorPortletKeys;
 import com.liferay.layout.content.page.editor.web.internal.util.StyleBookEntryUtil;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
-import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.service.LayoutLocalService;
-import com.liferay.portal.kernel.service.LayoutSetLocalService;
 import com.liferay.portal.kernel.service.permission.LayoutPermissionUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -75,30 +72,11 @@ public class ChangeStyleBookEntryMVCActionCommand
 				updatedLayout, layoutTypeSettingsUnicodeProperties.toString());
 		}
 
-		FrontendTokenDefinition frontendTokenDefinition = null;
-
-		if (FeatureFlagManagerUtil.isEnabled(
-				themeDisplay.getCompanyId(), "LPD-30204")) {
-
-			frontendTokenDefinition =
-				_frontendTokenDefinitionRegistry.getFrontendTokenDefinition(
-					themeDisplay.getLayout());
-		}
-		else {
-			Group group = themeDisplay.getScopeGroup();
-
-			frontendTokenDefinition =
-				_frontendTokenDefinitionRegistry.getFrontendTokenDefinition(
-					_layoutSetLocalService.fetchLayoutSet(
-						themeDisplay.getSiteGroupId(),
-						group.isLayoutSetPrototype()));
-		}
-
 		StyleBookEntry styleBookEntry =
 			_styleBookEntryLocalService.
 				fetchStyleBookEntryByExternalReferenceCode(
 					updatedLayout.getStyleBookEntryERC(),
-					updatedLayout.getGroupId());
+					_staging.getLiveGroupId(updatedLayout.getGroupId()));
 
 		if (styleBookEntry == null) {
 			styleBookEntry = DefaultStyleBookEntryUtil.getDefaultStyleBookEntry(
@@ -108,8 +86,9 @@ public class ChangeStyleBookEntryMVCActionCommand
 		return JSONUtil.put(
 			"tokenValues",
 			StyleBookEntryUtil.getFrontendTokensValues(
-				frontendTokenDefinition, themeDisplay.getLocale(),
-				styleBookEntry));
+				_frontendTokenDefinitionRegistry.getFrontendTokenDefinition(
+					themeDisplay.getLayout()),
+				themeDisplay.getLocale(), styleBookEntry));
 	}
 
 	@Override
@@ -124,7 +103,7 @@ public class ChangeStyleBookEntryMVCActionCommand
 	private LayoutLocalService _layoutLocalService;
 
 	@Reference
-	private LayoutSetLocalService _layoutSetLocalService;
+	private Staging _staging;
 
 	@Reference
 	private StyleBookEntryLocalService _styleBookEntryLocalService;

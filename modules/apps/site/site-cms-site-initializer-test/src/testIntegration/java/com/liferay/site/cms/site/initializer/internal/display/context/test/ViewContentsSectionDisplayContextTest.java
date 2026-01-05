@@ -16,7 +16,6 @@ import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.Sync;
 import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.test.rule.FeatureFlag;
-import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
@@ -37,9 +36,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 /**
  * @author Mikel Lorza
  */
-@FeatureFlags(
-	featureFlags = {@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-32050")}
-)
+@FeatureFlag("LPD-17564")
 @RunWith(Arquillian.class)
 @Sync
 public class ViewContentsSectionDisplayContextTest
@@ -58,7 +55,7 @@ public class ViewContentsSectionDisplayContextTest
 			getFDSActionDropdownItems();
 
 		Assert.assertEquals(
-			fdsActionDropdownItems.toString(), 17,
+			fdsActionDropdownItems.toString(), 16,
 			fdsActionDropdownItems.size());
 
 		assertFDSActionDropdownItem(
@@ -98,21 +95,44 @@ public class ViewContentsSectionDisplayContextTest
 			fdsActionDropdownItems.get(11), "download", "import-translation",
 			"import-translation", null, "item");
 		assertFDSActionDropdownItem(
-			fdsActionDropdownItems.get(12), "password-policies", "permissions",
-			"permissions", "get", "item");
+			fdsActionDropdownItems.get(12), "copy", "copy", "copy-to", null,
+			"item");
 		assertFDSActionDropdownItem(
-			fdsActionDropdownItems.get(13), "password-policies",
+			fdsActionDropdownItems.get(13), "move-folder", "move", "move", null,
+			"item");
+
+		FDSActionDropdownItem permissionsFDSActionDropdownItem =
+			fdsActionDropdownItems.get(14);
+
+		assertFDSActionDropdownItem(
+			permissionsFDSActionDropdownItem, "password-policies",
+			"permissions-menu", "permissions", null, "contextual");
+
+		List<FDSActionDropdownItem> permissionsFDSActionDropdownItems =
+			(List<FDSActionDropdownItem>)permissionsFDSActionDropdownItem.get(
+				"items");
+
+		Assert.assertEquals(
+			permissionsFDSActionDropdownItems.toString(), 4,
+			permissionsFDSActionDropdownItems.size());
+
+		assertFDSActionDropdownItem(
+			permissionsFDSActionDropdownItems.get(0), "password-policies",
+			"permissions", "permissions", "get", "item");
+		assertFDSActionDropdownItem(
+			permissionsFDSActionDropdownItems.get(1), "password-policies",
 			"default-permissions", "default-permissions", null, "item");
 		assertFDSActionDropdownItem(
-			fdsActionDropdownItems.get(14), "password-policies",
+			permissionsFDSActionDropdownItems.get(2), "password-policies",
 			"edit-and-propagate-default-permissions",
 			"edit-and-propagate-default-permissions", null, "item");
 		assertFDSActionDropdownItem(
-			fdsActionDropdownItems.get(15), "password-policies",
+			permissionsFDSActionDropdownItems.get(3), "password-policies",
 			"reset-to-default-permissions", "reset-to-default-permissions",
 			null, "item");
+
 		assertFDSActionDropdownItem(
-			fdsActionDropdownItems.get(16), "trash", "delete", "delete", null,
+			fdsActionDropdownItems.get(15), "trash", "delete", "delete", null,
 			"item");
 	}
 
@@ -123,7 +143,7 @@ public class ViewContentsSectionDisplayContextTest
 		return LinkedHashMapBuilder.put(
 			"folder", StringPool.BLANK
 		).put(
-			"basic-content", getRedirect("L_CMS_BASIC_WEB_CONTENT")
+			"basic-web-content", getRedirect("L_CMS_BASIC_WEB_CONTENT")
 		).put(
 			"blog", getRedirect("L_CMS_BLOG")
 		).build();

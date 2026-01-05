@@ -4,10 +4,10 @@
  */
 
 import {FrontendDataSet} from '@liferay/frontend-data-set-web';
-import {openModal} from 'frontend-js-components-web';
 import {navigate, sub} from 'frontend-js-web';
 import React from 'react';
 
+import {openCMSModal} from '../../../common/utils/openCMSModal';
 import MultipleSpacesRenderer from '../../props_transformer/cell_renderers/MultipleSpacesRenderer';
 import {executeAsyncItemAction} from '../../props_transformer/utils/executeAsyncItemAction';
 import CategorizationToolbar from '../CategorizationToolbar';
@@ -37,7 +37,7 @@ export default function ViewTags({
 			{
 				label: Liferay.Language.get('new'),
 				onClick: () => {
-					openModal({
+					openCMSModal({
 						contentComponent: ({
 							closeModal,
 						}: {
@@ -113,7 +113,7 @@ export default function ViewTags({
 		itemData: any;
 		loadData: () => {};
 	}) => {
-		openModal({
+		openCMSModal({
 			bodyHTML: Liferay.Language.get(
 				'are-you-sure-you-want-to-delete-this-tag'
 			),
@@ -159,7 +159,7 @@ export default function ViewTags({
 		itemData: any;
 		loadData: () => {};
 	}) => {
-		openModal({
+		openCMSModal({
 			contentComponent: ({closeModal}: {closeModal: () => void}) =>
 				EditTagsModal({
 					assetLibraries: itemData.assetLibraries,
@@ -180,7 +180,7 @@ export default function ViewTags({
 		itemData: any;
 		loadData: () => {};
 	}) => {
-		openModal({
+		openCMSModal({
 			contentComponent: ({closeModal}: {closeModal: () => void}) =>
 				MergeTagsModal({
 					closeModal,
@@ -267,6 +267,7 @@ export default function ViewTags({
 						label: Liferay.Language.get('merge'),
 					},
 					{
+						className: 'text-danger',
 						data: {
 							permissionKey: 'delete',
 						},

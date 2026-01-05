@@ -164,6 +164,11 @@ public class TaxonomyCategoryResourceImpl
 				return Scope.SITE;
 			}
 
+			@Override
+			public boolean isStagingSupported() {
+				return true;
+			}
+
 		};
 	}
 
@@ -273,6 +278,7 @@ public class TaxonomyCategoryResourceImpl
 			assetCategory, assetCategory.getGroupId(), taxonomyCategory);
 
 		assetCategory = _assetCategoryService.updateCategory(
+			taxonomyCategory.getExternalReferenceCode(),
 			assetCategory.getCategoryId(),
 			_getParentAssetCategoryId(
 				assetCategory, assetVocabularyId, assetCategory.getGroupId(),
@@ -835,11 +841,15 @@ public class TaxonomyCategoryResourceImpl
 
 		Long taxonomyVocabularyId = taxonomyCategory.getTaxonomyVocabularyId();
 
-		if ((taxonomyVocabularyId != null) &&
-			(_assetVocabularyService.fetchVocabulary(taxonomyVocabularyId) !=
-				null)) {
+		if (taxonomyVocabularyId != null) {
+			AssetVocabulary assetVocabulary =
+				_assetVocabularyService.fetchVocabulary(taxonomyVocabularyId);
 
-			return taxonomyVocabularyId;
+			if ((assetVocabulary != null) &&
+				(assetVocabulary.getGroupId() == groupId)) {
+
+				return taxonomyVocabularyId;
+			}
 		}
 
 		String taxonomyVocabularyExternalReferenceCode = StringPool.BLANK;
@@ -957,6 +967,7 @@ public class TaxonomyCategoryResourceImpl
 
 		return _toTaxonomyCategory(
 			_assetCategoryService.updateCategory(
+				taxonomyCategory.getExternalReferenceCode(),
 				persistedAssetCategory.getCategoryId(),
 				_getParentAssetCategoryId(
 					persistedAssetCategory, assetVocabularyId, groupId,
@@ -1055,6 +1066,7 @@ public class TaxonomyCategoryResourceImpl
 			assetCategory, assetCategory.getGroupId(), taxonomyCategory);
 
 		return _assetCategoryService.updateCategory(
+			taxonomyCategory.getExternalReferenceCode(),
 			assetCategory.getCategoryId(),
 			_getParentAssetCategoryId(
 				assetCategory, assetVocabularyId, assetCategory.getGroupId(),

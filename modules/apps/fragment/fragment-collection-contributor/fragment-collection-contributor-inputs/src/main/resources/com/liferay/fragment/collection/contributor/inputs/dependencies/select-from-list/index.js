@@ -35,12 +35,15 @@ const valueInputElement = document.getElementById(
 	`${fragmentElementId}-value-input`
 );
 
-buttonElement.addEventListener('click', toggleDropdown);
-buttonElement.addEventListener('blur', handleResultListBlur);
-uiInputElement.addEventListener('click', toggleDropdown);
-uiInputElement.addEventListener('input', debounce(handleInputChange, 1000));
-uiInputElement.addEventListener('blur', handleInputBlur);
-uiInputElement.addEventListener('keydown', handleInputKeyDown);
+if (!input.readOnly) {
+	buttonElement.addEventListener('click', toggleDropdown);
+	buttonElement.addEventListener('blur', handleResultListBlur);
+	buttonElement.addEventListener('keydown', handleButtonPress);
+	uiInputElement.addEventListener('click', toggleDropdown);
+	uiInputElement.addEventListener('input', debounce(handleInputChange, 1000));
+	uiInputElement.addEventListener('blur', handleInputBlur);
+	uiInputElement.addEventListener('keydown', handleInputKeyDown);
+}
 
 window.addEventListener('resize', handleWindowResizeOrScroll, {
 	passive: true,
@@ -64,17 +67,22 @@ else {
 
 		if (selectedOption) {
 			lastSearchQuery = selectedOption.label.toLowerCase();
-			valueInputElement.value = selectedOption.value;
 
-			const selectedOptionElement = optionListElement.querySelector(
-				'.active.dropdown-item'
-			);
+			if (valueInputElement) {
+				valueInputElement.value = selectedOption.value;
+			}
 
-			if (selectedOptionElement) {
-				optionListElement.setAttribute(
-					'aria-activedescendant',
-					selectedOptionElement.id
+			if (optionListElement) {
+				const selectedOptionElement = optionListElement.querySelector(
+					'.active.dropdown-item'
 				);
+
+				if (selectedOptionElement) {
+					optionListElement.setAttribute(
+						'aria-activedescendant',
+						selectedOptionElement.id
+					);
+				}
 			}
 		}
 	}
@@ -216,7 +224,7 @@ else {
 					}
 				});
 
-				optionListElement.addEventListener('click', (event) => {
+				optionListElement?.addEventListener('click', (event) => {
 					const translationInput = getTranslationInput({
 						inputId: uiInputElement.id,
 						inputName: input.name,
@@ -268,7 +276,7 @@ else {
 					),
 				});
 
-				optionListElement.addEventListener(
+				optionListElement?.addEventListener(
 					'click',
 					handleResultListClick
 				);
@@ -315,6 +323,23 @@ function handleResultListClick(event, onChange, translationInput) {
 	}
 }
 
+function handleButtonPress(event) {
+	event.preventDefault();
+
+	if (checkIsOpenDropdown()) {
+		handleKeydown(event);
+
+		if (event.key === KEYS.Enter) {
+			closeDropdown();
+		}
+	}
+	else {
+		if (event.key === KEYS.Enter) {
+			openDropdown();
+		}
+	}
+}
+
 function handleInputBlur() {
 	if (!uiInputElement.value) {
 		labelInputElement.value = '';
@@ -340,14 +365,18 @@ function handleInputKeyDown(event) {
 		return;
 	}
 
-	const currentFocusedOption = document.getElementById(
-		optionListElement.getAttribute('aria-activedescendant')
-	);
-
 	if (KEYS[event.key]) {
 		openDropdown();
 		event.preventDefault();
 	}
+
+	handleKeydown(event);
+}
+
+function handleKeydown(event) {
+	const currentFocusedOption = document.getElementById(
+		optionListElement.getAttribute('aria-activedescendant')
+	);
 
 	if (event.key === KEYS.ArrowDown && !event.altKey) {
 		if (currentFocusedOption) {
@@ -588,7 +617,7 @@ function setSelectedOption(optionElement) {
 		selectedOption.classList.remove('active');
 	}
 
-	lastSearchQuery = optionElement.textContent.toLowerCase();
+	lastSearchQuery = optionElement.textContent.toLowerCase().trim();
 
 	optionElement.classList.add('active');
 

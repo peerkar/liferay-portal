@@ -704,6 +704,11 @@ public class LayoutStructure {
 		return layoutStructureRule;
 	}
 
+	public void deleteLayoutStructureRules() {
+		_layoutStructureRules.clear();
+		_layoutStructureRulesMap.clear();
+	}
+
 	public Map<String, List<LayoutStructureItem>> duplicateLayoutStructureItem(
 		List<String> itemIds) {
 
@@ -1075,7 +1080,7 @@ public class LayoutStructure {
 
 	public LayoutStructureRule updateLayoutStructureRule(
 		JSONArray actionsJSONArray, JSONArray conditionsJSONArray,
-		String conditionType, String name, String ruleId) {
+		String conditionType, String name, String ruleId, String script) {
 
 		LayoutStructureRule layoutStructureRule = _layoutStructureRulesMap.get(
 			ruleId);
@@ -1085,6 +1090,7 @@ public class LayoutStructure {
 			layoutStructureRule.setConditionsJSONArray(conditionsJSONArray);
 			layoutStructureRule.setConditionType(conditionType);
 			layoutStructureRule.setName(name);
+			layoutStructureRule.setScript(script);
 		}
 
 		return layoutStructureRule;
@@ -1427,8 +1433,21 @@ public class LayoutStructure {
 	private void _updateLayoutStructure(
 		LayoutStructureItem layoutStructureItem, int position) {
 
-		_layoutStructureItems.put(
+		LayoutStructureItem oldLayoutStructureItem = _layoutStructureItems.put(
 			layoutStructureItem.getItemId(), layoutStructureItem);
+
+		if ((oldLayoutStructureItem != null) &&
+			Validator.isNotNull(oldLayoutStructureItem.getParentItemId())) {
+
+			LayoutStructureItem oldParentLayoutStructureItem =
+				getLayoutStructureItem(
+					oldLayoutStructureItem.getParentItemId());
+
+			if (oldParentLayoutStructureItem != null) {
+				oldParentLayoutStructureItem.deleteChildrenItem(
+					oldLayoutStructureItem.getItemId());
+			}
+		}
 
 		if (Validator.isNull(layoutStructureItem.getParentItemId())) {
 			return;

@@ -22,6 +22,7 @@ import com.liferay.commerce.service.CommerceShippingMethodLocalService;
 import com.liferay.commerce.shipping.engine.fixed.model.CommerceShippingFixedOption;
 import com.liferay.commerce.shipping.engine.fixed.service.CommerceShippingFixedOptionLocalService;
 import com.liferay.commerce.util.CommerceShippingEngineRegistry;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
@@ -166,32 +167,34 @@ public class ShippingMethodCheckoutStepDisplayContext {
 		List<CommerceShippingOption> commerceShippingOptions =
 			getCommerceShippingOptions(commerceShippingMethod);
 
-		if (Objects.equals(
+		if (!Objects.equals(
 				commerceShippingMethod.getEngineKey(), "by-weight") ||
 			Objects.equals(commerceShippingMethod.getEngineKey(), "fixed")) {
 
-			List<CommerceShippingOption> filteredCommerceShippingOptions =
-				new ArrayList<>();
-
-			for (CommerceShippingFixedOption commerceShippingFixedOption :
-					getFilteredCommerceShippingFixedOptions()) {
-
-				for (CommerceShippingOption commerceShippingOption :
-						commerceShippingOptions) {
-
-					String key = commerceShippingFixedOption.getKey();
-
-					if (key.equals(commerceShippingOption.getKey())) {
-						filteredCommerceShippingOptions.add(
-							commerceShippingOption);
-					}
-				}
-			}
-
-			return filteredCommerceShippingOptions;
+			return commerceShippingOptions;
 		}
 
-		return commerceShippingOptions;
+		List<CommerceShippingOption> filteredCommerceShippingOptions =
+			new ArrayList<>();
+
+		for (CommerceShippingFixedOption commerceShippingFixedOption :
+				getFilteredCommerceShippingFixedOptions()) {
+
+			filteredCommerceShippingOptions.addAll(
+				TransformUtil.transform(
+					commerceShippingOptions,
+					commerceShippingOption -> {
+						String key = commerceShippingFixedOption.getKey();
+
+						if (key.equals(commerceShippingOption.getKey())) {
+							return commerceShippingOption;
+						}
+
+						return null;
+					}));
+		}
+
+		return filteredCommerceShippingOptions;
 	}
 
 	public boolean isHideShippingPriceZero() throws PortalException {

@@ -29,11 +29,14 @@
 </#if>
 
 <#assign
+	appDocumentationURL = getSpecificationValue("appdocumentationurl")
+	appInstallationGuideURL = getSpecificationValue("appinstallationguideurl")
 	appUsageTerms = getSpecificationValue("appusagetermsurl")
 	cpuValue = getSpecificationValue("cpu")
 	developerName = getSpecificationValue("developer-name", catalogName)
 	publisherURL = (getSpecificationValue("publisherwebsiteurl")?trim?replace(" ", ""))!""
 	ramValue = getSpecificationValue("ram")
+	sourceCode = getSpecificationValue("source-code-url")
 	supportEmail = getSpecificationValue("supportemailaddress")
 	supportPhone = getSpecificationValue("supportphone")
 	type = getSpecificationValue("type")?lower_case
@@ -139,42 +142,77 @@
 
 <@section title = languageUtil.get(locale, "help-and-support", "Help and Support")>
 	<div class="d-flex flex-column mt-4">
-		<div class="d-flex">
-			<span class="help-and-support-link-icon">
-				<@clay["icon"] symbol="document" />
-			</span>
-
-			<a
-				class="d-flex w-100 justify-content-between help-and-support-link"
-				href="${(appUsageTerms?has_content)?then(appUsageTerms, 'https://www.liferay.com/en/legal/marketplace-terms-of-service')}"
-				target="_blank">
-				<span class="copy-text ml-1 mb-4 help-and-support-link">
-					${languageUtil.get(locale, "terms-and-conditions", "Terms & Conditions")}
+		<#if (appDocumentationURL?has_content || appInstallationGuideURL?has_content)>
+			<div class="d-flex mb-4">
+				<span class="support-modal-icon" id="app-documentation">
+					<@clay["icon"] symbol="document" />
 				</span>
 
-				<@clay["icon"]
-					className="help-and-support-link-arrow link-arrow ml-auto"
-					height="12"
-					symbol="angle-right-small"
-				/>
+				<a class="d-flex support-modal justify-content-between w-100" href="javascript:void(0)" onClick="openInstallationDocsModal();">
+					<span class="ml-1 ">
+						${languageUtil.get(locale, "app-documentation", "App Documentation")}
+					</span>
+				</a>
+			</div>
+		</#if>
+
+		<div class="d-flex mb-4">
+			<span class="support-modal-icon" id="publisher-support">
+				<@clay["icon"] symbol="envelope-closed" />
+			</span>
+
+			<a class="d-flex justify-content-between support-modal w-100" href="javascript:void(0)" onClick="openPublisherSupportModal();">
+				<span class="ml-1 ">
+					${languageUtil.get(locale, "publisher-support", "Publisher Support")}
+				</span>
 			</a>
 		</div>
 
-		<div class="d-flex">
-			<span class="help-and-support-link-icon" id="contact-publisher">
-				<@clay["icon"] symbol="document" />
-			</span>
-
-			<a class="d-flex w-100 justify-content-between help-and-support-link" href="javascript:void(0)" onClick="openModal()">
-				<span class="copy-text ml-1 help-and-support-link">
-					${languageUtil.get(locale, "publisher-contact-info", "Publisher Contact Info")}
+		<#if sourceCode?has_content>
+			<div class="d-flex mb-4">
+				<span class="support-link-icon">
+					<@clay["icon"] symbol="code" />
 				</span>
 
-				<@clay["icon"]
-					className="help-and-support-link-arrow link-arrow ml-auto"
-					height="12"
-					symbol="angle-right-small"
-				/>
+				<a
+					class="d-flex justify-content-between support-link w-100"
+					href="${sourceCode}"
+					target="_blank"
+				>
+					<span class="ml-1">
+						${languageUtil.get(locale, "source-code", "Source Code")}
+
+						<span class="d-none ml-1 support-link-icon-arrow-container">
+							<@clay["icon"]
+								className="support-link-icon-arrow"
+								symbol="tap-ahead"
+							/>
+						</span>
+					</span>
+				</a>
+			</div>
+		</#if>
+
+		<div class="d-flex">
+			<span class="support-link-icon">
+				<@clay["icon"] symbol="check-square" />
+			</span>
+
+			<a
+				class="d-flex justify-content-between support-link w-100"
+				href="/documents/d/marketplace/end_user_license_agreement-pdf"
+				target="_blank">
+
+				<span class="ml-1">
+					${languageUtil.get(locale, "eula", "EULA")}
+
+					<span class="d-none support-link-icon-arrow-container ml-1">
+						<@clay["icon"]
+							className="support-link-icon-arrow"
+							symbol="tap-ahead"
+						/>
+					</span>
+				</span>
 			</a>
 		</div>
 	</div>
@@ -184,8 +222,8 @@
 	showLine = false
 	title = languageUtil.get(locale, "share-link")
 >
-	<a class="align-items-center copy-text d-flex font-weight-bold ml-1 text-decoration-none text-primary" href="#copy-share-link" onclick="copyToClipboard(Liferay.ThemeDisplay.getCanonicalURL())">
-		<span class="help-and-support-link-icon mr-1">
+	<a class="align-items-center d-flex font-weight-bold ml-1 support-link text-primary" href="#copy-share-link" onclick="copyToClipboard(Liferay.ThemeDisplay.getCanonicalURL())">
+		<span class="link-icon mr-1">
 			<@clay["icon"] symbol="link" />
 		</span>
 		Copy & Share
@@ -217,7 +255,49 @@
 </#macro>
 
 <script ${nonceAttribute}>
-	function modalBody() {
+	function installationDocsModalBody() {
+		return `
+			<#if appDocumentationURL?has_content>
+				<div class="d-flex flex-row align-items-center mb-3">
+					<span class="align-items-center d-flex justify-content-center modal-icon-background mr-3" style="background: #E2E2E4; border-radius:50%; height:40px; overflow:hidden; width:40px;">
+						<@clay["icon"]
+							style="fill:#6B6C7E;"
+							symbol="document-code"
+						/>
+					</span>
+
+					<div class="d-flex flex-column">
+						<span class="text-black-50">${languageUtil.get(locale, "app-documentation-url", "App Documentation URL")}</span>
+
+						<a class="font-weight-bold" href="${appDocumentationURL}" target="_blank">
+							${appDocumentationURL}
+						</a>
+					</div>
+				</div>
+			</#if>
+
+			<#if appInstallationGuideURL?has_content>
+				<div class="d-flex flex-row align-items-center mb-4">
+					<span class="align-items-center d-flex justify-content-center modal-icon-background mr-3" style="background: #E2E2E4; border-radius:50%; height:40px; overflow:hidden; width:40px;">
+						<@clay["icon"]
+							style="fill:#6B6C7E;"
+							symbol="document"
+						/>
+					</span>
+
+					<div class="d-flex flex-column">
+						<span class="text-black-50">${languageUtil.get(locale, "app-installation-guide-url", "App Installation Guide URL")}</span>
+
+						<a class="font-weight-bold" href="${appInstallationGuideURL}" target="_blank">
+							${appInstallationGuideURL}
+						</a>
+					</div>
+				</div>
+			</#if>
+		`;
+	}
+
+	function publisherSupportModalBody() {
 		return `
 			<div class="align-items-center d-flex flex-row mb-3">
 				<span class="align-items-center d-flex justify-content-center modal-icon-background mr-3" style="background: #E2E2E4; border-radius:50%; height:40px; overflow:hidden; width:40px;">
@@ -294,11 +374,20 @@
 		`;
 	}
 
-	function openModal() {
+	function openInstallationDocsModal() {
 		Liferay.Util.openModal({
-			bodyHTML: modalBody(),
+			bodyHTML: installationDocsModalBody(),
 			center: true,
-			headerHTML: "<h2>Publisher Support Contact Info</h2>",
+			headerHTML: "<h2>Installation Guide</h2>",
+			size: "md"
+		});
+	}
+
+	function openPublisherSupportModal() {
+		Liferay.Util.openModal({
+			bodyHTML: publisherSupportModalBody(),
+			center: true,
+			headerHTML: "<h2>Publisher Support Info</h2>",
 			size: "md"
 		});
 	}
@@ -315,31 +404,40 @@
 </script>
 
 <style ${nonceAttribute}>
-	.copy-text {
-		color: #282934;
+	.support-link,
+	.support-modal {
 		font-size: 16px;
 	}
 
-	.help-and-support-link {
-		color: inherit;
-		text-decoration: none;
+	.support-link-icon {
+		color: #0B5FFF;
 	}
 
-.help-and-support-link-arrow {
-		margin-top: 3px;
-		fill: rgb(133, 140, 148);
+	.support-link-icon-arrow {
+		height: 12px !important;
+		width: 12px !important;
 	}
 
-	.help-and-support-link:hover {
-		color: inherit;
-		text-decoration: none;
+	.support-link:hover,
+	.support-modal:hover {
+		transform: translateY(-0.75px);
 	}
 
-	.help-and-support-link-icon {
-		color: rgb(133, 140, 148);
+	.support-link:hover .support-link-icon-arrow-container {
+		display: inline-block !important;
+		transform: rotate(90deg);
 	}
 
-	.help-and-support-svg mask,
+	.support-modal-icon,
+	.support-modal {
+		color: #54555F;
+	}
+
+	.support-modal:hover {
+		color: #272833;
+	}
+
+	.support-svg mask,
 	.link-arrow mask {
 		mask-type: alpha;
 	}

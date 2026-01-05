@@ -14,13 +14,13 @@ import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.model.ObjectEntryFolder;
 import com.liferay.object.model.ObjectField;
+import com.liferay.object.model.bag.ObjectFieldBag;
 import com.liferay.object.service.ObjectDefinitionLocalServiceUtil;
 import com.liferay.object.service.ObjectEntryFolderLocalServiceUtil;
 import com.liferay.object.service.ObjectEntryLocalServiceUtil;
 import com.liferay.object.service.ObjectFieldLocalServiceUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
@@ -71,10 +71,33 @@ public class ObjectEntryImpl extends ObjectEntryBaseImpl {
 	}
 
 	@Override
+	public Map<String, Serializable> getIndexedValues() {
+		if (_indexedValues == null) {
+			if (_log.isDebugEnabled()) {
+				_log.debug("Get values for object entry " + getObjectEntryId());
+			}
+
+			try {
+				_indexedValues = ObjectEntryLocalServiceUtil.getIndexedValues(
+					this);
+			}
+			catch (Exception exception) {
+				_log.error(exception);
+
+				return new HashMap<>();
+			}
+		}
+		else if (_log.isDebugEnabled()) {
+			_log.debug(
+				"Use cached values for object entry " + getObjectEntryId());
+		}
+
+		return _indexedValues;
+	}
+
+	@Override
 	public String getModelClassName() {
-		ObjectDefinition objectDefinition =
-			ObjectDefinitionLocalServiceUtil.fetchObjectDefinition(
-				getObjectDefinitionId());
+		ObjectDefinition objectDefinition = getObjectDefinition();
 
 		if (objectDefinition == null) {
 			return StringPool.BLANK;
@@ -102,6 +125,17 @@ public class ObjectEntryImpl extends ObjectEntryBaseImpl {
 	}
 
 	@Override
+	public ObjectDefinition getObjectDefinition() {
+		if (_objectDefinition == null) {
+			_objectDefinition =
+				ObjectDefinitionLocalServiceUtil.fetchObjectDefinition(
+					getObjectDefinitionId());
+		}
+
+		return _objectDefinition;
+	}
+
+	@Override
 	public StagedModelType getStagedModelType() {
 		return new StagedModelType(
 			PortalUtil.getClassNameId(getModelClassName()));
@@ -109,9 +143,7 @@ public class ObjectEntryImpl extends ObjectEntryBaseImpl {
 
 	@Override
 	public Map<Locale, String> getTitleMap() throws PortalException {
-		ObjectDefinition objectDefinition =
-			ObjectDefinitionLocalServiceUtil.getObjectDefinition(
-				getObjectDefinitionId());
+		ObjectDefinition objectDefinition = getObjectDefinition();
 
 		if ((objectDefinition == null) ||
 			(objectDefinition.getTitleObjectFieldId() == 0)) {
@@ -145,7 +177,7 @@ public class ObjectEntryImpl extends ObjectEntryBaseImpl {
 				LocaleUtil.fromLanguageId(entry.getKey()),
 				String.valueOf(
 					ObjectEntryValuesUtil.getValue(
-						entry.getKey(), objectField, new HashMap<>(values))));
+						entry.getKey(), objectField, values)));
 		}
 
 		return titleMap;
@@ -165,33 +197,18 @@ public class ObjectEntryImpl extends ObjectEntryBaseImpl {
 	public String getTitleValue(String languageId, boolean useDefault)
 		throws PortalException {
 
-		ObjectDefinition objectDefinition =
-			ObjectDefinitionLocalServiceUtil.getObjectDefinition(
-				getObjectDefinitionId());
+		ObjectDefinition objectDefinition = getObjectDefinition();
 
 		if ((objectDefinition != null) &&
 			(objectDefinition.getTitleObjectFieldId() > 0)) {
 
-			ObjectField objectField =
-				ObjectFieldLocalServiceUtil.fetchObjectField(
-					objectDefinition.getTitleObjectFieldId());
+			ObjectFieldBag objectFieldBag =
+				objectDefinition.getObjectFieldBag();
+
+			ObjectField objectField = objectFieldBag.getObjectField(
+				objectDefinition.getTitleObjectFieldId());
 
 			if (objectField != null) {
-				String title = String.valueOf(
-					ObjectEntryValuesUtil.getValue(
-						languageId, objectField, new HashMap<>(getValues())));
-
-				if (Validator.isNull(title) && useDefault) {
-					title = String.valueOf(
-						ObjectEntryValuesUtil.getValue(
-							getDefaultLanguageId(), objectField,
-							new HashMap<>(getValues())));
-				}
-
-				if (Validator.isNotNull(title)) {
-					return title;
-				}
-
 				if (Objects.equals(
 						objectField.getName(), "externalReferenceCode")) {
 
@@ -202,9 +219,18 @@ public class ObjectEntryImpl extends ObjectEntryBaseImpl {
 					return String.valueOf(getObjectEntryId());
 				}
 
-				return ObjectEntryValuesUtil.getValueString(
-					objectField,
-					ObjectEntryLocalServiceUtil.getSystemValues(this));
+				String title = String.valueOf(
+					ObjectEntryValuesUtil.getValue(
+						languageId, objectField, getIndexedValues()));
+
+				if (Validator.isNull(title) && useDefault) {
+					title = String.valueOf(
+						ObjectEntryValuesUtil.getValue(
+							getDefaultLanguageId(), objectField,
+							getIndexedValues()));
+				}
+
+				return title;
 			}
 		}
 
@@ -213,10 +239,6 @@ public class ObjectEntryImpl extends ObjectEntryBaseImpl {
 
 	@Override
 	public String getURLTitle(Locale locale) {
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-21926")) {
-			return null;
-		}
-
 		FriendlyURLEntry friendlyURLEntry =
 			FriendlyURLEntryLocalServiceUtil.fetchMainFriendlyURLEntry(
 				ClassNameLocalServiceUtil.getClassNameId(getModelClassName()),
@@ -231,10 +253,6 @@ public class ObjectEntryImpl extends ObjectEntryBaseImpl {
 
 	@Override
 	public Map<String, String> getURLTitleMap() {
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-21926")) {
-			return null;
-		}
-
 		FriendlyURLEntry friendlyURLEntry =
 			FriendlyURLEntryLocalServiceUtil.fetchMainFriendlyURLEntry(
 				ClassNameLocalServiceUtil.getClassNameId(getModelClassName()),
@@ -292,6 +310,11 @@ public class ObjectEntryImpl extends ObjectEntryBaseImpl {
 	}
 
 	@Override
+	public void setObjectDefinition(ObjectDefinition objectDefinition) {
+		_objectDefinition = objectDefinition;
+	}
+
+	@Override
 	public void setTransientValues(Map<String, Serializable> values) {
 		_transientValues = values;
 	}
@@ -304,6 +327,8 @@ public class ObjectEntryImpl extends ObjectEntryBaseImpl {
 	private static final Log _log = LogFactoryUtil.getLog(
 		ObjectEntryImpl.class);
 
+	private Map<String, Serializable> _indexedValues;
+	private ObjectDefinition _objectDefinition;
 	private Map<String, Serializable> _transientValues;
 	private Map<String, Serializable> _values;
 

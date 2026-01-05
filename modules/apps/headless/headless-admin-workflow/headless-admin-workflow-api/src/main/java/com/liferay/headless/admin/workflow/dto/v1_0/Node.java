@@ -254,9 +254,7 @@ public class Node implements Serializable {
 			sb.append("\"type\": ");
 
 			sb.append("\"");
-
 			sb.append(type);
-
 			sb.append("\"");
 		}
 
@@ -275,8 +273,9 @@ public class Node implements Serializable {
 	@GraphQLName("Type")
 	public static enum Type {
 
-		CONDITION("CONDITION"), FORK("FORK"), INITIAL_STATE("INITIAL_STATE"),
-		JOIN("JOIN"), JOIN_XOR("JOIN_XOR"), STATE("STATE"), TASK("TASK"),
+		AI_DECISION("AI_DECISION"), CONDITION("CONDITION"), FORK("FORK"),
+		INITIAL_STATE("INITIAL_STATE"), JOIN("JOIN"), JOIN_XOR("JOIN_XOR"),
+		LLM("LLM"), STATE("STATE"), TASK("TASK"),
 		TERMINAL_STATE("TERMINAL_STATE");
 
 		@JsonCreator

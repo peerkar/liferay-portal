@@ -56,7 +56,6 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.odata.entity.EntityField;
 import com.liferay.portal.odata.entity.StringEntityField;
 import com.liferay.portal.test.rule.FeatureFlag;
-import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.subscription.service.SubscriptionLocalService;
@@ -77,9 +76,7 @@ import org.junit.runner.RunWith;
 /**
  * @author Alicia García
  */
-@FeatureFlags(
-	featureFlags = {@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-32050")}
-)
+@FeatureFlag("LPD-17564")
 @RunWith(Arquillian.class)
 public class ObjectEntryFolderResourceTest
 	extends BaseObjectEntryFolderResourceTestCase {
@@ -197,6 +194,17 @@ public class ObjectEntryFolderResourceTest
 
 	@Override
 	@Test
+	public void testGetScopeScopeKeyObjectEntryFoldersPageWithFilterStringEquals()
+		throws Exception {
+
+		super.
+			testGetScopeScopeKeyObjectEntryFoldersPageWithFilterStringEquals();
+
+		_testGetScopeScopeKeyObjectEntryFoldersPageWithFilterStringEqualsFolderIdAndTitle();
+	}
+
+	@Override
+	@Test
 	public void testPatchScopeScopeKeyObjectEntryFolderByExternalReferenceCode()
 		throws Exception {
 
@@ -219,9 +227,7 @@ public class ObjectEntryFolderResourceTest
 		_testPostScopeScopeKeyObjectEntryFolderWithNonexistentParentObjectEntryFolderByObjectEntryFolderId();
 	}
 
-	@FeatureFlags(
-		featureFlags = {@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-32050")}
-	)
+	@FeatureFlag("LPD-17564")
 	@Override
 	@Test
 	public void testPostScopeScopeKeyObjectEntryFolderByExternalReferenceCodeRestore()
@@ -749,27 +755,47 @@ public class ObjectEntryFolderResourceTest
 	private Map<String, Map<String, String>> _getExpectedActions(
 		long objectEntryFolderId, boolean sharingEnabled) {
 
-		String href =
-			"http://localhost:8080/o/headless-object/v1.0" +
-				"/object-entry-folders/" + objectEntryFolderId;
+		String href1 = "http://localhost:8080/o/headless-object/v1.0";
+
+		String href2 = href1 + "/object-entry-folders/" + objectEntryFolderId;
+
+		String href3 =
+			href2 +
+				"/by-parent-object-entry-folder-id/{parentObjectEntryFolderId}";
 
 		return HashMapBuilder.<String, Map<String, String>>put(
-			"delete", _getActionValue(href, "DELETE")
+			"copy", _getActionValue(href3 + "/copy", "POST")
 		).put(
-			"get", _getActionValue(href, "GET")
+			"copy-replace", _getActionValue(href3 + "/copy-replace", "POST")
 		).put(
-			"permissions", _getActionValue(href + "/permissions", "GET")
+			"delete", _getActionValue(href2, "DELETE")
+		).put(
+			"get", _getActionValue(href2, "GET")
+		).put(
+			"get-by-scope",
+			_getActionValue(
+				StringBundler.concat(
+					href1, "/scopes/",
+					testGetScopeScopeKeyObjectEntryFoldersPage_getScopeKey(),
+					"/object-entry-folders"),
+				"GET")
+		).put(
+			"move", _getActionValue(href3 + "/move", "POST")
+		).put(
+			"move-replace", _getActionValue(href3 + "/move-replace", "POST")
+		).put(
+			"permissions", _getActionValue(href2 + "/permissions", "GET")
 		).put(
 			"share",
 			() -> {
 				if (sharingEnabled) {
-					return _getActionValue(href, "GET");
+					return _getActionValue(href2, "GET");
 				}
 
 				return null;
 			}
 		).put(
-			"update", _getActionValue(href, "PATCH")
+			"update", _getActionValue(href2, "PATCH")
 		).build();
 	}
 
@@ -852,6 +878,55 @@ public class ObjectEntryFolderResourceTest
 
 			_testGetObjectEntryFolderActions(false);
 		}
+	}
+
+	private void _testGetScopeScopeKeyObjectEntryFoldersPageWithFilterStringEqualsFolderIdAndTitle()
+		throws Exception {
+
+		ObjectEntryFolder objectEntryFolder1 = randomObjectEntryFolder();
+
+		String scopeKey =
+			testGetScopeScopeKeyObjectEntryFoldersPage_getScopeKey();
+
+		objectEntryFolder1 =
+			testGetScopeScopeKeyObjectEntryFoldersPage_addObjectEntryFolder(
+				scopeKey, objectEntryFolder1);
+
+		ObjectEntryFolder objectEntryFolder2 = randomObjectEntryFolder();
+
+		objectEntryFolder2.setParentObjectEntryFolderId(
+			objectEntryFolder1.getId());
+
+		objectEntryFolder2 =
+			testGetScopeScopeKeyObjectEntryFoldersPage_addObjectEntryFolder(
+				scopeKey, objectEntryFolder2);
+
+		ObjectEntryFolder objectEntryFolder3 = randomObjectEntryFolder();
+
+		objectEntryFolder3.setParentObjectEntryFolderId(
+			objectEntryFolder1.getId());
+
+		testGetScopeScopeKeyObjectEntryFoldersPage_addObjectEntryFolder(
+			scopeKey, objectEntryFolder3);
+
+		Page<ObjectEntryFolder> page =
+			objectEntryFolderResource.getScopeScopeKeyObjectEntryFoldersPage(
+				scopeKey, null, null, null,
+				"folderId eq " + objectEntryFolder1.getId(),
+				Pagination.of(1, 10), null);
+
+		Assert.assertEquals(2, page.getTotalCount());
+
+		page = objectEntryFolderResource.getScopeScopeKeyObjectEntryFoldersPage(
+			scopeKey, null, null, null,
+			StringBundler.concat(
+				"folderId eq ", objectEntryFolder1.getId(), " and title eq '",
+				objectEntryFolder2.getTitle(), "'"),
+			Pagination.of(1, 10), null);
+
+		assertEquals(
+			Collections.singletonList(objectEntryFolder2),
+			(List<ObjectEntryFolder>)page.getItems());
 	}
 
 	private void _testPatchScopeScopeKeyObjectEntryFolderByExternalReferenceCodeWithGroupKey()

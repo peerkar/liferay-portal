@@ -8,6 +8,8 @@ package com.liferay.object.service.impl;
 import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.account.service.AccountEntryOrganizationRelLocalService;
 import com.liferay.asset.kernel.service.AssetEntryLocalService;
+import com.liferay.asset.list.service.AssetListEntryLocalService;
+import com.liferay.exportimport.kernel.empty.model.EmptyModelManager;
 import com.liferay.fragment.cache.FragmentEntryLinkCache;
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.friendly.url.separator.util.FriendlyURLSeparatorUtil;
@@ -37,7 +39,6 @@ import com.liferay.object.exception.ObjectDefinitionEnableCategorizationExceptio
 import com.liferay.object.exception.ObjectDefinitionEnableCommentsException;
 import com.liferay.object.exception.ObjectDefinitionEnableFormContainerException;
 import com.liferay.object.exception.ObjectDefinitionEnableFriendlyURLCustomizationException;
-import com.liferay.object.exception.ObjectDefinitionEnableLocalizationException;
 import com.liferay.object.exception.ObjectDefinitionEnableObjectEntryHistoryException;
 import com.liferay.object.exception.ObjectDefinitionEnableObjectEntryScheduleException;
 import com.liferay.object.exception.ObjectDefinitionEnableObjectEntrySubscriptionException;
@@ -75,7 +76,6 @@ import com.liferay.object.model.ObjectDefinitionSetting;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.model.ObjectEntryTable;
 import com.liferay.object.model.ObjectField;
-import com.liferay.object.model.ObjectFieldModel;
 import com.liferay.object.model.ObjectFolder;
 import com.liferay.object.model.ObjectRelationship;
 import com.liferay.object.model.impl.ObjectDefinitionImpl;
@@ -134,6 +134,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.mass.delete.MassDeleteCacheThreadLocal;
 import com.liferay.portal.kernel.model.ClassName;
+import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.SystemEventConstants;
 import com.liferay.portal.kernel.model.User;
@@ -143,7 +144,6 @@ import com.liferay.portal.kernel.model.WorkflowInstanceLink;
 import com.liferay.portal.kernel.module.framework.service.IdentifiableOSGiService;
 import com.liferay.portal.kernel.portlet.FriendlyURLResolver;
 import com.liferay.portal.kernel.portlet.FriendlyURLResolverRegistryUtil;
-import com.liferay.portal.kernel.portlet.constants.FriendlyURLResolverConstants;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
@@ -241,8 +241,8 @@ public class ObjectDefinitionLocalServiceImpl
 			String externalReferenceCode, long userId, long objectFolderId,
 			String className, boolean enableComments,
 			boolean enableFormContainer, boolean enableFriendlyURLCustomization,
-			boolean enableIndexSearch, boolean enableLocalization,
-			boolean enableObjectEntryDraft, boolean enableObjectEntrySchedule,
+			boolean enableIndexSearch, boolean enableObjectEntryDraft,
+			boolean enableObjectEntrySchedule,
 			boolean enableObjectEntrySubscription,
 			boolean enableObjectEntryVersioning, String friendlyURLSeparator,
 			Map<Locale, String> labelMap, String name, String panelAppOrder,
@@ -250,19 +250,20 @@ public class ObjectDefinitionLocalServiceImpl
 			boolean portlet, String scope, String storageType,
 			List<ObjectDefinitionSetting> objectDefinitionSettings,
 			List<ObjectField> objectFields,
-			List<WorkflowDefinitionLink> workflowDefinitionLinks)
+			List<WorkflowDefinitionLink> workflowDefinitionLinks,
+			ServiceContext serviceContext)
 		throws PortalException {
 
 		return _addObjectDefinition(
 			externalReferenceCode, userId, objectFolderId, className, null,
 			enableComments, enableFormContainer, enableFriendlyURLCustomization,
-			enableIndexSearch, enableLocalization, enableObjectEntryDraft,
+			enableIndexSearch, enableObjectEntryDraft,
 			enableObjectEntrySchedule, enableObjectEntrySubscription,
 			enableObjectEntryVersioning, friendlyURLSeparator, labelMap, true,
 			name, panelAppOrder, panelCategoryKey, null, null, pluralLabelMap,
 			portlet, scope, storageType, false, null, 0,
 			WorkflowConstants.STATUS_DRAFT, objectDefinitionSettings,
-			objectFields, workflowDefinitionLinks);
+			objectFields, workflowDefinitionLinks, serviceContext);
 	}
 
 	@Indexable(type = IndexableType.REINDEX)
@@ -296,7 +297,7 @@ public class ObjectDefinitionLocalServiceImpl
 		objectDefinition.setStorageType(
 			ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT);
 		objectDefinition.setSystem(system);
-		objectDefinition.setStatus(WorkflowConstants.STATUS_DRAFT);
+		objectDefinition.setStatus(WorkflowConstants.STATUS_EMPTY);
 
 		if (objectDefinition.isUnmodifiableSystemObject() || !modifiable) {
 			throw new ObjectDefinitionModifiableException.MustBeModifiable();
@@ -304,7 +305,7 @@ public class ObjectDefinitionLocalServiceImpl
 
 		objectDefinition = objectDefinitionPersistence.update(objectDefinition);
 
-		_addOrUpdateObjectDefinitionPLOEntries(objectDefinition);
+		addOrUpdateObjectDefinitionPLOEntries(objectDefinition);
 
 		_resourceLocalService.addResources(
 			objectDefinition.getCompanyId(), 0, objectDefinition.getUserId(),
@@ -320,6 +321,32 @@ public class ObjectDefinitionLocalServiceImpl
 			ObjectEntryTable.INSTANCE.objectEntryId.getName(), userId);
 
 		return _updateTitleObjectFieldId(objectDefinition, null);
+	}
+
+	@Override
+	public void addOrUpdateObjectDefinitionPLOEntries(
+			ObjectDefinition objectDefinition)
+		throws PortalException {
+
+		try {
+			for (Locale locale : _language.getAvailableLocales()) {
+				String languageId = LocaleUtil.toLanguageId(locale);
+
+				_ploEntryLocalService.addOrUpdatePLOEntry(
+					objectDefinition.getCompanyId(),
+					objectDefinition.getUserId(),
+					"model.resource." + objectDefinition.getClassName(),
+					languageId, objectDefinition.getLabel(locale));
+				_ploEntryLocalService.addOrUpdatePLOEntry(
+					objectDefinition.getCompanyId(),
+					objectDefinition.getUserId(),
+					"model.resource." + objectDefinition.getResourceName(),
+					languageId, objectDefinition.getPluralLabel(locale));
+			}
+		}
+		catch (PortalException portalException) {
+			_handleException(portalException, null, null);
+		}
 	}
 
 	@Indexable(type = IndexableType.REINDEX)
@@ -344,11 +371,9 @@ public class ObjectDefinitionLocalServiceImpl
 				systemObjectDefinitionManager.getExternalReferenceCode(),
 				userId, objectFolderId,
 				systemObjectDefinitionManager.getModelClassName(),
-				table.getTableName(), false, false, false, true,
-				systemObjectDefinitionManager.isEnableLocalization(), false,
-				false, false, false, null,
-				systemObjectDefinitionManager.getLabelMap(), false,
-				systemObjectDefinitionManager.getName(), null, null,
+				table.getTableName(), false, false, false, true, false, false,
+				false, false, null, systemObjectDefinitionManager.getLabelMap(),
+				false, systemObjectDefinitionManager.getName(), null, null,
 				primaryKeyColumn.getName(), primaryKeyColumn.getName(),
 				systemObjectDefinitionManager.getPluralLabelMap(), false,
 				systemObjectDefinitionManager.getScope(),
@@ -442,8 +467,8 @@ public class ObjectDefinitionLocalServiceImpl
 			String externalReferenceCode, long userId, long objectFolderId,
 			String className, String dbTableName, boolean enableComments,
 			boolean enableFormContainer, boolean enableFriendlyURLCustomization,
-			boolean enableIndexSearch, boolean enableLocalization,
-			boolean enableObjectEntryDraft, boolean enableObjectEntrySchedule,
+			boolean enableIndexSearch, boolean enableObjectEntryDraft,
+			boolean enableObjectEntrySchedule,
 			boolean enableObjectEntrySubscription,
 			boolean enableObjectEntryVersioning, String friendlyURLSeparator,
 			Map<Locale, String> labelMap, boolean modifiable, String name,
@@ -469,14 +494,14 @@ public class ObjectDefinitionLocalServiceImpl
 			externalReferenceCode, userId, objectFolderId, className,
 			dbTableName, enableComments, enableFormContainer,
 			enableFriendlyURLCustomization, enableIndexSearch,
-			enableLocalization, enableObjectEntryDraft,
-			enableObjectEntrySchedule, enableObjectEntrySubscription,
-			enableObjectEntryVersioning, friendlyURLSeparator, labelMap,
-			modifiable, name, panelAppOrder, panelCategoryKey,
-			pkObjectFieldDBColumnName, pkObjectFieldName, pluralLabelMap,
-			portlet, scope, ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT,
-			true, titleObjectFieldName, version, status,
-			objectDefinitionSettings, objectFields, workflowDefinitionLinks);
+			enableObjectEntryDraft, enableObjectEntrySchedule,
+			enableObjectEntrySubscription, enableObjectEntryVersioning,
+			friendlyURLSeparator, labelMap, modifiable, name, panelAppOrder,
+			panelCategoryKey, pkObjectFieldDBColumnName, pkObjectFieldName,
+			pluralLabelMap, portlet, scope,
+			ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT, true,
+			titleObjectFieldName, version, status, objectDefinitionSettings,
+			objectFields, workflowDefinitionLinks, new ServiceContext());
 	}
 
 	@Override
@@ -694,12 +719,21 @@ public class ObjectDefinitionLocalServiceImpl
 			_dropTable(objectDefinition.getExtensionDBTableName());
 		}
 		else if (objectDefinition.isApproved()) {
+			_assetListEntryLocalService.updateAssetListEntryTypeSettings(
+				objectDefinition.getCompanyId(),
+				_classNameLocalService.getClassNameId(
+					objectDefinition.getClassName()));
+
+			_portletLocalService.removePortletModelResources(
+				objectDefinition.getCompanyId(),
+				objectDefinition.getPortletId());
+
 			try (SafeCloseable safeCloseable = CompanyThreadLocal.lock(
 					objectDefinition.getCompanyId())) {
 
 				ObjectDefinitionResourcePermissionUtil.removeResourceActions(
 					_objectActionLocalService, objectDefinition,
-					_resourceActions);
+					_objectFieldLocalService, _resourceActions);
 			}
 			catch (Exception exception) {
 				throw new PortalException(exception);
@@ -707,13 +741,7 @@ public class ObjectDefinitionLocalServiceImpl
 
 			_dropTable(objectDefinition.getDBTableName());
 			_dropTable(objectDefinition.getExtensionDBTableName());
-
-			if (FeatureFlagManagerUtil.isEnabled(
-					objectDefinition.getCompanyId(), "LPD-32050") ||
-				objectDefinition.isEnableLocalization()) {
-
-				_dropTable(objectDefinition.getLocalizationDBTableName());
-			}
+			_dropTable(objectDefinition.getLocalizationDBTableName());
 
 			undeployObjectDefinition(objectDefinition);
 
@@ -990,6 +1018,23 @@ public class ObjectDefinitionLocalServiceImpl
 			objectFolderId);
 	}
 
+	@Indexable(type = IndexableType.REINDEX)
+	public ObjectDefinition getOrAddEmptyObjectDefinition(
+			String externalReferenceCode, long companyId, long userId,
+			long objectFolderId, boolean modifiable, String scope,
+			boolean system)
+		throws PortalException {
+
+		return _emptyModelManager.getOrAddEmptyModel(
+			ObjectDefinition.class, companyId,
+			() -> objectDefinitionLocalService.addObjectDefinition(
+				externalReferenceCode, userId, objectFolderId, modifiable,
+				scope, system),
+			externalReferenceCode,
+			this::fetchObjectDefinitionByExternalReferenceCode,
+			this::getObjectDefinitionByExternalReferenceCode);
+	}
+
 	@Override
 	public List<ObjectDefinition> getSystemObjectDefinitions() {
 		return objectDefinitionPersistence.findBySystem(true);
@@ -1069,8 +1114,8 @@ public class ObjectDefinitionLocalServiceImpl
 				_objectFolderLocalService, _objectLayoutLocalService,
 				_objectLayoutTabLocalService, _objectRelationshipLocalService,
 				_objectScopeProviderRegistry, _objectViewLocalService,
-				_organizationLocalService, _ploEntryLocalService, _portal,
-				_portletLocalService, _resourceActions, _userLocalService,
+				_organizationLocalService, _portal, _portletLocalService,
+				_resourceActions, _userLocalService,
 				_resourcePermissionLocalService, _searchLocalizationHelper,
 				_sharingModelResourcePermissionConfigurator,
 				_systemEventLocalService, _textEmbeddingDocumentContributor,
@@ -1215,6 +1260,27 @@ public class ObjectDefinitionLocalServiceImpl
 
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
+	public ObjectDefinition updateClassName(long objectDefinitionId)
+		throws PortalException {
+
+		ObjectDefinition objectDefinition =
+			objectDefinitionPersistence.findByPrimaryKey(objectDefinitionId);
+
+		String className = _getClassName(
+			objectDefinition.getClassName(), objectDefinition.isModifiable(),
+			objectDefinition.isSystem());
+
+		if (StringUtil.equals(objectDefinition.getClassName(), className)) {
+			return objectDefinition;
+		}
+
+		objectDefinition.setClassName(className);
+
+		return objectDefinitionPersistence.update(objectDefinition);
+	}
+
+	@Indexable(type = IndexableType.REINDEX)
+	@Override
 	public ObjectDefinition updateCustomObjectDefinition(
 			String externalReferenceCode, long objectDefinitionId,
 			long accountEntryRestrictedObjectFieldId,
@@ -1223,8 +1289,8 @@ public class ObjectDefinitionLocalServiceImpl
 			boolean active, String className, boolean enableCategorization,
 			boolean enableComments, boolean enableFormContainer,
 			boolean enableFriendlyURLCustomization, boolean enableIndexSearch,
-			boolean enableLocalization, boolean enableObjectEntryDraft,
-			boolean enableObjectEntryHistory, boolean enableObjectEntrySchedule,
+			boolean enableObjectEntryDraft, boolean enableObjectEntryHistory,
+			boolean enableObjectEntrySchedule,
 			boolean enableObjectEntrySubscription,
 			boolean enableObjectEntryVersioning, String friendlyURLSeparator,
 			Map<Locale, String> labelMap, String name, String panelAppOrder,
@@ -1232,7 +1298,8 @@ public class ObjectDefinitionLocalServiceImpl
 			Map<Locale, String> pluralLabelMap, String scope, int status,
 			List<ObjectDefinitionSetting> objectDefinitionSettings,
 			List<ObjectField> objectFields,
-			List<WorkflowDefinitionLink> workflowDefinitionLinks)
+			List<WorkflowDefinitionLink> workflowDefinitionLinks,
+			ServiceContext serviceContext)
 		throws PortalException {
 
 		ObjectDefinition objectDefinition =
@@ -1249,13 +1316,12 @@ public class ObjectDefinitionLocalServiceImpl
 			objectFolderId, titleObjectFieldId, accountEntryRestricted, active,
 			className, null, enableCategorization, enableComments,
 			enableFormContainer, enableFriendlyURLCustomization,
-			enableIndexSearch, enableLocalization, enableObjectEntryDraft,
-			enableObjectEntryHistory, enableObjectEntrySchedule,
-			enableObjectEntrySubscription, enableObjectEntryVersioning,
-			friendlyURLSeparator, labelMap, name, panelAppOrder,
-			panelCategoryKey, portlet, null, null, pluralLabelMap, scope,
-			status, objectDefinitionSettings, objectFields,
-			workflowDefinitionLinks);
+			enableIndexSearch, enableObjectEntryDraft, enableObjectEntryHistory,
+			enableObjectEntrySchedule, enableObjectEntrySubscription,
+			enableObjectEntryVersioning, friendlyURLSeparator, labelMap, name,
+			panelAppOrder, panelCategoryKey, portlet, null, null,
+			pluralLabelMap, scope, status, objectDefinitionSettings,
+			objectFields, workflowDefinitionLinks, serviceContext);
 	}
 
 	@Indexable(type = IndexableType.REINDEX)
@@ -1429,8 +1495,8 @@ public class ObjectDefinitionLocalServiceImpl
 			String externalReferenceCode, long userId, long objectFolderId,
 			String className, String dbTableName, boolean enableComments,
 			boolean enableFormContainer, boolean enableFriendlyURLCustomization,
-			boolean enableIndexSearch, boolean enableLocalization,
-			boolean enableObjectEntryDraft, boolean enableObjectEntrySchedule,
+			boolean enableIndexSearch, boolean enableObjectEntryDraft,
+			boolean enableObjectEntrySchedule,
 			boolean enableObjectEntrySubscription,
 			boolean enableObjectEntryVersioning, String friendlyURLSeparator,
 			Map<Locale, String> labelMap, boolean modifiable, String name,
@@ -1441,7 +1507,8 @@ public class ObjectDefinitionLocalServiceImpl
 			int version, int status,
 			List<ObjectDefinitionSetting> objectDefinitionSettings,
 			List<ObjectField> objectFields,
-			List<WorkflowDefinitionLink> workflowDefinitionLinks)
+			List<WorkflowDefinitionLink> workflowDefinitionLinks,
+			ServiceContext serviceContext)
 		throws PortalException {
 
 		User user = _userLocalService.getUser(userId);
@@ -1476,8 +1543,6 @@ public class ObjectDefinitionLocalServiceImpl
 		_validateEnableFriendlyURLCustomization(
 			enableFriendlyURLCustomization, friendlyURLSeparator, modifiable,
 			storageType, system);
-		_validateEnableLocalization(
-			user.getCompanyId(), enableLocalization, modifiable);
 		_validateEnableObjectEntrySchedule(
 			enableObjectEntrySchedule, modifiable, null, system);
 		_validateEnableObjectEntrySubscription(
@@ -1513,14 +1578,9 @@ public class ObjectDefinitionLocalServiceImpl
 				storageType, ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT));
 		objectDefinition.setEnableComments(enableComments);
 		objectDefinition.setEnableFormContainer(enableFormContainer);
-
-		if (FeatureFlagManagerUtil.isEnabled("LPD-21926")) {
-			objectDefinition.setEnableFriendlyURLCustomization(
-				enableFriendlyURLCustomization);
-		}
-
+		objectDefinition.setEnableFriendlyURLCustomization(
+			enableFriendlyURLCustomization);
 		objectDefinition.setEnableIndexSearch(enableIndexSearch);
-		objectDefinition.setEnableLocalization(enableLocalization);
 		objectDefinition.setEnableObjectEntryDraft(enableObjectEntryDraft);
 
 		if (FeatureFlagManagerUtil.isEnabled(
@@ -1568,7 +1628,7 @@ public class ObjectDefinitionLocalServiceImpl
 		if (objectDefinition.isModifiable() ||
 			!objectDefinition.isUnmodifiableSystemObject()) {
 
-			_addOrUpdateObjectDefinitionPLOEntries(objectDefinition);
+			addOrUpdateObjectDefinitionPLOEntries(objectDefinition);
 
 			dbTableName = "ObjectEntry";
 		}
@@ -1639,6 +1699,12 @@ public class ObjectDefinitionLocalServiceImpl
 		_addOrUpdateWorkflowDefinitionLinks(
 			objectDefinition, workflowDefinitionLinks);
 
+		ObjectDefinitionResourcePermissionUtil.updateResourcePermissions(
+			objectDefinition.getCompanyId(),
+			GroupConstants.DEFAULT_PARENT_GROUP_ID,
+			ObjectDefinition.class.getName(),
+			objectDefinition.getObjectDefinitionId(), serviceContext);
+
 		if (objectDefinition.isUnmodifiableSystemObject()) {
 			_createTable(
 				DynamicObjectDefinitionTableFactory.createExtension(
@@ -1667,31 +1733,6 @@ public class ObjectDefinitionLocalServiceImpl
 				objectAction.getObjectActionTriggerKey(),
 				objectAction.getParametersUnicodeProperties(),
 				objectAction.isSystem());
-		}
-	}
-
-	private void _addOrUpdateObjectDefinitionPLOEntries(
-			ObjectDefinition objectDefinition)
-		throws PortalException {
-
-		try {
-			for (Locale locale : _language.getAvailableLocales()) {
-				String languageId = LocaleUtil.toLanguageId(locale);
-
-				_ploEntryLocalService.addOrUpdatePLOEntry(
-					objectDefinition.getCompanyId(),
-					objectDefinition.getUserId(),
-					"model.resource." + objectDefinition.getClassName(),
-					languageId, objectDefinition.getLabel(locale));
-				_ploEntryLocalService.addOrUpdatePLOEntry(
-					objectDefinition.getCompanyId(),
-					objectDefinition.getUserId(),
-					"model.resource." + objectDefinition.getResourceName(),
-					languageId, objectDefinition.getPluralLabel(locale));
-			}
-		}
-		catch (PortalException portalException) {
-			_handleException(portalException, null, null);
 		}
 	}
 
@@ -2239,22 +2280,6 @@ public class ObjectDefinitionLocalServiceImpl
 			return null;
 		}
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-21926")) {
-			FriendlyURLResolver friendlyURLResolver =
-				FriendlyURLResolverRegistryUtil.
-					getFriendlyURLResolverByDefaultURLSeparator(
-						FriendlyURLResolverConstants.
-							URL_SEPARATOR_OBJECT_ENTRY);
-
-			if (friendlyURLResolver == null) {
-				return FriendlyURLResolverConstants.
-					URL_SEPARATOR_Y_OBJECT_ENTRY;
-			}
-
-			return StringUtil.removeSubstring(
-				friendlyURLResolver.getURLSeparator(), StringPool.SLASH);
-		}
-
 		if (Validator.isNull(friendlyURLSeparator)) {
 			return _friendlyURLNormalizer.normalizeWithPeriodsAndSlashes(name);
 		}
@@ -2407,22 +2432,6 @@ public class ObjectDefinitionLocalServiceImpl
 		List<ObjectField> objectFields =
 			_objectFieldPersistence.findByObjectDefinitionId(
 				objectDefinition.getObjectDefinitionId());
-
-		if (!FeatureFlagManagerUtil.isEnabled(
-				objectDefinition.getCompanyId(), "LPD-32050") &&
-			!objectDefinition.isEnableLocalization() &&
-			ListUtil.exists(objectFields, ObjectFieldModel::isLocalized)) {
-
-			_handleException(
-				new ObjectDefinitionEnableLocalizationException(
-					"You cannot disable entry translation for the object " +
-						"definition because translation is enabled for " +
-							"custom fields",
-					"you-cannot-disable-entry-translation-for-the-object-" +
-						"definition-because-translation-is-enabled-for-" +
-							"custom-fields"),
-				"enableLocalization", false);
-		}
 
 		if (!ListUtil.exists(
 				objectFields, objectField -> !objectField.isMetadata())) {
@@ -2585,9 +2594,8 @@ public class ObjectDefinitionLocalServiceImpl
 			boolean active, String className, String dbTableName,
 			boolean enableCategorization, boolean enableComments,
 			boolean enableFormContainer, boolean enableFriendlyURLCustomization,
-			boolean enableIndexSearch, boolean enableLocalization,
-			boolean enableObjectEntryDraft, boolean enableObjectEntryHistory,
-			boolean enableObjectEntrySchedule,
+			boolean enableIndexSearch, boolean enableObjectEntryDraft,
+			boolean enableObjectEntryHistory, boolean enableObjectEntrySchedule,
 			boolean enableObjectEntrySubscription,
 			boolean enableObjectEntryVersioning, String friendlyURLSeparator,
 			Map<Locale, String> labelMap, String name, String panelAppOrder,
@@ -2596,7 +2604,8 @@ public class ObjectDefinitionLocalServiceImpl
 			Map<Locale, String> pluralLabelMap, String scope, int status,
 			List<ObjectDefinitionSetting> objectDefinitionSettings,
 			List<ObjectField> objectFields,
-			List<WorkflowDefinitionLink> workflowDefinitionLinks)
+			List<WorkflowDefinitionLink> workflowDefinitionLinks,
+			ServiceContext serviceContext)
 		throws PortalException {
 
 		if (!objectDefinition.isApproved()) {
@@ -2645,9 +2654,6 @@ public class ObjectDefinitionLocalServiceImpl
 			enableFriendlyURLCustomization, friendlyURLSeparator,
 			objectDefinition.isModifiable(), objectDefinition.getStorageType(),
 			objectDefinition.isSystem());
-		_validateEnableLocalization(
-			objectDefinition.getCompanyId(), enableLocalization,
-			objectDefinition.isModifiable());
 		_validateEnableObjectEntryHistory(
 			objectDefinition.isEnableObjectEntryHistory() !=
 				enableObjectEntryHistory,
@@ -2702,12 +2708,8 @@ public class ObjectDefinitionLocalServiceImpl
 		objectDefinition.setEnableCategorization(enableCategorization);
 		objectDefinition.setEnableComments(enableComments);
 		objectDefinition.setEnableFormContainer(enableFormContainer);
-
-		if (FeatureFlagManagerUtil.isEnabled("LPD-21926")) {
-			objectDefinition.setEnableFriendlyURLCustomization(
-				enableFriendlyURLCustomization);
-		}
-
+		objectDefinition.setEnableFriendlyURLCustomization(
+			enableFriendlyURLCustomization);
 		objectDefinition.setEnableObjectEntryDraft(enableObjectEntryDraft);
 		objectDefinition.setEnableObjectEntryHistory(enableObjectEntryHistory);
 
@@ -2739,7 +2741,7 @@ public class ObjectDefinitionLocalServiceImpl
 			objectDefinition, objectDefinitionSettings);
 
 		if (!objectDefinition.isUnmodifiableSystemObject()) {
-			_addOrUpdateObjectDefinitionPLOEntries(objectDefinition);
+			addOrUpdateObjectDefinitionPLOEntries(objectDefinition);
 		}
 
 		if (FeatureFlagManagerUtil.isEnabled(
@@ -2754,13 +2756,24 @@ public class ObjectDefinitionLocalServiceImpl
 		_addOrUpdateWorkflowDefinitionLinks(
 			objectDefinition, workflowDefinitionLinks);
 
+		ObjectDefinitionResourcePermissionUtil.updateResourcePermissions(
+			objectDefinition.getCompanyId(),
+			GroupConstants.DEFAULT_PARENT_GROUP_ID,
+			ObjectDefinition.class.getName(),
+			objectDefinition.getObjectDefinitionId(), serviceContext);
+
 		if (objectDefinition.isApproved()) {
 			if (!active && oldActive) {
 				objectDefinitionLocalService.deployInactiveObjectDefinition(
 					objectDefinition);
 			}
 			else if (active) {
-				_validateFriendlyURLSeparator(objectDefinition);
+				if (!StringUtil.equals(
+						objectDefinition.getFriendlyURLSeparator(),
+						friendlyURLSeparator)) {
+
+					_validateFriendlyURLSeparator(objectDefinition);
+				}
 
 				objectDefinitionLocalService.deployObjectDefinition(
 					objectDefinition);
@@ -2806,12 +2819,17 @@ public class ObjectDefinitionLocalServiceImpl
 
 		objectDefinition.setDBTableName(dbTableName);
 		objectDefinition.setEnableIndexSearch(enableIndexSearch);
-		objectDefinition.setEnableLocalization(enableLocalization);
 		objectDefinition.setName(name);
 		objectDefinition.setPKObjectFieldDBColumnName(
 			pkObjectFieldDBColumnName);
 		objectDefinition.setPKObjectFieldName(pkObjectFieldName);
 		objectDefinition.setScope(scope);
+
+		if ((objectDefinition.getStatus() == WorkflowConstants.STATUS_EMPTY) &&
+			(status == WorkflowConstants.STATUS_DRAFT)) {
+
+			objectDefinition.setStatus(status);
+		}
 
 		objectDefinition = _update(objectDefinition);
 
@@ -2900,11 +2918,7 @@ public class ObjectDefinitionLocalServiceImpl
 		throws PortalException {
 
 		if (Validator.isNull(titleObjectFieldName)) {
-			titleObjectFieldName = "id";
-
-			if (FeatureFlagManagerUtil.isEnabled("LPD-21926")) {
-				titleObjectFieldName = "externalReferenceCode";
-			}
+			titleObjectFieldName = "externalReferenceCode";
 		}
 
 		ObjectField objectField = _objectFieldPersistence.findByODI_N(
@@ -3113,9 +3127,7 @@ public class ObjectDefinitionLocalServiceImpl
 			boolean modifiable, String storageType, boolean system)
 		throws PortalException {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-21926") ||
-			!enableFriendlyURLCustomization) {
-
+		if (!enableFriendlyURLCustomization) {
 			return;
 		}
 
@@ -3145,25 +3157,6 @@ public class ObjectDefinitionLocalServiceImpl
 					"Enable friendly URL customization is only allowed for " +
 						"object definitions with the default storage type"),
 				"enableFriendlyURLCustomization", true);
-		}
-	}
-
-	private void _validateEnableLocalization(
-			long companyId, boolean enableLocalization, boolean modifiable)
-		throws PortalException {
-
-		if (enableLocalization && !modifiable) {
-			return;
-		}
-
-		if (FeatureFlagManagerUtil.isEnabled(companyId, "LPD-32050") &&
-			!enableLocalization && modifiable) {
-
-			_handleException(
-				new ObjectDefinitionEnableLocalizationException(
-					"Enable localization must be true for modifiable object " +
-						"definitions"),
-				"enableLocalization", false);
 		}
 	}
 
@@ -3311,8 +3304,7 @@ public class ObjectDefinitionLocalServiceImpl
 			ObjectDefinition objectDefinition)
 		throws PortalException {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-21926") ||
-			Validator.isNull(objectDefinition.getFriendlyURLSeparator()) ||
+		if (Validator.isNull(objectDefinition.getFriendlyURLSeparator()) ||
 			ObjectDefinitionUtil.isDefaultFriendlyURLSeparator(
 				objectDefinition.getFriendlyURLSeparator())) {
 
@@ -3466,6 +3458,11 @@ public class ObjectDefinitionLocalServiceImpl
 		invalidObjectDefinitionSettingsNames.removeAll(
 			_allowedObjectDefinitionSettingNames);
 
+		if (objectDefinition.isModifiableAndSystem()) {
+			invalidObjectDefinitionSettingsNames.remove(
+				ObjectDefinitionSettingConstants.NAME_VISIBLE);
+		}
+
 		if (!invalidObjectDefinitionSettingsNames.isEmpty()) {
 			_handleException(
 				new ObjectDefinitionSettingNameException.NotAllowedNames(
@@ -3480,6 +3477,9 @@ public class ObjectDefinitionLocalServiceImpl
 			if (StringUtil.equals(
 					ObjectDefinitionSettingConstants.
 						NAME_ROOT_OBJECT_DEFINITION_EXTERNAL_REFERENCE_CODES,
+					objectDefinitionSettingsValue.getKey()) ||
+				StringUtil.equals(
+					ObjectDefinitionSettingConstants.NAME_VISIBLE,
 					objectDefinitionSettingsValue.getKey())) {
 
 				continue;
@@ -3745,6 +3745,9 @@ public class ObjectDefinitionLocalServiceImpl
 	@Reference
 	private AssetEntryLocalService _assetEntryLocalService;
 
+	@Reference
+	private AssetListEntryLocalService _assetListEntryLocalService;
+
 	private BundleContext _bundleContext;
 
 	@Reference
@@ -3759,6 +3762,9 @@ public class ObjectDefinitionLocalServiceImpl
 	@Reference
 	private DynamicQueryBatchIndexingActionableFactory
 		_dynamicQueryBatchIndexingActionableFactory;
+
+	@Reference
+	private EmptyModelManager _emptyModelManager;
 
 	@Reference
 	private FragmentEntryLinkCache _fragmentEntryLinkCache;

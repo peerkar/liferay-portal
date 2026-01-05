@@ -4,24 +4,12 @@
  */
 
 import ClayAlert from '@clayui/alert';
-import ClayForm from '@clayui/form';
-import {Toggle} from '@liferay/object-js-components-web';
 import React from 'react';
 
 import './TranslationsContainer.scss';
 
-interface TranslationsContainerProps {
-	onSubmit?: (editedObjectDefinition?: Partial<ObjectDefinition>) => void;
-	setValues: (values: Partial<ObjectDefinition>) => void;
-	values: Partial<ObjectDefinition>;
-}
-
-export function TranslationsContainer({
-	onSubmit,
-	setValues,
-	values,
-}: TranslationsContainerProps) {
-	return Liferay.FeatureFlags['LPD-32050'] ? (
+export function TranslationsContainer() {
+	return (
 		<ClayAlert
 			displayType="info"
 			title={`${Liferay.Language.get('info')}:`}
@@ -30,30 +18,5 @@ export function TranslationsContainer({
 				'enable-or-disable-translation-for-fields-individually'
 			)} `}
 		</ClayAlert>
-	) : (
-		<div className="lfr-objects-translations-container">
-			<ClayForm.Group>
-				<Toggle
-					disabled={values.active}
-					label={Liferay.Language.get('enable-entry-translations')}
-					onBlur={(event) => {
-						event.stopPropagation();
-
-						if (onSubmit) {
-							onSubmit();
-						}
-					}}
-					onToggle={() =>
-						setValues({
-							enableLocalization: !values.enableLocalization,
-						})
-					}
-					toggled={values.enableLocalization}
-					tooltip={Liferay.Language.get(
-						'enable-entry-translations-in-all-fields'
-					)}
-				/>
-			</ClayForm.Group>
-		</div>
 	);
 }

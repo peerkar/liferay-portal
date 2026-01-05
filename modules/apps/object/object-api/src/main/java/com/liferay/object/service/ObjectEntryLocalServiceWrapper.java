@@ -441,6 +441,14 @@ public class ObjectEntryLocalServiceWrapper
 	}
 
 	@Override
+	public java.util.Map<String, java.io.Serializable> getIndexedValues(
+			com.liferay.object.model.ObjectEntry objectEntry)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _objectEntryLocalService.getIndexedValues(objectEntry);
+	}
+
+	@Override
 	public java.util.List<com.liferay.object.model.ObjectEntry>
 			getManyToManyObjectEntries(
 				long groupId, long objectRelationshipId, long primaryKey,
@@ -570,13 +578,13 @@ public class ObjectEntryLocalServiceWrapper
 
 	@Override
 	public long getObjectEntriesCount(
-			long groupId,
+			long groupId, String languageId,
 			com.liferay.object.model.ObjectDefinition objectDefinition,
 			com.liferay.petra.sql.dsl.expression.Predicate predicate)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _objectEntryLocalService.getObjectEntriesCount(
-			groupId, objectDefinition, predicate);
+			groupId, languageId, objectDefinition, predicate);
 	}
 
 	/**
@@ -912,6 +920,15 @@ public class ObjectEntryLocalServiceWrapper
 		_objectEntryLocalService.updateAsset(
 			userId, objectEntry, assetCategoryIds, assetTagNames,
 			assetLinkEntryIds, priority);
+	}
+
+	@Override
+	public com.liferay.object.model.ObjectEntry updateModifiedDate(
+			long objectEntryId, java.util.Date modifiedDate)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _objectEntryLocalService.updateModifiedDate(
+			objectEntryId, modifiedDate);
 	}
 
 	@Override

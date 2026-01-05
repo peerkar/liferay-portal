@@ -137,6 +137,29 @@ export const contents = {
 	},
 };
 
+if (Liferay.FeatureFlags['LPD-62272']) {
+	contents['ai-decision'] = {
+		sections: [
+			'nodeInformation',
+			'promptSummary',
+			'ragSummary',
+			'toolsSummary',
+		],
+		showDeleteButton: true,
+		title: Liferay.Language.get('ai-decision'),
+	};
+	contents['llm'] = {
+		sections: [
+			'nodeInformation',
+			'promptSummary',
+			'ragSummary',
+			'toolsSummary',
+		],
+		showDeleteButton: true,
+		title: Liferay.Language.get('llm-node'),
+	};
+}
+
 const errorsDefaultValues = {
 	id: false,
 	label: false,

@@ -55,21 +55,15 @@ public class ListTypeDefinitionLocalServiceUtil {
 	}
 
 	public static ListTypeDefinition addListTypeDefinition(
-			String externalReferenceCode, long userId, boolean system)
-		throws PortalException {
-
-		return getService().addListTypeDefinition(
-			externalReferenceCode, userId, system);
-	}
-
-	public static ListTypeDefinition addListTypeDefinition(
 			String externalReferenceCode, long userId,
 			Map<java.util.Locale, String> nameMap, boolean system,
-			List<com.liferay.list.type.model.ListTypeEntry> listTypeEntries)
+			List<com.liferay.list.type.model.ListTypeEntry> listTypeEntries,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws PortalException {
 
 		return getService().addListTypeDefinition(
-			externalReferenceCode, userId, nameMap, system, listTypeEntries);
+			externalReferenceCode, userId, nameMap, system, listTypeEntries,
+			serviceContext);
 	}
 
 	/**
@@ -339,6 +333,15 @@ public class ListTypeDefinitionLocalServiceUtil {
 		return getService().getListTypeDefinitionsCount();
 	}
 
+	public static ListTypeDefinition getOrAddEmptyListTypeDefinition(
+			String externalReferenceCode, long companyId, long userId,
+			boolean system)
+		throws PortalException {
+
+		return getService().getOrAddEmptyListTypeDefinition(
+			externalReferenceCode, companyId, userId, system);
+	}
+
 	/**
 	 * Returns the OSGi service identifier.
 	 *
@@ -376,12 +379,13 @@ public class ListTypeDefinitionLocalServiceUtil {
 	public static ListTypeDefinition updateListTypeDefinition(
 			String externalReferenceCode, long listTypeDefinitionId,
 			long userId, Map<java.util.Locale, String> nameMap,
-			List<com.liferay.list.type.model.ListTypeEntry> listTypeEntries)
+			List<com.liferay.list.type.model.ListTypeEntry> listTypeEntries,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws PortalException {
 
 		return getService().updateListTypeDefinition(
 			externalReferenceCode, listTypeDefinitionId, userId, nameMap,
-			listTypeEntries);
+			listTypeEntries, serviceContext);
 	}
 
 	public static void updateUserId(

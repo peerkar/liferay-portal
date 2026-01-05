@@ -15,10 +15,10 @@ ViewBulkActionTaskReportDisplayContext viewBulkActionTaskReportDisplayContext = 
 	<div>
 		<frontend-data-set:headless-display
 			apiURL="<%= viewBulkActionTaskReportDisplayContext.getAPIURL() %>"
-			fdsActionDropdownItems="<%= viewBulkActionTaskReportDisplayContext.getFDSActionDropdownItems() %>"
 			formName="fm"
 			id="<%= CMSSiteInitializerFDSNames.BULK_ACTION_TASK_REPORT_SECTION %>"
 			itemsPerPage="<%= 20 %>"
+			propsTransformer="{BulkActionTaskReportFDSPropsTransformer} from site-cms-site-initializer"
 			selectedItemsKey="embedded.id"
 			showSelectAll="<%= false %>"
 			style="fluid"

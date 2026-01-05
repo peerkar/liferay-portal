@@ -77,7 +77,7 @@ import java.util.function.Supplier;
 	)
 
 	@JsonTypeInfo(
-		include= JsonTypeInfo.As.PROPERTY, property="${schema.discriminator.propertyName}",
+		include= JsonTypeInfo.As.EXISTING_PROPERTY, property="${schema.discriminator.propertyName}",
 		use= JsonTypeInfo.Id.NAME, visible = true
 	)
 </#if>
@@ -410,6 +410,31 @@ public <#if schema.discriminator?has_content>abstract</#if> class ${schemaName} 
 			return null;
 		}
 
+		public void setPropertyValue(String propertyName, Object propertyValue) {
+			<#list properties?keys as propertyName>
+				<#if jsonMapPropertyNames?seq_contains(propertyName)>
+					<#continue>
+				</#if>
+
+				<#assign capitalizedPropertyName = propertyName?cap_first />
+
+				<#if enumSchemas?keys?seq_contains(propertyType)>
+					<#assign capitalizedPropertyName = propertyType />
+				</#if>
+
+				if (Objects.equals(propertyName, "${propertyName}")) {
+					set${capitalizedPropertyName}((${properties[propertyName]}) propertyValue);
+				}
+				else
+			</#list>
+
+			{
+				<#list jsonMapPropertyNames as propertyName>
+					${propertyName}.put(propertyName, propertyValue);
+				</#list>
+			}
+		}
+
 		private final class CachedUnsafeSupplier<T, E extends Throwable> implements UnsafeSupplier<T, E> {
 
 			public CachedUnsafeSupplier(UnsafeSupplier<T, E> unsafeSupplier) {
@@ -504,7 +529,11 @@ public <#if schema.discriminator?has_content>abstract</#if> class ${schemaName} 
 
 				sb.append("\"${key}\": ");
 
-				<#if allSchemas[propertyType]??>
+				<#if toStringEnumSchemas?keys?seq_contains(propertyType)>
+					sb.append("\"");
+					sb.append(${propertyName});
+					sb.append("\"");
+				<#elseif allSchemas[propertyType]??>
 					sb.append(String.valueOf(${propertyName}));
 				<#elseif stringUtil.equals(propertyType, "Object")>
 					if (${propertyName} instanceof Map) {
@@ -550,15 +579,13 @@ public <#if schema.discriminator?has_content>abstract</#if> class ${schemaName} 
 
 						sb.append("]");
 					<#else>
-						<#if stringUtil.equals(propertyType, "Date") || stringUtil.equals(propertyType, "String") || toStringEnumSchemas?keys?seq_contains(propertyType)>
+						<#if stringUtil.equals(propertyType, "Date") || stringUtil.equals(propertyType, "String")>
 							sb.append("\"");
 
 							<#if stringUtil.equals(propertyType, "Date")>
 								sb.append(liferayToJSONDateFormat.format(${propertyName}));
 							<#elseif stringUtil.equals(propertyType, "String")>
 								sb.append(_escape(${propertyName}));
-							<#else>
-								sb.append(${propertyName});
 							</#if>
 
 							sb.append("\"");

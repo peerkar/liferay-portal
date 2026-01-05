@@ -265,11 +265,6 @@ public class UserManagerImpl implements UserManager {
 			ScimUser scimUser = _getScimUser(
 				CompanyThreadLocal.getCompanyId(), GetterUtil.getLong(userId));
 
-			if (!scimUser.isActive()) {
-				throw new NotFoundException(
-					"No user found with user ID " + userId);
-			}
-
 			return ScimUtil.toUser(
 				_getGroups(
 					CompanyThreadLocal.getCompanyId(),
@@ -1190,7 +1185,7 @@ public class UserManagerImpl implements UserManager {
 		portalUser = _userService.updateUser(
 			portalUser.getUserId(), scimUser.getPassword(), StringPool.BLANK,
 			StringPool.BLANK, false, portalUser.getReminderQueryQuestion(),
-			portalUser.getReminderQueryAnswer(), portalUser.getScreenName(),
+			portalUser.getReminderQueryAnswer(), scimUser.getScreenName(),
 			scimUser.getEmailAddresses()[0], false, null,
 			portalUser.getLanguageId(), scimUser.getTimeZoneId(),
 			portalUser.getGreeting(), portalUser.getComments(),

@@ -9,6 +9,7 @@ import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.service.ObjectDefinitionLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -28,21 +29,7 @@ public class ObjectDefinitionTestUtil {
 	}
 
 	public static ObjectDefinition addCustomObjectDefinition(
-			boolean enableLocalization)
-		throws PortalException {
-
-		return addCustomObjectDefinition(0, enableLocalization);
-	}
-
-	public static ObjectDefinition addCustomObjectDefinition(
 			long objectFolderId)
-		throws PortalException {
-
-		return addCustomObjectDefinition(objectFolderId, false);
-	}
-
-	public static ObjectDefinition addCustomObjectDefinition(
-			long objectFolderId, boolean enableLocalization)
 		throws PortalException {
 
 		String value =
@@ -51,13 +38,13 @@ public class ObjectDefinitionTestUtil {
 
 		return ObjectDefinitionLocalServiceUtil.addCustomObjectDefinition(
 			null, TestPropsValues.getUserId(), objectFolderId, null, false,
-			true, false, true, enableLocalization, false, false, false, false,
-			null, LocalizedMapUtil.getLocalizedMap(value), value, null, null,
+			true, false, true, false, false, false, false, null,
+			LocalizedMapUtil.getLocalizedMap(value), value, null, null,
 			LocalizedMapUtil.getLocalizedMap(value), true,
 			ObjectDefinitionConstants.SCOPE_COMPANY,
 			ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT,
 			Collections.emptyList(), Collections.emptyList(),
-			Collections.emptyList());
+			Collections.emptyList(), new ServiceContext());
 	}
 
 	public static ObjectDefinition addModifiableSystemObjectDefinition()
@@ -70,7 +57,7 @@ public class ObjectDefinitionTestUtil {
 		return ObjectDefinitionLocalServiceUtil.addSystemObjectDefinition(
 			"L_" + StringUtil.toLowerCase(RandomTestUtil.randomString()),
 			TestPropsValues.getUserId(), 0, null, null, false, true, false,
-			false, false, false, false, false, false, null,
+			false, false, false, false, false, null,
 			LocalizedMapUtil.getLocalizedMap(value), true, "Test", null, null,
 			null, null, LocalizedMapUtil.getLocalizedMap(value), true,
 			ObjectDefinitionConstants.SCOPE_COMPANY, null, 1, 0,

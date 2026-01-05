@@ -53,6 +53,8 @@ public class EditAssetCategoryMVCActionCommand extends BaseMVCActionCommand {
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
+		String externalReferenceCode = ParamUtil.getString(
+			actionRequest, "externalReferenceCode");
 		long categoryId = ParamUtil.getLong(actionRequest, "categoryId");
 
 		long parentCategoryId = ParamUtil.getLong(
@@ -89,8 +91,8 @@ public class EditAssetCategoryMVCActionCommand extends BaseMVCActionCommand {
 			long groupId = ParamUtil.getLong(actionRequest, "groupId");
 
 			category = _assetCategoryService.addCategory(
-				groupId, parentCategoryId, titleMap, descriptionMap,
-				vocabularyId, null, serviceContext);
+				externalReferenceCode, groupId, parentCategoryId, titleMap,
+				descriptionMap, vocabularyId, null, serviceContext);
 
 			MultiSessionMessages.add(
 				actionRequest, "categoryAdded",
@@ -108,8 +110,9 @@ public class EditAssetCategoryMVCActionCommand extends BaseMVCActionCommand {
 					categoryId));
 
 			category = _assetCategoryService.updateCategory(
-				categoryId, parentCategoryId, titleMap, descriptionMap,
-				vocabularyId, categoryPropertiesArray, serviceContext);
+				externalReferenceCode, categoryId, parentCategoryId, titleMap,
+				descriptionMap, vocabularyId, categoryPropertiesArray,
+				serviceContext);
 
 			MultiSessionMessages.add(
 				actionRequest, "categoryUpdated",

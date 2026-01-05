@@ -10,6 +10,8 @@ import com.liferay.jenkins.results.parser.JenkinsResultsParserUtil;
 import com.liferay.jenkins.results.parser.TestClassReport;
 import com.liferay.jenkins.results.parser.TestReport;
 import com.liferay.jenkins.results.parser.TopLevelBuildReport;
+import com.liferay.jenkins.results.parser.test.clazz.TestClass;
+import com.liferay.jenkins.results.parser.test.clazz.TestClassMethod;
 import com.liferay.jenkins.results.parser.test.clazz.group.AxisTestClassGroup;
 
 import java.io.IOException;
@@ -18,13 +20,13 @@ import java.io.IOException;
  * @author Michael Hashimoto
  */
 public class PortalLogBatchBuildTestrayCaseResult
-	extends BatchBuildTestrayCaseResult {
+	extends BatchBuildTestrayCaseResult<TestClass, TestClassMethod> {
 
 	public PortalLogBatchBuildTestrayCaseResult(
-		TestrayBuild testrayBuild, TopLevelBuildReport topLevelBuildReport,
-		AxisTestClassGroup axisTestClassGroup) {
+		AxisTestClassGroup axisTestClassGroup, TestrayBuild testrayBuild,
+		TopLevelBuildReport topLevelBuildReport) {
 
-		super(testrayBuild, topLevelBuildReport, axisTestClassGroup);
+		super(axisTestClassGroup, testrayBuild, topLevelBuildReport);
 	}
 
 	@Override

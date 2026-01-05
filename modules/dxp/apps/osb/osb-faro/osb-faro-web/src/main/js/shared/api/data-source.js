@@ -297,6 +297,7 @@ export function updateCSV({fieldMappingMaps, groupId, id, name, status}) {
 
 export function updateLiferay({
 	analyticsConfiguration,
+	channelsConfiguration,
 	contactsConfiguration,
 	credentials,
 	fieldMappingMaps,
@@ -309,6 +310,7 @@ export function updateLiferay({
 	const data = pickBy(
 		{
 			analyticsConfiguration,
+			channelsConfiguration,
 			contactsConfiguration,
 			credentials: get(
 				credentials,
@@ -336,6 +338,7 @@ export function updateLiferay({
 
 export function updateSalesforce({
 	accountsConfiguration,
+	channelsConfiguration,
 	contactsConfiguration,
 	credentials,
 	fieldMappingMaps,
@@ -348,6 +351,7 @@ export function updateSalesforce({
 	const data = pickBy(
 		{
 			accountsConfiguration,
+			channelsConfiguration,
 			contactsConfiguration,
 			credentials,
 			fieldMappingMaps,
@@ -364,6 +368,43 @@ export function updateSalesforce({
 		},
 		method: 'PATCH',
 		path: `contacts/${groupId}/data_source/${id}/salesforce`
+	});
+}
+
+export function fetchAccountsCount({groupId, id}) {
+	return sendRequest({
+		method: 'GET',
+		path: `contacts/${groupId}/salesforce/accounts_count?dataSourceId=${id}`
+	});
+}
+
+export function fetchUserCount({groupId, id}) {
+	return sendRequest({
+		method: 'GET',
+		path: `contacts/${groupId}/salesforce/users_count?dataSourceId=${id}`
+	});
+}
+
+export function fetchChannelDatasources({
+	delta,
+	groupId,
+	id,
+	orderIOMap = createOrderIOMap(NAME),
+	page,
+	query = ''
+}) {
+	const orderParams = orderIOMap.first();
+	const orderByFields = buildOrderByFields(orderParams);
+
+	return sendRequest({
+		data: {
+			cur: page,
+			delta,
+			name: query,
+			orderByFields
+		},
+		method: 'GET',
+		path: `contacts/${groupId}/data_source/${id}/channel-data-sources`
 	});
 }
 
@@ -398,6 +439,13 @@ function delete$({groupId, id}) {
 	return sendRequest({
 		method: 'DELETE',
 		path: `contacts/${groupId}/data_source/${id}`
+	});
+}
+
+export function fetchChannelsMetric({groupId, id}) {
+	return sendRequest({
+		method: 'GET',
+		path: `contacts/${groupId}/data_source/${id}/metrics`
 	});
 }
 

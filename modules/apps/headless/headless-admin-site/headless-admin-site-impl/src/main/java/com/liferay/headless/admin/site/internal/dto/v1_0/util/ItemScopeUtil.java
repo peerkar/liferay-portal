@@ -5,53 +5,24 @@
 
 package com.liferay.headless.admin.site.internal.dto.v1_0.util;
 
-import com.liferay.headless.admin.site.dto.v1_0.Scope;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
-import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.ScopeUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.vulcan.scope.Scope;
 
 /**
  * @author Rubén Pulido
  */
 public class ItemScopeUtil {
 
-	public static Long getGroupId(
-		long companyId, Scope scope, long scopeGroupId) {
-
-		if ((scope == null) ||
-			Validator.isNull(scope.getExternalReferenceCode())) {
-
-			return scopeGroupId;
-		}
-
-		Group group = GroupLocalServiceUtil.fetchGroupByExternalReferenceCode(
-			scope.getExternalReferenceCode(), companyId);
-
-		if (group == null) {
-			return null;
-		}
-
-		return group.getGroupId();
-	}
-
 	public static Long getItemGroupId(
 		long companyId, Scope scope, long scopeGroupId) {
 
-		if ((scope == null) || (scope.getExternalReferenceCode() == null)) {
-			return scopeGroupId;
-		}
-
-		Group group = GroupLocalServiceUtil.fetchGroupByExternalReferenceCode(
-			scope.getExternalReferenceCode(), companyId);
-
-		if (group == null) {
-			return null;
-		}
-
-		return group.getGroupId();
+		return ScopeUtil.getItemGroupId(
+			companyId, _getScopeExternalReferenceCode(scope), scopeGroupId);
 	}
 
 	public static Scope getItemScope(long itemScopeGroupId, long scopeGroupId)
@@ -61,7 +32,12 @@ public class ItemScopeUtil {
 			return null;
 		}
 
-		return _getScope(GroupLocalServiceUtil.getGroup(itemScopeGroupId));
+		Group group = GroupLocalServiceUtil.getGroup(itemScopeGroupId);
+
+		Scope.Type type = (group.getType() == GroupConstants.TYPE_DEPOT) ?
+			Scope.Type.ASSET_LIBRARY : Scope.Type.SITE;
+
+		return Scope.ofReference(group.getExternalReferenceCode(), type);
 	}
 
 	public static Scope getItemScope(
@@ -76,56 +52,34 @@ public class ItemScopeUtil {
 			itemGroupExternalReferenceCode, companyId);
 
 		if (group == null) {
-			return new Scope() {
-				{
-					setExternalReferenceCode(
-						() -> itemGroupExternalReferenceCode);
-					setType(() -> Type.SITE);
-				}
-			};
+			return Scope.ofReference(
+				itemGroupExternalReferenceCode, Scope.Type.SITE);
 		}
 
 		if (group.getGroupId() == scopeGroupId) {
 			return null;
 		}
 
-		return _getScope(group);
+		Scope.Type type = (group.getType() == GroupConstants.TYPE_DEPOT) ?
+			Scope.Type.ASSET_LIBRARY : Scope.Type.SITE;
+
+		return Scope.ofReference(group.getExternalReferenceCode(), type);
 	}
 
 	public static String getItemScopeExternalReferenceCode(
 			Scope itemScope, long scopeGroupId)
 		throws PortalException {
 
-		if (itemScope == null) {
-			return null;
-		}
-
-		Group group = GroupLocalServiceUtil.getGroup(scopeGroupId);
-
-		if (StringUtil.equals(
-				itemScope.getExternalReferenceCode(),
-				group.getExternalReferenceCode())) {
-
-			return null;
-		}
-
-		return itemScope.getExternalReferenceCode();
+		return ScopeUtil.getItemScopeExternalReferenceCode(
+			_getScopeExternalReferenceCode(itemScope), scopeGroupId);
 	}
 
-	private static Scope _getScope(Group group) {
-		return new Scope() {
-			{
-				setExternalReferenceCode(group::getExternalReferenceCode);
-				setType(
-					() -> {
-						if (group.getType() == GroupConstants.TYPE_DEPOT) {
-							return Type.ASSET_LIBRARY;
-						}
+	private static String _getScopeExternalReferenceCode(Scope scope) {
+		if (scope == null) {
+			return null;
+		}
 
-						return Type.SITE;
-					});
-			}
-		};
+		return scope.getExternalReferenceCode();
 	}
 
 }

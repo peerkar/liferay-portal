@@ -44,3 +44,11 @@ resource "aws_vpc_security_group_ingress_rule" "nodes_ingress_ephemeral" {
 	security_group_id=aws_security_group.nodes.id
 	to_port=65535
 }
+resource "aws_vpc_security_group_ingress_rule" "nodes_ingress_public" {
+	cidr_ipv4="0.0.0.0/0"
+	count=var.demo_mode ? 1 : 0
+	from_port=80
+	ip_protocol="tcp"
+	security_group_id=aws_security_group.nodes.id
+	to_port=443
+}

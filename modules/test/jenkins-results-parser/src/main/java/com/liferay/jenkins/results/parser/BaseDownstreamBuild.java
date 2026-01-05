@@ -645,8 +645,40 @@ public class BaseDownstreamBuild extends BaseBuild implements DownstreamBuild {
 	}
 
 	@Override
+	public boolean isUniqueFailure() {
+		if (!isFailing()) {
+			return false;
+		}
+
+		if (!isCompareToUpstream()) {
+			return true;
+		}
+
+		String currentFailure = JenkinsResultsParserUtil.combine(
+			getBatchName(), ",", getResult());
+
+		for (String upstreamFailure :
+				UpstreamFailureUtil.getUpstreamJobFailures(
+					"build", getTopLevelBuild())) {
+
+			if (upstreamFailure.equals(currentFailure)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	@Override
 	public void saveBuildURLInBuildDatabase() {
 		BuildDatabase buildDatabase = getBuildDatabase();
+
+		if (isBuildCached()) {
+			buildDatabase.putProperty(
+				CACHED_BUILD_URLS_PROPERTIES_KEY, getBuildURL(), "", false);
+
+			return;
+		}
 
 		buildDatabase.putProperty(
 			BUILD_URLS_PROPERTIES_KEY, getAxisName(), getBuildURL(), false);
@@ -654,8 +686,11 @@ public class BaseDownstreamBuild extends BaseBuild implements DownstreamBuild {
 		_saveBadBuildURLsInBuildDatabase(getBadBuildURLs());
 	}
 
-	protected BaseDownstreamBuild(String url, TopLevelBuild topLevelBuild) {
-		super(url, topLevelBuild);
+	protected BaseDownstreamBuild(
+		String buildURL, DownstreamBuildReport cachedDownstreamBuildReport,
+		TopLevelBuild topLevelBuild) {
+
+		super(buildURL, cachedDownstreamBuildReport, topLevelBuild);
 	}
 
 	@Override

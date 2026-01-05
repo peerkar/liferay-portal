@@ -19,7 +19,6 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.test.rule.FeatureFlag;
-import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
 
 import java.util.Arrays;
@@ -37,9 +36,7 @@ import org.junit.runner.RunWith;
 /**
  * @author Javier Gamarra
  */
-@FeatureFlags(
-	featureFlags = {@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-32050")}
-)
+@FeatureFlag("LPD-17564")
 @RunWith(Arquillian.class)
 public class ObjectFieldResourceTest extends BaseObjectFieldResourceTestCase {
 
@@ -48,8 +45,8 @@ public class ObjectFieldResourceTest extends BaseObjectFieldResourceTestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 
-		_objectDefinition = ObjectDefinitionTestUtil.addCustomObjectDefinition(
-			true);
+		_objectDefinition =
+			ObjectDefinitionTestUtil.addCustomObjectDefinition();
 	}
 
 	@After

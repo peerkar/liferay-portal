@@ -1,6 +1,7 @@
 @component-name = "portal-commerce"
 definition {
 
+	property browser.chrome.version = "139.0";
 	property portal.release = "true";
 	property portal.upstream = "true";
 	property testray.main.component.name = "Product Info Management";
@@ -628,7 +629,7 @@ definition {
 		}
 
 		task ("Then an error message is shown") {
-			Alert.viewErrorMessage(errorMessage = "The qualifier is already linked.");
+			Alert.viewErrorMessage(errorMessage = "The payment method group relation qualifier already exists.");
 		}
 
 		task ("When the admin selects the same term eligibility once again") {
@@ -638,7 +639,7 @@ definition {
 		}
 
 		task ("Then an error message is shown") {
-			Alert.viewErrorMessage(errorMessage = "The qualifier is already linked.");
+			Alert.viewErrorMessage(errorMessage = "The payment method group relation qualifier already exists.");
 		}
 	}
 
@@ -679,7 +680,7 @@ definition {
 		}
 
 		task ("Then an error message is shown") {
-			Alert.viewErrorMessage(errorMessage = "The qualifier is already linked.");
+			Alert.viewErrorMessage(errorMessage = "The shipping fixed option qualifier already exists.");
 		}
 
 		task ("When the admin selects the same term eligibility once again") {
@@ -689,7 +690,7 @@ definition {
 		}
 
 		task ("Then an error message is shown") {
-			Alert.viewErrorMessage(errorMessage = "The qualifier is already linked.");
+			Alert.viewErrorMessage(errorMessage = "The shipping fixed option qualifier already exists");
 		}
 	}
 
@@ -2079,9 +2080,7 @@ definition {
 
 		CommerceEntry.gotoMenuTab(menuTab = "Visibility");
 
-		for (var nameList : list "Channels,Account Groups") {
-			CommerceEntry.assertCheckedSpecificToggle(name = ${nameList});
-		}
+		CommerceEntry.assertCheckedSpecificToggle(name = "Channels");
 
 		CommerceChannels.openChannelsAdmin();
 

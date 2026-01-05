@@ -8,7 +8,7 @@ import {readFileSync, statSync} from 'fs';
 
 import {applicationsMenuPageTest} from '../../../fixtures/applicationsMenuPageTest';
 import {loginTest} from '../../../fixtures/loginTest';
-import fillAndClickOutside from '../../../utils/fillAndClickOutside';
+import {clickAndExpectToBeVisible} from '../../../utils/clickAndExpectToBeVisible';
 import {getTempDir} from '../../../utils/temp';
 
 export const test = mergeTests(loginTest(), applicationsMenuPageTest);
@@ -64,15 +64,13 @@ test('LPD-55895: Check if the additional information field is exported correctly
 
 	await page.waitForTimeout(500);
 
-	const options = await page.getByLabel('Options');
-
-	await options.click();
-
-	const menuItem = await page.getByRole('menuitem', {
-		name: 'Export Audit Events',
+	await clickAndExpectToBeVisible({
+		autoClick: true,
+		target: page.getByRole('menuitem', {
+			name: 'Export Audit Events',
+		}),
+		trigger: page.getByLabel('Options'),
 	});
-
-	await menuItem.click();
 
 	const downloadPromise = await page.waitForEvent('download');
 
@@ -161,15 +159,13 @@ test('LPD-40224: Check if the export audit events .csv is being filtered by the 
 		}
 	});
 
-	const options = await page.getByLabel('Options');
-
-	await options.click();
-
-	const menuItem = await page.getByRole('menuitem', {
-		name: 'Export Audit Events',
+	await clickAndExpectToBeVisible({
+		autoClick: true,
+		target: page.getByRole('menuitem', {
+			name: 'Export Audit Events',
+		}),
+		trigger: page.getByLabel('Options'),
 	});
-
-	await menuItem.click();
 
 	const downloadPromise = await page.waitForEvent('download');
 
@@ -206,23 +202,24 @@ test('LPD-40224: Check if the audit events filtered by date are being exported',
 
 	await page.locator('#startDate').fill('01/01/2001');
 
-	await fillAndClickOutside(page, page.locator('#endDate'), '01/01/2001');
+	await page.locator('#endDate').fill('01/01/2001');
 
-	await page.locator('.lexicon-icon-search').click();
+	await page.locator('#endDate').press('Tab');
 
 	await page.waitForTimeout(500);
 
-	await expect(page.getByText('There are no events.')).toBeVisible();
-
-	const options = await page.getByLabel('Options');
-
-	await options.click();
-
-	const menuItem = await page.getByRole('menuitem', {
-		name: 'Export Audit Events',
+	await clickAndExpectToBeVisible({
+		target: page.getByText('There are no events.'),
+		trigger: page.locator('.lexicon-icon-search'),
 	});
 
-	await menuItem.click();
+	await clickAndExpectToBeVisible({
+		autoClick: true,
+		target: page.getByRole('menuitem', {
+			name: 'Export Audit Events',
+		}),
+		trigger: page.getByLabel('Options'),
+	});
 
 	const downloadPromise = await page.waitForEvent('download');
 

@@ -44,7 +44,6 @@ import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.site.initializer.SiteInitializer;
@@ -64,7 +63,6 @@ import org.junit.runner.RunWith;
 /**
  * @author Jorge García
  */
-@FeatureFlag("LPD-6378")
 @RunWith(Arquillian.class)
 public class LoginActionTest {
 
@@ -236,7 +234,8 @@ public class LoginActionTest {
 			_layoutUtilityPageEntryLocalService.addLayoutUtilityPageEntry(
 				null, _serviceContext.getUserId(), group.getGroupId(), 0, 0,
 				true, RandomTestUtil.randomString(),
-				LayoutUtilityPageEntryConstants.TYPE_LOGIN, 0, _serviceContext);
+				LayoutUtilityPageEntryConstants.TYPE_LOGIN, null,
+				_serviceContext);
 
 		UserTestUtil.setUser(
 			_userLocalService.getGuestUser(TestPropsValues.getCompanyId()));

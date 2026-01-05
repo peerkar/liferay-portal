@@ -23,6 +23,7 @@ import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -137,6 +138,10 @@ public class ObjectEntryEntityModelTest {
 				new StringEntityField(
 					"externalReferenceCode", locale -> "externalReferenceCode")
 			).put(
+				"folderId",
+				new IntegerEntityField(
+					"folderId", locale -> "objectEntryFolderId")
+			).put(
 				"id", new IdEntityField("id", locale -> "id", String::valueOf)
 			).put(
 				"keywords",
@@ -152,8 +157,13 @@ public class ObjectEntryEntityModelTest {
 					new IntegerEntityField(
 						"taxonomyCategoryIds", locale -> "assetCategoryIds"))
 			).put(
+				"title", new StringEntityField("title", locale -> Field.TITLE)
+			).put(
 				"userId",
 				new IntegerEntityField("userId", locale -> Field.USER_ID)
+			).put(
+				"version",
+				new IntegerEntityField("version", locale -> "version")
 			).putAll(
 				_getExpectedObjectFieldsEntityFieldsMap(customObjectFields)
 			).putAll(
@@ -355,13 +365,14 @@ public class ObjectEntryEntityModelTest {
 		ObjectDefinition objectDefinition =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
 				null, TestPropsValues.getUserId(), 0, null, false, true, false,
-				true, false, false, false, false, false, null,
+				true, false, false, false, false, null,
 				LocalizedMapUtil.getLocalizedMap(objectDefinitionName),
 				objectDefinitionName, null, null,
 				LocalizedMapUtil.getLocalizedMap(objectDefinitionName), true,
 				ObjectDefinitionConstants.SCOPE_COMPANY,
 				ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT,
-				Collections.emptyList(), objectFields, Collections.emptyList());
+				Collections.emptyList(), objectFields, Collections.emptyList(),
+				new ServiceContext());
 
 		objectDefinition =
 			_objectDefinitionLocalService.publishCustomObjectDefinition(

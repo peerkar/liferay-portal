@@ -15,7 +15,9 @@ import com.liferay.headless.admin.user.client.resource.v1_0.AccountRoleResource;
 import com.liferay.headless.admin.user.client.resource.v1_0.PostalAddressResource;
 import com.liferay.headless.admin.user.client.resource.v1_0.UserAccountResource;
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Catalog;
+import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Currency;
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Product;
+import com.liferay.headless.commerce.admin.catalog.client.resource.v1_0.CurrencyResource;
 import com.liferay.headless.commerce.admin.order.client.dto.v1_0.BillingAddress;
 import com.liferay.headless.commerce.admin.order.client.dto.v1_0.Order;
 import com.liferay.headless.commerce.admin.order.client.dto.v1_0.OrderItem;
@@ -28,6 +30,7 @@ import com.liferay.marketplace.service.KoroneikiService;
 import com.liferay.marketplace.service.MarketplaceService;
 import com.liferay.marketplace.util.MarketplaceUtil;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 
 import java.io.BufferedWriter;
@@ -172,13 +175,13 @@ public class MarketplaceRestController extends BaseRestController {
 			_marketplaceService.getAccountResource();
 
 		com.liferay.headless.admin.user.client.pagination.Page<Account>
-			accountPage = accountResource.getAccountsPage(
+			accountsPage = accountResource.getAccountsPage(
 				"", "name eq '" + account.getName() + "'",
 				com.liferay.headless.admin.user.client.pagination.Pagination.of(
 					1, 1),
 				"");
 
-		if (accountPage.getTotalCount() > 0) {
+		if (accountsPage.getTotalCount() > 0) {
 			throw new ResponseStatusException(
 				HttpStatus.CONFLICT, "Account already exists");
 		}
@@ -289,28 +292,22 @@ public class MarketplaceRestController extends BaseRestController {
 		_marketplaceService.updateOrder(
 			null, order.getId(), MarketplaceConstants.ORDER_STATUS_PROCESSING);
 
-		Page<OrderItem> orderItemPage =
-			_marketplaceService.getOrderItemResource(
-			).getOrderIdOrderItemsPage(
-				order.getId(), Pagination.of(1, 10)
-			);
+		String orderTypeExternalReferenceCode =
+			order.getOrderTypeExternalReferenceCode();
 
-		if (Objects.equals(
-				order.getOrderTypeExternalReferenceCode(),
-				"CLIENT_EXTENSION") ||
-			Objects.equals(
-				order.getOrderTypeExternalReferenceCode(), "CLOUDAPP")) {
+		if (Objects.equals(orderTypeExternalReferenceCode, "ADDONS")) {
+			_setUpAddOns(jwt, order);
 
-			_setUpCloudProductPurchase(order, orderItemPage);
+			_marketplaceService.updateOrder(
+				null, order.getId(),
+				MarketplaceConstants.ORDER_STATUS_COMPLETED);
 		}
 
-		if (Objects.equals(
-				order.getOrderTypeExternalReferenceCode(), "COMPOSITE_APP") ||
+		if (Objects.equals(orderTypeExternalReferenceCode, "CLOUD_APP") ||
+			Objects.equals(orderTypeExternalReferenceCode, "COMPOSITE_APP") ||
 			Objects.equals(
-				order.getOrderTypeExternalReferenceCode(),
-				"LOW_CODE_CONFIGURATION") ||
-			Objects.equals(
-				order.getOrderTypeExternalReferenceCode(), "OTHER")) {
+				orderTypeExternalReferenceCode, "LOW_CODE_CONFIGURATION") ||
+			Objects.equals(orderTypeExternalReferenceCode, "OTHER")) {
 
 			_marketplaceService.updateOrder(
 				null, order.getId(),
@@ -318,9 +315,36 @@ public class MarketplaceRestController extends BaseRestController {
 		}
 
 		if (Objects.equals(
-				order.getOrderTypeExternalReferenceCode(), "DXPAPP")) {
+				orderTypeExternalReferenceCode, "CLIENT_EXTENSION") ||
+			Objects.equals(
+				order.getOrderTypeExternalReferenceCode(), "DXP_APP")) {
 
-			_setUpDxpProductPurchase(jwt, order, orderItemPage);
+			Page<OrderItem> orderItemsPage =
+				_marketplaceService.getOrderItemResource(
+				).getOrderIdOrderItemsPage(
+					order.getId(), Pagination.of(1, 10)
+				);
+
+			Map<String, String> productSpecificationsMap =
+				_marketplaceService.getProductSpecificationsMap(
+					_marketplaceService.getSku(
+						orderItemsPage.fetchFirstItem(
+						).getSkuId()
+					).getProductId());
+
+			if (Objects.equals(
+					productSpecificationsMap.get("price-model"), "Free")) {
+
+				_marketplaceService.updateOrder(
+					null, order.getId(),
+					MarketplaceConstants.ORDER_STATUS_COMPLETED);
+
+				return;
+			}
+
+			_setUpProductEntitlements(
+				jwt, productSpecificationsMap.get("license-type"), order,
+				orderItemsPage);
 		}
 	}
 
@@ -447,10 +471,13 @@ public class MarketplaceRestController extends BaseRestController {
 				});
 		}
 
+		_setExchangeRate(order);
+
 		orderResource.patchOrder(
 			orderId,
 			new Order() {
 				{
+					setCustomFields(order::getCustomFields);
 					setTaxAmount(() -> finalTaxAmount);
 					setTotal(() -> finalTotal);
 				}
@@ -477,6 +504,24 @@ public class MarketplaceRestController extends BaseRestController {
 		}
 
 		return accountRole.getId();
+	}
+
+	private String _getExchangeRate(Order order) {
+		Map<String, String> customFields =
+			(Map<String, String>)order.getCustomFields();
+
+		JSONObject orderMetadataJSONObject = new JSONObject(
+			customFields.getOrDefault("order-metadata", "{}"));
+
+		if (!Objects.equals(order.getCurrencyCode(), "USD") ||
+			!orderMetadataJSONObject.has("exchangeRate")) {
+
+			return "Not applicable";
+		}
+
+		double exchangeRate = orderMetadataJSONObject.getDouble("exchangeRate");
+
+		return "1 USD = " + String.format("%.5f", exchangeRate) + " EUR";
 	}
 
 	private void _sendOrderPurchasedNotification(Order order) throws Exception {
@@ -544,6 +589,8 @@ public class MarketplaceRestController extends BaseRestController {
 			).put(
 				"[%EMAIL_ADDRESS%]", order.getCreatorEmailAddress()
 			).put(
+				"[%EXCHANGE_RATE%]", _getExchangeRate(order)
+			).put(
 				"[%LICENSE_TYPE%]", productSpecificationsMap.get("license-type")
 			).put(
 				"[%NET_PRICE_FORMATTED%]", order.getSubtotalFormatted()
@@ -586,54 +633,96 @@ public class MarketplaceRestController extends BaseRestController {
 			).build());
 	}
 
-	private void _setUpCloudProductPurchase(
-			Order order, Page<OrderItem> orderItemPage)
-		throws Exception {
-
+	private void _setExchangeRate(Order order) throws Exception {
 		Map<String, String> customFields =
 			(Map<String, String>)order.getCustomFields();
 
-		customFields.put(
-			"cloud-provisioning",
-			MarketplaceUtil.createCloudProvisioningJSONArray(
-				orderItemPage
-			).toString());
+		JSONObject orderMetadataJSONObject = new JSONObject(
+			customFields.getOrDefault("order-metadata", "{}"));
 
-		_marketplaceService.updateOrder(
-			customFields, order.getId(),
-			MarketplaceConstants.ORDER_STATUS_COMPLETED);
+		if (orderMetadataJSONObject.has("exchangeRate")) {
+			return;
+		}
+
+		CurrencyResource currencyResource =
+			_marketplaceService.getCurrencyResource();
+
+		com.liferay.headless.commerce.admin.catalog.client.pagination.Page
+			<Currency> currenciesPage = currencyResource.getCurrenciesPage(
+				null, "code eq 'EUR'",
+				com.liferay.headless.commerce.admin.catalog.client.pagination.
+					Pagination.of(1, 1),
+				null);
+
+		Currency currency = currenciesPage.fetchFirstItem();
+
+		if (currency == null) {
+			return;
+		}
+
+		customFields.put(
+			"order-metadata",
+			orderMetadataJSONObject.put(
+				"exchangeRate", currency.getRate()
+			).toString());
 	}
 
-	private void _setUpDxpProductPurchase(
-			Jwt jwt, Order order, Page<OrderItem> orderItemPage)
-		throws Exception {
-
-		Map<String, String> productSpecificationsMap =
-			_marketplaceService.getProductSpecificationsMap(
-				_marketplaceService.getSku(
-					orderItemPage.fetchFirstItem(
-					).getSkuId()
-				).getProductId());
-
-		if (Objects.equals(
-				productSpecificationsMap.get("price-model"), "Free")) {
-
-			_marketplaceService.updateOrder(
-				null, order.getId(),
-				MarketplaceConstants.ORDER_STATUS_COMPLETED);
+	private void _setUpAddOns(Jwt jwt, Order order) throws Exception {
+		if (!order.getAccountExternalReferenceCode(
+			).startsWith(
+				"KOR-"
+			)) {
 
 			return;
 		}
 
-		AccountResource accountResource =
-			_marketplaceService.getAccountResource();
+		Map<String, String> customFields =
+			(Map<String, String>)order.getCustomFields();
 
-		Account account = accountResource.getAccount(order.getAccountId());
+		JSONObject orderMetadataJSONObject = new JSONObject(
+			customFields.getOrDefault("order-metadata", "{}"));
 
-		if (!account.getExternalReferenceCode(
-			).startsWith(
-				"KOR-"
-			)) {
+		if (_koroneikiService.hasEntitlement(
+				_koroneikiService.getKoroneikiAccount(
+					order.getAccountExternalReferenceCode()),
+				MarketplaceConstants.KORONEIKI_AC_ENTITLEMENTS)) {
+
+			_koroneikiService.linkProductPurchaseToOpportunity(
+				jwt, String.valueOf(order.getId()),
+				orderMetadataJSONObject.getString("productPurchaseKey"));
+
+			return;
+		}
+
+		for (OrderItem orderItem : order.getOrderItems()) {
+			if (!Objects.equals(
+					orderItem.getSkuExternalReferenceCode(),
+					orderMetadataJSONObject.getString("productKey"))) {
+
+				continue;
+			}
+
+			_koroneikiService.postAccountAccountKeyProductPurchase(
+				order.getAccountExternalReferenceCode(), jwt, "Subscription",
+				MarketplaceUtil.getSkuOptionValue(
+					"license-usage-type", orderItem.getOptions()),
+				orderItem);
+		}
+	}
+
+	private void _setUpProductEntitlements(
+			Jwt jwt, String licenseType, Order order,
+			Page<OrderItem> orderItemsPage)
+		throws Exception {
+
+		String accountExternalReferenceCode =
+			order.getAccountExternalReferenceCode();
+
+		if (!accountExternalReferenceCode.startsWith("KOR-")) {
+			AccountResource accountResource =
+				_marketplaceService.getAccountResource();
+
+			Account account = accountResource.getAccount(order.getAccountId());
 
 			account.setExternalReferenceCode(
 				() -> _koroneikiService.postKoroneikiAccount(
@@ -644,12 +733,12 @@ public class MarketplaceRestController extends BaseRestController {
 		}
 
 		try {
-			for (OrderItem orderItem : orderItemPage.getItems()) {
+			for (OrderItem orderItem : orderItemsPage.getItems()) {
 				_koroneikiService.postAccountAccountKeyProductPurchase(
-					account, jwt,
-					_marketplaceService.getSkuOptionValue(
-						"dxp-license-usage-type", orderItem.getOptions()),
-					orderItem, productSpecificationsMap);
+					accountExternalReferenceCode, jwt, licenseType,
+					MarketplaceUtil.getSkuOptionValue(
+						"license-usage-type", orderItem.getOptions()),
+					orderItem);
 			}
 
 			_marketplaceService.updateOrder(

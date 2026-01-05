@@ -16,6 +16,7 @@ import {isolatedSiteTest} from '../../../fixtures/isolatedSiteTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {pageEditorPagesTest} from '../../../fixtures/pageEditorPagesTest';
 import {pageManagementSiteTest} from '../../../fixtures/pageManagementSiteTest';
+import {pagesAdminPagesTest} from '../../../fixtures/pagesAdminPagesTest';
 import {ApiHelpers} from '../../../helpers/ApiHelpers';
 import {clickAndExpectToBeVisible} from '../../../utils/clickAndExpectToBeVisible';
 import {getRandomInt} from '../../../utils/getRandomInt';
@@ -34,6 +35,7 @@ const test = mergeTests(
 	}),
 	isolatedSiteTest,
 	loginTest(),
+	pagesAdminPagesTest,
 	pageEditorPagesTest,
 	pageManagementSiteTest
 );
@@ -110,7 +112,13 @@ test.describe('Configuration', () => {
 		{
 			tag: ['@LPS-86191', '@LPS-96438'],
 		},
-		async ({apiHelpers, displayPageTemplatesPage, page, site}) => {
+		async ({
+			apiHelpers,
+			displayPageTemplatesPage,
+			page,
+			pagesAdminPage,
+			site,
+		}) => {
 
 			// Create a display page template for Basic Web Content and mark as default
 
@@ -153,11 +161,7 @@ test.describe('Configuration', () => {
 				})
 				.click();
 
-			await page
-				.getByLabel('Define a custom theme for this page.', {
-					exact: true,
-				})
-				.check();
+			await pagesAdminPage.defineCustomThemeRadio.click();
 
 			await page.getByRole('checkbox', {name: 'Show Footer'}).uncheck();
 

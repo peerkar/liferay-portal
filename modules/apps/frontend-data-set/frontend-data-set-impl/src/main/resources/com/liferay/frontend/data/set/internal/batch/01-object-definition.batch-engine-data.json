@@ -13,6 +13,7 @@
 	},
 	"items": [
 		{
+			"enableFormContainer": false,
 			"externalReferenceCode": "L_DATA_SET",
 			"label": {
 				"en_US": "Data Set"
@@ -128,6 +129,22 @@
 					"type": "Clob"
 				},
 				{
+					"DBType": "Boolean",
+					"businessType": "Boolean",
+					"defaultValue": false,
+					"externalReferenceCode": "HIDE_MANAGEMENT_BAR_IN_EMPTY_STATE",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"label": {
+						"en_US": "Hide Management Bar in Empty State"
+					},
+					"name": "hideManagementBarInEmptyState",
+					"required": false,
+					"state": false,
+					"system": true,
+					"type": "Boolean"
+				},
+				{
 					"DBType": "Clob",
 					"businessType": "LongText",
 					"externalReferenceCode": "ITEM_ACTIONS_ORDER",
@@ -231,6 +248,23 @@
 					"state": false,
 					"system": true,
 					"type": "String"
+				},
+				{
+					"DBType": "Boolean",
+					"businessType": "Boolean",
+					"defaultValue": false,
+					"externalReferenceCode": "SNAPSHOTS_ENABLED",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"label": {
+						"en_US": "Snapshots Enabled"
+					},
+					"localized": false,
+					"name": "snapshotsEnabled",
+					"required": false,
+					"state": false,
+					"system": true,
+					"type": "Boolean"
 				},
 				{
 					"DBType": "Clob",
@@ -422,6 +456,7 @@
 			"titleObjectFieldName": "label"
 		},
 		{
+			"enableFormContainer": false,
 			"enableLocalization": true,
 			"externalReferenceCode": "L_DATA_SET_ACTION",
 			"label": {
@@ -685,6 +720,7 @@
 			"system": true
 		},
 		{
+			"enableFormContainer": false,
 			"externalReferenceCode": "L_DATA_SET_CARDS_SECTION",
 			"label": {
 				"en_US": "Data Set Cards Section"
@@ -768,6 +804,7 @@
 			"system": true
 		},
 		{
+			"enableFormContainer": false,
 			"enableLocalization": true,
 			"externalReferenceCode": "L_DATA_SET_CLIENT_EXTENSION_FILTER",
 			"label": {
@@ -855,6 +892,7 @@
 			"system": true
 		},
 		{
+			"enableFormContainer": false,
 			"enableLocalization": true,
 			"externalReferenceCode": "L_DATA_SET_DATE_FILTER",
 			"label": {
@@ -974,6 +1012,7 @@
 			"system": true
 		},
 		{
+			"enableFormContainer": false,
 			"externalReferenceCode": "L_DATA_SET_LIST_SECTION",
 			"label": {
 				"en_US": "Data Set List Section"
@@ -1057,6 +1096,7 @@
 			"system": true
 		},
 		{
+			"enableFormContainer": false,
 			"enableLocalization": true,
 			"externalReferenceCode": "L_DATA_SET_SELECTION_FILTER",
 			"label": {
@@ -1288,6 +1328,7 @@
 			"system": true
 		},
 		{
+			"enableFormContainer": false,
 			"enableLocalization": true,
 			"externalReferenceCode": "L_DATA_SET_SORT",
 			"label": {
@@ -1391,6 +1432,7 @@
 			"system": true
 		},
 		{
+			"enableFormContainer": false,
 			"enableLocalization": true,
 			"externalReferenceCode": "L_DATA_SET_TABLE_SECTION",
 			"label": {
@@ -1519,6 +1561,106 @@
 			},
 			"portlet": false,
 			"rootObjectDefinitionExternalReferenceCode": "L_DATA_SET",
+			"scope": "company",
+			"status": {
+				"code": 0
+			},
+			"system": true
+		},
+		{
+			"externalReferenceCode": "L_DATA_SET_SNAPSHOT",
+			"label": {
+				"en_US": "Data Set Snapshot"
+			},
+			"modifiable": true,
+			"name": "DataSetSnapshot",
+			"objectFields": [
+				{
+					"DBType": "Boolean",
+					"businessType": "Boolean",
+					"defaultValue": true,
+					"externalReferenceCode": "ACTIVE",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"label": {
+						"en_US": "Active"
+					},
+					"localized": false,
+					"name": "active",
+					"required": false,
+					"state": false,
+					"system": true,
+					"type": "Boolean"
+				},
+				{
+					"DBType": "Clob",
+					"businessType": "LongText",
+					"externalReferenceCode": "FDS_NAME",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"label": {
+						"en_US": "FDS Name"
+					},
+					"localized": false,
+					"name": "fdsName",
+					"required": false,
+					"state": false,
+					"system": true,
+					"type": "Clob"
+				},
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"externalReferenceCode": "LABEL",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"label": {
+						"en_US": "Label"
+					},
+					"localized": false,
+					"name": "label",
+					"required": false,
+					"state": false,
+					"system": true,
+					"type": "String"
+				},
+				{
+					"DBType": "Clob",
+					"businessType": "LongText",
+					"externalReferenceCode": "PORTLET_ID",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"label": {
+						"en_US": "Portlet Id"
+					},
+					"name": "portletId",
+					"required": false,
+					"state": false,
+					"system": true,
+					"type": "Clob"
+				},
+				{
+					"DBType": "Clob",
+					"businessType": "LongText",
+					"externalReferenceCode": "VIEW_CONFIG",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"label": {
+						"en_US": "View Config"
+					},
+					"localized": false,
+					"name": "viewConfig",
+					"required": false,
+					"state": false,
+					"system": true,
+					"type": "Clob"
+				}
+			],
+			"panelCategoryKey": "",
+			"pluralLabel": {
+				"en_US": "Data Set Snapshots"
+			},
+			"portlet": false,
 			"scope": "company",
 			"status": {
 				"code": 0

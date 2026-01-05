@@ -16,6 +16,7 @@ import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.PropsValues;
+import com.liferay.portal.kernel.util.Time;
 
 import java.io.InputStream;
 
@@ -180,6 +181,11 @@ public class HTTPTestUtil {
 		}
 
 		options.setMethod(httpMethod);
+
+		// Added because modules/apps/object/**/ExportTaskResourceTest.java was
+		// slow to create companies. See LPD-73606.
+
+		options.setTimeout((int)Time.MINUTE * 2);
 
 		if (body != null) {
 			options.setBody(

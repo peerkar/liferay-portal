@@ -23,9 +23,14 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import jakarta.ws.rs.core.UriInfo;
 
+import java.util.function.Function;
+
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
  * @author Carlos Correa
  */
+@ProviderType
 public interface ContextDataInjectorBuilder {
 
 	public ContextDataInjectorBuilder acceptLanguage(
@@ -37,6 +42,9 @@ public interface ContextDataInjectorBuilder {
 
 	public ContextDataInjectorBuilder expressionConvert(
 		ExpressionConvert<?> expressionConvert);
+
+	public ContextDataInjectorBuilder fallbackContextValueFunction(
+		Function<Class<?>, Object> contextResolver);
 
 	public ContextDataInjectorBuilder filterParserProvider(
 		FilterParserProvider filterParserProvider);

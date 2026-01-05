@@ -43,6 +43,11 @@ export interface IItemSelectorModalProps<T> {
 	breadcrumbs?: React.ComponentProps<typeof ClayBreadcrumb>['items'];
 
 	/**
+	 * If the @clayui/breadcrumb items label should be visible or not
+	 */
+	breadcrumbsLabel?: boolean;
+
+	/**
 	 * URL for item creation used to open a new tab.
 	 */
 	createItemURL?: string;
@@ -56,7 +61,7 @@ export interface IItemSelectorModalProps<T> {
 	 * The displayed label for the type of item being selected. Used in the
 	 * modal title.
 	 */
-	itemTypeLabel: string;
+	itemTypeLabel?: string;
 
 	/**
 	 * Items that are currently selected (controlled).
@@ -72,6 +77,12 @@ export interface IItemSelectorModalProps<T> {
 		label: string;
 		value: string;
 	};
+
+	/**
+	 * Represents a customizable message that can be rendered as a React node.
+	 * It will show up above the Frontend Data Set.
+	 */
+	message?: React.ReactNode;
 
 	/**
 	 * Flag for if multiple items can be selected.
@@ -97,6 +108,11 @@ export interface IItemSelectorModalProps<T> {
 	 * Expects the 'open' property from the Clay useModal hook.
 	 */
 	open: boolean;
+
+	/**
+	 * Represents the title of a modal. takes precedence over itemTypeLabel.
+	 */
+	title?: string;
 }
 
 const EMPTY_STATE_PROPS = {
@@ -109,6 +125,7 @@ const EMPTY_STATE_PROPS = {
 function ItemSelectorModal<T extends Record<string, any>>({
 	apiURL,
 	breadcrumbs,
+	breadcrumbsLabel = true,
 	createItemURL,
 	fdsProps,
 	itemTypeLabel,
@@ -118,11 +135,13 @@ function ItemSelectorModal<T extends Record<string, any>>({
 		label: 'title',
 		value: 'id',
 	},
+	message,
 	multiSelect = false,
 	observer,
 	onItemsChange,
 	onOpenChange,
 	open,
+	title,
 }: IItemSelectorModalProps<T>) {
 	const [selectedItems, setSelectedItems] = useState(externalItems);
 
@@ -146,15 +165,21 @@ function ItemSelectorModal<T extends Record<string, any>>({
 			<ClayModal.Header
 				closeButtonAriaLabel={Liferay.Language.get('close')}
 			>
-				{sub(Liferay.Language.get('select-x'), itemTypeLabel)}
+				{title
+					? title
+					: sub(Liferay.Language.get('select-x'), itemTypeLabel)}
 			</ClayModal.Header>
+
+			{message}
 
 			<ClayModal.Body className="p-0">
 				{breadcrumbs && (
 					<ClayLayout.Container fluid>
-						<h2 className="mb-0 mt-2">
-							{breadcrumbs[breadcrumbs.length - 1].label}
-						</h2>
+						{breadcrumbsLabel && (
+							<h2 className="mb-0 mt-2">
+								{breadcrumbs[breadcrumbs.length - 1].label}
+							</h2>
+						)}
 
 						<ClayBreadcrumb
 							items={breadcrumbs.map((breadcrumb, index) => ({

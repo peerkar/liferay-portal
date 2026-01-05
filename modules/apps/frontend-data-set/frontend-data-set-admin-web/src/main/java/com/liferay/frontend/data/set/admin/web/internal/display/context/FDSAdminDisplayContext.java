@@ -68,8 +68,9 @@ public class FDSAdminDisplayContext {
 			WebKeys.THEME_DISPLAY);
 
 		_dataSetObjectDefinition =
-			objectDefinitionLocalService.fetchObjectDefinition(
-				_themeDisplay.getCompanyId(), "DataSet");
+			objectDefinitionLocalService.
+				fetchObjectDefinitionByExternalReferenceCode(
+					"L_DATA_SET", _themeDisplay.getCompanyId());
 	}
 
 	public JSONArray getCellClientExtensionRenderersJSONArray()
@@ -112,6 +113,19 @@ public class FDSAdminDisplayContext {
 		).setWindowState(
 			LiferayWindowState.POP_UP
 		).buildString();
+	}
+
+	public String getDeleteCustomDataSetURL() {
+		ResourceURL resourceURL =
+			(ResourceURL)PortalUtil.getControlPanelPortletURL(
+				_renderRequest, _themeDisplay.getScopeGroup(),
+				FDSAdminPortletKeys.FDS_ADMIN, 0, 0,
+				RenderRequest.RESOURCE_PHASE);
+
+		resourceURL.setResourceID(
+			"/frontend_data_set_admin/delete_custom_data_set");
+
+		return resourceURL.toString();
 	}
 
 	public String getEditDataSetURL() {
@@ -254,9 +268,6 @@ public class FDSAdminDisplayContext {
 					_systemFDSEntryRegistry.getSystemFDSEntry(systemFDSName);
 
 				return JSONUtil.put(
-					"additionalAPIURLParameters",
-					systemFDSEntry.getAdditionalAPIURLParameters()
-				).put(
 					"defaultItemsPerPage",
 					systemFDSEntry.getDefaultItemsPerPage()
 				).put(

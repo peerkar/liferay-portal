@@ -31,7 +31,8 @@ import org.osgi.service.component.annotations.Reference;
 	property = "object.field.business.type.key=" + ObjectFieldConstants.BUSINESS_TYPE_BOOLEAN,
 	service = ObjectFieldBusinessType.class
 )
-public class BooleanObjectFieldBusinessType implements ObjectFieldBusinessType {
+public class BooleanObjectFieldBusinessType
+	extends BaseObjectFieldBusinessType {
 
 	@Override
 	public Set<String> getAllowedObjectFieldSettingsNames() {
@@ -71,6 +72,38 @@ public class BooleanObjectFieldBusinessType implements ObjectFieldBusinessType {
 	}
 
 	@Override
+	public Object getValue(
+			Long groupId, ObjectField objectField, long userId,
+			Map<String, Object> values)
+		throws PortalException {
+
+		Object value = super.getValue(groupId, objectField, userId, values);
+
+		if (value instanceof String) {
+			return Boolean.valueOf((String)value);
+		}
+
+		return value;
+	}
+
+	@Override
+	public boolean isAllowedObjectFieldSettingValue(
+		String objectFieldSettingName, String objectFieldSettingValue) {
+
+		if (super.isAllowedObjectFieldSettingValue(
+				objectFieldSettingName, objectFieldSettingValue) ||
+			(objectFieldSettingName.equals(
+				ObjectFieldSettingConstants.NAME_DEFAULT_VALUE_TYPE) &&
+			 objectFieldSettingValue.equals(
+				 ObjectFieldSettingConstants.VALUE_EXPRESSION_BUILDER))) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
 	public void validateObjectFieldSettingsDefaultValue(
 			ObjectField objectField,
 			Map<String, String> objectFieldSettingsValuesMap)
@@ -80,7 +113,7 @@ public class BooleanObjectFieldBusinessType implements ObjectFieldBusinessType {
 			return;
 		}
 
-		ObjectFieldBusinessType.super.validateObjectFieldSettingsDefaultValue(
+		super.validateObjectFieldSettingsDefaultValue(
 			objectField, objectFieldSettingsValuesMap);
 
 		if (Objects.equals(

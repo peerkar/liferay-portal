@@ -226,6 +226,8 @@ export type TAction =
 
 export type TState = {
 	baseResourceURL: string;
+	ckEditor5Config?: object;
+	decimalSeparator: string;
 	deletedObjectDefinition: DeletedObjectDefinition | null;
 	editObjectDefinitionURL: string;
 	elements: Elements<ObjectDefinitionNodeData | ObjectRelationshipEdgeData[]>;

@@ -14,6 +14,8 @@ import aQute.bnd.osgi.Resource;
 
 import aQute.lib.io.IO;
 
+import com.liferay.petra.function.UnsafeRunnable;
+
 import java.io.InputStream;
 
 import java.net.URL;
@@ -97,11 +99,37 @@ public class JspAnalyzerPluginTest {
 			"javax.servlet", "javax.servlet.http");
 
 		_testImplicitImports(
-			"dependencies/imports_without_comments_with_javax.jsp", javaxFQNs,
+			"dependencies/imports_without_comments.jsp", null, jakartaFQNs,
+			javaxFQNs);
+		_testImplicitImports(
+			"dependencies/imports_without_comments_with_javax.jsp", null,
+			javaxFQNs, jakartaFQNs);
+		_testImplicitImports(
+			"dependencies/imports_without_javaee_packages.jsp", "jakarta",
+			jakartaFQNs, javaxFQNs);
+		_testImplicitImports(
+			"dependencies/imports_without_javaee_packages.jsp", "javax",
+			javaxFQNs, jakartaFQNs);
+		_testImplicitImports(
+			"dependencies/imports_without_packages.jsp", "jakarta", jakartaFQNs,
+			javaxFQNs);
+		_testImplicitImports(
+			"dependencies/imports_without_packages.jsp", "javax", javaxFQNs,
 			jakartaFQNs);
 		_testImplicitImports(
-			"dependencies/imports_without_comments.jsp", jakartaFQNs,
+			"dependencies/imports_without_packages.jsp", null, jakartaFQNs,
 			javaxFQNs);
+
+		_assertThrows(
+			IllegalArgumentException.class, "Invalid value was provided for",
+			() -> _testImplicitImports(
+				"dependencies/imports_without_javaee_packages.jsp", "test",
+				null, null));
+		_assertThrows(
+			IllegalArgumentException.class, "Invalid value was provided for",
+			() -> _testImplicitImports(
+				"dependencies/imports_without_packages.jsp", "test", null,
+				null));
 	}
 
 	@Test
@@ -203,6 +231,26 @@ public class JspAnalyzerPluginTest {
 		return clazz.getResource(path);
 	}
 
+	private void _assertThrows(
+		Class<? extends Exception> exceptionClass,
+		String expectedMessageContains, UnsafeRunnable<Exception> runnable) {
+
+		try {
+			runnable.run();
+
+			Assert.fail();
+		}
+		catch (Exception exception) {
+			Assert.assertEquals(exceptionClass, exception.getClass());
+
+			String message = exception.getMessage();
+
+			Assert.assertTrue(
+				"Unexpected exception message: " + message,
+				message.contains(expectedMessageContains));
+		}
+	}
+
 	private void _testAddTaglibRequirements(
 			List<String> expectedURIs, String jspPath, String unexpectedURI)
 		throws Exception {
@@ -235,7 +283,7 @@ public class JspAnalyzerPluginTest {
 	}
 
 	private void _testImplicitImports(
-			String jspPath, List<String> expectedFQNs,
+			String jspPath, String javaeePackage, List<String> expectedFQNs,
 			List<String> notExpectedFQNs)
 		throws Exception {
 
@@ -254,6 +302,12 @@ public class JspAnalyzerPluginTest {
 			builder.setJar(jar);
 
 			builder.setProperty("-jsp", "*.jsp");
+
+			if (javaeePackage != null) {
+				builder.setProperty(
+					"-antbnd.jspanalyzer.fallback-javaee-package",
+					javaeePackage);
+			}
 
 			JspAnalyzerPlugin jspAnalyzerPlugin = new JspAnalyzerPlugin();
 

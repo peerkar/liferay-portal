@@ -9,7 +9,7 @@ import com.liferay.dynamic.data.mapping.constants.DDMTemplateConstants;
 import com.liferay.dynamic.data.mapping.exception.TemplateNameException;
 import com.liferay.dynamic.data.mapping.exception.TemplateScriptException;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
-import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
+import com.liferay.dynamic.data.mapping.service.DDMTemplateService;
 import com.liferay.info.item.provider.InfoItemFormProvider;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseTransactionalMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.template.TemplateConstants;
@@ -83,9 +84,8 @@ public class AddTemplateEntryMVCActionCommand
 			DDMTemplate.class.getName(), actionRequest);
 
 		try {
-			DDMTemplate ddmTemplate = _ddmTemplateLocalService.addTemplate(
-				null, themeDisplay.getUserId(),
-				serviceContext.getScopeGroupId(),
+			DDMTemplate ddmTemplate = _ddmTemplateService.addTemplate(
+				null, serviceContext.getScopeGroupId(),
 				_portal.getClassNameId(TemplateEntry.class), 0,
 				_portal.getClassNameId(TemplateEntry.class), nameMap,
 				Collections.emptyMap(),
@@ -132,7 +132,14 @@ public class AddTemplateEntryMVCActionCommand
 	private JSONObject _getErrorJSONObject(
 		PortalException portalException, ThemeDisplay themeDisplay) {
 
-		if (portalException instanceof TemplateNameException) {
+		if (portalException instanceof PrincipalException.MustHavePermission) {
+			return JSONUtil.put(
+				"other",
+				_language.get(
+					themeDisplay.getLocale(),
+					"you-do-not-have-the-required-permissions"));
+		}
+		else if (portalException instanceof TemplateNameException) {
 			return JSONUtil.put(
 				"name",
 				_language.get(
@@ -172,7 +179,7 @@ public class AddTemplateEntryMVCActionCommand
 		AddTemplateEntryMVCActionCommand.class);
 
 	@Reference
-	private DDMTemplateLocalService _ddmTemplateLocalService;
+	private DDMTemplateService _ddmTemplateService;
 
 	@Reference
 	private Language _language;

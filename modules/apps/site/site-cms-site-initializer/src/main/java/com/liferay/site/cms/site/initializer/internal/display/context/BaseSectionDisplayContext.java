@@ -5,7 +5,6 @@
 
 package com.liferay.site.cms.site.initializer.internal.display.context;
 
-import com.liferay.depot.constants.DepotConstants;
 import com.liferay.depot.model.DepotEntry;
 import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.document.library.configuration.DLConfiguration;
@@ -13,10 +12,9 @@ import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.info.constants.InfoDisplayWebKeys;
-import com.liferay.object.constants.ObjectDefinitionSettingConstants;
+import com.liferay.info.localized.InfoLocalizedValue;
 import com.liferay.object.constants.ObjectFolderConstants;
 import com.liferay.object.model.ObjectDefinition;
-import com.liferay.object.model.ObjectDefinitionSetting;
 import com.liferay.object.model.ObjectEntryFolder;
 import com.liferay.object.service.ObjectDefinitionService;
 import com.liferay.object.service.ObjectDefinitionSettingLocalService;
@@ -24,7 +22,6 @@ import com.liferay.object.service.ObjectEntryFolderLocalServiceUtil;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
-import com.liferay.petra.string.StringUtil;
 import com.liferay.portal.kernel.editor.configuration.EditorConfiguration;
 import com.liferay.portal.kernel.editor.configuration.EditorConfigurationFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -41,8 +38,6 @@ import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
-import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
-import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -51,25 +46,23 @@ import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.site.cms.site.initializer.internal.util.ActionUtil;
 import com.liferay.site.cms.site.initializer.internal.util.PermissionUtil;
-import com.liferay.translation.constants.TranslationPortletKeys;
-
-import jakarta.portlet.ActionRequest;
+import com.liferay.translation.exporter.TranslationInfoItemFieldValuesExporter;
+import com.liferay.translation.exporter.TranslationInfoItemFieldValuesExporterRegistry;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -85,7 +78,9 @@ public abstract class BaseSectionDisplayContext {
 		ObjectDefinitionSettingLocalService objectDefinitionSettingLocalService,
 		ModelResourcePermission<ObjectEntryFolder>
 			objectEntryFolderModelResourcePermission,
-		Portal portal) {
+		Portal portal,
+		TranslationInfoItemFieldValuesExporterRegistry
+			translationInfoItemFieldValuesExporterRegistry) {
 
 		this.depotEntryLocalService = depotEntryLocalService;
 
@@ -96,12 +91,10 @@ public abstract class BaseSectionDisplayContext {
 		this.language = language;
 
 		_objectDefinitionService = objectDefinitionService;
-		_objectDefinitionSettingLocalService =
-			objectDefinitionSettingLocalService;
-		_objectEntryFolderModelResourcePermission =
-			objectEntryFolderModelResourcePermission;
 
 		this.portal = portal;
+		_translationInfoItemFieldValuesExporterRegistry =
+			translationInfoItemFieldValuesExporterRegistry;
 
 		themeDisplay = (ThemeDisplay)httpServletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
@@ -109,11 +102,25 @@ public abstract class BaseSectionDisplayContext {
 		objectEntryFolder = _getObjectEntryFolder(
 			themeDisplay.getCompanyId(),
 			httpServletRequest.getAttribute(InfoDisplayWebKeys.INFO_ITEM));
+
+		_sectionDisplayContextHelper = new SectionDisplayContextHelper(
+			depotEntryLocalService, groupLocalService, language,
+			objectDefinitionSettingLocalService,
+			objectEntryFolderModelResourcePermission, portal);
+	}
+
+	public String getAdditionalAPIURLParameters() {
+		return _sectionDisplayContextHelper.getAdditionalAPIURLParameters(
+			getCMSSectionFilterString(), httpServletRequest,
+			getRootObjectEntryFolderExternalReferenceCode());
 	}
 
 	public Map<String, Object> getAdditionalProps() {
 		return HashMapBuilder.<String, Object>put(
-			"assetLibraries", _getDepotEntriesJSONArray()
+			"assetLibraries",
+			_sectionDisplayContextHelper.getDepotEntriesJSONArray(
+				httpServletRequest,
+				getRootObjectEntryFolderExternalReferenceCode())
 		).put(
 			"autocompleteURL",
 			() -> StringBundler.concat(
@@ -121,6 +128,17 @@ public abstract class BaseSectionDisplayContext {
 				"true&entryClassNames=com.liferay.portal.kernel.model.User,",
 				"com.liferay.portal.kernel.model.UserGroup&nestedFields=",
 				"embedded")
+		).put(
+			"availableExportFileFormats",
+			() -> TransformUtil.transform(
+				_translationInfoItemFieldValuesExporterRegistry.
+					getTranslationInfoItemFieldValuesExporters(),
+				this::_getExportFileFormatJSONObject)
+		).put(
+			"availableTargetLocales",
+			_getLocalesJSONArray(
+				themeDisplay.getLocale(),
+				LanguageUtil.getAvailableLocales(themeDisplay.getSiteGroupId()))
 		).put(
 			"baseAssetLibraryViewURL", ActionUtil.getBaseSpaceURL(themeDisplay)
 		).put(
@@ -250,6 +268,8 @@ public abstract class BaseSectionDisplayContext {
 				"L_CMS_BASIC_WEB_CONTENT", "content-icon-basic-content"
 			).put(
 				"L_CMS_BLOG", "content-icon-blog"
+			).put(
+				"L_CMS_EXTERNAL_VIDEO", "file-icon-color-3"
 			).build()
 		).put(
 			"objectDefinitionIcons",
@@ -259,7 +279,18 @@ public abstract class BaseSectionDisplayContext {
 				"L_CMS_BASIC_WEB_CONTENT", "forms"
 			).put(
 				"L_CMS_BLOG", "blogs"
+			).put(
+				"L_CMS_EXTERNAL_VIDEO", "document-multimedia"
 			).build()
+		).put(
+			"objectEntryFolderExternalReferenceCode",
+			() -> {
+				if (objectEntryFolder == null) {
+					return null;
+				}
+
+				return objectEntryFolder.getExternalReferenceCode();
+			}
 		).put(
 			"parentObjectEntryFolderExternalReferenceCode",
 			_getParentObjectEntryFolderExternalReferenceCode()
@@ -269,35 +300,7 @@ public abstract class BaseSectionDisplayContext {
 	}
 
 	public String getAPIURL() {
-		StringBundler sb = new StringBundler(9);
-
-		sb.append("/o/search/v1.0/search?emptySearch=true&filter=");
-
-		if (objectEntryFolder != null) {
-			sb.append("folderId eq ");
-			sb.append(objectEntryFolder.getObjectEntryFolderId());
-
-			if (objectEntryFolder.getStatus() ==
-					WorkflowConstants.STATUS_IN_TRASH) {
-
-				sb.append(" and status eq ");
-				sb.append(WorkflowConstants.STATUS_IN_TRASH);
-			}
-			else {
-				sb.append(" and status in (");
-				sb.append(StringUtil.merge(_statuses, ", "));
-				sb.append(")");
-			}
-		}
-		else {
-			sb.append(getCMSSectionFilterString());
-		}
-
-		sb.append("&nestedFields=embedded,file.metadata,");
-		sb.append("file.previewURL,file.thumbnailURL,");
-		sb.append("systemProperties.objectDefinitionBrief");
-
-		return sb.toString();
+		return "/o/search/v1.0/search?" + getAdditionalAPIURLParameters();
 	}
 
 	public Map<String, Object> getBreadcrumbProps() throws PortalException {
@@ -321,27 +324,9 @@ public abstract class BaseSectionDisplayContext {
 	}
 
 	public CreationMenu getCreationMenu() {
-		return new CreationMenu() {
-			{
-				if (_hasAddEntryPermission()) {
-					for (DropdownItem dropdownItem :
-							getCreationMenuDropdownItems()) {
-
-						JSONArray depotEntriesJSONArray =
-							_getDepotEntriesJSONArray(dropdownItem);
-
-						if (depotEntriesJSONArray == null) {
-							continue;
-						}
-
-						dropdownItem.putData(
-							"assetLibraries", depotEntriesJSONArray);
-
-						addPrimaryDropdownItem(dropdownItem);
-					}
-				}
-			}
-		};
+		return _sectionDisplayContextHelper.getCreationMenu(
+			getCreationMenuDropdownItems(), httpServletRequest,
+			getRootObjectEntryFolderExternalReferenceCode());
 	}
 
 	public List<DropdownItem> getCreationMenuDropdownItems() {
@@ -351,159 +336,8 @@ public abstract class BaseSectionDisplayContext {
 	public abstract Map<String, Object> getEmptyState();
 
 	public List<FDSActionDropdownItem> getFDSActionDropdownItems() {
-		return ListUtil.fromArray(
-			new FDSActionDropdownItem(
-				ActionUtil.getBaseViewFolderURL(themeDisplay) + "{embedded.id}",
-				"view", "actionLinkFolder",
-				LanguageUtil.get(httpServletRequest, "view-folder"), "get",
-				"update", null,
-				HashMapBuilder.<String, Object>put(
-					"entryClassName", ObjectEntryFolder.class.getName()
-				).build()),
-			new FDSActionDropdownItem(
-				StringBundler.concat(
-					themeDisplay.getPathFriendlyURLPublic(),
-					GroupConstants.CMS_FRIENDLY_URL, "/e/edit-folder/",
-					portal.getClassNameId(ObjectEntryFolder.class),
-					"/{embedded.id}?redirect=", themeDisplay.getURLCurrent()),
-				"pencil", "editFolder",
-				LanguageUtil.get(httpServletRequest, "edit"), "get", "update",
-				null,
-				HashMapBuilder.<String, Object>put(
-					"entryClassName", ObjectEntryFolder.class.getName()
-				).build()),
-			new FDSActionDropdownItem(
-				StringBundler.concat(
-					themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
-					GroupConstants.CMS_FRIENDLY_URL,
-					"/edit_content_item?objectEntryId={embedded.id}&",
-					"redirect=", themeDisplay.getURLCurrent()),
-				"pencil", "actionLink",
-				LanguageUtil.get(httpServletRequest, "edit"), "get", "update",
-				null),
-			new FDSActionDropdownItem(
-				null, "share", "share",
-				LanguageUtil.get(httpServletRequest, "share"), "get", "share",
-				"link"),
-			new FDSActionDropdownItem(
-				StringBundler.concat(
-					themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
-					GroupConstants.CMS_FRIENDLY_URL,
-					"/translate_content_item?objectEntryId={embedded.id}&",
-					"redirect=", themeDisplay.getURLCurrent()),
-				"automatic-translate", "translate",
-				LanguageUtil.get(httpServletRequest, "translate"), "get",
-				"update", null),
-			new FDSActionDropdownItem(
-				"{actions.expire.href}", "time", "expire",
-				LanguageUtil.get(httpServletRequest, "expire"), "post",
-				"expire", "headless"),
-			new FDSActionDropdownItem(
-				StringBundler.concat(
-					themeDisplay.getPortalURL(), themeDisplay.getPathMain(),
-					GroupConstants.CMS_FRIENDLY_URL,
-					"/edit_content_item?&p_l_mode=read&p_p_state=",
-					LiferayWindowState.POP_UP, "&redirect=",
-					themeDisplay.getURLCurrent(),
-					"&objectEntryId={embedded.id}"),
-				"view", "view-content",
-				LanguageUtil.get(httpServletRequest, "view"), null, null, null),
-			new FDSActionDropdownItem(
-				StringPool.BLANK, "view", "view-file",
-				LanguageUtil.get(httpServletRequest, "view"), null, null, null),
-			new FDSActionDropdownItem(
-				StringBundler.concat(
-					themeDisplay.getPathFriendlyURLPublic(),
-					GroupConstants.CMS_FRIENDLY_URL,
-					"/version-history?objectEntryId={embedded.id}&backURL=",
-					themeDisplay.getURLCurrent()),
-				"date-time", "version-history",
-				LanguageUtil.get(httpServletRequest, "view-history"), "get",
-				"versions", null),
-			new FDSActionDropdownItem(
-				PortletURLBuilder.create(
-					portal.getControlPanelPortletURL(
-						httpServletRequest, TranslationPortletKeys.TRANSLATION,
-						ActionRequest.RENDER_PHASE)
-				).setMVCRenderCommandName(
-					"/translation/export_translation"
-				).setParameter(
-					"className", "{entryClassName}"
-				).setParameter(
-					"classPK", "{embedded.id}"
-				).setParameter(
-					"groupId", "{embedded.scopeId}"
-				).setWindowState(
-					LiferayWindowState.POP_UP
-				).buildString(),
-				"upload", "export-for-translation",
-				LanguageUtil.get(httpServletRequest, "export-for-translation"),
-				null, null, null),
-			new FDSActionDropdownItem(
-				PortletURLBuilder.create(
-					portal.getControlPanelPortletURL(
-						httpServletRequest, TranslationPortletKeys.TRANSLATION,
-						ActionRequest.RENDER_PHASE)
-				).setMVCRenderCommandName(
-					"/translation/import_translation"
-				).setParameter(
-					"className", "{entryClassName}"
-				).setParameter(
-					"classPK", "{embedded.id}"
-				).setParameter(
-					"groupId", "{embedded.scopeId}"
-				).setWindowState(
-					LiferayWindowState.POP_UP
-				).buildString(),
-				"download", "import-translation",
-				LanguageUtil.get(httpServletRequest, "import-translation"),
-				null, null, null),
-			new FDSActionDropdownItem(
-				PortletURLBuilder.create(
-					portal.getControlPanelPortletURL(
-						httpServletRequest,
-						"com_liferay_portlet_configuration_web_portlet_" +
-							"PortletConfigurationPortlet",
-						ActionRequest.RENDER_PHASE)
-				).setMVCPath(
-					"/edit_permissions.jsp"
-				).setRedirect(
-					themeDisplay.getURLCurrent()
-				).setParameter(
-					"modelResource", "{entryClassName}"
-				).setParameter(
-					"modelResourceDescription", "{embedded.name}"
-				).setParameter(
-					"resourceGroupId", "{embedded.scopeId}"
-				).setParameter(
-					"resourcePrimKey", "{embedded.id}"
-				).setWindowState(
-					LiferayWindowState.POP_UP
-				).buildString(),
-				"password-policies", "permissions",
-				language.get(httpServletRequest, "permissions"), "get",
-				"permissions", "modal-permissions"),
-			new FDSActionDropdownItem(
-				StringPool.BLANK, "password-policies", "default-permissions",
-				LanguageUtil.get(httpServletRequest, "default-permissions"),
-				null, "permissions", null),
-			new FDSActionDropdownItem(
-				StringPool.BLANK, "password-policies",
-				"edit-and-propagate-default-permissions",
-				LanguageUtil.get(
-					httpServletRequest,
-					"edit-and-propagate-default-permissions"),
-				null, "permissions", null),
-			new FDSActionDropdownItem(
-				StringPool.BLANK, "password-policies",
-				"reset-to-default-permissions",
-				LanguageUtil.get(
-					httpServletRequest, "reset-to-default-permissions"),
-				null, "permissions", null),
-			new FDSActionDropdownItem(
-				null, "trash", "delete",
-				language.get(httpServletRequest, "delete"), null, "delete",
-				null));
+		return _sectionDisplayContextHelper.getFDSActionDropdownItems(
+			httpServletRequest);
 	}
 
 	protected void addBreadcrumbItem(
@@ -520,9 +354,7 @@ public abstract class BaseSectionDisplayContext {
 	}
 
 	protected String appendStatus(String filterString) {
-		return StringBundler.concat(
-			filterString, " and status in (", StringUtil.merge(_statuses, ", "),
-			")");
+		return _sectionDisplayContextHelper.appendStatus(filterString);
 	}
 
 	protected abstract String getCMSSectionFilterString();
@@ -546,90 +378,23 @@ public abstract class BaseSectionDisplayContext {
 	protected final Portal portal;
 	protected final ThemeDisplay themeDisplay;
 
-	private List<Long> _getAcceptedGroupIds(long objectDefinitionId) {
-		List<Long> acceptedGroupIds = new ArrayList<>();
+	private JSONObject _getExportFileFormatJSONObject(
+		TranslationInfoItemFieldValuesExporter
+			translationInfoItemFieldValuesExporter) {
 
-		ObjectDefinitionSetting objectDefinitionSetting =
-			_objectDefinitionSettingLocalService.fetchObjectDefinitionSetting(
-				objectDefinitionId,
-				ObjectDefinitionSettingConstants.NAME_ACCEPTED_GROUP_IDS);
+		return JSONUtil.put(
+			"displayName",
+			() -> {
+				InfoLocalizedValue<String> labelInfoLocalizedValue =
+					translationInfoItemFieldValuesExporter.
+						getLabelInfoLocalizedValue();
 
-		for (String groupId :
-				StringUtil.split(objectDefinitionSetting.getValue())) {
-
-			DepotEntry depotEntry = depotEntryLocalService.fetchGroupDepotEntry(
-				GetterUtil.getLong(groupId));
-
-			if (depotEntry != null) {
-				acceptedGroupIds.add(depotEntry.getGroupId());
+				return labelInfoLocalizedValue.getValue(
+					themeDisplay.getLocale());
 			}
-		}
-
-		return acceptedGroupIds;
-	}
-
-	private JSONArray _getDepotEntriesJSONArray() {
-		if (objectEntryFolder != null) {
-			return _getDepotEntriesJSONArray(
-				List.of(objectEntryFolder.getGroupId()));
-		}
-
-		return _getDepotEntriesJSONArray(
-			TransformUtil.transform(
-				depotEntryLocalService.getDepotEntries(
-					themeDisplay.getCompanyId(), DepotConstants.TYPE_SPACE),
-				DepotEntry::getGroupId));
-	}
-
-	private JSONArray _getDepotEntriesJSONArray(DropdownItem dropdownItem) {
-		Map<String, Object> dropdownItemData =
-			(HashMap<String, Object>)dropdownItem.get("data");
-
-		long objectDefinitionId = GetterUtil.getLong(
-			dropdownItemData.get("objectDefinitionId"));
-
-		if (objectDefinitionId != 0) {
-			return _getDepotEntriesJSONArray(objectDefinitionId);
-		}
-
-		return _getDepotEntriesJSONArray();
-	}
-
-	private JSONArray _getDepotEntriesJSONArray(List<Long> groupIds) {
-		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
-
-		for (Long groupId : groupIds) {
-			JSONObject jsonObject = _getJSONObject(groupId);
-
-			if (jsonObject != null) {
-				jsonArray.put(jsonObject);
-			}
-		}
-
-		return jsonArray;
-	}
-
-	private JSONArray _getDepotEntriesJSONArray(long objectDefinitionId) {
-		if (_isAcceptAllGroups(objectDefinitionId)) {
-			return _getDepotEntriesJSONArray();
-		}
-
-		List<Long> acceptedGroupIds = _getAcceptedGroupIds(objectDefinitionId);
-
-		if (acceptedGroupIds.isEmpty()) {
-			return null;
-		}
-
-		if (objectEntryFolder != null) {
-			if (!acceptedGroupIds.contains(objectEntryFolder.getGroupId())) {
-				return null;
-			}
-
-			return _getDepotEntriesJSONArray(
-				List.of(objectEntryFolder.getGroupId()));
-		}
-
-		return _getDepotEntriesJSONArray(acceptedGroupIds);
+		).put(
+			"mimeType", translationInfoItemFieldValuesExporter.getMimeType()
+		);
 	}
 
 	private Map<String, String> _getFileMimeTypeCssClasses() {
@@ -728,22 +493,6 @@ public abstract class BaseSectionDisplayContext {
 		return fileMimeTypeValues;
 	}
 
-	private JSONObject _getJSONObject(long groupId) {
-		Group group = groupLocalService.fetchGroup(groupId);
-
-		if (group == null) {
-			return null;
-		}
-
-		return JSONUtil.put(
-			"externalReferenceCode", group.getExternalReferenceCode()
-		).put(
-			"groupId", group.getGroupId()
-		).put(
-			"name", group.getName(themeDisplay.getLocale())
-		);
-	}
-
 	private String _getLayoutName() {
 		Layout layout = themeDisplay.getLayout();
 
@@ -752,6 +501,23 @@ public abstract class BaseSectionDisplayContext {
 		}
 
 		return layout.getName(themeDisplay.getLocale(), true);
+	}
+
+	private JSONArray _getLocalesJSONArray(
+		Locale locale, Collection<Locale> locales) {
+
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+
+		locales.forEach(
+			currentLocale -> jsonArray.put(
+				JSONUtil.put(
+					"displayName",
+					LocaleUtil.getLocaleDisplayName(currentLocale, locale)
+				).put(
+					"languageId", LocaleUtil.toLanguageId(currentLocale)
+				)));
+
+		return jsonArray;
 	}
 
 	private ObjectEntryFolder _getObjectEntryFolder(
@@ -780,65 +546,13 @@ public abstract class BaseSectionDisplayContext {
 		return objectEntryFolder.getExternalReferenceCode();
 	}
 
-	private boolean _hasAddEntryPermission() {
-		if (objectEntryFolder == null) {
-			return true;
-		}
-
-		try {
-			return _objectEntryFolderModelResourcePermission.contains(
-				themeDisplay.getPermissionChecker(),
-				objectEntryFolder.getObjectEntryFolderId(),
-				ActionKeys.ADD_ENTRY);
-		}
-		catch (PortalException portalException) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(portalException);
-			}
-		}
-
-		return false;
-	}
-
-	private boolean _isAcceptAllGroups(long objectDefinitionId) {
-		ObjectDefinitionSetting objectDefinitionSetting =
-			_objectDefinitionSettingLocalService.fetchObjectDefinitionSetting(
-				objectDefinitionId,
-				ObjectDefinitionSettingConstants.NAME_ACCEPT_ALL_GROUPS);
-
-		if ((objectDefinitionSetting != null) &&
-			GetterUtil.getBoolean(objectDefinitionSetting.getValue())) {
-
-			return true;
-		}
-
-		objectDefinitionSetting =
-			_objectDefinitionSettingLocalService.fetchObjectDefinitionSetting(
-				objectDefinitionId,
-				ObjectDefinitionSettingConstants.NAME_ACCEPTED_GROUP_IDS);
-
-		if ((objectDefinitionSetting == null) ||
-			Validator.isNull(objectDefinitionSetting.getValue())) {
-
-			return true;
-		}
-
-		return false;
-	}
-
 	private static final Log _log = LogFactoryUtil.getLog(
 		BaseSectionDisplayContext.class);
 
-	private static final List<Integer> _statuses = Arrays.asList(
-		WorkflowConstants.STATUS_APPROVED, WorkflowConstants.STATUS_DRAFT,
-		WorkflowConstants.STATUS_EXPIRED, WorkflowConstants.STATUS_PENDING,
-		WorkflowConstants.STATUS_SCHEDULED);
-
 	private final DLConfiguration _dlConfiguration;
 	private final ObjectDefinitionService _objectDefinitionService;
-	private final ObjectDefinitionSettingLocalService
-		_objectDefinitionSettingLocalService;
-	private final ModelResourcePermission<ObjectEntryFolder>
-		_objectEntryFolderModelResourcePermission;
+	private final SectionDisplayContextHelper _sectionDisplayContextHelper;
+	private final TranslationInfoItemFieldValuesExporterRegistry
+		_translationInfoItemFieldValuesExporterRegistry;
 
 }

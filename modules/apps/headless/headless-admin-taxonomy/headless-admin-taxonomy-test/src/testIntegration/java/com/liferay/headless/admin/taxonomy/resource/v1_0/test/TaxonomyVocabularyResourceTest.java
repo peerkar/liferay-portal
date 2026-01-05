@@ -6,7 +6,10 @@
 package com.liferay.headless.admin.taxonomy.resource.v1_0.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.asset.kernel.model.AssetVocabulary;
+import com.liferay.asset.kernel.model.AssetVocabularyConstants;
 import com.liferay.asset.kernel.service.AssetVocabularyGroupRelLocalService;
+import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
 import com.liferay.depot.constants.DepotConstants;
 import com.liferay.depot.model.DepotEntry;
 import com.liferay.depot.service.DepotEntryLocalService;
@@ -17,7 +20,9 @@ import com.liferay.headless.admin.taxonomy.client.pagination.Page;
 import com.liferay.headless.admin.taxonomy.client.pagination.Pagination;
 import com.liferay.headless.admin.taxonomy.client.problem.Problem;
 import com.liferay.headless.admin.taxonomy.client.resource.v1_0.TaxonomyVocabularyResource;
+import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.lazy.referencing.LazyReferencingThreadLocal;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.Role;
@@ -37,7 +42,6 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.test.rule.FeatureFlag;
-import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
 
 import java.util.List;
@@ -211,9 +215,7 @@ public class TaxonomyVocabularyResourceTest
 		}
 	}
 
-	@FeatureFlags(
-		featureFlags = {@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-32050")}
-	)
+	@FeatureFlag("LPD-17564")
 	@Override
 	@Test
 	public void testGetSiteTaxonomyVocabulariesPage() throws Exception {
@@ -244,9 +246,18 @@ public class TaxonomyVocabularyResourceTest
 	}
 
 	@Override
+	@Test
+	public void testPutTaxonomyVocabulary() throws Exception {
+		super.testPutTaxonomyVocabulary();
+
+		_testPutTaxonomyVocabularyUpdatesEmptyVocabulary();
+	}
+
+	@Override
 	protected String[] getAdditionalAssertFieldNames() {
 		return new String[] {
-			"assetTypes", "description", "multiValued", "name", "visibilityType"
+			"assetTypes", "description", "multiValued", "name",
+			"numberOfTaxonomyCategories", "visibilityType"
 		};
 	}
 
@@ -277,6 +288,7 @@ public class TaxonomyVocabularyResourceTest
 					RandomTestUtil.randomString());
 				multiValued = RandomTestUtil.randomBoolean();
 				name = RandomTestUtil.randomString();
+				numberOfTaxonomyCategories = 0;
 				siteId = testGroup.getGroupId();
 				visibilityType = VisibilityType.PUBLIC;
 			}
@@ -500,9 +512,56 @@ public class TaxonomyVocabularyResourceTest
 		Assert.assertNull(getTaxonomyVocabulary.getPermissions());
 	}
 
+	private void _testPutTaxonomyVocabularyUpdatesEmptyVocabulary()
+		throws Exception {
+
+		AssetVocabulary assetVocabulary = null;
+
+		try (SafeCloseable safeCloseable =
+				LazyReferencingThreadLocal.setEnabledWithSafeCloseable(true)) {
+
+			assetVocabulary =
+				_assetVocabularyLocalService.getOrAddEmptyVocabulary(
+					RandomTestUtil.randomString(), TestPropsValues.getUserId(),
+					testGroup.getGroupId());
+		}
+
+		TaxonomyVocabulary updateTaxonomyVocabulary = new TaxonomyVocabulary() {
+			{
+				multiValued = false;
+				name = RandomTestUtil.randomString();
+				visibilityType = VisibilityType.PUBLIC;
+			}
+		};
+
+		TaxonomyVocabulary updatedTaxonomyVocabulary =
+			taxonomyVocabularyResource.
+				putSiteTaxonomyVocabularyByExternalReferenceCode(
+					assetVocabulary.getGroupId(),
+					assetVocabulary.getExternalReferenceCode(),
+					updateTaxonomyVocabulary);
+
+		Assert.assertEquals(
+			TaxonomyVocabulary.VisibilityType.PUBLIC,
+			updatedTaxonomyVocabulary.getVisibilityType());
+
+		assetVocabulary =
+			_assetVocabularyLocalService.
+				getAssetVocabularyByExternalReferenceCode(
+					assetVocabulary.getExternalReferenceCode(),
+					assetVocabulary.getGroupId());
+
+		Assert.assertEquals(
+			AssetVocabularyConstants.VISIBILITY_TYPE_PUBLIC,
+			assetVocabulary.getVisibilityType());
+	}
+
 	@Inject
 	private AssetVocabularyGroupRelLocalService
 		_assetVocabularyGroupRelLocalService;
+
+	@Inject
+	private AssetVocabularyLocalService _assetVocabularyLocalService;
 
 	@Inject
 	private DepotEntryLocalService _depotEntryLocalService;

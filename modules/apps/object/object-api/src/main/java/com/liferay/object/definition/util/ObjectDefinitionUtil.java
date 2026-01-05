@@ -6,6 +6,8 @@
 package com.liferay.object.definition.util;
 
 import com.liferay.batch.engine.unit.BatchEngineUnitThreadLocal;
+import com.liferay.object.constants.ObjectDefinitionConstants;
+import com.liferay.object.constants.ObjectPortletKeys;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.events.StartupHelperUtil;
 import com.liferay.portal.kernel.portlet.FriendlyURLResolver;
@@ -31,6 +33,14 @@ public class ObjectDefinitionUtil {
 		}
 
 		return _allowedModifiableSystemObjectDefinitionNames.get(name);
+	}
+
+	public static String getPortletId(String className) {
+		return StringUtil.replaceFirst(
+			className,
+			ObjectDefinitionConstants.
+				CLASS_NAME_PREFIX_CUSTOM_OBJECT_DEFINITION,
+			ObjectPortletKeys.OBJECT_DEFINITIONS + StringPool.UNDERLINE);
 	}
 
 	public static boolean isAllowedModifiableSystemObjectDefinitionName(
@@ -97,7 +107,8 @@ public class ObjectDefinitionUtil {
 	}
 
 	private static final String[] _ALLOWED_INVOKER_BUNDLE_SYMBOLIC_NAMES = {
-		"com.liferay.commerce.service", "com.liferay.cookies.impl",
+		"com.liferay.ai.hub.site.initializer", "com.liferay.commerce.service",
+		"com.liferay.cookies.impl", "com.liferay.digital.sales.room.impl",
 		"com.liferay.frontend.data.set.admin.web",
 		"com.liferay.frontend.data.set.impl",
 		"com.liferay.headless.builder.impl", "com.liferay.list.type.service",
@@ -154,9 +165,15 @@ public class ObjectDefinitionUtil {
 		).put(
 			"DataSetSelectionFilter", "/data-set-admin/selection-filters"
 		).put(
+			"DataSetSnapshot", "/data-set-admin/snapshots"
+		).put(
 			"DataSetSort", "/data-set-admin/sorts"
 		).put(
 			"DataSetTableSection", "/data-set-admin/table-sections"
+		).put(
+			"DSRRoom", "/digital-sales-room/rooms"
+		).put(
+			"DSRTemplate", "/digital-sales-room/templates"
 		).put(
 			"FDSAction", "/data-set-manager/actions"
 		).put(
@@ -182,6 +199,8 @@ public class ObjectDefinitionUtil {
 			"FunctionalCookieEntry", "/functional-cookies-entries"
 		).put(
 			"KnowledgeBase", "/cms/knowledge-bases"
+		).put(
+			"MCPServer", "/mcp/servers"
 		).put(
 			"MCPServerPrompt", "/mcp/server-prompts"
 		).put(

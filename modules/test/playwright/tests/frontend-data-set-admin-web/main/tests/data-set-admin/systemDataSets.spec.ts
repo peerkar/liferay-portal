@@ -8,6 +8,7 @@ import {Locator, expect, mergeTests} from '@playwright/test';
 import {featureFlagsTest} from '../../../../../fixtures/featureFlagsTest';
 import {isolatedSiteTest} from '../../../../../fixtures/isolatedSiteTest';
 import {loginTest} from '../../../../../fixtures/loginTest';
+import getRandomString from '../../../../../utils/getRandomString';
 import {waitForAlert} from '../../../../../utils/waitForAlert';
 import {fdsSamplePageTest} from '../../../../frontend-data-set-web/main/fixtures/fdsSamplePageTest';
 import {dataSetManagerApiHelpersTest} from '../../fixtures/dataSetManagerApiHelpersTest';
@@ -268,7 +269,7 @@ test(
 				.locator('tr')
 				.filter({hasText: 'System Action'});
 
-			await expect(itemActionRows).toHaveCount(14);
+			await expect(itemActionRows).toHaveCount(3);
 
 			for (const itemActionRow of await itemActionRows.all()) {
 				await expect(
@@ -622,6 +623,117 @@ test(
 			await expect(advancedSampleListItem).not.toHaveClass(/disabled/);
 
 			await creationModal.cancelButton.click();
+		});
+	}
+);
+
+test(
+	'Deleting a System Data Set does not remove custom views',
+	{tag: '@LPD-72423'},
+	async ({fdsSamplePage, page, site, systemDataSetsPage}) => {
+		let pageUrl: string;
+
+		const userView1Name = getRandomString();
+
+		await test.step('Add FDS Sample Widget for object definition generation', async () => {
+			await fdsSamplePage.setupFDSSampleWidget({site});
+
+			pageUrl = page.url();
+		});
+
+		await test.step('Create a user view', async () => {
+			await fdsSamplePage.userViewsActionsButton.click();
+
+			const actionsDropdownId =
+				await fdsSamplePage.userViewsActionsButton.getAttribute(
+					'aria-controls'
+				);
+
+			const actionsDropdown = page.locator(`#${actionsDropdownId}`);
+
+			await actionsDropdown
+				.filter({has: page.getByRole('menu')})
+				.waitFor();
+
+			const menuItem = actionsDropdown.getByRole('menuitem', {
+				name: 'Save View As...',
+			});
+
+			await expect(menuItem).toBeVisible();
+
+			await menuItem.click();
+
+			await expect(fdsSamplePage.userViewsSaveModal).toBeInViewport();
+
+			await fdsSamplePage.userViewsSaveModal
+				.getByLabel('NameRequired')
+				.fill(userView1Name);
+
+			await fdsSamplePage.userViewsSaveModal
+				.getByRole('button', {name: 'Save'})
+				.click();
+		});
+
+		await test.step('Import an Advanced Sample system data set', async () => {
+			await systemDataSetsPage.goto();
+
+			const creationModal = systemDataSetsPage.creationModal;
+
+			const advancedSampleListItem = creationModal.listItems.filter({
+				hasText: 'Advanced Sample',
+			});
+
+			await systemDataSetsPage.createButton.click();
+
+			await advancedSampleListItem.click();
+
+			await creationModal.createButton.click();
+
+			await waitForAlert(systemDataSetsPage.page);
+		});
+
+		await test.step('Delete the imported system data set', async () => {
+			const fdsRows = systemDataSetsPage.pageContainer.locator('.fds tr');
+
+			const advancedSampleRow = fdsRows.filter({
+				hasText: 'Advanced Sample',
+			});
+
+			await advancedSampleRow.locator('.dropdown-toggle').click();
+
+			await systemDataSetsPage.page
+				.locator('.dropdown-menu.show')
+				.getByRole('menuitem', {name: 'Delete'})
+				.click();
+
+			const deleteModal = systemDataSetsPage.page.getByRole('dialog');
+
+			await deleteModal.getByRole('button', {name: 'Delete'}).click();
+
+			await waitForAlert(systemDataSetsPage.page);
+
+			await expect(advancedSampleRow).not.toBeAttached();
+		});
+
+		await test.step('Check that the previously created user view still exists', async () => {
+			await page.goto(pageUrl);
+
+			await fdsSamplePage.userViewsSelectorButton.click();
+
+			const userViewsDropdownId =
+				await fdsSamplePage.userViewsSelectorButton.getAttribute(
+					'aria-controls'
+				);
+
+			const userViewsDropdown = page.locator(`#${userViewsDropdownId}`);
+
+			await userViewsDropdown.waitFor();
+
+			const userViewMenuItem = userViewsDropdown.getByRole('option', {
+				name: userView1Name,
+			});
+
+			await expect(userViewMenuItem).toBeVisible();
 		});
 	}
 );

@@ -40,8 +40,11 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.util.SystemBundleUtil;
 import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.PermissionService;
+import com.liferay.portal.kernel.service.ResourceActionLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -53,8 +56,12 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.language.LanguageResources;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
+import com.liferay.portal.vulcan.fields.NestedFieldsSupplier;
+import com.liferay.portal.vulcan.permission.Permission;
+import com.liferay.portal.vulcan.permission.PermissionUtil;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -86,26 +93,28 @@ public class ObjectDefinitionUtil {
 		ObjectValidationRuleLocalService objectValidationRuleLocalService,
 		DTOConverter<com.liferay.object.model.ObjectView, ObjectView>
 			objectViewDTOConverter,
-		ObjectViewLocalService objectViewLocalService, Portal portal,
+		ObjectViewLocalService objectViewLocalService,
+		PermissionService permissionService, Portal portal,
+		ResourceActionLocalService resourceActionLocalService,
 		com.liferay.object.model.ObjectDefinition
 			serviceBuilderObjectDefinition,
 		SystemObjectDefinitionManagerRegistry
 			systemObjectDefinitionManagerRegistry,
-		UserLocalService userLocalService,
+		User user, UserLocalService userLocalService,
 		WorkflowDefinitionLinkLocalService workflowDefinitionLinkLocalService) {
 
 		if (serviceBuilderObjectDefinition == null) {
 			return null;
 		}
 
+		SystemObjectDefinitionManager systemObjectDefinitionManager =
+			systemObjectDefinitionManagerRegistry.
+				getSystemObjectDefinitionManager(
+					serviceBuilderObjectDefinition.getName());
+
 		String restContextPath = StringPool.BLANK;
 
 		if (serviceBuilderObjectDefinition.isUnmodifiableSystemObject()) {
-			SystemObjectDefinitionManager systemObjectDefinitionManager =
-				systemObjectDefinitionManagerRegistry.
-					getSystemObjectDefinitionManager(
-						serviceBuilderObjectDefinition.getName());
-
 			if (systemObjectDefinitionManager != null) {
 				JaxRsApplicationDescriptor jaxRsApplicationDescriptor =
 					systemObjectDefinitionManager.
@@ -170,25 +179,31 @@ public class ObjectDefinitionUtil {
 							isEnableFormContainer();
 					});
 				setEnableFriendlyURLCustomization(
-					() -> {
-						if (!FeatureFlagManagerUtil.isEnabled("LPD-21926")) {
-							return null;
-						}
-
-						return serviceBuilderObjectDefinition.
-							isEnableFriendlyURLCustomization();
-					});
+					serviceBuilderObjectDefinition::
+						isEnableFriendlyURLCustomization);
 				setEnableIndexSearch(
 					serviceBuilderObjectDefinition::isEnableIndexSearch);
 				setEnableLocalization(
-					serviceBuilderObjectDefinition::isEnableLocalization);
+					() -> {
+						if (serviceBuilderObjectDefinition.
+								isUnmodifiableSystemObject()) {
+
+							return systemObjectDefinitionManager.
+								isEnableLocalization();
+						}
+
+						return true;
+					});
 				setEnableObjectEntryDraft(
 					serviceBuilderObjectDefinition::isEnableObjectEntryDraft);
 				setEnableObjectEntryHistory(
 					serviceBuilderObjectDefinition::isEnableObjectEntryHistory);
 				setEnableObjectEntrySchedule(
 					() -> {
-						if (!FeatureFlagManagerUtil.isEnabled("LPD-17564")) {
+						if (!FeatureFlagManagerUtil.isEnabled(
+								serviceBuilderObjectDefinition.getCompanyId(),
+								"LPD-17564")) {
+
 							return null;
 						}
 
@@ -209,7 +224,10 @@ public class ObjectDefinitionUtil {
 					});
 				setEnableObjectEntryVersioning(
 					() -> {
-						if (!FeatureFlagManagerUtil.isEnabled("LPD-17564")) {
+						if (!FeatureFlagManagerUtil.isEnabled(
+								serviceBuilderObjectDefinition.getCompanyId(),
+								"LPD-17564")) {
+
 							return null;
 						}
 
@@ -219,14 +237,7 @@ public class ObjectDefinitionUtil {
 				setExternalReferenceCode(
 					serviceBuilderObjectDefinition::getExternalReferenceCode);
 				setFriendlyURLSeparator(
-					() -> {
-						if (!FeatureFlagManagerUtil.isEnabled("LPD-21926")) {
-							return null;
-						}
-
-						return serviceBuilderObjectDefinition.
-							getFriendlyURLSeparator();
-					});
+					serviceBuilderObjectDefinition::getFriendlyURLSeparator);
 				setId(serviceBuilderObjectDefinition::getObjectDefinitionId);
 				setLabel(
 					() -> LocalizedMapUtil.getLanguageIdMap(
@@ -315,6 +326,40 @@ public class ObjectDefinitionUtil {
 					serviceBuilderObjectDefinition::getPanelCategoryKey);
 				setParameterRequired(
 					() -> finalRESTContextPath.matches(".*/\\{\\w+}/.*"));
+				setPermissions(
+					() -> {
+						if (!FeatureFlagManagerUtil.isEnabled(
+								serviceBuilderObjectDefinition.getCompanyId(),
+								"LPD-35914")) {
+
+							return null;
+						}
+
+						return NestedFieldsSupplier.supply(
+							"permissions",
+							nestedFieldNames -> {
+								String permissionName =
+									com.liferay.object.model.ObjectDefinition.
+										class.getName();
+
+								permissionService.checkPermission(
+									user.getGroupId(), permissionName,
+									serviceBuilderObjectDefinition.
+										getObjectDefinitionId());
+
+								Collection<Permission> permissions =
+									PermissionUtil.getPermissions(
+										serviceBuilderObjectDefinition.
+											getCompanyId(),
+										resourceActionLocalService.
+											getResourceActions(permissionName),
+										serviceBuilderObjectDefinition.
+											getObjectDefinitionId(),
+										permissionName, null);
+
+								return permissions.toArray(new Permission[0]);
+							});
+					});
 				setPluralLabel(
 					() -> LocalizedMapUtil.getLanguageIdMap(
 						serviceBuilderObjectDefinition.getPluralLabelMap()));
@@ -351,7 +396,10 @@ public class ObjectDefinitionUtil {
 					});
 				setStorageType(
 					() -> {
-						if (!FeatureFlagManagerUtil.isEnabled("LPS-135430")) {
+						if (!FeatureFlagManagerUtil.isEnabled(
+								serviceBuilderObjectDefinition.getCompanyId(),
+								"LPS-135430")) {
+
 							return null;
 						}
 
@@ -374,7 +422,10 @@ public class ObjectDefinitionUtil {
 					});
 				setWorkflowDefinitionLinks(
 					() -> {
-						if (!FeatureFlagManagerUtil.isEnabled("LPD-17564")) {
+						if (!FeatureFlagManagerUtil.isEnabled(
+								serviceBuilderObjectDefinition.getCompanyId(),
+								"LPD-17564")) {
+
 							return null;
 						}
 

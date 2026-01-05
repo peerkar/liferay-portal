@@ -45,7 +45,6 @@ import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.URLUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
@@ -65,7 +64,6 @@ import org.junit.runner.RunWith;
 /**
  * @author Alvaro Saugar
  */
-@FeatureFlag("LPD-6378")
 @RunWith(Arquillian.class)
 public class UpdatePasswordActionTest {
 
@@ -117,7 +115,7 @@ public class UpdatePasswordActionTest {
 			_layoutUtilityPageEntryLocalService.addLayoutUtilityPageEntry(
 				null, serviceContext.getUserId(), group.getGroupId(), 0, 0,
 				true, RandomTestUtil.randomString(),
-				LayoutUtilityPageEntryConstants.TYPE_FORGOT_PASSWORD, 0,
+				LayoutUtilityPageEntryConstants.TYPE_FORGOT_PASSWORD, null,
 				serviceContext);
 
 		Layout layout = _layoutLocalService.fetchLayout(

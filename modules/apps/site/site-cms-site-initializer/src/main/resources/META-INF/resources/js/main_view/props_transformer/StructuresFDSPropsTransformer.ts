@@ -5,6 +5,7 @@
 
 import {IInternalRenderer} from '@liferay/frontend-data-set-web';
 
+import {ObjectDefinition} from '../../common/types/ObjectDefinition';
 import getLocalizedValue from '../../common/utils/getLocalizedValue';
 import deleteStructureAction from './actions/deleteStructureAction';
 import importStructureAction from './actions/importStructureAction';
@@ -56,8 +57,10 @@ export default function StructuresFDSPropsTransformer({
 				actions: {
 					delete: {href: string; method: string};
 				};
+				id: number;
 				label: Partial<Liferay.Language.FullyLocalizedValue<string>>;
 				objectFolderExternalReferenceCode: string;
+				objectRelationships: ObjectDefinition['objectRelationships'];
 				status: {code: number};
 			};
 			loadData: () => {};
@@ -77,7 +80,6 @@ export default function StructuresFDSPropsTransformer({
 				const target = event.target as HTMLAnchorElement;
 
 				await deleteStructureAction({
-					deleteAction: itemData.actions.delete,
 					getObjectDefinitionDeleteInfoURL: target.href,
 					loadData,
 					name:
@@ -85,7 +87,9 @@ export default function StructuresFDSPropsTransformer({
 							itemData.label,
 							Liferay.ThemeDisplay.getLanguageId()
 						) || getLocalizedValue(itemData.label),
+					relationships: itemData.objectRelationships,
 					status: itemData.status.code,
+					structureId: itemData.id,
 				});
 			}
 		},

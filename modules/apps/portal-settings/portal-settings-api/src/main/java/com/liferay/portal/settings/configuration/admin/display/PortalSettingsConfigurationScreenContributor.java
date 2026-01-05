@@ -12,12 +12,24 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.io.Serializable;
+
+import java.util.Dictionary;
 import java.util.Locale;
 
 /**
  * @author Drew Brokke
  */
 public interface PortalSettingsConfigurationScreenContributor {
+
+	public default Dictionary<String, Object> exportProperties(
+			Serializable scopePK)
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"Export capability is not implemented for configuration: " +
+				getKey());
+	}
 
 	public String getCategoryKey();
 
@@ -45,6 +57,15 @@ public interface PortalSettingsConfigurationScreenContributor {
 		RenderRequest renderRequest, RenderResponse renderResponse) {
 
 		return null;
+	}
+
+	public default void importProperties(
+			Dictionary<String, Object> properties, Serializable scopePK)
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"Import capability is not implemented for configuration: " +
+				getKey());
 	}
 
 	public default boolean isDeprecated() {

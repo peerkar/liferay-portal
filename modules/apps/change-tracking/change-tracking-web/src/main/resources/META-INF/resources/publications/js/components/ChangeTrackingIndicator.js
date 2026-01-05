@@ -487,7 +487,7 @@ export default function ChangeTrackingIndicator({
 		return (
 			<ClayPopover
 				alignPosition="bottom"
-				closeOnClickOutside={!cms}
+				closeOnClickOutside={true}
 				disableScroll={true}
 				header={
 					<ClayLayout.ContentRow verticalAlign="center">
@@ -495,35 +495,29 @@ export default function ChangeTrackingIndicator({
 							{warningHeader}
 						</ClayLayout.ContentCol>
 
-						{!cms && (
-							<ClayLayout.ContentCol>
-								<ClayButtonWithIcon
-									aria-label={Liferay.Language.get('close')}
-									displayType="unstyled"
-									onClick={() => {
-										setShowWarning(false);
+						<ClayLayout.ContentCol>
+							<ClayButtonWithIcon
+								aria-label={Liferay.Language.get('close')}
+								displayType="unstyled"
+								onClick={() => {
+									setShowWarning(false);
 
-										if (popoverCheckbox) {
-											savePortalPreferences(
-												'hideContextChangeWarningDuration',
-												saveDisplayPreferenceURL,
-												hideContextChangeWarningDuration
-											);
-										}
-									}}
-									size="xs"
-									symbol="times"
-									title={Liferay.Language.get('close')}
-								/>
-							</ClayLayout.ContentCol>
-						)}
+									if (popoverCheckbox) {
+										savePortalPreferences(
+											'hideContextChangeWarningDuration',
+											saveDisplayPreferenceURL,
+											hideContextChangeWarningDuration
+										);
+									}
+								}}
+								size="xs"
+								symbol="times"
+								title={Liferay.Language.get('close')}
+							/>
+						</ClayLayout.ContentCol>
 					</ClayLayout.ContentRow>
 				}
 				onShowChange={(value) => {
-					if (cms) {
-						return;
-					}
-
 					setShowWarning(value);
 
 					if (popoverCheckbox) {
@@ -760,48 +754,46 @@ export default function ChangeTrackingIndicator({
 					{showWarning ? renderWarning() : renderDropdown()}
 				</ClayLayout.ContentCol>
 
-				{Liferay.FeatureFlags['LPD-20556'] ? (
-					<>
-						{timelineItemsURL ? (
-							<ClayLayout.ContentCol>
-								<div className="autofit-col row-divider">
-									<div />
-								</div>
-							</ClayLayout.ContentCol>
-						) : null}
-
+				<>
+					{timelineItemsURL ? (
 						<ClayLayout.ContentCol>
-							<div
-								className="c-inner"
-								style={{
-									padding: '1px',
-									width: '21px',
-								}}
-								tabIndex="-1"
-								title="Timeline"
-							>
-								{renderTimeline()}
+							<div className="autofit-col row-divider">
+								<div />
 							</div>
 						</ClayLayout.ContentCol>
+					) : null}
 
-						<ClayLayout.ContentCol>
-							<div
-								className="c-inner"
-								data-qa-id={Liferay.Language.get(
-									'production-conflict'
-								)}
-								style={{
-									margin: '2px',
-									padding: '1px',
-									width: '16px !important',
-								}}
-								tabIndex="-1"
-							>
-								{renderConflictIcon()}
-							</div>
-						</ClayLayout.ContentCol>
-					</>
-				) : null}
+					<ClayLayout.ContentCol>
+						<div
+							className="c-inner"
+							style={{
+								padding: '1px',
+								width: '21px',
+							}}
+							tabIndex="-1"
+							title="Timeline"
+						>
+							{renderTimeline()}
+						</div>
+					</ClayLayout.ContentCol>
+
+					<ClayLayout.ContentCol>
+						<div
+							className="c-inner"
+							data-qa-id={Liferay.Language.get(
+								'production-conflict'
+							)}
+							style={{
+								margin: '2px',
+								padding: '1px',
+								width: '16px !important',
+							}}
+							tabIndex="-1"
+						>
+							{renderConflictIcon()}
+						</div>
+					</ClayLayout.ContentCol>
+				</>
 			</ClayLayout.ContentRow>
 		</>
 	);

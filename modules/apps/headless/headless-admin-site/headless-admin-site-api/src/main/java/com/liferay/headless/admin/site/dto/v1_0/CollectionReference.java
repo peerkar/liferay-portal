@@ -56,7 +56,7 @@ import java.util.function.Supplier;
 	}
 )
 @JsonTypeInfo(
-	include = JsonTypeInfo.As.PROPERTY, property = "collectionType",
+	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "collectionType",
 	use = JsonTypeInfo.Id.NAME, visible = true
 )
 @XmlRootElement(name = "CollectionReference")
@@ -167,9 +167,7 @@ public abstract class CollectionReference implements Serializable {
 			sb.append("\"collectionType\": ");
 
 			sb.append("\"");
-
 			sb.append(collectionType);
-
 			sb.append("\"");
 		}
 

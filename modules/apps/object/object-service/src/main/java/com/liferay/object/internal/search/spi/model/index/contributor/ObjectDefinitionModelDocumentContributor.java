@@ -26,10 +26,12 @@ public class ObjectDefinitionModelDocumentContributor
 	public void contribute(
 		Document document, ObjectDefinition objectDefinition) {
 
+		document.addKeyword(Field.HIDDEN, !objectDefinition.isVisible());
 		document.addText(Field.NAME, objectDefinition.getShortName());
 		document.addKeyword(Field.STATUS, objectDefinition.getStatus());
 		document.addLocalizedKeyword(
 			"localized_label", objectDefinition.getLabelMap(), true, true);
+		document.addKeyword("modifiable", objectDefinition.isModifiable());
 		document.addKeyword(
 			"objectDefinitionId", objectDefinition.getObjectDefinitionId());
 		document.addKeyword(

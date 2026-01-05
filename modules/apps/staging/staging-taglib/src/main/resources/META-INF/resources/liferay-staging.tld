@@ -96,8 +96,20 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
+			<description>The language keys of the checkbox's subtitles.</description>
+			<name>subtitles</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
 			<description>The language key of the checkbox's suggestion text. It is displayed after the label.</description>
 			<name>suggestion</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>The language key of the checkbox's tag.</description>
+			<name>tag</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>

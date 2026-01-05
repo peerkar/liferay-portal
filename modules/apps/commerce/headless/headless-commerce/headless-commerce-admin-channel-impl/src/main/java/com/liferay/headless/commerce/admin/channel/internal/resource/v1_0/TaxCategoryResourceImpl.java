@@ -14,9 +14,6 @@ import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
@@ -35,22 +32,16 @@ public class TaxCategoryResourceImpl extends BaseTaxCategoryResourceImpl {
 			String search, Pagination pagination)
 		throws Exception {
 
-		List<TaxCategory> taxCategories = new ArrayList<>();
-
-		List<CPTaxCategory> cpTaxCategories =
-			_cpTaxCategoryService.findCPTaxCategoriesByCompanyId(
-				contextCompany.getCompanyId(), search,
-				pagination.getStartPosition(), pagination.getEndPosition());
-
-		for (CPTaxCategory cpTaxCategory : cpTaxCategories) {
-			taxCategories.add(
-				_toTaxCategory(cpTaxCategory.getCPTaxCategoryId()));
-		}
-
-		int count = _cpTaxCategoryService.countCPTaxCategoriesByCompanyId(
-			contextCompany.getCompanyId(), search);
-
-		return Page.of(taxCategories, pagination, count);
+		return Page.of(
+			transform(
+				_cpTaxCategoryService.findCPTaxCategoriesByCompanyId(
+					contextCompany.getCompanyId(), search,
+					pagination.getStartPosition(), pagination.getEndPosition()),
+				cpTaxCategory -> _toTaxCategory(
+					cpTaxCategory.getCPTaxCategoryId())),
+			pagination,
+			_cpTaxCategoryService.countCPTaxCategoriesByCompanyId(
+				contextCompany.getCompanyId(), search));
 	}
 
 	@Override

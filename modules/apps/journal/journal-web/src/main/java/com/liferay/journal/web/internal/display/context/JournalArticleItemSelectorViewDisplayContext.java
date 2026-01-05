@@ -242,6 +242,24 @@ public class JournalArticleItemSelectorViewDisplayContext {
 				return group.getDescriptiveName(_themeDisplay.getLocale());
 			}
 		).put(
+			"scopeExternalReferenceCode",
+			() -> {
+				long scopeGroupId = _themeDisplay.getRefererGroupId();
+
+				if (scopeGroupId <= 0) {
+					scopeGroupId = _themeDisplay.getScopeGroupId();
+				}
+
+				if (assetEntry.getGroupId() == scopeGroupId) {
+					return null;
+				}
+
+				Group group = GroupLocalServiceUtil.getGroup(
+					assetEntry.getGroupId());
+
+				return group.getExternalReferenceCode();
+			}
+		).put(
 			"subtype", _getSubtype(ddmStructure)
 		).put(
 			"title", journalArticle.getTitle(_themeDisplay.getLocale(), true)

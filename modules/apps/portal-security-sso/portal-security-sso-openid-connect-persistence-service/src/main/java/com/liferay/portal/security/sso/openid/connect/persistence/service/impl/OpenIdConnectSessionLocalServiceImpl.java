@@ -6,6 +6,7 @@
 package com.liferay.portal.security.sso.openid.connect.persistence.service.impl;
 
 import com.liferay.portal.aop.AopService;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -87,6 +88,22 @@ public class OpenIdConnectSessionLocalServiceImpl
 		return openIdConnectSessionPersistence.
 			findByLtAccessTokenExpirationDate(
 				ltAccessTokenExpirationDate, start, end);
+	}
+
+	@Override
+	public OpenIdConnectSession getOpenIdConnectSession(
+			long userId, String issuer)
+		throws PortalException {
+
+		return openIdConnectSessionPersistence.findByU_I(userId, issuer);
+	}
+
+	@Override
+	public OpenIdConnectSession getOpenIdConnectSession(
+			String issuer, String sessionId)
+		throws PortalException {
+
+		return openIdConnectSessionPersistence.findByI_S(issuer, sessionId);
 	}
 
 }

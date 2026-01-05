@@ -18,10 +18,6 @@ export function getRightSidebarWidth(
 		if (selectedObjectField.businessType === 'Aggregation') {
 			return 950;
 		}
-
-		if (selectedObjectField.businessType === 'Picklist') {
-			return 500;
-		}
 	}
 
 	if (selectedObjectRelationship) {

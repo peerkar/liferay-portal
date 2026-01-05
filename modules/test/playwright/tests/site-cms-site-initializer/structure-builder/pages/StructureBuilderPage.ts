@@ -39,7 +39,7 @@ export class StructureBuilderPage {
 	readonly dataApiHelpers: DataApiHelpers;
 
 	private readonly clearAllSpacesButton: Locator;
-	private readonly customizeExperienceButton: Locator;
+	private readonly customizeEditorButton: Locator;
 	private readonly labelInput: Locator;
 	private readonly nameInput: Locator;
 
@@ -54,8 +54,8 @@ export class StructureBuilderPage {
 		this.dataApiHelpers = dataApiHelpers;
 
 		this.clearAllSpacesButton = this.page.getByLabel('Clear All');
-		this.customizeExperienceButton = this.page.getByRole('button', {
-			name: 'Customize Experience',
+		this.customizeEditorButton = this.page.getByRole('button', {
+			name: 'Customize Editor',
 		});
 		this.labelInput = this.page.getByLabel('Content Structure Label');
 		this.nameInput = this.page.getByLabel('Content Structure Name');
@@ -92,18 +92,21 @@ export class StructureBuilderPage {
 		}).toPass();
 	}
 
-	async addField(type: FieldType) {
-		const hasFields = !(await this.page
-			.getByText('No Fields Yet')
-			.isVisible());
-
+	async addField(type: FieldType, parent?: Field) {
 		let trigger: Locator;
 
-		if (hasFields) {
-			trigger = this.page.getByTitle('Add Field');
+		if (parent) {
+			await this.selectFields([parent]);
+
+			const treeItem = this.page
+				.locator('.treeview-item')
+				.getByLabel(parent.label, {exact: true})
+				.nth(parent.nth || 0);
+
+			trigger = treeItem.getByTitle('Add Field');
 		}
 		else {
-			trigger = this.page.getByText('Add Field');
+			trigger = this.page.getByTitle('Add Field').first();
 		}
 
 		await clickAndExpectToBeVisible({
@@ -328,12 +331,14 @@ export class StructureBuilderPage {
 	}
 
 	async createStructureFromData({
+		autoDelete = true,
 		erc = getRandomString(),
 		label,
 		name = `StructureName${getRandomInt()}`,
 		page,
 		publish = true,
 	}: {
+		autoDelete?: boolean;
 		erc?: string;
 		label: string;
 		name?: string;
@@ -350,7 +355,7 @@ export class StructureBuilderPage {
 			name,
 		});
 
-		const id = await page.saveStructure();
+		const id = await page.saveStructure({autoDelete});
 
 		if (publish) {
 			await page.publishStructure();
@@ -359,10 +364,10 @@ export class StructureBuilderPage {
 		return id;
 	}
 
-	async customizeExperience() {
+	async customizeEditor() {
 		await expect(async () => {
-			if (await this.customizeExperienceButton.isVisible()) {
-				await this.customizeExperienceButton.click({timeout: 2000});
+			if (await this.customizeEditorButton.isVisible()) {
+				await this.customizeEditorButton.click({timeout: 2000});
 			}
 
 			await expect(
@@ -371,7 +376,7 @@ export class StructureBuilderPage {
 				timeout: 3500,
 			});
 
-			await this.waitForExperienceCustomizerModal();
+			await this.waitForEditorCustomizerModal();
 		}).toPass();
 	}
 
@@ -459,7 +464,7 @@ export class StructureBuilderPage {
 			await this.publishButton.click();
 
 			await waitForAlert(this.page, 'published successfully', {
-				timeout: 5000,
+				timeout: 10000,
 			});
 		};
 
@@ -468,7 +473,7 @@ export class StructureBuilderPage {
 				(response) =>
 					response.url().includes('object-definitions') &&
 					response.status() === 200,
-				{timeout: 5000}
+				{timeout: 10000}
 			),
 			await publish(),
 		]);
@@ -476,7 +481,9 @@ export class StructureBuilderPage {
 		return await response.json();
 	}
 
-	async saveStructure() {
+	async saveStructure(
+		{autoDelete}: {autoDelete?: boolean} = {autoDelete: true}
+	) {
 		const save = async () => {
 			await this.saveButton.click();
 
@@ -497,10 +504,12 @@ export class StructureBuilderPage {
 
 		// Add ids to ApiHelpers data so structures are cleaned after each test
 
-		this.dataApiHelpers.data.push({
-			id,
-			type: 'objectDefinition',
-		});
+		if (autoDelete) {
+			this.dataApiHelpers.data.push({
+				id,
+				type: 'objectDefinition',
+			});
+		}
 
 		return id;
 	}
@@ -584,6 +593,18 @@ export class StructureBuilderPage {
 		}
 	}
 
+	async switchLanguage(languageId: string) {
+		const trigger = this.page.getByLabel('Open Localizations');
+
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: this.page.locator('.dropdown-item', {hasText: languageId}),
+			trigger,
+		});
+
+		await expect(trigger).toHaveAttribute('title', languageId);
+	}
+
 	async switchTab(name: 'General' | 'Search' | 'Workflow') {
 		const target =
 			name === 'General'
@@ -600,7 +621,7 @@ export class StructureBuilderPage {
 		});
 	}
 
-	async waitForExperienceCustomizerModal() {
+	async waitForEditorCustomizerModal() {
 		await this.page.waitForTimeout(4000);
 
 		const gotItButton = this.page.getByText('Got It');

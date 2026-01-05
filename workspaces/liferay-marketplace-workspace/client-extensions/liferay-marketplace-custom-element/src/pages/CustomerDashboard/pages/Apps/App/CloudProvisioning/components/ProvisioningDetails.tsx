@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {ClayButtonWithIcon} from '@clayui/button';
 import classNames from 'classnames';
 
+import ButtonWithIcon from '../../../../../../../components/ButtonWithIcon';
 import i18n from '../../../../../../../i18n';
 import OrderDetailsHeader from '../../../../../components/OrderDetailsHeader';
 import AccountEmailInfo from '../../Licenses/CreateLicense/AccountInfo';
@@ -73,7 +73,7 @@ const ProvisioningDetails: React.FC<ProvisioningDetailsProps> = ({
 				</span>
 
 				<span>
-					<ClayButtonWithIcon
+					<ButtonWithIcon
 						aria-label="Close"
 						borderless
 						className="text-dark"

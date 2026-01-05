@@ -39,7 +39,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 
 import java.util.Collections;
 import java.util.List;
@@ -129,13 +128,13 @@ public class UpgradeRecorderTest {
 			_bundle.getSymbolicName());
 
 		try {
-			StartupHelperUtil.setUpgrading(true);
+			_startUpgrade();
 
 			release.setSchemaVersion("0.0.0");
 
 			release = _releaseLocalService.updateRelease(release);
 
-			StartupHelperUtil.setUpgrading(false);
+			_stopUpgrade();
 		}
 		finally {
 			_releaseLocalService.deleteRelease(release);
@@ -150,7 +149,7 @@ public class UpgradeRecorderTest {
 
 	@Test
 	public void testFailureResultByPreupgradeVerifyExceptionWithoutReleaseManager() {
-		StartupHelperUtil.setUpgrading(true);
+		_startUpgrade();
 
 		ServiceTracker<ReleaseManager, ReleaseManager> originalServiceTracker =
 			ReflectionTestUtil.getFieldValue(
@@ -195,7 +194,7 @@ public class UpgradeRecorderTest {
 		finally {
 			_appender.stop();
 
-			StartupHelperUtil.setUpgrading(false);
+			_stopUpgrade();
 
 			ReflectionTestUtil.setFieldValue(
 				_upgradeRecorder, "_serviceTracker", originalServiceTracker);
@@ -206,7 +205,7 @@ public class UpgradeRecorderTest {
 
 	@Test
 	public void testFailureResultByPreupgradeVerifyExceptionWithReleaseManager() {
-		StartupHelperUtil.setUpgrading(true);
+		_startUpgrade();
 
 		VerifyExceptionProcess verifyExceptionProcess =
 			new VerifyExceptionProcess();
@@ -234,7 +233,7 @@ public class UpgradeRecorderTest {
 		finally {
 			_appender.stop();
 
-			StartupHelperUtil.setUpgrading(false);
+			_stopUpgrade();
 		}
 
 		Assert.assertEquals("failure", _getResult());
@@ -242,7 +241,7 @@ public class UpgradeRecorderTest {
 
 	@Test
 	public void testFailureResultByVerifyException() {
-		StartupHelperUtil.setUpgrading(true);
+		_startUpgrade();
 
 		VerifyExceptionProcess verifyExceptionProcess =
 			new VerifyExceptionProcess();
@@ -270,25 +269,25 @@ public class UpgradeRecorderTest {
 		finally {
 			_appender.stop();
 
-			StartupHelperUtil.setUpgrading(false);
+			_stopUpgrade();
 		}
 
 		Assert.assertEquals("failure", _getResult());
 	}
 
 	@Test
-	public void testFailureStatusByPendingCoreUpgrade() throws SQLException {
+	public void testFailureStatusByPendingCoreUpgrade() throws Exception {
 		try (Connection connection = DataAccess.getConnection()) {
 			Version version = PortalUpgradeProcess.getCurrentSchemaVersion(
 				connection);
 
 			try {
-				StartupHelperUtil.setUpgrading(true);
+				_startUpgrade();
 
 				PortalUpgradeProcess.updateSchemaVersion(
 					connection, new Version(0, 0, 0));
 
-				StartupHelperUtil.setUpgrading(false);
+				_stopUpgrade();
 			}
 			finally {
 				PortalUpgradeProcess.updateSchemaVersion(connection, version);
@@ -328,9 +327,9 @@ public class UpgradeRecorderTest {
 
 	@Test
 	public void testSuccessResultByNoUpgrades() {
-		StartupHelperUtil.setUpgrading(true);
+		_startUpgrade();
 
-		StartupHelperUtil.setUpgrading(false);
+		_stopUpgrade();
 
 		Assert.assertEquals("success", _getResult());
 		Assert.assertEquals("no upgrade", _getType());
@@ -338,14 +337,14 @@ public class UpgradeRecorderTest {
 
 	@Test
 	public void testSuccessResultWithUnrelatedError() {
-		StartupHelperUtil.setUpgrading(true);
+		_startUpgrade();
 
 		UnrelatedErrorUpgradeProcess unrelatedErrorUpgradeProcess =
 			new UnrelatedErrorUpgradeProcess();
 
 		unrelatedErrorUpgradeProcess.doUpgrade();
 
-		StartupHelperUtil.setUpgrading(false);
+		_stopUpgrade();
 
 		Assert.assertEquals("success", _getResult());
 		Assert.assertEquals("no upgrade", _getType());
@@ -353,14 +352,14 @@ public class UpgradeRecorderTest {
 
 	@Test
 	public void testSuccessResultWithWarning() {
-		StartupHelperUtil.setUpgrading(true);
+		_startUpgrade();
 
 		WarningUpgradeProcess warningUpgradeProcess =
 			new WarningUpgradeProcess();
 
 		warningUpgradeProcess.doUpgrade();
 
-		StartupHelperUtil.setUpgrading(false);
+		_stopUpgrade();
 
 		Assert.assertEquals("success", _getResult());
 		Assert.assertEquals("no upgrade", _getType());
@@ -376,9 +375,9 @@ public class UpgradeRecorderTest {
 		bundle.start();
 
 		try {
-			StartupHelperUtil.setUpgrading(true);
+			_startUpgrade();
 
-			StartupHelperUtil.setUpgrading(false);
+			_stopUpgrade();
 		}
 		finally {
 			bundle.uninstall();
@@ -452,6 +451,18 @@ public class UpgradeRecorderTest {
 		return ReflectionTestUtil.getFieldValue(_upgradeRecorder, "_type");
 	}
 
+	private void _startUpgrade() {
+		StartupHelperUtil.setUpgrading(true);
+
+		DBUpgrader.startUpgradeLogAppender();
+	}
+
+	private void _stopUpgrade() {
+		StartupHelperUtil.setUpgrading(false);
+
+		DBUpgrader.stopUpgradeLogAppender();
+	}
+
 	private void _testUpgrade(String type) {
 		List<Release> releases = _releaseLocalService.getReleases(0, 4);
 
@@ -475,7 +486,7 @@ public class UpgradeRecorderTest {
 			qualifierRelease = _releaseLocalService.updateRelease(
 				qualifierRelease);
 
-			StartupHelperUtil.setUpgrading(true);
+			_startUpgrade();
 
 			if (type.equals("major")) {
 				majorRelease.setSchemaVersion(
@@ -513,7 +524,7 @@ public class UpgradeRecorderTest {
 
 			_releaseLocalService.updateRelease(qualifierRelease);
 
-			StartupHelperUtil.setUpgrading(false);
+			_stopUpgrade();
 		}
 		finally {
 			majorRelease.setSchemaVersion(majorSchemaVersion.toString());

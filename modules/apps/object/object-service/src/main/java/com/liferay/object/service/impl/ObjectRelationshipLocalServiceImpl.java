@@ -16,6 +16,7 @@ import com.liferay.object.exception.DuplicateObjectRelationshipException;
 import com.liferay.object.exception.DuplicateObjectRelationshipExternalReferenceCodeException;
 import com.liferay.object.exception.NoSuchObjectRelationshipException;
 import com.liferay.object.exception.ObjectDefinitionScopeException;
+import com.liferay.object.exception.ObjectEntryGroupIdException;
 import com.liferay.object.exception.ObjectRelationshipDeletionTypeException;
 import com.liferay.object.exception.ObjectRelationshipEdgeException;
 import com.liferay.object.exception.ObjectRelationshipNameException;
@@ -36,6 +37,7 @@ import com.liferay.object.model.ObjectRelationshipTable;
 import com.liferay.object.petra.sql.dsl.DynamicObjectDefinitionTable;
 import com.liferay.object.petra.sql.dsl.DynamicObjectDefinitionTableUtil;
 import com.liferay.object.petra.sql.dsl.DynamicObjectRelationshipMappingTable;
+import com.liferay.object.petra.sql.dsl.DynamicObjectRelationshipMappingTableFactory;
 import com.liferay.object.relationship.util.ObjectRelationshipUtil;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectDefinitionSettingLocalService;
@@ -188,30 +190,46 @@ public class ObjectRelationshipLocalServiceImpl
 				objectRelationship.getObjectDefinitionId2());
 
 		if (Objects.equals(
+				objectDefinition1.getScope(), objectDefinition2.getScope()) &&
+			!Objects.equals(
+				_getObjectEntryGroupId(objectDefinition1, primaryKey1),
+				_getObjectEntryGroupId(objectDefinition2, primaryKey2))) {
+
+			throw new ObjectEntryGroupIdException.MustShareSameGroupId();
+		}
+
+		if (Objects.equals(
 				objectRelationship.getType(),
 				ObjectRelationshipConstants.TYPE_MANY_TO_MANY)) {
 
+			DynamicObjectRelationshipMappingTable
+				dynamicObjectRelationshipMappingTable =
+					DynamicObjectRelationshipMappingTableFactory.create(
+						objectRelationship.getDBTableName(), objectDefinition1,
+						objectDefinition2, objectRelationship.isReverse());
+
 			if (_hasManyToManyObjectRelationshipMappingTableValues(
-					objectDefinition1, objectDefinition2, objectRelationship,
-					primaryKey1, primaryKey2)) {
+					dynamicObjectRelationshipMappingTable, primaryKey1,
+					primaryKey2)) {
 
 				return;
 			}
 
-			Map<String, String> pkObjectFieldDBColumnNames =
-				ObjectRelationshipUtil.getPKObjectFieldDBColumnNames(
-					objectDefinition1, objectDefinition2,
-					objectRelationship.isReverse());
+			Column<DynamicObjectRelationshipMappingTable, Long>
+				primaryKeyColumn1 =
+					dynamicObjectRelationshipMappingTable.
+						getPrimaryKeyColumn1();
+			Column<DynamicObjectRelationshipMappingTable, Long>
+				primaryKeyColumn2 =
+					dynamicObjectRelationshipMappingTable.
+						getPrimaryKeyColumn2();
 
 			runSQL(
 				StringBundler.concat(
 					"insert into ", objectRelationship.getDBTableName(), " (",
-					pkObjectFieldDBColumnNames.get(
-						"pkObjectFieldDBColumnName1"),
-					", ",
-					pkObjectFieldDBColumnNames.get(
-						"pkObjectFieldDBColumnName2"),
-					") values (", primaryKey1, ", ", primaryKey2, ")"));
+					primaryKeyColumn1.getName(), ", ",
+					primaryKeyColumn2.getName(), ") values (", primaryKey1,
+					", ", primaryKey2, ")"));
 
 			FinderCacheUtil.clearDSLQueryCache(
 				objectRelationship.getDBTableName());
@@ -306,32 +324,29 @@ public class ObjectRelationshipLocalServiceImpl
 		objectRelationshipLocalService.updateObjectRelationship(
 			reverseObjectRelationship);
 
-		Map<String, String> pkObjectFieldDBColumnNames =
-			ObjectRelationshipUtil.getPKObjectFieldDBColumnNames(
-				objectDefinition1, objectDefinition2, false);
-
-		String pkObjectFieldDBColumnName1 = pkObjectFieldDBColumnNames.get(
-			"pkObjectFieldDBColumnName1");
-		String pkObjectFieldDBColumnName2 = pkObjectFieldDBColumnNames.get(
-			"pkObjectFieldDBColumnName2");
-
 		DynamicObjectRelationshipMappingTable
 			dynamicObjectRelationshipMappingTable =
-				new DynamicObjectRelationshipMappingTable(
-					pkObjectFieldDBColumnName1, pkObjectFieldDBColumnName2,
-					objectRelationship.getDBTableName());
+				DynamicObjectRelationshipMappingTableFactory.create(
+					objectRelationship.getDBTableName(), objectDefinition1,
+					objectDefinition2);
 
 		runSQL(dynamicObjectRelationshipMappingTable.getCreateTableSQL());
 
 		Connection connection = _currentConnection.getConnection(
 			objectRelationshipPersistence.getDataSource());
+		Column<DynamicObjectRelationshipMappingTable, Long> primaryKeyColumn1 =
+			dynamicObjectRelationshipMappingTable.getPrimaryKeyColumn1();
 
 		ObjectDBManagerUtil.createIndexMetadata(
 			connection, objectRelationship.getDBTableName(), false,
-			pkObjectFieldDBColumnName1);
+			primaryKeyColumn1.getName());
+
+		Column<DynamicObjectRelationshipMappingTable, Long> primaryKeyColumn2 =
+			dynamicObjectRelationshipMappingTable.getPrimaryKeyColumn2();
+
 		ObjectDBManagerUtil.createIndexMetadata(
 			connection, objectRelationship.getDBTableName(), false,
-			pkObjectFieldDBColumnName2);
+			primaryKeyColumn2.getName());
 
 		return objectRelationship;
 	}
@@ -1173,6 +1188,8 @@ public class ObjectRelationshipLocalServiceImpl
 					objectDefinition1, name);
 		}
 
+		_validateRelationshipName(dbColumnName, name);
+
 		objectField.setDBColumnName(dbColumnName);
 
 		String dbTableName = objectDefinition2.getDBTableName();
@@ -1440,6 +1457,25 @@ public class ObjectRelationshipLocalServiceImpl
 		return classPKs.size();
 	}
 
+	private long _getObjectEntryGroupId(
+			ObjectDefinition objectDefinition, long primaryKey)
+		throws PortalException {
+
+		if (objectDefinition.isUnmodifiableSystemObject()) {
+			SystemObjectDefinitionManager systemObjectDefinitionManager =
+				_systemObjectDefinitionManagerRegistry.
+					getSystemObjectDefinitionManager(
+						objectDefinition.getName());
+
+			return systemObjectDefinitionManager.getBaseModelGroupId();
+		}
+
+		ObjectEntry objectEntry = _objectEntryLocalService.getObjectEntry(
+			primaryKey);
+
+		return objectEntry.getGroupId();
+	}
+
 	private int _getRelatedRootDescendantNodeObjectEntriesCount(
 			ObjectDefinition objectDefinition, long objectFieldId)
 		throws PortalException {
@@ -1528,23 +1564,9 @@ public class ObjectRelationshipLocalServiceImpl
 	}
 
 	private boolean _hasManyToManyObjectRelationshipMappingTableValues(
-		ObjectDefinition objectDefinition1, ObjectDefinition objectDefinition2,
-		ObjectRelationship objectRelationship, long primaryKey1,
-		long primaryKey2) {
-
-		Map<String, String> pkObjectFieldDBColumnNames =
-			ObjectRelationshipUtil.getPKObjectFieldDBColumnNames(
-				objectDefinition1, objectDefinition2,
-				objectRelationship.isReverse());
-
 		DynamicObjectRelationshipMappingTable
-			dynamicObjectRelationshipMappingTable =
-				new DynamicObjectRelationshipMappingTable(
-					pkObjectFieldDBColumnNames.get(
-						"pkObjectFieldDBColumnName1"),
-					pkObjectFieldDBColumnNames.get(
-						"pkObjectFieldDBColumnName2"),
-					objectRelationship.getDBTableName());
+			dynamicObjectRelationshipMappingTable,
+		long primaryKey1, long primaryKey2) {
 
 		Column<DynamicObjectRelationshipMappingTable, Long> primaryKeyColumn1 =
 			dynamicObjectRelationshipMappingTable.getPrimaryKeyColumn1();
@@ -2063,6 +2085,23 @@ public class ObjectRelationshipLocalServiceImpl
 					"Parameter object field ID " + parameterObjectFieldId +
 						" does not belong to a relationship object field");
 			}
+		}
+	}
+
+	private void _validateRelationshipName(String dbColumnName, String name)
+		throws ObjectRelationshipNameException {
+
+		int availableLength =
+			ObjectFieldConstants.DB_COLUMN_NAME_MAX_LENGTH -
+				(dbColumnName.length() - name.length());
+
+		if (name.length() > availableLength) {
+			throw new ObjectRelationshipNameException(
+				StringBundler.concat(
+					"The relationship name must be less than ",
+					availableLength + 1,
+					" characters. Long object definition names reduce the ",
+					"characters available for the relationship name."));
 		}
 	}
 

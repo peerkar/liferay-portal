@@ -24,6 +24,7 @@ import com.liferay.portal.kernel.dependency.manager.DependencyManagerSyncUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogContext;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.ReleaseConstants;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
@@ -51,6 +52,7 @@ import com.liferay.portal.util.InitUtil;
 import com.liferay.portal.util.PortalClassPathUtil;
 import com.liferay.portal.verify.PreupgradeVerifyProcessSuite;
 import com.liferay.portal.verify.VerifyException;
+import com.liferay.portal.verify.VerifyProcess;
 import com.liferay.portal.verify.VerifyProcessSuite;
 import com.liferay.util.dao.orm.CustomSQLUtil;
 
@@ -65,6 +67,9 @@ import org.apache.commons.lang.time.StopWatch;
 import org.apache.logging.log4j.core.Appender;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceRegistration;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * @author Michael C. Han
@@ -148,7 +153,9 @@ public class DBUpgrader {
 			return _upgradeDatabaseAutoRun;
 		}
 
-		if (DBManagerUtil.getDBType() == DBType.HYPERSONIC) {
+		if (StartupHelperUtil.isDBNew() ||
+			(DBManagerUtil.getDBType() == DBType.HYPERSONIC)) {
+
 			_upgradeDatabaseAutoRun = false;
 		}
 		else {
@@ -165,14 +172,17 @@ public class DBUpgrader {
 		_upgradeClient = true;
 
 		try {
-			_initUpgradeStopwatch();
-
 			PortalClassPathUtil.initializeClassPaths(null);
 
 			InitUtil.initWithSpring(
 				ListUtil.fromArray(
 					PropsUtil.getArray(PropsKeys.SPRING_CONFIGS)),
-				true, false, () -> StartupHelperUtil.setUpgrading(true));
+				true, false,
+				() -> {
+					StartupHelperUtil.setUpgrading(true);
+
+					startUpgradeLogAppender();
+				});
 
 			StartupHelperUtil.printPatchLevel();
 
@@ -180,7 +190,7 @@ public class DBUpgrader {
 
 			InitUtil.registerContext();
 
-			upgradeModules(() -> StartupHelperUtil.setUpgrading(false));
+			upgradeModules();
 
 			BundleContext bundleContext = SystemBundleUtil.getBundleContext();
 
@@ -207,7 +217,16 @@ public class DBUpgrader {
 	}
 
 	public static void startUpgradeLogAppender() {
-		_initUpgradeStopwatch();
+		if (PropsValues.UPGRADE_LOG_CONTEXT_ENABLED) {
+			BundleContext bundleContext = SystemBundleUtil.getBundleContext();
+
+			_serviceRegistration = bundleContext.registerService(
+				LogContext.class, UpgradeLogContext.getInstance(), null);
+		}
+
+		_stopWatch = new StopWatch();
+
+		_stopWatch.start();
 
 		ServiceLatch serviceLatch = SystemBundleUtil.newServiceLatch();
 
@@ -225,10 +244,18 @@ public class DBUpgrader {
 	}
 
 	public static void stopUpgradeLogAppender() {
-		if (_appender != null) {
+		if ((_appender != null) && _appender.isStarted()) {
 			_stopWatch.stop();
 
 			_appender.stop();
+		}
+
+		ServiceRegistration<?> serviceRegistration = _serviceRegistration;
+
+		if (serviceRegistration != null) {
+			serviceRegistration.unregister();
+
+			_serviceRegistration = null;
 		}
 	}
 
@@ -293,7 +320,7 @@ public class DBUpgrader {
 			).getTime());
 	}
 
-	public static void upgradeModules(Runnable upgradeModulesCallbackRunnable) {
+	public static void upgradeModules() {
 		_registerModuleServiceLifecycle(
 			moduleServiceLifecyclePortalInitialized);
 
@@ -308,10 +335,49 @@ public class DBUpgrader {
 			IndexUpdaterUtil.updateAllIndexes();
 		}
 
-		upgradeModulesCallbackRunnable.run();
+		StartupHelperUtil.setUpgrading(false);
 
 		_registerModuleServiceLifecycle(
 			moduleServiceLifecyclePortletsInitialized);
+
+		if (!StartupHelperUtil.isRunOnPortalUpgradeVerifiers()) {
+			stopUpgradeLogAppender();
+
+			return;
+		}
+
+		try {
+			ServiceTracker<VerifyProcess, VerifyProcess> serviceTracker =
+				new ServiceTracker<>(
+					SystemBundleUtil.getBundleContext(),
+					FrameworkUtil.createFilter(
+						StringBundler.concat(
+							"(&(component.name=", _CLASS_NAME, ")(objectClass=",
+							VerifyProcess.class.getName(), "))")),
+					null);
+
+			serviceTracker.open();
+
+			VerifyProcess verifyProcess = serviceTracker.waitForService(5000L);
+
+			if (verifyProcess == null) {
+				stopUpgradeLogAppender();
+
+				if (_log.isWarnEnabled()) {
+					_log.warn(
+						_CLASS_NAME +
+							" did not activate successfully. The verify " +
+								"process will not be executed.");
+				}
+			}
+
+			serviceTracker.close();
+		}
+		catch (Exception exception) {
+			_log.error(exception);
+
+			throw new RuntimeException(exception);
+		}
 	}
 
 	public static void upgradePortal() throws Exception {
@@ -340,6 +406,8 @@ public class DBUpgrader {
 
 					StartupHelperUtil.setUpgrading(false);
 
+					stopUpgradeLogAppender();
+
 					System.exit(1);
 				}
 			}
@@ -358,6 +426,8 @@ public class DBUpgrader {
 						exception);
 
 					StartupHelperUtil.setUpgrading(false);
+
+					stopUpgradeLogAppender();
 
 					throw exception;
 				}
@@ -519,12 +589,6 @@ public class DBUpgrader {
 		return buildNumber;
 	}
 
-	private static void _initUpgradeStopwatch() {
-		_stopWatch = new StopWatch();
-
-		_stopWatch.start();
-	}
-
 	private static void _registerModuleServiceLifecycle(
 		String moduleServiceLifecycle) {
 
@@ -549,11 +613,16 @@ public class DBUpgrader {
 		db.runSQL("update CompanyInfo set key_ = null");
 	}
 
+	private static final String _CLASS_NAME =
+		"com.liferay.data.cleanup.internal.verify." +
+			"PostUpgradeDataCleanupVerifyProcess";
+
 	private static final Version _VERSION_7010 = new Version(0, 0, 6);
 
 	private static final Log _log = LogFactoryUtil.getLog(DBUpgrader.class);
 
 	private static volatile Appender _appender;
+	private static volatile ServiceRegistration<?> _serviceRegistration;
 	private static volatile StopWatch _stopWatch;
 	private static volatile boolean _upgradeClient;
 	private static Boolean _upgradeDatabaseAutoRun;

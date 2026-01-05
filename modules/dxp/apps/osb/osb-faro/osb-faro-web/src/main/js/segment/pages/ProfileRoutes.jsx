@@ -1,27 +1,42 @@
+import * as API from 'shared/api';
 import * as breadcrumbs from 'shared/util/breadcrumbs';
 import BasePage from 'shared/components/base-page';
 import BundleRouter from 'route-middleware/BundleRouter';
+import ClayButton from '@clayui/button';
+import ClayIcon from '@clayui/icon';
+import ClayLink from '@clayui/link';
 import DownloadPDFReport from 'shared/components/download-report/DownloadPDFReport';
 import EmbeddedAlertList from 'shared/components/EmbeddedAlertList';
+import ErrorPage from 'shared/pages/ErrorPage';
 import getCN from 'classnames';
 import Label from 'shared/components/Label';
 import Loading from 'shared/components/Loading';
-import React, {lazy, Suspense} from 'react';
+import React, {
+	lazy,
+	Suspense,
+	useContext,
+	useEffect,
+	useMemo,
+	useState
+} from 'react';
 import RouteNotFound from 'shared/components/RouteNotFound';
 import {AlertTypes} from 'shared/components/Alert';
 import {ChannelContext} from 'shared/context/channel';
-import {compose} from 'shared/hoc';
 import {CSVType} from 'shared/components/download-report/utils';
+import {DownloadReportDropdown} from 'shared/components/download-report/DownloadReportDropdown';
 import {DownloadStaticCSVReport} from 'shared/components/download-report/DownloadStaticCSVReport';
+import {formatUTCDate} from 'shared/util/date';
 import {getMatchedRoute, Routes, SEGMENTS, toRoute} from 'shared/util/router';
-import {PropTypes} from 'prop-types';
 import {Segment} from 'shared/util/records';
-import {SegmentStates} from 'shared/util/constants';
-import {Switch, withRouter} from 'react-router-dom';
-import {withSegment} from 'shared/hoc/WithSegment';
+import {SegmentStates, SegmentTypes} from 'shared/util/constants';
+import {Switch, useParams} from 'react-router-dom';
+import {useRequest} from 'shared/hooks/useRequest';
 
 const Overview = lazy(() =>
 	import(/* webpackChunkName: "SegmentOverview" */ './Overview')
+);
+const OverviewRealTime = lazy(() =>
+	import(/* webpackChunkName: "SegmentOverview" */ './OverviewRealTime')
 );
 const Membership = lazy(() =>
 	import(/* webpackChunkName: "SegmentMembership" */ './Membership')
@@ -59,23 +74,70 @@ const NAV_ITEMS = [
 	}
 ];
 
-export class SegmentProfileRoutes extends React.Component {
-	static contextType = ChannelContext;
+const SEGMENTS_LANGUAGE_MAP = {
+	[SegmentTypes.Batch]: Liferay.Language.get('batch-segment'),
+	[SegmentTypes.RealTime]: Liferay.Language.get('real-time-segment')
+};
 
-	static propTypes = {
-		groupId: PropTypes.string.isRequired,
-		id: PropTypes.string.isRequired,
-		segment: PropTypes.instanceOf(Segment).isRequired
-	};
+export const SegmentProfileRoutes = () => {
+	const {selectedChannel} = useContext(ChannelContext);
 
-	checkDisabled() {
-		return this.props.segment.get('state') === SegmentStates.Disabled;
+	const {channelId, groupId, id} = useParams();
+
+	const {data, error, loading, refetch} = useRequest({
+		dataSourceFn: API.individualSegment.fetch,
+		variables: {
+			groupId,
+			includeReferencedObjects: true,
+			segmentId: id
+		}
+	});
+
+	const segment = useMemo(() => new Segment(data), [data]);
+
+	const [segmentDetails, setSegmentDetails] = useState({
+		dateModified: segment.dateModified,
+		name: segment.name,
+		segmentType: segment.segmentType
+	});
+
+	useEffect(() => {
+		if (data && !loading) {
+			setSegmentDetails({
+				dateModified: segment.dateModified,
+				name: segment.name,
+				segmentType: segment.segmentType
+			});
+		}
+	}, [data, loading]);
+
+	if (loading && !segmentDetails.name) {
+		return <Loading />;
 	}
 
-	getAlerts() {
-		const {segment} = this.props;
+	const title = segmentDetails.name || Liferay.Language.get('unknown');
 
-		if (segment.get('state') === SegmentStates.InProgress) {
+	if (error) {
+		return (
+			<ErrorPage
+				href={toRoute(Routes.CONTACTS_LIST_ENTITY, {
+					channelId,
+					groupId,
+					type: SEGMENTS
+				})}
+				linkLabel={Liferay.Language.get('go-to-segments')}
+				message={Liferay.Language.get(
+					'the-segment-you-are-looking-for-does-not-exist'
+				)}
+				subtitle={Liferay.Language.get('segment-not-found')}
+			/>
+		);
+	}
+
+	const checkDisabled = () => segment.state === SegmentStates.Disabled;
+
+	const getAlerts = () => {
+		if (segment.state === SegmentStates.InProgress) {
 			return [
 				{
 					alertType: AlertTypes.Info,
@@ -85,7 +147,7 @@ export class SegmentProfileRoutes extends React.Component {
 					stripe: true
 				}
 			];
-		} else if (this.checkDisabled()) {
+		} else if (checkDisabled()) {
 			return [
 				{
 					alertType: AlertTypes.Danger,
@@ -96,68 +158,52 @@ export class SegmentProfileRoutes extends React.Component {
 				}
 			];
 		}
-	}
+	};
 
-	getClassNameForRoute(matchedRoute) {
-		const {className} = this.props;
+	const isBatch = segmentDetails.segmentType === SegmentTypes.Batch;
 
-		switch (matchedRoute) {
-			case Routes.CONTACTS_SEGMENT_DISTRIBUTION:
-				return getCN('segment-distribution-root', className);
-			case Routes.CONTACTS_SEGMENT_INTERESTS:
-				return getCN('contacts-interests-root', className);
-			case Routes.CONTACTS_SEGMENT:
-				return getCN(
-					'segment-overview-root',
-					'overview-root',
-					className
-				);
-			case Routes.CONTACTS_SEGMENT_MEMBERSHIP:
-			default:
-				return className;
-		}
-	}
-
-	render() {
-		const {channelId, groupId, id, segment} = this.props;
-
-		const matchedRoute = getMatchedRoute(NAV_ITEMS);
-
-		const componentProps = {segment};
-
-		const {selectedChannel} = this.context;
-
-		const title = segment.name || Liferay.Language.get('unknown');
-
-		return (
-			<BasePage
-				className={getCN(
-					'segment-profile-root',
-					this.getClassNameForRoute(matchedRoute)
-				)}
-				documentTitle={`${segment.name} - ${Liferay.Language.get(
-					'segment'
-				)}`}
+	return (
+		<BasePage
+			className={getCN(
+				'segment-profile-root',
+				'segment-overview-root',
+				'overview-root'
+			)}
+			documentTitle={`${segmentDetails.name} - ${Liferay.Language.get(
+				'segment'
+			)}`}
+		>
+			<BasePage.Header
+				breadcrumbs={[
+					breadcrumbs.getHome({
+						channelId,
+						groupId,
+						label: selectedChannel && selectedChannel.name
+					}),
+					breadcrumbs.getSegments({channelId, groupId}),
+					breadcrumbs.getEntityName({label: segmentDetails.name})
+				]}
+				groupId={groupId}
 			>
-				<BasePage.Header
-					breadcrumbs={[
-						breadcrumbs.getHome({
-							channelId,
-							groupId,
-							label: selectedChannel && selectedChannel.name
-						}),
-						breadcrumbs.getSegments({channelId, groupId}),
-						breadcrumbs.getEntityName({label: segment.name})
-					]}
-					groupId={groupId}
-				>
-					<BasePage.Row>
-						<BasePage.Header.TitleSection title={title}>
-							<Label display='secondary' size='lg' uppercase>
-								{Liferay.Language.get('segment')}
-							</Label>
-						</BasePage.Header.TitleSection>
-
+				<BasePage.Row>
+					<BasePage.Header.TitleSection
+						className='mb-3'
+						subtitle={
+							!isBatch &&
+							`Last update: ${formatUTCDate(
+								segmentDetails.dateModified,
+								'MMM DD, YYYY hh:mm a'
+							)
+								.replace('am', 'a.m.')
+								.replace('pm', 'p.m.')}`
+						}
+						title={title}
+					>
+						<Label display='secondary' size='lg' uppercase>
+							{SEGMENTS_LANGUAGE_MAP[segmentDetails.segmentType]}
+						</Label>
+					</BasePage.Header.TitleSection>
+					{isBatch && (
 						<BasePage.Header.Section>
 							<BasePage.Header.PageActions
 								actions={[
@@ -180,34 +226,37 @@ export class SegmentProfileRoutes extends React.Component {
 								]}
 							/>
 						</BasePage.Header.Section>
-					</BasePage.Row>
-
+					)}
+				</BasePage.Row>
+				{isBatch && (
 					<BasePage.Header.NavBar
 						items={NAV_ITEMS}
 						routeParams={{channelId, groupId, id}}
 					/>
-				</BasePage.Header>
-
-				{getMatchedRoute(NAV_ITEMS) === Routes.CONTACTS_SEGMENT && (
-					<BasePage.SubHeader>
-						<div className='d-flex justify-content-end w-100'>
-							<DownloadPDFReport
-								disabled={false}
-								showDateRange={false}
-								subtitle={selectedChannel?.name}
-								title={title}
-							/>
-						</div>
-					</BasePage.SubHeader>
 				)}
+			</BasePage.Header>
 
-				{getMatchedRoute(NAV_ITEMS) ===
+			{isBatch && getMatchedRoute(NAV_ITEMS) === Routes.CONTACTS_SEGMENT && (
+				<BasePage.SubHeader>
+					<div className='d-flex justify-content-end w-100'>
+						<DownloadPDFReport
+							disabled={false}
+							showDateRange={false}
+							subtitle={selectedChannel?.name}
+							title={title}
+						/>
+					</div>
+				</BasePage.SubHeader>
+			)}
+
+			{isBatch &&
+				getMatchedRoute(NAV_ITEMS) ===
 					Routes.CONTACTS_SEGMENT_MEMBERSHIP && (
 					<BasePage.SubHeader>
 						<div className='d-flex justify-content-end w-100'>
 							<DownloadStaticCSVReport
-								disabled={this.checkDisabled()}
-								segmentId={segment.get('id')}
+								disabled={checkDisabled()}
+								segmentId={segment.id}
 								type={CSVType.Membership}
 								typeLang={Liferay.Language.get(
 									'segment-membership'
@@ -217,32 +266,74 @@ export class SegmentProfileRoutes extends React.Component {
 					</BasePage.SubHeader>
 				)}
 
-				<EmbeddedAlertList alerts={this.getAlerts()} />
+			{!isBatch && (
+				<BasePage.SubHeader>
+					<div className='d-flex justify-content-end w-100'>
+						<DownloadReportDropdown
+							className='button-root'
+							segmentId={segment.id}
+							title={segmentDetails.name}
+						/>
 
-				<BasePage.Body
-					disabled={this.checkDisabled()}
-					pageContainer={
-						matchedRoute !== Routes.CONTACTS_SEGMENT_DISTRIBUTION
-					}
-				>
+						<ClayButton
+							borderless
+							button
+							className='button-root'
+							disabled={loading}
+							displayType='secondary'
+							key={Liferay.Language.get('refresh-data')}
+							onClick={refetch}
+							size='sm'
+						>
+							{loading ? (
+								<Loading align='false' className='mr-2 mt-n1' />
+							) : (
+								<ClayIcon className='mr-2' symbol='reload' />
+							)}
+							{Liferay.Language.get('refresh-data')}
+						</ClayButton>
+
+						<ClayLink
+							borderless
+							button
+							className='button-root'
+							displayType='secondary'
+							href={toRoute(Routes.CONTACTS_SEGMENT_EDIT, {
+								channelId,
+								groupId,
+								id
+							})}
+							small
+						>
+							<ClayIcon className='mr-2' symbol='pencil' />
+							{Liferay.Language.get('edit-segment')}
+						</ClayLink>
+					</div>
+				</BasePage.SubHeader>
+			)}
+
+			<EmbeddedAlertList alerts={getAlerts()} />
+
+			<BasePage.Body disabled={checkDisabled()}>
+				{segment.id ? (
 					<Suspense fallback={<Loading />}>
 						<Switch>
 							<BundleRouter
-								componentProps={componentProps}
+								componentProps={{segment}}
 								data={Membership}
 								exact
 								path={Routes.CONTACTS_SEGMENT_MEMBERSHIP}
 							/>
 
 							<BundleRouter
-								componentProps={componentProps}
+								componentProps={{segment}}
 								data={InterestDetails}
 								exact
 								path={Routes.CONTACTS_SEGMENT_INTEREST_DETAILS}
 							/>
 
 							<BundleRouter
-								componentProps={componentProps}
+								componentProps={{segment}}
 								data={Interests}
 								destructured={false}
 								exact
@@ -250,15 +341,15 @@ export class SegmentProfileRoutes extends React.Component {
 							/>
 
 							<BundleRouter
-								componentProps={componentProps}
+								componentProps={{segment}}
 								data={Distribution}
 								exact
 								path={Routes.CONTACTS_SEGMENT_DISTRIBUTION}
 							/>
 
 							<BundleRouter
-								componentProps={componentProps}
-								data={Overview}
+								componentProps={{segment}}
+								data={isBatch ? Overview : OverviewRealTime}
 								exact
 								path={Routes.CONTACTS_SEGMENT}
 							/>
@@ -266,10 +357,12 @@ export class SegmentProfileRoutes extends React.Component {
 							<RouteNotFound />
 						</Switch>
 					</Suspense>
-				</BasePage.Body>
-			</BasePage>
-		);
-	}
-}
+				) : (
+					<Loading />
+				)}
+			</BasePage.Body>
+		</BasePage>
+	);
+};
 
-export default compose(withRouter, withSegment(true))(SegmentProfileRoutes);
+export default SegmentProfileRoutes;

@@ -10,9 +10,11 @@ function setCookie(name, value, expirationDays) {
 		expirationDate.getTime() + expirationDays * 24 * 60 * 60 * 1000
 	);
 
-	const expires = 'expires=' + expirationDate.toUTCString();
-
-	document.cookie = `${name}=${value};${expires};path=/;secure`;
+	Liferay.Util.Cookie.set(name, value, Liferay.Util.Cookie.TYPES.FUNCTIONAL, {
+		'max-age': expirationDate,
+		'path': themeDisplay.getPathContext() || '/',
+		'secure': true,
+	});
 }
 
 setCookie('Interest', 'Products', 1);

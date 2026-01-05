@@ -53,6 +53,7 @@ renderResponse.setTitle(title);
 		<liferay-ui:error exception="<%= AssetCategoryLimitException.class %>" message="the-maximum-number-of-categories-for-the-vocabulary-has-been-exceeded" />
 		<liferay-ui:error exception="<%= AssetCategoryNameException.class %>" message="please-enter-a-valid-name" />
 		<liferay-ui:error exception="<%= DuplicateCategoryException.class %>" message="please-enter-a-unique-name" />
+		<liferay-ui:error exception="<%= DuplicateCategoryExternalReferenceCodeException.class %>" message="please-enter-a-unique-external-reference-code" />
 
 		<aui:model-context bean="<%= category %>" model="<%= AssetCategory.class %>" />
 
@@ -71,6 +72,8 @@ renderResponse.setTitle(title);
 			<aui:input label="name" localized="<%= true %>" name="title" placeholder="name" required="<%= true %>" type="text" value="<%= (category == null) ? StringPool.BLANK : assetCategoriesDisplayContext.getCategoryLocalizationXML(category) %>">
 				<aui:validator name="maxLength"><%= ModelHintsUtil.getMaxLength(AssetCategory.class.getName(), "name") %></aui:validator>
 			</aui:input>
+
+			<aui:input disabled='<%= (category != null) && !FeatureFlagManagerUtil.isEnabled("LPD-31228") %>' label="external-reference-code" name="externalReferenceCode" placeholder="external-reference-code" />
 
 			<div>
 				<label for="<portlet:namespace />description"><liferay-ui:message key="description" /></label>

@@ -193,9 +193,7 @@ public class ModuleViewport implements Serializable {
 			sb.append("\"id\": ");
 
 			sb.append("\"");
-
 			sb.append(id);
-
 			sb.append("\"");
 		}
 
@@ -227,8 +225,8 @@ public class ModuleViewport implements Serializable {
 	@GraphQLName("Id")
 	public static enum Id {
 
-		LANDSCAPE_MOBILE("LandscapeMobile"), PORTRAIT_MOBILE("PortraitMobile"),
-		TABLET("Tablet");
+		DESKTOP("Desktop"), LANDSCAPE_MOBILE("LandscapeMobile"),
+		PORTRAIT_MOBILE("PortraitMobile"), TABLET("Tablet");
 
 		@JsonCreator
 		public static Id create(String value) {

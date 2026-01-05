@@ -1,0 +1,138 @@
+{
+	"externalReferenceCode": "C_REPLACEMENT_ACTIVATION_KEY_REQUEST",
+	"label": {
+		"en_US": "Replacement Activation Key Request"
+	},
+	"name": "ReplacementActivationKeyRequest",
+	"objectFields": [
+		{
+			"DBType": "Boolean",
+			"externalReferenceCode": "C_REPLACEMENT_ACTIVATION_KEY_REQUEST_acknowledgement",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Acknowledgement"
+			},
+			"name": "acknowledgement",
+			"required": true
+		},
+		{
+			"DBType": "Boolean",
+			"externalReferenceCode": "C_REPLACEMENT_ACTIVATION_KEY_REQUEST_activeLiferaySubscription",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Active Liferay Subscription?"
+			},
+			"name": "activeLiferaySubscription",
+			"required": false
+		},
+		{
+			"DBType": "String",
+			"businessType": "Picklist",
+			"externalReferenceCode": "C_REPLACEMENT_ACTIVATION_KEY_REQUEST_clustered",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Clustered?"
+			},
+			"listTypeDefinitionExternalReferenceCode": "CLUSTERED",
+			"name": "clustered",
+			"required": true,
+			"type": "String"
+		},
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_REPLACEMENT_ACTIVATION_KEY_REQUEST_companyName",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Company Name"
+			},
+			"name": "companyName",
+			"required": true
+		},
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_REPLACEMENT_ACTIVATION_KEY_REQUEST_contactEmailAddress",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Contact Email Address"
+			},
+			"name": "contactEmailAddress",
+			"required": true
+		},
+		{
+			"DBType": "Clob",
+			"externalReferenceCode": "C_REPLACEMENT_ACTIVATION_KEY_REQUEST_explainReplacementActivationKey",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Please explain why you need a replacement activation key"
+			},
+			"name": "explainReplacementActivationKey",
+			"required": true
+		},
+		{
+			"DBType": "Clob",
+			"externalReferenceCode": "C_REPLACEMENT_ACTIVATION_KEY_REQUEST_serverInformation",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Please provide the server information, as applicable, depending on your version of Liferay Portal or Liferay DXP"
+			},
+			"name": "serverInformation",
+			"required": false
+		},
+		{
+			"DBType": "String",
+			"businessType": "Picklist",
+			"externalReferenceCode": "C_REPLACEMENT_ACTIVATION_KEY_REQUEST_supportRegion",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Support Region"
+			},
+			"listTypeDefinitionExternalReferenceCode": "SUPPORT_REGION",
+			"name": "supportRegion",
+			"required": true,
+			"type": "String"
+		},
+		{
+			"DBType": "String",
+			"businessType": "Picklist",
+			"externalReferenceCode": "C_REPLACEMENT_ACTIVATION_KEY_REQUEST_typeOfServer",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Type of Server"
+			},
+			"listTypeDefinitionExternalReferenceCode": "TYPE_OF_SERVER",
+			"name": "typeOfServer",
+			"required": true,
+			"type": "String"
+		},
+		{
+			"DBType": "String",
+			"businessType": "Picklist",
+			"externalReferenceCode": "C_REPLACEMENT_ACTIVATION_KEY_REQUEST_versionOfLiferaySoftware",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Version of Liferay Software"
+			},
+			"listTypeDefinitionExternalReferenceCode": "VERSION_OF_LIFERAY_SOFTWARE",
+			"name": "versionOfLiferaySoftware",
+			"required": false,
+			"type": "String"
+		}
+	],
+	"panelCategoryKey": "applications_menu.applications.content",
+	"pluralLabel": {
+		"en_US": "Replacement Activation Key Requests"
+	},
+	"portlet": true,
+	"scope": "company",
+	"system": false
+}

@@ -261,12 +261,11 @@ export const convertFieldMappingToAccountProperty = (
 				displayName: string;
 				id: string;
 				name: string;
+				ownerType: string;
 				rawType: string;
+				type: string;
 		  }
 ): Property => {
-	const context = isMap(fieldMapping)
-		? fieldMapping.get('context')
-		: fieldMapping.context;
 	const displayName = isMap(fieldMapping)
 		? fieldMapping.get('displayName')
 		: fieldMapping.displayName;
@@ -278,17 +277,13 @@ export const convertFieldMappingToAccountProperty = (
 		? fieldMapping.get('rawType')
 		: fieldMapping.rawType;
 
-	const CUSTOM_REGEX = /custom-/;
-
 	return new Property({
 		entityName: Liferay.Language.get('account'),
 		id,
 		label: displayName || name,
-		name: context ? `${context}/${id}/value` : id,
+		name: id,
 		propertyKey: FieldOwnerTypes.Account,
-		type: CUSTOM_REGEX.test(type)
-			? type.toLowerCase()
-			: `account-${type.toLowerCase()}`
+		type: `account-${type.toLowerCase()}` as PropertyTypes
 	});
 };
 

@@ -7,6 +7,7 @@ package com.liferay.fragment.internal.util.configuration;
 
 import com.liferay.fragment.constants.FragmentConfigurationFieldDataType;
 import com.liferay.fragment.entry.processor.constants.FragmentEntryProcessorConstants;
+import com.liferay.fragment.entry.processor.helper.LayoutReferenceResolver;
 import com.liferay.fragment.util.configuration.FragmentConfigurationField;
 import com.liferay.fragment.util.configuration.FragmentEntryConfigurationParser;
 import com.liferay.fragment.util.configuration.FragmentEntryMenuDisplayConfiguration;
@@ -15,6 +16,7 @@ import com.liferay.frontend.token.definition.FrontendTokenDefinition;
 import com.liferay.frontend.token.definition.FrontendTokenDefinitionRegistry;
 import com.liferay.frontend.token.definition.FrontendTokenMapping;
 import com.liferay.info.item.ClassPKInfoItemIdentifier;
+import com.liferay.info.item.ERCInfoItemIdentifier;
 import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.info.item.provider.InfoItemObjectProvider;
 import com.liferay.info.pagination.InfoPage;
@@ -26,7 +28,6 @@ import com.liferay.layout.list.retriever.ListObjectReference;
 import com.liferay.layout.list.retriever.ListObjectReferenceFactory;
 import com.liferay.layout.list.retriever.ListObjectReferenceFactoryRegistry;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -35,10 +36,7 @@ import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
-import com.liferay.portal.kernel.service.LayoutLocalService;
-import com.liferay.portal.kernel.service.LayoutSetLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -386,24 +384,9 @@ public class FragmentEntryConfigurationParserImpl
 			return fieldValue;
 		}
 
-		FrontendTokenDefinition frontendTokenDefinition = null;
-
-		if (FeatureFlagManagerUtil.isEnabled(
-				themeDisplay.getCompanyId(), "LPD-30204")) {
-
-			frontendTokenDefinition =
-				_frontendTokenDefinitionRegistry.getFrontendTokenDefinition(
-					themeDisplay.getLayout());
-		}
-		else {
-			Group group = themeDisplay.getScopeGroup();
-
-			frontendTokenDefinition =
-				_frontendTokenDefinitionRegistry.getFrontendTokenDefinition(
-					_layoutSetLocalService.fetchLayoutSet(
-						themeDisplay.getSiteGroupId(),
-						group.isLayoutSetPrototype()));
-		}
+		FrontendTokenDefinition frontendTokenDefinition =
+			_frontendTokenDefinitionRegistry.getFrontendTokenDefinition(
+				themeDisplay.getLayout());
 
 		if (frontendTokenDefinition == null) {
 			return fieldValue;
@@ -608,18 +591,49 @@ public class FragmentEntryConfigurationParserImpl
 		try {
 			JSONObject jsonObject = _jsonFactory.createJSONObject(value);
 
+			String className = jsonObject.getString("className");
+			long classPK = jsonObject.getLong("classPK");
+			String externalReferenceCode = jsonObject.getString(
+				"externalReferenceCode");
+
+			if (Validator.isNull(className) ||
+				((classPK <= 0) && Validator.isNull(externalReferenceCode))) {
+
+				return null;
+			}
+
 			InfoItemObjectProvider<?> infoItemObjectProvider =
 				_infoItemServiceRegistry.getFirstInfoItemService(
-					InfoItemObjectProvider.class,
-					jsonObject.getString("className"),
+					InfoItemObjectProvider.class, className,
 					ClassPKInfoItemIdentifier.INFO_ITEM_SERVICE_FILTER);
 
 			if (infoItemObjectProvider == null) {
 				return null;
 			}
 
+			if (classPK > 0) {
+				return infoItemObjectProvider.getInfoItem(
+					new ClassPKInfoItemIdentifier(classPK));
+			}
+
+			ServiceContext serviceContext =
+				ServiceContextThreadLocal.getServiceContext();
+
+			if (serviceContext == null) {
+				return null;
+			}
+
+			ThemeDisplay themeDisplay = serviceContext.getThemeDisplay();
+
+			if (themeDisplay == null) {
+				return null;
+			}
+
 			return infoItemObjectProvider.getInfoItem(
-				new ClassPKInfoItemIdentifier(jsonObject.getLong("classPK")));
+				themeDisplay.getScopeGroupId(),
+				new ERCInfoItemIdentifier(
+					externalReferenceCode,
+					jsonObject.getString("scopeExternalReferenceCode")));
 		}
 		catch (Exception exception) {
 			if (_log.isDebugEnabled()) {
@@ -654,6 +668,10 @@ public class FragmentEntryConfigurationParserImpl
 			).put(
 				"externalReferenceCode",
 				configurationValueJSONObject.getString("externalReferenceCode")
+			).put(
+				"scopeExternalReferenceCode",
+				configurationValueJSONObject.getString(
+					"scopeExternalReferenceCode")
 			).put(
 				"template", configurationValueJSONObject.get("template")
 			).put(
@@ -780,8 +798,21 @@ public class FragmentEntryConfigurationParserImpl
 	}
 
 	private Object _getURLValue(String value) {
+		ServiceContext serviceContext =
+			ServiceContextThreadLocal.getServiceContext();
+
+		if ((serviceContext == null) || Validator.isNull(value) ||
+			(serviceContext.getThemeDisplay() == null)) {
+
+			return StringPool.POUND;
+		}
+
 		JSONObject jsonObject = (JSONObject)_getFieldValue(
 			FragmentConfigurationFieldDataType.OBJECT, value);
+
+		if (jsonObject == null) {
+			return StringPool.POUND;
+		}
 
 		JSONObject layoutJSONObject = jsonObject.getJSONObject("layout");
 
@@ -789,23 +820,18 @@ public class FragmentEntryConfigurationParserImpl
 			return jsonObject.getString("href");
 		}
 
-		long groupId = layoutJSONObject.getLong("groupId");
-		boolean privateLayout = layoutJSONObject.getBoolean("privateLayout");
-		long layoutId = layoutJSONObject.getLong("layoutId");
+		ThemeDisplay themeDisplay = serviceContext.getThemeDisplay();
 
-		Layout layout = _layoutLocalService.fetchLayout(
-			groupId, privateLayout, layoutId);
+		Layout layout = _layoutReferenceResolver.resolve(
+			themeDisplay.getCompanyId(), layoutJSONObject,
+			themeDisplay.getScopeGroupId());
 
 		if (layout == null) {
 			return StringPool.POUND;
 		}
 
-		ServiceContext serviceContext =
-			ServiceContextThreadLocal.getServiceContext();
-
 		try {
-			return _portal.getLayoutFullURL(
-				layout, serviceContext.getThemeDisplay());
+			return _portal.getLayoutFullURL(layout, themeDisplay);
 		}
 		catch (Exception exception) {
 			if (_log.isDebugEnabled()) {
@@ -909,10 +935,7 @@ public class FragmentEntryConfigurationParserImpl
 	private LayoutListRetrieverRegistry _layoutListRetrieverRegistry;
 
 	@Reference
-	private LayoutLocalService _layoutLocalService;
-
-	@Reference
-	private LayoutSetLocalService _layoutSetLocalService;
+	private LayoutReferenceResolver _layoutReferenceResolver;
 
 	@Reference
 	private ListObjectReferenceFactoryRegistry

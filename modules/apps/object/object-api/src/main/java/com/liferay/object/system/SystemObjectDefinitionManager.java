@@ -63,6 +63,10 @@ public interface SystemObjectDefinitionManager {
 	public String getBaseModelExternalReferenceCode(long primaryKey)
 		throws PortalException;
 
+	public default long getBaseModelGroupId() {
+		return 0L;
+	}
+
 	public String getExternalReferenceCode();
 
 	public JaxRsApplicationDescriptor getJaxRsApplicationDescriptor();
@@ -185,6 +189,11 @@ public interface SystemObjectDefinitionManager {
 	}
 
 	public int getVersion();
+
+	public boolean hasModelResourcePermission(
+			long objectDefinitionId, PermissionChecker permissionChecker,
+			long primaryKey, String actionId)
+		throws PortalException;
 
 	public default boolean isEnableLocalization() {
 		return false;

@@ -7,6 +7,7 @@ package com.liferay.dynamic.data.mapping.internal.util;
 
 import com.liferay.dynamic.data.mapping.configuration.DDMIndexerConfiguration;
 import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
+import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldType;
@@ -17,10 +18,9 @@ import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.Field;
-import com.liferay.dynamic.data.mapping.storage.Fields;
 import com.liferay.dynamic.data.mapping.storage.constants.FieldConstants;
 import com.liferay.dynamic.data.mapping.util.DDM;
-import com.liferay.dynamic.data.mapping.util.DDMFormValuesToFieldsConverter;
+import com.liferay.dynamic.data.mapping.util.DDMFormValuesConverterUtil;
 import com.liferay.dynamic.data.mapping.util.DDMIndexer;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -70,8 +70,12 @@ import java.text.Format;
 import java.text.ParseException;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -110,59 +114,60 @@ public class DDMIndexerImpl implements DDMIndexer {
 
 		Set<Locale> locales = ddmFormValues.getAvailableLocales();
 
-		Fields fields = _toFields(ddmStructure, ddmFormValues);
-
-		for (Field field : fields) {
+		for (FieldPair fieldPair : _toFieldPairs(ddmStructure, ddmFormValues)) {
 			try {
-				String indexType = ddmStructure.getFieldProperty(
-					field.getName(), "indexType");
+				DDMFormField ddmFormField = fieldPair._ddmFormField;
 
-				if (Validator.isNull(indexType) || indexType.equals("none")) {
-					continue;
-				}
+				String indexType = ddmFormField.getIndexType();
 
-				DDMFormField ddmFormField = ddmStructure.getDDMFormField(
-					field.getName());
 				String name = null;
 				Serializable value = null;
 
-				if (GetterUtil.getBoolean(
-						ddmStructure.getFieldProperty(
-							field.getName(), "localizable"))) {
-
+				if (ddmFormField.isLocalizable()) {
 					for (Locale locale : locales) {
-						name = encodeName(
-							ddmStructure.getStructureId(),
-							ddmFormField.getFieldReference(), locale,
-							indexType);
-						value = field.getValue(locale);
+						value = _getValue(
+							fieldPair._field, ddmFormField, locale);
+
+						if ((value != null) || legacyDDMIndexFieldsEnabled) {
+							name = encodeName(
+								ddmStructure.getStructureId(),
+								ddmFormField.getFieldReference(), locale,
+								indexType);
+						}
 
 						if (legacyDDMIndexFieldsEnabled) {
 							_addToDocument(
-								document, field, indexType, name, value);
+								document, indexType, name,
+								ddmFormField.getType(), value);
 						}
 						else if (value != null) {
 							fieldArray.addField(
 								createField(
-									ddmFormField, field, indexType, locale,
-									name, value));
+									ddmFormField, indexType, locale, name,
+									value));
 						}
 					}
 				}
 				else {
-					name = encodeName(
-						ddmStructure.getStructureId(),
-						ddmFormField.getFieldReference(), null, indexType);
-					value = field.getValue(ddmFormValues.getDefaultLocale());
+					value = _getValue(
+						fieldPair._field, ddmFormField,
+						ddmFormValues.getDefaultLocale());
+
+					if ((value != null) || legacyDDMIndexFieldsEnabled) {
+						name = encodeName(
+							ddmStructure.getStructureId(),
+							ddmFormField.getFieldReference(), null, indexType);
+					}
 
 					if (legacyDDMIndexFieldsEnabled) {
-						_addToDocument(document, field, indexType, name, value);
+						_addToDocument(
+							document, indexType, name, ddmFormField.getType(),
+							value);
 					}
 					else if (value != null) {
 						fieldArray.addField(
 							createField(
-								ddmFormField, field, indexType, null, name,
-								value));
+								ddmFormField, indexType, null, name, value));
 					}
 				}
 			}
@@ -409,8 +414,8 @@ public class DDMIndexerImpl implements DDMIndexer {
 	}
 
 	protected com.liferay.portal.kernel.search.Field createField(
-			DDMFormField ddmFormField, Field ddmStructureField,
-			String indexType, Locale locale, String name, Serializable value)
+			DDMFormField ddmFormField, String indexType, Locale locale,
+			String name, Serializable value)
 		throws PortalException {
 
 		com.liferay.portal.kernel.search.Field ddmField =
@@ -426,8 +431,9 @@ public class DDMIndexerImpl implements DDMIndexer {
 		String valueFieldName = getValueFieldName(indexType, locale);
 
 		_addToDocument(
-			document, ddmStructureField, indexType, valueFieldName,
-			_getSortableValue(ddmFormField, locale, value), value);
+			document, indexType, valueFieldName,
+			_getSortableValue(ddmFormField, locale, value),
+			ddmFormField.getType(), value);
 
 		Map<String, com.liferay.portal.kernel.search.Field> documentFields =
 			document.getFields();
@@ -535,6 +541,61 @@ public class DDMIndexerImpl implements DDMIndexer {
 	@Reference
 	protected Sorts sorts;
 
+	private void _addField(
+			DDMFormField ddmFormField, DDMFormFieldValue ddmFormFieldValue,
+			Map<String, List<DDMFormFieldValue>> ddmFormFieldValuesMap,
+			long ddmStructureId, Locale defaultLocale,
+			Map<String, FieldPair> fieldPairs)
+		throws PortalException {
+
+		if ((ddmFormField == null) || ddmFormField.isTransient() ||
+			(ddmFormFieldValue.getValue() == null)) {
+
+			return;
+		}
+
+		String indexType = ddmFormField.getIndexType();
+
+		if (Validator.isNull(indexType) || indexType.equals("none")) {
+			return;
+		}
+
+		Field field = _createField(
+			ddmFormField, ddmFormFieldValuesMap, ddmFormFieldValue,
+			ddmStructureId, defaultLocale);
+
+		FieldPair fieldPair = fieldPairs.get(field.getName());
+
+		if (fieldPair == null) {
+			fieldPairs.put(field.getName(), new FieldPair(ddmFormField, field));
+
+			return;
+		}
+
+		fieldPair._mergeField(field);
+	}
+
+	private void _addFields(
+			DDMForm ddmForm, DDMFormFieldValue ddmFormFieldValue,
+			Map<String, List<DDMFormFieldValue>> ddmFormFieldValuesMap,
+			long ddmStructureId, Locale defaultLocale,
+			Map<String, FieldPair> fieldPairs)
+		throws PortalException {
+
+		_addField(
+			ddmForm.getDDMFormField(ddmFormFieldValue.getName(), true),
+			ddmFormFieldValue, ddmFormFieldValuesMap, ddmStructureId,
+			defaultLocale, fieldPairs);
+
+		for (DDMFormFieldValue nestedDDMFormFieldValue :
+				ddmFormFieldValue.getNestedDDMFormFieldValues()) {
+
+			_addFields(
+				ddmForm, nestedDDMFormFieldValue, ddmFormFieldValuesMap,
+				ddmStructureId, defaultLocale, fieldPairs);
+		}
+	}
+
 	private void _addFieldValue(
 			StringBundler sb, String type, String valueString)
 		throws Exception {
@@ -597,7 +658,9 @@ public class DDMIndexerImpl implements DDMIndexer {
 		else if (type.equals(DDMFormFieldTypeConstants.RICH_TEXT)) {
 			sb.append(_htmlParser.extractText(valueString));
 		}
-		else if (type.equals(DDMFormFieldTypeConstants.SELECT)) {
+		else if (type.equals(DDMFormFieldTypeConstants.CHECKBOX_MULTIPLE) ||
+				 type.equals(DDMFormFieldTypeConstants.SELECT)) {
+
 			JSONArray jsonArray = _jsonFactory.createJSONArray(valueString);
 
 			sb.append(ArrayUtil.toStringArray(jsonArray));
@@ -628,16 +691,8 @@ public class DDMIndexerImpl implements DDMIndexer {
 	}
 
 	private void _addToDocument(
-			Document document, Field field, String indexType, String name,
-			Serializable value)
-		throws PortalException {
-
-		_addToDocument(document, field, indexType, name, value, value);
-	}
-
-	private void _addToDocument(
-			Document document, Field field, String indexType, String name,
-			Serializable sortableValue, Serializable value)
+			Document document, String indexType, String name,
+			Serializable sortableValue, String type, Serializable value)
 		throws PortalException {
 
 		if (value == null) {
@@ -700,8 +755,6 @@ public class DDMIndexerImpl implements DDMIndexer {
 
 			String[] truncatedValuesString = valuesString;
 
-			String type = field.getType();
-
 			if (type.equals(DDMFormFieldTypeConstants.DATE) ||
 				type.equals(DDMFormFieldTypeConstants.DATE_TIME)) {
 
@@ -757,8 +810,6 @@ public class DDMIndexerImpl implements DDMIndexer {
 				String.valueOf(sortableValue));
 			String valueString = String.valueOf(value);
 
-			String type = field.getType();
-
 			if (type.equals(DDMFormFieldTypeConstants.GEOLOCATION)) {
 				JSONObject jsonObject = _jsonFactory.createJSONObject(
 					valueString);
@@ -769,7 +820,9 @@ public class DDMIndexerImpl implements DDMIndexer {
 				document.addGeoLocation(
 					name.concat("_geolocation"), latitude, longitude);
 			}
-			else if (type.equals(DDMFormFieldTypeConstants.SELECT)) {
+			else if (type.equals(DDMFormFieldTypeConstants.CHECKBOX_MULTIPLE) ||
+					 type.equals(DDMFormFieldTypeConstants.SELECT)) {
+
 				document.addKeyword(
 					_getFieldName(name), _toStringArray(sortableValue));
 				document.addKeyword(
@@ -805,6 +858,80 @@ public class DDMIndexerImpl implements DDMIndexer {
 				}
 			}
 		}
+	}
+
+	private void _addToDocument(
+			Document document, String indexType, String name, String type,
+			Serializable value)
+		throws PortalException {
+
+		_addToDocument(document, indexType, name, value, type, value);
+	}
+
+	private Field _createField(
+			DDMFormField ddmFormField,
+			Map<String, List<DDMFormFieldValue>> ddmFormFieldValuesMap,
+			DDMFormFieldValue ddmFormFieldValue, long ddmStructureId,
+			Locale defaultLocale)
+		throws PortalException {
+
+		Field field = new Field();
+
+		field.setDDMStructureId(ddmStructureId);
+		field.setDefaultLocale(defaultLocale);
+		field.setName(ddmFormFieldValue.getName());
+
+		Value value = ddmFormFieldValue.getValue();
+
+		boolean addValueLocales = false;
+
+		if (MapUtil.isEmpty(value.getValues())) {
+			LocalizedValue predefinedValue = ddmFormField.getPredefinedValue();
+
+			Map<Locale, String> predefinedValuesMap =
+				predefinedValue.getValues();
+
+			if (predefinedValuesMap.isEmpty()) {
+				LocalizedValue localizedValue = new LocalizedValue(
+					defaultLocale);
+
+				localizedValue.addString(defaultLocale, StringPool.BLANK);
+
+				ddmFormField.setPredefinedValue(localizedValue);
+			}
+
+			value = ddmFormField.getPredefinedValue();
+
+			addValueLocales = true;
+		}
+
+		if (!value.isLocalized()) {
+			field.addValue(
+				defaultLocale,
+				FieldConstants.getSerializable(
+					defaultLocale, LocaleUtil.ROOT, ddmFormField.getDataType(),
+					value.getString(LocaleUtil.ROOT)));
+
+			return field;
+		}
+
+		Set<Locale> availableLocales = _getAvailableLocales(
+			ddmFormFieldValuesMap, ddmFormField.getName());
+
+		if (addValueLocales) {
+			availableLocales.addAll(value.getAvailableLocales());
+		}
+
+		for (Locale availableLocale : availableLocales) {
+			field.addValue(
+				availableLocale,
+				FieldConstants.getSerializable(
+					availableLocale, availableLocale,
+					ddmFormField.getDataType(),
+					value.getString(availableLocale)));
+		}
+
+		return field;
 	}
 
 	private void _createSortableTextField(
@@ -876,9 +1003,7 @@ public class DDMIndexerImpl implements DDMIndexer {
 				}
 
 				_extractIndexableAttribute(
-					ddmFormField, defaultLocale,
-					ddmStructure.getFieldProperty(
-						ddmFormField.getName(), "indexType"),
+					ddmFormField, defaultLocale, ddmFormField.getIndexType(),
 					ddmFormFieldLocale, sb, ddmFormFieldValue.getValue());
 			}
 			catch (Exception exception) {
@@ -904,6 +1029,47 @@ public class DDMIndexerImpl implements DDMIndexer {
 					ddmStructure, defaultLocale, locale, sb);
 			}
 		}
+	}
+
+	private Set<Locale> _getAvailableLocales(
+		Map<String, List<DDMFormFieldValue>> ddmFormFieldValuesMap,
+		String name) {
+
+		Set<Locale> availableLocales = new HashSet<>();
+
+		List<DDMFormFieldValue> ddmFormFieldValues = ddmFormFieldValuesMap.get(
+			name);
+
+		if (ddmFormFieldValues == null) {
+			return availableLocales;
+		}
+
+		List<DDMFormFieldValue> matchedDDMFormFieldValues = new ArrayList<>();
+
+		for (DDMFormFieldValue ddmFormFieldValue : ddmFormFieldValues) {
+			Value value = ddmFormFieldValue.getValue();
+
+			if (value == null) {
+				continue;
+			}
+
+			availableLocales.addAll(value.getAvailableLocales());
+
+			ddmFormFieldValue.populateNestedDDMFormFieldValues(
+				name, matchedDDMFormFieldValues);
+		}
+
+		for (DDMFormFieldValue ddmFormFieldValue : matchedDDMFormFieldValues) {
+			Value value = ddmFormFieldValue.getValue();
+
+			if (value == null) {
+				continue;
+			}
+
+			availableLocales.addAll(value.getAvailableLocales());
+		}
+
+		return availableLocales;
 	}
 
 	private Date[] _getDateValues(String type, String[] values) {
@@ -1000,19 +1166,72 @@ public class DDMIndexerImpl implements DDMIndexer {
 		return sortableValue;
 	}
 
-	private Fields _toFields(
+	private Serializable _getValue(
+		Field field, DDMFormField ddmFormField, Locale locale) {
+
+		List<Serializable> values = field.getValues(locale);
+
+		if (values.isEmpty()) {
+			return null;
+		}
+
+		try {
+			if ((values.size() > 1) || ddmFormField.isRepeatable()) {
+				return FieldConstants.getSerializable(
+					ddmFormField.getDataType(), values);
+			}
+
+			return values.get(0);
+		}
+		catch (Exception exception) {
+			_log.error("Unable to extract field value", exception);
+		}
+
+		return null;
+	}
+
+	private Collection<FieldPair> _toFieldPairs(
 		DDMStructure ddmStructure, DDMFormValues ddmFormValues) {
 
 		try {
-			return _ddmFormValuesToFieldsConverter.convert(
-				ddmStructure, ddmFormValues);
+			DDMForm ddmForm = ddmStructure.getFullHierarchyDDMForm(false);
+
+			List<DDMFormFieldValue> ddmFormFieldValues =
+				DDMFormValuesConverterUtil.getDDMFormFieldValues(
+					ddmForm.getDDMFormFields(),
+					ddmFormValues.getDDMFormFieldValuesMap(true));
+
+			Map<String, List<DDMFormFieldValue>> ddmFormFieldValuesMap =
+				new HashMap<>();
+
+			for (DDMFormFieldValue ddmFormFieldValue : ddmFormFieldValues) {
+				List<DDMFormFieldValue> curDDMFormFieldValues =
+					ddmFormFieldValuesMap.computeIfAbsent(
+						ddmFormFieldValue.getName(), key -> new ArrayList<>());
+
+				curDDMFormFieldValues.add(ddmFormFieldValue);
+
+				ddmFormFieldValue.populateNestedDDMFormFieldValuesMap(
+					ddmFormFieldValuesMap);
+			}
+
+			Map<String, FieldPair> fieldPairs = new HashMap<>();
+
+			for (DDMFormFieldValue ddmFormFieldValue : ddmFormFieldValues) {
+				_addFields(
+					ddmForm, ddmFormFieldValue, ddmFormFieldValuesMap,
+					ddmStructure.getStructureId(),
+					ddmFormValues.getDefaultLocale(), fieldPairs);
+			}
+
+			return fieldPairs.values();
 		}
 		catch (PortalException portalException) {
 			_log.error(
 				"Unable to convert DDMFormValues to Fields", portalException);
 		}
 
-		return new Fields();
+		return Collections.emptySet();
 	}
 
 	private String[] _toStringArray(Object value) throws PortalException {
@@ -1038,9 +1257,6 @@ public class DDMIndexerImpl implements DDMIndexer {
 	@Reference
 	private DDM _ddm;
 
-	@Reference
-	private DDMFormValuesToFieldsConverter _ddmFormValuesToFieldsConverter;
-
 	private volatile DDMIndexerConfiguration _ddmIndexerConfiguration;
 
 	@Reference
@@ -1051,5 +1267,23 @@ public class DDMIndexerImpl implements DDMIndexer {
 
 	@Reference
 	private JSONFactory _jsonFactory;
+
+	private static class FieldPair {
+
+		private FieldPair(DDMFormField ddmFormField, Field field) {
+			_ddmFormField = ddmFormField;
+			_field = field;
+		}
+
+		private void _mergeField(Field field) {
+			for (Locale locale : field.getAvailableLocales()) {
+				_field.addValues(locale, field.getValues(locale));
+			}
+		}
+
+		private final DDMFormField _ddmFormField;
+		private final Field _field;
+
+	}
 
 }

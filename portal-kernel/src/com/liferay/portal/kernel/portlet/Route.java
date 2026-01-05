@@ -306,6 +306,10 @@ public class Route {
 			return null;
 		}
 
+		for (String name : _stringParser.getStringParserFragmentNames()) {
+			parameters.remove(name);
+		}
+
 		for (String name : generatedParameters.keySet()) {
 
 			// Virtual parameters will never be placed in the query string, so

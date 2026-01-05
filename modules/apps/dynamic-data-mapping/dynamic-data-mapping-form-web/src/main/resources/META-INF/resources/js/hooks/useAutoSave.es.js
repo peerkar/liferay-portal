@@ -14,7 +14,7 @@ import {
 } from 'data-engine-js-components-web';
 import objectHash from 'object-hash';
 import React, {useCallback, useContext, useEffect, useRef} from 'react';
-import {withRouter} from 'react-router-dom';
+import {useLocation} from 'react-router';
 
 import {useStateSync} from './useStateSync.es';
 import {useValidateFormWithObjects} from './useValidateFormWithObjects';
@@ -77,7 +77,8 @@ const MILLISECONDS_TO_MINUTE = 60000;
  *
  * Each time the rules are changed, the form is saved.
  */
-export function AutoSaveProvider({children, interval, location, url}) {
+function AutoSaveProvider({children, interval, url}) {
+	const location = useLocation();
 	const {portletNamespace} = useConfig();
 	const {
 		availableLanguageIds,
@@ -236,7 +237,7 @@ export function AutoSaveProvider({children, interval, location, url}) {
 	);
 }
 
-export default withRouter(AutoSaveProvider);
+export default AutoSaveProvider;
 
 export function useAutoSave() {
 	return useContext(AutoSaveContext);

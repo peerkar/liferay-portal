@@ -99,7 +99,188 @@ public class Site implements Serializable {
 
 	@io.swagger.v3.oas.annotations.media.Schema
 	@Valid
-	public Map<String, String> getDescription() {
+	public AnalyticsConfiguration getAnalyticsConfiguration() {
+		if (_analyticsConfigurationSupplier != null) {
+			analyticsConfiguration = _analyticsConfigurationSupplier.get();
+
+			_analyticsConfigurationSupplier = null;
+		}
+
+		return analyticsConfiguration;
+	}
+
+	public void setAnalyticsConfiguration(
+		AnalyticsConfiguration analyticsConfiguration) {
+
+		this.analyticsConfiguration = analyticsConfiguration;
+
+		_analyticsConfigurationSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setAnalyticsConfiguration(
+		UnsafeSupplier<AnalyticsConfiguration, Exception>
+			analyticsConfigurationUnsafeSupplier) {
+
+		_analyticsConfigurationSupplier = () -> {
+			try {
+				return analyticsConfigurationUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected AnalyticsConfiguration analyticsConfiguration;
+
+	@JsonIgnore
+	private Supplier<AnalyticsConfiguration> _analyticsConfigurationSupplier;
+
+	@io.swagger.v3.oas.annotations.media.Schema(
+		description = "Whether to enable auto tagging of assets on this site."
+	)
+	public Boolean getAssetAutoTaggingEnabled() {
+		if (_assetAutoTaggingEnabledSupplier != null) {
+			assetAutoTaggingEnabled = _assetAutoTaggingEnabledSupplier.get();
+
+			_assetAutoTaggingEnabledSupplier = null;
+		}
+
+		return assetAutoTaggingEnabled;
+	}
+
+	public void setAssetAutoTaggingEnabled(Boolean assetAutoTaggingEnabled) {
+		this.assetAutoTaggingEnabled = assetAutoTaggingEnabled;
+
+		_assetAutoTaggingEnabledSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setAssetAutoTaggingEnabled(
+		UnsafeSupplier<Boolean, Exception>
+			assetAutoTaggingEnabledUnsafeSupplier) {
+
+		_assetAutoTaggingEnabledSupplier = () -> {
+			try {
+				return assetAutoTaggingEnabledUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField(
+		description = "Whether to enable auto tagging of assets on this site."
+	)
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected Boolean assetAutoTaggingEnabled;
+
+	@JsonIgnore
+	private Supplier<Boolean> _assetAutoTaggingEnabledSupplier;
+
+	@io.swagger.v3.oas.annotations.media.Schema(
+		description = "Whether to allow subsites to display content from this site."
+	)
+	public Boolean getContentSharingWithChildrenEnabled() {
+		if (_contentSharingWithChildrenEnabledSupplier != null) {
+			contentSharingWithChildrenEnabled =
+				_contentSharingWithChildrenEnabledSupplier.get();
+
+			_contentSharingWithChildrenEnabledSupplier = null;
+		}
+
+		return contentSharingWithChildrenEnabled;
+	}
+
+	public void setContentSharingWithChildrenEnabled(
+		Boolean contentSharingWithChildrenEnabled) {
+
+		this.contentSharingWithChildrenEnabled =
+			contentSharingWithChildrenEnabled;
+
+		_contentSharingWithChildrenEnabledSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setContentSharingWithChildrenEnabled(
+		UnsafeSupplier<Boolean, Exception>
+			contentSharingWithChildrenEnabledUnsafeSupplier) {
+
+		_contentSharingWithChildrenEnabledSupplier = () -> {
+			try {
+				return contentSharingWithChildrenEnabledUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField(
+		description = "Whether to allow subsites to display content from this site."
+	)
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected Boolean contentSharingWithChildrenEnabled;
+
+	@JsonIgnore
+	private Supplier<Boolean> _contentSharingWithChildrenEnabledSupplier;
+
+	@io.swagger.v3.oas.annotations.media.Schema(example = "en_US")
+	public String getDefaultLanguageId() {
+		if (_defaultLanguageIdSupplier != null) {
+			defaultLanguageId = _defaultLanguageIdSupplier.get();
+
+			_defaultLanguageIdSupplier = null;
+		}
+
+		return defaultLanguageId;
+	}
+
+	public void setDefaultLanguageId(String defaultLanguageId) {
+		this.defaultLanguageId = defaultLanguageId;
+
+		_defaultLanguageIdSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setDefaultLanguageId(
+		UnsafeSupplier<String, Exception> defaultLanguageIdUnsafeSupplier) {
+
+		_defaultLanguageIdSupplier = () -> {
+			try {
+				return defaultLanguageIdUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected String defaultLanguageId;
+
+	@JsonIgnore
+	private Supplier<String> _defaultLanguageIdSupplier;
+
+	@io.swagger.v3.oas.annotations.media.Schema
+	public String getDescription() {
 		if (_descriptionSupplier != null) {
 			description = _descriptionSupplier.get();
 
@@ -109,7 +290,7 @@ public class Site implements Serializable {
 		return description;
 	}
 
-	public void setDescription(Map<String, String> description) {
+	public void setDescription(String description) {
 		this.description = description;
 
 		_descriptionSupplier = null;
@@ -117,8 +298,7 @@ public class Site implements Serializable {
 
 	@JsonIgnore
 	public void setDescription(
-		UnsafeSupplier<Map<String, String>, Exception>
-			descriptionUnsafeSupplier) {
+		UnsafeSupplier<String, Exception> descriptionUnsafeSupplier) {
 
 		_descriptionSupplier = () -> {
 			try {
@@ -135,10 +315,183 @@ public class Site implements Serializable {
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected Map<String, String> description;
+	protected String description;
 
 	@JsonIgnore
-	private Supplier<Map<String, String>> _descriptionSupplier;
+	private Supplier<String> _descriptionSupplier;
+
+	@io.swagger.v3.oas.annotations.media.Schema
+	@Valid
+	public Map<String, String> getDescription_i18n() {
+		if (_description_i18nSupplier != null) {
+			description_i18n = _description_i18nSupplier.get();
+
+			_description_i18nSupplier = null;
+		}
+
+		return description_i18n;
+	}
+
+	public void setDescription_i18n(Map<String, String> description_i18n) {
+		this.description_i18n = description_i18n;
+
+		_description_i18nSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setDescription_i18n(
+		UnsafeSupplier<Map<String, String>, Exception>
+			description_i18nUnsafeSupplier) {
+
+		_description_i18nSupplier = () -> {
+			try {
+				return description_i18nUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected Map<String, String> description_i18n;
+
+	@JsonIgnore
+	private Supplier<Map<String, String>> _description_i18nSupplier;
+
+	@io.swagger.v3.oas.annotations.media.Schema
+	public String getDescriptiveName() {
+		if (_descriptiveNameSupplier != null) {
+			descriptiveName = _descriptiveNameSupplier.get();
+
+			_descriptiveNameSupplier = null;
+		}
+
+		return descriptiveName;
+	}
+
+	public void setDescriptiveName(String descriptiveName) {
+		this.descriptiveName = descriptiveName;
+
+		_descriptiveNameSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setDescriptiveName(
+		UnsafeSupplier<String, Exception> descriptiveNameUnsafeSupplier) {
+
+		_descriptiveNameSupplier = () -> {
+			try {
+				return descriptiveNameUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	protected String descriptiveName;
+
+	@JsonIgnore
+	private Supplier<String> _descriptiveNameSupplier;
+
+	@io.swagger.v3.oas.annotations.media.Schema
+	@Valid
+	public Map<String, String> getDescriptiveName_i18n() {
+		if (_descriptiveName_i18nSupplier != null) {
+			descriptiveName_i18n = _descriptiveName_i18nSupplier.get();
+
+			_descriptiveName_i18nSupplier = null;
+		}
+
+		return descriptiveName_i18n;
+	}
+
+	public void setDescriptiveName_i18n(
+		Map<String, String> descriptiveName_i18n) {
+
+		this.descriptiveName_i18n = descriptiveName_i18n;
+
+		_descriptiveName_i18nSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setDescriptiveName_i18n(
+		UnsafeSupplier<Map<String, String>, Exception>
+			descriptiveName_i18nUnsafeSupplier) {
+
+		_descriptiveName_i18nSupplier = () -> {
+			try {
+				return descriptiveName_i18nUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	protected Map<String, String> descriptiveName_i18n;
+
+	@JsonIgnore
+	private Supplier<Map<String, String>> _descriptiveName_i18nSupplier;
+
+	@io.swagger.v3.oas.annotations.media.Schema(
+		description = "Whether directory indexing is enabled."
+	)
+	public Boolean getDirectoryIndexingEnabled() {
+		if (_directoryIndexingEnabledSupplier != null) {
+			directoryIndexingEnabled = _directoryIndexingEnabledSupplier.get();
+
+			_directoryIndexingEnabledSupplier = null;
+		}
+
+		return directoryIndexingEnabled;
+	}
+
+	public void setDirectoryIndexingEnabled(Boolean directoryIndexingEnabled) {
+		this.directoryIndexingEnabled = directoryIndexingEnabled;
+
+		_directoryIndexingEnabledSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setDirectoryIndexingEnabled(
+		UnsafeSupplier<Boolean, Exception>
+			directoryIndexingEnabledUnsafeSupplier) {
+
+		_directoryIndexingEnabledSupplier = () -> {
+			try {
+				return directoryIndexingEnabledUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField(description = "Whether directory indexing is enabled.")
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected Boolean directoryIndexingEnabled;
+
+	@JsonIgnore
+	private Supplier<Boolean> _directoryIndexingEnabledSupplier;
 
 	@io.swagger.v3.oas.annotations.media.Schema(
 		description = "The site's external reference code."
@@ -263,6 +616,51 @@ public class Site implements Serializable {
 	@JsonIgnore
 	private Supplier<Long> _idSupplier;
 
+	@io.swagger.v3.oas.annotations.media.Schema(
+		description = "Whether to use the default language set by defaultLanguageId."
+	)
+	public Boolean getInheritLocales() {
+		if (_inheritLocalesSupplier != null) {
+			inheritLocales = _inheritLocalesSupplier.get();
+
+			_inheritLocalesSupplier = null;
+		}
+
+		return inheritLocales;
+	}
+
+	public void setInheritLocales(Boolean inheritLocales) {
+		this.inheritLocales = inheritLocales;
+
+		_inheritLocalesSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setInheritLocales(
+		UnsafeSupplier<Boolean, Exception> inheritLocalesUnsafeSupplier) {
+
+		_inheritLocalesSupplier = () -> {
+			try {
+				return inheritLocalesUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField(
+		description = "Whether to use the default language set by defaultLanguageId."
+	)
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected Boolean inheritLocales;
+
+	@JsonIgnore
+	private Supplier<Boolean> _inheritLocalesSupplier;
+
 	@io.swagger.v3.oas.annotations.media.Schema
 	public String getKey() {
 		if (_keySupplier != null) {
@@ -301,6 +699,51 @@ public class Site implements Serializable {
 
 	@JsonIgnore
 	private Supplier<String> _keySupplier;
+
+	@io.swagger.v3.oas.annotations.media.Schema(
+		description = "A list of languages for which the role has a translation."
+	)
+	public String[] getLocales() {
+		if (_localesSupplier != null) {
+			locales = _localesSupplier.get();
+
+			_localesSupplier = null;
+		}
+
+		return locales;
+	}
+
+	public void setLocales(String[] locales) {
+		this.locales = locales;
+
+		_localesSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setLocales(
+		UnsafeSupplier<String[], Exception> localesUnsafeSupplier) {
+
+		_localesSupplier = () -> {
+			try {
+				return localesUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField(
+		description = "A list of languages for which the role has a translation."
+	)
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected String[] locales;
+
+	@JsonIgnore
+	private Supplier<String[]> _localesSupplier;
 
 	@io.swagger.v3.oas.annotations.media.Schema
 	public Boolean getManualMembership() {
@@ -342,6 +785,65 @@ public class Site implements Serializable {
 
 	@JsonIgnore
 	private Supplier<Boolean> _manualMembershipSupplier;
+
+	@io.swagger.v3.oas.annotations.media.Schema(
+		description = "Sets the maps API provider to use when displaying geolocalized assets."
+	)
+	@JsonGetter("mapProviderKey")
+	@Valid
+	public MapProviderKey getMapProviderKey() {
+		if (_mapProviderKeySupplier != null) {
+			mapProviderKey = _mapProviderKeySupplier.get();
+
+			_mapProviderKeySupplier = null;
+		}
+
+		return mapProviderKey;
+	}
+
+	@JsonIgnore
+	public String getMapProviderKeyAsString() {
+		MapProviderKey mapProviderKey = getMapProviderKey();
+
+		if (mapProviderKey == null) {
+			return null;
+		}
+
+		return mapProviderKey.toString();
+	}
+
+	public void setMapProviderKey(MapProviderKey mapProviderKey) {
+		this.mapProviderKey = mapProviderKey;
+
+		_mapProviderKeySupplier = null;
+	}
+
+	@JsonIgnore
+	public void setMapProviderKey(
+		UnsafeSupplier<MapProviderKey, Exception>
+			mapProviderKeyUnsafeSupplier) {
+
+		_mapProviderKeySupplier = () -> {
+			try {
+				return mapProviderKeyUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField(
+		description = "Sets the maps API provider to use when displaying geolocalized assets."
+	)
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected MapProviderKey mapProviderKey;
+
+	@JsonIgnore
+	private Supplier<MapProviderKey> _mapProviderKeySupplier;
 
 	@io.swagger.v3.oas.annotations.media.Schema
 	public Integer getMembershipRestriction() {
@@ -441,6 +943,51 @@ public class Site implements Serializable {
 
 	@JsonIgnore
 	private Supplier<MembershipType> _membershipTypeSupplier;
+
+	@io.swagger.v3.oas.annotations.media.Schema(
+		description = "Whether to allow users to mention other users."
+	)
+	public Boolean getMentionsEnabled() {
+		if (_mentionsEnabledSupplier != null) {
+			mentionsEnabled = _mentionsEnabledSupplier.get();
+
+			_mentionsEnabledSupplier = null;
+		}
+
+		return mentionsEnabled;
+	}
+
+	public void setMentionsEnabled(Boolean mentionsEnabled) {
+		this.mentionsEnabled = mentionsEnabled;
+
+		_mentionsEnabledSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setMentionsEnabled(
+		UnsafeSupplier<Boolean, Exception> mentionsEnabledUnsafeSupplier) {
+
+		_mentionsEnabledSupplier = () -> {
+			try {
+				return mentionsEnabledUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField(
+		description = "Whether to allow users to mention other users."
+	)
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected Boolean mentionsEnabled;
+
+	@JsonIgnore
+	private Supplier<Boolean> _mentionsEnabledSupplier;
 
 	@io.swagger.v3.oas.annotations.media.Schema
 	public String getName() {
@@ -571,29 +1118,34 @@ public class Site implements Serializable {
 	private Supplier<String> _parentSiteExternalReferenceCodeSupplier;
 
 	@io.swagger.v3.oas.annotations.media.Schema
-	public String getParentSiteKey() {
-		if (_parentSiteKeySupplier != null) {
-			parentSiteKey = _parentSiteKeySupplier.get();
+	@Valid
+	public com.liferay.portal.vulcan.permission.Permission[] getPermissions() {
+		if (_permissionsSupplier != null) {
+			permissions = _permissionsSupplier.get();
 
-			_parentSiteKeySupplier = null;
+			_permissionsSupplier = null;
 		}
 
-		return parentSiteKey;
+		return permissions;
 	}
 
-	public void setParentSiteKey(String parentSiteKey) {
-		this.parentSiteKey = parentSiteKey;
+	public void setPermissions(
+		com.liferay.portal.vulcan.permission.Permission[] permissions) {
 
-		_parentSiteKeySupplier = null;
+		this.permissions = permissions;
+
+		_permissionsSupplier = null;
 	}
 
 	@JsonIgnore
-	public void setParentSiteKey(
-		UnsafeSupplier<String, Exception> parentSiteKeyUnsafeSupplier) {
+	public void setPermissions(
+		UnsafeSupplier
+			<com.liferay.portal.vulcan.permission.Permission[], Exception>
+				permissionsUnsafeSupplier) {
 
-		_parentSiteKeySupplier = () -> {
+		_permissionsSupplier = () -> {
 			try {
-				return parentSiteKeyUnsafeSupplier.get();
+				return permissionsUnsafeSupplier.get();
 			}
 			catch (RuntimeException runtimeException) {
 				throw runtimeException;
@@ -605,11 +1157,99 @@ public class Site implements Serializable {
 	}
 
 	@GraphQLField
-	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-	protected String parentSiteKey;
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected com.liferay.portal.vulcan.permission.Permission[] permissions;
 
 	@JsonIgnore
-	private Supplier<String> _parentSiteKeySupplier;
+	private Supplier<com.liferay.portal.vulcan.permission.Permission[]>
+		_permissionsSupplier;
+
+	@io.swagger.v3.oas.annotations.media.Schema
+	@Valid
+	public RatingsTypes getRatingsTypes() {
+		if (_ratingsTypesSupplier != null) {
+			ratingsTypes = _ratingsTypesSupplier.get();
+
+			_ratingsTypesSupplier = null;
+		}
+
+		return ratingsTypes;
+	}
+
+	public void setRatingsTypes(RatingsTypes ratingsTypes) {
+		this.ratingsTypes = ratingsTypes;
+
+		_ratingsTypesSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setRatingsTypes(
+		UnsafeSupplier<RatingsTypes, Exception> ratingsTypesUnsafeSupplier) {
+
+		_ratingsTypesSupplier = () -> {
+			try {
+				return ratingsTypesUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected RatingsTypes ratingsTypes;
+
+	@JsonIgnore
+	private Supplier<RatingsTypes> _ratingsTypesSupplier;
+
+	@io.swagger.v3.oas.annotations.media.Schema(
+		description = "Whether to allow users to share items with other users."
+	)
+	public Boolean getSharingEnabled() {
+		if (_sharingEnabledSupplier != null) {
+			sharingEnabled = _sharingEnabledSupplier.get();
+
+			_sharingEnabledSupplier = null;
+		}
+
+		return sharingEnabled;
+	}
+
+	public void setSharingEnabled(Boolean sharingEnabled) {
+		this.sharingEnabled = sharingEnabled;
+
+		_sharingEnabledSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setSharingEnabled(
+		UnsafeSupplier<Boolean, Exception> sharingEnabledUnsafeSupplier) {
+
+		_sharingEnabledSupplier = () -> {
+			try {
+				return sharingEnabledUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField(
+		description = "Whether to allow users to share items with other users."
+	)
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected Boolean sharingEnabled;
+
+	@JsonIgnore
+	private Supplier<Boolean> _sharingEnabledSupplier;
 
 	@io.swagger.v3.oas.annotations.media.Schema
 	public String getTemplateKey() {
@@ -706,32 +1346,32 @@ public class Site implements Serializable {
 	@JsonIgnore
 	private Supplier<TemplateType> _templateTypeSupplier;
 
-	@io.swagger.v3.oas.annotations.media.Schema
-	@Valid
-	public Map<String, String> getTypeSettings() {
-		if (_typeSettingsSupplier != null) {
-			typeSettings = _typeSettingsSupplier.get();
+	@io.swagger.v3.oas.annotations.media.Schema(
+		description = "Whether to enable the Recycle Bin."
+	)
+	public Boolean getTrashEnabled() {
+		if (_trashEnabledSupplier != null) {
+			trashEnabled = _trashEnabledSupplier.get();
 
-			_typeSettingsSupplier = null;
+			_trashEnabledSupplier = null;
 		}
 
-		return typeSettings;
+		return trashEnabled;
 	}
 
-	public void setTypeSettings(Map<String, String> typeSettings) {
-		this.typeSettings = typeSettings;
+	public void setTrashEnabled(Boolean trashEnabled) {
+		this.trashEnabled = trashEnabled;
 
-		_typeSettingsSupplier = null;
+		_trashEnabledSupplier = null;
 	}
 
 	@JsonIgnore
-	public void setTypeSettings(
-		UnsafeSupplier<Map<String, String>, Exception>
-			typeSettingsUnsafeSupplier) {
+	public void setTrashEnabled(
+		UnsafeSupplier<Boolean, Exception> trashEnabledUnsafeSupplier) {
 
-		_typeSettingsSupplier = () -> {
+		_trashEnabledSupplier = () -> {
 			try {
-				return typeSettingsUnsafeSupplier.get();
+				return trashEnabledUnsafeSupplier.get();
 			}
 			catch (RuntimeException runtimeException) {
 				throw runtimeException;
@@ -742,12 +1382,57 @@ public class Site implements Serializable {
 		};
 	}
 
-	@GraphQLField
+	@GraphQLField(description = "Whether to enable the Recycle Bin.")
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected Map<String, String> typeSettings;
+	protected Boolean trashEnabled;
 
 	@JsonIgnore
-	private Supplier<Map<String, String>> _typeSettingsSupplier;
+	private Supplier<Boolean> _trashEnabledSupplier;
+
+	@io.swagger.v3.oas.annotations.media.Schema(
+		description = "The time, in minutes, that entries are kept in the Recycle Bin. Entries that have been in the Recycle Bin for more than this time are automatically deleted."
+	)
+	public Integer getTrashEntriesMaxAge() {
+		if (_trashEntriesMaxAgeSupplier != null) {
+			trashEntriesMaxAge = _trashEntriesMaxAgeSupplier.get();
+
+			_trashEntriesMaxAgeSupplier = null;
+		}
+
+		return trashEntriesMaxAge;
+	}
+
+	public void setTrashEntriesMaxAge(Integer trashEntriesMaxAge) {
+		this.trashEntriesMaxAge = trashEntriesMaxAge;
+
+		_trashEntriesMaxAgeSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setTrashEntriesMaxAge(
+		UnsafeSupplier<Integer, Exception> trashEntriesMaxAgeUnsafeSupplier) {
+
+		_trashEntriesMaxAgeSupplier = () -> {
+			try {
+				return trashEntriesMaxAgeUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField(
+		description = "The time, in minutes, that entries are kept in the Recycle Bin. Entries that have been in the Recycle Bin for more than this time are automatically deleted."
+	)
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected Integer trashEntriesMaxAge;
+
+	@JsonIgnore
+	private Supplier<Integer> _trashEntriesMaxAgeSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -788,7 +1473,61 @@ public class Site implements Serializable {
 			sb.append(active);
 		}
 
-		Map<String, String> description = getDescription();
+		AnalyticsConfiguration analyticsConfiguration =
+			getAnalyticsConfiguration();
+
+		if (analyticsConfiguration != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"analyticsConfiguration\": ");
+
+			sb.append(String.valueOf(analyticsConfiguration));
+		}
+
+		Boolean assetAutoTaggingEnabled = getAssetAutoTaggingEnabled();
+
+		if (assetAutoTaggingEnabled != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"assetAutoTaggingEnabled\": ");
+
+			sb.append(assetAutoTaggingEnabled);
+		}
+
+		Boolean contentSharingWithChildrenEnabled =
+			getContentSharingWithChildrenEnabled();
+
+		if (contentSharingWithChildrenEnabled != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"contentSharingWithChildrenEnabled\": ");
+
+			sb.append(contentSharingWithChildrenEnabled);
+		}
+
+		String defaultLanguageId = getDefaultLanguageId();
+
+		if (defaultLanguageId != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"defaultLanguageId\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(defaultLanguageId));
+
+			sb.append("\"");
+		}
+
+		String description = getDescription();
 
 		if (description != null) {
 			if (sb.length() > 1) {
@@ -797,7 +1536,63 @@ public class Site implements Serializable {
 
 			sb.append("\"description\": ");
 
-			sb.append(_toJSON(description));
+			sb.append("\"");
+
+			sb.append(_escape(description));
+
+			sb.append("\"");
+		}
+
+		Map<String, String> description_i18n = getDescription_i18n();
+
+		if (description_i18n != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"description_i18n\": ");
+
+			sb.append(_toJSON(description_i18n));
+		}
+
+		String descriptiveName = getDescriptiveName();
+
+		if (descriptiveName != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"descriptiveName\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(descriptiveName));
+
+			sb.append("\"");
+		}
+
+		Map<String, String> descriptiveName_i18n = getDescriptiveName_i18n();
+
+		if (descriptiveName_i18n != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"descriptiveName_i18n\": ");
+
+			sb.append(_toJSON(descriptiveName_i18n));
+		}
+
+		Boolean directoryIndexingEnabled = getDirectoryIndexingEnabled();
+
+		if (directoryIndexingEnabled != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"directoryIndexingEnabled\": ");
+
+			sb.append(directoryIndexingEnabled);
 		}
 
 		String externalReferenceCode = getExternalReferenceCode();
@@ -844,6 +1639,18 @@ public class Site implements Serializable {
 			sb.append(id);
 		}
 
+		Boolean inheritLocales = getInheritLocales();
+
+		if (inheritLocales != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"inheritLocales\": ");
+
+			sb.append(inheritLocales);
+		}
+
 		String key = getKey();
 
 		if (key != null) {
@@ -860,6 +1667,32 @@ public class Site implements Serializable {
 			sb.append("\"");
 		}
 
+		String[] locales = getLocales();
+
+		if (locales != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"locales\": ");
+
+			sb.append("[");
+
+			for (int i = 0; i < locales.length; i++) {
+				sb.append("\"");
+
+				sb.append(_escape(locales[i]));
+
+				sb.append("\"");
+
+				if ((i + 1) < locales.length) {
+					sb.append(", ");
+				}
+			}
+
+			sb.append("]");
+		}
+
 		Boolean manualMembership = getManualMembership();
 
 		if (manualMembership != null) {
@@ -870,6 +1703,20 @@ public class Site implements Serializable {
 			sb.append("\"manualMembership\": ");
 
 			sb.append(manualMembership);
+		}
+
+		MapProviderKey mapProviderKey = getMapProviderKey();
+
+		if (mapProviderKey != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"mapProviderKey\": ");
+
+			sb.append("\"");
+			sb.append(mapProviderKey);
+			sb.append("\"");
 		}
 
 		Integer membershipRestriction = getMembershipRestriction();
@@ -894,10 +1741,20 @@ public class Site implements Serializable {
 			sb.append("\"membershipType\": ");
 
 			sb.append("\"");
-
 			sb.append(membershipType);
-
 			sb.append("\"");
+		}
+
+		Boolean mentionsEnabled = getMentionsEnabled();
+
+		if (mentionsEnabled != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"mentionsEnabled\": ");
+
+			sb.append(mentionsEnabled);
 		}
 
 		String name = getName();
@@ -945,20 +1802,51 @@ public class Site implements Serializable {
 			sb.append("\"");
 		}
 
-		String parentSiteKey = getParentSiteKey();
+		com.liferay.portal.vulcan.permission.Permission[] permissions =
+			getPermissions();
 
-		if (parentSiteKey != null) {
+		if (permissions != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"parentSiteKey\": ");
+			sb.append("\"permissions\": ");
 
-			sb.append("\"");
+			sb.append("[");
 
-			sb.append(_escape(parentSiteKey));
+			for (int i = 0; i < permissions.length; i++) {
+				sb.append(permissions[i]);
 
-			sb.append("\"");
+				if ((i + 1) < permissions.length) {
+					sb.append(", ");
+				}
+			}
+
+			sb.append("]");
+		}
+
+		RatingsTypes ratingsTypes = getRatingsTypes();
+
+		if (ratingsTypes != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"ratingsTypes\": ");
+
+			sb.append(String.valueOf(ratingsTypes));
+		}
+
+		Boolean sharingEnabled = getSharingEnabled();
+
+		if (sharingEnabled != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"sharingEnabled\": ");
+
+			sb.append(sharingEnabled);
 		}
 
 		String templateKey = getTemplateKey();
@@ -987,22 +1875,32 @@ public class Site implements Serializable {
 			sb.append("\"templateType\": ");
 
 			sb.append("\"");
-
 			sb.append(templateType);
-
 			sb.append("\"");
 		}
 
-		Map<String, String> typeSettings = getTypeSettings();
+		Boolean trashEnabled = getTrashEnabled();
 
-		if (typeSettings != null) {
+		if (trashEnabled != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"typeSettings\": ");
+			sb.append("\"trashEnabled\": ");
 
-			sb.append(_toJSON(typeSettings));
+			sb.append(trashEnabled);
+		}
+
+		Integer trashEntriesMaxAge = getTrashEntriesMaxAge();
+
+		if (trashEntriesMaxAge != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"trashEntriesMaxAge\": ");
+
+			sb.append(trashEntriesMaxAge);
 		}
 
 		sb.append("}");
@@ -1016,6 +1914,44 @@ public class Site implements Serializable {
 		name = "x-class-name"
 	)
 	public String xClassName;
+
+	@GraphQLName("MapProviderKey")
+	public static enum MapProviderKey {
+
+		GOOGLE_MAPS("GoogleMaps"), OPEN_STREET_MAP("OpenStreetMap");
+
+		@JsonCreator
+		public static MapProviderKey create(String value) {
+			if ((value == null) || value.equals("")) {
+				return null;
+			}
+
+			for (MapProviderKey mapProviderKey : values()) {
+				if (Objects.equals(mapProviderKey.getValue(), value)) {
+					return mapProviderKey;
+				}
+			}
+
+			throw new IllegalArgumentException("Invalid enum value: " + value);
+		}
+
+		@JsonValue
+		public String getValue() {
+			return _value;
+		}
+
+		@Override
+		public String toString() {
+			return _value;
+		}
+
+		private MapProviderKey(String value) {
+			_value = value;
+		}
+
+		private final String _value;
+
+	}
 
 	@GraphQLName("MembershipType")
 	public static enum MembershipType {

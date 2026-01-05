@@ -89,7 +89,7 @@ public class UtilityLayoutTypeControllerTest {
 			_layoutUtilityPageEntryLocalService.addLayoutUtilityPageEntry(
 				null, TestPropsValues.getUserId(), _group.getGroupId(), 0, 0,
 				false, RandomTestUtil.randomString(),
-				LayoutUtilityPageEntryConstants.TYPE_SC_NOT_FOUND, 0,
+				LayoutUtilityPageEntryConstants.TYPE_SC_NOT_FOUND, null,
 				ServiceContextTestUtil.getServiceContext(_group.getGroupId()));
 
 		_layout = _layoutLocalService.getLayout(
@@ -182,9 +182,10 @@ public class UtilityLayoutTypeControllerTest {
 				WorkflowConstants.STATUS_DRAFT,
 				ServiceContextTestUtil.getServiceContext(_group.getGroupId()));
 
-		_layout = _layoutLocalService.updateMasterLayoutPlid(
+		_layout = _layoutLocalService.updateMasterLayoutPageTemplateEntryERC(
 			_layout.getGroupId(), _layout.isPrivateLayout(),
-			_layout.getLayoutId(), layoutPageTemplateEntry.getPlid());
+			_layout.getLayoutId(),
+			layoutPageTemplateEntry.getExternalReferenceCode());
 
 		mockHttpServletRequest = new MockHttpServletRequest();
 

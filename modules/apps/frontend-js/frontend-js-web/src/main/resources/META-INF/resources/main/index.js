@@ -23,6 +23,7 @@ export const {
 	createRenderURL,
 	createResourceURL,
 	debounce,
+	deepClone,
 	delegate,
 	escapeHTML,
 	fetch,
@@ -92,3 +93,4 @@ export {default as printPage} from './util/print_page';
 export {isReducedMotion} from './util/reducedMotion';
 export {default as dateUtils} from './utils/date_time/index';
 export {getObjectValueFromPath} from './utils/object/getObjectValueFromPath';
+export {default as pkceChallenge} from './utils/pkceChallenge';

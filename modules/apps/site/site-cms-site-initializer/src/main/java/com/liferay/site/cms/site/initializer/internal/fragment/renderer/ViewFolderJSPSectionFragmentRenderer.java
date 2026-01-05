@@ -58,7 +58,8 @@ public class ViewFolderJSPSectionFragmentRenderer
 			httpServletRequest, language, _objectDefinitionService,
 			_objectDefinitionSettingLocalService,
 			_objectEntryFolderLocalService,
-			_objectEntryFolderModelResourcePermission, _portal);
+			_objectEntryFolderModelResourcePermission, _portal,
+			translationInfoItemFieldValuesExporterRegistry);
 	}
 
 	@Override

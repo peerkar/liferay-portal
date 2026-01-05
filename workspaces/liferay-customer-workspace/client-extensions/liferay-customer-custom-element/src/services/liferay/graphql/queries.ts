@@ -100,16 +100,16 @@ export const addDXPCloudEnvironment = gql`
 
 export const addHighPriorityContact = gql`
 	mutation addHighPriorityContact(
-		$HighPriorityContacts: InputC_HighPriorityContacts!
+		$HighPriorityContact: InputC_HighPriorityContact!
 	) {
-		createHighPriorityContacts(input: $HighPriorityContacts)
+		createHighPriorityContact(input: $HighPriorityContact)
 			@rest(
 				method: "POST"
-				type: "C_HighPriorityContactsPage"
-				path: "/c/highprioritycontactses/"
+				type: "C_HighPriorityContactPage"
+				path: "/c/highprioritycontacts/"
 			) {
-			contactsCategory
-			r_userToHighPriorityContacts_userId
+			contactCategory
+			r_userToHighPriorityContact_userId
 		}
 	}
 `;
@@ -240,14 +240,14 @@ export const deleteAccountUserRoles = gql`
 	}
 `;
 
-export const deleteHighPriorityContacts = gql`
-	mutation deleteHighPriorityContacts($highPriorityContactsId: Long!) {
-		deleteHighPriorityContacts(
-			highPriorityContactsId: $highPriorityContactsId
+export const deleteHighPriorityContact = gql`
+	mutation deleteHighPriorityContact($highPriorityContactId: Long!) {
+		deleteHighPriorityContact(
+			highPriorityContactId: $highPriorityContactId
 		)
 			@rest(
 				type: "Boolean"
-				path: "/c/highprioritycontactses/{args.highPriorityContactsId}"
+				path: "/c/highprioritycontacts/{args.highPriorityContactId}"
 				method: "DELETE"
 			) {
 			NoResponse
@@ -753,69 +753,17 @@ export const notificationQueueEntry = gql`
 	}
 `;
 
-export const patchOrderItemByExternalReferenceCode = gql`
-	mutation patchOrderItemByExternalReferenceCode(
-		$externalReferenceCode: String
-		$orderItem: InputOrderItem
-	) {
-		patchOrderItemByExternalReferenceCode(
-			externalReferenceCode: $externalReferenceCode
-			orderItem: $orderItem
-		)
-	}
-`;
-
-export const patchUserAccount = gql`
-	mutation patchUserAccount(
-		$userAccountId: Long!
-		$userAccount: InputUserAccount!
-	) {
-		patchUserAccount(
-			userAccountId: $userAccountId
-			userAccount: $userAccount
-		) {
-			alternateName
-			familyName
-			givenName
-			id
-		}
-	}
-`;
-
-export const updateAccountSubscriptionGroups = gql`
-	mutation putAccountSubscriptionGroups(
-		$id: Long!
-		$accountSubscriptionGroup: InputC_AccountSubscriptionGroup!
-	) {
-		updateAccountSubscriptionGroup(
-			accountSubscriptionGroupId: $id
-			input: $accountSubscriptionGroup
-		)
-			@rest(
-				method: "PUT"
-				type: "C_AccountSubscriptionGroup"
-				path: "/c/accountsubscriptiongroups/{args.accountSubscriptionGroupId}"
-			) {
-			accountSubscriptionGroupId
-			accountKey
-			activationStatus
-			externalReferenceCode
-			name
-		}
-	}
-`;
-
-export const updateBusinessEvent = gql`
-	mutation updateBusinessEvent(
+export const patchBusinessEvent = gql`
+	mutation patchBusinessEvent(
 		$businessEvent: InputC_BusinessEvent!
 		$businessEventId: Long!
 	) {
-		updateBusinessEvent(
+		patchBusinessEvent(
 			businessEventId: $businessEventId
 			input: $businessEvent
 		)
 			@rest(
-				method: "PUT"
+				method: "PATCH"
 				type: "C_BusinessEvent"
 				path: "/c/businessevents/{args.businessEventId}"
 			) {
@@ -833,21 +781,52 @@ export const updateBusinessEvent = gql`
 	}
 `;
 
-export const updateDXPCloudEnvironment = gql`
-	mutation updateDXPCloudProjectId(
+export const patchDXPCloudEnvironment = gql`
+	mutation patchDXPCloudProjectId(
 		$dxpCloudEnvironmentId: Long!
 		$DXPCloudEnvironment: InputC_DXPCloudEnvironment!
 	) {
-		updateDXPCloudEnvironment(
+		patchDXPCloudEnvironment(
 			dxpCloudEnvironmentId: $dxpCloudEnvironmentId
 			input: $DXPCloudEnvironment
 		)
 			@rest(
-				method: "PUT"
+				method: "PATCH"
 				type: "C_DXPCloudEnvironment"
 				path: "/c/dxpcloudenvironments/{args.dxpCloudEnvironmentId}"
 			) {
 			dxpCloudEnvironmentId
+		}
+	}
+`;
+
+export const patchOrderItemByExternalReferenceCode = gql`
+	mutation patchOrderItemByExternalReferenceCode(
+		$externalReferenceCode: String
+		$orderItem: InputOrderItem
+	) {
+		patchOrderItemByExternalReferenceCode(
+			externalReferenceCode: $externalReferenceCode
+			orderItem: $orderItem
+		) {
+			externalReferenceCode
+		}
+	}
+`;
+
+export const patchUserAccount = gql`
+	mutation patchUserAccount(
+		$userAccountId: Long!
+		$userAccount: InputUserAccount!
+	) {
+		patchUserAccount(
+			userAccountId: $userAccountId
+			userAccount: $userAccount
+		) {
+			alternateName
+			familyName
+			givenName
+			id
 		}
 	}
 `;

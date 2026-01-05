@@ -6,6 +6,7 @@
 package com.liferay.document.library.repository.authorization.oauth2;
 
 import com.liferay.document.library.repository.authorization.capability.AuthorizationException;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 
 import java.util.Map;
@@ -29,10 +30,18 @@ public class OAuth2AuthorizationException extends AuthorizationException {
 
 		public AccessDenied(String description) {
 			super(
-				String.format(
-					"The client is not authorized to request an " +
-						"authorization code using method: %s",
-					description));
+				"The client is not authorized to request an authorization " +
+					"code using method: " + description);
+		}
+
+	}
+
+	public static class InvalidNonce extends OAuth2AuthorizationException {
+
+		public InvalidNonce(String description) {
+			super(
+				"The authorization server returned an invalid nonce: " +
+					description);
 		}
 
 	}
@@ -41,11 +50,10 @@ public class OAuth2AuthorizationException extends AuthorizationException {
 
 		public InvalidRequest(String description) {
 			super(
-				String.format(
-					"The request is missing a required parameter, includes " +
-						"an invalid parameter value, includes a parameter " +
-							"more than once, or is otherwise malformed: %s",
-					description));
+				StringBundler.concat(
+					"The request is missing a required parameter, includes an ",
+					"invalid parameter value, includes a parameter more than ",
+					"once, or is otherwise malformed: ", description));
 		}
 
 	}
@@ -54,20 +62,18 @@ public class OAuth2AuthorizationException extends AuthorizationException {
 
 		public InvalidScope(String description) {
 			super(
-				String.format(
-					"The requested scope is invalid, unknown, or malformed: %s",
-					description));
+				"The requested scope is invalid, unknown, or malformed: " +
+					description);
 		}
 
 	}
 
 	public static class InvalidState extends OAuth2AuthorizationException {
 
-		public InvalidState(String state) {
+		public InvalidState(String description) {
 			super(
-				String.format(
-					"The resource owner returned an invalid state value: %s",
-					state));
+				"The resource owner returned an invalid state value: " +
+					description);
 		}
 
 	}
@@ -76,10 +82,9 @@ public class OAuth2AuthorizationException extends AuthorizationException {
 
 		public ServerError(String description) {
 			super(
-				String.format(
-					"The authorization server encountered an unexpected " +
-						"condition that prevented it from fulfilling the " +
-							"request: %s",
+				StringBundler.concat(
+					"The authorization server encountered an unexpected ",
+					"condition that prevented it from fulfilling the request: ",
 					description));
 		}
 
@@ -90,11 +95,10 @@ public class OAuth2AuthorizationException extends AuthorizationException {
 
 		public TemporarilyUnavailable(String description) {
 			super(
-				String.format(
-					"The authorization server is currently unable to handle " +
-						"the request due to a temporary overloading or " +
-							"maintenance of the server: %s",
-					description));
+				StringBundler.concat(
+					"The authorization server is currently unable to handle ",
+					"the request due to a temporary overloading or ",
+					"maintenance of the server: ", description));
 		}
 
 	}
@@ -104,10 +108,8 @@ public class OAuth2AuthorizationException extends AuthorizationException {
 
 		public UnauthorizedClient(String description) {
 			super(
-				String.format(
-					"The resource owner or authorization server denied the " +
-						"request: %s",
-					description));
+				"The resource owner or authorization server denied the " +
+					"request: " + description);
 		}
 
 	}
@@ -117,10 +119,8 @@ public class OAuth2AuthorizationException extends AuthorizationException {
 
 		public UnsupportedResponseType(String description) {
 			super(
-				String.format(
-					"The authorization server does not support obtaining an " +
-						"authorization code using this method: %s",
-					description));
+				"The authorization server does not support obtaining an " +
+					"authorization code using this method: " + description);
 		}
 
 	}

@@ -88,9 +88,9 @@ public abstract class PageElementDefinition implements Cloneable, Serializable {
 
 		COLLECTION_DISPLAY("CollectionDisplay"),
 		COLLECTION_ITEM("CollectionItem"), CONTAINER("Container"),
-		DROP_ZONE("DropZone"), FORM("Form"), FORM_STEP("FormStep"),
-		FORM_STEP_CONTAINER("FormStepContainer"), FRAGMENT("Fragment"),
-		FRAGMENT_COMPOSITION("FragmentComposition"),
+		DROP_ZONE("DropZone"), FORM_CONTAINER("FormContainer"),
+		FORM_STEP("FormStep"), FORM_STEP_CONTAINER("FormStepContainer"),
+		FRAGMENT("Fragment"), FRAGMENT_COMPOSITION("FragmentComposition"),
 		FRAGMENT_DROP_ZONE("FragmentDropZone"), GRID("Grid"), MODULE("Module"),
 		WIDGET("Widget");
 

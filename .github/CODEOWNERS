@@ -241,12 +241,12 @@ modules/apps/portal/portal-fragment-bundle-watcher/    @liferay-core-infra
 modules/apps/portal/portal-fragment-bundle-watcher-test/    @liferay-core-infra
 modules/apps/portal/portal-http-impl/    @liferay-core-infra
 modules/apps/portal/portal-init-servlet-filter/    @liferay-core-infra
-modules/apps/portal/portal-instance-lifecycle-api/    @liferay-core-infra
-modules/apps/portal/portal-instance-lifecycle-impl/    @liferay-core-infra
+modules/apps/portal/portal-instance-lifecycle-api/    @liferay-database-infra
+modules/apps/portal/portal-instance-lifecycle-impl/    @liferay-database-infra
 modules/apps/portal/portal-jmx/    @liferay-core-infra
 modules/apps/portal/portal-jmx-api/    @liferay-core-infra
 modules/apps/portal/portal-jmx-test/    @liferay-core-infra
-modules/apps/portal/portal-kernel-instance-test/    @liferay-core-infra
+modules/apps/portal/portal-kernel-instance-test/    @liferay-database-infra
 modules/apps/portal/portal-license-deployer/    @liferay-core-infra
 modules/apps/portal/portal-log4j-test/    @liferay-core-infra
 modules/apps/portal/portal-messaging/    @liferay-core-infra
@@ -414,7 +414,6 @@ modules/dxp/apps/frontend-theme/    @liferay-platform-experience
 modules/dxp/apps/multi-factor-authentication/    @liferay-appsec
 modules/dxp/apps/osb/osb-faro/    @liferay-ac
 modules/dxp/apps/osb/osb-site-initializer/    @liferay-site-management
-modules/dxp/apps/osb/osb-spring-boot/
 modules/dxp/apps/osb/osb-testray/
 modules/dxp/apps/portal/
 modules/dxp/apps/portal/portal-dao-db    @liferay-database-infra
@@ -513,11 +512,13 @@ modules/util/portal-tools-service-builder-test-uad/    @liferay-core-infra
 modules/util/release-util/    @liferay-devtools
 modules/util/source-formatter/    @liferay-devtools
 portal-impl/src/com/liferay/portal/db/    @liferay-database-infra
+portal-impl/src/com/liferay/portal/tools/DBUpgrader.java    @liferay-database-infra
 portal-impl/src/com/liferay/portal/upgrade/    @liferay-database-infra
 portal-impl/src/com/liferay/portal/verify/    @liferay-database-infra
 portal-impl/test/unit/com/liferay/portal/upgrade/    @liferay-database-infra
 portal-impl/test/unit/com/liferay/portal/verify/    @liferay-database-infra
 portal-kernel/src/com/liferay/portal/kernel/db/    @liferay-database-infra
+portal-kernel/src/com/liferay/portal/kernel/instance/    @liferay-database-infra
 portal-kernel/src/com/liferay/portal/kernel/upgrade/    @liferay-database-infra
 util-taglib/    @liferay-frontend
 workspaces/liferay-marketplace-workspace/    @liferay-commerce

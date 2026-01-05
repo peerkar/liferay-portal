@@ -10,11 +10,13 @@ import com.liferay.portal.db.DBResourceUtil;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
+import com.liferay.portal.kernel.instance.PortalInstancePool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.framework.ThrowableCollector;
 import com.liferay.portal.kernel.module.util.BundleUtil;
 import com.liferay.portal.kernel.module.util.SystemBundleUtil;
+import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.util.LoggingTimer;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -61,6 +63,20 @@ public class PrimaryKeyUpdaterUtil {
 					}
 				}
 			}
+
+			CompanyLocalServiceUtil.forEachCompanyId(
+				companyId -> {
+					try {
+						_addUpdatePrimaryKeysFutures(
+							DBResourceUtil.
+								getNonserviceBuilderPrimaryKeyColumnNames(
+									companyId));
+					}
+					catch (Exception exception) {
+						_log.error(exception);
+					}
+				},
+				PortalInstancePool.getCompanyIds());
 
 			_awaitFuturesTermination();
 

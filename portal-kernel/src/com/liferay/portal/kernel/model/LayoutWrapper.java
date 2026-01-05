@@ -67,8 +67,12 @@ public class LayoutWrapper
 		attributes.put("styleBookEntryERC", getStyleBookEntryERC());
 		attributes.put("css", getCss());
 		attributes.put("priority", getPriority());
-		attributes.put("faviconFileEntryId", getFaviconFileEntryId());
-		attributes.put("masterLayoutPlid", getMasterLayoutPlid());
+		attributes.put("faviconFileEntryERC", getFaviconFileEntryERC());
+		attributes.put(
+			"faviconFileEntryScopeERC", getFaviconFileEntryScopeERC());
+		attributes.put(
+			"masterLayoutPageTemplateEntryERC",
+			getMasterLayoutPageTemplateEntryERC());
 		attributes.put("layoutPrototypeUuid", getLayoutPrototypeUuid());
 		attributes.put(
 			"layoutPrototypeLinkEnabled", isLayoutPrototypeLinkEnabled());
@@ -285,16 +289,26 @@ public class LayoutWrapper
 			setPriority(priority);
 		}
 
-		Long faviconFileEntryId = (Long)attributes.get("faviconFileEntryId");
+		String faviconFileEntryERC = (String)attributes.get(
+			"faviconFileEntryERC");
 
-		if (faviconFileEntryId != null) {
-			setFaviconFileEntryId(faviconFileEntryId);
+		if (faviconFileEntryERC != null) {
+			setFaviconFileEntryERC(faviconFileEntryERC);
 		}
 
-		Long masterLayoutPlid = (Long)attributes.get("masterLayoutPlid");
+		String faviconFileEntryScopeERC = (String)attributes.get(
+			"faviconFileEntryScopeERC");
 
-		if (masterLayoutPlid != null) {
-			setMasterLayoutPlid(masterLayoutPlid);
+		if (faviconFileEntryScopeERC != null) {
+			setFaviconFileEntryScopeERC(faviconFileEntryScopeERC);
+		}
+
+		String masterLayoutPageTemplateEntryERC = (String)attributes.get(
+			"masterLayoutPageTemplateEntryERC");
+
+		if (masterLayoutPageTemplateEntryERC != null) {
+			setMasterLayoutPageTemplateEntryERC(
+				masterLayoutPageTemplateEntryERC);
 		}
 
 		String layoutPrototypeUuid = (String)attributes.get(
@@ -681,13 +695,28 @@ public class LayoutWrapper
 	}
 
 	/**
-	 * Returns the favicon file entry ID of this layout.
+	 * Returns the favicon file entry erc of this layout.
 	 *
-	 * @return the favicon file entry ID of this layout
+	 * @return the favicon file entry erc of this layout
 	 */
 	@Override
-	public long getFaviconFileEntryId() {
-		return model.getFaviconFileEntryId();
+	public String getFaviconFileEntryERC() {
+		return model.getFaviconFileEntryERC();
+	}
+
+	@Override
+	public long getFaviconFileEntryGroupId() {
+		return model.getFaviconFileEntryGroupId();
+	}
+
+	/**
+	 * Returns the favicon file entry scope erc of this layout.
+	 *
+	 * @return the favicon file entry scope erc of this layout
+	 */
+	@Override
+	public String getFaviconFileEntryScopeERC() {
+		return model.getFaviconFileEntryScopeERC();
 	}
 
 	@Override
@@ -983,10 +1012,15 @@ public class LayoutWrapper
 	}
 
 	/**
-	 * Returns the master layout plid of this layout.
+	 * Returns the master layout page template entry erc of this layout.
 	 *
-	 * @return the master layout plid of this layout
+	 * @return the master layout page template entry erc of this layout
 	 */
+	@Override
+	public String getMasterLayoutPageTemplateEntryERC() {
+		return model.getMasterLayoutPageTemplateEntryERC();
+	}
+
 	@Override
 	public long getMasterLayoutPlid() {
 		return model.getMasterLayoutPlid();
@@ -2101,13 +2135,23 @@ public class LayoutWrapper
 	}
 
 	/**
-	 * Sets the favicon file entry ID of this layout.
+	 * Sets the favicon file entry erc of this layout.
 	 *
-	 * @param faviconFileEntryId the favicon file entry ID of this layout
+	 * @param faviconFileEntryERC the favicon file entry erc of this layout
 	 */
 	@Override
-	public void setFaviconFileEntryId(long faviconFileEntryId) {
-		model.setFaviconFileEntryId(faviconFileEntryId);
+	public void setFaviconFileEntryERC(String faviconFileEntryERC) {
+		model.setFaviconFileEntryERC(faviconFileEntryERC);
+	}
+
+	/**
+	 * Sets the favicon file entry scope erc of this layout.
+	 *
+	 * @param faviconFileEntryScopeERC the favicon file entry scope erc of this layout
+	 */
+	@Override
+	public void setFaviconFileEntryScopeERC(String faviconFileEntryScopeERC) {
+		model.setFaviconFileEntryScopeERC(faviconFileEntryScopeERC);
 	}
 
 	/**
@@ -2275,13 +2319,16 @@ public class LayoutWrapper
 	}
 
 	/**
-	 * Sets the master layout plid of this layout.
+	 * Sets the master layout page template entry erc of this layout.
 	 *
-	 * @param masterLayoutPlid the master layout plid of this layout
+	 * @param masterLayoutPageTemplateEntryERC the master layout page template entry erc of this layout
 	 */
 	@Override
-	public void setMasterLayoutPlid(long masterLayoutPlid) {
-		model.setMasterLayoutPlid(masterLayoutPlid);
+	public void setMasterLayoutPageTemplateEntryERC(
+		String masterLayoutPageTemplateEntryERC) {
+
+		model.setMasterLayoutPageTemplateEntryERC(
+			masterLayoutPageTemplateEntryERC);
 	}
 
 	/**

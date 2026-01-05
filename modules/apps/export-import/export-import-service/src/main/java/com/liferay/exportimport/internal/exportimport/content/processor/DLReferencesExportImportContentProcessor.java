@@ -8,67 +8,49 @@ package com.liferay.exportimport.internal.exportimport.content.processor;
 import com.liferay.document.library.kernel.exception.NoSuchFileEntryException;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
-import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
 import com.liferay.document.library.util.DLURLHelper;
 import com.liferay.exportimport.configuration.ExportImportServiceConfiguration;
 import com.liferay.exportimport.content.processor.ExportImportContentProcessor;
 import com.liferay.exportimport.kernel.exception.ExportImportContentProcessorException;
 import com.liferay.exportimport.kernel.exception.ExportImportContentValidationException;
 import com.liferay.exportimport.kernel.lar.ExportImportPathUtil;
+import com.liferay.exportimport.kernel.lar.ExportImportProcessCallbackRegistry;
 import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
-import com.liferay.petra.string.CharPool;
+import com.liferay.exportimport.report.model.ExportImportReportEntry;
+import com.liferay.exportimport.report.service.ExportImportReportEntryLocalService;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONFactory;
-import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.StagedModel;
-import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.model.VirtualHost;
-import com.liferay.portal.kernel.portlet.constants.FriendlyURLResolverConstants;
 import com.liferay.portal.kernel.repository.friendly.url.resolver.FileEntryFriendlyURLResolver;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
-import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
-import com.liferay.portal.kernel.service.UserLocalService;
-import com.liferay.portal.kernel.service.VirtualHostLocalService;
-import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.Http;
-import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.MapUtil;
-import com.liferay.portal.kernel.util.ObjectValuePair;
-import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Element;
+import com.liferay.staging.StagingGroupHelper;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang.StringUtils;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Gergely Mathe
+ * @author Carlos Correa
  */
 @Component(
 	property = "content.processor.type=DLReferences",
@@ -84,8 +66,90 @@ public class DLReferencesExportImportContentProcessor
 			boolean escapeContent)
 		throws Exception {
 
+		Group group = _groupLocalService.getGroup(
+			portletDataContext.getGroupId());
+
+		if (group.isStagingGroup()) {
+			group = group.getLiveGroup();
+		}
+
+		if (group.isStaged() && !group.isStagedRemotely() &&
+			!group.isStagedPortlet(PortletKeys.DOCUMENT_LIBRARY) &&
+			ExportImportThreadLocal.isStagingInProcess()) {
+
+			return content;
+		}
+
 		return _replaceExportDLReferences(
-			portletDataContext, stagedModel, content, exportReferencedContent);
+			content, exportReferencedContent, portletDataContext, stagedModel);
+	}
+
+	@Override
+	public String replaceExportContentReferences(
+		String content, PortletDataContext portletDataContext) {
+
+		StringBuilder sb = new StringBuilder(content);
+
+		DLReferencesReverseIterator dlReferencesReverseIterator =
+			new DLReferencesReverseIterator(
+				content, _fileEntryFriendlyURLResolver,
+				portletDataContext.getScopeGroupId());
+
+		while (dlReferencesReverseIterator.hasNext()) {
+			DLReferencesReverseIterator.DLReference dlReference =
+				dlReferencesReverseIterator.next();
+
+			FileEntry fileEntry = dlReference.getFileEntry();
+
+			String externalReferenceCode = null;
+			String uuid = null;
+
+			if (fileEntry != null) {
+				externalReferenceCode = fileEntry.getExternalReferenceCode();
+				uuid = fileEntry.getUuid();
+			}
+			else if (Validator.isBlank(
+						dlReference.getParameter("friendlyURL"))) {
+
+				if (_log.isDebugEnabled()) {
+					_log.debug(
+						"The file entry does not exist and the friendly URL " +
+							"parameter was not parsed");
+				}
+
+				continue;
+			}
+			else if (_log.isDebugEnabled()) {
+				_log.debug(
+					"The file entry with friendly URL " +
+						dlReference.getParameter("friendlyURL") +
+							" does not exist");
+			}
+
+			Group group = dlReference.getGroup();
+
+			if (group == null) {
+				if (_log.isDebugEnabled()) {
+					_log.debug(
+						"Unable to get group for document library reference " +
+							dlReference.getReference());
+				}
+
+				continue;
+			}
+
+			DocumentLibraryReference documentLibraryReference =
+				new DocumentLibraryReference(
+					externalReferenceCode,
+					dlReference.getParameter("friendlyURL"),
+					group.getFriendlyURL(), group.getGroupId(), uuid);
+
+			sb.replace(
+				dlReference.getBeginPos(), dlReference.getEndPos(),
+				documentLibraryReference.toString());
+		}
+
+		return sb.toString();
 	}
 
 	@Override
@@ -95,7 +159,104 @@ public class DLReferencesExportImportContentProcessor
 		throws Exception {
 
 		return _replaceImportDLReferences(
-			portletDataContext, stagedModel, content);
+			content, portletDataContext, stagedModel);
+	}
+
+	@Override
+	public String replaceImportContentReferences(
+			String content, PortletDataContext portletDataContext)
+		throws Exception {
+
+		Map<Long, Long> groupIds =
+			(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
+				Group.class);
+
+		for (DocumentLibraryReference documentLibraryReference :
+				DocumentLibraryReference.parse(content)) {
+
+			Group group = _getGroup(
+				portletDataContext.getCompanyId(), documentLibraryReference,
+				groupIds);
+
+			long groupId = (group != null) ? group.getGroupId() : 0L;
+
+			FileEntry fileEntry =
+				_fileEntryFriendlyURLResolver.resolveFriendlyURL(
+					groupId,
+					documentLibraryReference.getFileEntryFriendlyURL());
+
+			if (!_isSameFileEntry(documentLibraryReference, fileEntry)) {
+				if (_log.isDebugEnabled()) {
+					if (fileEntry == null) {
+						_log.debug(
+							StringBundler.concat(
+								"The file entry with friendly URL ",
+								documentLibraryReference.
+									getFileEntryFriendlyURL(),
+								" and group friendly URL ",
+								documentLibraryReference.getGroupFriendlyURL(),
+								" does not exist"));
+					}
+					else {
+						_log.debug(
+							StringBundler.concat(
+								"The file entry with friendly URL ",
+								documentLibraryReference.
+									getFileEntryFriendlyURL(),
+								" and group with friendly URL ",
+								documentLibraryReference.getGroupFriendlyURL(),
+								" exists but it may contain incorrect data"));
+					}
+				}
+
+				boolean companyGroup = false;
+
+				if (group != null) {
+					companyGroup = _stagingGroupHelper.isCompanyGroup(group);
+				}
+
+				ExportImportReportEntry exportImportReportEntry =
+					_exportImportReportEntryLocalService.
+						addEmptyExportImportReportEntry(
+							companyGroup ? 0L : groupId,
+							portletDataContext.getCompanyId(),
+							documentLibraryReference.getExternalReferenceCode(),
+							_classNameLocalService.getClassNameId(
+								FileEntry.class),
+							GetterUtil.getLong(
+								ExportImportThreadLocal.
+									getExportImportConfigurationId()),
+							FileEntry.class.getName());
+
+				_exportImportProcessCallbackRegistry.registerCallback(
+					portletDataContext.getExportImportProcessId(),
+					() -> {
+						FileEntry afterImportFileEntry =
+							_fileEntryFriendlyURLResolver.resolveFriendlyURL(
+								groupId,
+								documentLibraryReference.
+									getFileEntryFriendlyURL());
+
+						if (_isSameFileEntry(
+								documentLibraryReference,
+								afterImportFileEntry)) {
+
+							_exportImportReportEntryLocalService.
+								deleteExportImportReportEntry(
+									exportImportReportEntry.
+										getExportImportReportEntryId());
+						}
+
+						return null;
+					});
+			}
+
+			content = StringUtil.replaceLast(
+				content, documentLibraryReference.getReferenceString(),
+				_getUrl(documentLibraryReference, fileEntry, group));
+		}
+
+		return content;
 	}
 
 	@Override
@@ -103,487 +264,64 @@ public class DLReferencesExportImportContentProcessor
 		throws PortalException {
 
 		if (_isValidateDLReferences()) {
-			_validateDLReferences(groupId, content);
+			_validateDLReferences(content, groupId);
 		}
 	}
 
-	private ObjectValuePair<String, Integer>
-		_getDLReferenceEndPosObjectValuePair(
-			String content, int beginPos, int endPos) {
-
-		String[] stopStrings = _DL_REFERENCE_LEGACY_STOP_STRINGS;
-
-		if (!_isLegacyURL(content, beginPos)) {
-			stopStrings = _DL_REFERENCE_STOP_STRINGS;
-		}
-
-		int urlPatternPos = StringUtil.indexOfAny(
-			content, stopStrings, beginPos, endPos);
-
-		if (urlPatternPos == -1) {
-			if (endPos != content.length()) {
-				return null;
-			}
-
-			urlPatternPos = endPos;
-		}
-
-		return new ObjectValuePair<>(
-			content.substring(beginPos, urlPatternPos), urlPatternPos);
-	}
-
-	private Map<String, String[]> _getDLReferenceParameters(
-		long groupId, String content, int beginPos, int endPos) {
-
-		ObjectValuePair<String, Integer> dlReferenceEndPosObjectValuePair =
-			_getDLReferenceEndPosObjectValuePair(content, beginPos, endPos);
-
-		if (dlReferenceEndPosObjectValuePair == null) {
-			return null;
-		}
-
-		boolean legacyURL = _isLegacyURL(content, beginPos);
-
-		Map<String, String[]> map = new HashMap<>();
-
-		String dlReference = dlReferenceEndPosObjectValuePair.getKey();
-
-		endPos = dlReferenceEndPosObjectValuePair.getValue();
-
-		while (dlReference.contains(StringPool.AMPERSAND_ENCODED)) {
-			dlReference = StringUtil.replace(
-				dlReference, StringPool.AMPERSAND_ENCODED,
-				StringPool.AMPERSAND);
-		}
-
-		if (!legacyURL) {
-			String[] pathArray = dlReference.split(StringPool.SLASH);
-
-			if (pathArray.length < 3) {
-				return map;
-			}
-
-			if (Objects.equals(
-					pathArray[2],
-					FriendlyURLResolverConstants.URL_SEPARATOR_Y_FILE_ENTRY)) {
-
-				if (pathArray.length >= 5) {
-					map.put(
-						"friendlyURL",
-						new String[] {
-							StringUtils.substringBefore(
-								HttpComponentsUtil.decodeURL(pathArray[4]),
-								StringPool.POUND)
-						});
-				}
-
-				if (pathArray.length >= 4) {
-					map.put("groupName", new String[] {pathArray[3]});
-				}
-			}
-			else if (Objects.equals(pathArray[2], "portlet_file_entry")) {
-				if (pathArray.length >= 4) {
-					map.put("groupId", new String[] {pathArray[3]});
-				}
-
-				if (pathArray.length >= 5) {
-					map.put(
-						"title",
-						new String[] {
-							StringUtils.substringBefore(
-								HttpComponentsUtil.decodeURL(pathArray[4]),
-								StringPool.POUND)
-						});
-				}
-			}
-			else {
-				map.put("groupId", new String[] {pathArray[2]});
-
-				if (pathArray.length == 5) {
-					map.put("folderId", new String[] {pathArray[3]});
-					map.put(
-						"title",
-						new String[] {
-							StringUtils.substringBefore(
-								HttpComponentsUtil.decodeURL(pathArray[4]),
-								StringPool.POUND)
-						});
-				}
-			}
-
-			String uuid = _getUuid(dlReference);
-
-			if (Validator.isNotNull(uuid)) {
-				map.put("uuid", new String[] {uuid});
-			}
-		}
-		else {
-			dlReference = dlReference.substring(
-				dlReference.indexOf(CharPool.QUESTION) + 1);
-
-			map = HttpComponentsUtil.parameterMapFromString(dlReference);
-
-			String[] imageIds = null;
-
-			if (map.containsKey("img_id")) {
-				imageIds = map.get("img_id");
-			}
-			else if (map.containsKey("i_id")) {
-				imageIds = map.get("i_id");
-			}
-
-			imageIds = ArrayUtil.filter(imageIds, Validator::isNotNull);
-
-			if (ArrayUtil.isNotEmpty(imageIds)) {
-				map.put("image_id", imageIds);
-			}
-		}
-
-		map.put("endPos", new String[] {String.valueOf(endPos)});
-
-		String groupIdString = MapUtil.getString(map, "groupId");
-
-		if (groupIdString.equals("@group_id@")) {
-			groupIdString = String.valueOf(groupId);
-
-			map.put("groupId", new String[] {groupIdString});
-		}
-
-		return map;
-	}
-
-	private FileEntry _getFileEntry(Map<String, String[]> map) {
-		if (MapUtil.isEmpty(map)) {
-			return null;
-		}
-
-		FileEntry fileEntry = null;
+	private Group _getGroup(
+		long companyId, DocumentLibraryReference documentLibraryReference,
+		Map<Long, Long> groupIds) {
 
 		try {
-			String uuid = MapUtil.getString(map, "uuid");
-			long groupId = MapUtil.getLong(map, "groupId");
-
-			if (Validator.isNotNull(uuid)) {
-				try {
-					fileEntry = _dlAppLocalService.getFileEntryByUuidAndGroupId(
-						uuid, groupId);
-				}
-				catch (PortalException portalException) {
-					if (_log.isDebugEnabled()) {
-						_log.debug("Unable to get file entry", portalException);
-					}
-
-					return _dlAppLocalService.
-						getFileEntryByExternalReferenceCode(uuid, groupId);
-				}
+			if (groupIds.containsKey(documentLibraryReference.getGroupId())) {
+				return _groupLocalService.getGroup(
+					groupIds.get(documentLibraryReference.getGroupId()));
 			}
-			else {
-				if (map.containsKey("friendlyURL")) {
-					String friendlyURL = MapUtil.getString(map, "friendlyURL");
 
-					fileEntry = _resolveFileEntry(
-						MapUtil.getString(map, "groupName"), friendlyURL);
-
-					if (fileEntry == null) {
-						throw new NoSuchFileEntryException(
-							"No file entry found for friendly URL " +
-								friendlyURL);
-					}
-				}
-				else if (map.containsKey("folderId")) {
-					long folderId = MapUtil.getLong(map, "folderId");
-					String name = MapUtil.getString(map, "name");
-					String title = MapUtil.getString(map, "title");
-
-					if (Validator.isNotNull(title)) {
-						try {
-							fileEntry =
-								_dlAppLocalService.getFileEntryByFileName(
-									groupId, folderId, title);
-						}
-						catch (NoSuchFileEntryException
-									noSuchFileEntryException) {
-
-							if (_log.isDebugEnabled()) {
-								_log.debug(noSuchFileEntryException);
-							}
-
-							fileEntry = _dlAppLocalService.getFileEntry(
-								groupId, folderId, title);
-						}
-					}
-					else {
-						DLFileEntry dlFileEntry =
-							_dlFileEntryLocalService.fetchFileEntryByName(
-								groupId, folderId, name);
-
-						if (dlFileEntry != null) {
-							fileEntry = _dlAppLocalService.getFileEntry(
-								dlFileEntry.getFileEntryId());
-						}
-					}
-				}
-				else if (map.containsKey("image_id")) {
-					DLFileEntry dlFileEntry =
-						_dlFileEntryLocalService.fetchFileEntryByAnyImageId(
-							MapUtil.getLong(map, "image_id"));
-
-					if (dlFileEntry != null) {
-						fileEntry = _dlAppLocalService.getFileEntry(
-							dlFileEntry.getFileEntryId());
-					}
-				}
-			}
+			return _groupLocalService.fetchFriendlyURLGroup(
+				companyId, documentLibraryReference.getGroupFriendlyURL());
 		}
 		catch (Exception exception) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(exception);
-			}
-		}
-
-		return fileEntry;
-	}
-
-	private FileEntry _getFileEntry(String content, int beginPos)
-		throws PortalException {
-
-		int jsonBeginPos = StringUtil.lastIndexOfAny(
-			content, new String[] {"<![CDATA["}, beginPos);
-
-		jsonBeginPos = StringUtil.indexOfAny(
-			content, new char[] {'{'}, jsonBeginPos);
-
-		int jsonEndPos = StringUtil.indexOfAny(
-			content, new String[] {"]]>"}, jsonBeginPos);
-
-		jsonEndPos = StringUtil.lastIndexOfAny(
-			content, new char[] {'}'}, jsonEndPos);
-
-		if ((jsonBeginPos == QueryUtil.ALL_POS) &&
-			(jsonEndPos == QueryUtil.ALL_POS)) {
-
-			return null;
-		}
-
-		JSONObject jsonObject = _jsonFactory.createJSONObject(
-			content.substring(jsonBeginPos, jsonEndPos + 1));
-
-		try {
-			return _dlAppLocalService.getFileEntryByUuidAndGroupId(
-				jsonObject.getString("uuid"), jsonObject.getLong("groupId"));
-		}
-		catch (PortalException portalException) {
 			if (_log.isDebugEnabled()) {
-				_log.debug(portalException);
+				_log.debug(exception);
 			}
 		}
 
 		return null;
 	}
 
-	private Group _getGroup(String name) throws Exception {
-		Group group = _groupLocalService.fetchFriendlyURLGroup(
-			CompanyThreadLocal.getCompanyId(), StringPool.SLASH + name);
+	private String _getUrl(
+			DocumentLibraryReference documentLibraryReference,
+			FileEntry fileEntry, Group group)
+		throws Exception {
 
-		if (group != null) {
-			return group;
+		if (fileEntry == null) {
+			return _dlURLHelper.getPreviewURL(
+				documentLibraryReference.getFileEntryFriendlyURL(),
+				(group != null) ? group.getFriendlyURL() :
+					documentLibraryReference.getGroupFriendlyURL());
 		}
 
-		User user = _userLocalService.getUserByScreenName(
-			CompanyThreadLocal.getCompanyId(), name);
-
-		return user.getGroup();
+		return _dlURLHelper.getPreviewURL(
+			fileEntry, fileEntry.getFileVersion(), null, StringPool.BLANK,
+			false, false);
 	}
 
-	private String _getUuid(String s) {
-		Matcher matcher = _uuidPattern.matcher(s);
+	private boolean _isSameFileEntry(
+		DocumentLibraryReference documentLibraryReference,
+		FileEntry fileEntry) {
 
-		String uuid = StringPool.BLANK;
-
-		while (matcher.find()) {
-			uuid = matcher.group(0);
-		}
-
-		return uuid;
-	}
-
-	private boolean _isCreoleReference(String content, int beginPos) {
-		if (content.regionMatches(
-				true, beginPos - 2, StringPool.DOUBLE_OPEN_BRACKET, 0, 2) ||
-			content.regionMatches(
-				true, beginPos - 2, StringPool.DOUBLE_OPEN_CURLY_BRACE, 0, 2)) {
-
-			return true;
-		}
-
-		return false;
-	}
-
-	private boolean _isExternalURL(
-			long groupId, String content, int beginPos, int endPos)
-		throws PortalException {
-
-		if (((beginPos == 0) && (endPos == content.length())) ||
-			_isCreoleReference(content, beginPos) ||
-			_isHTMLReference(content, beginPos) ||
-			_isJSONReference(content, beginPos) ||
-			_isStyleReference(content, beginPos)) {
+		if ((fileEntry == null) ||
+			!StringUtil.equals(
+				documentLibraryReference.getExternalReferenceCode(),
+				fileEntry.getExternalReferenceCode()) ||
+			!StringUtil.equals(
+				documentLibraryReference.getUuid(), fileEntry.getUuid())) {
 
 			return false;
-		}
-
-		String portalURL = _portal.getPathContext();
-
-		if (Validator.isNull(portalURL)) {
-			ServiceContext serviceContext =
-				ServiceContextThreadLocal.getServiceContext();
-
-			if ((serviceContext != null) &&
-				(serviceContext.getThemeDisplay() != null)) {
-
-				portalURL = _portal.getPortalURL(
-					serviceContext.getThemeDisplay());
-			}
-		}
-
-		Set<String> hostNames = new HashSet<>();
-
-		hostNames.add(portalURL);
-
-		Group group = _groupLocalService.getGroup(groupId);
-
-		for (VirtualHost virtualHost :
-				_virtualHostLocalService.getVirtualHosts(
-					group.getCompanyId())) {
-
-			String hostname = virtualHost.getHostname();
-
-			hostNames.add(hostname);
-			hostNames.add(Http.HTTP_WITH_SLASH + hostname);
-			hostNames.add(Http.HTTPS_WITH_SLASH + hostname);
-		}
-
-		int colonPos = 0;
-
-		for (int i = 1; i <= _OFFSET_COLON_PORT; i++) {
-			if (i > beginPos) {
-				break;
-			}
-
-			if (content.charAt(beginPos - i) == CharPool.COLON) {
-				colonPos = i;
-
-				break;
-			}
-		}
-
-		long urlPort = 0;
-
-		if (colonPos > 0) {
-			urlPort = GetterUtil.getLong(
-				content.substring(beginPos - colonPos + 1, beginPos));
-		}
-
-		for (String hostName : hostNames) {
-			if (urlPort > 0) {
-				int serverPort = _portal.getPortalServerPort(
-					hostName.startsWith(Http.HTTPS_WITH_SLASH));
-
-				if (urlPort != serverPort) {
-					continue;
-				}
-			}
-
-			int curBeginPos = beginPos - hostName.length() - colonPos;
-
-			if (curBeginPos < 0) {
-				continue;
-			}
-
-			String substring = content.substring(curBeginPos, endPos);
-
-			if (substring.startsWith(hostName) &&
-				(((curBeginPos == 0) && (endPos == content.length())) ||
-				 _isCreoleReference(content, curBeginPos) ||
-				 _isHTMLReference(content, curBeginPos) ||
-				 _isJSONReference(content, curBeginPos) ||
-				 _isStyleReference(content, curBeginPos))) {
-
-				return false;
-			}
 		}
 
 		return true;
-	}
-
-	private boolean _isHTMLReference(String content, int beginPos) {
-		if (content.regionMatches(beginPos - 1, StringPool.APOSTROPHE, 0, 1) ||
-			content.regionMatches(beginPos - 1, StringPool.QUOTE, 0, 1)) {
-
-			beginPos = beginPos - 1;
-		}
-
-		if (content.regionMatches(
-				true, beginPos - 1, StringPool.BACK_SLASH, 0, 1)) {
-
-			beginPos = beginPos - 1;
-		}
-
-		String[] attributes = {"href=", "src="};
-
-		for (String attribute : attributes) {
-			if (content.regionMatches(
-					true, beginPos - attribute.length(), attribute, 0,
-					attribute.length())) {
-
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	private boolean _isJSONReference(String content, int beginPos) {
-		String[] jsonAttributes = {"\"href\"", "\"url\""};
-
-		int position = StringUtil.lastIndexOfAny(
-			content, jsonAttributes, beginPos);
-
-		if (position == -1) {
-			return false;
-		}
-
-		if (_jsonAttributePattern.matcher(
-				content.substring(position, beginPos)
-			).matches() ||
-			_jsonLocalizedPattern.matcher(
-				content.substring(position, beginPos)
-			).matches()) {
-
-			return true;
-		}
-
-		return false;
-	}
-
-	private boolean _isLegacyURL(String content, int beginPos) {
-		return !content.startsWith("/documents/", beginPos);
-	}
-
-	private boolean _isStyleReference(String content, int beginPos) {
-		beginPos = _skipWhiteSpacePos(content, beginPos);
-
-		if (content.regionMatches(beginPos - 1, StringPool.APOSTROPHE, 0, 1) ||
-			content.regionMatches(beginPos - 1, StringPool.QUOTE, 0, 1)) {
-
-			beginPos = beginPos - 1;
-		}
-
-		beginPos = _skipWhiteSpacePos(content, beginPos);
-
-		String url = "url(";
-
-		return content.regionMatches(true, beginPos - url.length(), url, 0, 2);
 	}
 
 	private boolean _isValidateDLReferences() {
@@ -604,160 +342,96 @@ public class DLReferencesExportImportContentProcessor
 	}
 
 	private String _replaceExportDLReferences(
-			PortletDataContext portletDataContext, StagedModel stagedModel,
-			String content, boolean exportReferencedContent)
+			String content, boolean exportReferencedContent,
+			PortletDataContext portletDataContext, StagedModel stagedModel)
 		throws Exception {
-
-		Group group = _groupLocalService.getGroup(
-			portletDataContext.getGroupId());
-
-		if (group.isStagingGroup()) {
-			group = group.getLiveGroup();
-		}
-
-		if (group.isStaged() && !group.isStagedRemotely() &&
-			!group.isStagedPortlet(PortletKeys.DOCUMENT_LIBRARY) &&
-			ExportImportThreadLocal.isStagingInProcess()) {
-
-			return content;
-		}
 
 		StringBuilder sb = new StringBuilder(content);
 
-		String contextPath = _portal.getPathContext();
+		DLReferencesReverseIterator dlReferencesReverseIterator =
+			new DLReferencesReverseIterator(
+				content, _fileEntryFriendlyURLResolver,
+				portletDataContext.getScopeGroupId());
 
-		String[] patterns = {
-			contextPath.concat("/c/document_library/get_file?"),
-			contextPath.concat("/documents/"),
-			contextPath.concat("/image/image_gallery?")
-		};
+		while (dlReferencesReverseIterator.hasNext()) {
+			DLReferencesReverseIterator.DLReference dlReference =
+				dlReferencesReverseIterator.next();
 
-		int beginPos = -1;
-		int endPos = content.length();
+			FileEntry fileEntry = dlReference.getFileEntry();
 
-		while (true) {
-			beginPos = StringUtil.lastIndexOfAny(content, patterns, endPos);
-
-			if (beginPos == -1) {
-				break;
-			}
-
-			Map<String, String[]> dlReferenceParameters =
-				_getDLReferenceParameters(
-					portletDataContext.getScopeGroupId(), content,
-					beginPos + contextPath.length(), endPos);
-
-			FileEntry fileEntry = _getFileEntry(dlReferenceParameters);
-
-			if ((fileEntry == null) ||
-				_isExternalURL(
-					portletDataContext.getScopeGroupId(), content, beginPos,
-					endPos)) {
-
-				endPos = beginPos - 1;
-
+			if (fileEntry == null) {
 				continue;
 			}
 
-			endPos = MapUtil.getInteger(dlReferenceParameters, "endPos");
+			if (exportReferencedContent && !fileEntry.isInTrash()) {
+				StagedModelDataHandlerUtil.exportReferenceStagedModel(
+					portletDataContext, stagedModel, fileEntry,
+					PortletDataContext.REFERENCE_TYPE_DEPENDENCY);
+			}
+			else {
+				Element entityElement = portletDataContext.getExportDataElement(
+					stagedModel);
 
-			try {
-				if (exportReferencedContent && !fileEntry.isInTrash()) {
-					StagedModelDataHandlerUtil.exportReferenceStagedModel(
-						portletDataContext, stagedModel, fileEntry,
-						PortletDataContext.REFERENCE_TYPE_DEPENDENCY);
-				}
-				else {
-					Element entityElement =
-						portletDataContext.getExportDataElement(stagedModel);
-
-					String referenceType =
-						PortletDataContext.REFERENCE_TYPE_DEPENDENCY;
-
-					if (fileEntry.isInTrash()) {
-						referenceType =
-							PortletDataContext.
-								REFERENCE_TYPE_DEPENDENCY_DISPOSABLE;
-					}
-
-					portletDataContext.addReferenceElement(
-						stagedModel, entityElement, fileEntry, referenceType,
-						true);
-				}
-
-				String path = ExportImportPathUtil.getModelPath(fileEntry);
-
-				StringBundler exportedReferenceSB = new StringBundler(10);
-
-				exportedReferenceSB.append("[$dl-reference=");
-				exportedReferenceSB.append(path);
-
-				if (dlReferenceParameters.containsKey("friendlyURL")) {
-					exportedReferenceSB.append("$,$include-friendly-url=true");
-				}
-				else {
-					exportedReferenceSB.append("$,$include-uuid=");
-					exportedReferenceSB.append(
-						dlReferenceParameters.containsKey("uuid"));
-				}
-
-				exportedReferenceSB.append("$]");
+				String referenceType =
+					PortletDataContext.REFERENCE_TYPE_DEPENDENCY;
 
 				if (fileEntry.isInTrash()) {
-					String originalReference = sb.substring(beginPos, endPos);
-
-					exportedReferenceSB.append("[#dl-reference=");
-					exportedReferenceSB.append(originalReference);
-
-					if (dlReferenceParameters.containsKey("friendlyURL")) {
-						exportedReferenceSB.append(
-							"#,#include-friendly-url=true");
-					}
-					else {
-						exportedReferenceSB.append("#,#include-uuid=");
-						exportedReferenceSB.append(
-							dlReferenceParameters.containsKey("uuid"));
-					}
-
-					exportedReferenceSB.append("#]");
+					referenceType =
+						PortletDataContext.REFERENCE_TYPE_DEPENDENCY_DISPOSABLE;
 				}
 
-				sb.replace(beginPos, endPos, exportedReferenceSB.toString());
-			}
-			catch (Exception exception) {
-				StringBundler exceptionSB = new StringBundler(6);
-
-				exceptionSB.append("Unable to process file entry ");
-				exceptionSB.append(fileEntry.getFileEntryId());
-				exceptionSB.append(" for staged model ");
-				exceptionSB.append(stagedModel.getModelClassName());
-				exceptionSB.append(" with primary key ");
-				exceptionSB.append(stagedModel.getPrimaryKeyObj());
-
-				ExportImportContentProcessorException
-					exportImportContentProcessorException =
-						new ExportImportContentProcessorException(
-							exceptionSB.toString(), exception);
-
-				if (_log.isDebugEnabled()) {
-					_log.debug(
-						exceptionSB.toString(),
-						exportImportContentProcessorException);
-				}
-				else if (_log.isWarnEnabled()) {
-					_log.warn(exceptionSB.toString());
-				}
+				portletDataContext.addReferenceElement(
+					stagedModel, entityElement, fileEntry, referenceType, true);
 			}
 
-			endPos = beginPos - 1;
+			String path = ExportImportPathUtil.getModelPath(fileEntry);
+
+			StringBundler exportedReferenceSB = new StringBundler(10);
+
+			exportedReferenceSB.append("[$dl-reference=");
+			exportedReferenceSB.append(path);
+
+			if (dlReference.containsParameter("friendlyURL")) {
+				exportedReferenceSB.append("$,$include-friendly-url=true");
+			}
+			else {
+				exportedReferenceSB.append("$,$include-uuid=");
+				exportedReferenceSB.append(
+					dlReference.containsParameter("uuid"));
+			}
+
+			exportedReferenceSB.append("$]");
+
+			if (fileEntry.isInTrash()) {
+				String originalReference = sb.substring(
+					dlReference.getBeginPos(), dlReference.getEndPos());
+
+				exportedReferenceSB.append("[#dl-reference=");
+				exportedReferenceSB.append(originalReference);
+
+				if (dlReference.containsParameter("friendlyURL")) {
+					exportedReferenceSB.append("#,#include-friendly-url=true");
+				}
+				else {
+					exportedReferenceSB.append("#,#include-uuid=");
+					exportedReferenceSB.append(
+						dlReference.containsParameter("uuid"));
+				}
+
+				exportedReferenceSB.append("#]");
+			}
+
+			sb.replace(
+				dlReference.getBeginPos(), dlReference.getEndPos(),
+				exportedReferenceSB.toString());
 		}
 
 		return sb.toString();
 	}
 
 	private String _replaceImportDLReferences(
-			PortletDataContext portletDataContext, StagedModel stagedModel,
-			String content)
+			String content, PortletDataContext portletDataContext,
+			StagedModel stagedModel)
 		throws Exception {
 
 		List<Element> referenceElements =
@@ -929,71 +603,18 @@ public class DLReferencesExportImportContentProcessor
 		return content;
 	}
 
-	private FileEntry _resolveFileEntry(String groupName, String friendlyURL)
-		throws Exception {
-
-		if (_fileEntryFriendlyURLResolver == null) {
-			return null;
-		}
-
-		Group group = _getGroup(groupName);
-
-		return _fileEntryFriendlyURLResolver.resolveFriendlyURL(
-			group.getGroupId(), friendlyURL);
-	}
-
-	private int _skipWhiteSpacePos(String content, int beginPos) {
-		while (content.regionMatches(beginPos - 1, StringPool.NEW_LINE, 0, 1) ||
-			   content.regionMatches(beginPos - 1, StringPool.RETURN, 0, 1) ||
-			   content.regionMatches(beginPos - 1, StringPool.SPACE, 0, 1) ||
-			   content.regionMatches(beginPos - 1, StringPool.TAB, 0, 1)) {
-
-			beginPos = beginPos - 1;
-		}
-
-		return beginPos;
-	}
-
-	private void _validateDLReferences(long groupId, String content)
+	private void _validateDLReferences(String content, long groupId)
 		throws PortalException {
 
-		String pathContext = _portal.getPathContext();
+		DLReferencesReverseIterator dlReferencesReverseIterator =
+			new DLReferencesReverseIterator(
+				content, _fileEntryFriendlyURLResolver, groupId);
 
-		String[] patterns = {
-			pathContext.concat("/c/document_library/get_file?"),
-			pathContext.concat("/documents/"),
-			pathContext.concat("/image/image_gallery?")
-		};
+		while (dlReferencesReverseIterator.hasNext()) {
+			DLReferencesReverseIterator.DLReference dlReference =
+				dlReferencesReverseIterator.next();
 
-		int beginPos = -1;
-		int endPos = content.length();
-
-		while (true) {
-			beginPos = StringUtil.lastIndexOfAny(content, patterns, endPos);
-
-			if (beginPos == -1) {
-				break;
-			}
-
-			Map<String, String[]> dlReferenceParameters =
-				_getDLReferenceParameters(
-					groupId, content, beginPos + pathContext.length(), endPos);
-
-			if (dlReferenceParameters == null) {
-				endPos = beginPos - 1;
-
-				continue;
-			}
-
-			FileEntry fileEntry = _getFileEntry(dlReferenceParameters);
-
-			if (fileEntry == null) {
-				fileEntry = _getFileEntry(content, beginPos);
-			}
-
-			if ((fileEntry == null) &&
-				!_isExternalURL(groupId, content, beginPos, endPos)) {
-
+			if (dlReference.getFileEntry() == null) {
 				ExportImportContentValidationException
 					exportImportContentValidationException =
 						new ExportImportContentValidationException(
@@ -1002,15 +623,10 @@ public class DLReferencesExportImportContentProcessor
 							new NoSuchFileEntryException());
 
 				exportImportContentValidationException.setDLReferenceParameters(
-					dlReferenceParameters);
-
-				ObjectValuePair<String, Integer>
-					dlReferenceEndPosObjectValuePair =
-						_getDLReferenceEndPosObjectValuePair(
-							content, beginPos, endPos);
+					dlReference.getParameters());
 
 				exportImportContentValidationException.setDLReference(
-					dlReferenceEndPosObjectValuePair.getKey());
+					dlReference.getReference());
 
 				exportImportContentValidationException.setType(
 					ExportImportContentValidationException.
@@ -1018,44 +634,14 @@ public class DLReferencesExportImportContentProcessor
 
 				throw exportImportContentValidationException;
 			}
-
-			endPos = beginPos - 1;
 		}
 	}
-
-	private static final String[] _DL_REFERENCE_LEGACY_STOP_STRINGS = {
-		StringPool.APOSTROPHE, StringPool.APOSTROPHE_ENCODED,
-		StringPool.BACK_SLASH + StringPool.APOSTROPHE,
-		StringPool.BACK_SLASH + StringPool.QUOTE, StringPool.CLOSE_BRACKET,
-		StringPool.CLOSE_CURLY_BRACE, StringPool.CLOSE_PARENTHESIS,
-		StringPool.GREATER_THAN, StringPool.LESS_THAN, StringPool.PIPE,
-		StringPool.POUND, StringPool.QUOTE, StringPool.QUOTE_ENCODED,
-		StringPool.SPACE
-	};
-
-	private static final String[] _DL_REFERENCE_STOP_STRINGS = {
-		StringPool.APOSTROPHE, StringPool.APOSTROPHE_ENCODED,
-		StringPool.BACK_SLASH + StringPool.APOSTROPHE,
-		StringPool.BACK_SLASH + StringPool.QUOTE, StringPool.CLOSE_BRACKET,
-		StringPool.CLOSE_CURLY_BRACE, StringPool.CLOSE_PARENTHESIS,
-		StringPool.GREATER_THAN, StringPool.LESS_THAN, StringPool.NEW_LINE,
-		StringPool.PIPE, StringPool.POUND, StringPool.QUESTION,
-		StringPool.QUOTE, StringPool.QUOTE_ENCODED, StringPool.SPACE
-	};
-
-	private static final int _OFFSET_COLON_PORT = 6;
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		DLReferencesExportImportContentProcessor.class);
 
-	private static final Pattern _jsonAttributePattern = Pattern.compile(
-		"\\\"[^\"\\\\\\\\]*\\\"\\s*:\\s*\\\"");
-	private static final Pattern _jsonLocalizedPattern = Pattern.compile(
-		"\\\"[^\"\\\\]*\\\"\\s*:\\s*\\{\\\"[a-zA-Z_]+" +
-			"\\\"\\s*:\\s*\\\"[^\"\\\\]*");
-	private static final Pattern _uuidPattern = Pattern.compile(
-		"[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-" +
-			"[a-fA-F0-9]{12}(?=[&,?]|$)");
+	@Reference
+	private ClassNameLocalService _classNameLocalService;
 
 	@Reference
 	private ConfigurationProvider _configurationProvider;
@@ -1064,10 +650,15 @@ public class DLReferencesExportImportContentProcessor
 	private DLAppLocalService _dlAppLocalService;
 
 	@Reference
-	private DLFileEntryLocalService _dlFileEntryLocalService;
+	private DLURLHelper _dlURLHelper;
 
 	@Reference
-	private DLURLHelper _dlURLHelper;
+	private ExportImportProcessCallbackRegistry
+		_exportImportProcessCallbackRegistry;
+
+	@Reference
+	private ExportImportReportEntryLocalService
+		_exportImportReportEntryLocalService;
 
 	@Reference
 	private FileEntryFriendlyURLResolver _fileEntryFriendlyURLResolver;
@@ -1076,15 +667,147 @@ public class DLReferencesExportImportContentProcessor
 	private GroupLocalService _groupLocalService;
 
 	@Reference
-	private JSONFactory _jsonFactory;
+	private StagingGroupHelper _stagingGroupHelper;
 
-	@Reference
-	private Portal _portal;
+	private static class DocumentLibraryReference {
 
-	@Reference
-	private UserLocalService _userLocalService;
+		public static List<DocumentLibraryReference> parse(String value) {
+			List<DocumentLibraryReference> documentLibraryReferences =
+				new ArrayList<>();
 
-	@Reference
-	private VirtualHostLocalService _virtualHostLocalService;
+			int startIndex = -1;
+
+			while ((startIndex = value.indexOf(_BEGIN)) != -1) {
+				int endIndex = value.indexOf(_END, startIndex);
+
+				String reference = value.substring(
+					startIndex, endIndex + _END.length());
+
+				String externalReferenceCode = _decode(
+					_getArgumentValue(_EXTERNAL_REFERENCE_CODE, reference));
+				String fileEntryFriendlyURL = _getArgumentValue(
+					_FILE_ENTRY_FRIENDLY_URL, reference);
+				String groupFriendlyURL = _getArgumentValue(
+					_GROUP_FRIENDLY_URL, reference);
+				long groupId = GetterUtil.getLong(
+					_getArgumentValue(_GROUP_ID, reference));
+				String uuid = _getArgumentValue(_UUID, reference);
+
+				documentLibraryReferences.add(
+					new DocumentLibraryReference(
+						externalReferenceCode, fileEntryFriendlyURL,
+						groupFriendlyURL, groupId, reference, uuid));
+
+				value = value.substring(endIndex + _END.length());
+			}
+
+			return documentLibraryReferences;
+		}
+
+		public String getExternalReferenceCode() {
+			return _externalReferenceCode;
+		}
+
+		public String getFileEntryFriendlyURL() {
+			return _fileEntryFriendlyURL;
+		}
+
+		public String getGroupFriendlyURL() {
+			return _groupFriendlyURL;
+		}
+
+		public long getGroupId() {
+			return _groupId;
+		}
+
+		public String getReferenceString() {
+			return _referenceString;
+		}
+
+		public String getUuid() {
+			return _uuid;
+		}
+
+		@Override
+		public String toString() {
+			return StringBundler.concat(
+				_BEGIN, " $", _EXTERNAL_REFERENCE_CODE, "=",
+				_encode(_externalReferenceCode), "$,$",
+				_FILE_ENTRY_FRIENDLY_URL, "=", _fileEntryFriendlyURL, "$,$",
+				_GROUP_FRIENDLY_URL, "=", _groupFriendlyURL, "$,$", _GROUP_ID,
+				"=", _groupId, "$,$", _UUID, "=", _uuid, _END);
+		}
+
+		private static String _decode(String text) {
+			return StringUtil.replace(
+				text, new String[] {"\\$\\", "\\[\\", "\\]\\"},
+				new String[] {"$", "[", "]"});
+		}
+
+		private static String _getArgumentValue(String name, String reference) {
+			String key = "$" + name + "=";
+
+			int beginIndex = reference.indexOf(key);
+
+			int endIndex = StringUtil.indexOfAny(
+				reference, new String[] {"$,$", _END}, beginIndex,
+				reference.length());
+
+			return reference.substring(beginIndex + key.length(), endIndex);
+		}
+
+		private DocumentLibraryReference(
+			String externalReferenceCode, String fileEntryFriendlyURL,
+			String groupFriendlyURL, long groupId, String uuid) {
+
+			this(
+				externalReferenceCode, fileEntryFriendlyURL, groupFriendlyURL,
+				groupId, null, uuid);
+		}
+
+		private DocumentLibraryReference(
+			String externalReferenceCode, String fileEntryFriendlyURL,
+			String groupFriendlyURL, long groupId, String referenceString,
+			String uuid) {
+
+			_externalReferenceCode = GetterUtil.getString(
+				externalReferenceCode);
+			_fileEntryFriendlyURL = fileEntryFriendlyURL;
+			_groupFriendlyURL = groupFriendlyURL;
+			_groupId = groupId;
+			_referenceString = referenceString;
+			_uuid = GetterUtil.getString(uuid);
+		}
+
+		private String _encode(String text) {
+			return StringUtil.replace(
+				text, new String[] {"$", "[", "]"},
+				new String[] {"\\$\\", "\\[\\", "\\]\\"});
+		}
+
+		private static final String _BEGIN = "[$dl-reference$";
+
+		private static final String _END = "$]";
+
+		private static final String _EXTERNAL_REFERENCE_CODE =
+			"external-reference-code";
+
+		private static final String _FILE_ENTRY_FRIENDLY_URL =
+			"file-entry-friendly-url";
+
+		private static final String _GROUP_FRIENDLY_URL = "group-friendly-url";
+
+		private static final String _GROUP_ID = "group-id";
+
+		private static final String _UUID = "uuid";
+
+		private final String _externalReferenceCode;
+		private final String _fileEntryFriendlyURL;
+		private final String _groupFriendlyURL;
+		private final long _groupId;
+		private String _referenceString;
+		private final String _uuid;
+
+	}
 
 }

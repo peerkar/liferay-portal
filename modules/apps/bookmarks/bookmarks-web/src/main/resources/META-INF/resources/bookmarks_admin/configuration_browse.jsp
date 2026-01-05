@@ -114,39 +114,42 @@ portletDisplay.setURLBackTitle("bookmarks");
 								<aui:field-wrapper label="show-columns">
 
 									<%
-									Set<String> availableFolderColumns = SetUtil.fromArray(StringUtil.split(allFolderColumns));
 
 									// Left list
 
 									List<KeyValuePair> leftList = new ArrayList<>();
 
-									for (String folderColumn : folderColumns) {
-										leftList.add(new KeyValuePair(folderColumn, LanguageUtil.get(request, folderColumn)));
+									Set<String> availableFolderColumns = SetUtil.fromArray(StringUtil.split(allFolderColumns));
+
+									String[] sortedFolderColumns = ArrayUtil.clone(folderColumns);
+
+									Arrays.sort(sortedFolderColumns);
+
+									for (String folderColumn : availableFolderColumns) {
+										if (Arrays.binarySearch(sortedFolderColumns, folderColumn) < 0) {
+											leftList.add(new KeyValuePair(folderColumn, LanguageUtil.get(request, folderColumn)));
+										}
 									}
+
+									leftList = ListUtil.sort(leftList, new KeyValuePairComparator(false, true));
 
 									// Right list
 
 									List<KeyValuePair> rightList = new ArrayList<>();
 
-									Arrays.sort(folderColumns);
-
-									for (String folderColumn : availableFolderColumns) {
-										if (Arrays.binarySearch(folderColumns, folderColumn) < 0) {
-											rightList.add(new KeyValuePair(folderColumn, LanguageUtil.get(request, folderColumn)));
-										}
+									for (String folderColumn : folderColumns) {
+										rightList.add(new KeyValuePair(folderColumn, LanguageUtil.get(request, folderColumn)));
 									}
-
-									rightList = ListUtil.sort(rightList, new KeyValuePairComparator(false, true));
 									%>
 
 									<liferay-ui:input-move-boxes
-										leftBoxName="currentFolderColumns"
+										leftBoxName="availableFolderColumns"
 										leftList="<%= leftList %>"
-										leftReorder="<%= Boolean.TRUE.toString() %>"
-										leftTitle="current"
-										rightBoxName="availableFolderColumns"
+										leftTitle="available"
+										rightBoxName="currentFolderColumns"
 										rightList="<%= rightList %>"
-										rightTitle="available"
+										rightReorder="<%= Boolean.TRUE.toString() %>"
+										rightTitle="in-use"
 									/>
 								</aui:field-wrapper>
 							</div>
@@ -211,41 +214,42 @@ portletDisplay.setURLBackTitle("bookmarks");
 							<aui:field-wrapper label="show-columns">
 
 								<%
-								Set<String> availableEntryColumns = SetUtil.fromArray(StringUtil.split(allEntryColumns));
 
 								// Left list
 
 								List<KeyValuePair> leftList = new ArrayList<>();
 
-								for (int i = 0; i < entryColumns.length; i++) {
-									String entryColumn = entryColumns[i];
+								Set<String> availableEntryColumns = SetUtil.fromArray(StringUtil.split(allEntryColumns));
 
-									leftList.add(new KeyValuePair(entryColumn, LanguageUtil.get(request, entryColumn)));
+								String[] sortedEntryColumns = ArrayUtil.clone(entryColumns);
+
+								Arrays.sort(sortedEntryColumns);
+
+								for (String entryColumn : availableEntryColumns) {
+									if (Arrays.binarySearch(sortedEntryColumns, entryColumn) < 0) {
+										leftList.add(new KeyValuePair(entryColumn, LanguageUtil.get(request, entryColumn)));
+									}
 								}
+
+								leftList = ListUtil.sort(leftList, new KeyValuePairComparator(false, true));
 
 								// Right list
 
 								List<KeyValuePair> rightList = new ArrayList<>();
 
-								Arrays.sort(entryColumns);
-
-								for (String entryColumn : availableEntryColumns) {
-									if (Arrays.binarySearch(entryColumns, entryColumn) < 0) {
-										rightList.add(new KeyValuePair(entryColumn, LanguageUtil.get(request, entryColumn)));
-									}
+								for (String entryColumn : entryColumns) {
+									rightList.add(new KeyValuePair(entryColumn, LanguageUtil.get(request, entryColumn)));
 								}
-
-								rightList = ListUtil.sort(rightList, new KeyValuePairComparator(false, true));
 								%>
 
 								<liferay-ui:input-move-boxes
-									leftBoxName="currentEntryColumns"
+									leftBoxName="availableEntryColumns"
 									leftList="<%= leftList %>"
-									leftReorder="<%= Boolean.TRUE.toString() %>"
-									leftTitle="current"
-									rightBoxName="availableEntryColumns"
+									leftTitle="available"
+									rightBoxName="currentEntryColumns"
 									rightList="<%= rightList %>"
-									rightTitle="available"
+									rightReorder="<%= Boolean.TRUE.toString() %>"
+									rightTitle="in-use"
 								/>
 							</aui:field-wrapper>
 						</div>

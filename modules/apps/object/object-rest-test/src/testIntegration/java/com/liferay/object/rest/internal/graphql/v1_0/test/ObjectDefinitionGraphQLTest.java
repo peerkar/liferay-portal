@@ -36,6 +36,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
@@ -131,7 +132,7 @@ public class ObjectDefinitionGraphQLTest {
 			ListTypeDefinitionLocalServiceUtil.addListTypeDefinition(
 				null, TestPropsValues.getUserId(),
 				LocalizedMapUtil.getLocalizedMap(_LIST_FIELD_NAME), false,
-				Collections.emptyList());
+				Collections.emptyList(), new ServiceContext());
 
 		_addListTypeEntry(listTypeDefinition, StringUtil.randomId());
 		_addListTypeEntry(listTypeDefinition, StringUtil.randomId());
@@ -349,7 +350,7 @@ public class ObjectDefinitionGraphQLTest {
 			ListTypeDefinitionLocalServiceUtil.addListTypeDefinition(
 				null, TestPropsValues.getUserId(),
 				LocalizedMapUtil.getLocalizedMap(StringUtil.randomId()), false,
-				Collections.emptyList());
+				Collections.emptyList(), new ServiceContext());
 		String listTypeEntryKey1 = StringUtil.randomId();
 
 		_addListTypeEntry(listTypeDefinition, listTypeEntryKey1);
@@ -367,7 +368,7 @@ public class ObjectDefinitionGraphQLTest {
 
 		ObjectDefinition objectDefinition =
 			ObjectDefinitionTestUtil.publishObjectDefinition(
-				false, ObjectDefinitionTestUtil.getRandomName(),
+				ObjectDefinitionTestUtil.getRandomName(),
 				Arrays.asList(
 					new MultiselectPicklistObjectFieldBuilder(
 					).userId(
@@ -576,7 +577,8 @@ public class ObjectDefinitionGraphQLTest {
 						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
 						ObjectFieldConstants.DB_TYPE_STRING, true, true, null,
 						RandomTestUtil.randomString(), _OBJECT_FIELD_NAME_TEXT,
-						false)));
+						false)),
+				false);
 
 		String pluralName = TextFormatter.formatPlural(
 			StringUtil.lowerCaseFirstLetter(objectDefinition.getShortName()));
@@ -730,7 +732,7 @@ public class ObjectDefinitionGraphQLTest {
 
 		try {
 			objectDefinition = ObjectDefinitionTestUtil.publishObjectDefinition(
-				true, ObjectDefinitionTestUtil.getRandomName(),
+				ObjectDefinitionTestUtil.getRandomName(),
 				Arrays.asList(
 					new TextObjectFieldBuilder(
 					).labelMap(
@@ -1243,14 +1245,14 @@ public class ObjectDefinitionGraphQLTest {
 		ObjectDefinition objectDefinition =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
 				null, TestPropsValues.getUserId(), 0, null, false, true, false,
-				true, false, enableObjectEntryDraft, false, false, false, null,
+				true, enableObjectEntryDraft, false, false, false, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				ObjectDefinitionTestUtil.getRandomName(), null, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				true, ObjectDefinitionConstants.SCOPE_COMPANY,
 				ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT,
 				Collections.emptyList(), Collections.emptyList(),
-				Collections.emptyList());
+				Collections.emptyList(), new ServiceContext());
 
 		ObjectFieldUtil.addCustomObjectField(
 			new TextObjectFieldBuilder(

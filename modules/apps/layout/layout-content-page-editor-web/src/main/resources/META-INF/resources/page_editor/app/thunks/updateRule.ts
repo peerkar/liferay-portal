@@ -3,9 +3,8 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {Action} from '../../plugins/page_rules/components/Action';
-import {Condition} from '../../plugins/page_rules/components/Condition';
 import {ConditionType} from '../../plugins/page_rules/components/RuleBuilderSection';
+import {Action, Condition} from '../../types/Rule';
 import {State} from '../../types/State';
 import updateNetwork from '../actions/updateNetwork';
 import updateRuleAction from '../actions/updateRule';
@@ -13,10 +12,11 @@ import RulesService from '../services/RulesService';
 
 type Props = {
 	actions: Action[];
-	conditionType: ConditionType;
-	conditions: Condition[];
+	conditionType?: ConditionType;
+	conditions?: Condition[];
 	name: string;
 	ruleId: string;
+	script?: string;
 };
 
 export default function updateRule({
@@ -25,6 +25,7 @@ export default function updateRule({
 	conditions,
 	name,
 	ruleId,
+	script,
 }: Props) {
 	return (
 		dispatch: (
@@ -41,6 +42,7 @@ export default function updateRule({
 			name,
 			onNetworkStatus: dispatch,
 			ruleId,
+			script,
 			segmentsExperienceId,
 		}).then(({layoutData}) => {
 			dispatch(updateRuleAction({layoutData, ruleId}));

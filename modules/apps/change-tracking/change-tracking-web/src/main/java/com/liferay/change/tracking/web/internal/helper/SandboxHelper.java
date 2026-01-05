@@ -5,6 +5,7 @@
 
 package com.liferay.change.tracking.web.internal.helper;
 
+import com.liferay.change.tracking.configuration.helper.CTSettingsConfigurationHelper;
 import com.liferay.change.tracking.constants.CTActionKeys;
 import com.liferay.change.tracking.constants.CTConstants;
 import com.liferay.change.tracking.constants.CTPortletKeys;
@@ -15,7 +16,6 @@ import com.liferay.change.tracking.model.CTPreferences;
 import com.liferay.change.tracking.service.CTCollectionLocalService;
 import com.liferay.change.tracking.service.CTCollectionTemplateLocalService;
 import com.liferay.change.tracking.service.CTPreferencesLocalService;
-import com.liferay.change.tracking.web.internal.configuration.helper.CTSettingsConfigurationHelper;
 import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.Language;
@@ -56,9 +56,7 @@ public class SandboxHelper {
 				_ctCollectionLocalService.fetchCTCollection(
 					ctPreferences.getCtCollectionId());
 
-			if ((ctCollection != null) &&
-				(ctCollection.getStatus() == WorkflowConstants.STATUS_DRAFT)) {
-
+			if ((ctCollection != null) && ctCollection.isInProgress()) {
 				return;
 			}
 		}
@@ -89,9 +87,7 @@ public class SandboxHelper {
 				ctPreferences.getPreviousCtCollectionId());
 		}
 
-		if ((ctCollection == null) ||
-			(ctCollection.getStatus() != WorkflowConstants.STATUS_DRAFT)) {
-
+		if ((ctCollection == null) || !ctCollection.isInProgress()) {
 			ctCollection = _findUserCTCollection(ctPreferences);
 		}
 
@@ -166,7 +162,11 @@ public class SandboxHelper {
 						ctPreferences.getUserId())
 				).and(
 					CTCollectionTable.INSTANCE.status.eq(
-						WorkflowConstants.STATUS_DRAFT)
+						WorkflowConstants.STATUS_DRAFT
+					).or(
+						CTCollectionTable.INSTANCE.status.eq(
+							WorkflowConstants.STATUS_INCOMPLETE)
+					).withParentheses()
 				)
 			).orderBy(
 				CTCollectionTable.INSTANCE.modifiedDate.descending()

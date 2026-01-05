@@ -3,6 +3,12 @@ import {TimeSpans} from 'shared/util/constants';
 export const EVER = 'ever';
 export const SINCE = 'since';
 
+export const DAYS = 'days';
+export const HOURS = 'hours';
+
+export const HOURS_IN_A_DAY = 24;
+export const MAX_DAYS = 30;
+
 export const isKnown = 'is-known';
 export const isUnknown = 'is-unknown';
 
@@ -71,6 +77,7 @@ export enum RelationalOperators {
  */
 
 export enum PropertyTypes {
+	AccountDate = 'account-date',
 	AccountNumber = 'account-number',
 	AccountText = 'account-text',
 	Behavior = 'behavior',
@@ -125,6 +132,13 @@ export const SUPPORTED_CONJUNCTION_OPTIONS = [
 ];
 
 export const SUPPORTED_OPERATORS_MAP = {
+	[PropertyTypes.AccountDate]: [
+		{
+			key: CustomFunctionOperators.AccountsFilter,
+			label: Liferay.Language.get('is-fragment'),
+			name: CustomFunctionOperators.AccountsFilter
+		}
+	],
 	[PropertyTypes.AccountNumber]: [
 		{
 			key: CustomFunctionOperators.AccountsFilter,
@@ -377,6 +391,7 @@ export const SUPPORTED_OPERATORS_MAP = {
 };
 
 export const SUPPORTED_PROPERTY_TYPES_MAP = {
+	[PropertyTypes.AccountDate]: [CustomFunctionOperators.AccountsFilter],
 	[PropertyTypes.AccountNumber]: [CustomFunctionOperators.AccountsFilter],
 	[PropertyTypes.AccountText]: [CustomFunctionOperators.AccountsFilter],
 	[PropertyTypes.Behavior]: [
@@ -530,6 +545,17 @@ export const TIME_CONJUNCTION_OPTIONS = [
 
 export const ACTIVITY_KEY = 'activityKey';
 export const EVENT_KEY = 'eventId';
+
+export const TIME_WINDOW_OPTIONS = [
+	{
+		label: Liferay.Language.get('hours'),
+		value: HOURS
+	},
+	{
+		label: Liferay.Language.get('days'),
+		value: DAYS
+	}
+];
 
 export const TIME_PERIOD_OPTIONS = [
 	{

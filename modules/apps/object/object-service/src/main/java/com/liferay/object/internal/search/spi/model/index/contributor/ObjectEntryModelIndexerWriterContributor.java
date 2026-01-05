@@ -5,7 +5,9 @@
 
 package com.liferay.object.internal.search.spi.model.index.contributor;
 
+import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
+import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
@@ -25,13 +27,17 @@ public class ObjectEntryModelIndexerWriterContributor
 	public ObjectEntryModelIndexerWriterContributor(
 		DynamicQueryBatchIndexingActionableFactory
 			dynamicQueryBatchIndexingActionableFactory,
-		long objectDefinitionId,
+		ObjectDefinition objectDefinition,
+		ObjectDefinitionLocalService objectDefinitionLocalService,
 		ObjectEntryLocalService objectEntryLocalService) {
 
 		_dynamicQueryBatchIndexingActionableFactory =
 			dynamicQueryBatchIndexingActionableFactory;
-		_objectDefinitionId = objectDefinitionId;
+		_objectDefinitionLocalService = objectDefinitionLocalService;
 		_objectEntryLocalService = objectEntryLocalService;
+
+		_companyId = objectDefinition.getCompanyId();
+		_objectDefinitionId = objectDefinition.getObjectDefinitionId();
 	}
 
 	@Override
@@ -47,9 +53,18 @@ public class ObjectEntryModelIndexerWriterContributor
 				dynamicQuery.add(
 					objectDefinitionIdProperty.eq(_objectDefinitionId));
 			});
+
+		ObjectDefinition objectDefinition =
+			_objectDefinitionLocalService.fetchObjectDefinition(
+				_objectDefinitionId);
+
 		batchIndexingActionable.setPerformActionMethod(
-			(ObjectEntry objectEntry) -> batchIndexingActionable.addDocuments(
-				modelIndexerWriterDocumentHelper.getDocument(objectEntry)));
+			(ObjectEntry objectEntry) -> {
+				objectEntry.setObjectDefinition(objectDefinition);
+
+				batchIndexingActionable.addDocuments(
+					modelIndexerWriterDocumentHelper.getDocument(objectEntry));
+			});
 	}
 
 	@Override
@@ -69,9 +84,20 @@ public class ObjectEntryModelIndexerWriterContributor
 		return IndexerWriterMode.UPDATE;
 	}
 
+	@Override
+	public boolean shouldRun(long companyId) {
+		if (_companyId == companyId) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private final long _companyId;
 	private final DynamicQueryBatchIndexingActionableFactory
 		_dynamicQueryBatchIndexingActionableFactory;
 	private final Long _objectDefinitionId;
+	private final ObjectDefinitionLocalService _objectDefinitionLocalService;
 	private final ObjectEntryLocalService _objectEntryLocalService;
 
 }

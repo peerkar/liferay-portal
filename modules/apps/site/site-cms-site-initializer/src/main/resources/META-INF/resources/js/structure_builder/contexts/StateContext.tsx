@@ -12,10 +12,10 @@ import React, {
 	useReducer,
 } from 'react';
 
+import {ObjectDefinitions} from '../../common/types/ObjectDefinition';
 import {Space} from '../../common/types/Space';
 import {Workflow} from '../../common/types/Workflow';
 import getLocalizedValue from '../../common/utils/getLocalizedValue';
-import {ObjectDefinitions} from '../types/ObjectDefinition';
 import {
 	ReferencedStructure,
 	RepeatableGroup,
@@ -57,6 +57,7 @@ type UndeletableReason = 'is-locked' | 'is-referenced' | 'causes-invalid-group';
 
 type History = {
 	deletedChildren: boolean;
+	deletedGroupERCs: Array<RepeatableGroup['erc']>;
 	modifiedNames: Set<Uuid>;
 };
 
@@ -72,6 +73,7 @@ export type State = {
 const INITIAL_STATE: State = {
 	history: {
 		deletedChildren: false,
+		deletedGroupERCs: [],
 		modifiedNames: new Set(),
 	},
 	invalids: new Map(),
@@ -84,13 +86,14 @@ const INITIAL_STATE: State = {
 		name: '',
 		spaces: 'all',
 		status: 'new',
+		system: false,
 		uuid: getUuid(),
 		workflows: {},
 	},
 	unsavedChanges: false,
 };
 
-type AddFieldAction = {field: Field; type: 'add-field'};
+type AddFieldAction = {field: Field; parentUuid?: Uuid; type: 'add-field'};
 
 type AddReferencedStructuresAction = {
 	referencedStructures: ReferencedStructure[];
@@ -205,24 +208,44 @@ function reducer(state: State, action: Action): State {
 
 	switch (action.type) {
 		case 'add-field': {
-			const {field} = action;
+			const {field, parentUuid} = action;
 
 			const {structure} = state;
 
-			const name = findAvailableFieldName(structure.children, field.name);
+			let parent: Structure | RepeatableGroup = structure;
 
-			const children = new Map(structure.children);
+			if (parentUuid) {
+				const item = findChild({root: structure, uuid: parentUuid});
+
+				if (item?.type === 'repeatable-group') {
+					parent = item;
+				}
+			}
+
+			const name = findAvailableFieldName(parent.children, field.name);
+
+			const children = new Map(parent.children);
 
 			children.set(field.uuid, {...field, name});
 
-			const sortedChildren = sortChildren(children);
+			let nextChildren;
+
+			if (parent.type === 'repeatable-group') {
+				nextChildren = updateChild({
+					child: {...parent, children: sortChildren(children)},
+					root: structure,
+				});
+			}
+			else {
+				nextChildren = sortChildren(children);
+			}
 
 			return {
 				...state,
 				selection: [field.uuid],
 				structure: {
 					...structure,
-					children: sortedChildren,
+					children: nextChildren,
 				},
 			};
 		}
@@ -444,6 +467,19 @@ function reducer(state: State, action: Action): State {
 					...nextState,
 					history: {...nextState.history, deletedChildren: true},
 				};
+
+				if (child.type === 'repeatable-group') {
+					nextState = {
+						...nextState,
+						history: {
+							...nextState.history,
+							deletedGroupERCs: [
+								...nextState.history.deletedGroupERCs,
+								child.erc,
+							],
+						},
+					};
+				}
 			}
 
 			return nextState;
@@ -473,7 +509,7 @@ function reducer(state: State, action: Action): State {
 				uuids: selection.filter((uuid) => !undeletables.has(uuid)),
 			});
 
-			return {
+			let nextState = {
 				...state,
 				selection: [...undeletables.keys()],
 				structure: {
@@ -481,6 +517,36 @@ function reducer(state: State, action: Action): State {
 					children: nextChildren,
 				},
 			};
+
+			for (const uuid of selection) {
+				const child = findChild({root: structure, uuid});
+
+				if (!child) {
+					continue;
+				}
+
+				if (state.publishedChildren.has(uuid)) {
+					nextState = {
+						...nextState,
+						history: {...nextState.history, deletedChildren: true},
+					};
+
+					if (child.type === 'repeatable-group') {
+						nextState = {
+							...nextState,
+							history: {
+								...nextState.history,
+								deletedGroupERCs: [
+									...nextState.history.deletedGroupERCs,
+									child.erc,
+								],
+							},
+						};
+					}
+				}
+			}
+
+			return nextState;
 		}
 		case 'publish-structure': {
 			const {structure} = state;
@@ -768,7 +834,7 @@ function reducer(state: State, action: Action): State {
 					erc,
 					label,
 					spaces,
-					...(!isPublished && {name: nextName}),
+					...(!isPublished && 'name' in action && {name: nextName}),
 				},
 				objectDefinitions,
 			});

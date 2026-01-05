@@ -10,6 +10,9 @@ import com.liferay.asset.kernel.service.AssetTagGroupRelLocalService;
 import com.liferay.asset.kernel.service.AssetTagLocalService;
 import com.liferay.asset.kernel.service.AssetTagService;
 import com.liferay.asset.tags.constants.AssetTagsAdminPortletKeys;
+import com.liferay.depot.constants.DepotConstants;
+import com.liferay.depot.model.DepotEntry;
+import com.liferay.depot.service.DepotEntryService;
 import com.liferay.exportimport.vulcan.batch.engine.ExportImportVulcanBatchEngineTaskItemDelegate;
 import com.liferay.headless.admin.taxonomy.dto.v1_0.Keyword;
 import com.liferay.headless.admin.taxonomy.internal.odata.entity.v1_0.KeywordEntityModel;
@@ -156,6 +159,11 @@ public class KeywordResourceImpl
 		return new ExportImportDescriptor() {
 
 			@Override
+			public String getLabelLanguageKey() {
+				return "tags";
+			}
+
+			@Override
 			public String getModelClassName() {
 				return AssetTag.class.getName();
 			}
@@ -173,6 +181,11 @@ public class KeywordResourceImpl
 			@Override
 			public Scope getScope() {
 				return Scope.SITE;
+			}
+
+			@Override
+			public boolean isStagingSupported() {
+				return true;
 			}
 
 		};
@@ -422,7 +435,25 @@ public class KeywordResourceImpl
 				searchContext.addVulcanAggregation(aggregation);
 				searchContext.setAttribute(Field.NAME, search);
 				searchContext.setCompanyId(contextCompany.getCompanyId());
-				searchContext.setGroupIds(new long[] {groupId});
+
+				DepotEntry depotEntry = _depotEntryService.fetchGroupDepotEntry(
+					groupId);
+
+				if ((depotEntry != null) &&
+					(depotEntry.getType() == DepotConstants.TYPE_SPACE)) {
+
+					searchContext.setAttribute(
+						"groupIds",
+						new long[] {
+							groupId, GroupConstants.ANY_PARENT_GROUP_ID
+						});
+				}
+				else {
+					searchContext.setGroupIds(
+						new long[] {
+							groupId, GroupConstants.ANY_PARENT_GROUP_ID
+						});
+				}
 			},
 			sorts,
 			document -> _toKeyword(
@@ -549,6 +580,9 @@ public class KeywordResourceImpl
 
 	@Reference
 	private AssetTagService _assetTagService;
+
+	@Reference
+	private DepotEntryService _depotEntryService;
 
 	@Reference
 	private DTOConverterRegistry _dtoConverterRegistry;

@@ -12,7 +12,7 @@ import ClayMultiSelect from '@clayui/multi-select';
 import {InternalDispatch, useControlledState} from '@clayui/shared';
 import {ClayTooltipProvider} from '@clayui/tooltip';
 import {fetch, getObjectValueFromPath} from 'frontend-js-web';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 
 import ItemSelectorModal, {IItemSelectorModalProps} from './ItemSelectorModal';
 
@@ -180,6 +180,11 @@ export interface IBaseItemSelectorProps<T> {
 	onItemsChange?: InternalDispatch<T[]>;
 
 	/**
+	 * A flag to refetch the data when the menu is active.
+	 */
+	refetchOnActive?: boolean;
+
+	/**
 	 * The current value of the input (controlled).
 	 */
 	value?: string;
@@ -203,7 +208,7 @@ interface IAutocomplete<T>
 	multiSelect?: false;
 }
 
-type IItemSelectorProps<T> = IMultiSelect<T> | IAutocomplete<T>;
+export type IItemSelectorProps<T> = IMultiSelect<T> | IAutocomplete<T>;
 
 function ItemSelector<T extends Record<string, any>>({
 	apiURL,
@@ -222,6 +227,7 @@ function ItemSelector<T extends Record<string, any>>({
 	defaultValue,
 	defaultItems,
 	displaySelectedItems = true,
+	refetchOnActive = false,
 	...otherProps
 }: IItemSelectorProps<T>) {
 	useEffect(() => {
@@ -254,7 +260,11 @@ function ItemSelector<T extends Record<string, any>>({
 
 	const [networkStatus, setNetworkStatus] = useState(NETWORK_STATUS_UNUSED);
 
-	const {loadMore, resource: sourceItems = []} = useResource({
+	const {
+		loadMore,
+		refetch,
+		resource: sourceItems = [],
+	} = useResource({
 		fetch: async (link) => {
 			const result = await fetch(link);
 
@@ -288,11 +298,26 @@ function ItemSelector<T extends Record<string, any>>({
 			return {cursor, items};
 		},
 		fetchDelay: 500,
-		fetchPolicy: 'cache-first' as FetchPolicy.CacheFirst,
+		fetchPolicy: refetchOnActive
+			? ('cache-and-network' as FetchPolicy.CacheAndNetwork)
+			: ('cache-first' as FetchPolicy.CacheFirst),
 		link: getNextPageURL({apiURL, page: 1}),
 		onNetworkStatusChange: setNetworkStatus,
 		variables: {search: value},
 	});
+
+	const selectedKeys = useMemo(() => {
+		return (
+			items?.map((item) =>
+				String(
+					getObjectValueFromPath({
+						object: item,
+						path: locator.value,
+					})
+				)
+			) ?? []
+		);
+	}, [items, locator.value]);
 
 	const memoizedChildren = useCallback(
 		(item: T) => {
@@ -334,10 +359,20 @@ function ItemSelector<T extends Record<string, any>>({
 
 	let itemSelectorComponent;
 
+	const handleActiveChange = (newActive: boolean) => {
+		if (newActive && refetchOnActive && newActive !== active) {
+			refetch();
+		}
+
+		setActive(newActive);
+	};
+
 	if (multiSelect && displaySelectedItems) {
 		itemSelectorComponent = (
 			<ClayMultiSelect
 				{...(otherProps as any)}
+				active={active}
+				allowsCustomLabel={false}
 				items={items}
 				locator={{
 					id: (item: T) => {
@@ -378,6 +413,7 @@ function ItemSelector<T extends Record<string, any>>({
 					loading: Liferay.Language.get('loading...'),
 					notFound: Liferay.Language.get('no-results-found'),
 				}}
+				onActiveChange={handleActiveChange}
 				onChange={setValue}
 				onItemsChange={setItems}
 				onLoadMore={async () => loadMore()}
@@ -403,12 +439,24 @@ function ItemSelector<T extends Record<string, any>>({
 				loadingState={networkStatus}
 				menuTrigger="focus"
 				messages={{
+					infiniteScrollInitialLoad: Liferay.Language.get(
+						'x-item-loaded-reach-the-last-item-to-load-more'
+					),
+					infiniteScrollInitialLoadPlural: Liferay.Language.get(
+						'x-items-loaded-reach-the-last-item-to-load-more'
+					),
+					infiniteScrollOnLoad:
+						Liferay.Language.get('loading-more-items'),
+					infiniteScrollOnLoaded:
+						Liferay.Language.get('x-item-loaded'),
+					infiniteScrollOnLoadedPlural:
+						Liferay.Language.get('x-items-loaded'),
 					listCount: Liferay.Language.get('x-list-option'),
 					listCountPlural: Liferay.Language.get('x-list-options'),
 					loading: Liferay.Language.get('loading...'),
 					notFound: Liferay.Language.get('no-results-found'),
 				}}
-				onActiveChange={setActive}
+				onActiveChange={handleActiveChange}
 				onChange={(value: string) => {
 					if (!value.length) {
 						setItems([]);
@@ -417,6 +465,7 @@ function ItemSelector<T extends Record<string, any>>({
 					setValue(value);
 				}}
 				onLoadMore={async () => loadMore()}
+				selectedKeys={selectedKeys}
 				value={value}
 			>
 				{memoizedChildren}

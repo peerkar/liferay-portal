@@ -1,0 +1,29 @@
+/**
+ * SPDX-FileCopyrightText: (c) 2000 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
+
+package com.liferay.source.formatter.dependencies;
+
+/**
+ * @author Alan Huang
+ */
+public class RunSQLStyling {
+
+	protected void method() throws Exception {
+		runSQL("update CTProcess set type_ = 0;");
+	}
+
+	protected void method2() throws Exception {
+		runSQL(
+			StringBundler.concat(
+				"create table DDMFieldAttribute (mvccVersion LONG default 0 ",
+				"not null, ctCollectionId LONG default 0 not null, ",
+				"fieldAttributeId LONG not null, companyId LONG, fieldId ",
+				"LONG, storageId LONG, attributeName VARCHAR(255) null, ",
+				"languageId VARCHAR(75) null, largeAttributeValue TEXT null, ",
+				"smallAttributeValue VARCHAR(255) null, primary key ",
+				"(fieldAttributeId, ctCollectionId));"));
+	}
+
+}

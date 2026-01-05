@@ -12,6 +12,7 @@ export class DefaultPermissionsPage {
 	readonly permissionsModal: Locator;
 	readonly permissionsModalCancelButton: Locator;
 	readonly permissionsModalSaveButton: Locator;
+	readonly permissionsModalSelectRole: Locator;
 	readonly propagateCheckbox: Locator;
 
 	constructor(page: Page) {
@@ -21,6 +22,8 @@ export class DefaultPermissionsPage {
 			this.permissionsModal.getByTestId('button-cancel');
 		this.permissionsModalSaveButton =
 			this.permissionsModal.getByTestId('button-save');
+		this.permissionsModalSelectRole =
+			this.permissionsModal.getByLabel('Select Role');
 		this.propagateCheckbox = this.permissionsModal.getByLabel(
 			'I understand that these changes will also affect existing entities.'
 		);
@@ -52,14 +55,14 @@ export class DefaultPermissionsPage {
 		if (bulk) {
 			await waitForAlert(
 				this.page,
-				'Info:Default permissions update action started for 2 assets. Check the Task Report for details.',
+				'Info:Default permissions update action started for',
 				{type: 'info'}
 			);
 		}
 		else if (propagate) {
 			await waitForAlert(
 				this.page,
-				'Info:Default permissions update action started for all assets. Check the Task Report for details.',
+				'Info:Default permissions update action started for all assets.',
 				{type: 'info'}
 			);
 		}

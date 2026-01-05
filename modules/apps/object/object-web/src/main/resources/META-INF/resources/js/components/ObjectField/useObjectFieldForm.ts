@@ -11,7 +11,10 @@ import {
 } from '@liferay/object-js-components-web';
 import {sub} from 'frontend-js-web';
 
-import {defaultLanguageId} from '../../utils/constants';
+import {
+	DEFAULT_VALUE_SUPPORTED_BUSINESS_TYPES,
+	defaultLanguageId,
+} from '../../utils/constants';
 import {normalizeFieldSettings} from '../../utils/fieldSettings';
 import {ObjectFieldErrors} from './ObjectFieldFormBase';
 
@@ -79,6 +82,14 @@ export function useObjectFieldForm({
 
 			return null;
 		};
+
+		const hasDefaultValue =
+			(Liferay.FeatureFlags['LPD-46451'] &&
+				field.businessType &&
+				DEFAULT_VALUE_SUPPORTED_BUSINESS_TYPES.includes(
+					field.businessType
+				)) ||
+			field.businessType === 'Picklist';
 
 		const errors: ObjectFieldErrors = {};
 
@@ -200,15 +211,18 @@ export function useObjectFieldForm({
 			}
 		}
 		else if (
-			field.businessType === 'LongText' ||
-			field.businessType === 'Text'
+			(field.businessType === 'LongText' ||
+				field.businessType === 'Text') &&
+			settings.showCounter &&
+			!settings.maxLength
 		) {
-			if (settings.showCounter && !settings.maxLength) {
-				errors.maxLength = constantsUtils.REQUIRED_MSG;
-			}
+			errors.maxLength = constantsUtils.REQUIRED_MSG;
 		}
-		else if (field.businessType === 'Picklist') {
-			if (!field.listTypeDefinitionId) {
+		else if (hasDefaultValue) {
+			if (
+				field.businessType === 'Picklist' &&
+				!field.listTypeDefinitionId
+			) {
 				errors.listTypeDefinitionId = constantsUtils.REQUIRED_MSG;
 			}
 

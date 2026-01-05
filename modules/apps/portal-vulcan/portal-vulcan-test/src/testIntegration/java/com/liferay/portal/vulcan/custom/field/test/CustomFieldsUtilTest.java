@@ -2749,12 +2749,10 @@ public class CustomFieldsUtilTest {
 		Assert.assertNull(exportImportReportEntry.getErrorStacktrace());
 		Assert.assertEquals(
 			ExpandoColumn.class.getName(),
-			exportImportReportEntry.getModelName());
+			exportImportReportEntry.getModelNameLanguageKey());
 		Assert.assertEquals(
 			ExportImportReportEntryConstants.ORIGIN_STAGING,
 			exportImportReportEntry.getOrigin());
-		Assert.assertEquals("company", exportImportReportEntry.getScope());
-		Assert.assertEquals("", exportImportReportEntry.getScopeKey());
 		Assert.assertEquals(
 			ExportImportReportEntryConstants.TYPE_EMPTY,
 			exportImportReportEntry.getType());

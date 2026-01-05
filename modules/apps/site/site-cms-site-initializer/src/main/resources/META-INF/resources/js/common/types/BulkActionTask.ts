@@ -25,7 +25,12 @@ export interface IBulkActionFDSDataItemTransformed {
 	classExternalReferenceCode: string;
 	className: string;
 	classPK: number;
+	file?: any;
 	name: string;
+}
+
+export interface IBulkActionSelectionScope {
+	selectAll: boolean;
 }
 
 export interface IBulkActionTask {
@@ -71,6 +76,7 @@ export interface IBulkActionTaskStarterDTO<
 	T extends keyof IBulkActionTaskType,
 > {
 	apiURL?: string;
+	dataSetId?: string;
 	keyValues?: IBulkActionTaskType[T];
 	onCreateError?:
 		| ((response: RequestResult<IBulkActionTaskPage>) => void)
@@ -88,6 +94,7 @@ export interface IBulkActionTaskType {
 	DefaultPermissionBulkAction: {
 		defaultPermissions: string;
 		depotGroupId?: number;
+		roleKey?: string;
 		treePath?: string;
 	};
 	DeleteBulkAction: {};
@@ -100,7 +107,9 @@ export interface IBulkActionTaskType {
 	};
 	PermissionBulkAction: {
 		configuration: string;
+		roleKey?: string;
 	};
+	ResetPermissionBulkAction: {};
 	TaxonomyCategoryBulkAction: {
 		taxonomyCategoryIds: number[];
 	};
@@ -108,6 +117,6 @@ export interface IBulkActionTaskType {
 
 export type TBulkActionTaskDTO = {
 	bulkActionItems: IBulkActionFDSDataItemTransformed[] | [];
-	selectAll: IBulkActionFDSData['selectAll'];
+	selectionScope: IBulkActionSelectionScope | null;
 	type: keyof IBulkActionTaskType;
 } & IBulkActionTaskType[keyof IBulkActionTaskType];

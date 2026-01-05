@@ -1,0 +1,11 @@
+{
+	"externalReferenceCode": "T_AC_USAGE",
+	"name": "Usage",
+	"name_i18n": {
+		"en_US": "Usage",
+		"es-ES": "Uso",
+		"ja-JP": "使用方法",
+		"pt-BR": "Uso"
+	},
+	"viewableBy": "Anyone"
+}

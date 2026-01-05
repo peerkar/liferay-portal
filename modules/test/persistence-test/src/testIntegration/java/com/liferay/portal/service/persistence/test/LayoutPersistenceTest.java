@@ -183,9 +183,12 @@ public class LayoutPersistenceTest {
 
 		newLayout.setPriority(RandomTestUtil.nextInt());
 
-		newLayout.setFaviconFileEntryId(RandomTestUtil.nextLong());
+		newLayout.setFaviconFileEntryERC(RandomTestUtil.randomString());
 
-		newLayout.setMasterLayoutPlid(RandomTestUtil.nextLong());
+		newLayout.setFaviconFileEntryScopeERC(RandomTestUtil.randomString());
+
+		newLayout.setMasterLayoutPageTemplateEntryERC(
+			RandomTestUtil.randomString());
 
 		newLayout.setLayoutPrototypeUuid(RandomTestUtil.randomString());
 
@@ -271,11 +274,14 @@ public class LayoutPersistenceTest {
 		Assert.assertEquals(
 			existingLayout.getPriority(), newLayout.getPriority());
 		Assert.assertEquals(
-			existingLayout.getFaviconFileEntryId(),
-			newLayout.getFaviconFileEntryId());
+			existingLayout.getFaviconFileEntryERC(),
+			newLayout.getFaviconFileEntryERC());
 		Assert.assertEquals(
-			existingLayout.getMasterLayoutPlid(),
-			newLayout.getMasterLayoutPlid());
+			existingLayout.getFaviconFileEntryScopeERC(),
+			newLayout.getFaviconFileEntryScopeERC());
+		Assert.assertEquals(
+			existingLayout.getMasterLayoutPageTemplateEntryERC(),
+			newLayout.getMasterLayoutPageTemplateEntryERC());
 		Assert.assertEquals(
 			existingLayout.getLayoutPrototypeUuid(),
 			newLayout.getLayoutPrototypeUuid());
@@ -415,11 +421,12 @@ public class LayoutPersistenceTest {
 	}
 
 	@Test
-	public void testCountByG_MLP() throws Exception {
-		_persistence.countByG_MLP(
-			RandomTestUtil.nextLong(), RandomTestUtil.nextLong());
+	public void testCountByG_MLPTEERC() throws Exception {
+		_persistence.countByG_MLPTEERC(RandomTestUtil.nextLong(), "");
 
-		_persistence.countByG_MLP(0L, 0L);
+		_persistence.countByG_MLPTEERC(0L, "null");
+
+		_persistence.countByG_MLPTEERC(0L, (String)null);
 	}
 
 	@Test
@@ -497,6 +504,16 @@ public class LayoutPersistenceTest {
 			new String[] {
 				RandomTestUtil.randomString(), "", "null", null, null
 			});
+	}
+
+	@Test
+	public void testCountByG_P_S() throws Exception {
+		_persistence.countByG_P_S(
+			RandomTestUtil.nextLong(), RandomTestUtil.randomBoolean(),
+			RandomTestUtil.randomBoolean());
+
+		_persistence.countByG_P_S(
+			0L, RandomTestUtil.randomBoolean(), RandomTestUtil.randomBoolean());
 	}
 
 	@Test
@@ -652,12 +669,13 @@ public class LayoutPersistenceTest {
 			"classPK", true, "name", true, "keywords", true, "robots", true,
 			"type", true, "hidden", true, "system", true, "friendlyURL", true,
 			"iconImageId", true, "themeId", true, "colorSchemeId", true,
-			"styleBookEntryERC", true, "priority", true, "faviconFileEntryId",
-			true, "masterLayoutPlid", true, "layoutPrototypeUuid", true,
-			"layoutPrototypeLinkEnabled", true, "layoutSetPrototypeLayoutERC",
-			true, "publishDate", true, "lastPublishDate", true, "status", true,
-			"statusByUserId", true, "statusByUserName", true, "statusDate",
-			true);
+			"styleBookEntryERC", true, "priority", true, "faviconFileEntryERC",
+			true, "faviconFileEntryScopeERC", true,
+			"masterLayoutPageTemplateEntryERC", true, "layoutPrototypeUuid",
+			true, "layoutPrototypeLinkEnabled", true,
+			"layoutSetPrototypeLayoutERC", true, "publishDate", true,
+			"lastPublishDate", true, "status", true, "statusByUserId", true,
+			"statusByUserName", true, "statusDate", true);
 	}
 
 	@Test
@@ -1038,9 +1056,12 @@ public class LayoutPersistenceTest {
 
 		layout.setPriority(RandomTestUtil.nextInt());
 
-		layout.setFaviconFileEntryId(RandomTestUtil.nextLong());
+		layout.setFaviconFileEntryERC(RandomTestUtil.randomString());
 
-		layout.setMasterLayoutPlid(RandomTestUtil.nextLong());
+		layout.setFaviconFileEntryScopeERC(RandomTestUtil.randomString());
+
+		layout.setMasterLayoutPageTemplateEntryERC(
+			RandomTestUtil.randomString());
 
 		layout.setLayoutPrototypeUuid(RandomTestUtil.randomString());
 

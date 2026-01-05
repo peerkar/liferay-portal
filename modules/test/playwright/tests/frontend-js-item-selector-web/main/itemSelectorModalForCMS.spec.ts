@@ -10,6 +10,7 @@ import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
 import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {isolatedSiteTest} from '../../../fixtures/isolatedSiteTest';
 import {loginTest} from '../../../fixtures/loginTest';
+import {DataApiHelpers} from '../../../helpers/ApiHelpers';
 import getRandomString from '../../../utils/getRandomString';
 import {EFDSVisualizationMode, waitForFDS} from '../../../utils/waitFor';
 import getPageDefinition from '../../layout-content-page-editor-web/main/utils/getPageDefinition';
@@ -21,15 +22,13 @@ const test = mergeTests(
 	dataApiHelpersTest,
 	featureFlagsTest({
 		'LPD-17564': {enabled: true},
+		'LPD-34594': {enabled: true},
 		'LPS-178052': {enabled: true},
 	}),
 	itemSelectorSamplePageTest,
 	isolatedSiteTest,
 	loginTest()
 );
-
-const spaceName = `Space ${getRandomString()}`;
-
 interface SpaceTest {
 	assetLibraryKey: string;
 	name: string;
@@ -41,15 +40,25 @@ interface FileObjectTest {
 	title: string;
 }
 
-let newSpace: SpaceTest = {
+const APPLICATION_NAME = 'cms/basic-documents';
+
+const firstSpaceName = `Space-1-${getRandomString()}`;
+const secondSpaceName = `Space-2-${getRandomString()}`;
+
+let firstSpace: SpaceTest = {
 	assetLibraryKey: '',
 	name: '',
 };
 
-let newSpaceObjectEntry: FileObjectTest = {file: {id: 0}, id: 0, title: ''};
-let defaultSpaceObjectEntry: FileObjectTest = {file: {id: 0}, id: 0, title: ''};
+let secondSpace: SpaceTest = {
+	assetLibraryKey: '',
+	name: '',
+};
 
-const createObjectEntryData = ({title}: {title: string}) => {
+let firstSpaceObjectEntry: FileObjectTest = {file: {id: 0}, id: 0, title: ''};
+let secondSpaceObjectEntry: FileObjectTest = {file: {id: 0}, id: 0, title: ''};
+
+function createObjectEntryData({title}: {title: string}) {
 	const newTitle = `${title} ${getRandomString()}`;
 
 	return {
@@ -61,41 +70,67 @@ const createObjectEntryData = ({title}: {title: string}) => {
 		objectEntryFolderExternalReferenceCode: 'L_FILES',
 		title: newTitle,
 	};
-};
+}
+
+async function createSpace(
+	apiHelpers: DataApiHelpers,
+	name: string
+): Promise<SpaceTest> {
+	return await apiHelpers.headlessAssetLibrary.createAssetLibrary({
+		name,
+		settings: {},
+		type: 'Space',
+	});
+}
+
+async function deleteSampleFile(
+	apiHelpers: DataApiHelpers,
+	id?: number
+): Promise<void> {
+	if (id) {
+		await apiHelpers.objectEntry.deleteObjectEntry(
+			APPLICATION_NAME,
+			String(id)
+		);
+	}
+}
+
+async function uploadSampleFile(
+	apiHelpers: DataApiHelpers,
+	title: string,
+	space: SpaceTest
+): Promise<FileObjectTest> {
+	const newEntry = (await apiHelpers.objectEntry.postObjectEntry(
+		createObjectEntryData({title}),
+		APPLICATION_NAME,
+		space.assetLibraryKey
+	)) as unknown as FileObjectTest;
+
+	apiHelpers.data.push({
+		id: newEntry.id,
+		type: 'document',
+	});
+
+	return newEntry;
+}
 
 test.beforeEach(async ({apiHelpers, itemSelectorSamplePage, site}) => {
-	await test.step('Create Space', async () => {
-		newSpace = (await apiHelpers.headlessAssetLibrary.createAssetLibrary({
-			name: spaceName,
-			settings: {},
-			type: 'Space',
-		})) as SpaceTest;
+	await test.step('Create Spaces', async () => {
+		firstSpace = await createSpace(apiHelpers, firstSpaceName);
+		secondSpace = await createSpace(apiHelpers, secondSpaceName);
 	});
 
 	await test.step('Upload sample files', async () => {
-		const applicationName = 'cms/basic-documents';
-
-		newSpaceObjectEntry = (await apiHelpers.objectEntry.postObjectEntry(
-			createObjectEntryData({title: 'new space file title'}),
-			applicationName,
-			newSpace.assetLibraryKey
-		)) as unknown as FileObjectTest;
-
-		defaultSpaceObjectEntry = (await apiHelpers.objectEntry.postObjectEntry(
-			createObjectEntryData({title: 'default space file title'}),
-			applicationName,
-			'Default'
-		)) as unknown as FileObjectTest;
-
-		apiHelpers.data.push({
-			id: newSpaceObjectEntry.id,
-			type: 'document',
-		});
-
-		apiHelpers.data.push({
-			id: defaultSpaceObjectEntry.id,
-			type: 'document',
-		});
+		firstSpaceObjectEntry = await uploadSampleFile(
+			apiHelpers,
+			'first space file title',
+			firstSpace
+		);
+		secondSpaceObjectEntry = await uploadSampleFile(
+			apiHelpers,
+			'second space file title',
+			secondSpace
+		);
 	});
 
 	const layout = await apiHelpers.headlessDelivery.createSitePage({
@@ -114,21 +149,8 @@ test.beforeEach(async ({apiHelpers, itemSelectorSamplePage, site}) => {
 });
 
 test.afterEach(async ({apiHelpers}) => {
-	const applicationName = 'cms/basic-documents';
-
-	if (newSpaceObjectEntry.id) {
-		await apiHelpers.objectEntry.deleteObjectEntry(
-			applicationName,
-			String(newSpaceObjectEntry.id)
-		);
-	}
-
-	if (defaultSpaceObjectEntry.id) {
-		await apiHelpers.objectEntry.deleteObjectEntry(
-			applicationName,
-			String(defaultSpaceObjectEntry.id)
-		);
-	}
+	await deleteSampleFile(apiHelpers, firstSpaceObjectEntry.id);
+	await deleteSampleFile(apiHelpers, secondSpaceObjectEntry.id);
 });
 
 test('Item Selector Modal with Spaces filter for when selecting CMS Files', async ({
@@ -149,33 +171,33 @@ test('Item Selector Modal with Spaces filter for when selecting CMS Files', asyn
 		waitForFDS({page, visualizationMode: EFDSVisualizationMode.CARDS});
 
 		await expect(
-			page.getByText(newSpaceObjectEntry.title, {exact: true})
+			page.getByText(firstSpaceObjectEntry.title, {exact: true})
 		).toBeVisible();
 
 		await expect(
-			page.getByText(defaultSpaceObjectEntry.title, {exact: true})
+			page.getByText(secondSpaceObjectEntry.title, {exact: true})
 		).toBeVisible();
 
 		await expect(itemSelectorSamplePage.filtersButton).toBeVisible();
 	});
 
-	await test.step(`Filter CMS Files by ${newSpace.name}`, async () => {
+	await test.step(`Filter CMS Files by ${firstSpace.name}`, async () => {
 		await itemSelectorSamplePage.filtersButton.click();
 
 		await page.getByRole('menuitem', {name: 'Space'}).click();
 
-		await page.getByLabel(newSpace.name).click();
+		await page.getByLabel(firstSpace.name).click();
 
 		await page.getByRole('button', {name: 'Add Filter'}).click();
 
 		waitForFDS({page, visualizationMode: EFDSVisualizationMode.CARDS});
 
 		await expect(
-			page.getByText(newSpaceObjectEntry.title, {exact: true})
+			page.getByText(firstSpaceObjectEntry.title, {exact: true})
 		).toBeVisible();
 
 		await expect(
-			page.getByText(defaultSpaceObjectEntry.title, {exact: true})
-		).not.toBeVisible();
+			page.getByText(secondSpaceObjectEntry.title, {exact: true})
+		).toBeHidden();
 	});
 });

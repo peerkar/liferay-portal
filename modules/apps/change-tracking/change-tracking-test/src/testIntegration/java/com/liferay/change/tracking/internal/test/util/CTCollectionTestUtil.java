@@ -12,18 +12,18 @@ import com.liferay.change.tracking.service.CTCollectionServiceUtil;
 import com.liferay.change.tracking.service.CTScoreLocalServiceUtil;
 import com.liferay.document.library.kernel.model.DLFileEntryMetadata;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestUtil;
-import com.liferay.journal.model.JournalArticle;
-import com.liferay.journal.service.JournalArticleLocalServiceUtil;
+import com.liferay.journal.model.JournalFolder;
+import com.liferay.journal.service.JournalFolderLocalServiceUtil;
+import com.liferay.journal.test.util.JournalFolderFixture;
 import com.liferay.journal.test.util.JournalTestUtil;
 import com.liferay.petra.lang.SafeCloseable;
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
-import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.log.LogCapture;
 import com.liferay.portal.test.log.LogEntry;
 import com.liferay.portal.test.log.LoggerTestUtil;
@@ -42,9 +42,11 @@ public class CTCollectionTestUtil {
 
 		Group group = GroupTestUtil.addGroup();
 
-		JournalArticle journalArticle = JournalTestUtil.addArticle(
-			group.getGroupId(), RandomTestUtil.randomString(),
-			StringPool.BLANK);
+		JournalFolderFixture journalFolderFixture = new JournalFolderFixture(
+			JournalFolderLocalServiceUtil.getService());
+
+		JournalFolder journalFolder = journalFolderFixture.addFolder(
+			group.getGroupId(), RandomTestUtil.randomString());
 
 		CTCollection ctCollection =
 			CTCollectionLocalServiceUtil.addCTCollection(
@@ -55,15 +57,26 @@ public class CTCollectionTestUtil {
 				CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
 					ctCollection.getCtCollectionId())) {
 
-			journalArticle = JournalArticleLocalServiceUtil.updateArticle(
-				journalArticle.getId(), RandomTestUtil.randomString());
+			JournalTestUtil.addArticle(
+				group.getGroupId(), journalFolder.getFolderId());
 		}
 
-		JournalArticleLocalServiceUtil.deleteArticle(
-			group.getGroupId(), journalArticle.getArticleId(),
-			ServiceContextTestUtil.getServiceContext());
+		JournalFolderLocalServiceUtil.deleteFolder(journalFolder.getFolderId());
 
 		return ctCollection;
+	}
+
+	public static CTCollection createCTCollectionWithIncompleteStatus(User user)
+		throws Exception {
+
+		CTCollection ctCollection =
+			CTCollectionLocalServiceUtil.addCTCollection(
+				null, TestPropsValues.getCompanyId(), user.getUserId(), 0,
+				RandomTestUtil.randomString(), null);
+
+		ctCollection.setStatus(WorkflowConstants.STATUS_INCOMPLETE);
+
+		return CTCollectionLocalServiceUtil.updateCTCollection(ctCollection);
 	}
 
 	public static void publishCTCollectionWithError(long ctCollectionId)

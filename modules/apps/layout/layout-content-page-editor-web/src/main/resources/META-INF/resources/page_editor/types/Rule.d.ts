@@ -7,10 +7,46 @@ import {Action} from '../plugins/page_rules/components/Action';
 import {Condition} from '../plugins/page_rules/components/Condition';
 import {ConditionType} from '../plugins/page_rules/components/RuleBuilderSection';
 
-export type Rule = {
+export interface Action {
+	error?: RuleError | null;
+	id: string;
+	itemId?: string;
+	readOnly?: boolean;
+	type: 'disable' | 'enable' | 'hide' | 'show' | undefined;
+}
+
+export type AdvancedRule = {
 	actions: Action[];
-	conditionType: ConditionType;
-	conditions: Condition[];
+	conditionType?: never;
+	conditions?: never;
 	id: string;
 	name: string;
+	script: string;
+};
+
+export type BasicRule = {
+	actions: Action[];
+	conditionType?: ConditionType;
+	conditions?: Condition[];
+	id: string;
+	name: string;
+	script?: never;
+};
+
+export interface Condition {
+	error?: RuleError | null;
+	field?: 'user' | 'role' | 'segment' | string;
+	id: string;
+	options?: {
+		type: 'equal' | 'not-equal';
+		value?: string;
+	};
+	type: 'field' | 'form' | 'user' | undefined;
+}
+
+export type Rule = AdvancedRule | BasicRule;
+
+export type RuleError = {
+	element: HTMLButtonElement | HTMLElement | HTMLInputElement;
+	message: string;
 };

@@ -161,6 +161,13 @@ public class CommerceOpenOrderContentPortlet extends MVCPortlet {
 					commerceOrderUuid, groupId);
 			}
 
+			long commerceOrderId = ParamUtil.getLong(
+				portletRequest, "commerceOrderId");
+
+			if (commerceOrderId != 0) {
+				return _commerceOrderService.getCommerceOrder(commerceOrderId);
+			}
+
 			HttpServletRequest httpServletRequest =
 				_portal.getHttpServletRequest(portletRequest);
 

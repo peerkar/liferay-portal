@@ -17,6 +17,7 @@ import com.liferay.info.item.InfoItemIdentifier;
 import com.liferay.info.item.InfoItemReference;
 import com.liferay.layout.display.page.BaseLayoutDisplayPageProvider;
 import com.liferay.layout.display.page.LayoutDisplayPageObjectProvider;
+import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.model.ObjectEntryVersion;
@@ -27,25 +28,28 @@ import com.liferay.object.service.ObjectEntryVersionLocalServiceUtil;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.web.internal.util.ObjectEntryUtil;
 import com.liferay.petra.string.CharPool;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 
 import java.io.Serializable;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Guilherme Camacho
@@ -54,7 +58,7 @@ public class ObjectEntryLayoutDisplayPageProvider
 	extends BaseLayoutDisplayPageProvider<ObjectEntry> {
 
 	public ObjectEntryLayoutDisplayPageProvider(
-		AssetHelper assetHelper,
+		AssetHelper assetHelper, GroupLocalService groupLocalService,
 		InfoItemFriendlyURLProvider<ObjectEntry> infoItemFriendlyURLProvider,
 		ObjectDefinition objectDefinition,
 		ObjectDefinitionLocalService objectDefinitionLocalService,
@@ -64,6 +68,7 @@ public class ObjectEntryLayoutDisplayPageProvider
 		UserLocalService userLocalService) {
 
 		_assetHelper = assetHelper;
+		_groupLocalService = groupLocalService;
 		_infoItemFriendlyURLProvider = infoItemFriendlyURLProvider;
 		_objectDefinition = objectDefinition;
 		_objectDefinitionLocalService = objectDefinitionLocalService;
@@ -88,17 +93,14 @@ public class ObjectEntryLayoutDisplayPageProvider
 	public LayoutDisplayPageObjectProvider<ObjectEntry>
 		getLayoutDisplayPageObjectProvider(long groupId, String urlTitle) {
 
-		if (FeatureFlagManagerUtil.isEnabled("LPD-21926")) {
-			ObjectEntry objectEntry = _objectEntryLocalService.fetchObjectEntry(
-				groupId, _objectDefinition, urlTitle);
+		ObjectEntry objectEntry = _objectEntryLocalService.fetchObjectEntry(
+			groupId, _objectDefinition, urlTitle);
 
-			if (objectEntry != null) {
-				return new ObjectEntryLayoutDisplayPageObjectProvider(
-					_assetHelper, _infoItemFriendlyURLProvider,
-					_objectDefinition, _objectDefinitionLocalService,
-					objectEntry, _objectEntryLocalService,
-					_objectRelationshipLocalService);
-			}
+		if (objectEntry != null) {
+			return new ObjectEntryLayoutDisplayPageObjectProvider(
+				_assetHelper, _infoItemFriendlyURLProvider, _objectDefinition,
+				_objectDefinitionLocalService, objectEntry,
+				_objectEntryLocalService, _objectRelationshipLocalService);
 		}
 
 		if (!_objectDefinition.isDefaultStorageType()) {
@@ -178,6 +180,19 @@ public class ObjectEntryLayoutDisplayPageProvider
 				userId = PrincipalThreadLocal.getUserId();
 			}
 
+			String scopeKey =
+				ercInfoItemIdentifier.getScopeExternalReferenceCode();
+
+			if (Validator.isNull(scopeKey) &&
+				!Objects.equals(
+					_objectDefinition.getScope(),
+					ObjectDefinitionConstants.SCOPE_COMPANY)) {
+
+				Group group = _groupLocalService.getGroup(groupId);
+
+				scopeKey = group.getExternalReferenceCode();
+			}
+
 			com.liferay.object.rest.dto.v1_0.ObjectEntry objectEntry =
 				_objectEntryManager.getObjectEntry(
 					serviceContext.getCompanyId(),
@@ -186,7 +201,7 @@ public class ObjectEntryLayoutDisplayPageProvider
 						serviceContext.getLocale(), null,
 						_userLocalService.fetchUser(userId)),
 					ercInfoItemIdentifier.getExternalReferenceCode(),
-					_objectDefinition, null);
+					_objectDefinition, scopeKey);
 
 			if (objectEntry != null) {
 				return new ObjectEntryLayoutDisplayPageObjectProvider(
@@ -265,6 +280,7 @@ public class ObjectEntryLayoutDisplayPageProvider
 		ObjectEntryLayoutDisplayPageProvider.class);
 
 	private final AssetHelper _assetHelper;
+	private final GroupLocalService _groupLocalService;
 	private final InfoItemFriendlyURLProvider<ObjectEntry>
 		_infoItemFriendlyURLProvider;
 	private final ObjectDefinition _objectDefinition;

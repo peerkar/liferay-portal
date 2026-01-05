@@ -16,7 +16,6 @@ import com.liferay.portal.kernel.test.rule.Sync;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.test.rule.FeatureFlag;
-import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
@@ -35,9 +34,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 /**
  * @author Eudaldo Alonso
  */
-@FeatureFlags(
-	featureFlags = {@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-32050")}
-)
+@FeatureFlag("LPD-17564")
 @RunWith(Arquillian.class)
 @Sync
 public class ViewAllSectionDisplayContextTest
@@ -55,7 +52,7 @@ public class ViewAllSectionDisplayContextTest
 		throws PortalException {
 
 		return LinkedHashMapBuilder.put(
-			"basic-content",
+			"basic-web-content",
 			getRedirect(
 				"L_CMS_BASIC_WEB_CONTENT",
 				ObjectEntryFolderConstants.EXTERNAL_REFERENCE_CODE_CONTENTS)
@@ -72,7 +69,7 @@ public class ViewAllSectionDisplayContextTest
 				"L_CMS_BLOG",
 				ObjectEntryFolderConstants.EXTERNAL_REFERENCE_CODE_CONTENTS)
 		).put(
-			"external-video-shortcut",
+			"external-video",
 			getRedirect(
 				"L_CMS_EXTERNAL_VIDEO",
 				ObjectEntryFolderConstants.EXTERNAL_REFERENCE_CODE_FILES)

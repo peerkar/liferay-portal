@@ -1,0 +1,606 @@
+[
+	{
+		"externalReferenceCode": "CP_NAV",
+		"menuItems": [
+			{
+				"friendlyURL": "/home",
+				"privateLayout": false,
+				"type": "layout"
+			},
+			{
+				"menuItems": [
+					{
+						"externalReferenceCode": "CP_NAV_PRODUCTS_DOCUMENTATION",
+						"menuItems": [
+							{
+								"externalReferenceCode": "CP_NAV_KNOWLEDGE_BASE",
+								"name_i18n": {
+									"en_US": "Knowledge Base",
+									"es_ES": "Base de conocimientos",
+									"ja_JP": "ナレッジ・ベース",
+									"pt_BR": "Base de conhecimento"
+								},
+								"type": "url",
+								"url": "https://help.liferay.com/hc",
+								"useNewTab": false
+							},
+							{
+								"externalReferenceCode": "CP_NAV_DOCUMENTATION",
+								"name_i18n": {
+									"en_US": "Documentation",
+									"es_ES": "Documentación",
+									"ja_JP": "ドキュメンテーション",
+									"pt_BR": "Documentação"
+								},
+								"type": "url",
+								"url": "https://learn.liferay.com/documentation",
+								"useNewTab": false
+							}
+						],
+						"name_i18n": {
+							"en_US": "Products Documentation",
+							"es_ES": "Documentación del producto",
+							"ja_JP": "製品ドキュメント",
+							"pt_BR": "Documentação do produto"
+						},
+						"title": "Products Documentation",
+						"type": "node"
+					},
+					{
+						"externalReferenceCode": "CP_NAV_TOOLS",
+						"menuItems": [
+							{
+								"externalReferenceCode": "CP_NAV_RELEASE_NOTES",
+								"friendlyURL": "/release-notes",
+								"type": "layout"
+							},
+							{
+								"externalReferenceCode": "CP_NAV_DOWNLOADS",
+								"name_i18n": {
+									"en_US": "Downloads",
+									"es_ES": "Descargas",
+									"ja_JP": "ダウンロード",
+									"pt_BR": "Transferências"
+								},
+								"type": "url",
+								"url": "https://customer.liferay.com/downloads",
+								"useNewTab": false
+							}
+						],
+						"name_i18n": {
+							"en_US": "Tools",
+							"es_ES": "Herramientas",
+							"ja_JP": "ツール",
+							"pt_BR": "Ferramentas"
+						},
+						"title": "Tools",
+						"type": "node"
+					},
+					{
+						"externalReferenceCode": "CP_NAV_SECURITIES_POLICIES",
+						"menuItems": [
+							{
+								"externalReferenceCode": "CP_NAV_SECURITY_OVERVIEW",
+								"name_i18n": {
+									"en_US": "Security Overview",
+									"es_ES": "Panorama de la seguridad",
+									"ja_JP": "セキュリティの概要",
+									"pt_BR": "Visão geral da segurança"
+								},
+								"type": "url",
+								"url": "https://help.liferay.com/hc/articles/360016700231",
+								"useNewTab": false
+							},
+							{
+								"externalReferenceCode": "CP_NAV_SECURITY_VULNERABILITIES",
+								"name_i18n": {
+									"en_US": "Security Vulnerabilities",
+									"es_ES": "Vulnerabilidades de Seguridad",
+									"ja_JP": "セキュリティ脆弱性",
+									"pt_BR": "Vulnerabilidades de Segurança"
+								},
+								"type": "url",
+								"url": "/security-vulnerabilities",
+								"useNewTab": false
+							}
+						],
+						"name_i18n": {
+							"en_US": "Securities & Policies",
+							"es_ES": "Seguridad y políticas",
+							"ja_JP": "セキュリティとポリシー",
+							"pt_BR": "Segurança e políticas"
+						},
+						"title": "Securities & Policies",
+						"type": "node"
+					}
+				],
+				"name_i18n": {
+					"en_US": "Resources",
+					"es_ES": "Recursos",
+					"ja_JP": "リソース",
+					"pt_BR": "Recursos"
+				},
+				"title": "Resources",
+				"type": "node"
+			},
+			{
+				"menuItems": [
+					{
+						"externalReferenceCode": "CP_NAV_SUPPORT_DOCUMENTATION",
+						"menuItems": [
+							{
+								"externalReferenceCode": "CP_NAV_PRODUCT_SUPPORT",
+								"name_i18n": {
+									"en_US": "Product Support",
+									"es_ES": "Soporte sobre productos",
+									"ja_JP": "製品サポート",
+									"pt_BR": "Suporte ao produto"
+								},
+								"type": "url",
+								"url": "https://help.liferay.com/hc/categories/360000892912",
+								"useNewTab": false
+							},
+							{
+								"externalReferenceCode": "CP_NAV_ACCOUNT_SUPPORT",
+								"name_i18n": {
+									"en_US": "Account Support",
+									"es_ES": "Soporte de cuentas",
+									"ja_JP": "アカウントサポート",
+									"pt_BR": "Suporte à conta"
+								},
+								"type": "url",
+								"url": "https://help.liferay.com/hc/articles/360018414031",
+								"useNewTab": false
+							}
+						],
+						"name_i18n": {
+							"en_US": "Support Documentation",
+							"es_ES": "Documentación de soporte",
+							"ja_JP": "サポート・ドキュメント",
+							"pt_BR": "Documentação de suporte"
+						},
+						"title": "Support Documentation",
+						"type": "node"
+					},
+					{
+						"externalReferenceCode": "CP_NAV_SUPPORT_ASSISTANCE",
+						"menuItems": [
+							{
+								"externalReferenceCode": "CP_NAV_SUPPORT_FAQ",
+								"name_i18n": {
+									"en_US": "Support FAQ",
+									"es_ES": "Preguntas frecuentes sobre asistencia",
+									"ja_JP": "サポートに関するよくある質問",
+									"pt_BR": "Perguntas frequentes sobre suporte"
+								},
+								"type": "url",
+								"url": "https://help.liferay.com/hc/articles/360015994791",
+								"useNewTab": false
+							},
+							{
+								"externalReferenceCode": "CP_NAV_CONTACT_US",
+								"name_i18n": {
+									"en_US": "Contact Us",
+									"es_ES": "Contacte con nosotros",
+									"ja_JP": "お問い合わせ",
+									"pt_BR": "Contate-nos"
+								},
+								"type": "url",
+								"url": "/callback-request",
+								"useNewTab": false
+							}
+						],
+						"name_i18n": {
+							"en_US": "Support Assistance",
+							"es_ES": "Asistencia de apoyo",
+							"ja_JP": "サポート",
+							"pt_BR": "Assistência de suporte"
+						},
+						"title": "Support Assistance",
+						"type": "node"
+					},
+					{
+						"externalReferenceCode": "CP_NAV_SUPPORT_TICKETS",
+						"menuItems": [
+							{
+								"externalReferenceCode": "CP_NAV_SUBMIT_A_TICKET",
+								"name_i18n": {
+									"en_US": "Submit a Ticket",
+									"es_ES": "Envíe un billete",
+									"ja_JP": "チケットを提出する",
+									"pt_BR": "Enviar um tíquete"
+								},
+								"type": "url",
+								"url": "https://help.liferay.com/hc/requests/new",
+								"useNewTab": false
+							},
+							{
+								"externalReferenceCode": "CP_NAV_MY_TICKETS",
+								"name_i18n": {
+									"en_US": "My Tickets",
+									"es_ES": "Mis billetes",
+									"ja_JP": "マイ・チケット",
+									"pt_BR": "Meus tíquetes"
+								},
+								"type": "url",
+								"url": "https://help.liferay.com/hc/requests",
+								"useNewTab": false
+							},
+							{
+								"externalReferenceCode": "CP_NAV_MY_TEAMS_TICKETS",
+								"name_i18n": {
+									"en_US": "My Team's Tickets",
+									"es_ES": "Billetes de mi equipo",
+									"ja_JP": "マイチームのチケット",
+									"pt_BR": "Tíquetes da minha equipe"
+								},
+								"type": "url",
+								"url": "https://help.liferay.com/hc/requests/organization",
+								"useNewTab": false
+							},
+							{
+								"externalReferenceCode": "CP_NAV_ESCALATE_A_TICKET",
+								"friendlyURL": "/support-ticket-escalation",
+								"type": "layout"
+							}
+						],
+						"name_i18n": {
+							"en_US": "Support Tickets",
+							"es_ES": "Billetes de soporte",
+							"ja_JP": "サポートチケット",
+							"pt_BR": "Tíquetes de suporte"
+						},
+						"title": "Support Tickets",
+						"type": "node"
+					}
+				],
+				"name_i18n": {
+					"en_US": "Support",
+					"es_ES": "Soporte",
+					"ja_JP": "サポート",
+					"pt_BR": "Suporte"
+				},
+				"title": "Support",
+				"type": "node"
+			}
+		],
+		"name": "Customer Portal Primary Navigation"
+	},
+	{
+		"externalReferenceCode": "CP-NEW-NAV",
+		"menuItems": [
+			{
+				"friendlyURL": "/home",
+				"name_i18n": {
+					"en_US": "Home",
+					"es_ES": "Página de inicio",
+					"ja_JP": "ホーム",
+					"pt_BR": "Página inicial"
+				},
+				"privateLayout": false,
+				"type": "layout",
+				"useCustomName": true
+			},
+			{
+				"menuItems": [
+					{
+						"externalReferenceCode": "CP_NEW_NAV_GUIDES",
+						"menuItems": [
+							{
+								"externalReferenceCode": "CP_NEW_NAV_GETTING_STARTED",
+								"name_i18n": {
+									"en_US": "Getting Started",
+									"es_ES": "Cómo empezar",
+									"ja_JP": "はじめに",
+									"pt_BR": "Primeiros passos"
+								},
+								"type": "url",
+								"url": "https://support-uat.liferay.com/w/getting-started-with-your-liferay-project-video-tutorials-",
+								"useNewTab": true
+							},
+							{
+								"externalReferenceCode": "CP_NEW_NAV_CUSTOMER_PORTAL_HELP",
+								"name_i18n": {
+									"en_US": "Customer Portal Help",
+									"es_ES": "Ayuda del Portal del cliente",
+									"ja_JP": "カスタマーポータルのヘルプ",
+									"pt_BR": "Ajuda do Portal do Cliente"
+								},
+								"type": "url",
+								"url": "http://localhost:8080/web/customer-portal",
+								"useNewTab": true
+							}
+						],
+						"name_i18n": {
+							"en_US": "Guides",
+							"es_ES": "Guías",
+							"ja_JP": "ガイド",
+							"pt_BR": "Guias"
+						},
+						"title": "Guides",
+						"type": "node"
+					},
+					{
+						"externalReferenceCode": "CP_NEW_NAV_PRODUCT_DOCUMENTATION",
+						"menuItems": [
+							{
+								"externalReferenceCode": "CP_NEW_NAV_LIFERAY_LEARN",
+								"name_i18n": {
+									"en_US": "Liferay Learn",
+									"es_ES": "Liferay Learn",
+									"ja_JP": "Liferay Learn",
+									"pt_BR": "Liferay Learn"
+								},
+								"type": "url",
+								"url": "https://learn.liferay.com/",
+								"useNewTab": true
+							},
+							{
+								"externalReferenceCode": "CP_NEW_NAV_KNOWLEDGE_BASE",
+								"name_i18n": {
+									"en_US": "Knowledge Base",
+									"es_ES": "Base de conocimiento",
+									"ja_JP": "ナレッジベース",
+									"pt_BR": "Base de Conhecimento"
+								},
+								"type": "url",
+								"url": "https://learn.liferay.com/learn-search?q=&resource-type=33315839&resource-type=33317328",
+								"useNewTab": true
+							}
+						],
+						"name_i18n": {
+							"en_US": "Product Documentation",
+							"es_ES": "Documentación de producto",
+							"ja_JP": "製品ドキュメンテーション",
+							"pt_BR": "Documentação do produto"
+						},
+						"title": "Product Documentation",
+						"type": "node"
+					},
+					{
+						"externalReferenceCode": "CP_NEW_NAV_SECURITY",
+						"menuItems": [
+							{
+								"externalReferenceCode": "CP_NEW_NAV_SECURITY_OVERVIEW",
+								"name_i18n": {
+									"en_US": "Security Overview",
+									"es_ES": "Visión general de seguridad",
+									"ja_JP": "セキュリティの概要",
+									"pt_BR": "Visão geral da segurança"
+								},
+								"type": "url",
+								"url": "https://support-uat.liferay.com/w/security-overview",
+								"useNewTab": true
+							},
+							{
+								"externalReferenceCode": "CP_NEW_NAV_SECURITY_REPORTS",
+								"name_i18n": {
+									"en_US": "Security Reports",
+									"es_ES": "Informes de seguridad",
+									"ja_JP": "セキュリティレポート",
+									"pt_BR": "Relatórios de segurança"
+								},
+								"type": "url",
+								"url": "http://localhost:8080/web/customer-portal/security-vulnerabilities",
+								"useNewTab": true
+							}
+						],
+						"name_i18n": {
+							"en_US": "Security",
+							"es_ES": "Segurança",
+							"ja_JP": "セキュリティ",
+							"pt_BR": "Seguridad"
+						},
+						"title": "Security",
+						"type": "node"
+					},
+					{
+						"externalReferenceCode": "CP_NEW_NAV_UPDATES",
+						"menuItems": [
+							{
+								"externalReferenceCode": "CP_NEW_NAV_RELEASE_NOTES",
+								"friendlyURL": "/release-notes",
+								"name_i18n": {
+									"en_US": "Release Notes",
+									"es_ES": "Notas de las actualizaciones",
+									"ja_JP": "リリースノート",
+									"pt_BR": "Notas de versão"
+								},
+								"type": "layout",
+								"useCustomName": true
+							},
+							{
+								"externalReferenceCode": "CP_NEW_NAV_CUSTOMER_PORTAL_UPDATES",
+								"name_i18n": {
+									"en_US": "Customer Portal Updates",
+									"es_ES": "Actualizaciones del Portal del cliente",
+									"ja_JP": "カスタマーポータルのアップデート",
+									"pt_BR": "Atualizações do Portal do Cliente"
+								},
+								"type": "url",
+								"url": "https://support-uat.liferay.com/w/business-events",
+								"useNewTab": true
+							},
+							{
+								"externalReferenceCode": "CP_NEW_NAV_DOWNLOADS",
+								"name_i18n": {
+									"en_US": "Downloads",
+									"es_ES": "Descargas",
+									"ja_JP": "ダウンロード",
+									"pt_BR": "Downloads"
+								},
+								"type": "url",
+								"url": "https://customer.liferay.com/downloads",
+								"useNewTab": true
+							}
+						],
+						"name_i18n": {
+							"en_US": "Updates",
+							"es_ES": "Actualizaciones",
+							"ja_JP": "更新情報",
+							"pt_BR": "Atualizações"
+						},
+						"title": "Updates",
+						"type": "node"
+					}
+				],
+				"name_i18n": {
+					"en_US": "Resources",
+					"es_ES": "Recursos",
+					"ja_JP": "リソース",
+					"pt_BR": "Recursos"
+				},
+				"title": "Resources",
+				"type": "node"
+			},
+			{
+				"menuItems": [
+					{
+						"externalReferenceCode": "CP_NEW_NAV_TICKETS",
+						"menuItems": [
+							{
+								"externalReferenceCode": "CP_NEW_NAV_MY_TICKETS",
+								"name_i18n": {
+									"en_US": "My Tickets",
+									"es_ES": "Mis tickets",
+									"ja_JP": "マイチケット",
+									"pt_BR": "Meus tickets"
+								},
+								"type": "url",
+								"url": "https://liferay-sandbox-424.atlassian.net/servicedesk/customer/user/requests?page=1&reporter=all",
+								"useNewTab": true
+							},
+							{
+								"externalReferenceCode": "CP_NEW_NAV_OPEN_A_TICKET",
+								"name_i18n": {
+									"en_US": "Open a Ticket",
+									"es_ES": "Abre un ticket",
+									"ja_JP": "チケットを作成する",
+									"pt_BR": "Abrir um ticket"
+								},
+								"type": "url",
+								"url": "https://liferay-sandbox-424.atlassian.net/servicedesk/customer/portals",
+								"useNewTab": true
+							},
+							{
+								"externalReferenceCode": "CP_NEW_NAV_ESCALATE_A_TICKET",
+								"name_i18n": {
+									"en_US": "Escalate a Ticket",
+									"es_ES": "Escala un ticket",
+									"ja_JP": "チケットのエスカレーション",
+									"pt_BR": "Escalar um ticket"
+								},
+								"type": "url",
+								"url": "http://localhost:8080/web/customer-portal/support-ticket-escalation",
+								"useNewTab": true
+							}
+						],
+						"name_i18n": {
+							"en_US": "Tickets",
+							"es_ES": "Tickets",
+							"ja_JP": "チケット",
+							"pt_BR": "Tickets"
+						},
+						"title": "Tickets",
+						"type": "node"
+					},
+					{
+						"externalReferenceCode": "CP_NEW_NAV_SUPPORT_RESOURCES",
+						"menuItems": [
+							{
+								"externalReferenceCode": "CP_NEW_NAV_SUPPORT_COVERAGE",
+								"name_i18n": {
+									"en_US": "Support Coverage",
+									"es_ES": "Cobertura de soporte",
+									"ja_JP": "サポート範囲",
+									"pt_BR": "Cobertura de suporte"
+								},
+								"type": "url",
+								"url": "http://localhost:8080/web/customer-portal",
+								"useNewTab": true
+							},
+							{
+								"externalReferenceCode": "CP_NEW_NAV_SERVICES_AND_COMPATIBILITY",
+								"name_i18n": {
+									"en_US": "Services and Compatibility",
+									"es_ES": "Servicios y compatibilidad",
+									"ja_JP": "サービスと互換性",
+									"pt_BR": "Serviços e Compatibilidade"
+								},
+								"type": "url",
+								"url": "http://localhost:8080/web/customer-portal",
+								"useNewTab": true
+							}
+						],
+						"name_i18n": {
+							"en_US": "Support Resources",
+							"es_ES": "Recursos de soporte",
+							"ja_JP": "サポートリソース",
+							"pt_BR": "Recursos de suporte"
+						},
+						"title": "Support Resources",
+						"type": "node"
+					},
+					{
+						"externalReferenceCode": "CP_NEW_NAV_SUPPORT_TICKETS",
+						"menuItems": [
+							{
+								"externalReferenceCode": "CP_NEW_NAV_CONTACT_US",
+								"name_i18n": {
+									"en_US": "Contact Us",
+									"es_ES": "Contáctanos",
+									"ja_JP": "お問い合わせ",
+									"pt_BR": "Fale conosco"
+								},
+								"type": "url",
+								"url": "http://localhost:8080/web/customer-portal/callback-request",
+								"useNewTab": true
+							},
+							{
+								"externalReferenceCode": "CP_NEW_NAV_CUSTOMER_EVENTS",
+								"name_i18n": {
+									"en_US": "Customer Events",
+									"es_ES": "Eventos de cliente",
+									"ja_JP": "カスタマーイベント",
+									"pt_BR": "Eventos para clientes"
+								},
+								"type": "url",
+								"url": "http://localhost:8080/web/customer-portal/announcements",
+								"useNewTab": true
+							}
+						],
+						"name_i18n": {
+							"en_US": "Connect",
+							"es_ES": "Conecta",
+							"ja_JP": "接続",
+							"pt_BR": "Conectar"
+						},
+						"title": "Support Tickets",
+						"type": "node"
+					}
+				],
+				"name_i18n": {
+					"en_US": "Support",
+					"es_ES": "Soporte",
+					"ja_JP": "サポート",
+					"pt_BR": "Suporte"
+				},
+				"title": "Support",
+				"type": "node"
+			},
+			{
+				"friendlyURL": "/projects",
+				"name_i18n": {
+					"en_US": "Projects",
+					"es_ES": "Proyectos",
+					"ja_JP": "プロジェクト",
+					"pt_BR": "Projetos"
+				},
+				"privateLayout": false,
+				"type": "layout",
+				"useCustomName": true
+			}
+		],
+		"name": "Customer Portal New Navigation"
+	}
+]

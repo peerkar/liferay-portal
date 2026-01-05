@@ -5,7 +5,6 @@
 
 package com.liferay.headless.admin.site.internal.dto.v1_0.util;
 
-import com.liferay.headless.admin.site.dto.v1_0.Scope;
 import com.liferay.headless.admin.site.internal.util.LogUtil;
 import com.liferay.info.item.ClassPKInfoItemIdentifier;
 import com.liferay.info.item.ERCInfoItemIdentifier;
@@ -20,6 +19,7 @@ import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.vulcan.scope.Scope;
 
 /**
  * @author Lourdes Fernández Besada
@@ -54,6 +54,13 @@ public class InfoItemUtil {
 					externalReferenceCode,
 					ItemScopeUtil.getItemScopeExternalReferenceCode(
 						scope, scopeGroupId)));
+
+			if (infoItem == null) {
+				LogUtil.logOptionalReference(
+					className, externalReferenceCode, scope, scopeGroupId);
+
+				return null;
+			}
 
 			InfoItemDetails infoItemDetails =
 				infoItemDetailsProvider.getInfoItemDetails(
@@ -108,6 +115,10 @@ public class InfoItemUtil {
 		try {
 			Object infoItem = infoItemObjectProvider.getInfoItem(
 				scopeGroupId, new ClassPKInfoItemIdentifier(classPK));
+
+			if (infoItem == null) {
+				return null;
+			}
 
 			InfoItemDetails infoItemDetails =
 				infoItemDetailsProvider.getInfoItemDetails(

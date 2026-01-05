@@ -30,6 +30,7 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.site.navigation.model.SiteNavigationMenuItem;
 
@@ -52,18 +53,33 @@ public class AssetVocabularySiteNavigationMenuTypeDisplayContext {
 		_itemSelector = itemSelector;
 		_siteNavigationMenuItem = siteNavigationMenuItem;
 
-		_typeSettingsUnicodeProperties = UnicodePropertiesBuilder.fastLoad(
-			siteNavigationMenuItem.getTypeSettings()
-		).build();
-
-		_assetVocabulary = AssetVocabularyLocalServiceUtil.fetchAssetVocabulary(
-			GetterUtil.getLong(_typeSettingsUnicodeProperties.get("classPK")));
-
 		_liferayPortletResponse = PortalUtil.getLiferayPortletResponse(
 			(PortletResponse)httpServletRequest.getAttribute(
 				JavaConstants.JAKARTA_PORTLET_RESPONSE));
+		_typeSettingsUnicodeProperties = UnicodePropertiesBuilder.fastLoad(
+			siteNavigationMenuItem.getTypeSettings()
+		).build();
 		_themeDisplay = (ThemeDisplay)httpServletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
+
+		Group group = null;
+
+		String scopeExternalReferenceCode = _typeSettingsUnicodeProperties.get(
+			"scopeExternalReferenceCode");
+
+		if (Validator.isNull(scopeExternalReferenceCode)) {
+			group = _themeDisplay.getScopeGroup();
+		}
+		else {
+			group = GroupLocalServiceUtil.fetchGroupByExternalReferenceCode(
+				scopeExternalReferenceCode, _themeDisplay.getCompanyId());
+		}
+
+		_assetVocabulary =
+			AssetVocabularyLocalServiceUtil.
+				fetchAssetVocabularyByExternalReferenceCode(
+					_typeSettingsUnicodeProperties.get("externalReferenceCode"),
+					group.getGroupId());
 	}
 
 	public Map<String, Object> getAssetVocabularyContextualSidebarContext()
@@ -72,16 +88,13 @@ public class AssetVocabularySiteNavigationMenuTypeDisplayContext {
 		return HashMapBuilder.<String, Object>put(
 			"assetVocabulary",
 			() -> HashMapBuilder.<String, Object>put(
-				"classPK",
-				GetterUtil.getLong(
-					_typeSettingsUnicodeProperties.get("classPK"))
-			).put(
 				"externalReferenceCode",
 				_typeSettingsUnicodeProperties.get("externalReferenceCode")
 			).put(
-				"groupId",
-				GetterUtil.getLong(
-					_typeSettingsUnicodeProperties.get("groupId"))
+				"scopeExternalReferenceCode",
+				GetterUtil.getString(
+					_typeSettingsUnicodeProperties.get(
+						"scopeExternalReferenceCode"))
 			).put(
 				"title",
 				() -> {
@@ -94,8 +107,6 @@ public class AssetVocabularySiteNavigationMenuTypeDisplayContext {
 				}
 			).put(
 				"type", "asset-vocabulary"
-			).put(
-				"uuid", _typeSettingsUnicodeProperties.get("uuid")
 			).build()
 		).put(
 			"chooseAssetVocabularyProps",
@@ -142,14 +153,22 @@ public class AssetVocabularySiteNavigationMenuTypeDisplayContext {
 		).put(
 			"siteName",
 			() -> {
-				long groupId = GetterUtil.getLong(
-					_typeSettingsUnicodeProperties.get("groupId"));
+				Group group = GroupLocalServiceUtil.getGroup(
+					_assetVocabulary.getGroupId());
+				String scopeExternalReferenceCode =
+					_typeSettingsUnicodeProperties.get(
+						"scopeExternalReferenceCode");
 
-				if (groupId == _themeDisplay.getCompanyGroupId()) {
-					return LanguageUtil.get(_httpServletRequest, "global");
+				if (scopeExternalReferenceCode != null) {
+					group =
+						GroupLocalServiceUtil.getGroupByExternalReferenceCode(
+							scopeExternalReferenceCode,
+							_themeDisplay.getCompanyId());
 				}
 
-				Group group = GroupLocalServiceUtil.getGroup(groupId);
+				if (group.getGroupId() == _themeDisplay.getCompanyGroupId()) {
+					return LanguageUtil.get(_httpServletRequest, "global");
+				}
 
 				return group.getDescriptiveName(_themeDisplay.getLocale());
 			}

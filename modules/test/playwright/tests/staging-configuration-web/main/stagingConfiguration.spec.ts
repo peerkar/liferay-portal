@@ -120,12 +120,7 @@ test(
 		}
 		finally {
 			await exportImportStagingInstanceSettingsPage.goto();
-			await exportImportStagingInstanceSettingsPage.checkConfigurationOption(
-				{
-					checked: false,
-					label: 'Show Advanced Staging Configuration by Default',
-				}
-			);
+			await exportImportStagingInstanceSettingsPage.resetDefaultValues();
 		}
 	}
 );
@@ -152,9 +147,10 @@ test(
 		});
 
 		await exportImportStagingSystemSettingsPage.goto();
-		await exportImportStagingSystemSettingsPage.checkShowAdvancedStagingConfiguration(
-			true
-		);
+		await exportImportStagingSystemSettingsPage.checkConfigurationOption({
+			checked: true,
+			label: 'Show Advanced Staging Configuration by Default',
+		});
 
 		try {
 			await enableLocalStaging(apiHelpers, page, site);
@@ -181,9 +177,7 @@ test(
 		}
 		finally {
 			await exportImportStagingSystemSettingsPage.goto();
-			await exportImportStagingSystemSettingsPage.checkShowAdvancedStagingConfiguration(
-				false
-			);
+			await exportImportStagingSystemSettingsPage.resetDefaultValues();
 		}
 	}
 );

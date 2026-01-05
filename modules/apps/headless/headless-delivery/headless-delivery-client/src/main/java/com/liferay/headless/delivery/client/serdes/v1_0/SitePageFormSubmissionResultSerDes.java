@@ -62,6 +62,31 @@ public class SitePageFormSubmissionResultSerDes {
 					sitePageFormSubmissionResult.getItemReference()));
 		}
 
+		if (sitePageFormSubmissionResult.
+				getNotificationTextFragmentInlineValue() != null) {
+
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"notificationTextFragmentInlineValue\": ");
+
+			sb.append(
+				String.valueOf(
+					sitePageFormSubmissionResult.
+						getNotificationTextFragmentInlineValue()));
+		}
+
+		if (sitePageFormSubmissionResult.getShowNotification() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"showNotification\": ");
+
+			sb.append(sitePageFormSubmissionResult.getShowNotification());
+		}
+
 		sb.append("}");
 
 		return sb.toString();
@@ -94,6 +119,29 @@ public class SitePageFormSubmissionResultSerDes {
 					sitePageFormSubmissionResult.getItemReference()));
 		}
 
+		if (sitePageFormSubmissionResult.
+				getNotificationTextFragmentInlineValue() == null) {
+
+			map.put("notificationTextFragmentInlineValue", null);
+		}
+		else {
+			map.put(
+				"notificationTextFragmentInlineValue",
+				String.valueOf(
+					sitePageFormSubmissionResult.
+						getNotificationTextFragmentInlineValue()));
+		}
+
+		if (sitePageFormSubmissionResult.getShowNotification() == null) {
+			map.put("showNotification", null);
+		}
+		else {
+			map.put(
+				"showNotification",
+				String.valueOf(
+					sitePageFormSubmissionResult.getShowNotification()));
+		}
+
 		return map;
 	}
 
@@ -115,6 +163,15 @@ public class SitePageFormSubmissionResultSerDes {
 			if (Objects.equals(jsonParserFieldName, "itemReference")) {
 				return false;
 			}
+			else if (Objects.equals(
+						jsonParserFieldName,
+						"notificationTextFragmentInlineValue")) {
+
+				return false;
+			}
+			else if (Objects.equals(jsonParserFieldName, "showNotification")) {
+				return false;
+			}
 
 			return false;
 		}
@@ -129,6 +186,23 @@ public class SitePageFormSubmissionResultSerDes {
 					sitePageFormSubmissionResult.setItemReference(
 						ClassFieldsReferenceSerDes.toDTO(
 							(String)jsonParserFieldValue));
+				}
+			}
+			else if (Objects.equals(
+						jsonParserFieldName,
+						"notificationTextFragmentInlineValue")) {
+
+				if (jsonParserFieldValue != null) {
+					sitePageFormSubmissionResult.
+						setNotificationTextFragmentInlineValue(
+							FragmentInlineValueSerDes.toDTO(
+								(String)jsonParserFieldValue));
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "showNotification")) {
+				if (jsonParserFieldValue != null) {
+					sitePageFormSubmissionResult.setShowNotification(
+						(Boolean)jsonParserFieldValue);
 				}
 			}
 		}

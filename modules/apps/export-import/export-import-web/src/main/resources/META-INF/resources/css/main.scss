@@ -120,6 +120,18 @@
 	}
 }
 
+.input-checkbox {
+	.lfr-tree {
+		margin-bottom: 1em;
+	}
+}
+
+.input-checkbox:has(.selected-labels) {
+	.form-group {
+		margin-bottom: 0 !important;
+	}
+}
+
 .layout-selector {
 	padding-left: 0;
 }

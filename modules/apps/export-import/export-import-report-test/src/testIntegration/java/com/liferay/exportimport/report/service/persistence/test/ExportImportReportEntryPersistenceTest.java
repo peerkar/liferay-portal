@@ -145,13 +145,10 @@ public class ExportImportReportEntryPersistenceTest {
 		newExportImportReportEntry.setErrorStacktrace(
 			RandomTestUtil.randomString());
 
-		newExportImportReportEntry.setModelName(RandomTestUtil.randomString());
+		newExportImportReportEntry.setModelNameLanguageKey(
+			RandomTestUtil.randomString());
 
 		newExportImportReportEntry.setOrigin(RandomTestUtil.nextInt());
-
-		newExportImportReportEntry.setScope(RandomTestUtil.randomString());
-
-		newExportImportReportEntry.setScopeKey(RandomTestUtil.randomString());
 
 		newExportImportReportEntry.setType(RandomTestUtil.nextInt());
 
@@ -204,17 +201,11 @@ public class ExportImportReportEntryPersistenceTest {
 			existingExportImportReportEntry.getErrorStacktrace(),
 			newExportImportReportEntry.getErrorStacktrace());
 		Assert.assertEquals(
-			existingExportImportReportEntry.getModelName(),
-			newExportImportReportEntry.getModelName());
+			existingExportImportReportEntry.getModelNameLanguageKey(),
+			newExportImportReportEntry.getModelNameLanguageKey());
 		Assert.assertEquals(
 			existingExportImportReportEntry.getOrigin(),
 			newExportImportReportEntry.getOrigin());
-		Assert.assertEquals(
-			existingExportImportReportEntry.getScope(),
-			newExportImportReportEntry.getScope());
-		Assert.assertEquals(
-			existingExportImportReportEntry.getScopeKey(),
-			newExportImportReportEntry.getScopeKey());
 		Assert.assertEquals(
 			existingExportImportReportEntry.getType(),
 			newExportImportReportEntry.getType());
@@ -265,9 +256,8 @@ public class ExportImportReportEntryPersistenceTest {
 			"exportImportReportEntryId", true, "groupId", true, "companyId",
 			true, "createDate", true, "modifiedDate", true,
 			"classExternalReferenceCode", true, "classNameId", true, "classPK",
-			true, "exportImportConfigurationId", true, "modelName", true,
-			"origin", true, "scope", true, "scopeKey", true, "type", true,
-			"status", true);
+			true, "exportImportConfigurationId", true, "modelNameLanguageKey",
+			true, "origin", true, "type", true, "status", true);
 	}
 
 	@Test
@@ -539,13 +529,10 @@ public class ExportImportReportEntryPersistenceTest {
 		exportImportReportEntry.setErrorStacktrace(
 			RandomTestUtil.randomString());
 
-		exportImportReportEntry.setModelName(RandomTestUtil.randomString());
+		exportImportReportEntry.setModelNameLanguageKey(
+			RandomTestUtil.randomString());
 
 		exportImportReportEntry.setOrigin(RandomTestUtil.nextInt());
-
-		exportImportReportEntry.setScope(RandomTestUtil.randomString());
-
-		exportImportReportEntry.setScopeKey(RandomTestUtil.randomString());
 
 		exportImportReportEntry.setType(RandomTestUtil.nextInt());
 

@@ -62,7 +62,7 @@ public class LearnRestController extends BaseRestController {
 				get(
 					_getAuthorization(),
 					UriComponentsBuilder.fromPath(
-						"/o/c/lessons/" + lessonId
+						"/o/c/p2s3lessons/" + lessonId
 					).queryParam(
 						"fields", "contentRawText"
 					).build(
@@ -174,16 +174,21 @@ public class LearnRestController extends BaseRestController {
 				get(
 					_getAuthorization(),
 					UriComponentsBuilder.fromPath(
-						"/o/c/quizquestions"
+						"/o/c/p2s3quizquestions"
 					).queryParam(
-						"filter", "quizId eq '" + quizId + "'"
+						"filter",
+						"r_p2s3QuizToP2S3QuizQuestions_c_p2s3QuizId eq '" +
+							quizId + "'"
 					).queryParam(
 						"fields",
-						"id,position,question,questionType,quizAnswers," +
-							"quizAnswers.answer,quizAnswers.id," +
-								"quizAnswers.position"
+						StringBundler.concat(
+							"id,p2s3QuizQuestionToP2S3QuizAnswers,",
+							"p2s3QuizQuestionToP2S3QuizAnswers.answer,",
+							"p2s3QuizQuestionToP2S3QuizAnswers.id,",
+							"p2s3QuizQuestionToP2S3QuizAnswers.position,",
+							"position,question,questionType")
 					).queryParam(
-						"nestedFields", "quizAnswers"
+						"nestedFields", "p2s3QuizQuestionToP2S3QuizAnswers"
 					).queryParam(
 						"pageSize", "500"
 					).queryParam(
@@ -209,20 +214,32 @@ public class LearnRestController extends BaseRestController {
 				get(
 					_getAuthorization(),
 					UriComponentsBuilder.fromPath(
-						"/o/c/quizes/" + quizId
+						"/o/c/p2s3quizes/" + quizId
 					).queryParam(
 						"fields",
 						StringBundler.concat(
-							"id,r_quiz_c_moduleId,durationMinutes,passingScore",
-							",isKnowledgeCheck,quizQuestions.id,quizQuestions.",
-							"position,quizQuestions.question,quizQuestions.",
-							"questionType,quizQuestions.questionTotalScore,",
-							"quizQuestions.quizAnswers,quizQuestions.",
-							"quizAnswers.id,quizQuestions.quizAnswers.position",
-							",quizQuestions.quizAnswers.answer,quizQuestions.",
-							"quizAnswers.score")
+							"durationMinutes,id,isKnowledgeCheck,",
+							"p2s3QuizToP2S3QuizQuestions.id,",
+							"p2s3QuizToP2S3QuizQuestions.",
+							"p2s3QuizQuestionToP2S3QuizAnswers,",
+							"p2s3QuizToP2S3QuizQuestions.",
+							"p2s3QuizQuestionToP2S3QuizAnswers.answer,",
+							"p2s3QuizToP2S3QuizQuestions.",
+							"p2s3QuizQuestionToP2S3QuizAnswers.id,",
+							"p2s3QuizToP2S3QuizQuestions.",
+							"p2s3QuizQuestionToP2S3QuizAnswers.position,",
+							"p2s3QuizToP2S3QuizQuestions.",
+							"p2s3QuizQuestionToP2S3QuizAnswers.score,",
+							"p2s3QuizToP2S3QuizQuestions.position,",
+							"p2s3QuizToP2S3QuizQuestions.question,",
+							"p2s3QuizToP2S3QuizQuestions.questionTotalScore,",
+							"p2s3QuizToP2S3QuizQuestions.questionType,",
+							"passingScore,",
+							"r_p2s3ModuleToP2S3Quizzes_c_p2s3ModuleId")
 					).queryParam(
-						"nestedFields", "quizQuestions,quizAnswers"
+						"nestedFields",
+						"p2s3QuizToP2S3QuizQuestions," +
+							"p2s3QuizQuestionToP2S3QuizAnswers"
 					).queryParam(
 						"nestedFieldsDepth", "2"
 					).queryParam(
@@ -272,7 +289,7 @@ public class LearnRestController extends BaseRestController {
 		JSONObject scoreSheetJSONObject) {
 
 		JSONArray quizAnswersJSONArray = quizQuestionJSONObject.getJSONArray(
-			"quizAnswers");
+			"p2s3QuizQuestionToP2S3QuizAnswers");
 
 		scoreSheetJSONObject.put("questionsAnswers", quizAnswersJSONArray);
 
@@ -310,7 +327,7 @@ public class LearnRestController extends BaseRestController {
 		JSONObject quizAnswersJSONObject, JSONObject quizJSONObject) {
 
 		JSONArray quizQuestionsJSONArray = quizJSONObject.getJSONArray(
-			"quizQuestions");
+			"p2s3QuizToP2S3QuizQuestions");
 
 		Map<String, Object> map = HashMapBuilder.<String, Object>put(
 			"isKnowledgeCheck", false
@@ -409,7 +426,7 @@ public class LearnRestController extends BaseRestController {
 			get(
 				_getAuthorization(),
 				UriComponentsBuilder.fromPath(
-					"/o/c/quizes/" + quizId + "/quizBadge"
+					"/o/c/p2s3quizes/" + quizId + "/quizBadge"
 				).queryParam(
 					"fields", "id"
 				).build(
@@ -428,7 +445,7 @@ public class LearnRestController extends BaseRestController {
 			get(
 				_getAuthorization(),
 				UriComponentsBuilder.fromPath(
-					"/o/c/userbadges"
+					"/o/c/p2s3userbadges"
 				).queryParam(
 					"filter",
 					StringBundler.concat(
@@ -449,10 +466,10 @@ public class LearnRestController extends BaseRestController {
 			).put(
 				"quizId", quizId
 			).put(
-				"r_userBadges_userId", userId
+				"r_lUserToP2S3UserBadges_userId", userId
 			).toString(),
 			UriComponentsBuilder.fromPath(
-				"/o/c/userbadges"
+				"/o/c/p2s3userbadges"
 			).build(
 			).toUri());
 	}

@@ -62,6 +62,16 @@ public class ListTypeEntrySerDes {
 			sb.append(_toJSON(listTypeEntry.getActions()));
 		}
 
+		if (listTypeEntry.getCreator() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"creator\": ");
+
+			sb.append(listTypeEntry.getCreator());
+		}
+
 		if (listTypeEntry.getDateCreated() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -155,6 +165,16 @@ public class ListTypeEntrySerDes {
 			sb.append(_toJSON(listTypeEntry.getName_i18n()));
 		}
 
+		if (listTypeEntry.getStatus() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"status\": ");
+
+			sb.append(String.valueOf(listTypeEntry.getStatus()));
+		}
+
 		if (listTypeEntry.getSystem() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -206,6 +226,13 @@ public class ListTypeEntrySerDes {
 		}
 		else {
 			map.put("actions", String.valueOf(listTypeEntry.getActions()));
+		}
+
+		if (listTypeEntry.getCreator() == null) {
+			map.put("creator", null);
+		}
+		else {
+			map.put("creator", String.valueOf(listTypeEntry.getCreator()));
 		}
 
 		if (listTypeEntry.getDateCreated() == null) {
@@ -264,6 +291,13 @@ public class ListTypeEntrySerDes {
 			map.put("name_i18n", String.valueOf(listTypeEntry.getName_i18n()));
 		}
 
+		if (listTypeEntry.getStatus() == null) {
+			map.put("status", null);
+		}
+		else {
+			map.put("status", String.valueOf(listTypeEntry.getStatus()));
+		}
+
 		if (listTypeEntry.getSystem() == null) {
 			map.put("system", null);
 		}
@@ -299,6 +333,9 @@ public class ListTypeEntrySerDes {
 			if (Objects.equals(jsonParserFieldName, "actions")) {
 				return true;
 			}
+			else if (Objects.equals(jsonParserFieldName, "creator")) {
+				return false;
+			}
 			else if (Objects.equals(jsonParserFieldName, "dateCreated")) {
 				return false;
 			}
@@ -322,6 +359,9 @@ public class ListTypeEntrySerDes {
 			else if (Objects.equals(jsonParserFieldName, "name_i18n")) {
 				return true;
 			}
+			else if (Objects.equals(jsonParserFieldName, "status")) {
+				return false;
+			}
 			else if (Objects.equals(jsonParserFieldName, "system")) {
 				return false;
 			}
@@ -341,6 +381,12 @@ public class ListTypeEntrySerDes {
 				if (jsonParserFieldValue != null) {
 					listTypeEntry.setActions(
 						(Map<String, Map<String, String>>)jsonParserFieldValue);
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "creator")) {
+				if (jsonParserFieldValue != null) {
+					listTypeEntry.setCreator(
+						CreatorSerDes.toDTO((String)jsonParserFieldValue));
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "dateCreated")) {
@@ -383,6 +429,12 @@ public class ListTypeEntrySerDes {
 				if (jsonParserFieldValue != null) {
 					listTypeEntry.setName_i18n(
 						(Map<String, String>)jsonParserFieldValue);
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "status")) {
+				if (jsonParserFieldValue != null) {
+					listTypeEntry.setStatus(
+						StatusSerDes.toDTO((String)jsonParserFieldValue));
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "system")) {

@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.site.cms.site.initializer.internal.constants.CMSSpaceConstants;
 import com.liferay.site.cms.site.initializer.internal.util.ActionUtil;
 import com.liferay.site.cms.site.initializer.internal.util.SpaceSummaryHeaderUtil;
+import com.liferay.translation.exporter.TranslationInfoItemFieldValuesExporterRegistry;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -41,13 +42,16 @@ public class ViewSpaceFilesSummarySectionDisplayContext
 		ObjectEntryFolderLocalService objectEntryFolderLocalService,
 		ModelResourcePermission<ObjectEntryFolder>
 			objectEntryFolderModelResourcePermission,
-		Portal portal) {
+		Portal portal,
+		TranslationInfoItemFieldValuesExporterRegistry
+			translationInfoItemFieldValuesExporterRegistry) {
 
 		super(
 			depotEntryLocalService, dlConfiguration, groupLocalService,
 			httpServletRequest, language, objectDefinitionService,
 			objectDefinitionSettingLocalService,
-			objectEntryFolderModelResourcePermission, portal);
+			objectEntryFolderModelResourcePermission, portal,
+			translationInfoItemFieldValuesExporterRegistry);
 
 		_groupId = groupId;
 		_objectEntryFolderLocalService = objectEntryFolderLocalService;
@@ -69,8 +73,9 @@ public class ViewSpaceFilesSummarySectionDisplayContext
 					themeDisplay.getCompanyId());
 
 		return SpaceSummaryHeaderUtil.getSpaceSummaryHeaderProps(
-			httpServletRequest, "view-all-files", Collections.emptyMap(),
-			Collections.emptyMap(), "files",
+			getAPIURL(), getCreationMenu(), httpServletRequest,
+			"view-all-files", Collections.emptyMap(), Collections.emptyMap(),
+			"files",
 			ActionUtil.getBaseViewFolderURL(themeDisplay) +
 				objectEntryFolder.getObjectEntryFolderId());
 	}

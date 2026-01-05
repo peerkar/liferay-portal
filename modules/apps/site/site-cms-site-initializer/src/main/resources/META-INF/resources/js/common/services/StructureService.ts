@@ -1,0 +1,200 @@
+/**
+ * SPDX-FileCopyrightText: (c) 2025 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
+
+import {State} from '../../structure_builder/contexts/StateContext';
+import {Structure} from '../../structure_builder/types/Structure';
+import buildGroupObjectDefinitions from '../../structure_builder/utils/buildGroupObjectDefinitions';
+import buildObjectDefinition from '../../structure_builder/utils/buildObjectDefinition';
+import getRandomId from '../../structure_builder/utils/getRandomId';
+import {ObjectDefinitions} from '../types/ObjectDefinition';
+import ApiHelper from './ApiHelper';
+
+async function createStructure({
+	children,
+	erc = getRandomId(),
+	label,
+	name,
+	spaces,
+	status,
+	workflows,
+}: {
+	children: Structure['children'];
+	erc?: Structure['erc'];
+	label: Structure['label'];
+	name: Structure['name'];
+	spaces: Structure['spaces'];
+	status: Structure['status'];
+	workflows: Structure['workflows'];
+}) {
+
+	// Publish object definitions for repeatable groups
+
+	const objectDefinitions = buildGroupObjectDefinitions({children});
+
+	for (const objectDefinition of objectDefinitions) {
+		const {error} = await ApiHelper.put(
+			`/o/object-admin/v1.0/object-definitions/by-external-reference-code/${objectDefinition.externalReferenceCode}`,
+			objectDefinition
+		);
+
+		if (error) {
+			return {
+				data: null,
+				error: Liferay.Language.get(
+					'an-unexpected-error-occurred-while-saving-or-publishing-the-content-structure'
+				),
+			};
+		}
+	}
+
+	// Publish the main object definition
+
+	const mainObjectDefinition = buildObjectDefinition({
+		children,
+		erc,
+		label,
+		name,
+		spaces,
+		status,
+		workflows,
+	});
+
+	return await ApiHelper.post<{id: number}>(
+		'/o/object-admin/v1.0/object-definitions',
+		mainObjectDefinition
+	);
+}
+
+async function updateStructure({
+	children,
+	erc,
+	history,
+	id,
+	label,
+	name,
+	objectDefinitions,
+	spaces,
+	status,
+	workflows,
+}: {
+	children: Structure['children'];
+	erc: Structure['erc'];
+	history: State['history'];
+	id: Structure['id'];
+	label: Structure['label'];
+	name: Structure['name'];
+	objectDefinitions: ObjectDefinitions;
+	spaces: Structure['spaces'];
+	status: Structure['status'];
+	workflows: Structure['workflows'];
+}) {
+
+	// Delete object definitions of deleted repeatable groups
+
+	if (history.deletedGroupERCs.length) {
+		const ids = history.deletedGroupERCs.map((erc) => {
+			const objectDefinition = objectDefinitions[erc];
+
+			return objectDefinition.id!;
+		});
+
+		const response = await ApiHelper.batch({
+			data: ids.map((id) => ({
+				id,
+			})),
+			method: 'DELETE',
+			url: '/o/object-admin/v1.0/object-definitions/batch',
+		});
+
+		if (response?.error) {
+			return {
+				error: Liferay.Language.get(
+					'an-unexpected-error-occurred-while-saving-or-publishing-the-content-structure'
+				),
+			};
+		}
+	}
+
+	// Publish object definitions for repeatable groups
+
+	const groupObjectDefinitions = buildGroupObjectDefinitions({children});
+
+	for (const objectDefinition of groupObjectDefinitions) {
+		const {error} = await ApiHelper.put(
+			`/o/object-admin/v1.0/object-definitions/by-external-reference-code/${objectDefinition.externalReferenceCode}`,
+			objectDefinition
+		);
+
+		if (error) {
+			return {
+				error: Liferay.Language.get(
+					'an-unexpected-error-occurred-while-saving-or-publishing-the-content-structure'
+				),
+			};
+		}
+	}
+
+	// Publish the main object definition
+
+	const mainObjectDefinition = buildObjectDefinition({
+		children,
+		erc,
+		id,
+		label,
+		name,
+		spaces,
+		status,
+		workflows,
+	});
+
+	return await ApiHelper.put(
+		`/o/object-admin/v1.0/object-definitions/${id}`,
+		mainObjectDefinition
+	);
+}
+
+async function deleteStructure({
+	id,
+	repeatableGroupIds,
+}: {
+	id: Structure['id'];
+	repeatableGroupIds?: number[];
+}) {
+	let promise;
+
+	// If the structure does not have repeatable groups, just delete it
+
+	if (!repeatableGroupIds?.length) {
+		promise = ApiHelper.delete(
+			`/o/object-admin/v1.0/object-definitions/${id}`
+		);
+	}
+
+	// Otherwise perform a batch request to remove also the groups
+
+	else {
+		const data = [...repeatableGroupIds, id].map((id) => ({
+			id,
+		}));
+
+		promise = ApiHelper.batch({
+			data,
+			method: 'DELETE',
+			url: '/o/object-admin/v1.0/object-definitions/batch',
+		});
+	}
+
+	const response = await promise;
+
+	if (response?.error) {
+		return {error: response.error};
+	}
+}
+
+export default {
+	createStructure,
+	deleteStructure,
+	updateStructure,
+};

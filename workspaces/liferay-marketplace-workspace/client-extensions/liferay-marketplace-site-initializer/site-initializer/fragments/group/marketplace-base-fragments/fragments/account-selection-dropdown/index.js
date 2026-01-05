@@ -138,7 +138,13 @@ function renderAccounts(accounts, currentAccountId, search) {
 
 	accounts.forEach((account) => {
 		const accountImage = document.createElement('img');
-		const accountName = document.createTextNode(account.name);
+
+		const accountName = document.createElement('span');
+		const accountType = document.createElement('span');
+
+		accountName.textContent = account.name;
+		accountType.textContent = account.type;
+
 		const profileContainer = document.createElement('div');
 		const row = document.createElement('li');
 
@@ -163,8 +169,21 @@ function renderAccounts(accounts, currentAccountId, search) {
 		accountImage.setAttribute('class', 'avatar mr-2');
 		accountImage.setAttribute('src', account.logoURL);
 
+		accountType.classList.add(
+			'account-selection-dropdown',
+			'text-capitalize',
+			'text-gray-secondary',
+			'small'
+		);
+
+		const textWrapper = document.createElement('div');
+		textWrapper.classList.add('d-flex', 'flex-column');
+
+		textWrapper.appendChild(accountName);
+		textWrapper.appendChild(accountType);
+
 		profileContainer.appendChild(accountImage);
-		profileContainer.appendChild(accountName);
+		profileContainer.appendChild(textWrapper);
 		row.appendChild(profileContainer);
 		dropdownList.appendChild(row);
 	});
@@ -174,7 +193,7 @@ async function loadDropdownAccounts() {
 	try {
 		const response = await getAccounts(
 			new URLSearchParams({
-				fields: 'id,name,logoURL',
+				fields: 'id,logoURL,name,type',
 				page: 2,
 				pageSize: PAGE_SIZE.toString(),
 				sort: 'name:asc',

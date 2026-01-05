@@ -30,6 +30,12 @@ type Field =
 			nth?: number;
 			type: 'Checkbox';
 			value: boolean;
+	  }
+	| {
+			label: string;
+			nth?: number;
+			type: 'Picklist';
+			value: string;
 	  };
 
 export class ContentsPage {
@@ -114,7 +120,7 @@ export class ContentsPage {
 		await this.page.getByLabel('NameRequired').fill(folderName);
 
 		if (spaceName) {
-			await this.page.getByLabel('SpaceRequired').click();
+			await this.page.getByLabel('SpaceMandatory').click();
 			await this.page.getByRole('option', {name: spaceName}).click();
 		}
 
@@ -152,6 +158,30 @@ export class ContentsPage {
 		}
 	}
 
+	async deleteFolder(folderName: string, recycleBinEnabled: boolean = true) {
+		await this.page
+			.locator('tr', {hasText: folderName})
+			.locator('td.cell-item-actions')
+			.getByRole('button')
+			.click();
+
+		await this.page.getByRole('menuitem', {name: 'Delete'}).click();
+
+		await this.page.getByRole('button', {name: 'Delete Folder'}).click();
+
+		if (recycleBinEnabled) {
+			await waitForAlert(this.page, `Success:${folderName} was moved`, {
+				autoClose: false,
+			});
+		}
+		else {
+			await waitForAlert(
+				this.page,
+				`Success:${folderName} has been permanently deleted.`
+			);
+		}
+	}
+
 	async editContent(title: string) {
 		const card = this.page
 			.locator('tr', {hasText: title})
@@ -184,6 +214,14 @@ export class ContentsPage {
 			}
 			else if (field.type === 'Checkbox') {
 				await element.setChecked(field.value);
+			}
+			else if (field.type === 'Picklist') {
+				await element.clear();
+				await clickAndExpectToBeVisible({
+					autoClick: true,
+					target: this.page.getByRole('option', {name: field.value}),
+					trigger: element,
+				});
 			}
 		}
 	}
@@ -266,5 +304,20 @@ export class ContentsPage {
 		await expect(
 			this.page.getByRole('dialog', {name: title})
 		).toBeVisible();
+	}
+
+	async viewShowDetails(title: string) {
+		const card = this.page
+			.locator('tr', {hasText: title})
+			.or(this.page.locator('.card-row', {hasText: title}));
+
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: this.page.getByRole('menuitem', {
+				exact: true,
+				name: 'Show Details',
+			}),
+			trigger: card.locator('button'),
+		});
 	}
 }

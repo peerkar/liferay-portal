@@ -16,7 +16,6 @@ import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.rest.dto.v1_0.Status;
 import com.liferay.object.rest.dto.v1_0.TaxonomyCategoryBrief;
-import com.liferay.object.rest.dto.v1_0.util.ScopeUtil;
 import com.liferay.object.rest.manager.v1_0.ObjectEntryManager;
 import com.liferay.object.rest.manager.v1_0.ObjectEntryManagerRegistry;
 import com.liferay.object.rest.manager.v1_0.util.ObjectEntryManagerUtil;
@@ -27,7 +26,6 @@ import com.liferay.object.web.internal.util.ObjectEntryUtil;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.InfoFormException;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -38,9 +36,11 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
+import com.liferay.portal.vulcan.scope.Scope;
 
 import java.text.DateFormat;
 
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -79,6 +79,7 @@ public class ObjectEntryInfoItemFieldValuesUpdater
 
 		ObjectEntryManager objectEntryManager =
 			_objectEntryManagerRegistry.getObjectEntryManager(
+				_objectDefinition.getCompanyId(),
 				_objectDefinition.getStorageType());
 
 		ServiceContext serviceContext =
@@ -87,7 +88,7 @@ public class ObjectEntryInfoItemFieldValuesUpdater
 		ThemeDisplay themeDisplay = serviceContext.getThemeDisplay();
 
 		Map<String, Object> curProperties = _getProperties(
-			objectEntry, infoItemFieldValues, themeDisplay);
+			objectEntry, infoItemFieldValues);
 
 		try {
 			String scopeKey = ObjectEntryInfoItemUtil.getScopeKey(
@@ -131,7 +132,8 @@ public class ObjectEntryInfoItemFieldValuesUpdater
 								});
 							setTaxonomyCategoryBriefs(
 								() -> _toTaxonomyCategoryBriefs(
-									serviceContext.getAssetCategoryIds()));
+									serviceContext.getAssetCategoryIds(),
+									themeDisplay.getLocale()));
 						}
 					});
 
@@ -225,6 +227,7 @@ public class ObjectEntryInfoItemFieldValuesUpdater
 
 			ObjectEntryManager objectEntryManager =
 				_objectEntryManagerRegistry.getObjectEntryManager(
+					_objectDefinition.getCompanyId(),
 					objectDefinition.getStorageType());
 
 			String externalReferenceCode = split[1];
@@ -236,24 +239,14 @@ public class ObjectEntryInfoItemFieldValuesUpdater
 	}
 
 	private Map<String, Object> _getProperties(
-		ObjectEntry objectEntry, InfoItemFieldValues infoItemFieldValues,
-		ThemeDisplay themeDisplay) {
-
-		if (FeatureFlagManagerUtil.isEnabled(
-				themeDisplay.getCompanyId(), "LPD-50377")) {
-
-			return ObjectEntryUtil.toProperties(
-				infoItemFieldValues, _objectDefinition,
-				objectEntry.getValues());
-		}
+		ObjectEntry objectEntry, InfoItemFieldValues infoItemFieldValues) {
 
 		return ObjectEntryUtil.toProperties(
-			themeDisplay.getCompanyId(), infoItemFieldValues,
-			objectEntry.getValues());
+			infoItemFieldValues, _objectDefinition, objectEntry.getValues());
 	}
 
 	private TaxonomyCategoryBrief[] _toTaxonomyCategoryBriefs(
-		long[] assetCategoryIds) {
+		long[] assetCategoryIds, Locale locale) {
 
 		return TransformUtil.transformToArray(
 			ListUtil.fromArray(assetCategoryIds),
@@ -264,8 +257,7 @@ public class ObjectEntryInfoItemFieldValuesUpdater
 				return new TaxonomyCategoryBrief() {
 					{
 						setScope(
-							() -> ScopeUtil.toScope(
-								assetCategory.getGroupId()));
+							() -> Scope.of(assetCategory.getGroupId(), locale));
 						setTaxonomyCategoryExternalReferenceCode(
 							assetCategory::getExternalReferenceCode);
 						setTaxonomyCategoryId(() -> assetCategoryId);

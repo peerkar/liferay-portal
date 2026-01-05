@@ -14,7 +14,6 @@ import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
 import com.liferay.petra.io.unsync.UnsyncByteArrayInputStream;
 import com.liferay.petra.lang.SafeCloseable;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.cache.MultiVMPool;
 import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
@@ -33,7 +32,7 @@ import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.upgrade.v7_4_x.UpgradeDLFileEntry;
 
 import java.sql.Connection;
-import java.sql.Statement;
+import java.sql.PreparedStatement;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -171,17 +170,16 @@ public class UpgradeDLFileEntryTest {
 	private void _unsetExternalReferenceCode(DLFileEntry dlFileEntry)
 		throws Exception {
 
-		Connection connection = DataAccess.getConnection();
+		try (Connection connection = DataAccess.getConnection();
+			PreparedStatement preparedStatement = connection.prepareStatement(
+				"update DLFileEntry set externalReferenceCode = '' where " +
+					"ctCollectionId = ? and fileEntryId = ?")) {
 
-		Statement statement = connection.createStatement();
+			preparedStatement.setLong(1, dlFileEntry.getCtCollectionId());
+			preparedStatement.setLong(2, dlFileEntry.getFileEntryId());
 
-		int rowCount = statement.executeUpdate(
-			StringBundler.concat(
-				"update DLFileEntry set externalReferenceCode = '' where ",
-				"ctCollectionId = ", dlFileEntry.getCtCollectionId(),
-				" and fileEntryId = ", dlFileEntry.getFileEntryId()));
-
-		Assert.assertEquals(1, rowCount);
+			Assert.assertEquals(1, preparedStatement.executeUpdate());
+		}
 	}
 
 	@Inject

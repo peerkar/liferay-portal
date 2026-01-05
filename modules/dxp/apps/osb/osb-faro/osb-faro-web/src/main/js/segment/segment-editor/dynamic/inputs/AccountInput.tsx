@@ -1,5 +1,6 @@
 import * as API from 'shared/api';
 import autobind from 'autobind-decorator';
+import CustomDateInput from './CustomDateInput';
 import CustomNumberInput from './CustomNumberInput';
 import CustomStringInput from './CustomStringInput';
 import React from 'react';
@@ -16,6 +17,7 @@ export default class AccountInput extends React.Component<IAccountInputProps> {
 	@autobind
 	fieldValuesDataSourceFn(): Promise<string[]> {
 		const {
+			channelId,
 			groupId,
 			property: {id},
 			value: valueIMap
@@ -23,6 +25,7 @@ export default class AccountInput extends React.Component<IAccountInputProps> {
 
 		return API.accounts
 			.fetchFieldValues({
+				channelId,
 				fieldMappingFieldName: id,
 				groupId,
 				query: getPropertyValue(valueIMap, 'value', 0)
@@ -34,6 +37,10 @@ export default class AccountInput extends React.Component<IAccountInputProps> {
 		const {
 			property: {type}
 		} = this.props;
+
+		if (type === PropertyTypes.AccountDate) {
+			return <CustomDateInput {...this.props} />;
+		}
 
 		if (type === PropertyTypes.AccountNumber) {
 			return <CustomNumberInput {...this.props} />;

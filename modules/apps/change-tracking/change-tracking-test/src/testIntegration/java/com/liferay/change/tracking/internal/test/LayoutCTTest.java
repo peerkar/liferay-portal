@@ -72,6 +72,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -102,6 +103,9 @@ public class LayoutCTTest {
 		_ctCollection = _ctCollectionLocalService.addCTCollection(
 			null, TestPropsValues.getCompanyId(), TestPropsValues.getUserId(),
 			0, LayoutCTTest.class.getName(), null);
+
+		_ctCollections.add(_ctCollection);
+
 		_group = GroupTestUtil.addGroup();
 		_layoutClassNameId = _classNameLocalService.getClassNameId(
 			Layout.class);
@@ -1049,7 +1053,13 @@ public class LayoutCTTest {
 			layout = _layoutLocalService.updateLayout(layout);
 		}
 
-		_layoutLocalService.deleteLayout(layout);
+		try (SafeCloseable safeCloseable =
+				PropsValuesTestUtil.swapWithSafeCloseable(
+					"CHANGE_TRACKING_DELETION_PROTECTION_ENABLED", false,
+					false)) {
+
+			_layoutLocalService.deleteLayout(layout);
+		}
 
 		try (LogCapture logCapture = LoggerTestUtil.configureLog4JLogger(
 				"com.liferay.portal.background.task.internal.messaging." +
@@ -1138,6 +1148,8 @@ public class LayoutCTTest {
 				TestPropsValues.getUserId(), 0, RandomTestUtil.randomString(),
 				null);
 
+		_ctCollections.add(otherCTCollection);
+
 		try (SafeCloseable safeCloseable =
 				CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
 					otherCTCollection.getCtCollectionId())) {
@@ -1155,31 +1167,13 @@ public class LayoutCTTest {
 		Assert.assertEquals(
 			CTConstants.CT_CHANGE_TYPE_MODIFICATION, ctEntry2.getChangeType());
 
-		Map<Long, List<ConflictInfo>> conflictInfoMap =
-			_ctCollectionLocalService.checkConflicts(_ctCollection);
+		Assert.assertTrue(_hasConflictInfo(layout));
 
-		Assert.assertFalse(conflictInfoMap.isEmpty());
+		otherCTCollection.setStatus(WorkflowConstants.STATUS_INCOMPLETE);
 
-		List<ConflictInfo> conflictInfos = conflictInfoMap.get(
-			_classNameLocalService.getClassNameId(Layout.class));
+		_ctCollectionLocalService.updateCTCollection(otherCTCollection);
 
-		boolean hasConflict = false;
-
-		for (ConflictInfo conflictInfo : conflictInfos) {
-			if ((conflictInfo.getSourcePrimaryKey() == layout.getPlid()) &&
-				Objects.equals(
-					conflictInfo.getResolutionDescription(
-						conflictInfo.getResourceBundle(LocaleUtil.ENGLISH)),
-					_language.get(
-						LocaleUtil.ENGLISH,
-						"deletion-conflicts-with-modifications-in-another-" +
-							"publication"))) {
-
-				hasConflict = true;
-			}
-		}
-
-		Assert.assertTrue(hasConflict);
+		Assert.assertTrue(_hasConflictInfo(layout));
 	}
 
 	@Test
@@ -1372,13 +1366,41 @@ public class LayoutCTTest {
 					layout.getRobotsMap(), layout.getType(), layout.isHidden(),
 					layout.getFriendlyURLMap(), false, null,
 					layout.getStyleBookEntryERC(),
-					layout.getFaviconFileEntryId(),
-					layout.getMasterLayoutPlid(), serviceContext);
+					layout.getFaviconFileEntryERC(),
+					layout.getFaviconFileEntryScopeERC(),
+					layout.getMasterLayoutPageTemplateEntryERC(),
+					serviceContext);
 			}
 		}
 		finally {
 			CacheRegistryUtil.setActive(active);
 		}
+	}
+
+	private boolean _hasConflictInfo(Layout layout) throws Exception {
+		Map<Long, List<ConflictInfo>> conflictInfoMap =
+			_ctCollectionLocalService.checkConflicts(_ctCollection);
+
+		Assert.assertFalse(conflictInfoMap.isEmpty());
+
+		List<ConflictInfo> conflictInfos = conflictInfoMap.get(
+			_classNameLocalService.getClassNameId(Layout.class));
+
+		for (ConflictInfo conflictInfo : conflictInfos) {
+			if ((conflictInfo.getSourcePrimaryKey() == layout.getPlid()) &&
+				Objects.equals(
+					conflictInfo.getResolutionDescription(
+						conflictInfo.getResourceBundle(LocaleUtil.ENGLISH)),
+					_language.get(
+						LocaleUtil.ENGLISH,
+						"deletion-conflicts-with-modifications-in-another-" +
+							"publication"))) {
+
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private void _lockLayout(Layout layout, User user) throws PortalException {
@@ -1426,10 +1448,11 @@ public class LayoutCTTest {
 	@Inject
 	private BulkLayoutConverter _bulkLayoutConverter;
 
-	@DeleteAfterTestRun
 	private CTCollection _ctCollection;
 
 	@DeleteAfterTestRun
+	private final List<CTCollection> _ctCollections = new ArrayList<>();
+
 	private Group _group;
 
 	@Inject

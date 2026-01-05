@@ -21,8 +21,10 @@ import {PaymentMethodType} from '../../../types';
 import PaidLicense from './PaidLicense';
 import TrialLicense from './TrialLicense';
 
-import '../../../../GetApp/styles/index.scss';
+import '../../../../ProductPurchase/components/StepWizard/StepWizard.scss';
 import {cartStore} from '../../../store/CartStore';
+
+import './index.scss';
 
 const isContinueButtonDisabled = () => {
 	const snapshot = productPurchaseStore.getSnapshot();
@@ -88,10 +90,11 @@ const License = () => {
 			}}
 			title={i18n.translate('license-selection')}
 		>
-			<div className="license-selector mb-6">
+			<div className="d-flex justify-content-between license-selector mb-6 w-100">
 				{licenseOptions.map(({icon, type, ...licenseOption}, index) => (
 					<CardButton
 						{...licenseOption}
+						fullSize={true}
 						icon={
 							<span className="license-icon">
 								<ClayIcon symbol={icon} />

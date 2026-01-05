@@ -15,6 +15,7 @@ import {AdvancedTab} from './Tabs/Advanced/AdvancedTab';
 import {BasicInfoTab} from './Tabs/BasicInfo/BasicInfoTab';
 
 import './EditObjectFieldContent.scss';
+import {DEFAULT_VALUE_SUPPORTED_BUSINESS_TYPES} from '../../utils/constants';
 
 interface EditObjectFieldContentProps
 	extends Omit<
@@ -25,7 +26,9 @@ interface EditObjectFieldContentProps
 		| 'objectDefinitionExternalReferenceCode'
 		| 'objectFieldId'
 	> {
+	ckEditor5Config?: object;
 	containerWrapper: ElementType;
+	decimalSeparator: string;
 	errors: ObjectFieldErrors;
 	handleChange: React.ChangeEventHandler<HTMLInputElement>;
 	modelBuilder?: boolean;
@@ -40,8 +43,10 @@ const TABS = [Liferay.Language.get('basic-info')];
 
 export function EditObjectFieldContent({
 	baseResourceURL,
+	ckEditor5Config,
 	containerWrapper,
 	creationLanguageId,
+	decimalSeparator,
 	errors,
 	filterOperators,
 	handleChange,
@@ -61,6 +66,8 @@ export function EditObjectFieldContent({
 
 	const [dbObjectFieldRequired, setDbObjectFieldRequired] =
 		useState<boolean>();
+	const [defaultValueSidebarElements, setDefaultValueSidebarElements] =
+		useState<SidebarCategory[]>([]);
 	const [objectFieldBusinessTypes, setObjectFieldBusinessTypes] = useState<
 		ObjectFieldBusinessType[]
 	>([]);
@@ -71,11 +78,15 @@ export function EditObjectFieldContent({
 	const [sidebarElements, setSidebarElements] = useState<SidebarCategory[]>(
 		[]
 	);
+	const hasDefaultValue =
+		(Liferay.FeatureFlags['LPD-46451'] &&
+			values.businessType &&
+			DEFAULT_VALUE_SUPPORTED_BUSINESS_TYPES.includes(
+				values.businessType
+			)) ||
+		values.businessType === 'Picklist';
 
-	if (
-		(isDefaultStorageType || values.businessType === 'Picklist') &&
-		TABS.length < 2
-	) {
+	if ((isDefaultStorageType || hasDefaultValue) && TABS.length < 2) {
 		TABS.push(Liferay.Language.get('advanced'));
 	}
 
@@ -107,6 +118,7 @@ export function EditObjectFieldContent({
 
 				const objectFieldInfoJSON =
 					(await objectFieldInfoResponse.json()) as {
+						defaultValueSidebarElements: SidebarCategory[];
 						objectFieldBusinessTypes: ObjectFieldBusinessType[];
 						objectRelationshipId: number;
 						readOnlySidebarElements: SidebarCategory[];
@@ -119,6 +131,9 @@ export function EditObjectFieldContent({
 					);
 				}
 
+				setDefaultValueSidebarElements(
+					objectFieldInfoJSON.defaultValueSidebarElements
+				);
 				setObjectFieldBusinessTypes(
 					objectFieldInfoJSON.objectFieldBusinessTypes
 				);
@@ -136,7 +151,7 @@ export function EditObjectFieldContent({
 
 	return (
 		<>
-			{isDefaultStorageType || values.businessType === 'Picklist' ? (
+			{isDefaultStorageType || hasDefaultValue ? (
 				<>
 					<ClayTabs className="side-panel-iframe__tabs">
 						{TABS.map((label, index) => (
@@ -190,8 +205,13 @@ export function EditObjectFieldContent({
 							})}
 						>
 							<AdvancedTab
+								ckEditor5Config={ckEditor5Config}
 								containerWrapper={containerWrapper}
 								creationLanguageId={creationLanguageId}
+								decimalSeparator={decimalSeparator}
+								defaultValueSidebarElements={
+									defaultValueSidebarElements
+								}
 								errors={errors}
 								isDefaultStorageType={isDefaultStorageType}
 								isRootDescendantNode={isRootDescendantNode}
@@ -202,7 +222,6 @@ export function EditObjectFieldContent({
 									readOnlySidebarElements
 								}
 								setValues={setValues}
-								sidebarElements={sidebarElements}
 								values={values}
 							/>
 						</ClayTabs.TabPane>

@@ -42,7 +42,11 @@ const FIELD: Field = {
 };
 
 const DEFAULT_STATE: State = {
-	history: {deletedChildren: false, modifiedNames: new Set()},
+	history: {
+		deletedChildren: false,
+		deletedGroupERCs: [],
+		modifiedNames: new Set(),
+	},
 	invalids: new Map(),
 	publishedChildren: new Set(),
 	selection: [],
@@ -53,6 +57,7 @@ const DEFAULT_STATE: State = {
 		name: 'UntitledStructure',
 		spaces: [],
 		status: 'new',
+		system: false,
 		uuid: getUuid(),
 		workflows: {},
 	},

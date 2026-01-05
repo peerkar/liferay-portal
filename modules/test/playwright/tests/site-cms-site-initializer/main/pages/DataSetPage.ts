@@ -7,6 +7,7 @@ import {Locator, Page, expect} from '@playwright/test';
 
 export class DataSetPage {
 	readonly activeViewSelector: Locator;
+	readonly assetLink: (assetName: string) => Locator;
 	readonly page: Page;
 	readonly table: {
 		bodyRows: Locator;
@@ -17,6 +18,12 @@ export class DataSetPage {
 
 	constructor(page: Page) {
 		this.activeViewSelector = page.getByLabel(/View Selected/);
+		this.assetLink = (assetName) => {
+			return page.getByRole('link', {
+				exact: true,
+				name: assetName,
+			});
+		};
 
 		const tableContainer = page.locator('.fds table');
 		this.table = {
@@ -26,7 +33,7 @@ export class DataSetPage {
 		};
 
 		this.page = page;
-		this.selectAllLink = page.getByRole('link', {
+		this.selectAllLink = page.getByRole('button', {
 			exact: true,
 			name: 'Select All',
 		});
@@ -37,7 +44,10 @@ export class DataSetPage {
 	}
 
 	async execBulkItemAction({action}) {
-		await this.page.getByLabel('Actions').click();
+		await this.page
+			.getByTestId('visualization-mode-table')
+			.getByLabel('Actions')
+			.click();
 
 		const dropdownMenuItemDelete = this.page.getByRole('menuitem', {
 			name: action,
@@ -48,19 +58,27 @@ export class DataSetPage {
 		await dropdownMenuItemDelete.click();
 	}
 
-	async execItemAction({action, filter}: {action: string; filter: string}) {
+	async execItemAction({
+		action,
+		filter,
+		timeout,
+	}: {
+		action: string;
+		filter: string;
+		timeout?: number;
+	}) {
 		const item = this.getRow(filter);
 		const button = item.getByRole('button', {
 			exact: true,
 			name: 'Actions',
 		});
 		const dropdownId = await button.getAttribute('aria-controls');
-		await button.click();
+		await button.click({timeout});
 
 		const dropdownMenu = this.page
 			.locator(`#${dropdownId}`)
 			.filter({has: this.page.getByRole('menu')});
-		await dropdownMenu.waitFor();
+		await dropdownMenu.waitFor({timeout});
 
 		const dropdownMenuActionItem = dropdownMenu
 			.getByRole('menuitem', {
@@ -68,11 +86,13 @@ export class DataSetPage {
 			})
 			.first();
 
-		await dropdownMenuActionItem.waitFor();
-		await dropdownMenuActionItem.click();
+		await dropdownMenuActionItem.waitFor({timeout});
+		await dropdownMenuActionItem.click({timeout});
 	}
 
-	async changeVisualizationMode(visualizationMode: 'Cards' | 'Table') {
+	async changeVisualizationMode(
+		visualizationMode: 'Cards' | 'Table' | 'Gallery'
+	) {
 		await this.activeViewSelector.waitFor({
 			state: 'visible',
 		});

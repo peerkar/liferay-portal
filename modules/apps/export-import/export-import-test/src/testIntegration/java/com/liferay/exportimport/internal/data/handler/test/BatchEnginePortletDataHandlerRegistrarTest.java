@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
+import com.liferay.portal.kernel.test.util.CompanyTestUtil;
 import com.liferay.portal.kernel.test.util.FeatureFlagTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
@@ -81,7 +82,7 @@ public class BatchEnginePortletDataHandlerRegistrarTest {
 
 	@FeatureFlag("LPD-35914")
 	@Test
-	@TestInfo({"LPD-56301", "LPD-65119"})
+	@TestInfo({"LPD-56301", "LPD-65119", "LPD-68124"})
 	public void test() throws Exception {
 		String portletId = RandomTestUtil.randomString();
 
@@ -128,6 +129,8 @@ public class BatchEnginePortletDataHandlerRegistrarTest {
 			FeatureFlagTestUtil.invokeFeatureFlagListeners(
 				TestPropsValues.getCompanyId(), true, "LPD-35914");
 
+			Company company = null;
+
 			try {
 				_assertPortletDataHandler(
 					TestPropsValues.getCompanyId(), portletId,
@@ -142,16 +145,33 @@ public class BatchEnginePortletDataHandlerRegistrarTest {
 						_hasPortletDataHandlerControls(
 							new PortletDataHandlerControl[] {
 								new PortletDataHandlerBoolean(
-									portletId, className1, null, true, false,
-									null, className1, null),
+									portletId, className1, className1, true,
+									false, null, className1, null),
 								new PortletDataHandlerBoolean(
-									portletId, className2, null, true, false,
-									null, className2, null)
+									portletId, className2, className2, true,
+									false, null, className2, null)
 							},
-							portletDataHandler.getExportControls()));
+							portletDataHandler.
+								getExportPortletDataHandlerControls()));
 
 				Assert.assertEquals(
 					1, _getRegisteredPortletDataHandlersCount(portletId));
+
+				company = CompanyTestUtil.addCompany();
+
+				FeatureFlagTestUtil.invokeFeatureFlagListeners(
+					company.getCompanyId(), true, "LPD-35914");
+
+				_assertPortletDataHandler(
+					company.getCompanyId(), portletId,
+					portletDataHandler ->
+						StringUtil.contains(
+							ClassUtil.getClassName(portletDataHandler),
+							"BatchEnginePortletDataHandler",
+							StringPool.PERIOD) &&
+						Arrays.equals(
+							new String[] {className1, className2},
+							portletDataHandler.getClassNames()));
 
 				_assertPortletDataHandler(
 					RandomTestUtil.randomLong(), portletId,
@@ -172,8 +192,13 @@ public class BatchEnginePortletDataHandlerRegistrarTest {
 							new String[] {className2},
 							portletDataHandler.getClassNames()) &&
 						_hasPortletDataHandlerControls(
-							new PortletDataHandlerControl[0],
-							portletDataHandler.getExportControls()));
+							new PortletDataHandlerControl[] {
+								new PortletDataHandlerBoolean(
+									portletId, className2, className2, true,
+									false, null, className2, null)
+							},
+							portletDataHandler.
+								getExportPortletDataHandlerControls()));
 
 				safeCloseable3.close();
 
@@ -186,6 +211,11 @@ public class BatchEnginePortletDataHandlerRegistrarTest {
 			finally {
 				FeatureFlagTestUtil.invokeFeatureFlagListeners(
 					TestPropsValues.getCompanyId(), false, "LPD-35914");
+
+				if (company != null) {
+					FeatureFlagTestUtil.invokeFeatureFlagListeners(
+						company.getCompanyId(), false, "LPD-35914");
+				}
 			}
 		}
 	}
@@ -259,11 +289,11 @@ public class BatchEnginePortletDataHandlerRegistrarTest {
 					portletDataHandlerControls) {
 
 				if (Objects.equals(
-						expectedPortletDataHandlerControl.getControlName(),
-						portletDataHandlerControl.getControlName()) &&
+						expectedPortletDataHandlerControl.getName(),
+						portletDataHandlerControl.getName()) &&
 					Objects.equals(
-						expectedPortletDataHandlerControl.getControlLabel(),
-						portletDataHandlerControl.getControlLabel()) &&
+						expectedPortletDataHandlerControl.getLabel(),
+						portletDataHandlerControl.getLabel()) &&
 					(expectedPortletDataHandlerControl.isDisabled() ==
 						portletDataHandlerControl.isDisabled())) {
 
@@ -333,6 +363,11 @@ public class BatchEnginePortletDataHandlerRegistrarTest {
 		@Override
 		public ExportImportDescriptor getExportImportDescriptor() {
 			return new ExportImportDescriptor() {
+
+				@Override
+				public String getLabelLanguageKey() {
+					return _className;
+				}
 
 				@Override
 				public String getModelClassName() {

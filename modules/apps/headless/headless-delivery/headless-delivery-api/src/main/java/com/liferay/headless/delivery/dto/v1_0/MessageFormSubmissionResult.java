@@ -158,6 +158,58 @@ public class MessageFormSubmissionResult implements Serializable {
 	@JsonIgnore
 	private Supplier<MessageType> _messageTypeSupplier;
 
+	@io.swagger.v3.oas.annotations.media.Schema(
+		description = "The localized message form submission result's notification text."
+	)
+	@Valid
+	public FragmentInlineValue getNotificationTextFragmentInlineValue() {
+		if (_notificationTextFragmentInlineValueSupplier != null) {
+			notificationTextFragmentInlineValue =
+				_notificationTextFragmentInlineValueSupplier.get();
+
+			_notificationTextFragmentInlineValueSupplier = null;
+		}
+
+		return notificationTextFragmentInlineValue;
+	}
+
+	public void setNotificationTextFragmentInlineValue(
+		FragmentInlineValue notificationTextFragmentInlineValue) {
+
+		this.notificationTextFragmentInlineValue =
+			notificationTextFragmentInlineValue;
+
+		_notificationTextFragmentInlineValueSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setNotificationTextFragmentInlineValue(
+		UnsafeSupplier<FragmentInlineValue, Exception>
+			notificationTextFragmentInlineValueUnsafeSupplier) {
+
+		_notificationTextFragmentInlineValueSupplier = () -> {
+			try {
+				return notificationTextFragmentInlineValueUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField(
+		description = "The localized message form submission result's notification text."
+	)
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected FragmentInlineValue notificationTextFragmentInlineValue;
+
+	@JsonIgnore
+	private Supplier<FragmentInlineValue>
+		_notificationTextFragmentInlineValueSupplier;
+
 	@io.swagger.v3.oas.annotations.media.Schema
 	public Boolean getShowNotification() {
 		if (_showNotificationSupplier != null) {
@@ -250,10 +302,21 @@ public class MessageFormSubmissionResult implements Serializable {
 			sb.append("\"messageType\": ");
 
 			sb.append("\"");
-
 			sb.append(messageType);
-
 			sb.append("\"");
+		}
+
+		FragmentInlineValue notificationTextFragmentInlineValue =
+			getNotificationTextFragmentInlineValue();
+
+		if (notificationTextFragmentInlineValue != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"notificationTextFragmentInlineValue\": ");
+
+			sb.append(String.valueOf(notificationTextFragmentInlineValue));
 		}
 
 		Boolean showNotification = getShowNotification();

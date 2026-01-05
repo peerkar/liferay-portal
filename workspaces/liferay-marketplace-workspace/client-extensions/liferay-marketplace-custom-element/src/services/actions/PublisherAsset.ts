@@ -3,12 +3,14 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import {UploadedFile} from '../../components/FileList/FileList';
 import SearchBuilder from '../../core/SearchBuilder';
 import {DOCUMENT_FOLDER_PERMISSIONS} from '../../enums/File';
 import {Liferay} from '../../liferay/liferay';
 import {MarketplaceProperties} from '../../utils/attributes';
 import HeadlessDelivery from '../rest/HeadlessDelivery';
 import HeadlessPublisherAssetses from '../rest/HeadlessPublisherAsset';
+import HeadlessPublisherAssetAttachment from '../rest/HeadlessPublisherAssetAttachment';
 
 const DOCUMENTS_ROOT_FOLDER = 0;
 const PICK_LIST_ASSET_TYPE = 'package';
@@ -16,7 +18,8 @@ const PUBLISHER_ASSETS_FOLDER = 'publisher_assets';
 
 export default class PublisherAsset {
 	constructor(
-		protected file: any,
+		protected file: UploadedFile[],
+		protected id: string,
 		protected product: Product,
 		protected properties: MarketplaceProperties,
 		protected versions: string
@@ -61,13 +64,44 @@ export default class PublisherAsset {
 		return appFolderId;
 	}
 
+	private async getPackageFolderId(appFolderId: number): Promise<number> {
+		const folderName = `app_${this.product.productId}_package_${this.id}`;
+
+		const {items: packageFolders} =
+			await HeadlessDelivery.getDocumentFolderDocuments(
+				appFolderId,
+				new URLSearchParams({
+					filter: SearchBuilder.contains('name', folderName),
+				})
+			);
+
+		const packageFolder = packageFolders.find(
+			(document: any) => document.name === folderName
+		);
+
+		let packageFolderId = packageFolder?.id;
+
+		if (!packageFolderId) {
+			const packageFolder = await HeadlessDelivery.createDocumentFolder(
+				folderName,
+				appFolderId,
+				DOCUMENT_FOLDER_PERMISSIONS.SITE_MEMBERS
+			);
+
+			packageFolderId = packageFolder.id;
+		}
+
+		return packageFolderId;
+	}
+
 	private async getPublisherAssetDocumentId(
+		file: UploadedFile,
 		appFolderId: number
 	): Promise<number> {
 		const formData = new FormData();
-		const blob = new Blob([this.file.file]);
+		const blob = new Blob([file.file]);
 
-		formData.append('file', blob, this.file.fileName);
+		formData.append('file', blob, file.fileName);
 		const sourceDocument =
 			await HeadlessDelivery.createDocumentFolderDocument(
 				appFolderId,
@@ -104,6 +138,8 @@ export default class PublisherAsset {
 
 			const appFolderId = await this.getAppFolderId(publisherFolderId);
 
+			const packageFolderId = await this.getPackageFolderId(appFolderId);
+
 			const productRelationshipName =
 				this.properties.featurePreview?.includes(
 					'product-versioning-new-primary-key'
@@ -111,15 +147,31 @@ export default class PublisherAsset {
 					? 'r_productEntryToPublisherAssets_CProductId'
 					: 'r_productEntryToPublisherAssets_CPDefinitionId';
 
-			await HeadlessPublisherAssetses.createPublisherAsset({
-				name: this.product.name.en_US,
-				[productRelationshipName]: this.product.id as unknown as string,
-				publisherAssetType: PICK_LIST_ASSET_TYPE,
-				r_accountEntryToPublisherAssets_accountEntryId:
-					Liferay.CommerceContext.account?.accountId,
-				sourceCode: await this.getPublisherAssetDocumentId(appFolderId),
-				version: this.versions,
-			});
+			const publisherAsset =
+				await HeadlessPublisherAssetses.createPublisherAsset({
+					[productRelationshipName]: this.product
+						.id as unknown as string,
+					r_accountEntryToPublisherAssets_accountEntryId:
+						Liferay.CommerceContext.account?.accountId,
+					version: this.versions,
+				});
+
+			for (const file of this.file) {
+				const sourceCode = await this.getPublisherAssetDocumentId(
+					file,
+					packageFolderId
+				);
+
+				await HeadlessPublisherAssetAttachment.createPublisherAssetAttachment(
+					{
+						name: file.fileName,
+						publisherAssetAttachmentType: PICK_LIST_ASSET_TYPE,
+						r_publisherAssetsToAttachment_c_publisherAssetsId:
+							publisherAsset.id,
+						sourceCode,
+					}
+				);
+			}
 		}
 		catch {
 			Liferay.Util.openToast({

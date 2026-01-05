@@ -38,24 +38,24 @@ public class ExportImportReportEntryLocalServiceUtil {
 	 */
 	public static ExportImportReportEntry addEmptyExportImportReportEntry(
 		long groupId, long companyId, String classExternalReferenceCode,
-		long classNameId, long exportImportConfigurationId, String modelName,
-		int origin, String scope, String scopeKey) {
+		long classNameId, long exportImportConfigurationId,
+		String modelNameLanguageKey) {
 
 		return getService().addEmptyExportImportReportEntry(
 			groupId, companyId, classExternalReferenceCode, classNameId,
-			exportImportConfigurationId, modelName, origin, scope, scopeKey);
+			exportImportConfigurationId, modelNameLanguageKey);
 	}
 
 	public static ExportImportReportEntry addErrorExportImportReportEntry(
 		long groupId, long companyId, String classExternalReferenceCode,
 		long classNameId, long classPK, long exportImportConfigurationId,
-		String errorMessage, String errorStacktrace, String modelName,
-		int origin, String scope, String scopeKey) {
+		String errorMessage, String errorStacktrace,
+		String modelNameLanguageKey) {
 
 		return getService().addErrorExportImportReportEntry(
 			groupId, companyId, classExternalReferenceCode, classNameId,
 			classPK, exportImportConfigurationId, errorMessage, errorStacktrace,
-			modelName, origin, scope, scopeKey);
+			modelNameLanguageKey);
 	}
 
 	/**

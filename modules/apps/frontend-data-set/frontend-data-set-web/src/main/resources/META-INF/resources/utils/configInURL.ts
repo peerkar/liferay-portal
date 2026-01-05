@@ -5,8 +5,10 @@
 
 import {EConfigInURLBehavior, IConfigInURL} from './types';
 
+export const FDS_CONFIG_PARAM_NAME = '_fdsConfig';
+
 function getConfigParamName(id: string): string {
-	return `${id}_fdsConfig`;
+	return `${id}${FDS_CONFIG_PARAM_NAME}`;
 }
 
 export function readConfigFromURL(id: string): Partial<IConfigInURL> | null {
@@ -49,6 +51,7 @@ export function writeConfigInURL(
 
 	const currentConfig = readConfigFromURL(id);
 
+	let currentConfigChanged: boolean = false;
 	Object.keys(config).forEach((key: string) => {
 		const configKey: keyof IConfigInURL = key as keyof IConfigInURL;
 
@@ -57,11 +60,12 @@ export function writeConfigInURL(
 
 			if (currentConfig && currentConfig[configKey]) {
 				delete currentConfig[configKey];
+				currentConfigChanged = true;
 			}
 		}
 	});
 
-	if (contains(config, currentConfig)) {
+	if (contains(config, currentConfig) && !currentConfigChanged) {
 		return;
 	}
 

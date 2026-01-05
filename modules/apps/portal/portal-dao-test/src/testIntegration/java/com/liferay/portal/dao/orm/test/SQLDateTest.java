@@ -22,7 +22,6 @@ import com.liferay.portal.test.rule.TransactionalTestRule;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 
@@ -65,7 +64,7 @@ public class SQLDateTest {
 	}
 
 	@Test
-	public void testMillisecondsJDBC() throws SQLException {
+	public void testMillisecondsJDBC() throws Exception {
 		long time = readTimeJDBC() / Time.SECOND * Time.SECOND;
 
 		for (int i = 0; i < Time.SECOND; i++) {
@@ -90,7 +89,7 @@ public class SQLDateTest {
 		}
 	}
 
-	protected long readTimeJDBC() throws SQLException {
+	protected long readTimeJDBC() throws Exception {
 		try (Connection connection = DataAccess.getConnection();
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(
@@ -125,7 +124,7 @@ public class SQLDateTest {
 		}
 	}
 
-	protected void writeTimeJDBC(long time) throws SQLException {
+	protected void writeTimeJDBC(long time) throws Exception {
 		try (Connection connection = DataAccess.getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(
 				_WRITE_RELEASE_MODIFIED_DATE)) {

@@ -11,10 +11,8 @@ create table ExportImportReportEntry (
 	exportImportConfigurationId LONG,
 	errorMessage TEXT null,
 	errorStacktrace TEXT null,
-	modelName VARCHAR(255) null,
+	modelNameLanguageKey VARCHAR(255) null,
 	origin INTEGER,
-	scope VARCHAR(75) null,
-	scopeKey VARCHAR(75) null,
 	type_ INTEGER,
 	status INTEGER
 );

@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.SynchronousDestinationTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
@@ -42,7 +43,6 @@ import com.liferay.portal.search.test.util.FieldValuesAssert;
 import com.liferay.portal.test.log.LogCapture;
 import com.liferay.portal.test.log.LogEntry;
 import com.liferay.portal.test.log.LoggerTestUtil;
-import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
@@ -63,7 +63,6 @@ import org.junit.runner.RunWith;
 /**
  * @author Victor Kammerer
  */
-@FeatureFlag("LPD-32050")
 @RunWith(Arquillian.class)
 public class ObjectEntryIndexerReindexTest {
 
@@ -85,7 +84,7 @@ public class ObjectEntryIndexerReindexTest {
 			ObjectDefinition objectDefinition =
 				_objectDefinitionLocalService.addCustomObjectDefinition(
 					null, TestPropsValues.getUserId(), 0, null, false, true,
-					false, true, true, false, false, false, false, null,
+					false, true, false, false, false, false, null,
 					LocalizedMapUtil.getLocalizedMap(
 						RandomTestUtil.randomString()),
 					ObjectDefinitionTestUtil.getRandomName(), null, null,
@@ -195,7 +194,7 @@ public class ObjectEntryIndexerReindexTest {
 									Boolean.TRUE.toString()
 								).build())
 						).build()),
-					Collections.emptyList());
+					Collections.emptyList(), new ServiceContext());
 
 			_objectDefinitionLocalService.publishCustomObjectDefinition(
 				TestPropsValues.getUserId(),

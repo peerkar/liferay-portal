@@ -46,7 +46,9 @@ public class OpenIdConnectSessionWrapper
 		attributes.put("authServerWellKnownURI", getAuthServerWellKnownURI());
 		attributes.put("clientId", getClientId());
 		attributes.put("idToken", getIdToken());
+		attributes.put("issuer", getIssuer());
 		attributes.put("refreshToken", getRefreshToken());
+		attributes.put("sessionId", getSessionId());
 
 		return attributes;
 	}
@@ -116,10 +118,22 @@ public class OpenIdConnectSessionWrapper
 			setIdToken(idToken);
 		}
 
+		String issuer = (String)attributes.get("issuer");
+
+		if (issuer != null) {
+			setIssuer(issuer);
+		}
+
 		String refreshToken = (String)attributes.get("refreshToken");
 
 		if (refreshToken != null) {
 			setRefreshToken(refreshToken);
+		}
+
+		String sessionId = (String)attributes.get("sessionId");
+
+		if (sessionId != null) {
+			setSessionId(sessionId);
 		}
 	}
 
@@ -189,6 +203,16 @@ public class OpenIdConnectSessionWrapper
 	}
 
 	/**
+	 * Returns the issuer of this open ID connect session.
+	 *
+	 * @return the issuer of this open ID connect session
+	 */
+	@Override
+	public String getIssuer() {
+		return model.getIssuer();
+	}
+
+	/**
 	 * Returns the modified date of this open ID connect session.
 	 *
 	 * @return the modified date of this open ID connect session
@@ -236,6 +260,16 @@ public class OpenIdConnectSessionWrapper
 	@Override
 	public String getRefreshToken() {
 		return model.getRefreshToken();
+	}
+
+	/**
+	 * Returns the session ID of this open ID connect session.
+	 *
+	 * @return the session ID of this open ID connect session
+	 */
+	@Override
+	public String getSessionId() {
+		return model.getSessionId();
 	}
 
 	/**
@@ -324,6 +358,16 @@ public class OpenIdConnectSessionWrapper
 	}
 
 	/**
+	 * Sets the issuer of this open ID connect session.
+	 *
+	 * @param issuer the issuer of this open ID connect session
+	 */
+	@Override
+	public void setIssuer(String issuer) {
+		model.setIssuer(issuer);
+	}
+
+	/**
 	 * Sets the modified date of this open ID connect session.
 	 *
 	 * @param modifiedDate the modified date of this open ID connect session
@@ -371,6 +415,16 @@ public class OpenIdConnectSessionWrapper
 	@Override
 	public void setRefreshToken(String refreshToken) {
 		model.setRefreshToken(refreshToken);
+	}
+
+	/**
+	 * Sets the session ID of this open ID connect session.
+	 *
+	 * @param sessionId the session ID of this open ID connect session
+	 */
+	@Override
+	public void setSessionId(String sessionId) {
+		model.setSessionId(sessionId);
 	}
 
 	/**

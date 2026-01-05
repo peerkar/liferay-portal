@@ -25,19 +25,14 @@ public class AppServerBundleStandaloneBuildTestrayCaseResult
 	extends BaseStandaloneBuildTestrayCaseResult {
 
 	public AppServerBundleStandaloneBuildTestrayCaseResult(
-		TestrayBuild testrayBuild, TopLevelBuildReport topLevelBuildReport,
-		String appServerType) {
+		String appServerType, TestrayBuild testrayBuild,
+		TopLevelBuildReport topLevelBuildReport) {
 
 		super(testrayBuild, topLevelBuildReport);
 
 		_appServerType = appServerType;
-	}
 
-	@Override
-	public BuildReport getBuildReport() {
-		TopLevelBuildReport topLevelBuildReport = getTopLevelBuildReport();
-
-		return topLevelBuildReport.getDownstreamBuildReport(_getAxisName());
+		initBuildReport();
 	}
 
 	@Override
@@ -84,6 +79,14 @@ public class AppServerBundleStandaloneBuildTestrayCaseResult
 			topLevelBuildReport.getJobName(), "_",
 			String.valueOf(topLevelBuildReport.getBuildNumber()), "_",
 			getBatchName(), "_", _appServerType, ".xml");
+	}
+
+	@Override
+	protected void initBuildReport() {
+		TopLevelBuildReport topLevelBuildReport = getTopLevelBuildReport();
+
+		setBuildReport(
+			topLevelBuildReport.getDownstreamBuildReport(_getAxisName()));
 	}
 
 	private String _getAxisName() {

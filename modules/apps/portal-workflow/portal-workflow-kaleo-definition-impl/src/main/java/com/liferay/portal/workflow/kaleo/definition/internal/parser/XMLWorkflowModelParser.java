@@ -16,6 +16,7 @@ import com.liferay.portal.kernel.workflow.WorkflowException;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
+import com.liferay.portal.workflow.kaleo.definition.AIDecision;
 import com.liferay.portal.workflow.kaleo.definition.Action;
 import com.liferay.portal.workflow.kaleo.definition.ActionAware;
 import com.liferay.portal.workflow.kaleo.definition.AddressRecipient;
@@ -28,6 +29,7 @@ import com.liferay.portal.workflow.kaleo.definition.DurationScale;
 import com.liferay.portal.workflow.kaleo.definition.Fork;
 import com.liferay.portal.workflow.kaleo.definition.Join;
 import com.liferay.portal.workflow.kaleo.definition.JoinXor;
+import com.liferay.portal.workflow.kaleo.definition.LLM;
 import com.liferay.portal.workflow.kaleo.definition.Node;
 import com.liferay.portal.workflow.kaleo.definition.Notification;
 import com.liferay.portal.workflow.kaleo.definition.NotificationAware;
@@ -38,6 +40,7 @@ import com.liferay.portal.workflow.kaleo.definition.RoleRecipient;
 import com.liferay.portal.workflow.kaleo.definition.ScriptAction;
 import com.liferay.portal.workflow.kaleo.definition.ScriptAssignment;
 import com.liferay.portal.workflow.kaleo.definition.ScriptRecipient;
+import com.liferay.portal.workflow.kaleo.definition.Setting;
 import com.liferay.portal.workflow.kaleo.definition.State;
 import com.liferay.portal.workflow.kaleo.definition.Task;
 import com.liferay.portal.workflow.kaleo.definition.TaskForm;
@@ -118,57 +121,58 @@ public class XMLWorkflowModelParser implements WorkflowModelParser {
 		Definition definition = new Definition(
 			name, description, document.formattedString(), version);
 
+		List<Element> aiDecisionElements = rootElement.elements("ai-decision");
+
+		for (Element aiDecisionElement : aiDecisionElements) {
+			definition.addNode(_parseAIDecision(aiDecisionElement));
+		}
+
 		List<Element> conditionElements = rootElement.elements("condition");
 
 		for (Element conditionElement : conditionElements) {
-			Condition condition = _parseCondition(conditionElement);
-
-			definition.addNode(condition);
+			definition.addNode(_parseCondition(conditionElement));
 		}
 
 		List<Element> forkElements = rootElement.elements("fork");
 
 		for (Element forkElement : forkElements) {
-			Fork fork = _parseFork(forkElement);
-
-			definition.addNode(fork);
+			definition.addNode(_parseFork(forkElement));
 		}
 
 		List<Element> joinElements = rootElement.elements("join");
 
 		for (Element joinElement : joinElements) {
-			Join join = _parseJoin(joinElement);
-
-			definition.addNode(join);
+			definition.addNode(_parseJoin(joinElement));
 		}
 
 		List<Element> joinXorElements = rootElement.elements("join-xor");
 
 		for (Element joinXorElement : joinXorElements) {
-			JoinXor joinXor = _parseJoinXor(joinXorElement);
+			definition.addNode(_parseJoinXor(joinXorElement));
+		}
 
-			definition.addNode(joinXor);
+		List<Element> llmElements = rootElement.elements("llm");
+
+		for (Element llmElement : llmElements) {
+			definition.addNode(_parseLLM(llmElement));
 		}
 
 		List<Element> stateElements = rootElement.elements("state");
 
 		for (Element stateElement : stateElements) {
-			State state = _parseState(stateElement);
-
-			definition.addNode(state);
+			definition.addNode(_parseState(stateElement));
 		}
 
 		List<Element> taskElements = rootElement.elements("task");
 
 		for (Element taskElement : taskElements) {
-			Task task = _parseTask(taskElement);
-
-			definition.addNode(task);
+			definition.addNode(_parseTask(taskElement));
 		}
 
 		_parseTransitions(
-			definition, conditionElements, forkElements, joinElements,
-			joinXorElements, stateElements, taskElements);
+			definition, aiDecisionElements, conditionElements, forkElements,
+			joinElements, joinXorElements, llmElements, stateElements,
+			taskElements);
 
 		return definition;
 	}
@@ -233,6 +237,56 @@ public class XMLWorkflowModelParser implements WorkflowModelParser {
 			"notification");
 
 		_parseNotificationElements(notificationElements, node);
+	}
+
+	private AIDecision _parseAIDecision(Element aiDecisionElement) {
+		AIDecision aiDecision = new AIDecision(
+			StringUtil.trim(aiDecisionElement.elementText("description")),
+			aiDecisionElement.elementTextTrim("name"));
+
+		aiDecision.setLabelMap(
+			_parseLabels(aiDecisionElement.element("labels")));
+		aiDecision.setMetadata(aiDecisionElement.elementTextTrim("metadata"));
+
+		Set<Setting> settings = new HashSet<>();
+
+		String inputVariables = aiDecisionElement.elementTextTrim(
+			"input-variables");
+
+		if (inputVariables != null) {
+			settings.add(new Setting("inputVariables", inputVariables));
+		}
+
+		String outputVariables = aiDecisionElement.elementTextTrim(
+			"output-variables");
+
+		if (outputVariables != null) {
+			settings.add(new Setting("outputVariables", outputVariables));
+		}
+
+		settings.add(
+			new Setting("prompt", aiDecisionElement.elementTextTrim("prompt")));
+
+		String rag = aiDecisionElement.elementTextTrim("rag");
+
+		if (rag != null) {
+			settings.add(new Setting("rag", rag));
+		}
+
+		String tools = aiDecisionElement.elementTextTrim("tools");
+
+		if (tools != null) {
+			settings.add(new Setting("tools", tools));
+		}
+
+		settings.add(
+			new Setting(
+				"userMessage",
+				aiDecisionElement.elementTextTrim("user-message")));
+
+		aiDecision.setSettings(settings);
+
+		return aiDecision;
 	}
 
 	private Set<Assignment> _parseAssignments(Element assignmentsElement)
@@ -458,6 +512,53 @@ public class XMLWorkflowModelParser implements WorkflowModelParser {
 		}
 
 		return labelMap;
+	}
+
+	private LLM _parseLLM(Element llmElement) {
+		LLM llm = new LLM(
+			StringUtil.trim(llmElement.elementText("description")),
+			llmElement.elementTextTrim("name"));
+
+		llm.setLabelMap(_parseLabels(llmElement.element("labels")));
+
+		llm.setMetadata(llmElement.elementTextTrim("metadata"));
+
+		Set<Setting> settings = new HashSet<>();
+
+		String inputVariables = llmElement.elementTextTrim("input-variables");
+
+		if (inputVariables != null) {
+			settings.add(new Setting("inputVariables", inputVariables));
+		}
+
+		String outputVariables = llmElement.elementTextTrim("output-variables");
+
+		if (outputVariables != null) {
+			settings.add(new Setting("outputVariables", outputVariables));
+		}
+
+		settings.add(
+			new Setting("prompt", llmElement.elementTextTrim("prompt")));
+
+		String rag = llmElement.elementTextTrim("rag");
+
+		if (rag != null) {
+			settings.add(new Setting("rag", rag));
+		}
+
+		String tools = llmElement.elementTextTrim("tools");
+
+		if (tools != null) {
+			settings.add(new Setting("tools", tools));
+		}
+
+		settings.add(
+			new Setting(
+				"userMessage", llmElement.elementTextTrim("user-message")));
+
+		llm.setSettings(settings);
+
+		return llm;
 	}
 
 	private void _parseNotificationElements(
@@ -891,11 +992,16 @@ public class XMLWorkflowModelParser implements WorkflowModelParser {
 	}
 
 	private void _parseTransitions(
-			Definition definition, List<Element> conditionElements,
-			List<Element> forkElements, List<Element> joinElements,
-			List<Element> joinXorElements, List<Element> stateElements,
+			Definition definition, List<Element> aiDecisionElements,
+			List<Element> conditionElements, List<Element> forkElements,
+			List<Element> joinElements, List<Element> joinXorElements,
+			List<Element> llmElements, List<Element> stateElements,
 			List<Element> taskElements)
 		throws Exception {
+
+		for (Element aiDecisionElement : aiDecisionElements) {
+			_parseTransition(definition, aiDecisionElement);
+		}
 
 		for (Element conditionElement : conditionElements) {
 			_parseTransition(definition, conditionElement);
@@ -911,6 +1017,10 @@ public class XMLWorkflowModelParser implements WorkflowModelParser {
 
 		for (Element joinXorElement : joinXorElements) {
 			_parseTransition(definition, joinXorElement);
+		}
+
+		for (Element llmElement : llmElements) {
+			_parseTransition(definition, llmElement);
 		}
 
 		for (Element stateElement : stateElements) {

@@ -3,8 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {openModal} from 'frontend-js-components-web';
-
+import {openCMSModal} from '../../../common/utils/openCMSModal';
 import {executeAsyncItemAction} from '../utils/executeAsyncItemAction';
 
 export default function confirmAndDeleteEntryAction({
@@ -20,7 +19,7 @@ export default function confirmAndDeleteEntryAction({
 	successMessage: string;
 	title: string;
 }) {
-	openModal({
+	openCMSModal({
 		bodyHTML,
 		buttons: [
 			{
@@ -32,7 +31,7 @@ export default function confirmAndDeleteEntryAction({
 			{
 				displayType: 'danger',
 				label: Liferay.Language.get('delete'),
-				onClick: ({processClose}) => {
+				onClick: ({processClose}: {processClose: () => void}) => {
 					processClose();
 
 					executeAsyncItemAction({

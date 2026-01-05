@@ -12,9 +12,6 @@ const categoriesListItems = document.querySelectorAll(
 const categoriesTrigger = document.querySelector('.categories-trigger');
 const channelId = Liferay.CommerceContext.commerceChannelId;
 const clearInputButton = document.querySelector('.clear-input-button');
-const listSectionContainers = document.querySelectorAll(
-	'.list-section-container'
-);
 const menu = document.querySelector('.marketplace-nav-menu-container');
 const navContainer = document.querySelector('.search-nav-container-full');
 const overlay = document.querySelector('.results-overlay');
@@ -37,6 +34,21 @@ const searchResultsContainer = document.querySelector(
 );
 const spritemap = `${Liferay.ThemeDisplay.getPathThemeImages()}/clay/icons.svg`;
 
+const featuredSectionContainer = document.querySelector('.featured-section');
+let listSectionContainers = document.querySelectorAll(
+	'.list-section-container'
+);
+
+function getClayIconSVG(icon, options = {height: 16, width: 16}) {
+	return `<svg class="lexicon-icon lexicon-icon-${icon} mr-2" height="${options.height}" width="${options.width}">
+				<use href="${spritemap}#${icon}"></use>
+			</svg>`;
+}
+
+function getDecodedJSONParse(value, defaultValue = []) {
+	return value ? JSON.parse(decodeURIComponent(value)) : defaultValue;
+}
+
 const searchToggle = {
 	hide() {
 		state.isSearchExpanded = false;
@@ -46,6 +58,7 @@ const searchToggle = {
 		search.classList.remove('expanded');
 		searchContainer.classList.remove('expanded');
 		searchIcon.classList.remove('expanded');
+
 		scrollControl.unlock();
 
 		setTimeout(() => {
@@ -55,14 +68,19 @@ const searchToggle = {
 		}, 300);
 	},
 
-	show() {
+	async show() {
 		state.isSearchExpanded = true;
 
 		menu.classList.add('hidden');
 		results.style.display = 'block';
 		searchDropdown.style.display = 'block';
+
 		scrollControl.lock();
+
 		renderRecentSearches();
+
+		await renderFeaturedSection(JSON.parse(configuration.featuredSection1));
+		await renderFeaturedSection(JSON.parse(configuration.featuredSection2));
 
 		setTimeout(() => {
 			searchIcon.classList.add('expanded');
@@ -79,44 +97,40 @@ const searchToggle = {
 };
 
 const searchStorage = {
-	clear() {
-		localStorage.removeItem(SEARCH_STORAGE_KEY);
+	clear(storageKey) {
+		document.cookie = `${storageKey}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
 	},
 
-	delete(term) {
-		localStorage.setItem(
-			SEARCH_STORAGE_KEY,
-			JSON.stringify(this.get().filter((item) => item !== term))
-		);
+	get(storageKey) {
+		return document.cookie
+			.split('; ')
+			.find((row) => row.startsWith(storageKey + '='))
+			?.split('=')[1];
 	},
 
-	get() {
-		return JSON.parse(localStorage.getItem(SEARCH_STORAGE_KEY)) || [];
-	},
+	save(name, value, days = 7) {
+		const expires = new Date(Date.now() + days * 864e5).toUTCString();
 
-	save(term) {
-		term = term.trim();
-
-		if (!term) {
-			return;
-		}
-
-		const searchItems =
-			JSON.parse(localStorage.getItem(SEARCH_STORAGE_KEY)) || [];
-
-		const searchItemsLimited = [
-			term,
-			...searchItems.filter(
-				(item) => item.toLowerCase() !== term.toLowerCase()
-			),
-		].slice(0, 5);
-
-		localStorage.setItem(
-			SEARCH_STORAGE_KEY,
-			JSON.stringify(searchItemsLimited)
-		);
+		document.cookie = `${name}=${encodeURIComponent(
+			value
+		)}; expires=${expires}; path=/`;
 	},
 };
+
+function setSearchInput(value) {
+	const items = getDecodedJSONParse(searchStorage.get(SEARCH_STORAGE_KEY));
+
+	const searchItemsLimited = [
+		value,
+		...items.filter((item) => item.toLowerCase() !== value.toLowerCase()),
+	].slice(0, 5);
+
+	searchStorage.save(
+		SEARCH_STORAGE_KEY,
+		JSON.stringify(searchItemsLimited),
+		30
+	);
+}
 
 const scrollControl = {
 	lock() {
@@ -143,48 +157,52 @@ const state = {
 	selectedIndex: -1,
 };
 
-async function fetchSearchResults(category, query) {
-	const trimmed = query.trim();
+async function fetchSearchResults(category, searchValue) {
+	searchValue = searchValue.trim();
 
-	if (!trimmed) {
+	if (!searchValue) {
 		searchResultsContainer.innerHTML = '';
 		searchResultsContainer.style.display = 'none';
 
 		return;
 	}
 
-	const {items = []} = await getProducts(category, trimmed);
+	const {items = []} = await getProducts(category, searchValue);
 
 	if (!items.length) {
-		return renderNoResults(trimmed);
+		return renderNoResults(searchValue);
 	}
 
-	searchStorage.save(trimmed);
+	setSearchInput(searchValue);
 
 	const resultsList = document.createElement('ul');
 
 	resultsList.className = 'recent-searches-list w-100';
 
 	const searchRegex = new RegExp(
-		`(${trimmed.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`,
+		`(${searchValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`,
 		'gi'
 	);
 
 	for (const product of items) {
 		const itemHTML = `
-            <li class="results-items-list w-100">
-                <a class="align-items-center border-radius-medium d-flex flex-row mb-0 text-dark text-decoration-none w-100" href="/web/marketplace/p/${product.slug}?keyword=${trimmed}">
-                    <div class="image-container mr-2 rounded">
-                        <img alt="${product.name}" class="app-search-bar-image" draggable="false" height="56" src="${product.urlImage?.replace('https://', 'http://') || ''}" width="56" />
-                    </div>
+				<li class="results-items-list w-100">
+					<a class="align-items-center border-radius-medium d-flex flex-row mb-0 text-dark text-decoration-none w-100" href="/web/marketplace/p/${product.slug}?keyword=${searchValue}">
+						<div class="image-container mr-2 rounded">
+							<img alt="${product.name}" class="app-search-bar-image" draggable="false" height="56" src="${product.urlImage?.replace('https://', 'http://') || ''}" width="56" />
+						</div>
 
-                    <div class="app-name font-weight-bold w-100">${product.name.replace(searchRegex, '<mark>$1</mark>')}</div>
-                </a>
-            </li>
-        `;
+						<div class="app-name font-weight-bold w-100">${product.name.replace(searchRegex, '<mark>$1</mark>')}</div>
+					</a>
+				</li>
+			`;
 
 		resultsList.insertAdjacentHTML('beforeend', itemHTML);
 	}
+
+	listSectionContainers = document.querySelectorAll(
+		'.list-section-container'
+	);
 
 	listSectionContainers.forEach((sectionContainer) =>
 		sectionContainer.classList.add('hidden')
@@ -210,15 +228,22 @@ const getFirstParam = (...keys) => {
 async function getProducts(category, query) {
 	const params = new URLSearchParams({
 		accountId: '-1',
+		filter: `categoryNames/any(x:(x eq 'App'))`,
 		pageSize: 12,
 	});
 
+	let currentFilter = params.get('filter');
+
 	if (category && category !== 'All Categories') {
-		params.set('filter', `categoryNames/any(x:(x eq '${category}'))`);
+		const categoryFilter = `categoryNames/any(x:(x eq '${category}'))`;
+
+		currentFilter = `${currentFilter} and ${categoryFilter}`;
+
+		params.set('filter', currentFilter);
 	}
 
 	if (query) {
-		params.set('search', encodeURIComponent(query));
+		params.set('search', query);
 	}
 
 	const response = await Liferay.Util.fetch(
@@ -286,8 +311,17 @@ async function main() {
 		});
 	});
 
-	search.addEventListener('click', () => {
+	search.addEventListener('click', (event) => {
+		event.stopPropagation();
+
 		if (!state.isSearchExpanded) {
+			state.isSearchExpanded = true;
+			searchToggle.show();
+		}
+
+		if (state.isSearchExpanded && state.isDropdownExpanded) {
+			state.isDropdownExpanded = false;
+			searchDropdown.classList.remove('expanded');
 			state.isSearchExpanded = true;
 			searchToggle.show();
 		}
@@ -295,6 +329,7 @@ async function main() {
 
 	navContainer.addEventListener('click', (event) => {
 		if (
+			!results.contains(event.target) &&
 			!search.contains(event.target) &&
 			!searchDropdown.contains(event.target)
 		) {
@@ -338,14 +373,14 @@ async function main() {
 	searchInput.addEventListener('input', () => {
 		clearTimeout(state.searchTimeout);
 
-		const value = searchInput.value.trim();
+		const searchValue = searchInput.value.trim();
 
-		clearInputButton.classList.toggle('visible', !!value);
+		clearInputButton.classList.toggle('visible', !!searchValue);
 
 		state.searchTimeout = setTimeout(() => {
-			fetchSearchResults(state.categorySelected, value);
+			fetchSearchResults(state.categorySelected, searchValue);
 
-			if (!searchInput.value.trim().length) {
+			if (!searchValue.length) {
 				listSectionContainers.forEach((container) =>
 					container.classList.remove('hidden')
 				);
@@ -354,14 +389,14 @@ async function main() {
 	});
 
 	search.addEventListener('keydown', async (event) => {
-		const key = event.key;
-
 		if (!search.classList.contains('expanded')) {
 			return;
 		}
+
 		state.resultsItemsList = document.querySelectorAll(
 			'.results-items-list'
 		);
+
 		const items = state.resultsItemsList;
 
 		if (!items || !items.length) {
@@ -371,6 +406,8 @@ async function main() {
 		const clearSelection = () => {
 			items.forEach((item) => item.classList.remove('selected'));
 		};
+
+		const key = event.key;
 
 		if (key === 'ArrowDown') {
 			event.preventDefault();
@@ -413,40 +450,47 @@ async function main() {
 					selectedItem.firstElementChild;
 
 				if (clickable) {
+					searchToggle.hide();
 					clickable.click();
 				}
 				else if (typeof selectedItem.onclick === 'function') {
+					searchToggle.hide();
 					selectedItem.onclick();
 				}
 				else {
+					searchToggle.hide();
 					selectedItem.click();
 				}
 
 				return;
 			}
 
-			if (searchInput.value.trim()) {
-				searchStorage.save(searchInput.value.trim());
+			const searchValue = searchInput.value.trim();
 
-				const data = await getProducts(
-					state.categorySelected !== 'All Categories'
-						? state.categorySelected
-						: '',
-					searchInput.value.trim()
-				);
-
-				state.enterSelection = null;
-
-				const queryParam = data.items.length ? 'q' : 'n';
-
-				window.location.href = `/web/marketplace/applications?${queryParam}=${searchInput.value.trim()}${
-					state.categorySelected !== 'All Categories'
-						? `&category=${encodeURIComponent(
-								state.categorySelected
-							)}`
-						: ''
-				}`;
+			if (!searchValue) {
+				return;
 			}
+
+			setSearchInput(searchValue);
+
+			const data = await getProducts(
+				state.categorySelected !== 'All Categories'
+					? state.categorySelected
+					: '',
+				searchValue
+			);
+
+			state.enterSelection = null;
+
+			const queryParam = data.items.length ? 'q' : 'n';
+
+			searchToggle.hide();
+
+			window.location.href = `/web/marketplace/applications?${queryParam}=${searchValue}${
+				state.categorySelected !== 'All Categories'
+					? `&category=${encodeURIComponent(state.categorySelected)}`
+					: ''
+			}`;
 		}
 	});
 
@@ -483,6 +527,8 @@ async function onclickNavigateTo(term) {
 		term.trim()
 	);
 
+	searchToggle.hide();
+
 	state.enterSelection = null;
 	const queryParam = data.items.length ? 'q' : 'n';
 	window.location.href = `/web/marketplace/applications?${queryParam}=${term}`;
@@ -497,32 +543,37 @@ const removeAllQueryParams = (url) => {
 };
 
 function renderNoResults(query) {
+	listSectionContainers = document.querySelectorAll(
+		'.list-section-container'
+	);
+
 	listSectionContainers.forEach((sectionElement) =>
 		sectionElement.classList.add('hidden')
 	);
 
 	searchResultsContainer.innerHTML = `
-        <ul class="recent-searches-list w-100">
-            <li class="py-3 results-items-list w-100">
-            	<div class="align-items-center d-flex search-no-results-container">
-                	<svg class="lexicon-icon lexicon-icon-warning mr-2" width="16" height="16">
-                		<use href="${spritemap}#warning"></use>
-                	</svg>
+		<ul class="recent-searches-list w-100">
+			<li class="py-3 results-items-list w-100">
+				<div class="align-items-center d-flex search-no-results-container">
+					${getClayIconSVG('warning')}
 
-                	<span>Oops! No results for <strong>"${query}"</strong></span>
-           		</div>
-            </li>
-        </ul>
-    `;
+					<span>Oops! No results for <strong>"${query}"</strong></span>
+				</div>
+			</li>
+		</ul>
+	`;
 
 	searchResultsContainer.style.display = 'block';
 }
 
 function renderRecentSearches() {
-	const searches = searchStorage.get();
+	const searchItems = getDecodedJSONParse(
+		searchStorage.get(SEARCH_STORAGE_KEY)
+	);
+
 	recentSearchesContainer.innerHTML = '';
 
-	if (!searches.length) {
+	if (!searchItems.length) {
 		recentSearchesContainer.style.display = 'none';
 
 		return;
@@ -531,19 +582,20 @@ function renderRecentSearches() {
 	recentSearchesContainer.style.display = 'block';
 
 	const titleHTML = `
-        <div class="align-items-center d-flex justify-content-between results-title-container w-100">
-            <h4 class="m-0 text-black-50 text-nowrap">Recent Searches</h4>
-            <div class="divider-horizontal flex-grow-1 mx-3"></div>
-            <button class="btn font-weight-bold p-0 section-action-button text-nowrap">Clear All</button>
-        </div>
-    `;
+		<div class="align-items-center d-flex justify-content-between results-title-container w-100">
+			<h4 class="m-0 text-black-50 text-nowrap">Recent Searches</h4>
+			<div class="divider-horizontal flex-grow-1 mx-3"></div>
+			<button class="btn font-weight-bold p-0 section-action-button text-nowrap">Clear All</button>
+		</div>
+	`;
 
 	recentSearchesContainer.insertAdjacentHTML('beforeend', titleHTML);
 
 	recentSearchesContainer
 		.querySelector('button')
 		.addEventListener('click', () => {
-			searchStorage.clear();
+			searchStorage.clear(SEARCH_STORAGE_KEY);
+
 			renderRecentSearches();
 		});
 
@@ -551,33 +603,36 @@ function renderRecentSearches() {
 
 	list.className = 'results-list-container w-100';
 
-	searches.slice(0, 3).forEach((term) => {
+	searchItems.slice(0, 3).forEach((searchItem) => {
 		const li = document.createElement('li');
 
 		li.className = 'results-items-list w-100';
 
 		li.innerHTML = `
-            <a class="align-items-center d-flex text-dark text-decoration-none w-100">
-                <svg class="lexicon-icon lexicon-icon-restore mr-2" width="16" height="16">
-                    <use href="${spritemap}#restore"></use>
-                </svg>
-                <span class="font-weight-bold w-100">${term}</span>
-            </a>
+			<a class="align-items-center d-flex text-dark text-decoration-none w-100">
+				${getClayIconSVG('restore')}
 
-            <button class="bg-transparent border-0 btn btn-sm text-muted">
-                <svg class="lexicon-icon lexicon-icon-times" width="14" height="14">
-                    <use href="${spritemap}#times"></use>
-                </svg>
-            </button>
-        `;
+				<span class="font-weight-bold w-100">${searchItem}</span>
+			</a>
+
+			<button class="bg-transparent border-0 btn btn-sm text-muted">
+				${getClayIconSVG('times', {height: 14, width: 14})}
+			</button>
+		`;
 
 		li.querySelector('a').addEventListener('click', () =>
-			onclickNavigateTo(term)
+			onclickNavigateTo(searchItem)
 		);
 
 		li.querySelector('button').addEventListener('click', (event) => {
 			event.stopPropagation();
-			searchStorage.delete(term);
+
+			const items = getDecodedJSONParse(
+				searchStorage.get(SEARCH_STORAGE_KEY)
+			).filter((item) => item !== searchItem);
+
+			searchStorage.save(SEARCH_STORAGE_KEY, JSON.stringify(items));
+
 			renderRecentSearches();
 		});
 
@@ -637,15 +692,13 @@ function showFeedbackAlert(text) {
 		'search-info-panel expanded d-flex align-items-center justify-content-between';
 
 	panel.innerHTML = `
-        <div class="container-fluid container-fluid-max-xl d-flex justify-content-between">
-            <div class="align-items-center d-flex">${text}</div>
-            <button class="btn btn-sm border-0 bg-transparent text-muted" style="cursor:pointer">
-                <svg class="lexicon-icon lexicon-icon-times" width="14" height="14">
-                    <use href="${spritemap}#times"></use>
-                </svg>
-            </button>
-        </div>
-    `;
+		<div class="container-fluid container-fluid-max-xl d-flex justify-content-between">
+			<div class="align-items-center d-flex">${text}</div>
+			<button class="btn btn-sm border-0 bg-transparent text-muted" style="cursor:pointer">
+				${getClayIconSVG('times', {height: 14, width: 14})}
+			</button>
+		</div>
+	`;
 
 	panel.querySelector('button').addEventListener('click', (event) => {
 		event.stopPropagation();
@@ -661,6 +714,174 @@ function showFeedbackAlert(text) {
 
 	navContainer.appendChild(panel);
 	navContainer.classList.add('expanded');
+}
+
+async function getCatalogProducts(options = {}) {
+	const searchParams = new URLSearchParams({
+		accountId: options.accountId || '-1',
+		pageSize: options.pageSize || 12,
+	});
+
+	if (options.filter) {
+		searchParams.set('filter', options.filter);
+	}
+
+	if (options.search) {
+		searchParams.set('search', encodeURIComponent(options.search));
+	}
+
+	const response = await Liferay.Util.fetch(
+		`/o/headless-commerce-delivery-catalog/v1.0/channels/${channelId}/products?${searchParams}`
+	);
+
+	return response.json();
+}
+
+async function renderFeaturedSection({
+	pageSize = 3,
+	specificationValue = '',
+	title = 'Section',
+} = {}) {
+	const featuredSectionKey = `@marketplace/featured/${specificationValue.toLowerCase()}`;
+
+	const normalizedClass = specificationValue
+		.toLowerCase()
+		.replace(/\s+/g, '-');
+
+	if (featuredSectionContainer.querySelector(`.${normalizedClass}`)) {
+		return;
+	}
+
+	const featuredSectionCache = searchStorage.get(featuredSectionKey);
+
+	let featuredSectionProducts = featuredSectionCache
+		? getDecodedJSONParse(featuredSectionCache)
+		: [];
+
+	if (!featuredSectionProducts.length) {
+		const response = await getCatalogProducts({
+			accountId: '-1',
+			filter: `specificationValues/any(x:(x eq '${specificationValue}'))`,
+			pageSize,
+		});
+
+		if (!response?.items?.length) {
+			return;
+		}
+
+		searchStorage.save(
+			featuredSectionKey,
+			JSON.stringify(response?.items),
+			14
+		);
+
+		featuredSectionProducts = response?.items;
+	}
+
+	const featuredSectionHTML = document.createElement('div');
+
+	featuredSectionHTML.classList.add(
+		'align-items-start',
+		'd-flex',
+		'flex-column',
+		'justify-content-start',
+		'list-section-container',
+		'w-100',
+		`${normalizedClass}`
+	);
+
+	const featuredTitleContainer = document.createElement('div');
+
+	featuredTitleContainer.classList.add(
+		'align-items-center',
+		'd-flex',
+		'justify-content-between',
+		'results-title-container',
+		'w-100'
+	);
+
+	const featuredTitle = document.createElement('h4');
+
+	featuredTitle.classList.add('m-0', 'text-black-50', 'text-nowrap');
+	featuredTitle.textContent = title;
+
+	const divider = document.createElement('div');
+
+	divider.classList.add('divider-horizontal', 'mx-3');
+
+	const viewAllLink = document.createElement('a');
+
+	viewAllLink.classList.add(
+		'font-weight-bold',
+		'p-0',
+		'section-action-button',
+		'text-nowrap'
+	);
+
+	viewAllLink.href = `/web/marketplace/applications?our-selection=${specificationValue}`;
+
+	const viewAllSpan = document.createElement('span');
+
+	viewAllSpan.classList.add('text-black-50', 'text-nowrap');
+	viewAllSpan.textContent = 'View All';
+
+	viewAllLink.appendChild(viewAllSpan);
+
+	featuredTitleContainer.appendChild(featuredTitle);
+	featuredTitleContainer.appendChild(divider);
+	featuredTitleContainer.appendChild(viewAllLink);
+
+	const resultsListContainer = document.createElement('ul');
+	resultsListContainer.classList.add('results-list-container', 'w-100');
+
+	for (const product of featuredSectionProducts) {
+		const listItem = document.createElement('li');
+
+		listItem.classList.add('results-items-list', 'w-100');
+
+		const productLink = document.createElement('a');
+
+		productLink.classList.add(
+			'align-items-center',
+			'd-flex',
+			'flex-row',
+			'mb-0',
+			'text-dark',
+			'text-decoration-none',
+			'w-100'
+		);
+		productLink.href = `/web/marketplace/p/${product.slug}`;
+		productLink.target = '_self';
+
+		const imageContainer = document.createElement('div');
+		imageContainer.classList.add('image-container', 'mr-2', 'rounded');
+
+		const productImage = document.createElement('img');
+		productImage.alt = product.name;
+		productImage.classList.add('app-search-bar-image');
+		productImage.draggable = false;
+		productImage.height = 56;
+		productImage.width = 56;
+		productImage.src =
+			product.urlImage?.replace('https://', 'http://') || '';
+
+		imageContainer.appendChild(productImage);
+
+		const productNameDiv = document.createElement('div');
+		productNameDiv.classList.add('font-weight-bold', 'w-100');
+		productNameDiv.textContent = product.name;
+
+		productLink.appendChild(imageContainer);
+		productLink.appendChild(productNameDiv);
+
+		listItem.appendChild(productLink);
+		resultsListContainer.appendChild(listItem);
+	}
+
+	featuredSectionHTML.appendChild(featuredTitleContainer);
+	featuredSectionHTML.appendChild(resultsListContainer);
+
+	featuredSectionContainer.appendChild(featuredSectionHTML);
 }
 
 main();

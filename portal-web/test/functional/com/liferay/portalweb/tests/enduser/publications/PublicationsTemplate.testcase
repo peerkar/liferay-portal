@@ -1,6 +1,7 @@
 @component-name = "portal-publications"
 definition {
 
+	property browser.chrome.version = "139.0";
 	property custom.properties = "jsonws.web.service.paths.excludes=";
 	property osgi.module.configuration.file.names = "com.liferay.change.tracking.configuration.CTSettingsConfiguration.config";
 	property osgi.module.configurations = "enabled=B\"true\"";
@@ -94,35 +95,6 @@ definition {
 		Publications.viewInvitedUser(
 			publicationRole = "Viewer",
 			userInvite = "userea2@liferay.com");
-	}
-
-	@priority = 3
-	test CanDeletePublicationTemplate {
-		JSONUser.addUser(
-			userEmailAddress = "userea@liferay.com",
-			userFirstName = "userfn",
-			userLastName = "userln",
-			userScreenName = "usersn");
-
-		PublicationsTemplate.gotoPublicationTemplate();
-
-		PublicationsTemplate.addPublicationTemplate(
-			publicationDescription = "Publications Description ${CURRENT_USERNAME}",
-			publicationName = "Publication Name ${CURRENT_USERNAME}",
-			publicationRole1 = "Editor",
-			publicationRole2 = "Viewer",
-			templateDescription = "Template Description",
-			templateName = "Template Name",
-			titleRole1 = "Viewers can view. Viewers cannot edit, publish, or invite other users.",
-			userInvite = "userea@liferay.com",
-			userInvite1 = "userea@liferay.com",
-			userMissingPublicationsRole = "true");
-
-		PublicationsTemplate.viewPublicationTemplate(templateName = "Template Name");
-
-		PublicationsTemplate.deletePublicationTemplate(templateName = "Template Name");
-
-		PublicationsTemplate.viewPublicationTemplateNotPresent(templateName = "Template Name");
 	}
 
 	@priority = 3

@@ -30,6 +30,7 @@ import com.liferay.portal.vulcan.internal.test.util.PaginationConfigurationTestU
 
 import jakarta.ws.rs.NotFoundException;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 
 import java.util.Arrays;
@@ -453,6 +454,28 @@ public class GraphQLServletTest {
 	}
 
 	@Test
+	public void testQueryWithIntegerArray() throws Exception {
+		int[] integers = {
+			RandomTestUtil.randomInt(), RandomTestUtil.randomInt()
+		};
+
+		Assert.assertArrayEquals(
+			integers,
+			JSONUtil.toIntegerArray(
+				JSONUtil.getValueAsJSONArray(
+					_invoke(
+						new GraphQLField(
+							"testDTO1Page",
+							HashMapBuilder.put(
+								"integers", (Object)integers
+							).build(),
+							new GraphQLField("integers")),
+						"query"),
+					"JSONObject/data", "JSONObject/testDTO1Page",
+					"JSONArray/integers")));
+	}
+
+	@Test
 	public void testSchema() throws Exception {
 
 		// Mutation fields
@@ -601,9 +624,14 @@ public class GraphQLServletTest {
 
 	public static class TestDTO1Page {
 
-		public TestDTO1Page(int page, int pageSize) {
+		public TestDTO1Page(Integer[] integers, int page, int pageSize) {
+			this.integers = integers;
 			this.page = page;
 			this.pageSize = pageSize;
+		}
+
+		public Integer[] getIntegers() {
+			return integers;
 		}
 
 		public int getPage() {
@@ -613,6 +641,9 @@ public class GraphQLServletTest {
 		public int getPageSize() {
 			return pageSize;
 		}
+
+		@com.liferay.portal.vulcan.graphql.annotation.GraphQLField
+		protected Integer[] integers;
 
 		@com.liferay.portal.vulcan.graphql.annotation.GraphQLField
 		protected int page;
@@ -657,11 +688,12 @@ public class GraphQLServletTest {
 		}
 
 		@com.liferay.portal.vulcan.graphql.annotation.GraphQLField
-		public GraphQLServletTest.TestDTO1Page testDTO1Page(
+		public TestDTO1Page testDTO1Page(
+			@GraphQLName("integers") Integer[] integers,
 			@GraphQLName("page") int page,
 			@GraphQLName("pageSize") int pageSize) {
 
-			return new TestDTO1Page(page, pageSize);
+			return new TestDTO1Page(integers, page, pageSize);
 		}
 
 		@com.liferay.portal.vulcan.graphql.annotation.GraphQLField
@@ -738,7 +770,7 @@ public class GraphQLServletTest {
 
 					sb.append(entry.getKey());
 					sb.append(": ");
-					sb.append(entry.getValue());
+					sb.append(_serializeValue(entry.getValue()));
 					sb.append(", ");
 				}
 
@@ -759,6 +791,34 @@ public class GraphQLServletTest {
 
 				sb.append("}");
 			}
+
+			return sb.toString();
+		}
+
+		private Object _serializeValue(Object value) {
+			if (value == null) {
+				return null;
+			}
+
+			Class<?> clazz = value.getClass();
+
+			if (!clazz.isArray()) {
+				return value;
+			}
+
+			StringBuilder sb = new StringBuilder("[");
+
+			int length = Array.getLength(value);
+
+			for (int i = 0; i < length; i++) {
+				sb.append(_serializeValue(Array.get(value, i)));
+
+				if (i < (length - 1)) {
+					sb.append(", ");
+				}
+			}
+
+			sb.append("]");
 
 			return sb.toString();
 		}

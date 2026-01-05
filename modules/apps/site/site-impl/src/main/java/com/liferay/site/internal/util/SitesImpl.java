@@ -163,8 +163,10 @@ public class SitesImpl implements Sites {
 				targetLayout.getDescriptionMap(), targetLayout.getKeywordsMap(),
 				targetLayout.getRobotsMap(), layoutPrototypeLayout.getType(),
 				targetLayout.isHidden(), targetLayout.getFriendlyURLMap(),
-				layoutPrototypeLayout.isIconImage(), iconBytes, null, 0,
-				layoutPrototypeLayout.getMasterLayoutPlid(), serviceContext);
+				layoutPrototypeLayout.isIconImage(), iconBytes, null, null,
+				null,
+				layoutPrototypeLayout.getMasterLayoutPageTemplateEntryERC(),
+				serviceContext);
 		}
 		finally {
 			serviceContext.setAssetCategoryIds(originalAssetCategoryIds);

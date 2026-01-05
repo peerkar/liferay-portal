@@ -11,7 +11,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.liferay.petra.function.UnsafeSupplier;
 import com.liferay.petra.string.StringBundler;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.vulcan.graphql.annotation.GraphQLField;
 import com.liferay.portal.vulcan.graphql.annotation.GraphQLName;
@@ -56,32 +55,32 @@ public class DropZonePageElementDefinition
 	}
 
 	@io.swagger.v3.oas.annotations.media.Schema(
-		description = "The drop zone page element's allowed or unallowed fragments."
+		description = "Whether to add new fragment entries automatically in the allowed fragments list."
 	)
-	@Valid
-	public Object getFragmentSettings() {
-		if (_fragmentSettingsSupplier != null) {
-			fragmentSettings = _fragmentSettingsSupplier.get();
+	public Boolean getAddNewFragmentEntries() {
+		if (_addNewFragmentEntriesSupplier != null) {
+			addNewFragmentEntries = _addNewFragmentEntriesSupplier.get();
 
-			_fragmentSettingsSupplier = null;
+			_addNewFragmentEntriesSupplier = null;
 		}
 
-		return fragmentSettings;
+		return addNewFragmentEntries;
 	}
 
-	public void setFragmentSettings(Object fragmentSettings) {
-		this.fragmentSettings = fragmentSettings;
+	public void setAddNewFragmentEntries(Boolean addNewFragmentEntries) {
+		this.addNewFragmentEntries = addNewFragmentEntries;
 
-		_fragmentSettingsSupplier = null;
+		_addNewFragmentEntriesSupplier = null;
 	}
 
 	@JsonIgnore
-	public void setFragmentSettings(
-		UnsafeSupplier<Object, Exception> fragmentSettingsUnsafeSupplier) {
+	public void setAddNewFragmentEntries(
+		UnsafeSupplier<Boolean, Exception>
+			addNewFragmentEntriesUnsafeSupplier) {
 
-		_fragmentSettingsSupplier = () -> {
+		_addNewFragmentEntriesSupplier = () -> {
 			try {
-				return fragmentSettingsUnsafeSupplier.get();
+				return addNewFragmentEntriesUnsafeSupplier.get();
 			}
 			catch (RuntimeException runtimeException) {
 				throw runtimeException;
@@ -93,13 +92,61 @@ public class DropZonePageElementDefinition
 	}
 
 	@GraphQLField(
-		description = "The drop zone page element's allowed or unallowed fragments."
+		description = "Whether to add new fragment entries automatically in the allowed fragments list."
 	)
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected Object fragmentSettings;
+	protected Boolean addNewFragmentEntries;
 
 	@JsonIgnore
-	private Supplier<Object> _fragmentSettingsSupplier;
+	private Supplier<Boolean> _addNewFragmentEntriesSupplier;
+
+	@io.swagger.v3.oas.annotations.media.Schema(
+		description = "A list of allowed fragment references."
+	)
+	@Valid
+	public FragmentReference[] getAllowedFragmentReferences() {
+		if (_allowedFragmentReferencesSupplier != null) {
+			allowedFragmentReferences =
+				_allowedFragmentReferencesSupplier.get();
+
+			_allowedFragmentReferencesSupplier = null;
+		}
+
+		return allowedFragmentReferences;
+	}
+
+	public void setAllowedFragmentReferences(
+		FragmentReference[] allowedFragmentReferences) {
+
+		this.allowedFragmentReferences = allowedFragmentReferences;
+
+		_allowedFragmentReferencesSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setAllowedFragmentReferences(
+		UnsafeSupplier<FragmentReference[], Exception>
+			allowedFragmentReferencesUnsafeSupplier) {
+
+		_allowedFragmentReferencesSupplier = () -> {
+			try {
+				return allowedFragmentReferencesUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField(description = "A list of allowed fragment references.")
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected FragmentReference[] allowedFragmentReferences;
+
+	@JsonIgnore
+	private Supplier<FragmentReference[]> _allowedFragmentReferencesSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -130,28 +177,39 @@ public class DropZonePageElementDefinition
 
 		sb.append("{");
 
-		Object fragmentSettings = getFragmentSettings();
+		Boolean addNewFragmentEntries = getAddNewFragmentEntries();
 
-		if (fragmentSettings != null) {
+		if (addNewFragmentEntries != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"fragmentSettings\": ");
+			sb.append("\"addNewFragmentEntries\": ");
 
-			if (fragmentSettings instanceof Map) {
-				sb.append(
-					JSONFactoryUtil.createJSONObject(
-						(Map<?, ?>)fragmentSettings));
+			sb.append(addNewFragmentEntries);
+		}
+
+		FragmentReference[] allowedFragmentReferences =
+			getAllowedFragmentReferences();
+
+		if (allowedFragmentReferences != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
 			}
-			else if (fragmentSettings instanceof String) {
-				sb.append("\"");
-				sb.append(_escape((String)fragmentSettings));
-				sb.append("\"");
+
+			sb.append("\"allowedFragmentReferences\": ");
+
+			sb.append("[");
+
+			for (int i = 0; i < allowedFragmentReferences.length; i++) {
+				sb.append(String.valueOf(allowedFragmentReferences[i]));
+
+				if ((i + 1) < allowedFragmentReferences.length) {
+					sb.append(", ");
+				}
 			}
-			else {
-				sb.append(fragmentSettings);
-			}
+
+			sb.append("]");
 		}
 
 		Type type = getType();
@@ -164,9 +222,7 @@ public class DropZonePageElementDefinition
 			sb.append("\"type\": ");
 
 			sb.append("\"");
-
 			sb.append(type);
-
 			sb.append("\"");
 		}
 

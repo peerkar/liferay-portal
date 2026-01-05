@@ -15,4 +15,12 @@
 			<%@ include file="/checkbox/extended_label.jspf" %>
 		</label>
 	</div>
+
+	<c:if test="<%= Validator.isNotNull(subtitles) %>">
+		<ul class="lfr-tree list-unstyled">
+			<li>
+				<span class="selected-labels"><%= subtitles %></span>
+			</li>
+		</ul>
+	</c:if>
 </div>

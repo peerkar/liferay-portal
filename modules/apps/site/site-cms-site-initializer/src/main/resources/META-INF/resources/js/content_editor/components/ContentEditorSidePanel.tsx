@@ -27,6 +27,8 @@ import SchedulePanel from './panels/SchedulePanel';
 
 type Props = {
 	addCommentURL: string;
+	assetLibraryId: string;
+	cmsGroupId: string;
 	comments: Comment[];
 	contentAPIURL: string;
 	deleteCommentURL: string;
@@ -35,7 +37,7 @@ type Props = {
 	entryClassName: string;
 	expirationDate: string;
 	getCommentsURL: string;
-	groupId: string;
+	hasUpdatePermission: boolean;
 	id: string;
 	isSubscribed: boolean;
 	reviewDate: string;
@@ -62,7 +64,7 @@ type Item = {
 
 type BaseScheduleData = {
 	error: string;
-	neverExpire: boolean;
+	neverCheckbox: {label: string; value: boolean};
 	value: string;
 };
 
@@ -127,13 +129,19 @@ export default function ContentEditorSidePanel(props: Props) {
 	const [scheduleFields, setScheduleFields] = useState<ScheduleFields>({
 		expirationDate: {
 			error: '',
-			neverExpire: Boolean(props.expirationDate),
+			neverCheckbox: {
+				label: Liferay.Language.get('never-expire'),
+				value: !props.expirationDate,
+			},
 			serverValue: props.expirationDate,
 			value: toMomentDate(props.expirationDate),
 		},
 		reviewDate: {
 			error: '',
-			neverExpire: Boolean(props.reviewDate),
+			neverCheckbox: {
+				label: Liferay.Language.get('never-review'),
+				value: !props.reviewDate,
+			},
 			serverValue: props.reviewDate,
 			value: toMomentDate(props.reviewDate),
 		},
@@ -157,10 +165,10 @@ export default function ContentEditorSidePanel(props: Props) {
 	const onUpdateSchedule = ({
 		error,
 		name,
-		neverExpire,
+		neverCheckbox,
 		value,
 	}: UpdateScheduleProps) => {
-		const values = neverExpire
+		const values = neverCheckbox
 			? {serverValue: ''}
 			: {
 					serverValue: toServerISOFormat(value),

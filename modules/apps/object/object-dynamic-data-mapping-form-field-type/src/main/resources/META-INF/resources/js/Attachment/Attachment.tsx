@@ -21,45 +21,27 @@ import type {
 
 export interface AttachmentProps
 	extends AttachmentBaseProps<string | LocalizedValue<string>> {
-	contentURL?: string;
 	deleteURL?: string;
 	fieldName: string;
 	fileEntryProperties: AttachmentFile | LocalizedValue<AttachmentFile>;
 	localizedObjectField: boolean;
 	onChange: FieldChangeEventHandler<string | LocalizedValue<string>>;
-	title?: string;
 }
 
 export default function Attachment({
-	contentURL,
 	deleteURL,
 	fileEntryProperties,
 	localizedObjectField,
 	onChange,
 	readOnly,
 	tip,
-	title,
 	value,
 	...otherProps
 }: AttachmentProps) {
-	const isLocalizedObjectField: boolean =
-		Liferay.FeatureFlags['LPD-32050'] && !!localizedObjectField;
-
 	const {portletNamespace} = useConfig();
 
-	const getAttachment = () => {
-		if (Liferay.FeatureFlags['LPD-32050']) {
-			return fileEntryProperties;
-		}
-		else if (contentURL && title) {
-			return {contentURL, title};
-		}
-
-		return null;
-	};
-
 	const [attachment, setAttachment] = useState<AttachmentFile | null>(
-		getAttachment() as AttachmentFile | null
+		fileEntryProperties as AttachmentFile | null
 	);
 	const [error, setError] = useState({});
 	const [submitButtonClicked, setSubmitButtonClicked] = useState(false);
@@ -137,7 +119,7 @@ export default function Attachment({
 			{...otherProps}
 			{...error}
 		>
-			{isLocalizedObjectField ? (
+			{localizedObjectField ? (
 				<AttachmentLocalizedObjectField
 					{...otherProps}
 					error={error}

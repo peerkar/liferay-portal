@@ -1,8 +1,28 @@
 @import 'cadmin-variables';
 
 html#{$cadmin-selector} .cadmin {
-	.page-editor__rule:hover {
-		background: $cadmin-list-group-active-bg;
+	.page-editor__rule {
+		&:focus-visible,
+		&:hover {
+			background: $cadmin-list-group-active-bg;
+		}
+
+		&:focus-visible {
+			box-shadow: 0 0 0 2px $cadmin-primary-l0;
+			outline: 0;
+			z-index: 1;
+		}
+
+		input {
+			&:active,
+			&:focus {
+				outline-color: $cadmin-primary-l1;
+			}
+		}
+
+		.text-muted .label {
+			color: $cadmin-secondary-l1;
+		}
 	}
 
 	.page-editor__rule-builder-item {
@@ -46,11 +66,6 @@ html#{$cadmin-selector} .cadmin {
 			margin-top: 0;
 		}
 
-		.panel-header {
-			background-color: $cadmin-gray-100;
-			border-bottom: none;
-		}
-
 		.page-editor__rule-builder-section-title {
 			background-color: $cadmin-gray-100;
 			border-bottom: 1px solid $cadmin-gray-300;
@@ -62,6 +77,10 @@ html#{$cadmin-selector} .cadmin {
 				color: $cadmin-warning-l1;
 				transform: rotate(-90deg);
 			}
+		}
+
+		.lfr-objects__code-editor {
+			height: 60vh;
 		}
 	}
 }

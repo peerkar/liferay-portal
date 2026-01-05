@@ -21,16 +21,20 @@ import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.ObjectFieldSetting;
 import com.liferay.object.service.ObjectEntryLocalServiceUtil;
+import com.liferay.object.service.ObjectEntryService;
 import com.liferay.object.service.ObjectFieldLocalServiceUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.DateUtil;
@@ -186,7 +190,9 @@ public class ObjectFieldUtil {
 	public static String getAttachmentDownloadURL(
 			DLURLHelper dlURLHelper, FileEntry fileEntry, long groupId,
 			String objectDefinitionExternalReferenceCode,
-			String objectEntryExternalReferenceCode, ThemeDisplay themeDisplay)
+			ObjectEntry objectEntry, ObjectEntryService objectEntryService,
+			ObjectField objectField, PermissionChecker permissionChecker,
+			ThemeDisplay themeDisplay)
 		throws PortalException {
 
 		String downloadURL = dlURLHelper.getDownloadURL(
@@ -208,11 +214,33 @@ public class ObjectFieldUtil {
 		downloadURL = HttpComponentsUtil.addParameter(
 			downloadURL, "objectDefinitionExternalReferenceCode",
 			objectDefinitionExternalReferenceCode);
+
+		if (objectEntry == null) {
+			return downloadURL;
+		}
+
 		downloadURL = HttpComponentsUtil.addParameter(
 			downloadURL, "objectEntryExternalReferenceCode",
-			objectEntryExternalReferenceCode);
+			objectEntry.getExternalReferenceCode());
 
-		return downloadURL;
+		if (!FeatureFlagManagerUtil.isEnabled(
+				fileEntry.getCompanyId(), "LPD-17564") ||
+			(objectField == null)) {
+
+			return downloadURL;
+		}
+
+		if (!fileEntry.containsPermission(
+				permissionChecker, ActionKeys.DOWNLOAD) ||
+			!objectEntryService.hasModelResourcePermission(
+				objectEntry, objectField.getAttachmentDownloadActionKey())) {
+
+			return StringPool.BLANK;
+		}
+
+		return HttpComponentsUtil.addParameter(
+			downloadURL, "objectFieldExternalReferenceCode",
+			objectField.getExternalReferenceCode());
 	}
 
 	public static String getCounterName(ObjectField objectField) {
@@ -282,7 +310,7 @@ public class ObjectFieldUtil {
 			return isReadOnly(
 				ddmExpressionFactory, objectField,
 				ObjectFieldSettingUtil.getDefaultValues(
-					objectField.getObjectDefinitionId()));
+					ddmExpressionFactory, objectField.getObjectDefinitionId()));
 		}
 
 		return isReadOnly(
@@ -363,7 +391,7 @@ public class ObjectFieldUtil {
 				existingValues.put(
 					objectField.getName(),
 					ObjectFieldSettingUtil.getDefaultValue(
-						null, objectField, null));
+						ddmExpressionFactory, objectField, values));
 			}
 
 			if (objectField.isLocalized()) {

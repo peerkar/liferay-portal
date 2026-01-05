@@ -75,6 +75,32 @@ public class MessageFormSubmissionResult implements Cloneable, Serializable {
 
 	protected MessageType messageType;
 
+	public FragmentInlineValue getNotificationTextFragmentInlineValue() {
+		return notificationTextFragmentInlineValue;
+	}
+
+	public void setNotificationTextFragmentInlineValue(
+		FragmentInlineValue notificationTextFragmentInlineValue) {
+
+		this.notificationTextFragmentInlineValue =
+			notificationTextFragmentInlineValue;
+	}
+
+	public void setNotificationTextFragmentInlineValue(
+		UnsafeSupplier<FragmentInlineValue, Exception>
+			notificationTextFragmentInlineValueUnsafeSupplier) {
+
+		try {
+			notificationTextFragmentInlineValue =
+				notificationTextFragmentInlineValueUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected FragmentInlineValue notificationTextFragmentInlineValue;
+
 	public Boolean getShowNotification() {
 		return showNotification;
 	}

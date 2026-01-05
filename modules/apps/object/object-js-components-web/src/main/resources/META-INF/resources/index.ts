@@ -3,7 +3,12 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+export {BooleanEntryBaseField} from './components/BaseEntryFields/BooleanEntryBaseField';
+export {DateEntryBaseField} from './components/BaseEntryFields/DateEntryBaseField';
 export {ListTypeEntryBaseField} from './components/BaseEntryFields/ListTypeEntryBaseField';
+export {NumericEntryBaseField} from './components/BaseEntryFields/NumericEntryBaseField';
+export {RichTextEntryBaseField} from './components/BaseEntryFields/RichTextEntryBaseField';
+export {TextEntryBaseField} from './components/BaseEntryFields/TextEntryBaseField';
 export {
 	BuilderScreen,
 	TBuilderScreenItem,

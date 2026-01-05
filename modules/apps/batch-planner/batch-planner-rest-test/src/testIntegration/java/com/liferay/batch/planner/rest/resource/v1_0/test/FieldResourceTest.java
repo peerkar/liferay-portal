@@ -25,7 +25,6 @@ import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.test.rule.FeatureFlag;
-import com.liferay.portal.test.rule.FeatureFlags;
 
 import java.util.Collections;
 
@@ -38,9 +37,7 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class FieldResourceTest extends BaseFieldResourceTestCase {
 
-	@FeatureFlags(
-		featureFlags = {@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-32050")}
-	)
+	@FeatureFlag("LPD-17564")
 	@Override
 	@Test
 	public void testGetPlanInternalClassNameKeyFieldsPage() throws Exception {

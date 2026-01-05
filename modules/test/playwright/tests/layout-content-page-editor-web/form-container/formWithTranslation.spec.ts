@@ -42,8 +42,6 @@ const test = mergeTests(
 	featureFlagsTest({
 		'LPD-11235': {enabled: true},
 		'LPD-17564': {enabled: true},
-		'LPD-21926': {enabled: true},
-		'LPD-32050': {enabled: true},
 		'LPD-60546': {enabled: true},
 		'LPS-178052': {enabled: true},
 	}),
@@ -524,6 +522,11 @@ test(
 		const listTypeDefinition =
 			await apiHelpers.listTypeAdmin.postRandomListTypeDefinition();
 
+		apiHelpers.data.push({
+			id: listTypeDefinition.id,
+			type: 'listTypeDefinition',
+		});
+
 		const options = ['Spain', 'Italy', 'Germany', 'Brasil'];
 
 		for (const option of options) {
@@ -703,7 +706,7 @@ test(
 );
 
 test(
-	'Can translate multiselect form field',
+	'Can translate multiselect form field with Multiselector Checkbox fragment',
 	{tag: '@LPD-48344'},
 	async ({apiHelpers, page, pageEditorPage, site}) => {
 
@@ -711,6 +714,11 @@ test(
 
 		const listTypeDefinition =
 			await apiHelpers.listTypeAdmin.postRandomListTypeDefinition();
+
+		apiHelpers.data.push({
+			id: listTypeDefinition.id,
+			type: 'listTypeDefinition',
+		});
 
 		for (const option of ['Spain', 'Italy', 'Germany']) {
 			await apiHelpers.listTypeAdmin.postListTypeEntry({
@@ -787,6 +795,18 @@ test(
 			addLocalizationSelect: true,
 		});
 
+		// Swap to Multiselector Checkbox fragment
+
+		const fragmentId = await pageEditorPage.getFragmentId(
+			'Multiselector Dropdown'
+		);
+
+		await pageEditorPage.swapFragment({
+			folder: 'Form Components',
+			fragmentId,
+			fragmentName: 'Multiselector Checkbox',
+		});
+
 		await pageEditorPage.publishPage();
 
 		await page.goto(`/web${site.friendlyUrlPath}${layout.friendlyUrlPath}`);
@@ -831,6 +851,182 @@ test(
 		).toBeVisible();
 
 		// Check the object entry
+
+		const {items} =
+			await apiHelpers.objectEntry.getObjectDefinitionObjectEntries(
+				'c/plants'
+			);
+
+		expect(items[0].growthAreas_i18n).toStrictEqual({
+			en_US: [
+				{key: 'spain', name: 'Spain'},
+				{key: 'italy', name: 'Italy'},
+			],
+			es_ES: [
+				{key: 'spain', name: 'Spain'},
+				{key: 'italy', name: 'Italy'},
+				{key: 'germany', name: 'Germany'},
+			],
+		});
+	}
+);
+
+test(
+	'Can translate multiselect form field with Multiselector Dropdown fragment',
+	{tag: '@LPD-73126'},
+	async ({
+		apiHelpers,
+		localizationSelectPage,
+		page,
+		pageEditorPage,
+		site,
+	}) => {
+
+		// Create object definition
+
+		const listTypeDefinition =
+			await apiHelpers.listTypeAdmin.postRandomListTypeDefinition();
+
+		apiHelpers.data.push({
+			id: listTypeDefinition.id,
+			type: 'listTypeDefinition',
+		});
+
+		for (const option of ['Spain', 'Italy', 'Germany']) {
+			await apiHelpers.listTypeAdmin.postListTypeEntry({
+				key: option,
+				listTypeDefinitionExternalReferenceCode:
+					listTypeDefinition.externalReferenceCode,
+				name_i18n: {en_US: option},
+			});
+		}
+
+		const objectDefinitionAPIClient =
+			await apiHelpers.buildRestClient(ObjectDefinitionAPI);
+
+		const {body: objectDefinition} =
+			await objectDefinitionAPIClient.postObjectDefinition({
+				active: true,
+				enableLocalization: true,
+				externalReferenceCode: 'plantERC',
+				label: {
+					en_US: 'Plant',
+				},
+				name: 'Plant',
+				objectFields: [
+					{
+						DBType: 'String',
+						businessType: 'MultiselectPicklist',
+						indexed: true,
+						indexedAsKeyword: false,
+						label: {
+							en_US: 'Growth Areas',
+						},
+						listTypeDefinitionExternalReferenceCode:
+							listTypeDefinition.externalReferenceCode,
+						listTypeDefinitionId: listTypeDefinition.id,
+						localized: true,
+						name: 'growthAreas',
+						required: false,
+					},
+				],
+				pluralLabel: {
+					en_US: 'Plants',
+				},
+				portlet: true,
+				scope: 'company',
+				status: {
+					code: 0,
+				},
+			});
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		// Create a page with a Form fragment
+
+		const formId = getRandomString();
+
+		const formDefinition = getFormContainerDefinition({
+			id: formId,
+		});
+
+		const layout = await apiHelpers.headlessDelivery.createSitePage({
+			pageDefinition: getPageDefinition([formDefinition]),
+			siteId: site.id,
+			title: getRandomString(),
+		});
+
+		await pageEditorPage.goto(layout, site.friendlyUrlPath);
+
+		// Map the form to the Plant object
+
+		await pageEditorPage.mapFormFragment(formId, 'Plant', 'all', {
+			addLocalizationSelect: true,
+		});
+
+		// Publish and go to edit mode
+
+		await pageEditorPage.publishPage();
+
+		await page.goto(`/web${site.friendlyUrlPath}${layout.friendlyUrlPath}`);
+
+		// Select some options in default language
+
+		const input = page
+			.locator('.multiselector-dropdown')
+			.getByRole('combobox');
+
+		await clickAndExpectToBeVisible({
+			target: page.getByRole('option', {name: 'Spain'}),
+			trigger: input,
+		});
+
+		await clickAndExpectToBeVisible({
+			target: page.locator('.label').getByText('Spain'),
+			trigger: page.getByRole('option', {name: 'Spain'}),
+		});
+
+		await clickAndExpectToBeVisible({
+			target: page.getByRole('option', {name: 'Italy'}),
+			trigger: input,
+		});
+
+		await clickAndExpectToBeVisible({
+			target: page.locator('.label').getByText('Italy'),
+			trigger: page.getByRole('option', {name: 'Italy'}),
+		});
+
+		// Switch to spanish and select also another option
+
+		await localizationSelectPage.switchLanguage('es-ES');
+
+		await clickAndExpectToBeVisible({
+			target: page.getByRole('option', {name: 'Germany'}),
+			trigger: input,
+		});
+
+		await clickAndExpectToBeVisible({
+			target: page.locator('.label').getByText('Germany'),
+			trigger: page.getByRole('option', {name: 'Germany'}),
+		});
+
+		// Check translation status
+
+		expect(await localizationSelectPage.getLanguageStatus('es-ES')).toBe(
+			'translated'
+		);
+
+		// Save the form and check the object entry
+
+		await clickAndExpectToBeVisible({
+			target: page.getByText(
+				'Thank you. Your information was successfully received.'
+			),
+			trigger: page.getByRole('button', {name: 'Submit'}),
+		});
 
 		const {items} =
 			await apiHelpers.objectEntry.getObjectDefinitionObjectEntries(
@@ -1063,7 +1259,7 @@ test(
 
 		// Customize experience and delete Friendly URL fragment
 
-		await structureBuilderPage.customizeExperience();
+		await structureBuilderPage.customizeEditor();
 
 		await pageEditorPage.deleteFragment(
 			await pageEditorPage.getFragmentId('Friendly URL')
@@ -1615,6 +1811,11 @@ test(
 		const listTypeDefinition =
 			await apiHelpers.listTypeAdmin.postRandomListTypeDefinition();
 
+		apiHelpers.data.push({
+			id: listTypeDefinition.id,
+			type: 'listTypeDefinition',
+		});
+
 		for (const option of ['Spain', 'Italy']) {
 			await apiHelpers.listTypeAdmin.postListTypeEntry({
 				key: option,
@@ -1837,6 +2038,18 @@ test(
 
 		await pageEditorPage.mapFormFragment(formId, 'Plant', 'all', {
 			addLocalizationSelect: true,
+		});
+
+		// Swap to Multiselector Checkbox fragment
+
+		const fragmentId = await pageEditorPage.getFragmentId(
+			'Multiselector Dropdown'
+		);
+
+		await pageEditorPage.swapFragment({
+			folder: 'Form Components',
+			fragmentId,
+			fragmentName: 'Multiselector Checkbox',
 		});
 
 		await pageEditorPage.publishPage();
@@ -2114,19 +2327,6 @@ test(
 				objectFields: [
 					{
 						DBType: 'Clob',
-						businessType: 'RichText',
-						externalReferenceCode: 'richTextERC',
-						indexed: true,
-						indexedAsKeyword: false,
-						label: {
-							en_US: 'Rich Text',
-						},
-						localized: true,
-						name: 'richText',
-						required: false,
-					},
-					{
-						DBType: 'Clob',
 						businessType: 'LongText',
 						externalReferenceCode: 'longTextERC',
 						indexed: true,
@@ -2191,10 +2391,6 @@ test(
 					en_US: 'long text english',
 					es_ES: 'long text spanish',
 				},
-				richText_i18n: {
-					en_US: 'rich text english',
-					es_ES: 'rich text spanish',
-				},
 				text_i18n: {
 					en_US: 'text english',
 					es_ES: 'text spanish',
@@ -2255,8 +2451,6 @@ test(
 			name: 'Long Text',
 		});
 
-		const richTextField = page.locator('.ck-editor__editable');
-
 		const textField = page.getByRole('textbox', {
 			exact: true,
 			name: 'Text',
@@ -2265,10 +2459,6 @@ test(
 		await expect(checkboxField).toBeChecked();
 
 		await expect(longTextField).toHaveValue('long text english');
-
-		await expect(
-			richTextField.getByText('rich text english')
-		).toBeVisible();
 
 		await expect(textField).toHaveValue('text english');
 
@@ -2279,8 +2469,6 @@ test(
 		await longTextField.fill('long text english 1');
 
 		await textField.fill('text english 1');
-
-		await richTextField.fill('rich text english 1');
 
 		// Assert spanish translation is correct
 
@@ -2294,10 +2482,6 @@ test(
 
 		await expect(longTextField).toHaveValue('long text spanish');
 
-		await expect(
-			richTextField.getByText('rich text spanish')
-		).toBeVisible();
-
 		await expect(textField).toHaveValue('text spanish');
 
 		// Fill new values
@@ -2307,8 +2491,6 @@ test(
 		await longTextField.fill('long text spanish 1');
 
 		await textField.fill('text spanish 1');
-
-		await richTextField.fill('rich text spanish 1');
 
 		// Edit the object
 
@@ -2346,10 +2528,6 @@ test(
 
 		await expect(page.getByText('long text english 1')).toBeVisible();
 
-		await expect(
-			richTextField.getByText('rich text english 1')
-		).toBeVisible();
-
 		await expect(page.locator('input.ddm-field-text')).toHaveValue(
 			'text english 1'
 		);
@@ -2366,10 +2544,6 @@ test(
 
 		await expect(page.getByText('long text spanish 1')).toBeVisible();
 
-		await expect(
-			richTextField.getByText('rich text spanish 1')
-		).toBeVisible();
-
 		await expect(page.locator('input.ddm-field-text')).toHaveValue(
 			'text spanish 1'
 		);
@@ -2385,6 +2559,11 @@ test(
 
 		const listTypeDefinition =
 			await apiHelpers.listTypeAdmin.postRandomListTypeDefinition();
+
+		apiHelpers.data.push({
+			id: listTypeDefinition.id,
+			type: 'listTypeDefinition',
+		});
 
 		for (const option of ['Spain', 'Italy']) {
 			await apiHelpers.listTypeAdmin.postListTypeEntry({

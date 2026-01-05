@@ -20,6 +20,12 @@ defaultStartTimeJCalendar.add(java.util.Calendar.HOUR, 1);
 
 defaultStartTimeJCalendar.set(java.util.Calendar.MINUTE, 0);
 
+java.util.Calendar userStartTimeJCalendar = CalendarFactoryUtil.getCalendar(userTimeZone);
+
+userStartTimeJCalendar.add(java.util.Calendar.HOUR, 1);
+
+userStartTimeJCalendar.set(java.util.Calendar.MINUTE, 0);
+
 long calendarBookingId = BeanPropertiesUtil.getLong(calendarBooking, "calendarBookingId");
 
 int instanceIndex = BeanParamUtil.getInteger(calendarBooking, request, "instanceIndex");
@@ -291,7 +297,22 @@ while (manageableCalendarsIterator.hasNext()) {
 					<a class="calendar-portlet-recurrence-summary" href="javascript:void(0);" id="<portlet:namespace />summary"></a>
 				</aui:field-wrapper>
 
-				<aui:input defaultLanguageId="<%= LocaleUtil.toLanguageId(themeDisplay.getSiteDefaultLocale()) %>" name="description" />
+				<c:choose>
+					<c:when test='<%= FeatureFlagManagerUtil.isEnabled("LPD-11235") %>'>
+						<div data-testid="descriptionContainer">
+							<label for="<portlet:namespace />description"><liferay-ui:message key="description" /></label>
+
+							<liferay-editor:input-localized
+								defaultLanguageId="<%= LocaleUtil.toLanguageId(themeDisplay.getSiteDefaultLocale()) %>"
+								name="description"
+								xml="<%= (calendarBooking != null) ? calendarBooking.getDescription() : StringPool.BLANK %>"
+							/>
+						</div>
+					</c:when>
+					<c:otherwise>
+						<aui:input defaultLanguageId="<%= LocaleUtil.toLanguageId(themeDisplay.getSiteDefaultLocale()) %>" name="description" />
+					</c:otherwise>
+				</c:choose>
 			</clay:sheet-section>
 
 			<clay:panel-group>
@@ -1039,13 +1060,17 @@ while (manageableCalendarsIterator.hasNext()) {
 				endDateContainer.style.display = 'block';
 
 				startTimeHours =
-					<%= defaultStartTimeJCalendar.get(java.util.Calendar.HOUR_OF_DAY) %>;
-				startTimeMinutes =
-					<%= defaultStartTimeJCalendar.get(java.util.Calendar.MINUTE) %>;
-				endTimeHours =
-					<%= defaultEndTimeJCalendar.get(java.util.Calendar.HOUR_OF_DAY) %>;
-				endTimeMinutes =
-					<%= defaultEndTimeJCalendar.get(java.util.Calendar.MINUTE) %>;
+					<%= userStartTimeJCalendar.get(java.util.Calendar.HOUR_OF_DAY) %>;
+				startTimeMinutes = 0;
+
+				if (startTimeHours === 23) {
+					endTimeHours = 23;
+					endTimeMinutes = 59;
+				}
+				else {
+					endTimeHours = (startTimeHours + 1) % 24;
+					endTimeMinutes = 0;
+				}
 			}
 
 			updateTimePickersValues(

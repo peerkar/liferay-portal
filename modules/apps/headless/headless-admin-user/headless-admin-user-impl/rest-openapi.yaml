@@ -1154,6 +1154,10 @@ components:
                         The shared asset title.
                     readOnly: true
                     type: string
+                visible:
+                    description:
+                        If the shared asset is visible or not.
+                    type: boolean
             type: object
         Site:
             # @review
@@ -1476,6 +1480,10 @@ components:
                     format: date-time
                     readOnly: true
                     type: string
+                loginDate:
+                    format: date-time
+                    readOnly: true
+                    type: string
                 name:
                     description:
                         The user's full name.
@@ -1754,7 +1762,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.headless.admin.user.client', and version '4.0.80'."
+        'com.liferay.headless.admin.user.client', and version '4.0.82'."
     license:
         name: Apache 2.0
         url: http://www.apache.org/licenses/LICENSE-2.0.html

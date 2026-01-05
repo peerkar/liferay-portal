@@ -3,6 +3,7 @@
 		return (
 			(...args) => {
 				import(
+					Liferay.ThemeDisplay.getCDNHost() +
 					Liferay.ThemeDisplay.getPathContext() +
 						'/o/' +
 						contextPath +
@@ -42,7 +43,7 @@
 
 				merge(target[key], source[key]);
 			}
-else {
+			else {
 				Object.assign(target, { [key]: source[key] });
 			}
 		}

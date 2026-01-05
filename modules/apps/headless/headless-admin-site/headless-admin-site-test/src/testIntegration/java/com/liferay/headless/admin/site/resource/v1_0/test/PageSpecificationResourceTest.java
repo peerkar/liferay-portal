@@ -471,7 +471,8 @@ public class PageSpecificationResourceTest
 			RandomTestUtil.randomLocaleStringMap(), Collections.emptyMap(),
 			Collections.emptyMap(), Collections.emptyMap(),
 			Collections.emptyMap(), type, _getTypeSettings(), false, false,
-			Collections.emptyMap(), _getMasterLayoutPlid(serviceContext),
+			Collections.emptyMap(),
+			_getMasterLayoutPageTemplateEntryERC(serviceContext),
 			serviceContext);
 	}
 
@@ -649,7 +650,8 @@ public class PageSpecificationResourceTest
 					layout.getExternalReferenceCode());
 
 		PageExperiencesTestUtil.modifyPageExperiences(
-			contentPageSpecification.getPageExperiences());
+			contentPageSpecification.getPageExperiences(),
+			testGroup.getGroupId());
 
 		_modifySettings(
 			contentPageSpecification, serviceContext, layout.isTypeUtility());
@@ -691,18 +693,19 @@ public class PageSpecificationResourceTest
 		return contentPageSpecification;
 	}
 
-	private long _getMasterLayoutPlid(ServiceContext serviceContext)
+	private String _getMasterLayoutPageTemplateEntryERC(
+			ServiceContext serviceContext)
 		throws Exception {
 
 		if (RandomTestUtil.randomBoolean()) {
-			return 0;
+			return null;
 		}
 
 		LayoutPageTemplateEntry layoutPageTemplateEntry =
 			LayoutPageTemplateEntryTestUtil.getMasterLayoutPageTemplateEntry(
 				serviceContext, WorkflowConstants.STATUS_APPROVED);
 
-		return layoutPageTemplateEntry.getPlid();
+		return layoutPageTemplateEntry.getExternalReferenceCode();
 	}
 
 	private PageElement _getPageElement(
@@ -792,7 +795,7 @@ public class PageSpecificationResourceTest
 					setMasterPageItemExternalReference(
 						() ->
 							SettingsTestUtil.getMasterPageItemExternalReference(
-								serviceContext));
+								false, serviceContext));
 					setStyleBookItemExternalReference(
 						() ->
 							SettingsTestUtil.getStyleBookItemExternalReference(
@@ -1010,7 +1013,8 @@ public class PageSpecificationResourceTest
 					draftLayout.getExternalReferenceCode());
 
 		PageExperiencesTestUtil.modifyPageExperiences(
-			contentPageSpecification.getPageExperiences());
+			contentPageSpecification.getPageExperiences(),
+			testGroup.getGroupId());
 
 		contentPageSpecification.setStatus(PageSpecification.Status.DRAFT);
 
@@ -1152,7 +1156,8 @@ public class PageSpecificationResourceTest
 			layout.getKeywordsMap(), layout.getRobotsMap(), layout.getType(),
 			layout.isHidden(), layout.getFriendlyURLMap(),
 			layout.getIconImage(), null, _getStyleBookEntryERC(serviceContext),
-			0, layout.getMasterLayoutPlid(), serviceContext);
+			null, null, layout.getMasterLayoutPageTemplateEntryERC(),
+			serviceContext);
 	}
 
 	@Inject

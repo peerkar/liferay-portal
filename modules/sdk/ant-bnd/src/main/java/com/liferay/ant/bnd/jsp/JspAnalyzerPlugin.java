@@ -32,6 +32,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.jar.Manifest;
@@ -96,9 +97,22 @@ public class JspAnalyzerPlugin implements AnalyzerPlugin {
 		}
 
 		if (matches) {
+			String javaeePackage = analyzer.getProperty(
+				"-antbnd.jspanalyzer.fallback-javaee-package", "jakarta");
+
+			if ((javaeePackage != null) &&
+				!(javaeePackage.equals("jakarta") ||
+				  javaeePackage.equals("javax"))) {
+
+				throw new IllegalArgumentException(
+					"Invalid value was provided for the property \"-antbnd." +
+						"jspanalyzer.fallback-javaee-package. Valid values " +
+							"are either \"javax\" or \"jakarta.\"");
+			}
+
 			String[] requiredPackageImports = _REQUIRED_PACKAGE_NAMES_JAKARTA;
 
-			if (_isUseJavaxImports(taglibURIs)) {
+			if (_isUseJavaxImports(javaeePackage, taglibURIs)) {
 				requiredPackageImports = _REQUIRED_PACKAGE_NAMES_JAVAX;
 			}
 
@@ -562,15 +576,11 @@ public class JspAnalyzerPlugin implements AnalyzerPlugin {
 		return false;
 	}
 
-	private boolean _isUseJavaxImports(Set<String> taglibURIs) {
-		if (taglibURIs.isEmpty()) {
-			return false;
-		}
+	private boolean _isUseJavaxImports(
+		String javaeePackage, Set<String> taglibURIs) {
 
-		for (String javaxURI : _JSTL_CORE_URIS_JAVAX) {
-			if (taglibURIs.contains(javaxURI)) {
-				return true;
-			}
+		if (taglibURIs.isEmpty()) {
+			return Objects.equals(javaeePackage, "javax");
 		}
 
 		for (String jakartaURI : _JSTL_CORE_URIS_JAKARTA) {
@@ -579,17 +589,23 @@ public class JspAnalyzerPlugin implements AnalyzerPlugin {
 			}
 		}
 
-		for (String uri : taglibURIs) {
-			if (uri.contains("javax")) {
+		for (String javaxURI : _JSTL_CORE_URIS_JAVAX) {
+			if (taglibURIs.contains(javaxURI)) {
 				return true;
-			}
-
-			if (uri.contains("jakarta")) {
-				return false;
 			}
 		}
 
-		return false;
+		for (String uri : taglibURIs) {
+			if (uri.contains("jakarta")) {
+				return false;
+			}
+
+			if (uri.contains("javax")) {
+				return true;
+			}
+		}
+
+		return Objects.equals(javaeePackage, "javax");
 	}
 
 	private String _removeComments(String content) {

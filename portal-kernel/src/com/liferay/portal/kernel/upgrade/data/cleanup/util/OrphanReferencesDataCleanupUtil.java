@@ -5,9 +5,9 @@
 
 package com.liferay.portal.kernel.upgrade.data.cleanup.util;
 
+import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
-import com.liferay.petra.string.StringUtil;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBInspector;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
@@ -16,14 +16,18 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.util.PropsValues;
+import com.liferay.portal.kernel.util.StringUtil;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Luis Ortiz
@@ -31,9 +35,10 @@ import java.util.List;
 public class OrphanReferencesDataCleanupUtil {
 
 	public static void cleanUpTable(
-			Connection connection, String sourceAdditionalWhereClause,
-			String sourceColumnName, String sourceTableName,
-			String[] targetColumnNames, String targetTableName)
+			Connection connection, String[] customJoinClauses, boolean readOnly,
+			String sourceAdditionalWhereClause, String sourceColumnName,
+			String sourceTableName, String[] targetColumnNames,
+			String targetTableName)
 		throws Exception {
 
 		List<String> excludedTableNames = getNormalizedExcludedTableNames(
@@ -43,25 +48,64 @@ public class OrphanReferencesDataCleanupUtil {
 			return;
 		}
 
+		boolean aliasNeeded = false;
+
+		DB db = DBManagerUtil.getDB();
+
+		DBType dbType = db.getDBType();
+
+		if ((dbType == DBType.MYSQL) || (dbType == DBType.SQLSERVER) ||
+			(dbType == DBType.MARIADB)) {
+
+			aliasNeeded = true;
+		}
+
+		Set<String> firstIndexColumnNames = _getFirstIndexColumnNames(
+			connection, db, targetTableName);
+
+		List<SafeCloseable> safeCloseables = new ArrayList<>();
+
+		if (firstIndexColumnNames != null) {
+			for (String targetColumnName : targetColumnNames) {
+				if (!firstIndexColumnNames.contains(
+						StringUtil.toLowerCase(targetColumnName))) {
+
+					safeCloseables.add(
+						db.addTemporaryIndex(
+							connection, targetTableName, false,
+							targetColumnName));
+				}
+			}
+		}
+
+		String whereClause = getWhereClause(
+			connection, customJoinClauses, sourceAdditionalWhereClause,
+			sourceColumnName, sourceTableName, targetColumnNames,
+			targetTableName);
+
 		try (PreparedStatement preparedStatement1 = connection.prepareStatement(
 				StringBundler.concat(
-					"select ", sourceColumnName, ", count(1) from ",
-					sourceTableName,
-					getWhereClause(
-						connection, sourceAdditionalWhereClause,
-						sourceColumnName, sourceTableName, targetColumnNames,
-						targetTableName),
-					" group by ", sourceColumnName));
-			PreparedStatement preparedStatement2 = connection.prepareStatement(
-				StringBundler.concat(
-					"delete from ", sourceTableName,
-					getWhereClause(
-						connection, sourceAdditionalWhereClause,
-						sourceColumnName, sourceTableName, targetColumnNames,
-						targetTableName)));
+					"select ", _SOURCE_TABLE_ALIAS, StringPool.PERIOD,
+					sourceColumnName, ", count(1) from ", sourceTableName,
+					StringPool.SPACE, _SOURCE_TABLE_ALIAS, whereClause,
+					" group by ", _SOURCE_TABLE_ALIAS, StringPool.PERIOD,
+					sourceColumnName));
 			ResultSet resultSet = preparedStatement1.executeQuery()) {
 
-			preparedStatement2.execute();
+			if (!readOnly) {
+				try (PreparedStatement preparedStatement2 =
+						connection.prepareStatement(
+							StringBundler.concat(
+								"delete ",
+								aliasNeeded ?
+									(_SOURCE_TABLE_ALIAS + StringPool.SPACE) :
+										"",
+								"from ", sourceTableName, StringPool.SPACE,
+								_SOURCE_TABLE_ALIAS, whereClause))) {
+
+					preparedStatement2.execute();
+				}
+			}
 
 			if (!_log.isInfoEnabled()) {
 				return;
@@ -69,7 +113,7 @@ public class OrphanReferencesDataCleanupUtil {
 
 			while (resultSet.next()) {
 				DataCleanupLoggingUtil.logDelete(
-					_log, resultSet.getLong(2), sourceTableName,
+					_log, resultSet.getLong(2), readOnly, sourceTableName,
 					StringBundler.concat(
 						sourceColumnName, StringPool.SPACE,
 						resultSet.getObject(1), " was not found in column",
@@ -78,6 +122,24 @@ public class OrphanReferencesDataCleanupUtil {
 						targetTableName));
 			}
 		}
+		finally {
+			for (SafeCloseable safeCloseable : safeCloseables) {
+				safeCloseable.close();
+			}
+		}
+	}
+
+	public static void cleanUpTable(
+			Connection connection, String[] customJoinClauses,
+			String sourceAdditionalWhereClause, String sourceColumnName,
+			String sourceTableName, String[] targetColumnNames,
+			String targetTableName)
+		throws Exception {
+
+		cleanUpTable(
+			connection, customJoinClauses, false, sourceAdditionalWhereClause,
+			sourceColumnName, sourceTableName, targetColumnNames,
+			targetTableName);
 	}
 
 	public static List<String> getNormalizedExcludedTableNames(
@@ -96,10 +158,15 @@ public class OrphanReferencesDataCleanupUtil {
 		return _normalizedExcludedTableNames;
 	}
 
+	public static String getSourceTableAlias() {
+		return _SOURCE_TABLE_ALIAS;
+	}
+
 	public static String getWhereClause(
-			Connection connection, String sourceAdditionalWhereClause,
-			String sourceColumnName, String sourceTableName,
-			String[] targetColumnNames, String targetTableName)
+			Connection connection, String[] customJoinClauses,
+			String sourceAdditionalWhereClause, String sourceColumnName,
+			String sourceTableName, String[] targetColumnNames,
+			String targetTableName)
 		throws Exception {
 
 		String additionalNullCheck = "";
@@ -108,27 +175,194 @@ public class OrphanReferencesDataCleanupUtil {
 		DBInspector dbInspector = new DBInspector(connection);
 
 		if (dbInspector.isNumeric(sourceTableName, sourceColumnName)) {
-			additionalNullCheck = " and " + sourceColumnName + " != 0";
+			additionalNullCheck = StringBundler.concat(
+				" and ", _SOURCE_TABLE_ALIAS, StringPool.PERIOD,
+				sourceColumnName, " != 0");
 		}
 		else if (db.getDBType() != DBType.ORACLE) {
-			additionalNullCheck = " and " + sourceColumnName + " != ''";
+			additionalNullCheck = StringBundler.concat(
+				" and ", _SOURCE_TABLE_ALIAS, StringPool.PERIOD,
+				sourceColumnName, " != ''");
 		}
+
+		String whereClause = null;
+
+		if (db.getDBType() == DBType.MYSQL) {
+			whereClause = _getMySQLWhereClause(
+				customJoinClauses, dbInspector, sourceColumnName,
+				sourceTableName, targetColumnNames, targetTableName);
+		}
+		else {
+			whereClause = _getOtherDBsWhereClause(
+				customJoinClauses, dbInspector, sourceColumnName,
+				sourceTableName, targetColumnNames, targetTableName);
+		}
+
+		whereClause = StringBundler.concat(
+			whereClause, " and ",
+			_SOURCE_TABLE_ALIAS + StringPool.PERIOD + sourceColumnName,
+			" is not null", additionalNullCheck,
+			(sourceAdditionalWhereClause != null) ?
+				" and " + sourceAdditionalWhereClause : "");
+
+		return StringUtil.replace(
+			whereClause, "[$SOURCE_TABLE_ALIAS$]", _SOURCE_TABLE_ALIAS);
+	}
+
+	private static Set<String> _getFirstIndexColumnNames(
+			Connection connection, DB db, String tableName)
+		throws Exception {
+
+		DBInspector dbInspector = new DBInspector(connection);
+
+		if (!dbInspector.hasTable(tableName)) {
+			return null;
+		}
+
+		Set<String> firstIndexColumnNames = new HashSet<>();
+
+		try (ResultSet resultSet = db.getIndexResultSet(
+				connection, tableName, false)) {
+
+			while (resultSet.next()) {
+				String indexName = resultSet.getString("INDEX_NAME");
+
+				if (indexName == null) {
+					continue;
+				}
+
+				if (resultSet.getShort("ORDINAL_POSITION") == 1) {
+					String columnName = resultSet.getString("COLUMN_NAME");
+
+					if (columnName != null) {
+						firstIndexColumnNames.add(
+							StringUtil.lowerCase(columnName));
+					}
+				}
+			}
+		}
+
+		DatabaseMetaData databaseMetaData = connection.getMetaData();
+
+		try (ResultSet resultSet = databaseMetaData.getPrimaryKeys(
+				dbInspector.getCatalog(), dbInspector.getSchema(),
+				dbInspector.normalizeName(tableName, databaseMetaData))) {
+
+			while (resultSet.next()) {
+				if (resultSet.getShort("KEY_SEQ") != 1) {
+					continue;
+				}
+
+				String columnName = resultSet.getString("COLUMN_NAME");
+
+				firstIndexColumnNames.add(StringUtil.toLowerCase(columnName));
+
+				break;
+			}
+		}
+
+		return firstIndexColumnNames;
+	}
+
+	private static String _getMySQLWhereClause(
+		String[] customJoinClauses, DBInspector dbInspector,
+		String sourceColumnName, String sourceTableName,
+		String[] targetColumnNames, String targetTableName) {
+
+		int index = 0;
+		StringBundler sb = new StringBundler(
+			(17 * targetColumnNames.length) + 1);
+
+		for (String targetColumnName : targetColumnNames) {
+			String aliasTableName =
+				targetTableName + StringPool.UNDERLINE + targetColumnName;
+
+			sb.append(" left join ");
+			sb.append(targetTableName);
+			sb.append(StringPool.SPACE);
+			sb.append(aliasTableName);
+			sb.append(" on ");
+			sb.append(aliasTableName);
+			sb.append(StringPool.PERIOD);
+			sb.append(targetColumnName);
+			sb.append(" = ");
+
+			if ((customJoinClauses != null) &&
+				(customJoinClauses[index] != null)) {
+
+				sb.append(
+					StringUtil.replace(
+						customJoinClauses[index], "[$TARGET_TABLE_ALIAS$]",
+						aliasTableName));
+			}
+			else {
+				sb.append(_SOURCE_TABLE_ALIAS);
+				sb.append(StringPool.PERIOD);
+				sb.append(sourceColumnName);
+			}
+
+			if (StringUtil.equalsIgnoreCase("Company", targetTableName) &&
+				PropsValues.DATABASE_PARTITION_ENABLED &&
+				!dbInspector.isControlTable(sourceTableName)) {
+
+				sb.append(" and ");
+				sb.append(aliasTableName);
+				sb.append(".companyId = ");
+				sb.append(CompanyThreadLocal.getCompanyId());
+			}
+
+			index++;
+		}
+
+		sb.append(" where ");
+
+		for (String targetColumnName : targetColumnNames) {
+			String aliasTableName =
+				targetTableName + StringPool.UNDERLINE + targetColumnName;
+
+			sb.append(aliasTableName);
+
+			sb.append(StringPool.PERIOD);
+			sb.append(targetColumnName);
+			sb.append(" is null");
+			sb.append(" and ");
+		}
+
+		sb.setIndex(sb.index() - 1);
+
+		return sb.toString();
+	}
+
+	private static String _getOtherDBsWhereClause(
+		String[] customJoinClauses, DBInspector dbInspector,
+		String sourceColumnName, String sourceTableName,
+		String[] targetColumnNames, String targetTableName) {
 
 		StringBundler sb = new StringBundler(
 			(8 * targetColumnNames.length) + 5);
 
-		sb.append("not exists (select 1 from ");
+		sb.append(" where not exists (select 1 from ");
 		sb.append(targetTableName);
 		sb.append(" where (");
 
-		for (String targetColumnName : targetColumnNames) {
+		for (int i = 0; i < targetColumnNames.length; i++) {
 			sb.append(targetTableName);
 			sb.append(StringPool.PERIOD);
-			sb.append(targetColumnName);
+			sb.append(targetColumnNames[i]);
 			sb.append(" = ");
-			sb.append(sourceTableName);
-			sb.append(StringPool.PERIOD);
-			sb.append(sourceColumnName);
+
+			if ((customJoinClauses != null) && (customJoinClauses[i] != null)) {
+				sb.append(
+					StringUtil.replace(
+						customJoinClauses[i], "[$TARGET_TABLE_ALIAS$]",
+						targetTableName));
+			}
+			else {
+				sb.append(_SOURCE_TABLE_ALIAS);
+				sb.append(StringPool.PERIOD);
+				sb.append(sourceColumnName);
+			}
+
 			sb.append(" or ");
 		}
 
@@ -145,12 +379,10 @@ public class OrphanReferencesDataCleanupUtil {
 
 		sb.append(")");
 
-		return StringBundler.concat(
-			" where ", sb, " and ", sourceColumnName, " is not null",
-			additionalNullCheck,
-			(sourceAdditionalWhereClause != null) ?
-				" and " + sourceAdditionalWhereClause : "");
+		return sb.toString();
 	}
+
+	private static final String _SOURCE_TABLE_ALIAS = "s";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		OrphanReferencesDataCleanupUtil.class);

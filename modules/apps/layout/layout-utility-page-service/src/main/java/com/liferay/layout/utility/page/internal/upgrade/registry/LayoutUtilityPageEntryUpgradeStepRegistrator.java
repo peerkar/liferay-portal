@@ -5,7 +5,9 @@
 
 package com.liferay.layout.utility.page.internal.upgrade.registry;
 
-import com.liferay.layout.utility.page.internal.upgrade.registry.v1_4_4.LayoutUtilityPageEntryUpgradeProcess;
+import com.liferay.layout.utility.page.internal.upgrade.v1_4_0.LayoutUtilityPageEntryUpgradeProcess;
+import com.liferay.layout.utility.page.internal.upgrade.v1_4_1.LayoutUtilityPageEntryLayoutFriendlyURLUpgradeProcess;
+import com.liferay.layout.utility.page.internal.upgrade.v1_4_2.LayoutUtilityPageEntryLayoutExternalReferenceCodeUpgradeProcess;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.upgrade.DummyUpgradeStep;
 import com.liferay.portal.kernel.upgrade.UpgradeProcessFactory;
@@ -43,6 +45,15 @@ public class LayoutUtilityPageEntryUpgradeStepRegistrator
 		registry.register(
 			"1.3.0", "1.4.0",
 			new LayoutUtilityPageEntryUpgradeProcess(_layoutLocalService));
+
+		registry.register(
+			"1.4.0", "1.4.1",
+			new LayoutUtilityPageEntryLayoutFriendlyURLUpgradeProcess(
+				_layoutLocalService));
+
+		registry.register(
+			"1.4.1", "1.4.2",
+			new LayoutUtilityPageEntryLayoutExternalReferenceCodeUpgradeProcess());
 	}
 
 	@Reference

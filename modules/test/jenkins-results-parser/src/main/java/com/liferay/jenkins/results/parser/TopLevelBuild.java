@@ -17,6 +17,9 @@ import org.dom4j.Element;
  */
 public interface TopLevelBuild extends ParentBuild {
 
+	public void addCachedDownstreamBuildReport(
+		DownstreamBuildReport downstreamBuildReport);
+
 	public String getAcceptanceUpstreamJobName();
 
 	public String getAcceptanceUpstreamJobURL();
@@ -56,6 +59,14 @@ public interface TopLevelBuild extends ParentBuild {
 	public String getStatusSummary();
 
 	public TopLevelBuildReport getTopLevelBuildReport();
+
+	public long getTotalActualDuration();
+
+	public int getTotalActualSlavesUsedCount();
+
+	public long getTotalCachedDuration();
+
+	public int getTotalCachedSlavesUsedCount();
 
 	public Element getValidationGitHubMessageElement();
 

@@ -12,8 +12,9 @@ import {useMarketplaceContext} from '../../context/MarketplaceContext';
 import SearchBuilder from '../../core/SearchBuilder';
 import {OrderTypes, OrderWorkflowStatusCode} from '../../enums/Order';
 import {usePlacedOrders} from '../../hooks/data/usePlacedOrder';
+import i18n from '../../i18n';
 import HeadlessAdminUser from '../../services/rest/HeadlessAdminUser';
-import {useSSATrialsExtend} from './useSSATrialsExtend';
+import {useSSATrialsExtend} from './hooks/useSSATrialsExtend';
 
 const SSADashboardOutlet = () => {
 	const {marketplaceUserAccount, myUserAccount, properties} =
@@ -67,19 +68,23 @@ const SSADashboardOutlet = () => {
 		<PageRenderer error={error} isLoading={fetching}>
 			<div className="published-apps-dashboard-page-container">
 				<DashboardNavigation
-					currentAccount={ssaAccount}
 					dashboardNavigationItems={[
 						{
-							active: true,
-							itemTitle: 'My SaaS Demos',
+							itemTitle: i18n.translate('my-saas-demos'),
 							path: '/',
 							symbol: 'nodes',
 							visible: true,
 						},
 						{
-							itemTitle: 'Manage SaaS',
+							itemTitle: i18n.translate('saas-environments'),
 							path: '/saas-trials',
 							symbol: 'cog',
+							visible: marketplaceUserAccount.isSSAAdmin,
+						},
+						{
+							itemTitle: i18n.translate('manage-users'),
+							path: '/manage-users',
+							symbol: 'users',
 							visible: marketplaceUserAccount.isSSAAdmin,
 						},
 					].filter(({visible}) => visible)}

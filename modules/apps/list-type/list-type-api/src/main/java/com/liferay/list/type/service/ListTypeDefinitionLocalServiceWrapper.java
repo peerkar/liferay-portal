@@ -49,23 +49,16 @@ public class ListTypeDefinitionLocalServiceWrapper
 
 	@Override
 	public com.liferay.list.type.model.ListTypeDefinition addListTypeDefinition(
-			String externalReferenceCode, long userId, boolean system)
-		throws com.liferay.portal.kernel.exception.PortalException {
-
-		return _listTypeDefinitionLocalService.addListTypeDefinition(
-			externalReferenceCode, userId, system);
-	}
-
-	@Override
-	public com.liferay.list.type.model.ListTypeDefinition addListTypeDefinition(
 			String externalReferenceCode, long userId,
 			java.util.Map<java.util.Locale, String> nameMap, boolean system,
 			java.util.List<com.liferay.list.type.model.ListTypeEntry>
-				listTypeEntries)
+				listTypeEntries,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _listTypeDefinitionLocalService.addListTypeDefinition(
-			externalReferenceCode, userId, nameMap, system, listTypeEntries);
+			externalReferenceCode, userId, nameMap, system, listTypeEntries,
+			serviceContext);
 	}
 
 	/**
@@ -382,6 +375,17 @@ public class ListTypeDefinitionLocalServiceWrapper
 		return _listTypeDefinitionLocalService.getListTypeDefinitionsCount();
 	}
 
+	@Override
+	public com.liferay.list.type.model.ListTypeDefinition
+			getOrAddEmptyListTypeDefinition(
+				String externalReferenceCode, long companyId, long userId,
+				boolean system)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _listTypeDefinitionLocalService.getOrAddEmptyListTypeDefinition(
+			externalReferenceCode, companyId, userId, system);
+	}
+
 	/**
 	 * Returns the OSGi service identifier.
 	 *
@@ -428,12 +432,13 @@ public class ListTypeDefinitionLocalServiceWrapper
 				String externalReferenceCode, long listTypeDefinitionId,
 				long userId, java.util.Map<java.util.Locale, String> nameMap,
 				java.util.List<com.liferay.list.type.model.ListTypeEntry>
-					listTypeEntries)
+					listTypeEntries,
+				com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _listTypeDefinitionLocalService.updateListTypeDefinition(
 			externalReferenceCode, listTypeDefinitionId, userId, nameMap,
-			listTypeEntries);
+			listTypeEntries, serviceContext);
 	}
 
 	@Override

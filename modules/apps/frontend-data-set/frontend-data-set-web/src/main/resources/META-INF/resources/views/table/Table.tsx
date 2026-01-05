@@ -85,10 +85,16 @@ const getVisibleFields = ({
 	visibleFieldNames,
 }: {
 	fields: Array<any>;
-	visibleFieldNames: Array<string>;
+	visibleFieldNames: VisibleFieldNames;
 }) => {
 	const visibleFields = fields.filter(
-		({fieldName}) => visibleFieldNames[fieldName]
+		({fieldName}: {fieldName: string | string[]}) => {
+			if (Array.isArray(fieldName)) {
+				return visibleFieldNames[fieldName.join(',')];
+			}
+
+			return visibleFieldNames[fieldName.replaceAll('.', ',')];
+		}
 	);
 
 	return visibleFields.length ? visibleFields : fields;
@@ -623,6 +629,7 @@ function CellRenderer({
 
 		if (
 			field.contentRendererClientExtension &&
+			modifiedField &&
 			!modifiedField.clientExtensionResolutionError
 		) {
 			const mergedField = {...field, ...modifiedField};
@@ -750,14 +757,6 @@ const Table = ({
 		visibleFieldNames,
 	});
 
-	const [visibleColumns, setVisibleColumns] = useState(() =>
-		getVisibleFieldsMap(
-			schema.fields as Array<Field>,
-			visibleFields,
-			selectable
-		)
-	);
-
 	const columnNames = [];
 
 	if (selectable) {
@@ -850,7 +849,9 @@ const Table = ({
 					});
 
 					visibleColumns.forEach((value: any, key: any) => {
-						visibleFieldNames[key] = true;
+						if (visibleFieldNames[key] !== undefined) {
+							visibleFieldNames[key] = true;
+						}
 					});
 
 					viewsDispatch(updateVisibleFields(visibleFieldNames));
@@ -861,11 +862,13 @@ const Table = ({
 						portletId,
 						settings: {visibleFieldNames},
 					});
-
-					setVisibleColumns(visibleColumns);
 				}}
 				sort={getSorting()}
-				visibleColumns={visibleColumns}
+				visibleColumns={getVisibleFieldsMap(
+					schema.fields as Array<Field>,
+					visibleFields,
+					selectable
+				)}
 			>
 				<Head
 					fields={schema.fields as Array<Field>}

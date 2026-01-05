@@ -117,9 +117,26 @@ test(
 
 		await structureBuilderPage.changeFieldSettings({name: 'field'});
 
-		// Set label and empty name
+		// Set label for another language, publish and check an error is shown for the default language
 
 		await structureBuilderPage.selectStructure();
+
+		await structureBuilderPage.switchLanguage('es_ES');
+
+		await structureBuilderPage.changeStructureSettings({
+			label: 'Spanish label',
+		});
+
+		await clickAndExpectToBeVisible({
+			target: page.getByText(
+				'Please enter a valid label for the default language'
+			),
+			trigger: structureBuilderPage.publishButton,
+		});
+
+		// Set label and empty name
+
+		await structureBuilderPage.switchLanguage('en_US');
 
 		const label = `Structure${getRandomInt()}`;
 
@@ -367,5 +384,38 @@ test(
 			action: 'Delete',
 			filter: structureTitle,
 		});
+	}
+);
+
+test(
+	'The Name and ERC fields are not validated in the system structure because they are disabled fields',
+	{tag: '@LPD-69987'},
+	async ({page, structureBuilderPage, structuresPage}) => {
+
+		// Edit External Video structure
+
+		await structuresPage.goto();
+
+		await structuresPage.execItemAction({
+			action: 'Edit',
+			filter: 'External Video',
+		});
+
+		// Check that the Name and ERC inputs are disabled
+
+		await expect(page.getByLabel('Content Structure Name')).toBeDisabled();
+
+		await expect(page.getByLabel('ERC')).toBeDisabled();
+
+		// Check that the Name and ERC fields are not validated
+
+		await expect(async () => {
+			await structureBuilderPage.publishButton.click({timeout: 1000});
+
+			await waitForAlert(
+				page,
+				'Remember to review the customized editor if needed'
+			);
+		}).toPass();
 	}
 );

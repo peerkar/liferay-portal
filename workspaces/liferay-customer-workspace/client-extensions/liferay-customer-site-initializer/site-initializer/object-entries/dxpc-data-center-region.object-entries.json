@@ -1,0 +1,80 @@
+{
+	"object-entries": [
+		{
+			"externalReferenceCode": "CP_REGION_01",
+			"name": "Dammam, Saudi Arabia",
+			"value": "Dammam, Saudi Arabia"
+		},
+		{
+			"externalReferenceCode": "CP_REGION_02",
+			"name": "Doha, Qatar",
+			"value": "Doha, Qatar"
+		},
+		{
+			"externalReferenceCode": "CP_REGION_03",
+			"name": "Frankfurt, Germany",
+			"value": "Frankfurt, Germany"
+		},
+		{
+			"externalReferenceCode": "CP_REGION_04",
+			"name": "Hamina, Finland",
+			"value": "Hamina, Finland"
+		},
+		{
+			"externalReferenceCode": "CP_REGION_05",
+			"name": "Iowa, USA",
+			"value": "Iowa, USA"
+		},
+		{
+			"externalReferenceCode": "CP_REGION_06",
+			"name": "Jurong West, Singapore",
+			"value": "Jurong West, Singapore"
+		},
+		{
+			"externalReferenceCode": "CP_REGION_07",
+			"name": "London, England",
+			"value": "London, England"
+		},
+		{
+			"externalReferenceCode": "CP_REGION_08",
+			"name": "Montreal, Canada",
+			"value": "Montreal, Canada"
+		},
+		{
+			"externalReferenceCode": "CP_REGION_09",
+			"name": "Mumbai, India",
+			"value": "Mumbai, India"
+		},
+		{
+			"externalReferenceCode": "CP_REGION_10",
+			"name": "Oregon, USA",
+			"value": "Oregon, USA"
+		},
+		{
+			"externalReferenceCode": "CP_REGION_11",
+			"name": "Osaka, Japan",
+			"value": "Osaka, Japan"
+		},
+		{
+			"externalReferenceCode": "CP_REGION_12",
+			"name": "São Paulo, Brazil",
+			"value": "São Paulo, Brazil"
+		},
+		{
+			"externalReferenceCode": "CP_REGION_13",
+			"name": "Sydney, Australia",
+			"value": "Sydney, Australia"
+		},
+		{
+			"externalReferenceCode": "CP_REGION_14",
+			"name": "Tokyo, Japan",
+			"value": "Tokyo, Japan"
+		},
+		{
+			"externalReferenceCode": "CP_REGION_15",
+			"name": "Zurich, Switzerland",
+			"value": "Zurich, Switzerland"
+		}
+	],
+	"objectDefinitionName": "DXPCDataCenterRegion"
+}

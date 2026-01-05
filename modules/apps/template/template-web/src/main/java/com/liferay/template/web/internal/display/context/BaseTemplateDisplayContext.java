@@ -6,14 +6,19 @@
 package com.liferay.template.web.internal.display.context;
 
 import com.liferay.dynamic.data.mapping.configuration.DDMWebConfiguration;
+import com.liferay.dynamic.data.mapping.constants.DDMActionKeys;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItemListBuilder;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
+import com.liferay.portal.kernel.service.permission.PortletPermissionUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -83,8 +88,9 @@ public abstract class BaseTemplateDisplayContext {
 	}
 
 	public boolean isAddButtonEnabled() {
-		if (!_ddmWebConfiguration.enableTemplateCreation() ||
-			!isStagingGroup()) {
+		if (isMissingAddPortletDisplayTemplatePermission() ||
+			!_ddmWebConfiguration.enableTemplateCreation() ||
+			isStagingGroup()) {
 
 			return false;
 		}
@@ -98,10 +104,10 @@ public abstract class BaseTemplateDisplayContext {
 		if (!scopeGroup.hasLocalOrRemoteStagingGroup() ||
 			!scopeGroup.isStagedPortlet(TemplatePortletKeys.TEMPLATE)) {
 
-			return true;
+			return false;
 		}
 
-		return false;
+		return true;
 	}
 
 	protected String getKeywords() {
@@ -146,9 +152,32 @@ public abstract class BaseTemplateDisplayContext {
 		).buildPortletURL();
 	}
 
+	protected boolean isMissingAddPortletDisplayTemplatePermission() {
+		try {
+			return !PortletPermissionUtil.contains(
+				themeDisplay.getPermissionChecker(),
+				themeDisplay.getScopeGroupId(), themeDisplay.getLayout(),
+				TemplatePortletKeys.TEMPLATE, DDMActionKeys.ADD_TEMPLATE, false,
+				false);
+		}
+		catch (PortalException portalException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					"Unable to check permission for resource name " +
+						TemplatePortletKeys.TEMPLATE,
+					portalException);
+			}
+		}
+
+		return true;
+	}
+
 	protected final LiferayPortletRequest liferayPortletRequest;
 	protected final LiferayPortletResponse liferayPortletResponse;
 	protected final ThemeDisplay themeDisplay;
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		BaseTemplateDisplayContext.class);
 
 	private final DDMWebConfiguration _ddmWebConfiguration;
 	private String _keywords;

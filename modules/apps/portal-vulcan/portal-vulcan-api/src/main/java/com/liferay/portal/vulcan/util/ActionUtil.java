@@ -11,11 +11,13 @@ import com.liferay.oauth2.provider.scope.ScopeChecker;
 import com.liferay.oauth2.provider.scope.liferay.OAuth2ProviderScopeLiferayAccessControlContext;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupedModel;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
+import com.liferay.portal.kernel.service.GroupServiceUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -283,15 +285,13 @@ public class ActionUtil {
 			() -> {
 				UriBuilder uriBuilder = uriBuilderSupplier.get();
 
-				if (clazz.getSuperclass(
-					).isAnnotationPresent(
-						Path.class
-					)) {
+				Class<?> superClass = clazz.getSuperclass();
 
-					uriBuilder = uriBuilder.path(clazz.getSuperclass());
+				if (superClass.isAnnotationPresent(Path.class)) {
+					uriBuilder = uriBuilder.path(superClass);
 				}
 
-				uriBuilder = uriBuilder.path(clazz.getSuperclass(), methodName);
+				uriBuilder = uriBuilder.path(superClass, methodName);
 
 				if (parameterId != null) {
 					uriBuilder = uriBuilder.resolveTemplates(
@@ -408,8 +408,29 @@ public class ActionUtil {
 
 			parameterMap.put(firstParameterName, depotEntry.getDepotEntryId());
 		}
+		else if ((siteId != null) &&
+				 Objects.equals(
+					 firstParameterName, "assetLibraryExternalReferenceCode")) {
+
+			DepotEntry depotEntry = DepotEntryServiceUtil.getGroupDepotEntry(
+				siteId);
+
+			Group group = depotEntry.getGroup();
+
+			parameterMap.put(
+				firstParameterName, group.getExternalReferenceCode());
+		}
 		else if (Objects.equals(firstParameterName, "id")) {
 			parameterMap.put(firstParameterName, id);
+		}
+		else if ((siteId != null) &&
+				 Objects.equals(
+					 firstParameterName, "siteExternalReferenceCode")) {
+
+			Group group = GroupServiceUtil.getGroup(siteId);
+
+			parameterMap.put(
+				firstParameterName, group.getExternalReferenceCode());
 		}
 		else if ((siteId != null) &&
 				 Objects.equals(firstParameterName, "siteId")) {

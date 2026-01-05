@@ -124,37 +124,27 @@
 					/>
 
 					<#list termDisplayContexts as termDisplayContext>
-						<#assign hideClass = "" />
+						<#assign
+							cssClassTreeItem = (termDisplayContextCount gt 8)?then("d-none", "") + "tree-item-category"
+							hideClass = ""
+						/>
 
-						<#if termDisplayContextCount lte 8>
-							<@treeview_item
-								cssClassTreeItem = "tree-item-category"
-								frequency = termDisplayContext.getFrequency()
-								frequencyVisible = termDisplayContext.isFrequencyVisible()
-								id = termDisplayContext.getFilterValue()
-								name = htmlUtil.escape(termDisplayContext.getBucketText())
-								selectable = true
-								selected = termDisplayContext.isSelected()
-								termDisplayContextClass = hideClass
-								vocabularyName = vocabularyName
-							/>
-						<#else>
-							<@treeview_item
-								cssClassTreeItem = "tree-item-category d-none"
-								frequency = termDisplayContext.getFrequency()
-								frequencyVisible = termDisplayContext.isFrequencyVisible()
-								id = termDisplayContext.getFilterValue()
-								name = htmlUtil.escape(termDisplayContext.getBucketText())
-								selectable = true
-								selected = termDisplayContext.isSelected()
-								termDisplayContextClass = hideClass
-								vocabularyName = vocabularyName
-							/>
-						</#if>
+						<@treeview_item
+							cssClassTreeItem = cssClassTreeItem
+							frequency = termDisplayContext.getFrequency()
+							frequencyVisible = termDisplayContext.isFrequencyVisible()
+							id = termDisplayContext.getFilterValue()
+							name = htmlUtil.escape(termDisplayContext.getBucketText())
+							selectable = true
+							selected = termDisplayContext.isSelected()
+							termDisplayContextClass = hideClass
+							vocabularyName = vocabularyName
+						/>
 
 						<#assign termDisplayContextCount++ />
 					</#list>
-						 <#if termDisplayContextCount gt 8>
+
+					<#if termDisplayContextCount gt 8>
 						<@clay.button
 							cssClass="btn-unstyled facet-clear-btn view-all-btn c-mt-3"
 							displayType="link"
@@ -176,14 +166,28 @@
 	markupView="lexicon"
 	persistState=true
 >
-	<#assign vocabularyNames = assetCategoriesSearchFacetDisplayContext.getVocabularyNames()![] />
+	<#assign
+		vocabularyNames = assetCategoriesSearchFacetDisplayContext.getVocabularyNames()![]
+
+		customTitle =
+			{
+				"Applicable Versions": "Product Version",
+				"Capability": "Capabilities",
+				"Feature": "Features"
+			}
+
+		vocabularyNames = assetCategoriesSearchFacetDisplayContext.getVocabularyNames()![]
+
+		vocabularyTitle = (vocabularyNames?size == 1)?then(vocabularyNames[0]!'', 'category')
+	/>
+
 	<@liferay_ui.panel
 		collapsible=true
 		cssClass="p-4 search-facet search-facet-display-vocabulary"
 		id="${namespace + 'facetAssetCategoriesPanel'}"
 		markupView="lexicon"
 		persistState=true
-		title="${(vocabularyNames?size == 1)?then(vocabularyNames[0]!'', 'category')}"
+		title="${(themeDisplay.getURLCurrent()?contains('/sales-enablement/'))?then(customTitle[vocabularyTitle]!vocabularyTitle, vocabularyTitle)}"
 	>
 		<#if vocabularyNames?has_content>
 			<ul class="learn-treeview treeview treeview-light treeview-nested treeview-vocabulary-display" role="tree">
@@ -261,24 +265,23 @@
 	document.addEventListener('DOMContentLoaded', () => {
 		const panels = document.querySelectorAll('.panel-group .panel');
 
-		panels.forEach(panel => {
-			if (window.innerWidth <= 768) {
-				const panelBody = panel.querySelector('.panel-collapse');
+	panels.forEach(panel => {
+		const panelBody = panel.querySelector('.panel-collapse');
+		const panelHeaderButton = panel.querySelector('.panel-header-link');
 
-				if (panelBody) {
-					panelBody.classList.remove('show');
-					panelBody.classList.add('collapse');
-				}
-
-				const panelHeaderButton = panel.querySelector('.panel-header-link');
-
-				if (panelHeaderButton) {
-					panelHeaderButton.classList.add('collapsed');
-					panelHeaderButton.setAttribute('aria-expanded', 'false');
-				}
+		if (window.innerWidth <= 768) {
+			if (panelBody) {
+				panelBody.classList.remove('show');
+				panelBody.classList.add('collapse');
 			}
-		});
+
+			if (panelHeaderButton) {
+				panelHeaderButton.classList.add('collapsed');
+				panelHeaderButton.setAttribute('aria-expanded', 'false');
+			}
+		}
 	});
+});
 </@>
 
 <style>

@@ -7,6 +7,7 @@ package com.liferay.commerce.order.content.web.internal.fragment.renderer;
 
 import com.liferay.commerce.configuration.CommerceOrderCheckoutConfiguration;
 import com.liferay.commerce.constants.CommerceConstants;
+import com.liferay.commerce.constants.CommerceOrderActionKeys;
 import com.liferay.commerce.constants.CommerceOrderConstants;
 import com.liferay.commerce.constants.CommercePortletKeys;
 import com.liferay.commerce.model.CommerceOrder;
@@ -190,6 +191,11 @@ public class OrderActionsFragmentRenderer implements FragmentRenderer {
 				"liferay-commerce:order-actions:namespace",
 				StringUtil.randomId() + StringPool.UNDERLINE);
 			httpServletRequest.setAttribute(
+				"liferay-commerce:order-actions:notesPermission",
+				_hasModelPermission(
+					commerceOrder,
+					CommerceOrderActionKeys.MANAGE_COMMERCE_ORDER_NOTES));
+			httpServletRequest.setAttribute(
 				"liferay-commerce:order-actions:open", commerceOrder.isOpen());
 			httpServletRequest.setAttribute(
 				"liferay-commerce:order-actions:orderSummaryURL",
@@ -218,6 +224,12 @@ public class OrderActionsFragmentRenderer implements FragmentRenderer {
 				CommerceOrderInfoItemUtil.getCommerceOrderFriendlyURL(
 					_friendlyURLSeparatorProviderSnapshot.get(),
 					httpServletRequest));
+			httpServletRequest.setAttribute(
+				"liferay-commerce:order-actions:restrictedNotesPermission",
+				_hasModelPermission(
+					commerceOrder,
+					CommerceOrderActionKeys.
+						MANAGE_COMMERCE_ORDER_RESTRICTED_NOTES));
 
 			if (FeatureFlagManagerUtil.isEnabled(
 					_portal.getCompanyId(httpServletRequest), "LPD-10562") &&

@@ -6,15 +6,20 @@
 import {expect, mergeTests} from '@playwright/test';
 
 import {apiHelpersTest} from '../../../fixtures/apiHelpersTest';
+import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {isolatedSiteTest} from '../../../fixtures/isolatedSiteTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {createCategories} from '../../../helpers/CreateCategories';
+import {clickAndExpectToBeVisible} from '../../../utils/clickAndExpectToBeVisible';
 import {waitForAlert} from '../../../utils/waitForAlert';
 import {assetCategoriesPagesTest} from './fixtures/assetCategoriesAdminPagesTest';
 
 const test = mergeTests(
 	apiHelpersTest,
 	assetCategoriesPagesTest,
+	featureFlagsTest({
+		'LPD-31228': {enabled: true},
+	}),
 	isolatedSiteTest,
 	loginTest()
 );
@@ -41,16 +46,47 @@ test('User can add, edit, delete a category and add a subcategory.', async ({
 	await assetCategoriesAdminPage.goto(site.friendlyUrlPath);
 
 	const categoryNameChanged = 'category-1-changed';
+	const categoryERCChanged = 'category-1-erc-changed';
 
 	await test.step('edit', async () => {
 		await assetCategoriesEditPage.goto(categoryName);
 
 		await assetCategoriesEditPage.fillName(categoryNameChanged);
+		await assetCategoriesEditPage.fillExternalReferenceCode(
+			categoryERCChanged
+		);
 		await assetCategoriesEditPage.save(`Success:${categoryNameChanged}`);
 
 		await expect(
 			page.getByRole('link', {name: categoryNameChanged})
 		).toBeVisible();
+	});
+
+	await test.step('add a category with duplicate external code reference', async () => {
+		await assetCategoriesAdminPage.gotoAction(
+			'Add Subcategory',
+			categoryNameChanged
+		);
+
+		const subcategoryName = 'Subcategory name';
+
+		await assetCategoriesEditPage.fillName(subcategoryName);
+		await assetCategoriesEditPage.fillExternalReferenceCode(
+			categoryERCChanged
+		);
+
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: assetCategoriesEditPage.saveButton,
+			trigger: page.getByText(
+				'Please enter a unique external reference code.',
+				{
+					exact: true,
+				}
+			),
+		});
+
+		await assetCategoriesAdminPage.goto(site.friendlyUrlPath);
 	});
 
 	await test.step('add a subcategory', async () => {
@@ -62,6 +98,7 @@ test('User can add, edit, delete a category and add a subcategory.', async ({
 		const subcategoryName = 'Subcategory name';
 
 		await assetCategoriesEditPage.fillName(subcategoryName);
+
 		await assetCategoriesEditPage.save(`Success:${subcategoryName}`);
 
 		await expect(

@@ -1,23 +1,25 @@
 /**
- * SPDX-FileCopyrightText: (c) 2000 Liferay, Inc. https://liferay.com
+ * SPDX-FileCopyrightText: (c) 2025 Liferay, Inc. https://liferay.com
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
 import {Locator, Page, expect} from '@playwright/test';
 
+import {clickAndExpectToBeVisible} from '../../utils/clickAndExpectToBeVisible';
 import {waitForAlert} from '../../utils/waitForAlert';
+import {waitForPageToBeLoaded} from '../../utils/waitForPageToBeLoaded';
 import {ApplicationsMenuPage} from '../product-navigation-applications-menu/ApplicationsMenuPage';
 
 export class InstanceSettingsPage {
-	readonly page: Page;
-	readonly applicationsMenuPage: ApplicationsMenuPage;
 	readonly actionsButton: Locator;
+	readonly applicationsMenuPage: ApplicationsMenuPage;
+	readonly page: Page;
 	readonly saveButton: Locator;
 
 	constructor(page: Page) {
 		this.actionsButton = page.getByRole('button', {name: 'Actions'});
-		this.page = page;
 		this.applicationsMenuPage = new ApplicationsMenuPage(page);
+		this.page = page;
 		this.saveButton = page
 			.getByRole('button', {name: 'Save'})
 			.or(page.getByRole('button', {name: 'Update'}));
@@ -55,10 +57,22 @@ export class InstanceSettingsPage {
 		}
 	}
 
-	async exportInstanceSetting() {
-		await this.actionsButton.click();
+	async clickOnAction(actionName: string) {
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: this.page.getByRole('menuitem', {name: actionName}),
+			trigger: this.actionsButton,
+		});
+	}
 
-		await this.page.getByRole('menuitem', {name: 'Export'}).click();
+	async resetInstanceSetting() {
+		await this.clickOnAction('Reset Default Values');
+
+		await waitForAlert(this.page);
+	}
+
+	async exportInstanceSetting() {
+		await this.clickOnAction('Export');
 	}
 
 	async goToInstanceSetting(
@@ -92,6 +106,46 @@ export class InstanceSettingsPage {
 				name: configurationName,
 			})
 			.click();
+
+		await waitForPageToBeLoaded(this.page);
+	}
+
+	async exportFactoryEntries() {
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: this.page.getByRole('menuitem', {name: 'Export Entries'}),
+			trigger: this.page.getByRole('button', {name: 'Actions'}).first(),
+		});
+	}
+
+	async exportFactoryEntry(entryName: string) {
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: this.page.getByRole('menuitem', {name: 'Export'}),
+			trigger: this.page
+				.locator(`tbody tr:has-text("${entryName}")`)
+				.getByRole('button', {name: 'Actions'}),
+		});
+	}
+
+	async editFactoryEntry(entryName: string) {
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: this.page.getByRole('link', {name: 'Edit'}),
+			trigger: this.page
+				.locator(`tbody tr:has-text("${entryName}")`)
+				.getByRole('button', {name: 'Actions'}),
+		});
+	}
+
+	async deleteFactoryEntry(entryName: string) {
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: this.page.getByRole('link', {name: 'Delete'}),
+			trigger: this.page
+				.locator(`tbody tr:has-text("${entryName}")`)
+				.getByRole('button', {name: 'Actions'}),
+		});
 	}
 
 	async goToSSO() {

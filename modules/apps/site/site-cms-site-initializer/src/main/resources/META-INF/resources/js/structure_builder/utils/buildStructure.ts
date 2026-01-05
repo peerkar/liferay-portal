@@ -10,7 +10,7 @@ import {
 	ObjectDefinitions,
 	ObjectField,
 	ObjectRelationship,
-} from '../types/ObjectDefinition';
+} from '../../common/types/ObjectDefinition';
 import {
 	ReferencedStructure,
 	RepeatableGroup,
@@ -45,6 +45,7 @@ export default function buildStructure({
 		name: mainObjectDefinition.name ?? '',
 		spaces: getSpaces(mainObjectDefinition),
 		status: isPublished ? 'published' : 'draft',
+		system: mainObjectDefinition.system ?? false,
 		type: mainObjectDefinition.objectFolderExternalReferenceCode as Structure['type'],
 		uuid: getUuid(),
 		workflows: getWorkflows(mainObjectDefinition),

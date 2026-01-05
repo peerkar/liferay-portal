@@ -644,6 +644,26 @@ public class CustomFDSSerializerTest extends BaseFDSSerializerTestCase {
 	}
 
 	@Test
+	public void testSerializeHideManagementBarInEmptyState() throws Exception {
+		_mockSerializeHideManagementBarInEmptyState(FDS_NAMES[0], false);
+		_mockSerializeHideManagementBarInEmptyState(FDS_NAMES[1], true);
+
+		Assert.assertNotEquals(
+			_customFDSSerializer.serializeHideManagementBarInEmptyState(
+				FDS_NAMES[0], httpServletRequest),
+			_customFDSSerializer.serializeHideManagementBarInEmptyState(
+				FDS_NAMES[1], httpServletRequest));
+		Assert.assertFalse(
+			_customFDSSerializer.serializeHideManagementBarInEmptyState(
+				FDS_NAMES[0], httpServletRequest));
+		Assert.assertTrue(
+			_customFDSSerializer.serializeHideManagementBarInEmptyState(
+				FDS_NAMES[1], httpServletRequest));
+
+		_resetFDSSerializer();
+	}
+
+	@Test
 	public void testSerializeItemsActions() throws Exception {
 
 		// Different items actions
@@ -810,6 +830,21 @@ public class CustomFDSSerializerTest extends BaseFDSSerializerTestCase {
 				FDS_NAMES[1], httpServletRequest
 			).toString(),
 			JSONCompareMode.STRICT);
+	}
+
+	@Test
+	public void testSerializeSnapshotsEnabled() throws Exception {
+		_mockSerializeSnapshotsEnabled(FDS_NAMES[0], false);
+		_mockSerializeSnapshotsEnabled(FDS_NAMES[1], true);
+
+		Assert.assertFalse(
+			_customFDSSerializer.serializeSnapshotsEnabled(
+				FDS_NAMES[0], httpServletRequest));
+		Assert.assertTrue(
+			_customFDSSerializer.serializeSnapshotsEnabled(
+				FDS_NAMES[1], httpServletRequest));
+
+		_resetFDSSerializer();
 	}
 
 	@Test
@@ -1389,6 +1424,24 @@ public class CustomFDSSerializerTest extends BaseFDSSerializerTestCase {
 		);
 	}
 
+	private void _mockSerializeHideManagementBarInEmptyState(
+		String fdsName, boolean hideManagementBarInEmptyState) {
+
+		Mockito.when(
+			_customFDSSerializer.getDataSetObjectEntryProperties(
+				fdsName, httpServletRequest)
+		).thenReturn(
+			HashMapBuilder.<String, Object>put(
+				"hideManagementBarInEmptyState", hideManagementBarInEmptyState
+			).build()
+		);
+
+		Mockito.when(
+			_customFDSSerializer.serializeHideManagementBarInEmptyState(
+				fdsName, httpServletRequest)
+		).thenCallRealMethod();
+	}
+
 	private void _mockSerializeItemsActions(String fdsName, String[] labels) {
 		List<ObjectEntry> objectEntries = TransformUtil.transformToList(
 			labels,
@@ -1450,6 +1503,24 @@ public class CustomFDSSerializerTest extends BaseFDSSerializerTestCase {
 
 		Mockito.when(
 			_customFDSSerializer.serializePagination(
+				fdsName, httpServletRequest)
+		).thenCallRealMethod();
+	}
+
+	private void _mockSerializeSnapshotsEnabled(
+		String fdsName, boolean snapshotsEnabled) {
+
+		Mockito.when(
+			_customFDSSerializer.getDataSetObjectEntryProperties(
+				fdsName, httpServletRequest)
+		).thenReturn(
+			HashMapBuilder.<String, Object>put(
+				"snapshotsEnabled", snapshotsEnabled
+			).build()
+		);
+
+		Mockito.when(
+			_customFDSSerializer.serializeSnapshotsEnabled(
 				fdsName, httpServletRequest)
 		).thenCallRealMethod();
 	}

@@ -110,10 +110,7 @@ import org.junit.runner.RunWith;
  * @author Marco Leo
  */
 @FeatureFlags(
-	featureFlags = {
-		@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-32050"),
-		@FeatureFlag("LPD-34594")
-	}
+	featureFlags = {@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-34594")}
 )
 @RunWith(Arquillian.class)
 public class ObjectEntryServiceTest {
@@ -131,7 +128,7 @@ public class ObjectEntryServiceTest {
 			TestPropsValues.getCompanyId());
 
 		_objectDefinition = ObjectDefinitionTestUtil.publishObjectDefinition(
-			true, ObjectDefinitionTestUtil.getRandomName(),
+			ObjectDefinitionTestUtil.getRandomName(),
 			Arrays.asList(
 				ObjectFieldUtil.createObjectField(
 					ObjectFieldConstants.BUSINESS_TYPE_TEXT,

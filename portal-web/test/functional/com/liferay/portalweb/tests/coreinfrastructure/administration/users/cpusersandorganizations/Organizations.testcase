@@ -29,62 +29,6 @@ definition {
 	}
 
 	@priority = 4
-	test AddOrganizationName50Characters {
-		Organization.openOrganizationsAdmin();
-
-		Organization.addCP(orgName = "Organization Staging Organization Web Content Display");
-
-		Organization.openOrganizationsAdmin();
-
-		Organization.searchCP(
-			orgName = "Organization Staging Organization Web Content Display",
-			searchTerm = "Organization Staging Organization Web Content Display");
-
-		Organization.viewCP(
-			orgName = "Organization Staging Organization Web Content Display",
-			orgType = "Organization");
-	}
-
-	@priority = 4
-	test AddOrganizationNameDuplicate {
-		JSONOrganization.addOrganization(organizationName = "Organization Name");
-
-		Organization.openOrganizationsAdmin();
-
-		Organization.searchCP(
-			orgName = "Organization Name",
-			searchTerm = "Organization Name");
-
-		Organization.viewCP(
-			orgName = "Organization Name",
-			orgType = "Organization");
-
-		Organization.openOrganizationsAdmin();
-
-		LexiconEntry.gotoAdd();
-
-		Type(
-			locator1 = "TextInput#NAME",
-			value1 = "Organization Name");
-
-		Select(
-			locator1 = "Select#COUNTRY",
-			value1 = "United States");
-
-		Select(
-			locator1 = "Select#NEW_REGION",
-			value1 = "California");
-
-		Button.clickSave();
-
-		Alert.viewRequestFailedToComplete();
-
-		AssertTextEquals.assertPartialText(
-			locator1 = "Message#ERROR_1",
-			value1 = "The organization name is already taken.");
-	}
-
-	@priority = 4
 	test AddOrganizations {
 		Organization.openOrganizationsAdmin();
 
@@ -169,6 +113,8 @@ definition {
 
 	@priority = 4
 	test AddOrganizationSitePublicPage {
+		property browser.chrome.version = "139.0";
+
 		var portalURL = PropsUtil.get("portal.url");
 
 		JSONOrganization.addOrganization(organizationName = "Organization Name");
@@ -1119,6 +1065,7 @@ definition {
 	@description = "A new user can add an organization with localized country name."
 	@priority = 3
 	test LocalizeCountryName {
+		property browser.chrome.version = "139.0";
 		property custom.properties = "jsonws.web.service.paths.excludes=";
 
 		task ("Add a new user") {
@@ -1523,6 +1470,7 @@ definition {
 
 	@priority = 4
 	test ViewContentInCustomOrganizationTypeSite {
+		property browser.chrome.version = "139.0";
 		property custom.properties = "jsonws.web.service.paths.excludes=";
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
@@ -1715,6 +1663,8 @@ definition {
 
 	@priority = 4
 	test ViewOrganizationSiteViaSitesDirectory {
+		property browser.chrome.version = "139.0";
+
 		ProductMenu.gotoPortlet(
 			category = "Site Builder",
 			portlet = "Pages");

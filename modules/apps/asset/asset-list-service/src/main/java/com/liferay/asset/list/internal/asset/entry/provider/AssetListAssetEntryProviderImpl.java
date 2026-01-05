@@ -214,7 +214,7 @@ public class AssetListAssetEntryProviderImpl
 							ddmStructure.getStructureId(),
 							_getFieldReference(
 								ddmStructure, ddmStructureFieldName),
-							LocaleUtil.getSiteDefault()));
+							LocaleUtil.getMostRelevantLocale()));
 				}
 			}
 			else {
@@ -226,7 +226,7 @@ public class AssetListAssetEntryProviderImpl
 						ddmStructureId,
 						_getFieldReference(
 							ddmStructureId, ddmStructureFieldName),
-						LocaleUtil.getSiteDefault()));
+						LocaleUtil.getMostRelevantLocale()));
 			}
 
 			assetEntryQuery.setAttribute(
@@ -297,18 +297,19 @@ public class AssetListAssetEntryProviderImpl
 	}
 
 	private long[] _filterAssetCategoryIds(long[] assetCategoryIds) {
-		List<Long> filteredAssetCategoryIds = new ArrayList<>();
+		List<Long> filteredAssetCategoryIds = TransformUtil.transformToList(
+			assetCategoryIds,
+			assetCategoryId -> {
+				AssetCategory category =
+					_assetCategoryLocalService.fetchAssetCategory(
+						assetCategoryId);
 
-		for (long assetCategoryId : assetCategoryIds) {
-			AssetCategory category =
-				_assetCategoryLocalService.fetchAssetCategory(assetCategoryId);
+				if (category == null) {
+					return null;
+				}
 
-			if (category == null) {
-				continue;
-			}
-
-			filteredAssetCategoryIds.add(assetCategoryId);
-		}
+				return assetCategoryId;
+			});
 
 		return ArrayUtil.toArray(filteredAssetCategoryIds.toArray(new Long[0]));
 	}

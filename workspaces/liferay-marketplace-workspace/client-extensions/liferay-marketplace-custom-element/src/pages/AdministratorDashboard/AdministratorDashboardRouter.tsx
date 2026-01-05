@@ -5,14 +5,16 @@
 
 import ClayButton from '@clayui/button';
 import {Align} from '@clayui/drop-down';
-import {HashRouter, Route, Routes, useParams} from 'react-router-dom';
+import {Route, Routes, useParams} from 'react-router-dom';
 
 import DropDown from '../../components/DropDown';
 import NewAppContextProvider from '../../context/NewAppContext';
+import SolutionContextProvider from '../../context/SolutionContext';
 import withProviders from '../../hoc/withProviders';
 import {Liferay} from '../../liferay/liferay';
 import koroneikiOAuth2 from '../../services/oauth/Koroneiki';
 import App from '../PublisherDashboard/pages/Apps/App';
+import SolutionsDetails from '../PublisherDashboard/pages/Solutions/Solution';
 import AdministratorDashboardOutlet from './AdministratorDashboardOutlet';
 import AdministrationSummary from './pages';
 import Apps from './pages/Apps';
@@ -69,45 +71,49 @@ const AppWithActions = () => {
 };
 
 const AdministratorDashboardRouter = () => (
-	<HashRouter>
-		<Routes>
-			<Route element={<AdministratorDashboardOutlet />}>
-				<Route element={<AdministrationSummary />} index />
-				<Route element={<Orders />} path="orders" />
-				<Route
-					element={<PublisherRequest />}
-					path="publisher-request"
-				/>
-				<Route element={<Publishers />} path="publishers" />
-				<Route element={<Trial />} path="trial" />
+	<Routes>
+		<Route element={<AdministratorDashboardOutlet />}>
+			<Route element={<AdministrationSummary />} index />
+			<Route element={<Orders />} path="orders" />
+			<Route element={<PublisherRequest />} path="publisher-request" />
+			<Route element={<Publishers />} path="publishers" />
+			<Route element={<Trial />} path="trial" />
 
-				<Route path="apps">
-					<Route element={<Apps />} index />
+			<Route path="apps">
+				<Route element={<Apps />} index />
 
-					<Route path=":productId">
-						<Route
-							element={
-								<NewAppContextProvider>
-									<AppWithActions />
-								</NewAppContextProvider>
-							}
-							index
-						/>
-					</Route>
-				</Route>
-
-				<Route path="solutions">
-					<Route element={<Solutions />} index />
-
-					<Route path=":productId">
-						<Route element={<App />} index />
-					</Route>
+				<Route path=":productId">
+					<Route
+						element={
+							<NewAppContextProvider>
+								<AppWithActions />
+							</NewAppContextProvider>
+						}
+						index
+					/>
 				</Route>
 			</Route>
-		</Routes>
-	</HashRouter>
+
+			<Route path="solutions">
+				<Route element={<Solutions />} index />
+
+				<Route path=":productId">
+					<Route
+						element={
+							<SolutionContextProvider catalogId={0}>
+								<SolutionsDetails />
+							</SolutionContextProvider>
+						}
+						index
+					/>
+				</Route>
+			</Route>
+		</Route>
+	</Routes>
 );
 
 export default withProviders(AdministratorDashboardRouter, {
+	withBreadcrumbs: true,
 	withErrorBoundary: true,
+	withHashRouter: true,
 });

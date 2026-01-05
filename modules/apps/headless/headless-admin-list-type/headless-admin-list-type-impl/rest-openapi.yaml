@@ -9,6 +9,9 @@ components:
                         type: object
                     readOnly: true
                     type: object
+                creator:
+                    $ref: ../../headless-delivery/headless-delivery-impl/rest-openapi.yaml#Creator
+                    readOnly: true
                 dateCreated:
                     format: date
                     readOnly: true
@@ -35,6 +38,13 @@ components:
                     additionalProperties:
                         type: string
                     type: object
+                permissions:
+                    items:
+                        type: permission
+                    type: array
+                status:
+                    $ref: "#/components/schemas/Status"
+                    readOnly: true
                 system:
                     type: boolean
             type: object
@@ -47,6 +57,9 @@ components:
                         type: object
                     readOnly: true
                     type: object
+                creator:
+                    $ref: ../../headless-delivery/headless-delivery-impl/rest-openapi.yaml#Creator
+                    readOnly: true
                 dateCreated:
                     format: date
                     readOnly: true
@@ -69,10 +82,23 @@ components:
                     additionalProperties:
                         type: string
                     type: object
+                status:
+                    $ref: "#/components/schemas/Status"
+                    readOnly: true
                 system:
                     type: boolean
                 type:
                     type: string
+        Status:
+            properties:
+                code:
+                    format: int32
+                    type: integer
+                label:
+                    type: string
+                label_i18n:
+                    type: string
+            type: object
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID

@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.liferay.headless.delivery.dto.v1_0.Comment;
 import com.liferay.headless.delivery.dto.v1_0.Creator;
 import com.liferay.petra.function.UnsafeSupplier;
 import com.liferay.petra.string.StringBundler;
@@ -145,6 +146,52 @@ public class ObjectEntry implements Serializable {
 
 	@JsonIgnore
 	private Supplier<AuditEvent[]> _auditEventsSupplier;
+
+	@io.swagger.v3.oas.annotations.media.Schema(
+		description = "Optional field with the comments associated with this object entry, can be embedded with nestedFields"
+	)
+	@Valid
+	public Comment[] getComments() {
+		if (_commentsSupplier != null) {
+			comments = _commentsSupplier.get();
+
+			_commentsSupplier = null;
+		}
+
+		return comments;
+	}
+
+	public void setComments(Comment[] comments) {
+		this.comments = comments;
+
+		_commentsSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setComments(
+		UnsafeSupplier<Comment[], Exception> commentsUnsafeSupplier) {
+
+		_commentsSupplier = () -> {
+			try {
+				return commentsUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField(
+		description = "Optional field with the comments associated with this object entry, can be embedded with nestedFields"
+	)
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected Comment[] comments;
+
+	@JsonIgnore
+	private Supplier<Comment[]> _commentsSupplier;
 
 	@io.swagger.v3.oas.annotations.media.Schema
 	@Valid
@@ -1231,6 +1278,9 @@ public class ObjectEntry implements Serializable {
 		else if (Objects.equals(propertyName, "auditEvents")) {
 			return getAuditEvents();
 		}
+		else if (Objects.equals(propertyName, "comments")) {
+			return getComments();
+		}
 		else if (Objects.equals(propertyName, "creator")) {
 			return getCreator();
 		}
@@ -1325,6 +1375,91 @@ public class ObjectEntry implements Serializable {
 		return null;
 	}
 
+	public void setPropertyValue(String propertyName, Object propertyValue) {
+		if (Objects.equals(propertyName, "actions")) {
+			setActions((Map<String, Map<String, String>>)propertyValue);
+		}
+		else if (Objects.equals(propertyName, "auditEvents")) {
+			setAuditEvents((AuditEvent[])propertyValue);
+		}
+		else if (Objects.equals(propertyName, "creator")) {
+			setCreator((Creator)propertyValue);
+		}
+		else if (Objects.equals(propertyName, "dateCreated")) {
+			setDateCreated((Date)propertyValue);
+		}
+		else if (Objects.equals(propertyName, "dateModified")) {
+			setDateModified((Date)propertyValue);
+		}
+		else if (Objects.equals(propertyName, "defaultLanguageId")) {
+			setDefaultLanguageId((String)propertyValue);
+		}
+		else if (Objects.equals(propertyName, "displayDate")) {
+			setDisplayDate((Date)propertyValue);
+		}
+		else if (Objects.equals(propertyName, "expirationDate")) {
+			setExpirationDate((Date)propertyValue);
+		}
+		else if (Objects.equals(propertyName, "externalReferenceCode")) {
+			setExternalReferenceCode((String)propertyValue);
+		}
+		else if (Objects.equals(propertyName, "friendlyUrlPath")) {
+			setFriendlyUrlPath((String)propertyValue);
+		}
+		else if (Objects.equals(propertyName, "friendlyUrlPath_i18n")) {
+			setFriendlyUrlPath_i18n((Map<String, String>)propertyValue);
+		}
+		else if (Objects.equals(propertyName, "id")) {
+			setId((Long)propertyValue);
+		}
+		else if (Objects.equals(propertyName, "keywords")) {
+			setKeywords((String[])propertyValue);
+		}
+		else if (Objects.equals(
+					propertyName, "objectEntryFolderExternalReferenceCode")) {
+
+			setObjectEntryFolderExternalReferenceCode((String)propertyValue);
+		}
+		else if (Objects.equals(propertyName, "objectEntryFolderId")) {
+			setObjectEntryFolderId((Long)propertyValue);
+		}
+		else if (Objects.equals(propertyName, "permissions")) {
+			setPermissions(
+				(com.liferay.portal.vulcan.permission.Permission[])
+					propertyValue);
+		}
+		else if (Objects.equals(propertyName, "removedBy")) {
+			setRemovedBy((Creator)propertyValue);
+		}
+		else if (Objects.equals(propertyName, "removedDate")) {
+			setRemovedDate((Date)propertyValue);
+		}
+		else if (Objects.equals(propertyName, "reviewDate")) {
+			setReviewDate((Date)propertyValue);
+		}
+		else if (Objects.equals(propertyName, "scopeId")) {
+			setScopeId((Long)propertyValue);
+		}
+		else if (Objects.equals(propertyName, "scopeKey")) {
+			setScopeKey((String)propertyValue);
+		}
+		else if (Objects.equals(propertyName, "status")) {
+			setStatus((Status)propertyValue);
+		}
+		else if (Objects.equals(propertyName, "systemProperties")) {
+			setSystemProperties((SystemProperties)propertyValue);
+		}
+		else if (Objects.equals(propertyName, "taxonomyCategoryBriefs")) {
+			setTaxonomyCategoryBriefs((TaxonomyCategoryBrief[])propertyValue);
+		}
+		else if (Objects.equals(propertyName, "taxonomyCategoryIds")) {
+			setTaxonomyCategoryIds((Long[])propertyValue);
+		}
+		else {
+			properties.put(propertyName, propertyValue);
+		}
+	}
+
 	private final class CachedUnsafeSupplier<T, E extends Throwable>
 		implements UnsafeSupplier<T, E> {
 
@@ -1394,6 +1529,28 @@ public class ObjectEntry implements Serializable {
 				sb.append(String.valueOf(auditEvents[i]));
 
 				if ((i + 1) < auditEvents.length) {
+					sb.append(", ");
+				}
+			}
+
+			sb.append("]");
+		}
+
+		Comment[] comments = getComments();
+
+		if (comments != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"comments\": ");
+
+			sb.append("[");
+
+			for (int i = 0; i < comments.length; i++) {
+				sb.append(comments[i]);
+
+				if ((i + 1) < comments.length) {
 					sb.append(", ");
 				}
 			}

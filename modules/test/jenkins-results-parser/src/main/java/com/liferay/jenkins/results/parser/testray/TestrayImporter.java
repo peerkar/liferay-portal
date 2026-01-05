@@ -962,7 +962,7 @@ public class TestrayImporter {
 			AppServerBundleStandaloneBuildTestrayCaseResult
 				portalAppServerBundleStandaloneBuildTestrayCaseResult =
 					new AppServerBundleStandaloneBuildTestrayCaseResult(
-						testrayBuild, _topLevelBuildReport, "portal");
+						"portal", testrayBuild, _topLevelBuildReport);
 
 			BuildReport portalAppServerBundleBuildReport =
 				portalAppServerBundleStandaloneBuildTestrayCaseResult.
@@ -976,7 +976,7 @@ public class TestrayImporter {
 			AppServerBundleStandaloneBuildTestrayCaseResult
 				analyticsCloudAppServerBundleStandaloneBuildTestrayCaseResult =
 					new AppServerBundleStandaloneBuildTestrayCaseResult(
-						testrayBuild, _topLevelBuildReport, "analytics.cloud");
+						"analytics.cloud", testrayBuild, _topLevelBuildReport);
 
 			BuildReport analyticsCloudAppServerBundleBuildReport =
 				analyticsCloudAppServerBundleStandaloneBuildTestrayCaseResult.
@@ -1364,9 +1364,17 @@ public class TestrayImporter {
 		TestrayBuild testrayBuild = getTestrayBuild(
 			axisTestClassGroup.getTestBaseDir());
 
-		TestrayRun testrayRun = TestrayFactory.newTestrayRun(
-			testrayBuild, axisTestClassGroup.getBatchName(),
-			job.getJobPropertiesFiles());
+		TestrayRun testrayRun;
+
+		if (axisTestClassGroup instanceof FunctionalAxisTestClassGroup) {
+			testrayRun = TestrayFactory.newTestrayRun(
+				testrayBuild, axisTestClassGroup, job.getJobPropertiesFiles());
+		}
+		else {
+			testrayRun = TestrayFactory.newTestrayRun(
+				testrayBuild, axisTestClassGroup.getBatchName(),
+				job.getJobPropertiesFiles());
+		}
 
 		long start = JenkinsResultsParserUtil.getCurrentTimeMillis();
 
@@ -1415,7 +1423,7 @@ public class TestrayImporter {
 		propertiesMap.put(
 			"testray.total.cpu.use.time",
 			JenkinsResultsParserUtil.toDurationString(
-				_topLevelBuildReport.getTotalDuration()));
+				_topLevelBuildReport.getTotalActualDuration()));
 
 		_addPropertyElements(
 			rootElement.addElement("properties"), propertiesMap);
@@ -1432,7 +1440,7 @@ public class TestrayImporter {
 			PortalLogBatchBuildTestrayCaseResult
 				portalLogBatchBuildTestrayCaseResult =
 					TestrayFactory.newPortalLogTestrayCaseResult(
-						testrayBuild, _topLevelBuildReport, axisTestClassGroup);
+						axisTestClassGroup, testrayBuild, _topLevelBuildReport);
 
 			if (!JenkinsResultsParserUtil.isNullOrEmpty(
 					portalLogBatchBuildTestrayCaseResult.getErrors())) {
@@ -1443,8 +1451,8 @@ public class TestrayImporter {
 			for (TestClass testClass : axisTestClassGroup.getTestClasses()) {
 				testrayCaseResults.add(
 					TestrayFactory.newBuildTestrayCaseResult(
-						testrayBuild, _topLevelBuildReport, axisTestClassGroup,
-						testClass));
+						axisTestClassGroup, testClass, testrayBuild,
+						_topLevelBuildReport));
 			}
 		}
 		else if (axisTestClassGroup instanceof PlaywrightAxisTestClassGroup) {
@@ -1454,15 +1462,15 @@ public class TestrayImporter {
 
 					testrayCaseResults.add(
 						TestrayFactory.newBuildTestrayCaseResult(
-							testrayBuild, _topLevelBuildReport,
-							axisTestClassGroup, testClass, testClassMethod));
+							axisTestClassGroup, testClass, testClassMethod,
+							testrayBuild, _topLevelBuildReport));
 				}
 			}
 		}
 		else {
 			testrayCaseResults.add(
 				TestrayFactory.newBuildTestrayCaseResult(
-					testrayBuild, _topLevelBuildReport, axisTestClassGroup));
+					axisTestClassGroup, testrayBuild, _topLevelBuildReport));
 		}
 
 		for (TestrayCaseResult testrayCaseResult : testrayCaseResults) {

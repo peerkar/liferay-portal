@@ -5,6 +5,7 @@
 
 import {useOutletContext, useParams} from 'react-router-dom';
 
+import {breadcrumbStore} from '../../../../../components/Breadcrumb/BreadcrumbStore';
 import {DetailedCard} from '../../../../../components/DetailedCard/DetailedCard';
 import QATable from '../../../../../components/QATable';
 import {ProductSpecificationKey} from '../../../../../enums/Product';
@@ -42,8 +43,8 @@ const getPriceList = (
 			<table className="qa-table">
 				<thead>
 					<tr>
-						<th width="40%">{i18n.translate('type')}</th>
-						<th width="30%">{i18n.translate('qty')}</th>
+						<th style={{width: '40%'}}>{i18n.translate('type')}</th>
+						<th style={{width: '30%'}}>{i18n.translate('qty')}</th>
 						<th>{i18n.translate('total')}</th>
 					</tr>
 				</thead>
@@ -78,6 +79,11 @@ const getPriceList = (
 const App = () => {
 	const {orderId} = useParams();
 	const {placedOrder, product} = useOutletContext<any>();
+
+	breadcrumbStore.send({
+		replacements: {[orderId as string]: product.name},
+		type: 'setReplacements',
+	});
 
 	const licenseType = getProductSpecificationValue(
 		ProductSpecificationKey.APP_LICENSING_TYPE,

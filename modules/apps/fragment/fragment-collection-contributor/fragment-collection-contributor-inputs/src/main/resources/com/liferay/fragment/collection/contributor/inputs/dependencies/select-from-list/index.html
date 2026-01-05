@@ -11,7 +11,7 @@
 		</label>
 
 		[#if input.readOnly]
-			<input aria-describedby="${fragmentElementId}-help-text" aria-labelledby="${fragmentElementId}-select-from-list-input-label [#if  input.errorMessage?has_content]${fragmentElementId}-select-from-list-input-error-message[/#if]" class="form-control" id="${fragmentElementId}-select-from-list-input" name="${input.name}" placeholder="${languageUtil.get(locale, "choose-an-option")}" [#if input.readOnly]readonly[/#if] ${input.required?then('required', '')} type="text" [#if input.value??]value="${input.value}"[/#if] />
+			<input aria-describedby="${fragmentElementId}-help-text" aria-labelledby="${fragmentElementId}-select-from-list-input-label [#if  input.errorMessage?has_content]${fragmentElementId}-select-from-list-input-error-message[/#if]" class="form-control" id="${fragmentElementId}-select-from-list-input" name="${input.name}" placeholder="${languageUtil.get(locale, "choose-an-option")}" [#if input.readOnly]readonly[/#if] ${input.required?then('required', '')} type="text" [#if input.attributes.selectedOptionLabel??]value="${input.attributes.selectedOptionLabel}"[/#if] />
 		[#else]
 			<div class="d-flex">
 				<div class="align-items-end input-group">
@@ -23,7 +23,7 @@
 					</div>
 
 					<span class="input-group-append input-group-item input-group-item-shrink">
-						<button aria-controls="${fragmentElementId}-listbox" [#if input.showHelpText && input.helpText?has_content]aria-describedby="${fragmentElementId}-help-text"[/#if] aria-expanded="false" class="btn btn-secondary" [#if disabled]disabled[/#if] type="button">
+						<button aria-controls="${fragmentElementId}-listbox" [#if input.showHelpText && input.helpText?has_content]aria-describedby="${fragmentElementId}-help-text"[/#if] aria-expanded="false" aria-label='${languageUtil.get(locale, "open-options-menu")}' class="btn btn-secondary" [#if disabled]disabled[/#if] type="button">
 							[@clay["icon"] symbol="caret-double" /]
 						</button>
 					</span>

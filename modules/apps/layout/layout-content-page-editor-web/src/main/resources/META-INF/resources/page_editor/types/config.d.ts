@@ -49,6 +49,15 @@ export interface Config {
 
 	changeMasterLayoutURL: string;
 	changeStyleBookEntryURL: string;
+	codeEditorSidebarPanels: Array<{
+		items: Array<{
+			content: string;
+			helpText?: string;
+			label: string;
+			tooltip?: string;
+		}>;
+		label: string;
+	}>;
 	collectionSelectorURL: string;
 
 	commonStyles: Array<{
@@ -144,6 +153,7 @@ export interface Config {
 	getFormConfigURL: string;
 	getFormFieldsURL: string;
 	getFragmentEntryInputFieldTypesURL: string;
+	getFragmentEntryInputURL: string;
 	getIframeContentCssURL: string;
 	getIframeContentURL: string;
 	getInfoItemActionErrorMessageURL: string;
@@ -171,7 +181,7 @@ export interface Config {
 	markItemForDeletionURL: string;
 	masterLayouts: Array<{
 		imagePreviewURL: string;
-		masterLayoutPlid: string;
+		masterLayoutPageTemplateEntryERC: string;
 		name: string;
 	}>;
 	masterUsed: boolean;
@@ -195,7 +205,7 @@ export interface Config {
 		subtype: {
 			id: string;
 			label: string;
-		};
+		} | null;
 		type: {
 			id: string;
 			label: string;
@@ -216,6 +226,7 @@ export interface Config {
 		name: string;
 		styleBookEntryERC: string;
 	}>;
+	swapFragmentEntryLinkURL: string;
 	themeColorsCssClasses: string[];
 	toolbarId: string;
 
@@ -231,8 +242,10 @@ export interface Config {
 	updatePortletsHighlightedConfigurationURL: string;
 	updateRowColumnsURL: string;
 	updateRuleURL: string;
+	updateRulesURL: string;
 	updateSegmentsExperiencePriorityURL: string;
 	updateSegmentsExperienceURL: string;
+	validateExpressionURL: string;
 	videoItemSelectorURL: string;
 	workflowEnabled: boolean;
 }

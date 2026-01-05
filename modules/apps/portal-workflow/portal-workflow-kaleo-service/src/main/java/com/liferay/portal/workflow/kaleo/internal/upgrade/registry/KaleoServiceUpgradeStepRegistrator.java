@@ -48,6 +48,7 @@ import com.liferay.portal.workflow.kaleo.internal.upgrade.v3_2_0.KaleoInstanceUp
 import com.liferay.portal.workflow.kaleo.internal.upgrade.v4_0_0.KaleoDefinitionContentUpgradeProcess;
 import com.liferay.portal.workflow.kaleo.internal.upgrade.v4_0_1.DDLFormRecordToDDMFormInstanceRecordUpgradeClassNames;
 import com.liferay.portal.workflow.kaleo.internal.upgrade.v4_3_0.KaleoLogUpgradeProcess;
+import com.liferay.portal.workflow.kaleo.internal.upgrade.v4_6_0.util.KaleoNodeSettingTable;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -221,17 +222,24 @@ public class KaleoServiceUpgradeStepRegistrator
 			new com.liferay.portal.workflow.kaleo.internal.upgrade.v4_2_1.
 				WorkflowContextUpgradeProcess());
 
-		registry.register("4.2.1", "4.3.0", new KaleoLogUpgradeProcess());
+		registry.register("4.2.1", "4.2.2", new DummyUpgradeProcess());
+
+		registry.register("4.2.2", "4.3.0", new KaleoLogUpgradeProcess());
 
 		registry.register(
-			"4.3.0", "4.3.1",
+			"4.3.0", "4.3.0.step-1",
 			new com.liferay.portal.workflow.kaleo.internal.upgrade.v4_3_1.
-				KaleoDefinitionUpgradeProcess(),
+				KaleoDefinitionUpgradeProcess());
+
+		registry.register(
+			"4.3.0.step-1", "4.3.1",
 			new com.liferay.portal.workflow.kaleo.internal.upgrade.v4_3_1.
 				KaleoDefinitionVersionUpgradeProcess());
 
+		registry.register("4.3.1", "4.3.2", new DummyUpgradeProcess());
+
 		registry.register(
-			"4.3.1", "4.4.0",
+			"4.3.2", "4.4.0",
 			new com.liferay.portal.workflow.kaleo.internal.upgrade.v4_4_0.
 				KaleoDefinitionUpgradeProcess());
 
@@ -243,6 +251,8 @@ public class KaleoServiceUpgradeStepRegistrator
 					"(select 1 from KaleoInstance where ",
 					"KaleoInstance.kaleoInstanceId = ",
 					"WorkflowInstanceLink.workflowInstanceId)")));
+
+		registry.register("4.5.0", "4.6.0", KaleoNodeSettingTable.create());
 	}
 
 }

@@ -117,13 +117,10 @@ public class SiteNavigationMenuItemUtil {
 				siteNavigationMenuItem.getType(),
 				SiteNavigationMenuItemTypeConstants.LAYOUT)) {
 
-			String layoutUuid = typeSettingsUnicodeProperties.get("layoutUuid");
-
-			boolean privateLayout = GetterUtil.getBoolean(
-				typeSettingsUnicodeProperties.get("privateLayout"));
-
-			Layout layout = LayoutLocalServiceUtil.getLayoutByUuidAndGroupId(
-				layoutUuid, siteNavigationMenuItem.getGroupId(), privateLayout);
+			Layout layout =
+				LayoutLocalServiceUtil.getLayoutByExternalReferenceCode(
+					typeSettingsUnicodeProperties.get("externalReferenceCode"),
+					siteNavigationMenuItem.getGroupId());
 
 			Map<Locale, String> nameMap = layout.getNameMap();
 

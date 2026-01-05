@@ -12,6 +12,7 @@ import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
+import com.liferay.info.localized.InfoLocalizedValue;
 import com.liferay.layout.test.util.LayoutTestUtil;
 import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.constants.ObjectDefinitionSettingConstants;
@@ -36,6 +37,7 @@ import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.role.RoleConstants;
@@ -62,13 +64,17 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.Inject;
+import com.liferay.translation.exporter.TranslationInfoItemFieldValuesExporter;
+import com.liferay.translation.exporter.TranslationInfoItemFieldValuesExporterRegistry;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
@@ -110,6 +116,17 @@ public abstract class BaseSectionDisplayContextTestCase
 				"true&entryClassNames=com.liferay.portal.kernel.model.",
 				"User,com.liferay.portal.kernel.model.",
 				"UserGroup&nestedFields=embedded")
+		).put(
+			"availableExportFileFormats",
+			() -> TransformUtil.transform(
+				_translationInfoItemFieldValuesExporterRegistry.
+					getTranslationInfoItemFieldValuesExporters(),
+				this::_getExportFileFormatJSONObject)
+		).put(
+			"availableTargetLocales",
+			_getLocalesJSONArray(
+				themeDisplay.getLocale(),
+				LanguageUtil.getAvailableLocales(themeDisplay.getSiteGroupId()))
 		).put(
 			"baseAssetLibraryViewURL",
 			StringBundler.concat(
@@ -223,6 +240,8 @@ public abstract class BaseSectionDisplayContextTestCase
 				"L_CMS_BASIC_WEB_CONTENT", "content-icon-basic-content"
 			).put(
 				"L_CMS_BLOG", "content-icon-blog"
+			).put(
+				"L_CMS_EXTERNAL_VIDEO", "file-icon-color-3"
 			).build()
 		).put(
 			"objectDefinitionIcons",
@@ -232,6 +251,8 @@ public abstract class BaseSectionDisplayContextTestCase
 				"L_CMS_BASIC_WEB_CONTENT", "forms"
 			).put(
 				"L_CMS_BLOG", "blogs"
+			).put(
+				"L_CMS_EXTERNAL_VIDEO", "document-multimedia"
 			).build()
 		).put(
 			"parentObjectEntryFolderExternalReferenceCode",
@@ -350,76 +371,29 @@ public abstract class BaseSectionDisplayContextTestCase
 
 	@Test
 	@TestInfo("LPD-57827")
-	public void testGetDepotEntriesJSONArrayWithMultipleDepotEntries()
-		throws Exception {
-
-		String name = StringUtil.randomString();
-
-		DepotEntry depotEntry = addDepotEntry(name, DepotConstants.TYPE_SPACE);
-
-		try {
-			List<DepotEntry> depotEntries =
-				_depotEntryLocalService.getDepotEntries(
-					group.getCompanyId(), DepotConstants.TYPE_SPACE);
-
-			Assert.assertEquals(
-				depotEntries.toString(), 2, depotEntries.size());
-
-			DepotEntry defaultDepotEntry = depotEntries.get(0);
-
-			Group defaultDepotGroup = groupLocalService.fetchGroup(
-				defaultDepotEntry.getGroupId());
-
-			Assert.assertEquals("Default", defaultDepotGroup.getGroupKey());
-
-			Group depotGroup = groupLocalService.fetchGroup(
-				depotEntry.getGroupId());
-
-			Assert.assertEquals(name, depotGroup.getGroupKey());
-
-			_testGetDepotEntriesJSONArray(
-				List.of(defaultDepotEntry), null,
-				String.valueOf(defaultDepotGroup.getGroupId()));
-			_testGetDepotEntriesJSONArray(
-				List.of(depotEntry), null,
-				String.valueOf(depotGroup.getGroupId()));
-			_testGetDepotEntriesJSONArray(depotEntries, null, null);
-
-			if (getRootObjectEntryFolderExternalReferenceCode() != null) {
-				ObjectEntryFolder objectEntryFolder = _addObjectFolderEntry(
-					depotGroup);
-
-				_testGetDepotEntriesJSONArray(
-					List.of(depotEntry), objectEntryFolder, null);
-				_testGetDepotEntriesJSONArray(
-					List.of(depotEntry), objectEntryFolder,
-					String.valueOf(depotGroup.getGroupId()));
-				_testGetDepotEntriesJSONArray(
-					null, objectEntryFolder,
-					String.valueOf(defaultDepotGroup.getGroupId()));
-			}
-		}
-		finally {
-			_depotEntryLocalService.deleteDepotEntry(depotEntry);
-		}
-	}
-
-	@Test
-	@TestInfo("LPD-57827")
-	public void testGetDepotEntriesJSONArrayWithOneDepotEntryOnly()
-		throws Exception {
+	public void testGetDepotEntriesJSONArray() throws Exception {
+		String name = StringUtil.toLowerCase(RandomTestUtil.randomString());
 
 		List<DepotEntry> depotEntries = _depotEntryLocalService.getDepotEntries(
 			group.getCompanyId(), DepotConstants.TYPE_SPACE);
 
-		Assert.assertEquals(depotEntries.toString(), 1, depotEntries.size());
+		int originalDepotEntriesSize = depotEntries.size();
 
-		DepotEntry depotEntry = depotEntries.get(0);
+		addDepotEntry(name, DepotConstants.TYPE_SPACE);
+
+		depotEntries = _depotEntryLocalService.getDepotEntries(
+			group.getCompanyId(), DepotConstants.TYPE_SPACE);
+
+		Assert.assertEquals(
+			depotEntries.toString(), originalDepotEntriesSize + 1,
+			depotEntries.size());
+
+		DepotEntry depotEntry = depotEntries.get(depotEntries.size() - 1);
 
 		Group depotGroup = groupLocalService.fetchGroup(
 			depotEntry.getGroupId());
 
-		Assert.assertEquals("Default", depotGroup.getGroupKey());
+		Assert.assertEquals(name, depotGroup.getGroupKey());
 
 		_testGetDepotEntriesJSONArray(
 			depotEntries, null, String.valueOf(depotGroup.getGroupId()));
@@ -485,7 +459,9 @@ public abstract class BaseSectionDisplayContextTestCase
 		Assert.assertEquals(method, data.get("method"));
 
 		Assert.assertEquals(icon, fdsActionDropdownItem.get("icon"));
-		Assert.assertEquals(label, fdsActionDropdownItem.get("label"));
+		Assert.assertEquals(
+			language.get(LocaleUtil.getDefault(), label),
+			fdsActionDropdownItem.get("label"));
 		Assert.assertEquals(type, fdsActionDropdownItem.get("type"));
 	}
 
@@ -812,6 +788,25 @@ public abstract class BaseSectionDisplayContextTestCase
 		return jsonArray;
 	}
 
+	private JSONObject _getExportFileFormatJSONObject(
+		TranslationInfoItemFieldValuesExporter
+			translationInfoItemFieldValuesExporter) {
+
+		return JSONUtil.put(
+			"displayName",
+			() -> {
+				InfoLocalizedValue<String> labelInfoLocalizedValue =
+					translationInfoItemFieldValuesExporter.
+						getLabelInfoLocalizedValue();
+
+				return labelInfoLocalizedValue.getValue(
+					themeDisplay.getLocale());
+			}
+		).put(
+			"mimeType", translationInfoItemFieldValuesExporter.getMimeType()
+		);
+	}
+
 	private JSONArray _getJSONArray(List<DepotEntry> depotEntries) {
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
@@ -848,6 +843,23 @@ public abstract class BaseSectionDisplayContextTestCase
 		).put(
 			"name", group.getName(LocaleUtil.getDefault())
 		);
+	}
+
+	private JSONArray _getLocalesJSONArray(
+		Locale locale, Collection<Locale> locales) {
+
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+
+		locales.forEach(
+			currentLocale -> jsonArray.put(
+				JSONUtil.put(
+					"displayName",
+					LocaleUtil.getLocaleDisplayName(currentLocale, locale)
+				).put(
+					"languageId", LocaleUtil.toLanguageId(currentLocale)
+				)));
+
+		return jsonArray;
 	}
 
 	private String _getRedirect(DropdownItem dropdownItem) {
@@ -893,7 +905,9 @@ public abstract class BaseSectionDisplayContextTestCase
 
 			DropdownItem dropdownItem = dropdownItems.get(index);
 
-			Assert.assertEquals(entry.getKey(), dropdownItem.get("label"));
+			Assert.assertEquals(
+				language.get(LocaleUtil.getDefault(), entry.getKey()),
+				dropdownItem.get("label"));
 
 			if (Validator.isNull(entry.getValue())) {
 				Assert.assertNull(_getRedirect(dropdownItem));
@@ -963,5 +977,9 @@ public abstract class BaseSectionDisplayContextTestCase
 
 	@Inject
 	private Portal _portal;
+
+	@Inject
+	private TranslationInfoItemFieldValuesExporterRegistry
+		_translationInfoItemFieldValuesExporterRegistry;
 
 }

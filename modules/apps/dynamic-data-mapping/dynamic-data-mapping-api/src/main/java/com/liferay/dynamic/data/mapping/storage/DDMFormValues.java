@@ -11,6 +11,7 @@ import com.liferay.petra.lang.HashUtil;
 import java.io.Serializable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -25,6 +26,26 @@ import java.util.Set;
  */
 public class DDMFormValues implements Serializable {
 
+	public static List<DDMFormFieldValue> getDDMFormFieldValues(
+		List<DDMFormFieldValue> ddmFormFieldValues, String name,
+		boolean includeNestedDDMFormFieldValues) {
+
+		List<DDMFormFieldValue> matchedDDMFormFieldValues = new ArrayList<>();
+
+		for (DDMFormFieldValue ddmFormFieldValue : ddmFormFieldValues) {
+			if (Objects.equals(name, ddmFormFieldValue.getName())) {
+				matchedDDMFormFieldValues.add(ddmFormFieldValue);
+			}
+
+			if (includeNestedDDMFormFieldValues) {
+				ddmFormFieldValue.populateNestedDDMFormFieldValues(
+					name, matchedDDMFormFieldValues);
+			}
+		}
+
+		return matchedDDMFormFieldValues;
+	}
+
 	public DDMFormValues(DDMForm ddmForm) {
 		_ddmForm = ddmForm;
 	}
@@ -37,6 +58,9 @@ public class DDMFormValues implements Serializable {
 		ddmFormFieldValue.setDDMFormValues(this);
 
 		_ddmFormFieldValues.add(ddmFormFieldValue);
+
+		_ddmFormFieldValuesMap.putIfAbsent(
+			ddmFormFieldValue.getName(), ddmFormFieldValue);
 	}
 
 	@Override
@@ -71,8 +95,36 @@ public class DDMFormValues implements Serializable {
 		return _ddmForm;
 	}
 
+	public DDMFormFieldValue getDDMFormFieldValue(
+		String name, boolean includeNestedDDMFormFieldValues) {
+
+		DDMFormFieldValue ddmFormFieldValue = _ddmFormFieldValuesMap.get(name);
+
+		if (!includeNestedDDMFormFieldValues || (ddmFormFieldValue != null)) {
+			return ddmFormFieldValue;
+		}
+
+		for (DDMFormFieldValue curDDMFormFieldValue : _ddmFormFieldValues) {
+			DDMFormFieldValue matchedDDMFormFieldValue =
+				curDDMFormFieldValue.getNestedDDMFormFieldValue(name);
+
+			if (matchedDDMFormFieldValue != null) {
+				return matchedDDMFormFieldValue;
+			}
+		}
+
+		return null;
+	}
+
 	public List<DDMFormFieldValue> getDDMFormFieldValues() {
 		return _ddmFormFieldValues;
+	}
+
+	public List<DDMFormFieldValue> getDDMFormFieldValues(
+		String name, boolean includeNestedDDMFormFieldValues) {
+
+		return getDDMFormFieldValues(
+			_ddmFormFieldValues, name, includeNestedDDMFormFieldValues);
 	}
 
 	/**
@@ -167,6 +219,11 @@ public class DDMFormValues implements Serializable {
 		}
 
 		_ddmFormFieldValues = ddmFormFieldValues;
+
+		for (DDMFormFieldValue ddmFormFieldValue : ddmFormFieldValues) {
+			_ddmFormFieldValuesMap.putIfAbsent(
+				ddmFormFieldValue.getName(), ddmFormFieldValue);
+		}
 	}
 
 	public void setDefaultLocale(Locale defaultLocale) {
@@ -176,6 +233,8 @@ public class DDMFormValues implements Serializable {
 	private Set<Locale> _availableLocales = new LinkedHashSet<>();
 	private final DDMForm _ddmForm;
 	private List<DDMFormFieldValue> _ddmFormFieldValues = new ArrayList<>();
+	private final Map<String, DDMFormFieldValue> _ddmFormFieldValuesMap =
+		new HashMap<>();
 	private Locale _defaultLocale;
 
 }

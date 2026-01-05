@@ -1,0 +1,24 @@
+{
+	"fieldSets": [
+		{
+			"fields": [
+				{
+					"dataType": "int",
+					"defaultValue": "3",
+					"label": "Number of Slides",
+					"localizable": false,
+					"name": "numberOfSlides",
+					"type": "text",
+					"typeOptions": {
+						"validation": {
+							"errorMessage": "You can only create up to 3 slides.",
+							"max": 3,
+							"min": 1,
+							"type": "number"
+						}
+					}
+				}
+			]
+		}
+	]
+}

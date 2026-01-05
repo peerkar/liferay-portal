@@ -40,6 +40,7 @@ if (Validator.isNotNull(backURL)) {
 				<aui:input name="commerceInventoryWarehouseId" type="hidden" />
 				<aui:input name="commerceInventoryWarehouseItemId" type="hidden" />
 				<aui:input name="quantity" type="hidden" />
+				<aui:input name="reservedQuantity" type="hidden" />
 				<aui:input name="sku" type="hidden" value="<%= cpInstance.getSku() %>" />
 				<aui:input name="unitOfMeasureKey" type="hidden" />
 				<aui:input name="mvccVersion" type="hidden" />
@@ -67,7 +68,9 @@ if (Validator.isNotNull(backURL)) {
 						for (CommerceInventoryWarehouse commerceInventoryWarehouse : commerceInventoryWarehouses) {
 							long commerceInventoryWarehouseItemId = 0;
 							BigDecimal quantity = BigDecimal.ZERO;
+							BigDecimal reservedQuantity = BigDecimal.ZERO;
 							long mvccVersion = 0;
+
 							CommerceInventoryWarehouseItem commerceInventoryWarehouseItem = null;
 
 							for (String cpInstanceUnitOfMeasureKey : cpInstanceUnitOfMeasureKeys) {
@@ -76,17 +79,23 @@ if (Validator.isNotNull(backURL)) {
 								if (commerceInventoryWarehouseItem != null) {
 									commerceInventoryWarehouseItemId = commerceInventoryWarehouseItem.getCommerceInventoryWarehouseItemId();
 
-									mvccVersion = commerceInventoryWarehouseItem.getMvccVersion();
-
 									BigDecimal commerceInventoryWarehouseItemQuantity = commerceInventoryWarehouseItem.getQuantity();
 
 									if (commerceInventoryWarehouseItemQuantity != null) {
 										quantity = commerceInventoryWarehouseItemQuantity;
 									}
+
+									BigDecimal commerceInventoryWarehouseItemReservedQuantity = commerceInventoryWarehouseItem.getReservedQuantity();
+
+									if (commerceInventoryWarehouseItemReservedQuantity != null) {
+										reservedQuantity = commerceInventoryWarehouseItemReservedQuantity;
+									}
+
+									mvccVersion = commerceInventoryWarehouseItem.getMvccVersion();
 								}
 						%>
 
-								<tr data-commerce-inventory-warehouse-id="<%= commerceInventoryWarehouse.getCommerceInventoryWarehouseId() %>" data-commerce-inventory-warehouse-item-id="<%= commerceInventoryWarehouseItemId %>" data-commerce-inventory-warehouse-item-uom="<%= cpInstanceUnitOfMeasureKey %>" data-index="<%= curIndex %>" data-mvcc-version="<%= mvccVersion %>">
+								<tr data-commerce-inventory-warehouse-id="<%= commerceInventoryWarehouse.getCommerceInventoryWarehouseId() %>" data-commerce-inventory-warehouse-item-id="<%= commerceInventoryWarehouseItemId %>" data-commerce-inventory-warehouse-item-uom="<%= cpInstanceUnitOfMeasureKey %>" data-index="<%= curIndex %>" data-mvcc-version="<%= mvccVersion %>" data-reserved-quantity="<%= reservedQuantity %>">
 									<td>
 										<%= HtmlUtil.escape(commerceInventoryWarehouse.getName(locale)) %>
 									</td>

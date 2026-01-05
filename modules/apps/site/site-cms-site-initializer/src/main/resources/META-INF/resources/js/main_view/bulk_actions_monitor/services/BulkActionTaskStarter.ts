@@ -18,15 +18,10 @@ import {
 	displayCreateTaskErrorToast,
 	displayCreateTaskSuccessToast,
 } from '../../../common/utils/toastUtil';
-import {
-	composeCreateTaskDTO,
-	composeCreateTaskURL,
-	getTaskReportLink,
-} from '../util';
+import {composeCreateTaskDTO, composeCreateTaskURL} from '../util';
 import {getBulkActionTaskMessage} from '../util/notifications';
 
 export class BulkActionTaskStarter implements IBulkActionTaskStarter {
-	private readonly bulkActionClassNameId: number;
 	private readonly onCreateTaskError:
 		| ((response: RequestResult<IBulkActionTaskPage>) => void)
 		| null;
@@ -43,7 +38,6 @@ export class BulkActionTaskStarter implements IBulkActionTaskStarter {
 
 	constructor({
 		apiURL,
-		classNameId,
 		keyValues,
 		onCreateError = null,
 		onCreateSuccess = null,
@@ -51,14 +45,11 @@ export class BulkActionTaskStarter implements IBulkActionTaskStarter {
 		overrideDefaultSuccessToast = false,
 		selectedData,
 		type,
-	}: IBulkActionTaskStarterDTO<keyof IBulkActionTaskType> & {
-		classNameId: number;
-	}) {
+	}: IBulkActionTaskStarterDTO<keyof IBulkActionTaskType>) {
 		if (!apiURL) {
 			throw new Error('Cannot POST bulk action task.');
 		}
 
-		this.bulkActionClassNameId = classNameId;
 		this.onCreateTaskError = onCreateError;
 		this.onCreateTaskSuccess = onCreateSuccess;
 		this.overrideDefaultErrorToast = overrideDefaultErrorToast;
@@ -89,23 +80,9 @@ export class BulkActionTaskStarter implements IBulkActionTaskStarter {
 			);
 
 			displayCreateTaskSuccessToast(
-				sub(
-					message,
-					this.selectedData.selectAll
-						? [
-								getTaskReportLink(
-									this.bulkActionClassNameId,
-									response?.data?.id
-								),
-							]
-						: [
-								this.selectedData?.items?.length || 0,
-								getTaskReportLink(
-									this.bulkActionClassNameId,
-									response?.data?.id
-								),
-							]
-				)
+				this.selectedData.selectAll
+					? message
+					: sub(message, [this.selectedData?.items?.length || 0])
 			);
 
 			if (this.onCreateTaskSuccess) {

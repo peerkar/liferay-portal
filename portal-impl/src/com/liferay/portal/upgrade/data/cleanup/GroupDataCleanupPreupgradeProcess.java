@@ -26,21 +26,30 @@ public class GroupDataCleanupPreupgradeProcess
 				"groupId", "Group_"));
 		upgrade(
 			new TableOrphanReferencesDataCleanupPreupgradeProcess(
-				"ownerType = " + PortletKeys.PREFS_OWNER_TYPE_GROUP, "ownerId",
-				"PortalPreferences", "groupId", "Group_"));
+				null,
+				"[$SOURCE_TABLE_ALIAS$].ownerType = " +
+					PortletKeys.PREFS_OWNER_TYPE_GROUP,
+				"ownerId", "PortalPreferences", "groupId", "Group_"));
 		upgrade(
 			new TableOrphanReferencesDataCleanupPreupgradeProcess(
-				"ownerType = " + PortletKeys.PREFS_OWNER_TYPE_GROUP, "ownerId",
-				"PortletPreferences", "groupId", "Group_"));
+				null,
+				"[$SOURCE_TABLE_ALIAS$].ownerType = " +
+					PortletKeys.PREFS_OWNER_TYPE_GROUP,
+				"ownerId", "PortletPreferences", "groupId", "Group_"));
 		upgrade(
 			new TableOrphanReferencesDataCleanupPreupgradeProcess(
-				"scope = " + ResourceConstants.SCOPE_GROUP, "primKeyId",
-				"ResourcePermission", "groupId", "Group_"));
+				null,
+				"[$SOURCE_TABLE_ALIAS$].scope = " +
+					ResourceConstants.SCOPE_GROUP,
+				"primKeyId", "ResourcePermission", "groupId", "Group_"));
 		upgrade(
 			new TableOrphanReferencesDataCleanupPreupgradeProcess(
+				null,
 				StringBundler.concat(
-					"scope = ", ResourceConstants.SCOPE_INDIVIDUAL,
-					" and name = '", Group.class.getName(), "'"),
+					"[$SOURCE_TABLE_ALIAS$].scope = ",
+					ResourceConstants.SCOPE_INDIVIDUAL, " and ",
+					"[$SOURCE_TABLE_ALIAS$].name = '", Group.class.getName(),
+					"'"),
 				"primKeyId", "ResourcePermission", "groupId", "Group_"));
 	}
 

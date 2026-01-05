@@ -8,6 +8,7 @@ import {expect, mergeTests} from '@playwright/test';
 import {dataApiHelpersTest} from '../../../../fixtures/dataApiHelpersTest';
 import {featureFlagsTest} from '../../../../fixtures/featureFlagsTest';
 import {loginTest} from '../../../../fixtures/loginTest';
+import {getRandomInt} from '../../../../utils/getRandomInt';
 import getRandomString from '../../../../utils/getRandomString';
 import {cmsPagesTest} from '../fixtures/cmsPagesTest';
 
@@ -21,17 +22,99 @@ const test = mergeTests(
 );
 
 test(
-	'Can access to View All Files page',
+	'Opens in Gallery View by default for files',
+	{tag: '@LPD-72056'},
+	async ({apiHelpers, page, spaceSummaryPage}) => {
+		const applicationName = 'cms/basic-documents';
+		const spaceName = 'Default';
+
+		const file1Title = `title ${getRandomString()}`;
+
+		const objectEntry = await apiHelpers.objectEntry.postObjectEntry(
+			{
+				file: {
+					fileBase64: 'R0lGODlhAQABAAAAACw=',
+					name: `file_${getRandomString()}.png`,
+				},
+				objectEntryFolderExternalReferenceCode: 'L_FILES',
+				title: file1Title,
+			},
+			applicationName,
+			spaceName
+		);
+
+		try {
+			await spaceSummaryPage.goto(spaceName);
+			await spaceSummaryPage.viewAllFilesLink.click();
+
+			await expect(
+				page.getByRole('combobox', {name: 'Gallery View Selected'})
+			).toBeVisible();
+
+			await expect(
+				spaceSummaryPage.galleryPreview.getByText(
+					'No Preview Available'
+				)
+			).toBeVisible();
+
+			expect(page.getByText(file1Title)).toBeVisible();
+		}
+		finally {
+			await apiHelpers.objectEntry.deleteObjectEntry(
+				applicationName,
+				String(objectEntry.id)
+			);
+		}
+	}
+);
+
+test(
+	'Can access Add button when there are no items',
 	{tag: '@LPD-62706'},
 	async ({page, spaceSummaryPage}) => {
 		const spaceName = 'Default';
 
 		await spaceSummaryPage.goto(spaceName);
+
+		await page.getByRole('button', {name: `Add Content`}).click();
+
+		let dropdown = page.locator('.dropdown-menu.show');
+
+		await Promise.all([
+			expect(dropdown.getByText('Basic Web Content')).toBeVisible(),
+			expect(dropdown.getByText('Blog')).toBeVisible(),
+			expect(dropdown.getByText('Folder')).toBeVisible(),
+		]);
+
+		await page.getByRole('button', {name: `Add Content`}).click();
+
+		await page.getByRole('button', {name: `Add Files`}).click();
+
+		dropdown = page.locator('.dropdown-menu.show');
+
+		await Promise.all([
+			expect(dropdown.getByText('External Video')).toBeVisible(),
+			expect(dropdown.getByText('Folder')).toBeVisible(),
+			expect(dropdown.getByText('Multiple Files')).toBeVisible(),
+			expect(dropdown.getByText('Single File')).toBeVisible(),
+		]);
+	}
+);
+
+test(
+	'Can access to View All Files page if file is available',
+	{tag: '@LPD-62706'},
+	async ({page, spaceSummaryPage}) => {
+		const spaceName = 'Default';
+
+		await spaceSummaryPage.goto(spaceName);
+
+		await spaceSummaryPage.createFileFolder('Folder' + getRandomInt());
+
 		await spaceSummaryPage.viewAllFilesLink.click();
 
-		expect(page.getByRole('link', {name: spaceName})).toBeVisible();
+		await expect(page.getByRole('link', {name: spaceName})).toBeVisible();
 		expect(page.getByRole('link', {name: 'Files'})).toBeVisible();
-		expect(page.getByText('No Files Yet')).toBeVisible();
 	}
 );
 
@@ -69,17 +152,19 @@ test(
 );
 
 test(
-	'Can access to View All Content page',
+	'Can access to View All Content page if content is available',
 	{tag: '@LPD-62706'},
 	async ({page, spaceSummaryPage}) => {
 		const spaceName = 'Default';
 
 		await spaceSummaryPage.goto(spaceName);
+
+		await spaceSummaryPage.createContentFolder('Folder' + getRandomInt());
+
 		await spaceSummaryPage.viewAllContentLink.click();
 
-		expect(page.getByRole('link', {name: spaceName})).toBeVisible();
+		await expect(page.getByRole('link', {name: spaceName})).toBeVisible();
 		expect(page.getByRole('link', {name: 'Contents'})).toBeVisible();
-		expect(page.getByText('No Content Yet')).toBeVisible();
 	}
 );
 

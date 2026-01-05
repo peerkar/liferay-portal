@@ -320,7 +320,7 @@ public class LayoutStagedModelDataHandlerTest
 				null, TestPropsValues.getUserId(), stagingGroup.getGroupId(), 0,
 				0, false, RandomTestUtil.randomString(),
 				LayoutUtilityPageEntryConstants.TYPE_SC_INTERNAL_SERVER_ERROR,
-				0,
+				null,
 				ServiceContextTestUtil.getServiceContext(
 					stagingGroup.getGroupId(), TestPropsValues.getUserId()));
 
@@ -702,7 +702,7 @@ public class LayoutStagedModelDataHandlerTest
 							importedFileEntry.getFileVersion(), null,
 							StringPool.BLANK)),
 					"\" data-fileentryid=\"",
-					importedFileEntry.getFileEntryId(), "\"></a>")));
+					importedFileEntry.getFileEntryId(), "\"")));
 
 		_stagingLocalService.disableStaging(liveGroup, serviceContext);
 
@@ -736,7 +736,7 @@ public class LayoutStagedModelDataHandlerTest
 							importedFileEntry.getFileVersion(), null,
 							StringPool.BLANK)),
 					"\" data-fileentryid=\"",
-					importedFileEntry.getFileEntryId(), "\"></a>")));
+					importedFileEntry.getFileEntryId(), "\"")));
 		Assert.assertTrue(
 			html,
 			html.contains(
@@ -769,7 +769,8 @@ public class LayoutStagedModelDataHandlerTest
 				WorkflowConstants.STATUS_APPROVED);
 
 		Layout layout = LayoutTestUtil.addTypeContentLayout(
-			stagingGroup, false, false, layoutPageTemplateEntry.getPlid());
+			stagingGroup, false, false,
+			layoutPageTemplateEntry.getExternalReferenceCode());
 
 		initExport();
 
@@ -906,9 +907,9 @@ public class LayoutStagedModelDataHandlerTest
 
 		Layout layout = LayoutTestUtil.addTypeContentLayout(stagingGroup);
 
-		layout = _layoutLocalService.updateMasterLayoutPlid(
+		layout = _layoutLocalService.updateMasterLayoutPageTemplateEntryERC(
 			layout.getGroupId(), layout.isPrivateLayout(), layout.getLayoutId(),
-			masterLayoutPageTemplateEntry.getPlid());
+			masterLayoutPageTemplateEntry.getExternalReferenceCode());
 
 		StagedModelDataHandlerUtil.exportStagedModel(
 			portletDataContext, layout);
@@ -1144,10 +1145,6 @@ public class LayoutStagedModelDataHandlerTest
 		Layout stagingMasterLayout = _layoutLocalService.fetchLayout(
 			masterLayout.getUuid(), stagingGroup.getGroupId(), true);
 
-		stagingLayout = _layoutLocalService.updateMasterLayoutPlid(
-			stagingGroup.getGroupId(), false, stagingLayout.getLayoutId(),
-			stagingMasterLayout.getPlid());
-
 		stagingMasterLayout.setLayoutId(layout.getLayoutId());
 
 		stagingMasterLayout = _layoutLocalService.updateLayout(
@@ -1287,11 +1284,11 @@ public class LayoutStagedModelDataHandlerTest
 
 		StyleBookEntry styleBookEntry =
 			_styleBookEntryLocalService.addStyleBookEntry(
-				null, TestPropsValues.getUserId(), stagingGroup.getGroupId(),
+				null, TestPropsValues.getUserId(), liveGroup.getGroupId(),
 				false, StringPool.BLANK, RandomTestUtil.randomString(),
 				StringPool.BLANK, RandomTestUtil.randomString(),
 				ServiceContextTestUtil.getServiceContext(
-					stagingGroup.getGroupId()));
+					liveGroup.getGroupId()));
 
 		Layout layout = LayoutTestUtil.addTypeContentLayout(stagingGroup);
 

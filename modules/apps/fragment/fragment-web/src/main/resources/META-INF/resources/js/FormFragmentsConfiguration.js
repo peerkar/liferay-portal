@@ -8,7 +8,7 @@ import ClayForm, {ClayInput} from '@clayui/form';
 import ClayLayout from '@clayui/layout';
 import ClayTable from '@clayui/table';
 import {openSelectionModal} from 'frontend-js-components-web';
-import {createPortletURL, getPortletId, sub} from 'frontend-js-web';
+import {createPortletURL, sub} from 'frontend-js-web';
 import React, {useState} from 'react';
 
 export default function FormFragmentsConfiguration({
@@ -37,8 +37,7 @@ export default function FormFragmentsConfiguration({
 				Liferay.Language.get('fragment')
 			),
 			url: createPortletURL(selectFragmentEntryURL, {
-				inputType,
-				p_p_id: getPortletId(portletNamespace),
+				inputTypes: inputType,
 			}),
 		});
 	};

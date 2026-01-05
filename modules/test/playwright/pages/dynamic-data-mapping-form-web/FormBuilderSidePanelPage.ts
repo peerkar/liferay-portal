@@ -19,7 +19,9 @@ export class FormBuilderSidePanelPage {
 	readonly collapsibleToggleSwitch: Locator;
 	readonly helpText: Locator;
 	readonly htmlAutocompleteAttributeField: Locator;
+	readonly inputMaskToggle: Locator;
 	readonly label: Locator;
+	readonly numericTypeDecimal: Locator;
 	readonly objectFieldSelect: Locator;
 	readonly page: Page;
 	readonly paragraphFieldTextarea: Locator;
@@ -59,7 +61,9 @@ export class FormBuilderSidePanelPage {
 		this.htmlAutocompleteAttributeField = page.getByLabel(
 			'HTML Autocomplete Attribute'
 		);
+		this.inputMaskToggle = page.getByLabel('Input Mask');
 		this.label = page.getByLabel('Label', {exact: true}).first();
+		this.numericTypeDecimal = page.getByLabel('Decimal', {exact: true});
 		this.objectFieldSelect = page.getByLabel('Object Field');
 		this.page = page;
 		this.paragraphFieldTextarea = page
@@ -100,6 +104,31 @@ export class FormBuilderSidePanelPage {
 		await this.backButton.click();
 	}
 
+	async dragAndDropField(sourceFieldName: string, target: string | number) {
+		const sourceLocator = this.page
+			.locator(
+				`.ddm-field-container[data-field-name="${sourceFieldName}"]`
+			)
+			.locator('.ddm-drag');
+
+		let targetLocator;
+
+		if (typeof target === 'string') {
+			targetLocator = this.page.locator(
+				`.ddm-field-container[data-field-name="${target}"].ddm-target`
+			);
+		}
+		else {
+			targetLocator = this.page.locator('.col-ddm.col-md-12').nth(target);
+		}
+
+		// We need this pause to render forms group (if applicable)
+
+		await sourceLocator.dragTo(targetLocator);
+
+		await this.page.waitForTimeout(1000);
+	}
+
 	async fillParagraphField(apiHelpers: ApiHelpers, text: string) {
 		await this.paragraphFieldTextarea.fill(text);
 
@@ -115,6 +144,10 @@ export class FormBuilderSidePanelPage {
 
 		const option = this.getSelectOptionLocator(objectFieldLabel);
 		await option.click();
+	}
+
+	async getFieldReference() {
+		return this.page.getByLabel('Field Reference').inputValue();
 	}
 
 	getSelectOptionLocator(optionLabel: string) {

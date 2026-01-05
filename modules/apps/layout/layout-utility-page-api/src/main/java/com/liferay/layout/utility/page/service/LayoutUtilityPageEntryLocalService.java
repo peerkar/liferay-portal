@@ -82,7 +82,7 @@ public interface LayoutUtilityPageEntryLocalService
 	public LayoutUtilityPageEntry addLayoutUtilityPageEntry(
 			String externalReferenceCode, long userId, long groupId, long plid,
 			long previewFileEntryId, boolean defaultLayoutUtilityPageEntry,
-			String name, String type, long masterLayoutPlid,
+			String name, String type, String masterLayoutPageTemplateEntryERC,
 			ServiceContext serviceContext)
 		throws PortalException;
 
@@ -422,7 +422,8 @@ public interface LayoutUtilityPageEntryLocalService
 		LayoutUtilityPageEntry layoutUtilityPageEntry);
 
 	public LayoutUtilityPageEntry updateLayoutUtilityPageEntry(
-		long layoutUtilityPageEntryId, long previewFileEntryId);
+			long layoutUtilityPageEntryId, long previewFileEntryId)
+		throws PortalException;
 
 	@Indexable(type = IndexableType.REINDEX)
 	public LayoutUtilityPageEntry updateLayoutUtilityPageEntry(

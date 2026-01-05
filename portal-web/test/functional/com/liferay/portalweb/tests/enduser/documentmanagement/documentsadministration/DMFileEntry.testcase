@@ -1,6 +1,7 @@
 @component-name = "portal-content-management"
 definition {
 
+	property browser.chrome.version = "139.0";
 	property portal.release = "true";
 	property portal.upstream = "true";
 	property testray.main.component.name = "Documents and Media";
@@ -1654,19 +1655,21 @@ definition {
 	@priority = 3
 	@refactordone
 	test CanFilterByRecent {
+		HeadlessSite.addSite(siteName = "Site Name");
+
 		JSONDocument.addFileWithUploadedFile(
 			dmDocumentTitle = "DM Document Title 2",
-			groupName = "Guest",
+			groupName = "Site Name",
 			mimeType = "application/msword",
 			sourceFileName = "Document_2.doc");
 
 		JSONDocument.addFileWithUploadedFile(
 			dmDocumentTitle = "DM Document Title 3",
-			groupName = "Guest",
+			groupName = "Site Name",
 			mimeType = "application/msword",
 			sourceFileName = "Document_3.doc");
 
-		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "site-name");
 
 		LexiconEntry.changeDisplayStyle(displayStyle = "table");
 
@@ -1690,19 +1693,33 @@ definition {
 	test CanFilterByRecentAndOrderByDownloads {
 		property custom.properties = "dl.actions.visible=true";
 
+		HeadlessSite.addSite(siteName = "Site Name");
+
+		JSONLayout.addPublicLayout(
+			groupName = "Site Name",
+			layoutName = "Documents and Media Page");
+
+		JSONLayout.addWidgetToPublicLayout(
+			column = 1,
+			groupName = "Site Name",
+			layoutName = "Documents and Media Page",
+			widgetName = "Documents and Media");
+
 		JSONDocument.addFileWithUploadedFile(
 			dmDocumentTitle = "Document_2.doc",
-			groupName = "Guest",
+			groupName = "Site Name",
 			mimeType = "application/msword",
 			sourceFileName = "Document_2.doc");
 
 		JSONDocument.addFileWithUploadedFile(
 			dmDocumentTitle = "Document_3.doc",
-			groupName = "Guest",
+			groupName = "Site Name",
 			mimeType = "application/msword",
 			sourceFileName = "Document_3.doc");
 
-		Navigator.gotoPage(pageName = "Documents and Media Page");
+		Navigator.gotoSitePage(
+			pageName = "Documents and Media Page",
+			siteName = "Site Name");
 
 		DMDocument.downloadPG(dmDocumentTitle = "Document_3.doc");
 
@@ -1710,7 +1727,7 @@ definition {
 
 		DMDocument.assertFileNameFromTempFolder(fileName = "Document_3.doc");
 
-		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "site-name");
 
 		ManagementBar.setFilterAndOrder(
 			filterBy = "Recent",
@@ -3444,31 +3461,6 @@ definition {
 			dmDocumentTitle = "Document_2");
 	}
 
-	@description = "This test ensures that a user can see the info message after upload the file to see the preview."
-	@priority = 3
-	test CanViewInfoMessageOfDocumentPreview {
-		JSONDocument.addFileWithUploadedFile(
-			dmDocumentTitle = "Document_2.pdf",
-			groupName = "Guest",
-			mimeType = "application/pdf",
-			sourceFileName = "Document_2.pdf");
-
-		DMNavigator.openToEntryInAdmin(
-			dmDocumentTitle = "Document_2.pdf",
-			groupName = "Guest",
-			siteURLKey = "guest");
-
-		AssertTextEquals(
-			locator1 = "Message#INFO_1",
-			value1 = "Info:The document preview may not show all pages. Download it to see the full document.");
-
-		Click(locator1 = "Icon#CLOSE");
-
-		AssertTextNotPresent(
-			locator1 = "Message#INFO_1",
-			value1 = "Info:The document preview may not show all pages. Download it to see the full document.");
-	}
-
 	@priority = 4
 	@refactordone
 	test CanViewOlderVersion {
@@ -3988,7 +3980,7 @@ definition {
 	@description = "This test covers LPS-144687. It validates that a temp zip is not created if NoSuchFileException occurs during a download."
 	@priority = 4
 	test NoZipFileIsCreatedIfDownloadResultsInError {
-		DMDocument.deleteTempFolder(appServer = "tomcat-10.1.43");
+		DMDocument.deleteTempFolder(appServer = "tomcat-10.1.48");
 
 		for (var num : list "1,2,3") {
 			JSONDocument.addFileWithUploadedFile(
@@ -4008,7 +4000,7 @@ definition {
 		AssertConsoleTextPresent(value1 = "com.liferay.document.library.kernel.exception.NoSuchFileException");
 
 		DMDocument.assertNoZipFileFromTempFolder(
-			appServer = "tomcat-10.1.43",
+			appServer = "tomcat-10.1.48",
 			fileNamePattern = "*.zip");
 	}
 

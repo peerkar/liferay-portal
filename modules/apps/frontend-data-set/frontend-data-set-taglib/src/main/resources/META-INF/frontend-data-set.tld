@@ -207,11 +207,6 @@
 			<type>com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu</type>
 		</attribute>
 		<attribute>
-			<name>customViewsEnabled</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
 			<name>defaultSelectedItems</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -338,6 +333,11 @@
 		</attribute>
 		<attribute>
 			<name>showSelectAll</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>snapshotsEnabled</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>

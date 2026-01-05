@@ -134,7 +134,90 @@
 					"name": "Collaborator"
 				}
 			},
+			"Comment": {
+				"description": "Optional field with the comments associated with this object entry, can be embedded with nestedFields",
+				"properties": {
+					"actions": {
+						"additionalProperties": {
+							"additionalProperties": {
+								"description": "Block of actions allowed by the user making the request.",
+								"type": "string"
+							},
+							"description": "Block of actions allowed by the user making the request.",
+							"type": "object"
+						},
+						"description": "Block of actions allowed by the user making the request.",
+						"readOnly": true,
+						"type": "object"
+					},
+					"creator": {
+						"$ref": "#/components/schemas/Creator"
+					},
+					"dateCreated": {
+						"description": "The comment's creation date.",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"dateModified": {
+						"description": "The comment's latest modification date.",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"externalReferenceCode": {
+						"description": "The comment's external reference code.",
+						"type": "string"
+					},
+					"id": {
+						"description": "The comment's ID.",
+						"format": "int64",
+						"readOnly": true,
+						"type": "integer"
+					},
+					"numberOfComments": {
+						"description": "The number of child comments on this comment.",
+						"format": "int32",
+						"readOnly": true,
+						"type": "integer"
+					},
+					"parentCommentExternalReferenceCode": {
+						"description": "The parent comment's external reference code.",
+						"type": "string"
+					},
+					"parentCommentId": {
+						"description": "The ID of the comment's parent, if it exists.",
+						"format": "int64",
+						"type": "integer"
+					},
+					"text": {
+						"description": "The comment's text content.",
+						"type": "string"
+					},
+					"x-class-name": {
+						"default": "com.liferay.headless.delivery.dto.v1_0.Comment",
+						"readOnly": true,
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"x-filterable": {
+					"creatorId": {
+						"type": "integer"
+					},
+					"dateCreated": {
+						"type": "date_time"
+					},
+					"dateModified": {
+						"type": "date_time"
+					}
+				},
+				"xml": {
+					"name": "Comment"
+				}
+			},
 			"Creator": {
+				"description": "The comment's author.",
 				"properties": {
 					"additionalName": {
 						"description": "The author's additional name (e.g., middle name).",
@@ -395,6 +478,13 @@
 						"type": "array",
 						"x-batch-unsupported-formats": "CSV"
 					},
+					"comments": {
+						"description": "Optional field with the comments associated with this object entry, can be embedded with nestedFields",
+						"items": {
+							"$ref": "#/components/schemas/Comment"
+						},
+						"type": "array"
+					},
 					"creator": {
 						"readOnly": true,
 						"type": "string",
@@ -574,6 +664,9 @@
 					"field2": {
 						"type": "string"
 					},
+					"folderId": {
+						"type": "integer"
+					},
 					"id": {
 						"type": "id"
 					},
@@ -598,6 +691,9 @@
 					},
 					"relationship1/field1": {
 						"type": "string"
+					},
+					"relationship1/folderId": {
+						"type": "integer"
 					},
 					"relationship1/id": {
 						"type": "id"
@@ -626,7 +722,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship1/title": {
+						"type": "string"
+					},
 					"relationship1/userId": {
+						"type": "integer"
+					},
+					"relationship1/version": {
 						"type": "integer"
 					},
 					"relationship2/creator": {
@@ -646,6 +748,9 @@
 					},
 					"relationship2/field1": {
 						"type": "string"
+					},
+					"relationship2/folderId": {
+						"type": "integer"
 					},
 					"relationship2/id": {
 						"type": "id"
@@ -685,6 +790,9 @@
 					"relationship2/relationship1/field2": {
 						"type": "string"
 					},
+					"relationship2/relationship1/folderId": {
+						"type": "integer"
+					},
 					"relationship2/relationship1/id": {
 						"type": "id"
 					},
@@ -699,7 +807,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship2/relationship1/title": {
+						"type": "string"
+					},
 					"relationship2/relationship1/userId": {
+						"type": "integer"
+					},
+					"relationship2/relationship1/version": {
 						"type": "integer"
 					},
 					"relationship2/relationship2/creator": {
@@ -720,6 +834,9 @@
 					"relationship2/relationship2/field2": {
 						"type": "string"
 					},
+					"relationship2/relationship2/folderId": {
+						"type": "integer"
+					},
 					"relationship2/relationship2/id": {
 						"type": "id"
 					},
@@ -734,7 +851,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship2/relationship2/title": {
+						"type": "string"
+					},
 					"relationship2/relationship2/userId": {
+						"type": "integer"
+					},
+					"relationship2/relationship2/version": {
 						"type": "integer"
 					},
 					"relationship2/relationship3/creator": {
@@ -754,6 +877,9 @@
 					},
 					"relationship2/relationship3/field1": {
 						"type": "string"
+					},
+					"relationship2/relationship3/folderId": {
+						"type": "integer"
 					},
 					"relationship2/relationship3/id": {
 						"type": "id"
@@ -793,6 +919,9 @@
 					"relationship2/relationship3/relationship3/field1": {
 						"type": "string"
 					},
+					"relationship2/relationship3/relationship3/folderId": {
+						"type": "integer"
+					},
 					"relationship2/relationship3/relationship3/id": {
 						"type": "id"
 					},
@@ -820,7 +949,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship2/relationship3/relationship3/title": {
+						"type": "string"
+					},
 					"relationship2/relationship3/relationship3/userId": {
+						"type": "integer"
+					},
+					"relationship2/relationship3/relationship3/version": {
 						"type": "integer"
 					},
 					"relationship2/relationship3/relationship4/creator": {
@@ -840,6 +975,9 @@
 					},
 					"relationship2/relationship3/relationship4/field1": {
 						"type": "string"
+					},
+					"relationship2/relationship3/relationship4/folderId": {
+						"type": "integer"
 					},
 					"relationship2/relationship3/relationship4/id": {
 						"type": "id"
@@ -868,7 +1006,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship2/relationship3/relationship4/title": {
+						"type": "string"
+					},
 					"relationship2/relationship3/relationship4/userId": {
+						"type": "integer"
+					},
+					"relationship2/relationship3/relationship4/version": {
 						"type": "integer"
 					},
 					"relationship2/relationship3/relationship5/creator": {
@@ -888,6 +1032,9 @@
 					},
 					"relationship2/relationship3/relationship5/field1": {
 						"type": "string"
+					},
+					"relationship2/relationship3/relationship5/folderId": {
+						"type": "integer"
 					},
 					"relationship2/relationship3/relationship5/id": {
 						"type": "id"
@@ -913,6 +1060,9 @@
 					},
 					"relationship2/relationship3/relationship5/relationship5/field1": {
 						"type": "string"
+					},
+					"relationship2/relationship3/relationship5/relationship5/folderId": {
+						"type": "integer"
 					},
 					"relationship2/relationship3/relationship5/relationship5/id": {
 						"type": "id"
@@ -941,7 +1091,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship2/relationship3/relationship5/relationship5/title": {
+						"type": "string"
+					},
 					"relationship2/relationship3/relationship5/relationship5/userId": {
+						"type": "integer"
+					},
+					"relationship2/relationship3/relationship5/relationship5/version": {
 						"type": "integer"
 					},
 					"relationship2/relationship3/relationship5/relationship6/creator": {
@@ -962,6 +1118,9 @@
 					"relationship2/relationship3/relationship5/relationship6/field1": {
 						"type": "string"
 					},
+					"relationship2/relationship3/relationship5/relationship6/folderId": {
+						"type": "integer"
+					},
 					"relationship2/relationship3/relationship5/relationship6/id": {
 						"type": "id"
 					},
@@ -976,7 +1135,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship2/relationship3/relationship5/relationship6/title": {
+						"type": "string"
+					},
 					"relationship2/relationship3/relationship5/relationship6/userId": {
+						"type": "integer"
+					},
+					"relationship2/relationship3/relationship5/relationship6/version": {
 						"type": "integer"
 					},
 					"relationship2/relationship3/relationship5/status": {
@@ -986,7 +1151,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship2/relationship3/relationship5/title": {
+						"type": "string"
+					},
 					"relationship2/relationship3/relationship5/userId": {
+						"type": "integer"
+					},
+					"relationship2/relationship3/relationship5/version": {
 						"type": "integer"
 					},
 					"relationship2/relationship3/status": {
@@ -996,7 +1167,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship2/relationship3/title": {
+						"type": "string"
+					},
 					"relationship2/relationship3/userId": {
+						"type": "integer"
+					},
+					"relationship2/relationship3/version": {
 						"type": "integer"
 					},
 					"relationship2/relationship4/creator": {
@@ -1016,6 +1193,9 @@
 					},
 					"relationship2/relationship4/field1": {
 						"type": "string"
+					},
+					"relationship2/relationship4/folderId": {
+						"type": "integer"
 					},
 					"relationship2/relationship4/id": {
 						"type": "id"
@@ -1044,7 +1224,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship2/relationship4/title": {
+						"type": "string"
+					},
 					"relationship2/relationship4/userId": {
+						"type": "integer"
+					},
+					"relationship2/relationship4/version": {
 						"type": "integer"
 					},
 					"relationship2/status": {
@@ -1054,7 +1240,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship2/title": {
+						"type": "string"
+					},
 					"relationship2/userId": {
+						"type": "integer"
+					},
+					"relationship2/version": {
 						"type": "integer"
 					},
 					"status": {
@@ -1064,7 +1256,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"title": {
+						"type": "string"
+					},
 					"userId": {
+						"type": "integer"
+					},
+					"version": {
 						"type": "integer"
 					}
 				},
@@ -1093,6 +1291,13 @@
 						"readOnly": true,
 						"type": "array",
 						"x-batch-unsupported-formats": "CSV"
+					},
+					"comments": {
+						"description": "Optional field with the comments associated with this object entry, can be embedded with nestedFields",
+						"items": {
+							"$ref": "#/components/schemas/Comment"
+						},
+						"type": "array"
 					},
 					"creator": {
 						"readOnly": true,
@@ -1303,6 +1508,9 @@
 					"field1": {
 						"type": "string"
 					},
+					"folderId": {
+						"type": "integer"
+					},
 					"id": {
 						"type": "id"
 					},
@@ -1341,6 +1549,9 @@
 					"relationship1/field2": {
 						"type": "string"
 					},
+					"relationship1/folderId": {
+						"type": "integer"
+					},
 					"relationship1/id": {
 						"type": "id"
 					},
@@ -1355,7 +1566,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship1/title": {
+						"type": "string"
+					},
 					"relationship1/userId": {
+						"type": "integer"
+					},
+					"relationship1/version": {
 						"type": "integer"
 					},
 					"relationship2/creator": {
@@ -1375,6 +1592,9 @@
 					},
 					"relationship2/field2": {
 						"type": "string"
+					},
+					"relationship2/folderId": {
+						"type": "integer"
 					},
 					"relationship2/id": {
 						"type": "id"
@@ -1400,6 +1620,9 @@
 					},
 					"relationship2/relationship1/field1": {
 						"type": "string"
+					},
+					"relationship2/relationship1/folderId": {
+						"type": "integer"
 					},
 					"relationship2/relationship1/id": {
 						"type": "id"
@@ -1428,7 +1651,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship2/relationship1/title": {
+						"type": "string"
+					},
 					"relationship2/relationship1/userId": {
+						"type": "integer"
+					},
+					"relationship2/relationship1/version": {
 						"type": "integer"
 					},
 					"relationship2/relationship2/creator": {
@@ -1448,6 +1677,9 @@
 					},
 					"relationship2/relationship2/field1": {
 						"type": "string"
+					},
+					"relationship2/relationship2/folderId": {
+						"type": "integer"
 					},
 					"relationship2/relationship2/id": {
 						"type": "id"
@@ -1476,7 +1708,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship2/relationship2/title": {
+						"type": "string"
+					},
 					"relationship2/relationship2/userId": {
+						"type": "integer"
+					},
+					"relationship2/relationship2/version": {
 						"type": "integer"
 					},
 					"relationship2/status": {
@@ -1486,7 +1724,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship2/title": {
+						"type": "string"
+					},
 					"relationship2/userId": {
+						"type": "integer"
+					},
+					"relationship2/version": {
 						"type": "integer"
 					},
 					"relationship3/creator": {
@@ -1506,6 +1750,9 @@
 					},
 					"relationship3/field1": {
 						"type": "string"
+					},
+					"relationship3/folderId": {
+						"type": "integer"
 					},
 					"relationship3/id": {
 						"type": "id"
@@ -1545,6 +1792,9 @@
 					"relationship3/relationship3/field1": {
 						"type": "string"
 					},
+					"relationship3/relationship3/folderId": {
+						"type": "integer"
+					},
 					"relationship3/relationship3/id": {
 						"type": "id"
 					},
@@ -1572,7 +1822,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship3/relationship3/title": {
+						"type": "string"
+					},
 					"relationship3/relationship3/userId": {
+						"type": "integer"
+					},
+					"relationship3/relationship3/version": {
 						"type": "integer"
 					},
 					"relationship3/relationship4/creator": {
@@ -1592,6 +1848,9 @@
 					},
 					"relationship3/relationship4/field1": {
 						"type": "string"
+					},
+					"relationship3/relationship4/folderId": {
+						"type": "integer"
 					},
 					"relationship3/relationship4/id": {
 						"type": "id"
@@ -1620,7 +1879,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship3/relationship4/title": {
+						"type": "string"
+					},
 					"relationship3/relationship4/userId": {
+						"type": "integer"
+					},
+					"relationship3/relationship4/version": {
 						"type": "integer"
 					},
 					"relationship3/relationship5/creator": {
@@ -1640,6 +1905,9 @@
 					},
 					"relationship3/relationship5/field1": {
 						"type": "string"
+					},
+					"relationship3/relationship5/folderId": {
+						"type": "integer"
 					},
 					"relationship3/relationship5/id": {
 						"type": "id"
@@ -1665,6 +1933,9 @@
 					},
 					"relationship3/relationship5/relationship5/field1": {
 						"type": "string"
+					},
+					"relationship3/relationship5/relationship5/folderId": {
+						"type": "integer"
 					},
 					"relationship3/relationship5/relationship5/id": {
 						"type": "id"
@@ -1693,7 +1964,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship3/relationship5/relationship5/title": {
+						"type": "string"
+					},
 					"relationship3/relationship5/relationship5/userId": {
+						"type": "integer"
+					},
+					"relationship3/relationship5/relationship5/version": {
 						"type": "integer"
 					},
 					"relationship3/relationship5/relationship6/creator": {
@@ -1713,6 +1990,9 @@
 					},
 					"relationship3/relationship5/relationship6/field1": {
 						"type": "string"
+					},
+					"relationship3/relationship5/relationship6/folderId": {
+						"type": "integer"
 					},
 					"relationship3/relationship5/relationship6/id": {
 						"type": "id"
@@ -1739,6 +2019,9 @@
 					"relationship3/relationship5/relationship6/relationship6/field1": {
 						"type": "string"
 					},
+					"relationship3/relationship5/relationship6/relationship6/folderId": {
+						"type": "integer"
+					},
 					"relationship3/relationship5/relationship6/relationship6/id": {
 						"type": "id"
 					},
@@ -1753,7 +2036,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship3/relationship5/relationship6/relationship6/title": {
+						"type": "string"
+					},
 					"relationship3/relationship5/relationship6/relationship6/userId": {
+						"type": "integer"
+					},
+					"relationship3/relationship5/relationship6/relationship6/version": {
 						"type": "integer"
 					},
 					"relationship3/relationship5/relationship6/relationship7/creator": {
@@ -1774,6 +2063,9 @@
 					"relationship3/relationship5/relationship6/relationship7/field1": {
 						"type": "string"
 					},
+					"relationship3/relationship5/relationship6/relationship7/folderId": {
+						"type": "integer"
+					},
 					"relationship3/relationship5/relationship6/relationship7/id": {
 						"type": "id"
 					},
@@ -1788,7 +2080,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship3/relationship5/relationship6/relationship7/title": {
+						"type": "string"
+					},
 					"relationship3/relationship5/relationship6/relationship7/userId": {
+						"type": "integer"
+					},
+					"relationship3/relationship5/relationship6/relationship7/version": {
 						"type": "integer"
 					},
 					"relationship3/relationship5/relationship6/status": {
@@ -1798,7 +2096,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship3/relationship5/relationship6/title": {
+						"type": "string"
+					},
 					"relationship3/relationship5/relationship6/userId": {
+						"type": "integer"
+					},
+					"relationship3/relationship5/relationship6/version": {
 						"type": "integer"
 					},
 					"relationship3/relationship5/status": {
@@ -1808,7 +2112,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship3/relationship5/title": {
+						"type": "string"
+					},
 					"relationship3/relationship5/userId": {
+						"type": "integer"
+					},
+					"relationship3/relationship5/version": {
 						"type": "integer"
 					},
 					"relationship3/status": {
@@ -1818,7 +2128,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship3/title": {
+						"type": "string"
+					},
 					"relationship3/userId": {
+						"type": "integer"
+					},
+					"relationship3/version": {
 						"type": "integer"
 					},
 					"relationship4/creator": {
@@ -1838,6 +2154,9 @@
 					},
 					"relationship4/field1": {
 						"type": "string"
+					},
+					"relationship4/folderId": {
+						"type": "integer"
 					},
 					"relationship4/id": {
 						"type": "id"
@@ -1866,7 +2185,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship4/title": {
+						"type": "string"
+					},
 					"relationship4/userId": {
+						"type": "integer"
+					},
+					"relationship4/version": {
 						"type": "integer"
 					},
 					"status": {
@@ -1876,7 +2201,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"title": {
+						"type": "string"
+					},
 					"userId": {
+						"type": "integer"
+					},
+					"version": {
 						"type": "integer"
 					}
 				},
@@ -1905,6 +2236,13 @@
 						"readOnly": true,
 						"type": "array",
 						"x-batch-unsupported-formats": "CSV"
+					},
+					"comments": {
+						"description": "Optional field with the comments associated with this object entry, can be embedded with nestedFields",
+						"items": {
+							"$ref": "#/components/schemas/Comment"
+						},
+						"type": "array"
 					},
 					"creator": {
 						"readOnly": true,
@@ -2109,6 +2447,9 @@
 					"field1": {
 						"type": "string"
 					},
+					"folderId": {
+						"type": "integer"
+					},
 					"id": {
 						"type": "id"
 					},
@@ -2146,6 +2487,9 @@
 					},
 					"relationship3/field1": {
 						"type": "string"
+					},
+					"relationship3/folderId": {
+						"type": "integer"
 					},
 					"relationship3/id": {
 						"type": "id"
@@ -2185,6 +2529,9 @@
 					"relationship3/relationship1/field2": {
 						"type": "string"
 					},
+					"relationship3/relationship1/folderId": {
+						"type": "integer"
+					},
 					"relationship3/relationship1/id": {
 						"type": "id"
 					},
@@ -2199,7 +2546,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship3/relationship1/title": {
+						"type": "string"
+					},
 					"relationship3/relationship1/userId": {
+						"type": "integer"
+					},
+					"relationship3/relationship1/version": {
 						"type": "integer"
 					},
 					"relationship3/relationship2/creator": {
@@ -2219,6 +2572,9 @@
 					},
 					"relationship3/relationship2/field2": {
 						"type": "string"
+					},
+					"relationship3/relationship2/folderId": {
+						"type": "integer"
 					},
 					"relationship3/relationship2/id": {
 						"type": "id"
@@ -2244,6 +2600,9 @@
 					},
 					"relationship3/relationship2/relationship1/field1": {
 						"type": "string"
+					},
+					"relationship3/relationship2/relationship1/folderId": {
+						"type": "integer"
 					},
 					"relationship3/relationship2/relationship1/id": {
 						"type": "id"
@@ -2272,7 +2631,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship3/relationship2/relationship1/title": {
+						"type": "string"
+					},
 					"relationship3/relationship2/relationship1/userId": {
+						"type": "integer"
+					},
+					"relationship3/relationship2/relationship1/version": {
 						"type": "integer"
 					},
 					"relationship3/relationship2/relationship2/creator": {
@@ -2292,6 +2657,9 @@
 					},
 					"relationship3/relationship2/relationship2/field1": {
 						"type": "string"
+					},
+					"relationship3/relationship2/relationship2/folderId": {
+						"type": "integer"
 					},
 					"relationship3/relationship2/relationship2/id": {
 						"type": "id"
@@ -2320,7 +2688,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship3/relationship2/relationship2/title": {
+						"type": "string"
+					},
 					"relationship3/relationship2/relationship2/userId": {
+						"type": "integer"
+					},
+					"relationship3/relationship2/relationship2/version": {
 						"type": "integer"
 					},
 					"relationship3/relationship2/status": {
@@ -2330,7 +2704,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship3/relationship2/title": {
+						"type": "string"
+					},
 					"relationship3/relationship2/userId": {
+						"type": "integer"
+					},
+					"relationship3/relationship2/version": {
 						"type": "integer"
 					},
 					"relationship3/relationship3/creator": {
@@ -2350,6 +2730,9 @@
 					},
 					"relationship3/relationship3/field1": {
 						"type": "string"
+					},
+					"relationship3/relationship3/folderId": {
+						"type": "integer"
 					},
 					"relationship3/relationship3/id": {
 						"type": "id"
@@ -2378,7 +2761,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship3/relationship3/title": {
+						"type": "string"
+					},
 					"relationship3/relationship3/userId": {
+						"type": "integer"
+					},
+					"relationship3/relationship3/version": {
 						"type": "integer"
 					},
 					"relationship3/relationship4/creator": {
@@ -2398,6 +2787,9 @@
 					},
 					"relationship3/relationship4/field1": {
 						"type": "string"
+					},
+					"relationship3/relationship4/folderId": {
+						"type": "integer"
 					},
 					"relationship3/relationship4/id": {
 						"type": "id"
@@ -2426,7 +2818,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship3/relationship4/title": {
+						"type": "string"
+					},
 					"relationship3/relationship4/userId": {
+						"type": "integer"
+					},
+					"relationship3/relationship4/version": {
 						"type": "integer"
 					},
 					"relationship3/status": {
@@ -2436,7 +2834,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship3/title": {
+						"type": "string"
+					},
 					"relationship3/userId": {
+						"type": "integer"
+					},
+					"relationship3/version": {
 						"type": "integer"
 					},
 					"relationship4/creator": {
@@ -2456,6 +2860,9 @@
 					},
 					"relationship4/field1": {
 						"type": "string"
+					},
+					"relationship4/folderId": {
+						"type": "integer"
 					},
 					"relationship4/id": {
 						"type": "id"
@@ -2484,7 +2891,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship4/title": {
+						"type": "string"
+					},
 					"relationship4/userId": {
+						"type": "integer"
+					},
+					"relationship4/version": {
 						"type": "integer"
 					},
 					"relationship5/creator": {
@@ -2504,6 +2917,9 @@
 					},
 					"relationship5/field1": {
 						"type": "string"
+					},
+					"relationship5/folderId": {
+						"type": "integer"
 					},
 					"relationship5/id": {
 						"type": "id"
@@ -2529,6 +2945,9 @@
 					},
 					"relationship5/relationship5/field1": {
 						"type": "string"
+					},
+					"relationship5/relationship5/folderId": {
+						"type": "integer"
 					},
 					"relationship5/relationship5/id": {
 						"type": "id"
@@ -2557,7 +2976,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship5/relationship5/title": {
+						"type": "string"
+					},
 					"relationship5/relationship5/userId": {
+						"type": "integer"
+					},
+					"relationship5/relationship5/version": {
 						"type": "integer"
 					},
 					"relationship5/relationship6/creator": {
@@ -2577,6 +3002,9 @@
 					},
 					"relationship5/relationship6/field1": {
 						"type": "string"
+					},
+					"relationship5/relationship6/folderId": {
+						"type": "integer"
 					},
 					"relationship5/relationship6/id": {
 						"type": "id"
@@ -2603,6 +3031,9 @@
 					"relationship5/relationship6/relationship6/field1": {
 						"type": "string"
 					},
+					"relationship5/relationship6/relationship6/folderId": {
+						"type": "integer"
+					},
 					"relationship5/relationship6/relationship6/id": {
 						"type": "id"
 					},
@@ -2617,7 +3048,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship5/relationship6/relationship6/title": {
+						"type": "string"
+					},
 					"relationship5/relationship6/relationship6/userId": {
+						"type": "integer"
+					},
+					"relationship5/relationship6/relationship6/version": {
 						"type": "integer"
 					},
 					"relationship5/relationship6/relationship7/creator": {
@@ -2637,6 +3074,9 @@
 					},
 					"relationship5/relationship6/relationship7/field1": {
 						"type": "string"
+					},
+					"relationship5/relationship6/relationship7/folderId": {
+						"type": "integer"
 					},
 					"relationship5/relationship6/relationship7/id": {
 						"type": "id"
@@ -2663,6 +3103,9 @@
 					"relationship5/relationship6/relationship7/relationship7/field1": {
 						"type": "string"
 					},
+					"relationship5/relationship6/relationship7/relationship7/folderId": {
+						"type": "integer"
+					},
 					"relationship5/relationship6/relationship7/relationship7/id": {
 						"type": "id"
 					},
@@ -2677,7 +3120,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship5/relationship6/relationship7/relationship7/title": {
+						"type": "string"
+					},
 					"relationship5/relationship6/relationship7/relationship7/userId": {
+						"type": "integer"
+					},
+					"relationship5/relationship6/relationship7/relationship7/version": {
 						"type": "integer"
 					},
 					"relationship5/relationship6/relationship7/relationship8/creator": {
@@ -2698,6 +3147,9 @@
 					"relationship5/relationship6/relationship7/relationship8/field1": {
 						"type": "string"
 					},
+					"relationship5/relationship6/relationship7/relationship8/folderId": {
+						"type": "integer"
+					},
 					"relationship5/relationship6/relationship7/relationship8/id": {
 						"type": "id"
 					},
@@ -2712,7 +3164,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship5/relationship6/relationship7/relationship8/title": {
+						"type": "string"
+					},
 					"relationship5/relationship6/relationship7/relationship8/userId": {
+						"type": "integer"
+					},
+					"relationship5/relationship6/relationship7/relationship8/version": {
 						"type": "integer"
 					},
 					"relationship5/relationship6/relationship7/status": {
@@ -2722,7 +3180,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship5/relationship6/relationship7/title": {
+						"type": "string"
+					},
 					"relationship5/relationship6/relationship7/userId": {
+						"type": "integer"
+					},
+					"relationship5/relationship6/relationship7/version": {
 						"type": "integer"
 					},
 					"relationship5/relationship6/status": {
@@ -2732,7 +3196,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship5/relationship6/title": {
+						"type": "string"
+					},
 					"relationship5/relationship6/userId": {
+						"type": "integer"
+					},
+					"relationship5/relationship6/version": {
 						"type": "integer"
 					},
 					"relationship5/status": {
@@ -2742,7 +3212,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"relationship5/title": {
+						"type": "string"
+					},
 					"relationship5/userId": {
+						"type": "integer"
+					},
+					"relationship5/version": {
 						"type": "integer"
 					},
 					"status": {
@@ -2752,7 +3228,13 @@
 						"items": "integer",
 						"type": "array"
 					},
+					"title": {
+						"type": "string"
+					},
 					"userId": {
+						"type": "integer"
+					},
+					"version": {
 						"type": "integer"
 					}
 				},
@@ -2810,6 +3292,50 @@
 					"items": {
 						"items": {
 							"$ref": "#/components/schemas/Collaborator"
+						},
+						"type": "array"
+					},
+					"lastPage": {
+						"format": "int64",
+						"type": "integer"
+					},
+					"page": {
+						"format": "int64",
+						"type": "integer"
+					},
+					"pageSize": {
+						"format": "int64",
+						"type": "integer"
+					},
+					"totalCount": {
+						"format": "int64",
+						"type": "integer"
+					}
+				},
+				"type": "object",
+				"x-filterable": {
+				}
+			},
+			"PageComment": {
+				"properties": {
+					"actions": {
+						"additionalProperties": {
+							"additionalProperties": {
+								"type": "string"
+							},
+							"type": "object"
+						},
+						"type": "object"
+					},
+					"facets": {
+						"items": {
+							"$ref": "#/components/schemas/Facet"
+						},
+						"type": "array"
+					},
+					"items": {
+						"items": {
+							"$ref": "#/components/schemas/Comment"
 						},
 						"type": "array"
 					},
@@ -3026,6 +3552,7 @@
 				}
 			},
 			"ParentTaxonomyCategory": {
+				"description": "The category's parent category.",
 				"properties": {
 					"externalReferenceCode": {
 						"description": "The parent taxonomy category's external reference code.",
@@ -3045,6 +3572,7 @@
 				}
 			},
 			"ParentTaxonomyVocabulary": {
+				"description": "The parent category's `TaxonomyVocabulary`.",
 				"properties": {
 					"externalReferenceCode": {
 						"description": "The parent category's `TaxonomyVocabulary` external reference code.",
@@ -3091,18 +3619,28 @@
 			"Scope": {
 				"properties": {
 					"externalReferenceCode": {
+						"description": "The scope's external reference code.",
+						"type": "string"
+					},
+					"key": {
+						"description": "The scope's identifier.",
+						"type": "string"
+					},
+					"label": {
+						"description": "The scope's name.",
 						"type": "string"
 					},
 					"type": {
+						"description": "The scope's type.",
 						"enum": [
 							"AssetLibrary",
-							"CMS",
-							"Site"
+							"Site",
+							"Space"
 						],
 						"type": "string"
 					},
 					"x-class-name": {
-						"default": "com.liferay.headless.object.dto.v1_0.Scope",
+						"default": "com.liferay.portal.vulcan.scope.Scope",
 						"readOnly": true,
 						"type": "string"
 					}
@@ -5035,6 +5573,431 @@
 				]
 			}
 		},
+		"/by-external-reference-code/{externalReferenceCode}/comments": {
+			"get": {
+				"operationId": "getByExternalReferenceCodeCommentsPage",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "externalReferenceCode",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "aggregationTerms",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "fields",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "nestedFields",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "page",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "pageSize",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "restrictFields",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sort",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PageComment"
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"$ref": "#/components/schemas/PageComment"
+								}
+							}
+						},
+						"description": "default response"
+					}
+				},
+				"tags": [
+					"Comment"
+				]
+			},
+			"post": {
+				"operationId": "postByExternalReferenceCodeComment",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "externalReferenceCode",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Comment"
+							}
+						},
+						"application/xml": {
+							"schema": {
+								"$ref": "#/components/schemas/Comment"
+							}
+						}
+					}
+				},
+				"responses": {
+					"default": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Comment"
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"$ref": "#/components/schemas/Comment"
+								}
+							}
+						},
+						"description": "default response"
+					}
+				},
+				"tags": [
+					"Comment"
+				]
+			}
+		},
+		"/by-external-reference-code/{externalReferenceCode}/comments/{commentExternalReferenceCode}": {
+			"delete": {
+				"operationId": "deleteByExternalReferenceCodeComment",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "externalReferenceCode",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "path",
+						"name": "commentExternalReferenceCode",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"content": {
+							"application/json": {
+							},
+							"application/xml": {
+							}
+						},
+						"description": "default response"
+					}
+				},
+				"tags": [
+					"Comment"
+				]
+			},
+			"get": {
+				"operationId": "getByExternalReferenceCodeComment",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "externalReferenceCode",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "path",
+						"name": "commentExternalReferenceCode",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Comment"
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"$ref": "#/components/schemas/Comment"
+								}
+							}
+						},
+						"description": "default response"
+					}
+				},
+				"tags": [
+					"Comment"
+				]
+			},
+			"put": {
+				"operationId": "putByExternalReferenceCodeComment",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "externalReferenceCode",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "path",
+						"name": "commentExternalReferenceCode",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Comment"
+							}
+						},
+						"application/xml": {
+							"schema": {
+								"$ref": "#/components/schemas/Comment"
+							}
+						}
+					}
+				},
+				"responses": {
+					"default": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Comment"
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"$ref": "#/components/schemas/Comment"
+								}
+							}
+						},
+						"description": "default response"
+					}
+				},
+				"tags": [
+					"Comment"
+				]
+			}
+		},
+		"/by-external-reference-code/{externalReferenceCode}/comments/{commentExternalReferenceCode}/child-comments": {
+			"get": {
+				"operationId": "getByExternalReferenceCodeCommentChildCommentsPage",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "externalReferenceCode",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "path",
+						"name": "commentExternalReferenceCode",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "aggregationTerms",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "fields",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "nestedFields",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "page",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "pageSize",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "restrictFields",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sort",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PageComment"
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"$ref": "#/components/schemas/PageComment"
+								}
+							}
+						},
+						"description": "default response"
+					}
+				},
+				"tags": [
+					"Comment"
+				]
+			},
+			"post": {
+				"operationId": "postByExternalReferenceCodeCommentChildComment",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "externalReferenceCode",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "path",
+						"name": "commentExternalReferenceCode",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Comment"
+							}
+						},
+						"application/xml": {
+							"schema": {
+								"$ref": "#/components/schemas/Comment"
+							}
+						}
+					}
+				},
+				"responses": {
+					"default": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Comment"
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"$ref": "#/components/schemas/Comment"
+								}
+							}
+						},
+						"description": "default response"
+					}
+				},
+				"tags": [
+					"Comment"
+				]
+			}
+		},
 		"/by-external-reference-code/{externalReferenceCode}/restore": {
 			"put": {
 				"operationId": "putByExternalReferenceCodeRestore",
@@ -5157,6 +6120,13 @@
 					{
 						"in": "query",
 						"name": "pageSize",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sort",
 						"schema": {
 							"type": "string"
 						}
@@ -6391,352 +7361,6 @@
 				]
 			}
 		},
-		"/scopes/{scopeKey}/by-external-reference-code/{externalReferenceCode}/collaborators": {
-			"get": {
-				"description": "Retrieves the collaborators of an object entry.",
-				"operationId": "getScopeScopeKeyByExternalReferenceCodeCollaboratorsPage",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "scopeKey",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "path",
-						"name": "externalReferenceCode",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "fields",
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "nestedFields",
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "page",
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "pageSize",
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "restrictFields",
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"responses": {
-					"default": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/PageCollaborator"
-								}
-							},
-							"application/xml": {
-								"schema": {
-									"$ref": "#/components/schemas/PageCollaborator"
-								}
-							}
-						},
-						"description": "default response"
-					}
-				},
-				"tags": [
-					"Collaborator"
-				]
-			},
-			"post": {
-				"description": "Add or update all the collaborators received in the request. Delete existing collaborators that are not included in the request. Send a notification for the new collaborators and those whose permissions are different.",
-				"operationId": "postScopeScopeKeyByExternalReferenceCodeCollaboratorsPage",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "scopeKey",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "path",
-						"name": "externalReferenceCode",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"content": {
-						"application/json": {
-							"schema": {
-								"items": {
-									"$ref": "#/components/schemas/Collaborator"
-								},
-								"type": "array"
-							}
-						},
-						"application/xml": {
-							"schema": {
-								"items": {
-									"$ref": "#/components/schemas/Collaborator"
-								},
-								"type": "array"
-							}
-						}
-					}
-				},
-				"responses": {
-					"default": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/PageCollaborator"
-								}
-							},
-							"application/xml": {
-								"schema": {
-									"$ref": "#/components/schemas/PageCollaborator"
-								}
-							}
-						},
-						"description": "default response"
-					}
-				},
-				"tags": [
-					"Collaborator"
-				]
-			}
-		},
-		"/scopes/{scopeKey}/by-external-reference-code/{externalReferenceCode}/collaborators/by-type/{type}/{collaboratorId}": {
-			"delete": {
-				"description": "Deletes the collaborator for an object entry and returns a 204 if the operation succeeds.",
-				"operationId": "deleteScopeScopeKeyByExternalReferenceCodeCollaboratorByTypeCollaborator",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "scopeKey",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "path",
-						"name": "externalReferenceCode",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "path",
-						"name": "type",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "path",
-						"name": "collaboratorId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"responses": {
-					"default": {
-						"content": {
-							"application/json": {
-							},
-							"application/xml": {
-							}
-						},
-						"description": "default response"
-					}
-				},
-				"tags": [
-					"Collaborator"
-				]
-			},
-			"get": {
-				"description": "Retrieves the collaborator for an object entry.",
-				"operationId": "getScopeScopeKeyByExternalReferenceCodeCollaboratorByTypeCollaborator",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "scopeKey",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "path",
-						"name": "externalReferenceCode",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "path",
-						"name": "type",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "path",
-						"name": "collaboratorId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "fields",
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "nestedFields",
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "restrictFields",
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"responses": {
-					"default": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Collaborator"
-								}
-							},
-							"application/xml": {
-								"schema": {
-									"$ref": "#/components/schemas/Collaborator"
-								}
-							}
-						},
-						"description": "default response"
-					}
-				},
-				"tags": [
-					"Collaborator"
-				]
-			},
-			"put": {
-				"description": "Add or update a collaborator received in the request.",
-				"operationId": "putScopeScopeKeyByExternalReferenceCodeCollaboratorByTypeCollaborator",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "scopeKey",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "path",
-						"name": "externalReferenceCode",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "path",
-						"name": "type",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "path",
-						"name": "collaboratorId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/Collaborator"
-							}
-						},
-						"application/xml": {
-							"schema": {
-								"$ref": "#/components/schemas/Collaborator"
-							}
-						}
-					}
-				},
-				"responses": {
-					"default": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Collaborator"
-								}
-							},
-							"application/xml": {
-								"schema": {
-									"$ref": "#/components/schemas/Collaborator"
-								}
-							}
-						},
-						"description": "default response"
-					}
-				},
-				"tags": [
-					"Collaborator"
-				]
-			}
-		},
 		"/validate": {
 			"post": {
 				"operationId": "postValidate",
@@ -7097,213 +7721,6 @@
 					{
 						"in": "path",
 						"name": "object2FolderId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"responses": {
-					"default": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Object2"
-								}
-							},
-							"application/xml": {
-								"schema": {
-									"$ref": "#/components/schemas/Object2"
-								}
-							}
-						},
-						"description": "default response"
-					}
-				},
-				"tags": [
-					"Object2"
-				]
-			}
-		},
-		"/{object2Id}/by-version/{version}": {
-			"delete": {
-				"operationId": "deleteObject2ByVersion",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "object2Id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "path",
-						"name": "version",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"responses": {
-					"default": {
-						"content": {
-							"application/json": {
-							},
-							"application/xml": {
-							}
-						},
-						"description": "default response"
-					}
-				},
-				"tags": [
-					"Object2"
-				]
-			},
-			"get": {
-				"operationId": "getObject2ByVersion",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "object2Id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "path",
-						"name": "version",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"responses": {
-					"default": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Object2"
-								}
-							},
-							"application/xml": {
-								"schema": {
-									"$ref": "#/components/schemas/Object2"
-								}
-							}
-						},
-						"description": "default response"
-					}
-				},
-				"tags": [
-					"Object2"
-				]
-			}
-		},
-		"/{object2Id}/by-version/{version}/copy": {
-			"post": {
-				"operationId": "postObject2ByVersionCopy",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "object2Id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "path",
-						"name": "version",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"responses": {
-					"default": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Object2"
-								}
-							},
-							"application/xml": {
-								"schema": {
-									"$ref": "#/components/schemas/Object2"
-								}
-							}
-						},
-						"description": "default response"
-					}
-				},
-				"tags": [
-					"Object2"
-				]
-			}
-		},
-		"/{object2Id}/by-version/{version}/expire": {
-			"post": {
-				"operationId": "postObject2ByVersionExpire",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "object2Id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "path",
-						"name": "version",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"responses": {
-					"default": {
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Object2"
-								}
-							},
-							"application/xml": {
-								"schema": {
-									"$ref": "#/components/schemas/Object2"
-								}
-							}
-						},
-						"description": "default response"
-					}
-				},
-				"tags": [
-					"Object2"
-				]
-			}
-		},
-		"/{object2Id}/by-version/{version}/restore": {
-			"put": {
-				"operationId": "putObject2ByVersionRestore",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "object2Id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "path",
-						"name": "version",
 						"required": true,
 						"schema": {
 							"type": "string"
@@ -8710,9 +9127,9 @@
 				]
 			}
 		},
-		"/{object2Id}/versions": {
+		"/{object2Id}/translations": {
 			"get": {
-				"operationId": "getObject2sVersionsPage",
+				"operationId": "getObject2Translation",
 				"parameters": [
 					{
 						"in": "path",
@@ -8724,21 +9141,21 @@
 					},
 					{
 						"in": "query",
-						"name": "nestedFields",
+						"name": "sourceLanguageId",
 						"schema": {
 							"type": "string"
 						}
 					},
 					{
 						"in": "query",
-						"name": "page",
+						"name": "targetLanguageIds",
 						"schema": {
 							"type": "string"
 						}
 					},
 					{
 						"in": "query",
-						"name": "pageSize",
+						"name": "version",
 						"schema": {
 							"type": "string"
 						}
@@ -8747,15 +9164,51 @@
 				"responses": {
 					"default": {
 						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/PageObject2"
-								}
+							"application/zip": {
+							}
+						},
+						"description": "default response"
+					}
+				},
+				"tags": [
+					"Object2"
+				]
+			}
+		},
+		"/{object2Id}/translations/{languageId}": {
+			"get": {
+				"operationId": "getObject2TranslationLanguage",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "object2Id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "path",
+						"name": "languageId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "targetLanguageId",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"content": {
+							"application/x-xliff+xml": {
 							},
-							"application/xml": {
-								"schema": {
-									"$ref": "#/components/schemas/PageObject2"
-								}
+							"application/xliff+xml": {
 							}
 						},
 						"description": "default response"

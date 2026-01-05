@@ -248,6 +248,12 @@ export class JournalPage {
 			.getByRole('link')
 			.nth(index + 1)
 			.click();
+
+		const pageLabel = `Page ${index + 1}`;
+
+		const pageLabelLink = this.page.getByLabel(pageLabel);
+
+		await expect(pageLabelLink).toHaveAttribute('aria-current', 'page');
 	}
 
 	async setJournalArticlePermissions(

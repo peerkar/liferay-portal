@@ -9,6 +9,8 @@ import com.liferay.frontend.data.set.view.FDSView;
 import com.liferay.frontend.data.set.view.table.FDSTableSchema;
 import com.liferay.frontend.data.set.view.table.FDSTableSchemaBuilder;
 import com.liferay.frontend.data.set.view.table.FDSTableSchemaBuilderFactory;
+import com.liferay.frontend.data.set.view.table.LinkFDSTableSchemaField;
+import com.liferay.site.cms.site.initializer.internal.constants.CMSSiteInitializerFDSNames;
 
 import java.util.Locale;
 
@@ -18,7 +20,10 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Noor Najjar
  */
-@Component(property = "frontend.data.set.name=test", service = FDSView.class)
+@Component(
+	property = "frontend.data.set.name=" + CMSSiteInitializerFDSNames.VOCABULARIES,
+	service = FDSView.class
+)
 public class VocabulariesCMSTableFDSView extends BaseCMSTableFDSView {
 
 	@Override
@@ -36,14 +41,7 @@ public class VocabulariesCMSTableFDSView extends BaseCMSTableFDSView {
 				true
 			)
 		).add(
-			"numberOfTaxonomyCategories", "categories",
-			fdsTableSchemaField -> fdsTableSchemaField.setActionId(
-				"view-categories"
-			).setContentRenderer(
-				"actionLink"
-			).setSortable(
-				true
-			)
+			_addViewCategoriesLinkFDSTableSchemaField()
 		).add(
 			"assetTypes", "type",
 			fdsTableSchemaField -> fdsTableSchemaField.setContentRenderer(
@@ -58,6 +56,30 @@ public class VocabulariesCMSTableFDSView extends BaseCMSTableFDSView {
 		).add(
 			addDateFDSTableSchemaField("dateModified", "modified")
 		).build();
+	}
+
+	private LinkFDSTableSchemaField
+		_addViewCategoriesLinkFDSTableSchemaField() {
+
+		LinkFDSTableSchemaField linkFDSTableSchemaField =
+			new LinkFDSTableSchemaField();
+
+		linkFDSTableSchemaField.setActionId(
+			"view-categories"
+		).setContentRenderer(
+			"actionLink"
+		).setFieldName(
+			"numberOfTaxonomyCategories"
+		).setLabel(
+			"categories"
+		).setSortable(
+			true
+		);
+
+		linkFDSTableSchemaField.setDecoration("underline");
+		linkFDSTableSchemaField.setDisplayType("unstyled");
+
+		return linkFDSTableSchemaField;
 	}
 
 	@Reference

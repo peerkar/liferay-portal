@@ -9,9 +9,15 @@ import AssetCategorization from '../components/AssetCategorization';
 import {AssetTypeInfoPanelContext} from '../context';
 
 const CategorizationTabContent = () => {
-	const {cmsGroupId, objectEntries = []} = useContext(
-		AssetTypeInfoPanelContext
-	);
+	const {
+		assetLibrary,
+		cmsGroupId,
+		objectEntries = [],
+	} = useContext(AssetTypeInfoPanelContext);
+
+	if (!objectEntries[0].actions) {
+		return null;
+	}
 
 	const [
 		{
@@ -19,15 +25,17 @@ const CategorizationTabContent = () => {
 		},
 	] = objectEntries;
 
-	if (!cmsGroupId) {
+	if (!cmsGroupId || !assetLibrary || !get.href) {
 		return null;
 	}
 
 	return (
 		<AssetCategorization
+			assetLibraryId={assetLibrary?.groupId}
 			cmsGroupId={cmsGroupId}
 			getObjectEntryURL={get.href}
-			updateObjectEntryURL={update.href}
+			hasUpdatePermission={!!update?.href}
+			updateObjectEntryURL={update?.href}
 		/>
 	);
 };

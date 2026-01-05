@@ -91,13 +91,13 @@ public class ManyToManyObjectRelationshipInfoCollectionProviderTest {
 
 		return _objectDefinitionLocalService.addCustomObjectDefinition(
 			null, TestPropsValues.getUserId(), 0, null, false, true, false,
-			true, false, false, false, false, false, null,
+			true, false, false, false, false, null,
 			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 			ObjectDefinitionTestUtil.getRandomName(), null, null,
 			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 			true, scope, ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT,
 			Collections.emptyList(), Arrays.asList(objectField),
-			Collections.emptyList());
+			Collections.emptyList(), new ServiceContext());
 	}
 
 	private void _assertRelatedInfoCollectionProvider(

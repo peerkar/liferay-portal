@@ -31,7 +31,6 @@ import com.liferay.exportimport.kernel.lar.StagedModelType;
 import com.liferay.exportimport.kernel.lar.UserIdStrategy;
 import com.liferay.exportimport.kernel.xstream.XStreamAlias;
 import com.liferay.exportimport.kernel.xstream.XStreamConverter;
-import com.liferay.exportimport.kernel.xstream.XStreamType;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
@@ -53,6 +52,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.AuditedModel;
 import com.liferay.portal.kernel.model.ClassedModel;
+import com.liferay.portal.kernel.model.ExternalReferenceCodeModel;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.GroupedModel;
@@ -306,36 +306,32 @@ public class PortletDataContextImpl implements PortletDataContext {
 			ExportImportPermissionUtil.getRoleIdsToActionIds(
 				_companyId, resourceName, resourcePK);
 
-		List<KeyValuePair> permissionKeyValuePairs = new ArrayList<>();
+		List<KeyValuePair> permissionKeyValuePairs = TransformUtil.transform(
+			roleIdsToActionIds.entrySet(),
+			entry -> {
+				long roleId = entry.getKey();
 
-		for (Map.Entry<Long, Set<String>> entry :
-				roleIdsToActionIds.entrySet()) {
+				Role role = RoleLocalServiceUtil.fetchRole(roleId);
 
-			long roleId = entry.getKey();
-
-			Role role = RoleLocalServiceUtil.fetchRole(roleId);
-
-			if (role == null) {
-				continue;
-			}
-
-			String roleName = role.getName();
-
-			if (role.isTeam()) {
-				try {
-					roleName = ExportImportPermissionUtil.getTeamRoleName(
-						role.getDescriptiveName());
+				if (role == null) {
+					return null;
 				}
-				catch (PortalException portalException) {
-					_log.error(portalException);
+
+				String roleName = role.getName();
+
+				if (role.isTeam()) {
+					try {
+						roleName = ExportImportPermissionUtil.getTeamRoleName(
+							role.getDescriptiveName());
+					}
+					catch (PortalException portalException) {
+						_log.error(portalException);
+					}
 				}
-			}
 
-			KeyValuePair permission = new KeyValuePair(
-				roleName, StringUtil.merge(entry.getValue()));
-
-			permissionKeyValuePairs.add(permission);
-		}
+				return new KeyValuePair(
+					roleName, StringUtil.merge(entry.getValue()));
+			});
 
 		if (permissionKeyValuePairs.isEmpty()) {
 			return;
@@ -668,8 +664,7 @@ public class PortletDataContextImpl implements PortletDataContext {
 		if (!useDefaultValue) {
 			return MapUtil.getBoolean(
 				getParameterMap(),
-				PortletDataHandlerControl.getNamespacedControlName(
-					namespace, name));
+				PortletDataHandlerControl.getNamespacedName(namespace, name));
 		}
 
 		boolean defaultValue = MapUtil.getBoolean(
@@ -678,7 +673,7 @@ public class PortletDataContextImpl implements PortletDataContext {
 
 		return MapUtil.getBoolean(
 			getParameterMap(),
-			PortletDataHandlerControl.getNamespacedControlName(namespace, name),
+			PortletDataHandlerControl.getNamespacedName(namespace, name),
 			defaultValue);
 	}
 
@@ -2129,48 +2124,45 @@ public class PortletDataContextImpl implements PortletDataContext {
 			return Collections.emptyList();
 		}
 
-		List<Element> referenceElements = new ArrayList<>();
+		return TransformUtil.transform(
+			referencesElement.elements("reference"),
+			referenceElement -> {
+				if (!Objects.equals(
+						referenceElement.attributeValue("class-name"),
+						className) ||
+					((groupId > 0) &&
+					 !Objects.equals(
+						 referenceElement.attributeValue("group-id"),
+						 String.valueOf(groupId)))) {
 
-		for (Element referenceElement :
-				referencesElement.elements("reference")) {
+					return null;
+				}
 
-			if (!Objects.equals(
-					referenceElement.attributeValue("class-name"), className) ||
-				((groupId > 0) &&
-				 !Objects.equals(
-					 referenceElement.attributeValue("group-id"),
-					 String.valueOf(groupId)))) {
+				if (Validator.isNotNull(uuid) &&
+					!Objects.equals(
+						referenceElement.attributeValue("uuid"), uuid)) {
 
-				continue;
-			}
+					return null;
+				}
 
-			if (Validator.isNotNull(uuid) &&
-				!Objects.equals(
-					referenceElement.attributeValue("uuid"), uuid)) {
+				if (Validator.isNotNull(classPK) &&
+					!Objects.equals(
+						referenceElement.attributeValue("class-pk"),
+						String.valueOf(classPK))) {
 
-				continue;
-			}
+					return null;
+				}
 
-			if (Validator.isNotNull(classPK) &&
-				!Objects.equals(
-					referenceElement.attributeValue("class-pk"),
-					String.valueOf(classPK))) {
+				if ((referenceType != null) &&
+					!Objects.equals(
+						referenceElement.attributeValue("type"),
+						String.valueOf(referenceType))) {
 
-				continue;
-			}
+					return null;
+				}
 
-			if ((referenceType != null) &&
-				!Objects.equals(
-					referenceElement.attributeValue("type"),
-					String.valueOf(referenceType))) {
-
-				continue;
-			}
-
-			referenceElements.add(referenceElement);
-		}
-
-		return referenceElements;
+				return referenceElement;
+			});
 	}
 
 	protected List<Element> getReferenceElements(
@@ -2265,6 +2257,14 @@ public class PortletDataContextImpl implements PortletDataContext {
 					"display-name",
 					String.valueOf(classedModel.getPrimaryKeyObj()));
 			}
+		}
+
+		if (classedModel instanceof
+				ExternalReferenceCodeModel externalReferenceCodeModel) {
+
+			referenceElement.addAttribute(
+				"external-reference-code",
+				externalReferenceCodeModel.getExternalReferenceCode());
 		}
 
 		long groupId = _getGroupId(classedModel);
@@ -2656,14 +2656,10 @@ public class PortletDataContextImpl implements PortletDataContext {
 				}
 			}
 
-			List<XStreamType> xStreamTypes =
-				xStreamConfigurator.getAllowedXStreamTypes();
-
-			if (ListUtil.isNotEmpty(xStreamTypes)) {
-				for (XStreamType xStreamType : xStreamTypes) {
-					allowedTypeNames.add(xStreamType.getTypeExpression());
-				}
-			}
+			allowedTypeNames.addAll(
+				TransformUtil.transform(
+					xStreamConfigurator.getAllowedXStreamTypes(),
+					xStreamType -> xStreamType.getTypeExpression()));
 		}
 
 		// For default permissions, first wipe than add default

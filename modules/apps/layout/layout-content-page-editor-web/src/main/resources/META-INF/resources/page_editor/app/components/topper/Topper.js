@@ -21,6 +21,7 @@ import {useIsDisabledCollectionItem} from '../../contexts/CollectionItemContext'
 import {
 	useActivationOrigin,
 	useActiveItemIds,
+	useHighlightedItemIds,
 	useHoverItem,
 	useIsActive,
 	useIsHovered,
@@ -105,6 +106,7 @@ function TopperContent({
 	multiSelectType,
 }) {
 	const activeItemIds = useActiveItemIds();
+	const highlightedItemIds = useHighlightedItemIds();
 	const canUpdatePageStructure = useSelector(selectCanUpdatePageStructure);
 	const commentsPanelId = config.sidebarPanelsMap?.comments?.sidebarPanelId;
 	const dispatch = useDispatch();
@@ -122,6 +124,7 @@ function TopperContent({
 	const dropTargetPosition = targetPosition || keyboardMovementPosition;
 
 	const isHighlighted = isItemHighlighted(item, dropContainerId);
+	const isHighlightedFromRule = highlightedItemIds?.includes(item.itemId);
 
 	const selectable =
 		!multiSelectType ||
@@ -223,6 +226,7 @@ function TopperContent({
 				'dragged': isDraggingSource,
 				'drop-container': dropContainerId === item.itemId,
 				'highlighted': isHighlighted,
+				'highlighted-from-rule': isHighlightedFromRule,
 				'hovered': isHovered,
 				'not-allowed': !selectable,
 			})}

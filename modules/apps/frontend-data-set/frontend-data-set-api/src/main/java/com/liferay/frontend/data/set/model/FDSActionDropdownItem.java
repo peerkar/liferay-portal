@@ -7,12 +7,16 @@ package com.liferay.frontend.data.set.model;
 
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 
+import java.util.List;
 import java.util.Map;
 
 /**
  * @author Marco Leo
  */
 public class FDSActionDropdownItem extends DropdownItem {
+
+	public FDSActionDropdownItem() {
+	}
 
 	public FDSActionDropdownItem(
 		String confirmationMessage, String confirmationMessageType,
@@ -129,6 +133,12 @@ public class FDSActionDropdownItem extends DropdownItem {
 		putData("errorMessage", errorMessage);
 	}
 
+	public void setFDSActionDropdownItems(
+		List<FDSActionDropdownItem> fdsActionDropdownItems) {
+
+		put("items", fdsActionDropdownItems);
+	}
+
 	public void setHighlighted(Boolean highlighted) {
 		putData("highlighted", highlighted);
 	}
@@ -159,10 +169,6 @@ public class FDSActionDropdownItem extends DropdownItem {
 
 	public void setTitle(String title) {
 		putData("title", title);
-	}
-
-	public void setType(String type) {
-		putData("type", type);
 	}
 
 	public void setVisibilityFilters(Map<String, Object> visibilityFilters) {

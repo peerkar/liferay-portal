@@ -11,8 +11,13 @@ export const DEFAULT_FETCH_HEADERS = {
 
 export enum ETimeZoneBehaviors {
 	APPLY_THEME_DISPLAY_TIME_ZONE = 'applyThemeDisplayTimeZone',
+	APPLY_GIVEN_TIME_ZONE = 'applyGivenTimeZone',
 	DO_NOT_MODIFY_DATE_VALUE = 'doNotModifyDateValue',
 }
+
+export const CUSTOM_FIELD_NAME_DELIMITER = '.';
+export const CUSTOM_FIELD_NAME_ODATA_DELIMITER = '/';
+export const CUSTOM_FIELD_NAME_PREFIX = 'customField';
 
 export const FDS_ARRAY_FIELD_NAME_DELIMITER: string = '[]';
 export const FDS_ARRAY_FIELD_NAME_PARENT_SUFFIX: string = `${FDS_ARRAY_FIELD_NAME_DELIMITER}*`;

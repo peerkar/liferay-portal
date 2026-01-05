@@ -12,7 +12,6 @@ import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateCollectionTypeConstants;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateConstants;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
-import com.liferay.layout.page.template.exception.DuplicateLayoutPageTemplateEntryExternalReferenceCodeException;
 import com.liferay.layout.page.template.exception.LayoutPageTemplateEntryDefaultTemplateException;
 import com.liferay.layout.page.template.exception.LayoutPageTemplateEntryGroupIdException;
 import com.liferay.layout.page.template.exception.LayoutPageTemplateEntryLayoutPageTemplateCollectionIdException;
@@ -22,8 +21,11 @@ import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateCollectionLocalService;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
 import com.liferay.layout.page.template.test.util.LayoutPageTemplateTestUtil;
+import com.liferay.petra.function.UnsafeBiFunction;
+import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.DuplicateExternalReferenceCodeException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -41,14 +43,20 @@ import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
+import com.liferay.segments.model.SegmentsExperience;
+import com.liferay.segments.service.SegmentsExperienceLocalService;
 import com.liferay.style.book.model.StyleBookEntry;
 import com.liferay.style.book.service.StyleBookEntryLocalService;
+
+import java.util.Map;
+import java.util.Objects;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -83,6 +91,7 @@ public class LayoutPageTemplateEntryLocalServiceTest {
 	}
 
 	@Test
+	@TestInfo("LPD-74327")
 	public void testAddLayoutPageTemplateEntry() throws Exception {
 		LayoutPageTemplateEntry layoutPageTemplateEntry =
 			_layoutPageTemplateEntryLocalService.addLayoutPageTemplateEntry(
@@ -149,12 +158,11 @@ public class LayoutPageTemplateEntryLocalServiceTest {
 
 			Assert.fail();
 		}
-		catch (DuplicateLayoutPageTemplateEntryExternalReferenceCodeException
-					duplicateLayoutPageTemplateEntryExternalReferenceCodeException) {
+		catch (DuplicateExternalReferenceCodeException
+					duplicateExternalReferenceCodeException) {
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(
-					duplicateLayoutPageTemplateEntryExternalReferenceCodeException);
+				_log.debug(duplicateExternalReferenceCodeException);
 			}
 		}
 
@@ -274,6 +282,8 @@ public class LayoutPageTemplateEntryLocalServiceTest {
 			_depotEntryLocalService.deleteDepotEntry(depotEntry);
 		}
 
+		_testAddLayoutPageTemplateEntryWithExternalReferenceCode();
+
 		String layoutPageTemplateEntryKey = RandomTestUtil.randomString();
 
 		layoutPageTemplateEntry =
@@ -289,7 +299,7 @@ public class LayoutPageTemplateEntryLocalServiceTest {
 			layoutPageTemplateEntryKey,
 			layoutPageTemplateEntry.getLayoutPageTemplateEntryKey());
 
-		_testAddLayoutPageTemplateCollectionWithInvalidLayoutPageTemplateCollectionKey(
+		_testAddLayoutPageTemplateEntryWithInvalidLayoutPageTemplateCollectionKey(
 			LayoutPageTemplateEntryLayoutPageTemplateEntryKeyException.
 				MustNotBeDuplicate.class,
 			layoutPageTemplateEntryKey,
@@ -302,7 +312,7 @@ public class LayoutPageTemplateEntryLocalServiceTest {
 			RandomTestUtil.randomString() + StringPool.AMPERSAND +
 				RandomTestUtil.randomString();
 
-		_testAddLayoutPageTemplateCollectionWithInvalidLayoutPageTemplateCollectionKey(
+		_testAddLayoutPageTemplateEntryWithInvalidLayoutPageTemplateCollectionKey(
 			LayoutPageTemplateEntryLayoutPageTemplateEntryKeyException.
 				MustNotContainInvalidCharacters.class,
 			layoutPageTemplateEntryKey,
@@ -313,7 +323,7 @@ public class LayoutPageTemplateEntryLocalServiceTest {
 
 		layoutPageTemplateEntryKey = RandomTestUtil.randomString(80);
 
-		_testAddLayoutPageTemplateCollectionWithInvalidLayoutPageTemplateCollectionKey(
+		_testAddLayoutPageTemplateEntryWithInvalidLayoutPageTemplateCollectionKey(
 			LayoutPageTemplateEntryLayoutPageTemplateEntryKeyException.
 				MustNotExceedMaximumSize.class,
 			layoutPageTemplateEntryKey,
@@ -624,6 +634,45 @@ public class LayoutPageTemplateEntryLocalServiceTest {
 			draftLayout.getStyleBookEntryERC());
 	}
 
+	private void _assertExternalReferenceCodes(
+			Layout layout,
+			UnsafeBiFunction<String, String, Boolean, Exception>
+				unsafeBiFunction)
+		throws Exception {
+
+		Assert.assertTrue(
+			layout.getExternalReferenceCode(),
+			unsafeBiFunction.apply(
+				layout.getExternalReferenceCode(), "-layout"));
+
+		SegmentsExperience segmentsExperience =
+			_segmentsExperienceLocalService.fetchDefaultSegmentsExperience(
+				layout.getPlid());
+
+		Assert.assertTrue(
+			segmentsExperience.getExternalReferenceCode(),
+			unsafeBiFunction.apply(
+				segmentsExperience.getExternalReferenceCode(),
+				"-layout-default"));
+
+		Layout draftLayout = layout.fetchDraftLayout();
+
+		Assert.assertTrue(
+			draftLayout.getExternalReferenceCode(),
+			unsafeBiFunction.apply(
+				draftLayout.getExternalReferenceCode(), "-layout-draft"));
+
+		segmentsExperience =
+			_segmentsExperienceLocalService.fetchDefaultSegmentsExperience(
+				draftLayout.getPlid());
+
+		Assert.assertTrue(
+			segmentsExperience.getExternalReferenceCode(),
+			unsafeBiFunction.apply(
+				segmentsExperience.getExternalReferenceCode(),
+				"-layout-draft-default"));
+	}
+
 	private void _assertLayoutPageTemplateEntry(
 		boolean defaultTemplate,
 		LayoutPageTemplateEntry layoutPageTemplateEntry) {
@@ -638,27 +687,6 @@ public class LayoutPageTemplateEntryLocalServiceTest {
 		Assert.assertTrue(
 			Validator.isNotNull(
 				layoutPageTemplateEntry.getExternalReferenceCode()));
-	}
-
-	private void
-		_testAddLayoutPageTemplateCollectionWithInvalidLayoutPageTemplateCollectionKey(
-			Class<?> clazz, String layoutPageTemplateEntryKey, String message) {
-
-		try {
-			_layoutPageTemplateEntryLocalService.addLayoutPageTemplateEntry(
-				null, TestPropsValues.getUserId(), _group.getGroupId(),
-				LayoutPageTemplateConstants.
-					PARENT_LAYOUT_PAGE_TEMPLATE_COLLECTION_ID_DEFAULT,
-				layoutPageTemplateEntryKey, 0, 0, RandomTestUtil.randomString(),
-				LayoutPageTemplateEntryTypeConstants.MASTER_LAYOUT, 0, false, 0,
-				0, 0, WorkflowConstants.STATUS_APPROVED, _serviceContext);
-
-			Assert.fail();
-		}
-		catch (PortalException portalException) {
-			Assert.assertEquals(clazz, portalException.getClass());
-			Assert.assertEquals(message, portalException.getMessage());
-		}
 	}
 
 	private void
@@ -706,6 +734,118 @@ public class LayoutPageTemplateEntryLocalServiceTest {
 				_log.debug(
 					layoutPageTemplateEntryLayoutPageTemplateCollectionIdException);
 			}
+		}
+	}
+
+	private void _testAddLayoutPageTemplateEntryWithExternalReferenceCode()
+		throws Exception {
+
+		_testAddLayoutPageTemplateEntryWithExternalReferenceCode(
+			RandomTestUtil.randomString(),
+			externalReferenceCode ->
+				(curExternalReferenceCode, suffix) -> Objects.equals(
+					curExternalReferenceCode, externalReferenceCode + suffix));
+
+		_testAddLayoutPageTemplateEntryWithExternalReferenceCode(
+			null,
+			externalReferenceCode ->
+				(curExternalReferenceCode, suffix) -> Objects.equals(
+					curExternalReferenceCode, externalReferenceCode + suffix));
+
+		Map<String, String> expectedExternalReferenceCodesMap =
+			HashMapBuilder.put(
+				"-layout", RandomTestUtil.randomString()
+			).put(
+				"-layout-default", RandomTestUtil.randomString()
+			).put(
+				"-layout-draft", RandomTestUtil.randomString()
+			).put(
+				"-layout-draft-default", RandomTestUtil.randomString()
+			).build();
+
+		_serviceContext.setAttribute(
+			"defaultSegmentsExperienceExternalReferenceCode",
+			expectedExternalReferenceCodesMap.get("-layout-default"));
+		_serviceContext.setAttribute(
+			"draftLayoutDefaultSegmentsExperienceExternalReferenceCode",
+			expectedExternalReferenceCodesMap.get("-layout-draft-default"));
+		_serviceContext.setAttribute(
+			"draftLayoutExternalReferenceCode",
+			expectedExternalReferenceCodesMap.get("-layout-draft"));
+		_serviceContext.setAttribute(
+			"layoutExternalReferenceCode",
+			expectedExternalReferenceCodesMap.get("-layout"));
+
+		try {
+			_testAddLayoutPageTemplateEntryWithExternalReferenceCode(
+				RandomTestUtil.randomString(),
+				externalReferenceCode ->
+					(curExternalReferenceCode, suffix) -> Objects.equals(
+						curExternalReferenceCode,
+						expectedExternalReferenceCodesMap.get(suffix)));
+		}
+		finally {
+			_serviceContext.removeAttribute(
+				"defaultSegmentsExperienceExternalReferenceCode");
+			_serviceContext.removeAttribute(
+				"draftLayoutDefaultSegmentsExperienceExternalReferenceCode");
+			_serviceContext.removeAttribute("draftLayoutExternalReferenceCode");
+			_serviceContext.removeAttribute("layoutExternalReferenceCode");
+		}
+	}
+
+	private void _testAddLayoutPageTemplateEntryWithExternalReferenceCode(
+			String externalReferenceCode,
+			UnsafeFunction
+				<String, UnsafeBiFunction<String, String, Boolean, Exception>,
+				 Exception> unsafeFunction)
+		throws Exception {
+
+		LayoutPageTemplateEntry layoutPageTemplateEntry =
+			_layoutPageTemplateEntryLocalService.addLayoutPageTemplateEntry(
+				externalReferenceCode, TestPropsValues.getUserId(),
+				_group.getGroupId(),
+				LayoutPageTemplateConstants.
+					PARENT_LAYOUT_PAGE_TEMPLATE_COLLECTION_ID_DEFAULT,
+				RandomTestUtil.randomString(), 0, 0,
+				RandomTestUtil.randomString(),
+				LayoutPageTemplateEntryTypeConstants.MASTER_LAYOUT, 0, false, 0,
+				0, 0, WorkflowConstants.STATUS_APPROVED, _serviceContext);
+
+		if (Validator.isNull(externalReferenceCode)) {
+			Assert.assertNotNull(
+				layoutPageTemplateEntry.getExternalReferenceCode());
+		}
+		else {
+			Assert.assertEquals(
+				externalReferenceCode,
+				layoutPageTemplateEntry.getExternalReferenceCode());
+		}
+
+		_assertExternalReferenceCodes(
+			_layoutLocalService.getLayout(layoutPageTemplateEntry.getPlid()),
+			unsafeFunction.apply(
+				layoutPageTemplateEntry.getExternalReferenceCode()));
+	}
+
+	private void
+		_testAddLayoutPageTemplateEntryWithInvalidLayoutPageTemplateCollectionKey(
+			Class<?> clazz, String layoutPageTemplateEntryKey, String message) {
+
+		try {
+			_layoutPageTemplateEntryLocalService.addLayoutPageTemplateEntry(
+				null, TestPropsValues.getUserId(), _group.getGroupId(),
+				LayoutPageTemplateConstants.
+					PARENT_LAYOUT_PAGE_TEMPLATE_COLLECTION_ID_DEFAULT,
+				layoutPageTemplateEntryKey, 0, 0, RandomTestUtil.randomString(),
+				LayoutPageTemplateEntryTypeConstants.MASTER_LAYOUT, 0, false, 0,
+				0, 0, WorkflowConstants.STATUS_APPROVED, _serviceContext);
+
+			Assert.fail();
+		}
+		catch (PortalException portalException) {
+			Assert.assertEquals(clazz, portalException.getClass());
+			Assert.assertEquals(message, portalException.getMessage());
 		}
 	}
 
@@ -771,6 +911,9 @@ public class LayoutPageTemplateEntryLocalServiceTest {
 
 	@Inject
 	private Portal _portal;
+
+	@Inject
+	private SegmentsExperienceLocalService _segmentsExperienceLocalService;
 
 	private ServiceContext _serviceContext;
 

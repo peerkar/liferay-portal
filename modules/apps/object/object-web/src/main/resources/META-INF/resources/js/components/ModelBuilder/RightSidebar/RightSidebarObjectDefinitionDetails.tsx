@@ -208,7 +208,6 @@ export function RightSidebarObjectDefinitionDetails({
 	);
 
 	const showSeoSection =
-		Liferay.FeatureFlags['LPD-21926'] &&
 		values.friendlyURLSeparator !== undefined &&
 		!(
 			(Liferay.FeatureFlags['LPS-135430'] &&
@@ -312,6 +311,7 @@ export function RightSidebarObjectDefinitionDetails({
 					hasUpdateObjectDefinitionPermission={
 						!!values.actions?.update
 					}
+					isApproved={values?.status?.label === 'approved'}
 					isEnableObjectEntrySchedule={
 						!!values.enableObjectEntrySchedule
 					}
@@ -325,11 +325,7 @@ export function RightSidebarObjectDefinitionDetails({
 				/>
 			</div>
 			<div className="lfr-objects__model-builder-right-sidebar-object-definition-node-content">
-				<TranslationsContainer
-					onSubmit={onSubmit}
-					setValues={setValues}
-					values={values}
-				/>
+				<TranslationsContainer />
 			</div>
 			{showSeoSection && (
 				<div className="lfr-objects__model-builder-right-sidebar-object-definition-node-content">

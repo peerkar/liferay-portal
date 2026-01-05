@@ -7,6 +7,7 @@ package com.liferay.site.cms.site.initializer.internal.frontend.data.set.view.ta
 
 import com.liferay.frontend.data.set.view.FDSView;
 import com.liferay.site.cms.site.initializer.internal.constants.CMSSiteInitializerFDSNames;
+import com.liferay.site.cms.site.initializer.internal.util.FDSViewUtil;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -30,8 +31,8 @@ public class ContentAndFileContentsSectionCMSTableFDSView
 	extends BaseContentsSectionCMSTableFDSView {
 
 	@Override
-	public boolean isDefault() {
-		return true;
+	public boolean isDefault(String fdsName) {
+		return FDSViewUtil.isDefault(fdsName, getName());
 	}
 
 }

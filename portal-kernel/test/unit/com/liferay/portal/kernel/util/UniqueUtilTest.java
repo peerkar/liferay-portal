@@ -24,13 +24,16 @@ import org.mockito.Mockito;
 public class UniqueUtilTest {
 
 	@Test
-	public void testGetCopyValue() throws PortalException {
+	public void testGetUniqueValue() throws PortalException {
+		String languageKey = StringUtil.randomString();
+		String languageValue = StringUtil.randomString();
+
 		Language language = Mockito.mock(Language.class);
 
 		Mockito.when(
-			language.get(Mockito.any(Locale.class), Mockito.eq("copy"))
+			language.get(Mockito.any(Locale.class), Mockito.eq(languageKey))
 		).thenReturn(
-			"Copy"
+			languageValue
 		);
 
 		ReflectionTestUtil.setFieldValue(
@@ -39,15 +42,16 @@ public class UniqueUtilTest {
 		String value = RandomTestUtil.randomString();
 
 		Assert.assertEquals(
-			value + " (Copy)",
-			UniqueUtil.getCopyValue(copyValue -> true, value));
+			StringBundler.concat(value, " (", languageValue, ")"),
+			UniqueUtil.getUniqueValue(languageKey, uniqueValue -> true, value));
 
 		value = RandomTestUtil.randomString();
 
 		Assert.assertEquals(
-			value + " (Copy 3)",
-			UniqueUtil.getCopyValue(
-				copyValue -> copyValue.endsWith("3)"), value));
+			StringBundler.concat(value, " (", languageValue, " 3)"),
+			UniqueUtil.getUniqueValue(
+				languageKey, uniqueValue -> uniqueValue.endsWith(" 3)"),
+				value));
 	}
 
 }

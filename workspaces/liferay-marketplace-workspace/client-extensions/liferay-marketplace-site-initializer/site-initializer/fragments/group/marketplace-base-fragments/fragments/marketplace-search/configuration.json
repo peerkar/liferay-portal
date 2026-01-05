@@ -4,6 +4,34 @@
 			"fields": [
 				{
 					"dataType": "string",
+					"defaultValue": {
+						"specificationValue": "Highlights",
+						"title": "Highlights"
+					},
+					"label": "Featured Section 1",
+					"name": "featuredSection1",
+					"type": "text"
+				}
+			]
+		},
+		{
+			"fields": [
+				{
+					"dataType": "string",
+					"defaultValue": {
+						"specificationValue": "What is new",
+						"title": "What is new"
+					},
+					"label": "Featured Section 2",
+					"name": "featuredSection2",
+					"type": "text"
+				}
+			]
+		},
+		{
+			"fields": [
+				{
+					"dataType": "string",
 					"defaultValue": [
 						{
 							"color": "#FFB46E",

@@ -15,6 +15,7 @@ import com.liferay.object.model.ObjectEntryFolder;
 import com.liferay.object.service.ObjectDefinitionService;
 import com.liferay.object.service.ObjectDefinitionSettingLocalService;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.GroupConstants;
@@ -23,6 +24,7 @@ import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.site.cms.site.initializer.internal.util.ActionUtil;
+import com.liferay.translation.exporter.TranslationInfoItemFieldValuesExporterRegistry;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -43,13 +45,16 @@ public abstract class BaseFilesSectionDisplayContext
 		ObjectDefinitionSettingLocalService objectDefinitionSettingLocalService,
 		ModelResourcePermission<ObjectEntryFolder>
 			objectEntryFolderModelResourcePermission,
-		Portal portal) {
+		Portal portal,
+		TranslationInfoItemFieldValuesExporterRegistry
+			translationInfoItemFieldValuesExporterRegistry) {
 
 		super(
 			depotEntryLocalService, dlConfiguration, groupLocalService,
 			httpServletRequest, language, objectDefinitionService,
 			objectDefinitionSettingLocalService,
-			objectEntryFolderModelResourcePermission, portal);
+			objectEntryFolderModelResourcePermission, portal,
+			translationInfoItemFieldValuesExporterRegistry);
 	}
 
 	@Override
@@ -69,8 +74,29 @@ public abstract class BaseFilesSectionDisplayContext
 				null));
 		fdsBulkActionDropdownItems.add(
 			new FDSActionDropdownItem(
+				StringPool.BLANK, "password-policies",
+				"edit-default-permissions-by-role",
+				LanguageUtil.get(
+					httpServletRequest, "edit-default-permissions-by-role"),
+				null, null, null));
+		fdsBulkActionDropdownItems.add(
+			new FDSActionDropdownItem(
 				"#", "password-policies", "default-permissions",
 				LanguageUtil.get(httpServletRequest, "default-permissions"),
+				null, null, null));
+		fdsBulkActionDropdownItems.add(
+			new FDSActionDropdownItem(
+				StringPool.BLANK, "password-policies",
+				"edit-permissions-by-role",
+				LanguageUtil.get(
+					httpServletRequest, "edit-permissions-by-role"),
+				null, null, null));
+		fdsBulkActionDropdownItems.add(
+			new FDSActionDropdownItem(
+				StringPool.BLANK, "password-policies",
+				"reset-to-default-permissions",
+				LanguageUtil.get(
+					httpServletRequest, "reset-to-default-permissions"),
 				null, null, null));
 
 		return fdsBulkActionDropdownItems;

@@ -5,6 +5,7 @@
 
 package com.liferay.change.tracking.internal.upgrade.v2_4_0;
 
+import com.liferay.change.tracking.internal.upgrade.v2_4_0.util.CTSchemaVersionTable;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.upgrade.UpgradeProcessFactory;
@@ -22,15 +23,10 @@ public class CTSchemaVersionUpgradeProcess extends UpgradeProcess {
 
 		runSQL(
 			StringBundler.concat(
-				"create table CTSchemaVersion (mvccVersion LONG default 0 not ",
-				"null, schemaVersionId LONG not null primary key, companyId ",
-				"LONG, schemaContext TEXT null)"));
-
-		runSQL(
-			StringBundler.concat(
 				"update CTCollection set status = ",
 				WorkflowConstants.STATUS_EXPIRED, " where status = ",
-				WorkflowConstants.STATUS_DRAFT));
+				WorkflowConstants.STATUS_DRAFT, " or status = ",
+				WorkflowConstants.STATUS_INCOMPLETE));
 
 		runSQL(
 			"update CTPreferences set ctCollectionId = 0, " +
@@ -40,6 +36,7 @@ public class CTSchemaVersionUpgradeProcess extends UpgradeProcess {
 	@Override
 	protected UpgradeStep[] getPreUpgradeSteps() {
 		return new UpgradeStep[] {
+			CTSchemaVersionTable.create(),
 			UpgradeProcessFactory.addColumns(
 				"CTCollection", "schemaVersionId LONG")
 		};

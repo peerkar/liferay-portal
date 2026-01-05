@@ -48,6 +48,7 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchContextFactory;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.SortFactoryUtil;
+import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.PortletLocalService;
 import com.liferay.portal.kernel.theme.PortletDisplay;
@@ -457,18 +458,18 @@ public class AssetHelperImpl implements AssetHelper {
 		char[] wordCharArray = word.toCharArray();
 
 		for (char c : wordCharArray) {
-			for (char invalidChar : AssetHelper.INVALID_CHARACTERS) {
-				if (c == invalidChar) {
-					if (_log.isDebugEnabled()) {
-						_log.debug(
-							StringBundler.concat(
-								"Word ", word, " is not valid because ", c,
-								" is not allowed"));
-					}
-
-					return false;
-				}
+			if (!ArrayUtil.contains(AssetHelper.INVALID_CHARACTERS, c)) {
+				continue;
 			}
+
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					StringBundler.concat(
+						"Word ", word, " is not valid because ", c,
+						" is not allowed"));
+			}
+
+			return false;
 		}
 
 		return true;
@@ -689,6 +690,8 @@ public class AssetHelperImpl implements AssetHelper {
 			SearchContext searchContext, int start)
 		throws Exception {
 
+		BooleanQueryImpl booleanQueryImpl = new BooleanQueryImpl();
+
 		for (AssetEntryQuery assetEntryQuery : assetEntryQueries) {
 			SearchContext assetEntryQuerySearchContext = new SearchContext();
 
@@ -711,24 +714,23 @@ public class AssetHelperImpl implements AssetHelper {
 			BooleanQuery booleanQuery = baseSearcher.getFullQuery(
 				assetEntryQuerySearchContext);
 
-			BooleanClause<Query>[] booleanClauses =
-				searchContext.getBooleanClauses();
+			booleanQueryImpl.add(booleanQuery, BooleanClauseOccur.SHOULD);
+		}
 
-			if (booleanClauses == null) {
-				searchContext.setBooleanClauses(
-					new BooleanClause[] {
-						BooleanClauseFactoryUtil.create(
-							booleanQuery, BooleanClauseOccur.SHOULD.getName())
-					});
-			}
-			else {
-				searchContext.setBooleanClauses(
-					ArrayUtil.append(
-						booleanClauses,
-						BooleanClauseFactoryUtil.create(
-							booleanQuery,
-							BooleanClauseOccur.SHOULD.getName())));
-			}
+		BooleanClause<Query> assetEntryBooleanClauses =
+			BooleanClauseFactoryUtil.create(
+				booleanQueryImpl, BooleanClauseOccur.MUST.getName());
+
+		BooleanClause<Query>[] booleanClauses =
+			searchContext.getBooleanClauses();
+
+		if (booleanClauses == null) {
+			searchContext.setBooleanClauses(
+				new BooleanClause[] {assetEntryBooleanClauses});
+		}
+		else {
+			searchContext.setBooleanClauses(
+				ArrayUtil.append(booleanClauses, assetEntryBooleanClauses));
 		}
 
 		searchContext.setEnd(end);

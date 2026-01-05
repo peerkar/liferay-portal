@@ -41,6 +41,7 @@ export class ApplicationsMenuPage {
 	private readonly dataMigrationCenterMenuItem: Locator;
 	private readonly dataSetManagerMenuItem: Locator;
 	private readonly defaultPermissionsLink: Locator;
+	private readonly digitalSalesRoomsMenuItem: Locator;
 	readonly exportMenuItem: Locator;
 	private readonly gogoShellItem: Locator;
 	private readonly homePage: HomePage;
@@ -51,6 +52,7 @@ export class ApplicationsMenuPage {
 	private readonly metricsItem: Locator;
 	private readonly oAuth2Administration: Locator;
 	private readonly objectsMenuItem: Locator;
+	private readonly onDemandAdminItem: Locator;
 	private readonly page: Page;
 	private readonly passwordPoliciesAdminItem: Locator;
 	private readonly paymentsMenuItem: Locator;
@@ -203,6 +205,10 @@ export class ApplicationsMenuPage {
 			exact: true,
 			name: 'Default Permissions',
 		});
+		this.digitalSalesRoomsMenuItem = page.getByRole('menuitem', {
+			exact: true,
+			name: 'Digital Sales Rooms',
+		});
 		this.exportMenuItem = page.getByRole('menuitem', {
 			exact: true,
 			name: 'Export',
@@ -239,6 +245,10 @@ export class ApplicationsMenuPage {
 		this.objectsMenuItem = page.getByRole('menuitem', {
 			exact: true,
 			name: 'Objects',
+		});
+		this.onDemandAdminItem = page.getByRole('menuitem', {
+			exact: true,
+			name: 'On-Demand Admin',
 		});
 		this.page = page;
 		this.passwordPoliciesAdminItem = page.getByRole('menuitem', {
@@ -521,6 +531,11 @@ export class ApplicationsMenuPage {
 		await this.defaultPermissionsLink.click();
 	}
 
+	async goToDigitalSalesRooms() {
+		await this.goToCommercePanel();
+		await this.digitalSalesRoomsMenuItem.click();
+	}
+
 	async goToExport() {
 		await this.goToApplicationsMenu();
 		await this.exportMenuItem.click();
@@ -584,6 +599,11 @@ export class ApplicationsMenuPage {
 	async goToObjects() {
 		await this.goToControlPanel();
 		await this.objectsMenuItem.click();
+	}
+
+	async goToOnDemandAdmin() {
+		await this.goToControlPanel();
+		await this.onDemandAdminItem.click();
 	}
 
 	async goToPasswordPolicies() {

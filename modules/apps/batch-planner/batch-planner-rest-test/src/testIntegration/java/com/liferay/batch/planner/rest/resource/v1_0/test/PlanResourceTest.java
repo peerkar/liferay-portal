@@ -12,13 +12,28 @@ import com.liferay.batch.planner.rest.client.http.HttpInvoker;
 import com.liferay.object.field.builder.TextObjectFieldBuilder;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.test.util.ObjectDefinitionTestUtil;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.test.rule.DataGuard;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.URLCodec;
+import com.liferay.portal.test.rule.Inject;
+import com.liferay.portal.vulcan.batch.engine.Field;
+import com.liferay.portal.vulcan.batch.engine.VulcanBatchEngineTaskItemDelegate;
+import com.liferay.portal.vulcan.batch.engine.VulcanBatchEngineTaskItemDelegateRegistry;
+import com.liferay.portal.vulcan.resource.OpenAPIResource;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
+import com.liferay.portal.vulcan.util.OpenAPIUtil;
+import com.liferay.portal.vulcan.yaml.YAMLUtil;
+import com.liferay.portal.vulcan.yaml.openapi.OpenAPIYAML;
 
+import jakarta.ws.rs.core.Response;
+
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -34,35 +49,8 @@ public class PlanResourceTest extends BasePlanResourceTestCase {
 	@Override
 	@Test
 	public void testGetPlanTemplate() throws Exception {
-		assertHttpResponseStatusCode(
-			200,
-			planResource.getPlanTemplateHttpResponse(
-				"com.liferay.headless.admin.user.dto.v1_0.Account"));
-
-		String fieldName = "a" + RandomTestUtil.randomString();
-
-		ObjectDefinition objectDefinition =
-			ObjectDefinitionTestUtil.publishObjectDefinition(
-				Collections.singletonList(
-					new TextObjectFieldBuilder(
-					).labelMap(
-						LocalizedMapUtil.getLocalizedMap(
-							RandomTestUtil.randomString())
-					).name(
-						fieldName
-					).build()));
-
-		HttpInvoker.HttpResponse httpResponse =
-			planResource.getPlanTemplateHttpResponse(
-				"com.liferay.object.rest.dto.v1_0.ObjectEntry" +
-					URLCodec.encodeURL("#") + objectDefinition.getName());
-
-		Assert.assertEquals(200, httpResponse.getStatusCode());
-
-		String[] lines = StringUtil.split(
-			httpResponse.getContent(), System.lineSeparator());
-
-		Assert.assertTrue(StringUtil.contains(lines[0], fieldName));
+		_testGetPlanTemplateWithCustomObjectDefinition();
+		_testGetPlanTemplateWithObjectDefinition();
 	}
 
 	@Override
@@ -168,6 +156,109 @@ public class PlanResourceTest extends BasePlanResourceTestCase {
 		return planResource.postPlan(plan);
 	}
 
+	private OpenAPIYAML _getOpenAPIYAML(
+			long companyId, String internalClassNameKey)
+		throws Exception {
+
+		VulcanBatchEngineTaskItemDelegate vulcanBatchEngineTaskItemDelegate =
+			_vulcanBatchEngineTaskItemDelegateRegistry.
+				getVulcanBatchEngineTaskItemDelegate(
+					companyId, internalClassNameKey);
+
+		Response response = _openAPIResource.getOpenAPI(
+			Collections.singleton(
+				vulcanBatchEngineTaskItemDelegate.getResourceClass()),
+			"yaml");
+
+		return YAMLUtil.loadOpenAPIYAML((String)response.getEntity());
+	}
+
+	private List<Field> _getWritableFields(
+			long companyId, String internalClassNameKey)
+		throws Exception {
+
+		List<Field> fields = ListUtil.fromMapValues(
+			OpenAPIUtil.getDTOEntityFields(
+				TaskItemUtil.getSimpleClassName(internalClassNameKey),
+				_getOpenAPIYAML(companyId, internalClassNameKey)));
+
+		return ListUtil.filter(
+			fields,
+			field ->
+				(field.getAccessType() == Field.AccessType.READWRITE) ||
+				(field.getAccessType() == Field.AccessType.WRITE));
+	}
+
+	private void _testGetPlanTemplateWithCustomObjectDefinition()
+		throws Exception {
+
+		assertHttpResponseStatusCode(
+			200,
+			planResource.getPlanTemplateHttpResponse(
+				"com.liferay.headless.admin.user.dto.v1_0.Account"));
+
+		String fieldName = "a" + RandomTestUtil.randomString();
+
+		ObjectDefinition objectDefinition =
+			ObjectDefinitionTestUtil.publishObjectDefinition(
+				Collections.singletonList(
+					new TextObjectFieldBuilder(
+					).labelMap(
+						LocalizedMapUtil.getLocalizedMap(
+							RandomTestUtil.randomString())
+					).name(
+						fieldName
+					).build()),
+				false);
+
+		HttpInvoker.HttpResponse httpResponse =
+			planResource.getPlanTemplateHttpResponse(
+				"com.liferay.object.rest.dto.v1_0.ObjectEntry" +
+					URLCodec.encodeURL("#") + objectDefinition.getName());
+
+		Assert.assertEquals(200, httpResponse.getStatusCode());
+
+		String[] lines = StringUtil.split(
+			httpResponse.getContent(), System.lineSeparator());
+
+		Assert.assertTrue(StringUtil.contains(lines[0], fieldName));
+	}
+
+	private void _testGetPlanTemplateWithObjectDefinition() throws Exception {
+		HttpInvoker.HttpResponse httpResponse =
+			planResource.getPlanTemplateHttpResponse(
+				"com.liferay.object.admin.rest.dto.v1_0.ObjectDefinition");
+
+		Assert.assertEquals(200, httpResponse.getStatusCode());
+
+		List<String> expectedNames = new ArrayList<>();
+		List<String> expectedTypes = new ArrayList<>();
+
+		List<Field> fields = _getWritableFields(
+			TestPropsValues.getCompanyId(),
+			"com.liferay.object.admin.rest.dto.v1_0.ObjectDefinition");
+
+		for (Field field : fields) {
+			expectedNames.add(field.getName());
+			expectedTypes.add(String.valueOf(field.getType()));
+		}
+
+		String[] lines = StringUtil.split(
+			httpResponse.getContent(), System.lineSeparator());
+
+		Assert.assertArrayEquals(
+			expectedNames.toArray(), lines[0].split(StringPool.COMMA));
+		Assert.assertArrayEquals(
+			expectedTypes.toArray(), lines[1].split(StringPool.COMMA));
+	}
+
+	@Inject
+	private OpenAPIResource _openAPIResource;
+
 	private Plan _plan;
+
+	@Inject
+	private VulcanBatchEngineTaskItemDelegateRegistry
+		_vulcanBatchEngineTaskItemDelegateRegistry;
 
 }

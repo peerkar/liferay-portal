@@ -7,8 +7,10 @@ package com.liferay.layout.admin.web.internal.portlet.action;
 
 import com.liferay.layout.admin.constants.LayoutAdminPortletKeys;
 import com.liferay.layout.admin.web.internal.handler.LayoutUtilityPageEntryPortalExceptionRequestHandlerUtil;
+import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
+import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
 import com.liferay.layout.utility.page.model.LayoutUtilityPageEntry;
-import com.liferay.layout.utility.page.service.LayoutUtilityPageEntryLocalService;
+import com.liferay.layout.utility.page.service.LayoutUtilityPageEntryService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
@@ -84,15 +86,27 @@ public class AddLayoutUtilityPageEntryMVCActionCommand
 
 		String name = ParamUtil.getString(actionRequest, "name");
 		String type = ParamUtil.getString(actionRequest, "type");
+
 		long masterLayoutPlid = ParamUtil.getLong(
 			actionRequest, "masterLayoutPlid");
+
+		LayoutPageTemplateEntry masterLayoutPageTemplateEntry =
+			_layoutPageTemplateEntryLocalService.
+				fetchLayoutPageTemplateEntryByPlid(masterLayoutPlid);
+
+		String masterLayoutPageTemplateEntryERC = null;
+
+		if (masterLayoutPageTemplateEntry != null) {
+			masterLayoutPageTemplateEntryERC =
+				masterLayoutPageTemplateEntry.getExternalReferenceCode();
+		}
 
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			actionRequest);
 
-		return _layoutUtilityPageEntryLocalService.addLayoutUtilityPageEntry(
-			null, serviceContext.getUserId(), serviceContext.getScopeGroupId(),
-			0, 0, false, name, type, masterLayoutPlid, serviceContext);
+		return _layoutUtilityPageEntryService.addLayoutUtilityPageEntry(
+			null, serviceContext.getScopeGroupId(), 0, 0, false, name, type,
+			masterLayoutPageTemplateEntryERC, serviceContext);
 	}
 
 	private String _getRedirectURL(
@@ -127,8 +141,11 @@ public class AddLayoutUtilityPageEntryMVCActionCommand
 	private LayoutLocalService _layoutLocalService;
 
 	@Reference
-	private LayoutUtilityPageEntryLocalService
-		_layoutUtilityPageEntryLocalService;
+	private LayoutPageTemplateEntryLocalService
+		_layoutPageTemplateEntryLocalService;
+
+	@Reference
+	private LayoutUtilityPageEntryService _layoutUtilityPageEntryService;
 
 	@Reference
 	private Portal _portal;

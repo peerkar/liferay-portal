@@ -6,12 +6,13 @@
 import ClayButton from '@clayui/button';
 import {Option, Picker, Text} from '@clayui/core';
 import DropDown from '@clayui/drop-down';
+import {ClayToggle} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
 import ClayLayout from '@clayui/layout';
 import ClayLink from '@clayui/link';
 import {ClayTooltipProvider} from '@clayui/tooltip';
 import {fetch, navigate} from 'frontend-js-web';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 
 import {
 	DEFAULT_FETCH_HEADERS,
@@ -37,91 +38,29 @@ const Settings = ({
 	onDataSetUpdate,
 	spritemap,
 }: IDataSetSectionProps) => {
+	const [snapshotsEnabled, setSnapshotsEnabled] = useState<boolean>(
+		dataSet.snapshotsEnabled
+	);
 	const [defaultVisualizationMode, setDefaultVisualizationMode] = useState<
 		string | undefined
 	>(NOT_CONFIGURED_VISUALIZATION_MODE.type);
+	const [hideManagementBarInEmptyState, setHideManagementBarInEmptyState] =
+		useState(dataSet.hideManagementBarInEmptyState ?? true);
 	const [loading, setLoading] = useState(true);
 	const [visualizationModes, setVisualizationModes] = useState<
 		Array<TVisualizationMode>
 	>([]);
 
-	const getActiveVisualizationModes = async () => {
-		const fields = [
-			OBJECT_RELATIONSHIP.DATA_SET_CARDS_SECTIONS,
-			OBJECT_RELATIONSHIP.DATA_SET_LIST_SECTIONS,
-			OBJECT_RELATIONSHIP.DATA_SET_TABLE_SECTIONS,
-		].join(',');
-
-		const url = getDataSetResourceURL({
-			dataSetERC: dataSet.externalReferenceCode,
-			params: {
-				fields,
-				nestedFields: fields,
-			},
-		});
-
-		const response = await fetch(url, {
-			headers: DEFAULT_FETCH_HEADERS,
-		});
-
-		if (!response.ok) {
-			openDefaultFailureToast();
-
-			setVisualizationModes([]);
-
-			setLoading(false);
-
-			return;
-		}
-
-		const responseJSON = await response.json();
-
-		const {
-			[OBJECT_RELATIONSHIP.DATA_SET_CARDS_SECTIONS]: cards,
-			[OBJECT_RELATIONSHIP.DATA_SET_LIST_SECTIONS]: list,
-			[OBJECT_RELATIONSHIP.DATA_SET_TABLE_SECTIONS]: table,
-		} = responseJSON;
-
-		const activeViews: Array<TVisualizationMode> = [];
-
-		(DEFAULT_VISUALIZATION_MODES as Array<TVisualizationMode>).forEach(
-			(view) => {
-				if (view.mode === 'cards' && cards && cards.length) {
-					activeViews.push(view);
-				}
-				if (view.mode === 'list' && list && list.length) {
-					activeViews.push(view);
-				}
-				if (view.mode === 'table' && table && table.length) {
-					activeViews.push(view);
-				}
-			}
-		);
-
-		setVisualizationModes(activeViews);
-
-		setDefaultVisualizationMode(() => {
-			if (
-				activeViews.find(
-					(view: TVisualizationMode) =>
-						view.mode === dataSet.defaultVisualizationMode
-				)
-			) {
-				return dataSet.defaultVisualizationMode;
-			}
-			else {
-				return activeViews.length
-					? activeViews[0].mode
-					: NOT_CONFIGURED_VISUALIZATION_MODE.type;
-			}
-		});
-
-		setLoading(false);
-	};
+	const handleToggleChange = useCallback(
+		() => setHideManagementBarInEmptyState(!hideManagementBarInEmptyState),
+		[hideManagementBarInEmptyState]
+	);
 
 	const updateFDSViewSettings = async () => {
 		const body = {
 			defaultVisualizationMode,
+			hideManagementBarInEmptyState,
+			snapshotsEnabled,
 		};
 
 		const url = getDataSetResourceURL({
@@ -153,7 +92,104 @@ const Settings = ({
 	};
 
 	useEffect(() => {
-		getActiveVisualizationModes();
+		const fetchSettings = async () => {
+			const fields = [
+				OBJECT_RELATIONSHIP.DATA_SET_CARDS_SECTIONS,
+				OBJECT_RELATIONSHIP.DATA_SET_LIST_SECTIONS,
+				OBJECT_RELATIONSHIP.DATA_SET_TABLE_SECTIONS,
+			].join(',');
+
+			const url = getDataSetResourceURL({
+				dataSetERC: dataSet.externalReferenceCode,
+				params: {
+					fields: `${fields},hideManagementBarInEmptyState`,
+					nestedFields: fields,
+				},
+			});
+
+			try {
+				const response = await fetch(url, {
+					headers: DEFAULT_FETCH_HEADERS,
+				});
+
+				if (!response.ok) {
+					openDefaultFailureToast();
+
+					setVisualizationModes([]);
+
+					setLoading(false);
+
+					setHideManagementBarInEmptyState(true);
+
+					return;
+				}
+
+				const responseJSON = await response.json();
+
+				const {
+					hideManagementBarInEmptyState:
+						persistedHideManagementBarInEmptyState,
+					[OBJECT_RELATIONSHIP.DATA_SET_CARDS_SECTIONS]: cards,
+					[OBJECT_RELATIONSHIP.DATA_SET_LIST_SECTIONS]: list,
+					[OBJECT_RELATIONSHIP.DATA_SET_TABLE_SECTIONS]: table,
+				} = responseJSON;
+
+				const activeViews: Array<TVisualizationMode> = [];
+
+				(
+					DEFAULT_VISUALIZATION_MODES as Array<TVisualizationMode>
+				).forEach((view) => {
+					if (view.mode === 'cards' && cards && cards.length) {
+						activeViews.push(view);
+					}
+					if (view.mode === 'list' && list && list.length) {
+						activeViews.push(view);
+					}
+					if (view.mode === 'table' && table && table.length) {
+						activeViews.push(view);
+					}
+				});
+
+				setVisualizationModes(activeViews);
+
+				setDefaultVisualizationMode(() => {
+					if (
+						activeViews.find(
+							(view: TVisualizationMode) =>
+								view.mode === dataSet.defaultVisualizationMode
+						)
+					) {
+						return dataSet.defaultVisualizationMode;
+					}
+					else {
+						return activeViews.length
+							? activeViews[0].mode
+							: NOT_CONFIGURED_VISUALIZATION_MODE.type;
+					}
+				});
+
+				const serverHideManagementBarValue =
+					persistedHideManagementBarInEmptyState || false;
+
+				if (
+					serverHideManagementBarValue !==
+					hideManagementBarInEmptyState
+				) {
+					setHideManagementBarInEmptyState(
+						serverHideManagementBarValue
+					);
+				}
+
+				setLoading(false);
+			}
+			catch (error) {
+				openDefaultFailureToast();
+				setVisualizationModes([]);
+				setLoading(false);
+			}
+		};
+
+		fetchSettings();
 
 		// eslint-disable-next-line react-compiler/react-compiler
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -311,6 +347,72 @@ const Settings = ({
 							)}
 						</ClayLayout.Col>
 					</ClayLayout.Row>
+				</ClayLayout.SheetSection>
+
+				<ClayLayout.SheetSection>
+					<h3 className="sheet-subtitle">
+						{Liferay.Language.get('user-customization')}
+					</h3>
+
+					<ClayLayout.Row className="align-items-center justify-content-between mb-4">
+						<ClayLayout.Col size={11}>
+							<div>
+								<label
+									htmlFor="hide-management-bar-in-empty-state"
+									id="hide-management-bar-in-empty-state"
+								>
+									{Liferay.Language.get(
+										'hide-management-bar-in-empty-state'
+									)}
+								</label>
+							</div>
+
+							<div>
+								{Liferay.Language.get(
+									'hide-management-bar-in-empty-state-help'
+								)}
+							</div>
+						</ClayLayout.Col>
+
+						<ClayLayout.Col size={1}>
+							<div className="d-flex form-group justify-content-end mr-2">
+								<ClayToggle
+									disabled={loading}
+									onToggle={handleToggleChange}
+									toggled={hideManagementBarInEmptyState}
+								/>
+							</div>
+						</ClayLayout.Col>
+					</ClayLayout.Row>
+
+					{Liferay.FeatureFlags['LPD-10683'] && (
+						<ClayLayout.Row className="align-items-center justify-content-between mb-4">
+							<ClayLayout.Col size={11}>
+								<div>
+									<label htmlFor="user-views-toggle">
+										{Liferay.Language.get(
+											'enable-user-views'
+										)}
+									</label>
+								</div>
+
+								<div>
+									{Liferay.Language.get('user-views-help')}
+								</div>
+							</ClayLayout.Col>
+
+							<ClayLayout.Col
+								className="align-self-start"
+								size={1}
+							>
+								<ClayToggle
+									id="user-views-toggle"
+									onToggle={setSnapshotsEnabled}
+									toggled={snapshotsEnabled}
+								/>
+							</ClayLayout.Col>
+						</ClayLayout.Row>
+					)}
 				</ClayLayout.SheetSection>
 
 				<ClayLayout.SheetFooter>

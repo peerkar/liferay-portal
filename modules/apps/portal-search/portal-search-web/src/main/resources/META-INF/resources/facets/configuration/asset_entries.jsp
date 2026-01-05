@@ -16,7 +16,21 @@ int frequencyThreshold = dataJSONObject.getInt("frequencyThreshold");
 
 String[] assetTypes = new String[0];
 
-List<KeyValuePair> currentAssetTypes = new ArrayList<KeyValuePair>();
+// Left list
+
+List<KeyValuePair> leftList = new ArrayList<KeyValuePair>();
+
+for (AssetRendererFactory<?> assetRendererFactory : assetEntriesSearchFacet.getAssetRendererFactories(company.getCompanyId())) {
+	String className = assetRendererFactory.getClassName();
+
+	if (assetRendererFactory.isSearchable() && !ArrayUtil.contains(assetTypes, className)) {
+		leftList.add(new KeyValuePair(className, ResourceActionsUtil.getModelResource(locale, className)));
+	}
+}
+
+// Right list
+
+List<KeyValuePair> rightList = new ArrayList<KeyValuePair>();
 
 if (dataJSONObject.has("values")) {
 	JSONArray valuesJSONArray = dataJSONObject.getJSONArray("values");
@@ -26,17 +40,7 @@ if (dataJSONObject.has("values")) {
 	for (int i = 0; i < valuesJSONArray.length(); i++) {
 		assetTypes[i] = valuesJSONArray.getString(i);
 
-		currentAssetTypes.add(new KeyValuePair(assetTypes[i], ResourceActionsUtil.getModelResource(locale, assetTypes[i])));
-	}
-}
-
-List<KeyValuePair> availableAssetTypes = new ArrayList<KeyValuePair>();
-
-for (AssetRendererFactory<?> assetRendererFactory : assetEntriesSearchFacet.getAssetRendererFactories(company.getCompanyId())) {
-	String className = assetRendererFactory.getClassName();
-
-	if (assetRendererFactory.isSearchable() && !ArrayUtil.contains(assetTypes, className)) {
-		availableAssetTypes.add(new KeyValuePair(className, ResourceActionsUtil.getModelResource(locale, className)));
+		rightList.add(new KeyValuePair(assetTypes[i], ResourceActionsUtil.getModelResource(locale, assetTypes[i])));
 	}
 }
 %>
@@ -46,12 +50,12 @@ for (AssetRendererFactory<?> assetRendererFactory : assetEntriesSearchFacet.getA
 <aui:input name='<%= assetEntriesSearchFacet.getClassName() + "assetTypes" %>' type="hidden" />
 
 <liferay-ui:input-move-boxes
-	leftBoxName="currentAssetTypes"
-	leftList="<%= currentAssetTypes %>"
-	leftTitle="current"
-	rightBoxName="availableAssetTypes"
-	rightList="<%= availableAssetTypes %>"
-	rightTitle="available"
+	leftBoxName="availableAssetTypes"
+	leftList="<%= leftList %>"
+	leftTitle="available"
+	rightBoxName="currentAssetTypes"
+	rightList="<%= rightList %>"
+	rightTitle="in-use"
 />
 
 <aui:script>

@@ -1,6 +1,7 @@
 @component-name = "portal-commerce"
 definition {
 
+	property browser.chrome.version = "139.0";
 	property custom.properties = "company.security.strangers.verify=false${line.separator}jsonws.web.service.paths.excludes=";
 	property portal.release = "true";
 	property portal.upstream = "true";
@@ -239,6 +240,7 @@ definition {
 	@description = "This is a test for COMMERCE-12470. As an admin, I can view the UOM information for the SKU from the SKU's price tab"
 	@priority = 5
 	test CanViewUOMInformationFromSKU {
+		property browser.chrome.version = "139.0";
 		property portal.acceptance = "true";
 
 		task ("Given two UOMs are added to the SKU MIN93015") {

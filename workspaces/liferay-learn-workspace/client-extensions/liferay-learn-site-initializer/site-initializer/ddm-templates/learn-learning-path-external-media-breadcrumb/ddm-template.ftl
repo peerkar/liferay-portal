@@ -10,7 +10,7 @@
 	<#assign
 		learningPathId = (themeDisplay.getURLCurrent())?matches("(?<=learning-path=)[^&]*")[0]
 
-		learningPathName = restClient.get("/c/learningpaths/${learningPathId}?fields=name").name
+		learningPathName = restClient.get("/c/p2s3learningpaths/${learningPathId}?fields=name").name
 	/>
 
 	<div class="breadcrumb breadcrumb-lp">
@@ -20,7 +20,10 @@
 		<a href="/education-lms/learning-paths">
 			<@liferay_ui["message"] key="learning-path" />&nbsp/
 		</a>&nbsp
-		<a href="/l/${learningPathId}">${learningPathName}&nbsp/</a>&nbsp
+		<a href="/learning-path/${learningPathId}">
+			${learningPathName}&nbsp/
+		</a>&nbsp
+
 		<span class="breadcrumb-text-truncate title">
 			<#if (ObjectField_name.getData())??>
 				${ObjectField_name.getData()}

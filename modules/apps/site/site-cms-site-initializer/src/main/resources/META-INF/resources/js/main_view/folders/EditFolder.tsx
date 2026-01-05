@@ -5,16 +5,19 @@
 
 import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
 import ClayForm from '@clayui/form';
-import {Item} from '@clayui/multi-select/lib/types';
 import ClayToolbar from '@clayui/toolbar';
 import {useFormik} from 'formik';
-import {openToast} from 'frontend-js-components-web';
+import {FieldBase, openToast} from 'frontend-js-components-web';
 import {navigate, sub} from 'frontend-js-web';
 import React, {useEffect, useState} from 'react';
+import {v4 as uuidv4} from 'uuid';
 
-import {FieldSelect, FieldText} from '../../common/components/forms';
+import {SpaceInput} from '../../common/components/SpaceSelector';
+import {FieldText} from '../../common/components/forms';
 import {required, validate} from '../../common/components/forms/validations';
 import FolderService, {TFolder} from '../../common/services/FolderService';
+import SpaceService from '../../common/services/SpaceService';
+import {Space} from '../../common/types/Space';
 
 interface EditFolderProps {
 	backURL: string;
@@ -23,17 +26,33 @@ interface EditFolderProps {
 
 const EditFolder: React.FC<EditFolderProps> = ({backURL, folderId}) => {
 	const [folderData, setFolderData] = useState<
-		Pick<TFolder, 'description' | 'scopeKey' | 'title'>
-	>({description: '', scopeKey: '', title: ''});
+		Pick<TFolder, 'description' | 'title'> & {
+			space: Pick<Space, 'name' | 'settings'>;
+		}
+	>({
+		description: '',
+		space: {
+			name: 'Default',
+			settings: {
+				logoColor: 'outline-0',
+			},
+		},
+		title: '',
+	});
 	const [isLoading, setIsLoading] = useState<boolean>(true);
+
+	const folderSpaceInputId = `${uuidv4()}folderSpace`;
 
 	useEffect(() => {
 		const fetchFolderData = async () => {
 			setIsLoading(true);
 			try {
 				const response = await FolderService.getFolder(folderId);
+				const space = await SpaceService.getSpace(
+					response.scope?.externalReferenceCode!
+				);
 
-				setFolderData(response);
+				setFolderData({...response, space});
 			}
 			catch (error: any) {
 				throw new Error(
@@ -48,10 +67,6 @@ const EditFolder: React.FC<EditFolderProps> = ({backURL, folderId}) => {
 		fetchFolderData();
 	}, [folderId]);
 
-	const spaceItems: Item[] = folderData
-		? [{label: folderData.scopeKey, value: folderData.scopeKey}]
-		: [];
-
 	const {
 		errors,
 		handleChange,
@@ -63,7 +78,7 @@ const EditFolder: React.FC<EditFolderProps> = ({backURL, folderId}) => {
 		initialValues: {
 			folderDescription: folderData.description,
 			folderName: folderData.title,
-			folderSpace: folderData.scopeKey,
+			folderSpace: folderData.space,
 		},
 		onSubmit: async (formValues) => {
 			const newFolderValues: TFolder = {
@@ -106,7 +121,7 @@ const EditFolder: React.FC<EditFolderProps> = ({backURL, folderId}) => {
 			setValues({
 				folderDescription: folderData.description,
 				folderName: folderData.title,
-				folderSpace: folderData.scopeKey,
+				folderSpace: folderData.space,
 			});
 		}
 	}, [folderData, setValues]);
@@ -187,14 +202,22 @@ const EditFolder: React.FC<EditFolderProps> = ({backURL, folderId}) => {
 						value={values.folderName}
 					/>
 
-					<FieldSelect
-						aria-readonly
-						defaultValue={values.folderSpace}
-						items={spaceItems}
+					<FieldBase
+						id={folderSpaceInputId}
 						label={Liferay.Language.get('space')}
-						name="folderSpace"
 						required
-					/>
+					>
+						<SpaceInput
+							aria-readonly
+							id={folderSpaceInputId}
+							readOnly
+							spaceLogoColor={
+								values.folderSpace.settings?.logoColor
+							}
+							spaceName={values.folderSpace.name}
+							value={values.folderSpace.name}
+						/>
+					</FieldBase>
 
 					<FieldText
 						component="textarea"

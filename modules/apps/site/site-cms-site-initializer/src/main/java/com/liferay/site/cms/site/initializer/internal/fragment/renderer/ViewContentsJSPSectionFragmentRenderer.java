@@ -44,7 +44,8 @@ public class ViewContentsJSPSectionFragmentRenderer
 			_depotEntryLocalService, groupLocalService, httpServletRequest,
 			language, _objectDefinitionService,
 			_objectDefinitionSettingLocalService,
-			_objectEntryFolderModelResourcePermission, _portal);
+			_objectEntryFolderModelResourcePermission, _portal,
+			translationInfoItemFieldValuesExporterRegistry);
 	}
 
 	@Override

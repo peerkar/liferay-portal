@@ -6,7 +6,7 @@
 import ClayIcon from '@clayui/icon';
 
 import {CurrencyAbbreviation} from '../../enums/CurrencyAbbreviation';
-import {App} from '../../pages/PublisherDashboard/pages/Apps/AppCreationFlow/ReviewAndSubmitAppPage/ReviewAndSubmitAppPageUtil';
+import {App} from '../../pages/PublisherDashboard/pages/NewAppFlow/components/ReviewAndSubmitAppPage/ReviewAndSubmitAppPageUtil';
 import {isTrialSKU} from '../../utils/productUtils';
 
 import './LicensePriceChildren.scss';

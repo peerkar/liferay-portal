@@ -2,6 +2,7 @@
 definition {
 
 	property app.server.bundles.size = "1";
+	property browser.chrome.version = "139.0";
 	property custom.properties = "auth.verifier.TunnelAuthVerifier.hosts.allowed=${line.separator}tunneling.servlet.shared.secret=1234567890123456";
 	property databases.size = "1";
 	property minimum.slave.ram = "24";
@@ -4321,6 +4322,8 @@ definition {
 
 		WebContentDisplayPortlet.selectWebContent(webContentTitle = "WC WebContent Title");
 
+		IFrame.closeFrame();
+
 		Staging.gotoPublishToLive();
 
 		Staging.publishToLive(remoteStaging = "true");
@@ -4597,6 +4600,8 @@ definition {
 			siteName = "Site Name");
 
 		WebContentDisplayPortlet.selectWebContent(webContentTitle = "WC WebContent Title");
+
+		IFrame.closeFrame();
 
 		Staging.gotoPublishToLive();
 

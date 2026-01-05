@@ -114,6 +114,7 @@
 			"titleObjectFieldName": "name"
 		},
 		{
+			"enableFormContainer": false,
 			"externalReferenceCode": "L_COMMERCE_ORDER",
 			"objectRelationships": [
 				{
@@ -170,6 +171,7 @@
 			"titleObjectFieldName": "id"
 		},
 		{
+			"enableFormContainer": false,
 			"externalReferenceCode": "L_COMMERCE_ORDER_ITEM",
 			"objectRelationships": [
 				{
@@ -236,6 +238,12 @@
 			},
 			"modifiable": true,
 			"name": "CommerceReturn",
+			"objectDefinitionSettings": [
+				{
+					"name": "visible",
+					"value": "true"
+				}
+			],
 			"objectFields": [
 				{
 					"DBType": "Long",
@@ -611,6 +619,12 @@
 			},
 			"modifiable": true,
 			"name": "CommerceReturnItem",
+			"objectDefinitionSettings": [
+				{
+					"name": "visible",
+					"value": "true"
+				}
+			],
 			"objectFields": [
 				{
 					"DBType": "BigDecimal",

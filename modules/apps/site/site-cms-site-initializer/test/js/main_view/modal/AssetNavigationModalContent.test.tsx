@@ -11,6 +11,7 @@ import {fireEvent, render, screen} from '@testing-library/react';
 import React from 'react';
 
 import AssetNavigationModalContent from '../../../../src/main/resources/META-INF/resources/js/main_view/modal/asset_navigation_view/AssetNavigationModalContent';
+import {addParams} from '../../__mocks__/frontend-js-web';
 
 const ACTIONS = {
 	get: {href: '/link-to-get-action'},
@@ -119,7 +120,7 @@ const DEFAULT_PROPS = {
 		assetLibraries: [{groupId: 35393, name: 'Default'}],
 		cmsGroupId: 123,
 		commentsProps: {
-			addCommentURL: '',
+			addCommentURL: '/my-random-add-url',
 			comments: [],
 			deleteCommentURL: '',
 			editCommentURL: '',
@@ -152,11 +153,19 @@ describe('AssetNavigationModalContent', () => {
 	it('renders with the first item with the download link', () => {
 		renderComponent();
 
-		expect(screen.getByText('liferay icon.png')).toBeInTheDocument();
+		expect(
+			document.querySelector(
+				'.modal-title [data-testid="modal-header-name"]'
+			)?.textContent
+		).toEqual('liferay icon.png');
 		expect(
 			screen.getByRole('link', {name: 'download'})
 		).toBeInTheDocument();
-		expect(screen.getByRole('img')).toBeInTheDocument();
+		expect(
+			document.querySelector(
+				'.asset-navigation-container > div:not(.c-slideout) img.preview-file-image'
+			)
+		).toBeInTheDocument();
 	});
 
 	it('navigates to next item when right arrow key is pressed', () => {
@@ -202,6 +211,8 @@ describe('AssetNavigationModalContent', () => {
 	});
 
 	it('can see comments panel', () => {
+		addParams.mockReturnValue('/my-random-add-url?someParams');
+
 		const {getByLabelText} = renderComponent();
 
 		fireEvent.click(getByLabelText('show-comments'));

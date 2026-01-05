@@ -75,6 +75,7 @@ import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUti
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.ListTypeLocalService;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
@@ -170,7 +171,8 @@ public class BaseNotificationTypeTest {
 				null, TestPropsValues.getUserId(),
 				Collections.singletonMap(
 					LocaleUtil.US, RandomTestUtil.randomString()),
-				false, Arrays.asList(listTypeEntry1, listTypeEntry2));
+				false, Arrays.asList(listTypeEntry1, listTypeEntry2),
+				new ServiceContext());
 
 		childObjectEntryValues = LinkedHashMapBuilder.<String, Object>put(
 			"booleanObjectField", "true"
@@ -182,6 +184,8 @@ public class BaseNotificationTypeTest {
 			"emailTextObjectField", "test@liferay.com"
 		).put(
 			"integerObjectField", "12345"
+		).put(
+			"localizedPicklistObjectField", ""
 		).put(
 			"localizedTextObjectField", "localizedTextObjectFieldValue"
 		).put(
@@ -290,7 +294,7 @@ public class BaseNotificationTypeTest {
 		childObjectDefinition =
 			objectDefinitionLocalService.addCustomObjectDefinition(
 				null, user1.getUserId(), 0, null, false, true, false, true,
-				true, false, false, false, false, null,
+				false, false, false, false, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				ObjectDefinitionTestUtil.getRandomName(), null, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
@@ -390,6 +394,17 @@ public class BaseNotificationTypeTest {
 					).labelMap(
 						LocalizedMapUtil.getLocalizedMap(
 							RandomTestUtil.randomString())
+					).listTypeDefinitionId(
+						_listTypeDefinition.getListTypeDefinitionId()
+					).localized(
+						true
+					).name(
+						"localizedPicklistObjectField"
+					).build(),
+					new PicklistObjectFieldBuilder(
+					).labelMap(
+						LocalizedMapUtil.getLocalizedMap(
+							RandomTestUtil.randomString())
 					).name(
 						"picklistObjectField"
 					).listTypeDefinitionId(
@@ -425,7 +440,7 @@ public class BaseNotificationTypeTest {
 					).name(
 						"textObjectField"
 					).build()),
-				Collections.emptyList());
+				Collections.emptyList(), new ServiceContext());
 
 		childObjectDefinition =
 			objectDefinitionLocalService.publishCustomObjectDefinition(
@@ -435,7 +450,7 @@ public class BaseNotificationTypeTest {
 		parentObjectDefinition =
 			objectDefinitionLocalService.addCustomObjectDefinition(
 				null, user1.getUserId(), 0, null, false, true, false, true,
-				true, false, false, false, false, null,
+				false, false, false, false, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				"ParentObjectDefinition", null, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
@@ -518,7 +533,7 @@ public class BaseNotificationTypeTest {
 					).objectFieldSettings(
 						Collections.emptyList()
 					).build()),
-				Collections.emptyList());
+				Collections.emptyList(), new ServiceContext());
 
 		parentObjectDefinition =
 			objectDefinitionLocalService.publishCustomObjectDefinition(
@@ -774,6 +789,7 @@ public class BaseNotificationTypeTest {
 				getTermName("dateTimeObjectField"),
 				getTermName("emailTextObjectField"),
 				getTermName("integerObjectField"),
+				getTermName("localizedPicklistObjectField"),
 				getTermName("localizedTextObjectField"),
 				getTermName("longIntegerObjectField"),
 				getTermName("multipleRecipientsLongTextObjectField"),

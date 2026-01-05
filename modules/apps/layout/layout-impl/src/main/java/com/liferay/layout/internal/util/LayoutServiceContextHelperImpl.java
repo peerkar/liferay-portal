@@ -397,6 +397,8 @@ public class LayoutServiceContextHelperImpl
 				}
 
 				themeDisplay.setPlid(_layout.getPlid());
+				themeDisplay.setSiteDefaultLocale(
+					_portal.getSiteDefaultLocale(_group.getGroupId()));
 			}
 			else {
 				Locale locale = _portal.getSiteDefaultLocale(
@@ -404,6 +406,7 @@ public class LayoutServiceContextHelperImpl
 
 				themeDisplay.setLanguageId(LocaleUtil.toLanguageId(locale));
 				themeDisplay.setLocale(locale);
+				themeDisplay.setSiteDefaultLocale(locale);
 			}
 
 			themeDisplay.setPermissionChecker(permissionChecker);

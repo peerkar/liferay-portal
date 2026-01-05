@@ -1,0 +1,62 @@
+{
+	"accountEntryRestricted": true,
+	"accountEntryRestrictedObjectFieldName": "r_accountEntryToAdminLiferayExperienceCloud_accountEntryId",
+	"externalReferenceCode": "C_ADMIN_LXC",
+	"label": {
+		"en_US": "Admin Liferay Experience Cloud"
+	},
+	"name": "AdminLiferayExperienceCloud",
+	"objectFields": [
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_ADMIN_LXC_emailAddress",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Email Address"
+			},
+			"name": "emailAddress",
+			"required": true
+		},
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_ADMIN_LXC_fullName",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Full Name"
+			},
+			"name": "fullName",
+			"required": true
+		},
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_ADMIN_LXC_githubUsername",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Github Username"
+			},
+			"name": "githubUsername",
+			"required": true
+		},
+		{
+			"DBType": "Long",
+			"externalReferenceCode": "C_ADMIN_LXC_liferayExperienceCloudEnvironmentId",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Liferay Experience Cloud Environment"
+			},
+			"name": "liferayExperienceCloudEnvironmentId",
+			"required": true
+		}
+	],
+	"panelCategoryKey": "applications_menu.applications.content",
+	"pluralLabel": {
+		"en_US": "Admins Liferay Experience Cloud"
+	},
+	"portlet": true,
+	"scope": "company",
+	"system": false
+}

@@ -21,41 +21,41 @@ if (Validator.isNull(displayStyle)) {
 
 List<KeyValuePair> leftList = new ArrayList<>();
 
-for (int i = 0; i < types.length; i++) {
-	SocialBookmark socialBookmark = SocialBookmarksRegistryUtil.getSocialBookmark(types[i]);
-
-	if (socialBookmark != null) {
-		leftList.add(new KeyValuePair(types[i], socialBookmark.getName(locale)));
-	}
-}
-
-// Right list
-
-List<KeyValuePair> rightList = new ArrayList<>();
-
 Set<String> typesSet = new HashSet<>(Arrays.asList(types));
 
 for (String curType : SocialBookmarksRegistryUtil.getSocialBookmarksTypes()) {
 	SocialBookmark socialBookmark = SocialBookmarksRegistryUtil.getSocialBookmark(curType);
 
 	if (!typesSet.contains(curType)) {
-		rightList.add(new KeyValuePair(curType, socialBookmark.getName(locale)));
+		leftList.add(new KeyValuePair(curType, socialBookmark.getName(locale)));
 	}
 }
 
-rightList = ListUtil.sort(rightList, new KeyValuePairComparator(false, true));
+leftList = ListUtil.sort(leftList, new KeyValuePairComparator(false, true));
+
+// Right list
+
+List<KeyValuePair> rightList = new ArrayList<>();
+
+for (int i = 0; i < types.length; i++) {
+	SocialBookmark socialBookmark = SocialBookmarksRegistryUtil.getSocialBookmark(types[i]);
+
+	if (socialBookmark != null) {
+		rightList.add(new KeyValuePair(types[i], socialBookmark.getName(locale)));
+	}
+}
 %>
 
 <aui:input name="preferences--socialBookmarksTypes--" type="hidden" value="<%= StringUtil.merge(types) %>" />
 
 <liferay-ui:input-move-boxes
-	leftBoxName="currentTypes"
+	leftBoxName="availableTypes"
 	leftList="<%= leftList %>"
-	leftReorder="<%= Boolean.TRUE.toString() %>"
-	leftTitle="current"
-	rightBoxName="availableTypes"
+	leftTitle="available"
+	rightBoxName="currentTypes"
 	rightList="<%= rightList %>"
-	rightTitle="available"
+	rightReorder="<%= Boolean.TRUE.toString() %>"
+	rightTitle="in-use"
 />
 
 <label class="control-label" for="<portlet:namespace />typesOptions">
@@ -83,16 +83,25 @@ rightList = ListUtil.sort(rightList, new KeyValuePairComparator(false, true));
 		var socialBookmarksTypes = document.getElementById(
 			'<portlet:namespace />socialBookmarksTypes'
 		);
-		var currentTypes = document.getElementById(
-			'<portlet:namespace />currentTypes'
-		);
 
 		Liferay.after('inputmoveboxes:moveItem', () => {
-			socialBookmarksTypes.value = Util.getSelectedOptionValues(currentTypes);
+			setTimeout(() => {
+				var currentTypes = document.getElementById(
+					'<portlet:namespace />currentTypes'
+				);
+				socialBookmarksTypes.value =
+					Util.getSelectedOptionValues(currentTypes);
+			});
 		});
 
 		Liferay.after('inputmoveboxes:orderItem', () => {
-			socialBookmarksTypes.value = Util.getSelectedOptionValues(currentTypes);
+			setTimeout(() => {
+				var currentTypes = document.getElementById(
+					'<portlet:namespace />currentTypes'
+				);
+				socialBookmarksTypes.value =
+					Util.getSelectedOptionValues(currentTypes);
+			});
 		});
 	})();
 </aui:script>

@@ -43,34 +43,34 @@ long[] classNameIdValues = StringUtil.split(ParamUtil.getString(request, "classN
 
 			List<KeyValuePair> leftList = new ArrayList<KeyValuePair>();
 
-			for (long classNameId : classNameIdValues) {
-				String value = (String)PortalClassInvoker.invoke(methodKey, request, PortalUtil.getClassName(classNameId));
+			for (long classNameId : AssetRendererFactoryRegistryUtil.getClassNameIds(company.getCompanyId())) {
+				if (!ArrayUtil.contains(classNameIdValues, classNameId)) {
+					String value = (String)PortalClassInvoker.invoke(methodKey, request, PortalUtil.getClassName(classNameId));
 
-				leftList.add(new KeyValuePair(String.valueOf(classNameId), value));
+					leftList.add(new KeyValuePair(String.valueOf(classNameId), value));
+				}
 			}
 
 			// Right list
 
 			List<KeyValuePair> rightList = new ArrayList<KeyValuePair>();
 
-			for (long classNameId : AssetRendererFactoryRegistryUtil.getClassNameIds(company.getCompanyId())) {
-				if (!ArrayUtil.contains(classNameIdValues, classNameId)) {
-					String value = (String)PortalClassInvoker.invoke(methodKey, request, PortalUtil.getClassName(classNameId));
+			for (long classNameId : classNameIdValues) {
+				String value = (String)PortalClassInvoker.invoke(methodKey, request, PortalUtil.getClassName(classNameId));
 
-					rightList.add(new KeyValuePair(String.valueOf(classNameId), value));
-				}
+				rightList.add(new KeyValuePair(String.valueOf(classNameId), value));
 			}
 			%>
 
 			<aui:input name="userCustomAttributeNames" value='<%= ParamUtil.getString(request, "userCustomAttributeNamesValue", userCustomAttributeNames) %>' wrapperCssClass="lfr-input-text-container" />
 
 			<liferay-ui:input-move-boxes
-				leftBoxName="currentClassNameIds"
+				leftBoxName="availableClassNameIds"
 				leftList="<%= ListUtil.sort(leftList, new KeyValuePairComparator(false, true)) %>"
-				leftTitle="current"
-				rightBoxName="availableClassNameIds"
+				leftTitle="available"
+				rightBoxName="currentClassNameIds"
 				rightList="<%= ListUtil.sort(rightList, new KeyValuePairComparator(false, true)) %>"
-				rightTitle="available"
+				rightTitle="in-use"
 			/>
 
 			<aui:button-row>

@@ -15,8 +15,8 @@ import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {objectPagesTest} from '../../../fixtures/objectPagesTest';
 import createTempFile from '../../../utils/createTempFile';
-import {readCSVFile} from '../../../utils/fileReader';
 import getRandomString from '../../../utils/getRandomString';
+import {performUserSwitch, userData} from '../../../utils/performLogin';
 import {dataMigrationCenterPagesTest} from './fixtures/dataMigrationCenterPagesTest';
 import {
 	OBJECT_DEFINITION_TYPE,
@@ -499,34 +499,71 @@ const siteObjectDefinition: ObjectDefinition = {
 	status: {code: 0},
 };
 
-test('can download custom object sample file', async ({
+test('Admin users can see all site scopes regardless of site membership', async ({
 	apiHelpers,
 	dataMigrationCenterPage,
+	page,
 }) => {
-	const objectDefinitionAPIClient =
-		await apiHelpers.buildRestClient(ObjectDefinitionAPI);
+	let site: Site;
 
-	const {body: objectDefinition} =
-		await objectDefinitionAPIClient.postObjectDefinition(
-			companyObjectDefinition
+	await test.step('Setup Site, site scoped object and admin user', async () => {
+		site = await apiHelpers.headlessSite.createSite({
+			name: getRandomString(),
+		});
+
+		apiHelpers.data.push({id: site.id, type: 'site'});
+
+		const objectDefinitionAPIClient =
+			await apiHelpers.buildRestClient(ObjectDefinitionAPI);
+
+		const {body: objectDefinition} =
+			await objectDefinitionAPIClient.postObjectDefinition(
+				siteObjectDefinition
+			);
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		const adminUser = await apiHelpers.headlessAdminUser.postUserAccount();
+
+		userData[adminUser.alternateName] = {
+			name: adminUser.givenName,
+			password: 'test',
+			surname: adminUser.familyName,
+		};
+
+		const role =
+			await apiHelpers.headlessAdminUser.getRoleByName('Administrator');
+
+		await apiHelpers.headlessAdminUser.assignUserToRole(
+			role.externalReferenceCode,
+			adminUser.id
 		);
-	apiHelpers.data.push({
-		id: objectDefinition.id,
-		type: 'objectDefinition',
+
+		await performUserSwitch(page, adminUser.alternateName);
 	});
 
-	await dataMigrationCenterPage.gotoPage();
-	await dataMigrationCenterPage.goToImportFile();
+	await test.step('Navigate to import and check site scope object definition', async () => {
+		await dataMigrationCenterPage.goto();
+		await dataMigrationCenterPage.goToImportFile();
+		await dataMigrationCenterPage.selectEntityType(
+			OBJECT_ENTRY_ENTITY_TYPE
+		);
+	});
 
-	const file = await dataMigrationCenterPage.downloadSampleFile(
-		OBJECT_ENTRY_ENTITY_TYPE
-	);
+	await test.step('Assert all scopes are visible', async () => {
+		const scopeInnerText = await dataMigrationCenterPage.page
+			.getByLabel('Scope')
+			.innerText();
 
-	expect(file).toEqual(
-		await readCSVFile(
-			path.join(__dirname, '/dependencies/object_entry_import_sample.csv')
-		)
-	);
+		const scopesArray = scopeInnerText.split('\n');
+
+		expect(scopesArray).toEqual(
+			expect.arrayContaining([site.name, 'Global', 'Liferay DXP'])
+		);
+	});
 });
 
 test('can download object definition sample file', async ({
@@ -535,17 +572,8 @@ test('can download object definition sample file', async ({
 	await dataMigrationCenterPage.gotoPage();
 	await dataMigrationCenterPage.goToImportFile();
 
-	const file = await dataMigrationCenterPage.downloadSampleFile(
+	await dataMigrationCenterPage.assertSampleFileDownload(
 		OBJECT_DEFINITION_TYPE
-	);
-
-	expect(file).toEqual(
-		await readCSVFile(
-			path.join(
-				__dirname,
-				'/dependencies/object_definition_import_sample.csv'
-			)
-		)
 	);
 });
 

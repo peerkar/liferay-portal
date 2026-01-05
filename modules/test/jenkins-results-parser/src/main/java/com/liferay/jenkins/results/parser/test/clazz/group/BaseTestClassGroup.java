@@ -11,9 +11,11 @@ import com.liferay.jenkins.results.parser.JenkinsResultsParserUtil;
 import com.liferay.jenkins.results.parser.test.clazz.TestClass;
 
 import java.io.File;
+import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
@@ -22,6 +24,44 @@ import java.util.TreeSet;
  * @author Peter Yoo
  */
 public abstract class BaseTestClassGroup implements TestClassGroup {
+
+	public abstract String getOSArchitecture();
+
+	public String getSlaveLabel() {
+		String baseSlaveLabel = getBaseSlaveLabel();
+
+		if (!JenkinsResultsParserUtil.isCloudCINode()) {
+			return baseSlaveLabel;
+		}
+
+		try {
+			String osArchitecture = getOSArchitecture();
+
+			if (Objects.equals(osArchitecture, "arm") ||
+				Objects.equals(osArchitecture, "x86")) {
+
+				StringBuilder sb = new StringBuilder();
+
+				sb.append("slave.label.");
+				sb.append(osArchitecture);
+				sb.append("[");
+				sb.append(baseSlaveLabel);
+				sb.append("]");
+
+				String slaveLabel = JenkinsResultsParserUtil.getBuildProperty(
+					sb.toString());
+
+				if (!JenkinsResultsParserUtil.isNullOrEmpty(slaveLabel)) {
+					return slaveLabel;
+				}
+			}
+		}
+		catch (IOException ioException) {
+			ioException.printStackTrace();
+		}
+
+		return baseSlaveLabel;
+	}
 
 	@Override
 	public List<TestClass> getTestClasses() {
@@ -51,6 +91,10 @@ public abstract class BaseTestClassGroup implements TestClassGroup {
 	}
 
 	protected void addTestClass(TestClass testClass) {
+		if (_testClasses.contains(testClass)) {
+			return;
+		}
+
 		_testClasses.add(testClass);
 	}
 
@@ -63,6 +107,8 @@ public abstract class BaseTestClassGroup implements TestClassGroup {
 	protected boolean containsTestClasses() {
 		return !_testClasses.isEmpty();
 	}
+
+	protected abstract String getBaseSlaveLabel();
 
 	protected String getBuildStartProperty(String propertyName) {
 		BuildDatabase buildDatabase = BuildDatabaseUtil.getBuildDatabase();

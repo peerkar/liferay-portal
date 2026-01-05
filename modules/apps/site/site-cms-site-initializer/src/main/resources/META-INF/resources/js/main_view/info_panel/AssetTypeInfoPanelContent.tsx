@@ -17,14 +17,14 @@ import '../../../css/components/AssetTypeInfoPanel.scss';
 import {getBaseAssetInformation} from './util';
 
 const AssetTypeInfoPanelContent = ({
-	additionalProps: {assetLibraries, cmsGroupId, commentsProps},
+	additionalProps: {assetLibraries, cmsGroupId, commentsProps, ...otherProps},
 	items: objectEntries,
 }: {
 	additionalProps: any;
 	items: ISearchAssetObjectEntry[];
 }) => {
 	const assetInfo: ISearchAssetTypeInformation =
-		objectEntries?.length === 1
+		objectEntries?.length === 1 && objectEntries[0]?.actions
 			? getBaseAssetInformation(objectEntries[0])
 			: {};
 
@@ -46,7 +46,7 @@ const AssetTypeInfoPanelContent = ({
 					} as IAssetTypeInfoPanelContext
 				}
 			>
-				<AssetTypeInfoPanelHeader />
+				<AssetTypeInfoPanelHeader additionalProps={otherProps} />
 
 				<AssetTypeInfoPanelBody />
 			</AssetTypeInfoPanelContext.Provider>

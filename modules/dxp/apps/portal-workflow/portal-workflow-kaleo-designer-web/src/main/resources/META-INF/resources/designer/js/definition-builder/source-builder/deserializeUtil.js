@@ -114,6 +114,48 @@ DeserializeUtil.prototype = {
 						node.scriptLanguage || DEFAULT_LANGUAGE;
 				}
 
+				if (type === 'llm' || type === 'ai-decision') {
+					data.inputVariables = (() => {
+						try {
+							return JSON.parse(node['input-variables']);
+						}
+						catch (error) {
+							return [];
+						}
+					})();
+
+					data.outputVariables = (() => {
+						try {
+							return JSON.parse(node['output-variables']);
+						}
+						catch (error) {
+							return [];
+						}
+					})();
+
+					data.prompt = node.prompt || '';
+
+					data.rag = (() => {
+						try {
+							return JSON.parse(node.rag);
+						}
+						catch (error) {
+							return [];
+						}
+					})();
+
+					data.tools = (() => {
+						try {
+							return JSON.parse(node.tools);
+						}
+						catch (error) {
+							return [];
+						}
+					})();
+
+					data.userMessage = node['user-message'] || '';
+				}
+
 				data.actions = node.actions?.length && parseActions(node);
 
 				data.notifications =

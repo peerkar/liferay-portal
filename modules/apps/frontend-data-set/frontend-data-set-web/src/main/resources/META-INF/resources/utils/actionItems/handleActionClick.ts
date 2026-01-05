@@ -21,6 +21,7 @@ const handleActionClick = ({
 	executeAsyncItemAction,
 	highlightItems,
 	infoPanelOpen,
+	isItemSelected,
 	itemData,
 	itemId,
 	items,
@@ -39,6 +40,7 @@ const handleActionClick = ({
 	executeAsyncItemAction: Function;
 	highlightItems: Function;
 	infoPanelOpen?: boolean;
+	isItemSelected?: boolean;
 	itemData: any;
 	itemId: string | number;
 	items: any[];
@@ -68,7 +70,7 @@ const handleActionClick = ({
 
 	const doAction = ({defaultPrevented}: {defaultPrevented: boolean}) => {
 		if (target === INFO_PANEL && onInfoPanelToggleButtonClick) {
-			onItemSelectionChange?.(itemData);
+			!isItemSelected && onItemSelectionChange?.(itemData);
 
 			!infoPanelOpen && onInfoPanelToggleButtonClick();
 		}

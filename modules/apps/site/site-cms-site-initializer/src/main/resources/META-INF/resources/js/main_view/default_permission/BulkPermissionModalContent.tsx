@@ -6,17 +6,18 @@
 import '../../../css/components/DefaultPermission.scss';
 
 import ClayButton from '@clayui/button';
+import ClayForm, {ClaySelectWithOption} from '@clayui/form';
+import ClayIcon from '@clayui/icon';
 import ClayModal from '@clayui/modal';
-import {openModal} from 'frontend-js-components-web';
+import {ClayTooltipProvider} from '@clayui/tooltip';
 import {sub} from 'frontend-js-web';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 
 import CMSDefaultPermissionService from '../../common/services/CMSDefaultPermissionService';
 import SpaceService from '../../common/services/SpaceService';
-import {
-	OBJECT_ENTRY_FOLDER_CLASS_NAME,
-	getScopeExternalReferenceCode,
-} from '../../common/utils/getScopeExternalReferenceCode';
+import {OBJECT_ENTRY_FOLDER_CLASS_NAME} from '../../common/utils/constants';
+import {getScopeExternalReferenceCode} from '../../common/utils/getScopeExternalReferenceCode';
+import {openCMSModal} from '../../common/utils/openCMSModal';
 import {triggerAssetBulkAction} from '../props_transformer/actions/triggerAssetBulkAction';
 import {
 	DEFAULT_PERMISSIONS,
@@ -37,17 +38,16 @@ export function permissionsBulkAction({
 	defaultPermissionAdditionalProps,
 	section,
 	selectedData,
+	singleRoleMode,
 }: {
 	apiURL?: string;
 	className: string;
 	defaultPermissionAdditionalProps: any;
 	section?: string;
 	selectedData: any;
+	singleRoleMode?: boolean;
 }) {
-	return openModal({
-		containerProps: {
-			className: '',
-		},
+	return openCMSModal({
 		contentComponent: ({closeModal}: {closeModal: () => void}) =>
 			BulkPermissionModalContent({
 				...defaultPermissionAdditionalProps,
@@ -56,6 +56,7 @@ export function permissionsBulkAction({
 				closeModal,
 				section,
 				selectedData,
+				singleRoleMode,
 			}),
 		size: 'full-screen',
 	});
@@ -69,11 +70,39 @@ export default function BulkPermissionModalContent({
 	roles,
 	section,
 	selectedData,
-}: BulkPermissionModalContentProps & {apiURL: string; section?: string}) {
+	singleRoleMode,
+}: BulkPermissionModalContentProps & {
+	apiURL: string;
+	section?: string;
+	singleRoleMode?: boolean;
+}) {
 	const [currentValues, setCurrentValues] =
 		useState<AssetRoleSelectedActions>({});
 	const [loading, setLoading] = useState(false);
+	const [selectedRole, setSelectedRole] = useState<string>('');
 	const [tabs, setTabs] = useState<Array<AssetType> | undefined>(undefined);
+	const modalRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		if (modalRef.current) {
+			const modalContainer = modalRef.current.closest(
+				'.modal-dialog'
+			) as HTMLElement;
+
+			if (singleRoleMode) {
+				modalContainer.classList.add(
+					'permissions-by-role-modal-height-auto'
+				);
+			}
+		}
+	}, [singleRoleMode]);
+
+	const handleRoleChange = useCallback(
+		(event: React.ChangeEvent<HTMLSelectElement>) => {
+			setSelectedRole(event.target.value);
+		},
+		[]
+	);
 
 	const saveHandler = useCallback(
 		(event: any) => {
@@ -85,12 +114,17 @@ export default function BulkPermissionModalContent({
 				apiURL,
 				keyValues: {
 					configuration: JSON.stringify(currentValues),
+					...(singleRoleMode && selectedRole
+						? {roleKey: selectedRole}
+						: {}),
 				},
 				onCreateError: () => {
 					setLoading(false);
 				},
 				onCreateSuccess: (_response) => {
-					closeModal();
+					if (!singleRoleMode) {
+						closeModal();
+					}
 
 					setLoading(false);
 				},
@@ -98,7 +132,14 @@ export default function BulkPermissionModalContent({
 				type: 'PermissionBulkAction',
 			});
 		},
-		[apiURL, closeModal, currentValues, selectedData]
+		[
+			apiURL,
+			closeModal,
+			currentValues,
+			selectedData,
+			selectedRole,
+			singleRoleMode,
+		]
 	);
 
 	const onChangeHandler = useCallback((data: any) => {
@@ -252,12 +293,31 @@ export default function BulkPermissionModalContent({
 			<ClayModal.Header
 				closeButtonAriaLabel={Liferay.Language.get('close')}
 			>
-				{sub(
-					Liferay.Language.get('edit-x'),
-					Liferay.Language.get('permissions')
+				{singleRoleMode ? (
+					<>
+						{Liferay.Language.get('edit-permissions-by-role')}
+						<ClayTooltipProvider>
+							<span
+								className="ml-2"
+								title={Liferay.Language.get(
+									'these-permissions-will-apply-only-to-the-selected-entities-themselves-and-will-not-affect-their-default-permissions'
+								)}
+							>
+								<ClayIcon symbol="question-circle-full" />
+							</span>
+						</ClayTooltipProvider>
+					</>
+				) : (
+					sub(
+						Liferay.Language.get('edit-x'),
+						Liferay.Language.get('permissions')
+					)
 				)}
 
-				<span className="pl-2 text-4 text-secondary text-weight-normal">
+				<span
+					className="pl-2 text-4 text-secondary text-weight-normal"
+					ref={modalRef}
+				>
 					{`(${sub(Liferay.Language.get('x-x-selected'), [
 						selectedData.items.length,
 						className === DEPOT_CLASS_NAME
@@ -268,15 +328,69 @@ export default function BulkPermissionModalContent({
 			</ClayModal.Header>
 
 			<ClayModal.Body className="p-0">
+				{singleRoleMode && (
+					<div className="border-bottom p-4">
+						<div className="alert alert-info mb-3" role="alert">
+							<span className="alert-indicator">
+								<ClayIcon symbol="info-circle" />
+							</span>
+
+							<strong className="lead">
+								{Liferay.Language.get('info')}:
+							</strong>{' '}
+
+							{Liferay.Language.get(
+								'please-note-that-the-configuration-shown-at-the-top-corresponds-to-the-default-settings-of-the-parent-level'
+							)}
+						</div>
+
+						<ClayForm.Group>
+							<label htmlFor="roleSelect">
+								{Liferay.Language.get('select-role')}{' '}
+
+								<span className="text-danger">*</span>
+							</label>
+
+							<ClaySelectWithOption
+								aria-label="Select Role"
+								disabled={loading}
+								id="roleSelect"
+								onChange={handleRoleChange}
+								options={[
+									{
+										disabled: true,
+										label: Liferay.Language.get(
+											'choose-an-option'
+										),
+										value: '',
+									},
+									...roles.map((role) => ({
+										label: role.name,
+										value: role.key,
+									})),
+								]}
+								required={true}
+								value={selectedRole}
+							/>
+						</ClayForm.Group>
+					</div>
+				)}
+
 				<DefaultPermissionFormContainer
 					actions={actions}
 					disabled={loading}
-					infoBoxMessage={Liferay.Language.get(
-						'please-be-aware-that-the-configuration-shown-at-the-beginning-is-the-default-of-the-parent-level'
-					)}
+					infoBoxMessage={
+						singleRoleMode
+							? undefined
+							: Liferay.Language.get(
+									'please-be-aware-that-the-configuration-shown-at-the-beginning-is-the-default-of-the-parent-level'
+								)
+					}
 					onChange={onChangeHandler}
 					roles={roles}
 					section={section}
+					selectedRole={singleRoleMode ? selectedRole : undefined}
+					singleRoleMode={singleRoleMode}
 					types={tabs}
 					values={currentValues}
 				/>

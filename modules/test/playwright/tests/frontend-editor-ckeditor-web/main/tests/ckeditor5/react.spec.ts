@@ -5,34 +5,19 @@
 
 import {expect, mergeTests} from '@playwright/test';
 
-import {apiHelpersTest} from '../../../../../fixtures/apiHelpersTest';
 import {featureFlagsTest} from '../../../../../fixtures/featureFlagsTest';
-import {isolatedSiteTest} from '../../../../../fixtures/isolatedSiteTest';
 import {loginTest} from '../../../../../fixtures/loginTest';
-import {waitForEditor, waitForFDS} from '../../../../../utils/waitFor';
-import {ckeditorSamplePageTest} from './../../fixtures/ckeditorSamplePageTest';
-import {classicPageTest} from './fixtures/classicPageTest';
+import {waitForFDS} from '../../../../../utils/waitFor';
+import {reactClassicPageTest} from '../../../../frontend-editor-ckeditor-sample-web/fixtures/ckeditor5/classicPageTest';
 
 export const test = mergeTests(
-	apiHelpersTest,
-	ckeditorSamplePageTest,
-	classicPageTest,
+	reactClassicPageTest,
 	featureFlagsTest({
 		'LPD-11235': {enabled: true},
 		'LPS-178052': {enabled: true},
 	}),
-	isolatedSiteTest,
 	loginTest()
 );
-
-test.beforeEach(async ({ckeditorSamplePage, page, site}) => {
-	await ckeditorSamplePage.createAndGotoSitePage({site});
-
-	await ckeditorSamplePage.selectTab('CKEditor 5');
-	await ckeditorSamplePage.selectTab('React');
-
-	await waitForEditor({page});
-});
 
 test(
 	'Editor configuration is applied',

@@ -1,0 +1,6 @@
+{
+	"description": "Supported feature, available OOTB, that is not being actively evolved or improved.",
+	"externalReferenceCode": "T_FA_MAINTENANCE",
+	"name": "Maintenance",
+	"viewableBy": "Anyone"
+}

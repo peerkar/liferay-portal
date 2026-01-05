@@ -25,18 +25,19 @@ public interface CacheControlConfiguration {
 
 	@ExtendedAttributeDefinition(requiredInput = true)
 	@Meta.AD(
-		deflt = "private, no-cache, no-store, must-revalidate",
-		description = "cache-control-description", name = "cache-control",
-		optionLabels = {"no-cache", "private", "public"},
+		deflt = "must-revalidate", description = "cache-control-description",
+		name = "cache-control",
+		optionLabels = {"must-revalidate", "no-cache", "private", "public"},
 		optionValues = {
-			"private, no-cache, no-store, must-revalidate", "private", "public"
+			"must-revalidate", "private, no-cache, no-store, must-revalidate",
+			"private", "public"
 		},
 		required = false
 	)
 	public String cacheControl();
 
 	@Meta.AD(
-		deflt = "0", description = "max-age-description", name = "max-age",
+		deflt = "600", description = "max-age-description", name = "max-age",
 		required = false
 	)
 	public int maxAge();

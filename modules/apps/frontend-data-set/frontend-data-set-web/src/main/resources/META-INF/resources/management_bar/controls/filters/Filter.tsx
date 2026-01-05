@@ -42,10 +42,13 @@ interface FilterConfiguration {
 	id: string;
 }
 
-interface FilterComponentArgs {
+export interface IFilter {
+	clientExtensionResolutionError: any;
 	id: string;
+	label: string;
 	moduleURL: string;
 	onClose: () => void;
+	selectedItemsLabel: string;
 	type: 'clientExtension' | 'dateRange' | 'selection';
 }
 
@@ -55,13 +58,7 @@ const FILTER_IMPLEMENTATIONS = {
 	selection: selectionFilterImplementation,
 };
 
-const Filter = ({
-	id,
-	moduleURL,
-	onClose,
-	type,
-	...otherProps
-}: FilterComponentArgs) => {
+const Filter = ({id, moduleURL, onClose, type, ...otherProps}: IFilter) => {
 	const {setSearching, updateFilters} = useContext(FrontendDataSetContext);
 	const [{filters}, viewsDispatch] = useContext(ViewsContext);
 
@@ -100,10 +97,11 @@ const Filter = ({
 			...otherProps,
 		};
 
-		newFilter.odataFilterString =
-			filterImplementation.getOdataString(newFilter);
+		newFilter.odataFilterString = filterImplementation.getOdataString(
+			newFilter as any
+		);
 		newFilter.selectedItemsLabel =
-			filterImplementation.getSelectedItemsLabel(newFilter);
+			filterImplementation.getSelectedItemsLabel(newFilter as any);
 
 		setSearching(true);
 

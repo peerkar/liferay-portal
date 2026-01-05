@@ -21,6 +21,7 @@ import com.liferay.object.scope.ObjectScopeProviderRegistry;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.StringUtil;
 
 import jakarta.portlet.PortletURL;
 
@@ -84,7 +85,13 @@ public class ObjectEntryItemSelectorView
 
 	@Override
 	public String getTitle(Locale locale) {
-		return _objectDefinition.getPluralLabel(locale);
+		String title = _objectDefinition.getPluralLabel(locale);
+
+		if (_objectDefinition.isCMS()) {
+			title = StringUtil.appendParentheticalSuffix(title, "CMS");
+		}
+
+		return title;
 	}
 
 	@Override

@@ -125,6 +125,12 @@ public class OpenIdConnectUserLocalServiceWrapper
 			openIdConnectUser);
 	}
 
+	@Override
+	public void deleteOpenIdConnectUsers(long companyId, long userId) {
+		_openIdConnectUserLocalService.deleteOpenIdConnectUsers(
+			companyId, userId);
+	}
+
 	/**
 	 * @throws PortalException
 	 */
@@ -286,6 +292,16 @@ public class OpenIdConnectUserLocalServiceWrapper
 
 		return _openIdConnectUserLocalService.getOpenIdConnectUser(
 			openIdConnectUserId);
+	}
+
+	@Override
+	public com.liferay.portal.security.sso.openid.connect.persistence.model.
+		OpenIdConnectUser getOpenIdConnectUser(
+				long companyId, String issuer, String subject)
+			throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _openIdConnectUserLocalService.getOpenIdConnectUser(
+			companyId, issuer, subject);
 	}
 
 	/**

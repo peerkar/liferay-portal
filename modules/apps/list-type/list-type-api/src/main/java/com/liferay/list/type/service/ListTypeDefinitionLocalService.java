@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalService;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
@@ -76,14 +77,9 @@ public interface ListTypeDefinitionLocalService
 
 	@Indexable(type = IndexableType.REINDEX)
 	public ListTypeDefinition addListTypeDefinition(
-			String externalReferenceCode, long userId, boolean system)
-		throws PortalException;
-
-	@Indexable(type = IndexableType.REINDEX)
-	public ListTypeDefinition addListTypeDefinition(
 			String externalReferenceCode, long userId,
 			Map<Locale, String> nameMap, boolean system,
-			List<ListTypeEntry> listTypeEntries)
+			List<ListTypeEntry> listTypeEntries, ServiceContext serviceContext)
 		throws PortalException;
 
 	/**
@@ -294,6 +290,13 @@ public interface ListTypeDefinitionLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getListTypeDefinitionsCount();
 
+	@Indexable(type = IndexableType.REINDEX)
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public ListTypeDefinition getOrAddEmptyListTypeDefinition(
+			String externalReferenceCode, long companyId, long userId,
+			boolean system)
+		throws PortalException;
+
 	/**
 	 * Returns the OSGi service identifier.
 	 *
@@ -327,7 +330,7 @@ public interface ListTypeDefinitionLocalService
 	public ListTypeDefinition updateListTypeDefinition(
 			String externalReferenceCode, long listTypeDefinitionId,
 			long userId, Map<Locale, String> nameMap,
-			List<ListTypeEntry> listTypeEntries)
+			List<ListTypeEntry> listTypeEntries, ServiceContext serviceContext)
 		throws PortalException;
 
 	public void updateUserId(long companyId, long oldUserId, long newUserId)

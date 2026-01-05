@@ -28,6 +28,7 @@ interface IFormInputProps
 	extends FieldProps,
 		React.HTMLAttributes<HTMLInputElement> {
 	contentAfter: React.ReactNode;
+	contentAfterEnableMagnet?: boolean;
 	inline: boolean;
 	inset: {
 		content: React.ReactNode;
@@ -62,6 +63,7 @@ export default class FormInput extends React.Component<IFormInputProps> {
 
 	static propTypes = {
 		contentAfter: PropTypes.node,
+		contentAfterEnableMagnet: PropTypes.bool,
 		field: PropTypes.shape({
 			name: PropTypes.string,
 			onBlur: PropTypes.func,
@@ -137,7 +139,13 @@ export default class FormInput extends React.Component<IFormInputProps> {
 	}
 
 	renderInput(inputProps) {
-		const {contentAfter, inset, mask, text} = this.props;
+		const {
+			contentAfter,
+			contentAfterEnableMagnet,
+			inset,
+			mask,
+			text
+		} = this.props;
 
 		const ComponentFn = mask ? MaskedInput : Input;
 
@@ -184,9 +192,18 @@ export default class FormInput extends React.Component<IFormInputProps> {
 		} else if (contentAfter) {
 			return (
 				<Input.Group className='content-after'>
-					<Input.GroupItem>{inputComponent}</Input.GroupItem>
+					<Input.GroupItem
+						position={contentAfterEnableMagnet && 'prepend'}
+					>
+						{inputComponent}
+					</Input.GroupItem>
 
-					<Input.GroupItem shrink>{contentAfter}</Input.GroupItem>
+					<Input.GroupItem
+						position={contentAfterEnableMagnet && 'append'}
+						shrink
+					>
+						{contentAfter}
+					</Input.GroupItem>
 				</Input.Group>
 			);
 		} else {

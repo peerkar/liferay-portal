@@ -4,11 +4,11 @@
  */
 
 import ClayLink from '@clayui/link';
-import {openModal} from 'frontend-js-components-web';
+import {replaceTokens} from '@liferay/frontend-data-set-web';
 import {sub} from 'frontend-js-web';
 import React from 'react';
 
-import formatActionURL from '../../../common/utils/formatActionURL';
+import {openCMSModal} from '../../../common/utils/openCMSModal';
 import FilePreviewerModalContent from '../../modal/FilePreviewerModalContent';
 
 interface ActionItem {
@@ -36,7 +36,7 @@ export default function AssetVersionRenderer({
 			return value ? <>{value}</> : null;
 		}
 
-		formattedHref = formatActionURL(itemData, selectedAction.href);
+		formattedHref = replaceTokens(selectedAction.href, itemData);
 	}
 
 	const title = sub(
@@ -56,10 +56,7 @@ export default function AssetVersionRenderer({
 				href="#"
 				onClick={() => {
 					if (itemData.file?.thumbnailURL) {
-						openModal({
-							containerProps: {
-								className: '',
-							},
+						openCMSModal({
 							contentComponent: () =>
 								FilePreviewerModalContent({
 									file: itemData.file,
@@ -69,10 +66,7 @@ export default function AssetVersionRenderer({
 						});
 					}
 					else {
-						openModal({
-							containerProps: {
-								className: '',
-							},
+						openCMSModal({
 							size: 'full-screen',
 							title,
 							url: formattedHref,

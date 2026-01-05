@@ -1,0 +1,106 @@
+{
+	"accountEntryRestricted": true,
+	"accountEntryRestrictedObjectFieldName": "r_accountEntryToAnalyticsCloudWorkspace_accountEntryId",
+	"externalReferenceCode": "C_AC_WORKSPACE",
+	"label": {
+		"en_US": "Analytics Cloud Workspace"
+	},
+	"name": "AnalyticsCloudWorkspace",
+	"objectFields": [
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_AC_WORKSPACE_accountKey",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Account Key"
+			},
+			"name": "accountKey",
+			"required": false
+		},
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_AC_WORKSPACE_allowedEmailDomains",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Allowed Email Domains"
+			},
+			"name": "allowedEmailDomains",
+			"required": false
+		},
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_AC_WORKSPACE_dataCenterLocation",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Data Center Location"
+			},
+			"name": "dataCenterLocation",
+			"required": false
+		},
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_AC_WORKSPACE_ownerEmailAddress",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Owner Email Address"
+			},
+			"name": "ownerEmailAddress",
+			"required": false
+		},
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_AC_WORKSPACE_timeZone",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Time Zone"
+			},
+			"name": "timeZone",
+			"required": false
+		},
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_AC_WORKSPACE_workspaceFriendlyUrl",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Workspace Friendly URL"
+			},
+			"name": "workspaceFriendlyUrl",
+			"required": false
+		},
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_AC_WORKSPACE_workspaceGroupId",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Workspace Group ID"
+			},
+			"name": "workspaceGroupId",
+			"required": false
+		},
+		{
+			"DBType": "String",
+			"externalReferenceCode": "C_AC_WORKSPACE_workspaceName",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Workspace Name"
+			},
+			"name": "workspaceName",
+			"required": false
+		}
+	],
+	"panelCategoryKey": "applications_menu.applications.content",
+	"pluralLabel": {
+		"en_US": "Analytics Cloud Workspaces"
+	},
+	"portlet": true,
+	"scope": "company",
+	"system": false
+}

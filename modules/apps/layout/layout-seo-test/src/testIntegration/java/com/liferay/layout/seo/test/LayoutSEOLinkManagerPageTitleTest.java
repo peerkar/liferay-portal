@@ -41,7 +41,6 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.test.rule.FeatureFlag;
-import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
@@ -408,9 +407,7 @@ public class LayoutSEOLinkManagerPageTitleTest {
 			_layoutSEOLinkManager.getPageTitleSuffix(_layout, companyName));
 	}
 
-	@FeatureFlags(
-		featureFlags = {@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-32050")}
-	)
+	@FeatureFlag("LPD-17564")
 	@Test
 	@TestInfo("LPD-66633")
 	public void testGetPageTitleSuffixCompanyNameInCMSGroup() throws Exception {
@@ -431,9 +428,7 @@ public class LayoutSEOLinkManagerPageTitleTest {
 			_layoutSEOLinkManager.getPageTitleSuffix(_layout, companyName));
 	}
 
-	@FeatureFlags(
-		featureFlags = {@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-32050")}
-	)
+	@FeatureFlag("LPD-17564")
 	@Test
 	@TestInfo("LPD-66633")
 	public void testGetPageTitleSuffixGroupNameCompanyNameInCMSGroup()
@@ -474,9 +469,7 @@ public class LayoutSEOLinkManagerPageTitleTest {
 		}
 	}
 
-	@FeatureFlags(
-		featureFlags = {@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-32050")}
-	)
+	@FeatureFlag("LPD-17564")
 	@Test
 	@TestInfo("LPD-66633")
 	public void testGetPageTitleSuffixWithIncludeInstanceNameWithIncludeSiteNameInCMSGroup()
@@ -528,9 +521,7 @@ public class LayoutSEOLinkManagerPageTitleTest {
 		}
 	}
 
-	@FeatureFlags(
-		featureFlags = {@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-32050")}
-	)
+	@FeatureFlag("LPD-17564")
 	@Test
 	@TestInfo("LPD-66633")
 	public void testGetPageTitleSuffixWithIncludeInstanceNameWithoutIncludeSiteNameInCMSGroup()
@@ -576,9 +567,7 @@ public class LayoutSEOLinkManagerPageTitleTest {
 		}
 	}
 
-	@FeatureFlags(
-		featureFlags = {@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-32050")}
-	)
+	@FeatureFlag("LPD-17564")
 	@Test
 	@TestInfo("LPD-66633")
 	public void testGetPageTitleSuffixWithoutIncludeInstanceNameWithIncludeSiteNameInCMSGroup()
@@ -624,9 +613,7 @@ public class LayoutSEOLinkManagerPageTitleTest {
 		}
 	}
 
-	@FeatureFlags(
-		featureFlags = {@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-32050")}
-	)
+	@FeatureFlag("LPD-17564")
 	@Test
 	@TestInfo("LPD-66633")
 	public void testGetPageTitleSuffixWithoutIncludeInstanceNameWithoutIncludeSiteNameInCMSGroup()

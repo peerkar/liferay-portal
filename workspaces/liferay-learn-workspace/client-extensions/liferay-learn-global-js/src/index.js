@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import DropdownProvider from './DropdownProvider';
-import SpatialNavigationProvider from './SpatialNavigation';
+import './article';
 
 import 'prismjs';
 
-import './article';
+import 'swiper/css/bundle';
+import Swiper from 'swiper/bundle';
 
-export default {
-	DropdownProvider,
-	SpatialNavigationProvider,
-};
+import DropdownProvider from './DropdownProvider';
+import SpatialNavigationProvider from './SpatialNavigation';
+
+export {DropdownProvider, SpatialNavigationProvider, Swiper};

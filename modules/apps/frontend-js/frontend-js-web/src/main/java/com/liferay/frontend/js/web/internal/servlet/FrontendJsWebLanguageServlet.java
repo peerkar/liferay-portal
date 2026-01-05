@@ -123,10 +123,13 @@ public class FrontendJsWebLanguageServlet extends HttpServlet {
 
 		// Check if servlet context exists
 
+		String modulePath = _portal.getPathModule();
+		String proxyPath = _portal.getPathProxy();
 		String webContextPath = parts[2];
 
 		ServletContext servletContext = _serviceTrackerMap.getService(
-			Portal.PATH_MODULE + StringPool.SLASH + webContextPath);
+			modulePath.substring(proxyPath.length()) + StringPool.SLASH +
+				webContextPath);
 
 		if (servletContext == null) {
 			httpServletResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -242,6 +245,9 @@ public class FrontendJsWebLanguageServlet extends HttpServlet {
 
 	@Reference
 	private Language _language;
+
+	@Reference
+	private Portal _portal;
 
 	private ServiceTrackerMap<String, ServletContext> _serviceTrackerMap;
 

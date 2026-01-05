@@ -12,19 +12,46 @@ import com.liferay.portal.kernel.exception.PortalException;
  */
 public class ObjectEntryGroupIdException extends PortalException {
 
-	public ObjectEntryGroupIdException() {
+	public String getMessageKey() {
+		return _messageKey;
 	}
 
-	public ObjectEntryGroupIdException(String msg) {
-		super(msg);
+	public static class InvalidGroupIdForScope
+		extends ObjectEntryGroupIdException {
+
+		public InvalidGroupIdForScope(long groupId, String scope) {
+			super(
+				String.format(
+					"Group ID %d is not valid for scope \"%s\"", groupId,
+					scope),
+				"group-id-x-is-not-valid-for-scope-x");
+		}
+
 	}
 
-	public ObjectEntryGroupIdException(String msg, Throwable throwable) {
-		super(msg, throwable);
+	public static class MustShareSameGroupId
+		extends ObjectEntryGroupIdException {
+
+		public MustShareSameGroupId() {
+			super(
+				"Object entries within the same scope must share the same " +
+					"group ID to be related",
+				"object-entries-within-the-same-scope-must-share-the-same-" +
+					"group-id-to-be-related");
+		}
+
 	}
 
-	public ObjectEntryGroupIdException(Throwable throwable) {
-		super(throwable);
+	protected ObjectEntryGroupIdException(String messageKey) {
+		_messageKey = messageKey;
 	}
+
+	protected ObjectEntryGroupIdException(String message, String messageKey) {
+		super(message);
+
+		_messageKey = messageKey;
+	}
+
+	private final String _messageKey;
 
 }

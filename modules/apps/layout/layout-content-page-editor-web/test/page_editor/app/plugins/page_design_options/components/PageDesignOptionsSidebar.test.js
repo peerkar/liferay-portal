@@ -31,9 +31,9 @@ jest.mock(
 const DEFAULT_CONFIG = {
 	layoutType: '0',
 	masterLayouts: [
-		{masterLayoutPlid: '0', name: 'Blank'},
+		{masterLayoutPageTemplateEntryERC: '', name: 'Blank'},
 		{
-			masterLayoutPlid: '15',
+			masterLayoutPageTemplateEntryERC: '15',
 			name: 'Pablo Master Layout',
 		},
 	],
@@ -59,13 +59,13 @@ jest.mock(
 	})
 );
 
-const renderComponent = ({masterLayoutPlid = '0'} = {}) => {
+const renderComponent = ({masterLayoutPageTemplateEntryERC = ''} = {}) => {
 	return render(
 		<StoreAPIContextProvider
 			dispatch={() => Promise.resolve({styleBook: {}})}
 			getState={() => ({
 				masterLayout: {
-					masterLayoutPlid,
+					masterLayoutPageTemplateEntryERC,
 				},
 				permissions: {
 					LOCKED_SEGMENTS_EXPERIMENT: true,
@@ -86,8 +86,6 @@ describe('PageDesignOptionsSidebar', () => {
 	});
 
 	it('assert style books info message', () => {
-		Liferay.FeatureFlags['LPD-30204'] = true;
-
 		renderComponent();
 
 		expect(
@@ -95,8 +93,6 @@ describe('PageDesignOptionsSidebar', () => {
 				'only-style-books-based-on-the-frontend-token-definition-provided-by-Test Theme-are-visible'
 			)
 		).toBeInTheDocument();
-
-		Liferay.FeatureFlags['LPD-30204'] = false;
 	});
 
 	it('checks panel accessibility', async () => {
@@ -114,7 +110,7 @@ describe('PageDesignOptionsSidebar', () => {
 		});
 
 		expect(changeMasterLayout).toBeCalledWith(
-			expect.objectContaining({masterLayoutPlid: '15'})
+			expect.objectContaining({masterLayoutPageTemplateEntryERC: '15'})
 		);
 	});
 

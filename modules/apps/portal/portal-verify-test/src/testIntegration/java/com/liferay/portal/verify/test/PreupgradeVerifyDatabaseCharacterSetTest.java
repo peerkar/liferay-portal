@@ -6,6 +6,14 @@
 package com.liferay.portal.verify.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.object.constants.ObjectDefinitionConstants;
+import com.liferay.object.constants.ObjectRelationshipConstants;
+import com.liferay.object.field.builder.TextObjectFieldBuilder;
+import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.model.ObjectField;
+import com.liferay.object.model.ObjectRelationship;
+import com.liferay.object.service.ObjectRelationshipLocalService;
+import com.liferay.object.test.util.ObjectDefinitionTestUtil;
 import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -17,10 +25,12 @@ import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.dao.jdbc.DataSourceFactoryUtil;
 import com.liferay.portal.kernel.instance.PortalInstancePool;
 import com.liferay.portal.kernel.model.ServiceComponent;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceComponentLocalService;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.InfrastructureUtil;
 import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -32,9 +42,11 @@ import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.verify.PreupgradeVerifyDatabaseCharacterSet;
 import com.liferay.portal.verify.VerifyProcess;
 import com.liferay.portal.verify.test.util.BaseVerifyProcessTestCase;
+import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 
 import java.sql.Connection;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -160,6 +172,94 @@ public class PreupgradeVerifyDatabaseCharacterSetTest
 	}
 
 	@Test
+	public void testVerifyMixedCharacterSetObjectTables() throws Exception {
+		Assume.assumeTrue(
+			(_db.getDBType() == DBType.MARIADB) ||
+			(_db.getDBType() == DBType.MYSQL));
+
+		User user = UserTestUtil.getAdminUser(
+			CompanyThreadLocal.getCompanyId());
+
+		ObjectField objectField = new TextObjectFieldBuilder(
+		).userId(
+			user.getUserId()
+		).labelMap(
+			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString())
+		).localized(
+			true
+		).name(
+			"localizedField"
+		).build();
+
+		ObjectDefinition objectDefinition1 =
+			ObjectDefinitionTestUtil.publishObjectDefinition(
+				Collections.singletonList(objectField),
+				ObjectDefinitionConstants.SCOPE_COMPANY, user.getUserId());
+		ObjectDefinition objectDefinition2 =
+			ObjectDefinitionTestUtil.publishObjectDefinition(
+				Collections.singletonList(objectField),
+				ObjectDefinitionConstants.SCOPE_COMPANY, user.getUserId());
+
+		ObjectRelationship objectRelationship =
+			_objectRelationshipLocalService.addObjectRelationship(
+				null, user.getUserId(),
+				objectDefinition1.getObjectDefinitionId(),
+				objectDefinition2.getObjectDefinitionId(), 0,
+				ObjectRelationshipConstants.DELETION_TYPE_CASCADE, false,
+				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
+				StringUtil.randomId(), false,
+				ObjectRelationshipConstants.TYPE_MANY_TO_MANY, null);
+
+		_db.runSQL("drop table " + objectDefinition1.getDBTableName());
+		_db.runSQL("drop table " + objectDefinition1.getExtensionDBTableName());
+		_db.runSQL(
+			"drop table " + objectDefinition1.getLocalizationDBTableName());
+		_db.runSQL("drop table " + objectRelationship.getDBTableName());
+
+		String createTableSQL =
+			"create table %s (testColumn VARCHAR(75) primary key) collate " +
+				"utf8_bin";
+
+		_db.runSQL(
+			String.format(createTableSQL, objectDefinition1.getDBTableName()));
+		_db.runSQL(
+			String.format(
+				createTableSQL, objectDefinition1.getExtensionDBTableName()));
+		_db.runSQL(
+			String.format(
+				createTableSQL,
+				objectDefinition1.getLocalizationDBTableName()));
+		_db.runSQL(
+			String.format(createTableSQL, objectRelationship.getDBTableName()));
+
+		try (LogCapture logCapture = LoggerTestUtil.configureLog4JLogger(
+				PreupgradeVerifyDatabaseCharacterSet.class.getName(),
+				LoggerTestUtil.WARN)) {
+
+			testVerify();
+
+			DBInspector dbInspector = new DBInspector(_connection);
+
+			List<LogEntry> logEntries = logCapture.getLogEntries();
+
+			Assert.assertEquals(logEntries.toString(), 4, logEntries.size());
+
+			String messages = logEntries.toString();
+
+			_assertNormalizeName(
+				dbInspector, messages, objectDefinition1.getDBTableName());
+			_assertNormalizeName(
+				dbInspector, messages,
+				objectDefinition1.getExtensionDBTableName());
+			_assertNormalizeName(
+				dbInspector, messages,
+				objectDefinition1.getLocalizationDBTableName());
+			_assertNormalizeName(
+				dbInspector, messages, objectRelationship.getDBTableName());
+		}
+	}
+
+	@Test
 	public void testVerifyUnsupportedCharacterSet() {
 		Assume.assumeTrue(
 			(_db.getDBType() == DBType.MARIADB) ||
@@ -193,6 +293,16 @@ public class PreupgradeVerifyDatabaseCharacterSetTest
 			"unsupported_character_set_db");
 	}
 
+	private void _assertNormalizeName(
+			DBInspector dbInspector, String messages, String tableName)
+		throws Exception {
+
+		Assert.assertTrue(
+			messages.contains(
+				"Mixed character set and collation: " +
+					dbInspector.normalizeName(tableName)));
+	}
+
 	private void _verifyException(Exception exception, String expectedMessage) {
 		String message = exception.getMessage();
 
@@ -208,5 +318,8 @@ public class PreupgradeVerifyDatabaseCharacterSetTest
 	private static ServiceComponentLocalService _serviceComponentLocalService;
 
 	private static DataSource _unsupportedCharacterSetDataSource;
+
+	@Inject
+	private ObjectRelationshipLocalService _objectRelationshipLocalService;
 
 }

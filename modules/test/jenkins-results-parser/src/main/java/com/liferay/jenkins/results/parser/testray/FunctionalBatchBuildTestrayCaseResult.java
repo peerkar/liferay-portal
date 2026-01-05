@@ -5,13 +5,13 @@
 
 package com.liferay.jenkins.results.parser.testray;
 
-import com.liferay.jenkins.results.parser.BuildReport;
 import com.liferay.jenkins.results.parser.DownstreamBuildReport;
 import com.liferay.jenkins.results.parser.JenkinsResultsParserUtil;
 import com.liferay.jenkins.results.parser.TestReport;
 import com.liferay.jenkins.results.parser.TopLevelBuildReport;
 import com.liferay.jenkins.results.parser.test.clazz.FunctionalTestClass;
 import com.liferay.jenkins.results.parser.test.clazz.TestClass;
+import com.liferay.jenkins.results.parser.test.clazz.TestClassMethod;
 import com.liferay.jenkins.results.parser.test.clazz.group.AxisTestClassGroup;
 
 import java.util.ArrayList;
@@ -23,40 +23,26 @@ import java.util.Objects;
  * @author Michael Hashimoto
  */
 public class FunctionalBatchBuildTestrayCaseResult
-	extends BatchBuildTestrayCaseResult {
+	extends BatchBuildTestrayCaseResult<FunctionalTestClass, TestClassMethod> {
 
 	public FunctionalBatchBuildTestrayCaseResult(
-		TestrayBuild testrayBuild, TopLevelBuildReport topLevelBuildReport,
-		AxisTestClassGroup axisTestClassGroup, TestClass testClass) {
+		AxisTestClassGroup axisTestClassGroup, TestClass testClass,
+		TestrayBuild testrayBuild, TopLevelBuildReport topLevelBuildReport) {
 
-		super(testrayBuild, topLevelBuildReport, axisTestClassGroup);
+		super(axisTestClassGroup, testClass, testrayBuild, topLevelBuildReport);
 
 		if (!(testClass instanceof FunctionalTestClass)) {
 			throw new RuntimeException(
 				"Test class is not a functional test class");
 		}
-
-		_functionalTestClass = (FunctionalTestClass)testClass;
-	}
-
-	@Override
-	public BuildReport getBuildReport() {
-		if (_functionalTestClass.isBuildCachingEnabled()) {
-			DownstreamBuildReport cachedDownstreamBuildReport =
-				_functionalTestClass.getCachedDownstreamBuildReport();
-
-			if (cachedDownstreamBuildReport != null) {
-				return cachedDownstreamBuildReport;
-			}
-		}
-
-		return super.getBuildReport();
 	}
 
 	@Override
 	public String getComponentName() {
+		FunctionalTestClass functionalTestClass = getTestClass();
+
 		return JenkinsResultsParserUtil.getProperty(
-			_functionalTestClass.getPoshiProperties(),
+			functionalTestClass.getPoshiProperties(),
 			"testray.main.component.name");
 	}
 
@@ -72,13 +58,17 @@ public class FunctionalBatchBuildTestrayCaseResult
 
 	@Override
 	public String getName() {
-		return _functionalTestClass.getTestClassMethodName();
+		FunctionalTestClass functionalTestClass = getTestClass();
+
+		return functionalTestClass.getTestClassMethodName();
 	}
 
 	@Override
 	public int getPriority() {
+		FunctionalTestClass functionalTestClass = getTestClass();
+
 		String priority = JenkinsResultsParserUtil.getProperty(
-			_functionalTestClass.getPoshiProperties(), "priority");
+			functionalTestClass.getPoshiProperties(), "priority");
 
 		if ((priority != null) && priority.matches("\\d+")) {
 			return Integer.parseInt(priority);
@@ -106,8 +96,10 @@ public class FunctionalBatchBuildTestrayCaseResult
 
 	@Override
 	public String getSubcomponentNames() {
+		FunctionalTestClass functionalTestClass = getTestClass();
+
 		return JenkinsResultsParserUtil.getProperty(
-			_functionalTestClass.getPoshiProperties(),
+			functionalTestClass.getPoshiProperties(),
 			"testray.component.names");
 	}
 
@@ -130,9 +122,11 @@ public class FunctionalBatchBuildTestrayCaseResult
 
 	@Override
 	public TestReport getTestReport() {
-		if (_functionalTestClass.isBuildCachingEnabled()) {
+		FunctionalTestClass functionalTestClass = getTestClass();
+
+		if (functionalTestClass.isBuildCachingEnabled()) {
 			TestReport cachedTestReport =
-				_functionalTestClass.getCachedTestReport();
+				functionalTestClass.getCachedTestReport();
 
 			if (cachedTestReport != null) {
 				return cachedTestReport;
@@ -171,6 +165,24 @@ public class FunctionalBatchBuildTestrayCaseResult
 		}
 
 		return super.getLiferayOSGiLogTestrayAttachments();
+	}
+
+	@Override
+	protected void initBuildReport() {
+		FunctionalTestClass functionalTestClass = getTestClass();
+
+		if (functionalTestClass.isBuildCachingEnabled()) {
+			DownstreamBuildReport cachedDownstreamBuildReport =
+				functionalTestClass.getCachedDownstreamBuildReport();
+
+			if (cachedDownstreamBuildReport != null) {
+				setBuildReport(cachedDownstreamBuildReport);
+
+				return;
+			}
+		}
+
+		super.initBuildReport();
 	}
 
 	private TestrayAttachment _getPoshiConsoleTestrayAttachment() {
@@ -220,7 +232,5 @@ public class FunctionalBatchBuildTestrayCaseResult
 				getAxisName(), "/", JenkinsResultsParserUtil.fixURL(name),
 				"/summary.html.gz"));
 	}
-
-	private final FunctionalTestClass _functionalTestClass;
 
 }

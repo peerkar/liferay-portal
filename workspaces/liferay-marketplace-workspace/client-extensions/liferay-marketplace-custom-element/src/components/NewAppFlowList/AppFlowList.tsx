@@ -6,7 +6,7 @@
 import {AppFlowListItem} from './AppFlowListItem';
 
 import './AppFlowList.scss';
-import {AppFlowListItemProps} from '../../pages/PublisherDashboard/pages/Apps/AppCreationFlow/AppCreationFlowUtil';
+import {AppFlowListItemProps} from '../../pages/PublisherDashboard/pages/NewAppFlow/AppCreationFlowUtil';
 
 interface AppFlowListProps {
 	appFlowListItems: AppFlowListItemProps[];

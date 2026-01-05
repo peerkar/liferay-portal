@@ -14,6 +14,7 @@ import {liferayConfig} from '../../../liferay.config';
 import {OpenIdInstanceSettingsPage} from '../../../pages/portal-settings-authentication-openid-connect-web/OpenIdInstanceSettingsPage';
 import getRandomString from '../../../utils/getRandomString';
 import {performLoginViaApi, performLogout} from '../../../utils/performLogin';
+import {pagesPagesTest} from '../../layout-admin-web/main/fixtures/pagesPagesTest';
 import {utilityPagesPage} from '../../login-web/main/fixtures/utilityPageTest';
 import {openIdConfig} from './config';
 import {openIdSettingsPagesTest} from './fixtures/openIdSettingsPagesTest';
@@ -26,13 +27,13 @@ const test = mergeTests(
 	dataApiHelpersTest,
 	openIdSettingsPagesTest,
 	featureFlagsTest({
-		'LPD-6378': {enabled: true},
 		'LPD-20879': {enabled: true},
 		'LPD-57332': {enabled: true},
 	}),
 	loginTest(),
 	utilityPagesPage,
-	customFieldsPagesTest
+	customFieldsPagesTest,
+	pagesPagesTest
 );
 
 async function setupOpenIdConnection(
@@ -60,12 +61,17 @@ test.afterEach(
 		loginInstanceSettingsPage,
 		openIDInstanceSettingsPage,
 		page,
+		utilityPagesPage,
 	}) => {
 		await page.goto(liferayConfig.environment.baseUrl);
 
 		if (page.getByRole('button', {name: 'Sign In'}).isVisible) {
 			await performLoginViaApi({page, screenName: 'test'});
 		}
+
+		await utilityPagesPage.goto();
+
+		await utilityPagesPage.markAsDefault('Sign In');
 
 		if (providerName) {
 			await openIDInstanceSettingsPage.goto();
@@ -95,6 +101,12 @@ test.afterEach(
 	}
 );
 
+test.beforeEach(async ({utilityPagesPage}) => {
+	await utilityPagesPage.goto();
+
+	await utilityPagesPage.unmarkAsDefault('Sign In');
+});
+
 test.describe('OpenID connect link', () => {
 	test('is visible on sign-in page when OpenID connection is enabled on NOT an utility page', async ({
 		openIDInstanceSettingsPage,
@@ -108,7 +120,7 @@ test.describe('OpenID connect link', () => {
 			.getByRole('button', {name: 'Search'})
 			.waitFor({state: 'visible'});
 
-		await page.getByRole('button', {name: 'Sign In'}).click();
+		await page.getByRole('button', {name: 'Sign In'}).last().click();
 
 		await expect(page.getByText(openIdConfig.openIdLink)).toBeVisible();
 	});
@@ -135,7 +147,7 @@ test.describe('OpenID connect link', () => {
 
 		await page.goto('/web' + site.friendlyUrlPath);
 
-		await page.getByRole('button', {name: 'Sign In'}).click();
+		await page.getByRole('button', {name: 'Sign In'}).last().click();
 
 		await expect(page.getByText(openIdConfig.openIdLink)).toBeHidden();
 	});

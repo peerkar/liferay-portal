@@ -8,11 +8,12 @@ package com.liferay.style.book.util;
 import com.liferay.exportimport.kernel.staging.StagingUtil;
 import com.liferay.frontend.token.definition.FrontendTokenDefinition;
 import com.liferay.frontend.token.definition.FrontendTokenDefinitionRegistry;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
+import com.liferay.frontend.token.definition.constants.FrontendTokenDefinitionConstants;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.module.service.Snapshot;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.style.book.model.StyleBookEntry;
 import com.liferay.style.book.service.StyleBookEntryLocalServiceUtil;
@@ -28,10 +29,6 @@ public class DefaultStyleBookEntryUtil {
 	public static StyleBookEntry getDefaultMasterStyleBookEntry(Layout layout) {
 		StyleBookEntry styleBookEntry = _getMasterLayoutStyleBookEntry(layout);
 
-		if (styleBookEntry != null) {
-			return styleBookEntry;
-		}
-
 		FrontendTokenDefinitionRegistry frontendTokenDefinitionRegistry =
 			_frontendTokenDefinitionRegistrySnapshot.get();
 
@@ -39,9 +36,19 @@ public class DefaultStyleBookEntryUtil {
 			frontendTokenDefinitionRegistry.getFrontendTokenDefinition(layout);
 
 		if (frontendTokenDefinition != null) {
-			return StyleBookEntryLocalServiceUtil.fetchDefaultStyleBookEntry(
-				StagingUtil.getLiveGroupId(layout.getGroupId()),
-				frontendTokenDefinition.getThemeId());
+			if ((styleBookEntry == null) ||
+				StringUtil.equals(
+					frontendTokenDefinition.getThemeType(),
+					FrontendTokenDefinitionConstants.
+						THEME_TYPE_THEME_CSS_CET)) {
+
+				return StyleBookEntryLocalServiceUtil.
+					fetchDefaultStyleBookEntry(
+						StagingUtil.getLiveGroupId(layout.getGroupId()),
+						frontendTokenDefinition.getThemeId());
+			}
+
+			return styleBookEntry;
 		}
 
 		return null;
@@ -72,15 +79,9 @@ public class DefaultStyleBookEntryUtil {
 			layout);
 
 		if (defaultStyleBookEntry == null) {
-			if (FeatureFlagManagerUtil.isEnabled(
-					layout.getCompanyId(), "LPD-30204")) {
-
-				return LanguageUtil.format(
-					locale, "styles-from-x",
-					StyleBookUtil.getThemeName(layout, locale));
-			}
-
-			return LanguageUtil.get(locale, "styles-from-theme");
+			return LanguageUtil.format(
+				locale, "styles-from-x",
+				StyleBookUtil.getThemeName(layout, locale));
 		}
 
 		StyleBookEntry masterLayoutStyleBookEntry =
@@ -117,17 +118,12 @@ public class DefaultStyleBookEntryUtil {
 
 		return StyleBookEntryLocalServiceUtil.
 			fetchStyleBookEntryByExternalReferenceCode(
-				layout.getStyleBookEntryERC(), layout.getGroupId());
+				layout.getStyleBookEntryERC(),
+				StagingUtil.getLiveGroupId(layout.getGroupId()));
 	}
 
 	private static boolean _isStyleBookEntryApplicable(
 		Layout layout, StyleBookEntry styleBookEntry) {
-
-		if (!FeatureFlagManagerUtil.isEnabled(
-				layout.getCompanyId(), "LPD-30204")) {
-
-			return true;
-		}
 
 		FrontendTokenDefinitionRegistry frontendTokenDefinitionRegistry =
 			_frontendTokenDefinitionRegistrySnapshot.get();

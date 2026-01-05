@@ -5,8 +5,10 @@
 
 package com.liferay.configuration.admin.web.internal.util;
 
+import com.liferay.configuration.admin.util.ConfigurationFilterStringUtil;
 import com.liferay.configuration.admin.web.internal.display.context.ConfigurationScopeDisplayContext;
 import com.liferay.configuration.admin.web.internal.model.ConfigurationModel;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
@@ -21,7 +23,6 @@ import com.liferay.portal.kernel.util.Validator;
 import java.io.IOException;
 import java.io.Serializable;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Dictionary;
@@ -34,7 +35,6 @@ import java.util.TreeSet;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
 import org.osgi.framework.Filter;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
@@ -208,28 +208,19 @@ public class ConfigurationModelRetrieverImpl
 			ExtendedObjectClassDefinition.Scope scope, Serializable scopePK)
 		throws IOException {
 
-		List<ConfigurationModel> factoryInstancesConfigurationModels =
-			new ArrayList<>();
-
 		ConfigurationScopeDisplayContext configurationScopeDisplayContext =
 			new ConfigurationScopeDisplayContext(scope, scopePK);
 
-		for (Configuration configuration :
-				_getConfigurations(
-					factoryConfigurationModel.getFactoryPid(), scope,
-					String.valueOf(scopePK))) {
-
-			ConfigurationModel curConfigurationModel = new ConfigurationModel(
+		return TransformUtil.transformToList(
+			_getConfigurations(
+				factoryConfigurationModel.getFactoryPid(), scope,
+				String.valueOf(scopePK)),
+			configuration -> new ConfigurationModel(
 				configuration.getBundleLocation(),
 				factoryConfigurationModel.getBundleSymbolicName(),
 				factoryConfigurationModel.getClassLoader(), configuration,
 				configurationScopeDisplayContext, factoryConfigurationModel,
-				false);
-
-			factoryInstancesConfigurationModels.add(curConfigurationModel);
-		}
-
-		return factoryInstancesConfigurationModels;
+				false));
 	}
 
 	@Activate
@@ -241,7 +232,8 @@ public class ConfigurationModelRetrieverImpl
 		String pid, ExtendedObjectClassDefinition.Scope scope) {
 
 		if (scope.equals(ExtendedObjectClassDefinition.Scope.SYSTEM)) {
-			return _getSystemPidFilterString(pid);
+			return ConfigurationFilterStringUtil.getSystemScopedFilterString(
+				pid);
 		}
 
 		return _getScopedPidFilterString(pid, scope);
@@ -332,31 +324,32 @@ public class ConfigurationModelRetrieverImpl
 				return new Configuration[0];
 			}
 
-			Filter filter = null;
-
 			String propertyFilterString = _getPropertyFilterString(
 				scope.getPropertyKey(), value);
 
-			if (Validator.isNotNull(propertyFilterString)) {
-				filter = FrameworkUtil.createFilter(propertyFilterString);
+			if (Validator.isNull(propertyFilterString)) {
+				return configurations;
 			}
+
+			Filter filter = FrameworkUtil.createFilter(propertyFilterString);
 
 			if (filter == null) {
 				return configurations;
 			}
 
-			List<Configuration> configurationsList = new ArrayList<>();
+			return TransformUtil.transform(
+				configurations,
+				configuration -> {
+					Dictionary<String, Object> properties =
+						configuration.getProcessedProperties(null);
 
-			for (Configuration configuration : configurations) {
-				Dictionary<String, Object> properties =
-					configuration.getProcessedProperties(null);
+					if (filter.match(properties)) {
+						return configuration;
+					}
 
-				if (filter.match(properties)) {
-					configurationsList.add(configuration);
-				}
-			}
-
-			return configurationsList.toArray(new Configuration[0]);
+					return null;
+				},
+				Configuration.class);
 		}
 		catch (InvalidSyntaxException | IOException exception) {
 			throw new RuntimeException(exception);
@@ -376,83 +369,18 @@ public class ConfigurationModelRetrieverImpl
 	private String _getScopedPidFilterString(
 		String pid, ExtendedObjectClassDefinition.Scope scope) {
 
-		String unscopedPId = ConfigurationPIDUtil.getUnscopedPid(pid);
-
-		String filterString = StringBundler.concat(
-			StringPool.OPEN_PARENTHESIS, StringPool.PIPE,
-			_getPropertyFilterString(
-				ConfigurationAdmin.SERVICE_FACTORYPID, unscopedPId),
-			_getPropertyFilterString(
-				ConfigurationAdmin.SERVICE_FACTORYPID, unscopedPId + ".scoped"),
-			StringPool.CLOSE_PARENTHESIS);
-
-		if (pid.contains("~")) {
-			filterString = StringBundler.concat(
-				StringPool.OPEN_PARENTHESIS, StringPool.AMPERSAND, filterString,
-				_getPropertyFilterString(Constants.SERVICE_PID, pid),
-				StringPool.CLOSE_PARENTHESIS);
-		}
-
 		if (scope.equals(ExtendedObjectClassDefinition.Scope.COMPANY)) {
-			return StringBundler.concat(
-				StringPool.OPEN_PARENTHESIS, StringPool.AMPERSAND, filterString,
-				"(|(",
-				ExtendedObjectClassDefinition.Scope.COMPANY.getPropertyKey(),
-				"=*)(dxp.lxc.liferay.com.virtualInstanceId=*))(!(",
-				ExtendedObjectClassDefinition.Scope.GROUP.getPropertyKey(),
-				"=*))(!(siteExternalReferenceCode=*))(!(",
-				ExtendedObjectClassDefinition.Scope.PORTLET_INSTANCE.
-					getPropertyKey(),
-				"=*)))");
+			return ConfigurationFilterStringUtil.getCompanyScopedFilterString(
+				null, pid, null);
 		}
 
 		if (scope.equals(ExtendedObjectClassDefinition.Scope.GROUP)) {
-			return StringBundler.concat(
-				StringPool.OPEN_PARENTHESIS, StringPool.AMPERSAND, filterString,
-				"(|(",
-				ExtendedObjectClassDefinition.Scope.GROUP.getPropertyKey(),
-				"=*)(siteExternalReferenceCode=*))(!(",
-				ExtendedObjectClassDefinition.Scope.PORTLET_INSTANCE.
-					getPropertyKey(),
-				"=*)))");
+			return ConfigurationFilterStringUtil.getGroupScopedFilterString(
+				null, pid, null);
 		}
 
-		return StringBundler.concat(
-			StringPool.OPEN_PARENTHESIS, StringPool.AMPERSAND, filterString,
-			"(|(", ExtendedObjectClassDefinition.Scope.GROUP.getPropertyKey(),
-			"=*)(siteExternalReferenceCode=*))(",
-			ExtendedObjectClassDefinition.Scope.PORTLET_INSTANCE.
-				getPropertyKey(),
-			"=*))");
-	}
-
-	private String _getSystemPidFilterString(String pid) {
-		String filterString = StringBundler.concat(
-			StringPool.OPEN_PARENTHESIS, StringPool.PIPE,
-			_getPropertyFilterString(
-				ConfigurationAdmin.SERVICE_FACTORYPID, pid),
-			_getPropertyFilterString(Constants.SERVICE_PID, pid),
-			StringPool.CLOSE_PARENTHESIS);
-
-		if (pid.contains("~")) {
-			filterString = StringBundler.concat(
-				StringPool.OPEN_PARENTHESIS, StringPool.AMPERSAND,
-				_getPropertyFilterString(
-					ConfigurationAdmin.SERVICE_FACTORYPID,
-					ConfigurationPIDUtil.getUnscopedPid(pid)),
-				_getPropertyFilterString(Constants.SERVICE_PID, pid),
-				StringPool.CLOSE_PARENTHESIS);
-		}
-
-		return StringBundler.concat(
-			StringPool.OPEN_PARENTHESIS, StringPool.AMPERSAND, filterString,
-			"(|(!(",
-			ExtendedObjectClassDefinition.Scope.COMPANY.getPropertyKey(),
-			"=*))(",
-			ExtendedObjectClassDefinition.Scope.COMPANY.getPropertyKey(),
-			"=0))(!(dxp.lxc.liferay.com.virtualInstanceId=*))(!(",
-			ExtendedObjectClassDefinition.Scope.GROUP.getPropertyKey(),
-			"=*))(!(siteExternalReferenceCode=*)))");
+		return ConfigurationFilterStringUtil.getPortletScopedFilterString(
+			null, pid, null, null);
 	}
 
 	private BundleContext _bundleContext;

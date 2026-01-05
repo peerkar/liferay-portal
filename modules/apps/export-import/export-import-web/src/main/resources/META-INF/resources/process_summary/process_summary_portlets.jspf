@@ -61,15 +61,13 @@
 				continue;
 			}
 
-			PortletDataHandlerControl[] exportControls = portletDataHandler.getExportControls();
-
-			PortletDataHandlerControl[] metadataControls = portletDataHandler.getExportMetadataControls();
+			PortletDataHandlerControl[] portletDataHandlerControls = portletDataHandler.getExportPortletDataHandlerControls();
 
 			if (!type.equals(Constants.EXPORT) && liveGroup.isStagedPortlet(portlet.getRootPortletId())) {
-				exportControls = portletDataHandler.getStagingControls();
+				portletDataHandlerControls = portletDataHandler.getStagingPortletDataHandlerControls();
 			}
 
-			if (ArrayUtil.isEmpty(exportControls) && ArrayUtil.isEmpty(metadataControls)) {
+			if (ArrayUtil.isEmpty(portletDataHandlerControls) && ArrayUtil.isEmpty(portletDataHandler.getExportMetadataPortletDataHandlerControls())) {
 				continue;
 			}
 
@@ -81,21 +79,20 @@
 
 			Long totalDeletions = Long.valueOf(0);
 
-			for (PortletDataHandlerControl control : exportControls) {
-				String controlLabel = LanguageUtil.get(request, resourceBundle, control.getControlLabel());
-
-				String controlClass = control.getClassName();
-
+			for (PortletDataHandlerControl portletDataHandlerControl : portletDataHandlerControls) {
 				if (modelAdditionCounters == null) {
 					continue;
 				}
 
-				if (modelAdditionCounters.containsKey(controlClass)) {
-					LongWrapper modelAdditionCounter = modelAdditionCounters.get(controlClass);
+				String className = portletDataHandlerControl.getClassName();
+				String label = LanguageUtil.get(request, resourceBundle, portletDataHandlerControl.getLabel());
+
+				if (modelAdditionCounters.containsKey(className)) {
+					LongWrapper modelAdditionCounter = modelAdditionCounters.get(className);
 
 					Long value = modelAdditionCounter.getValue();
 
-					currentAdditions.put(controlLabel, value);
+					currentAdditions.put(label, value);
 
 					totalAdditions += value;
 				}
@@ -104,12 +101,12 @@
 					continue;
 				}
 
-				if (modelDeletionCounters.containsKey(controlClass)) {
-					LongWrapper modelDeletionCounter = modelDeletionCounters.get(controlClass);
+				if (modelDeletionCounters.containsKey(className)) {
+					LongWrapper modelDeletionCounter = modelDeletionCounters.get(className);
 
 					Long value = modelDeletionCounter.getValue();
 
-					currentDeletions.put(controlLabel, value);
+					currentDeletions.put(label, value);
 
 					totalDeletions += value;
 				}

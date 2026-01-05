@@ -38,26 +38,76 @@ import org.openjdk.jmh.annotations.Warmup;
 public class ReflectionUtilBenchmark {
 
 	@Benchmark
-	public Field declaredFieldExistFetch() throws Exception {
-		return ReflectionUtil.fetchDeclaredField(TestClass.class, "_s");
-	}
-
-	@Benchmark
-	public Field declaredFieldExistGet() throws Exception {
-		Field field = TestClass.class.getDeclaredField("_s");
-
-		field.setAccessible(true);
-
-		return field;
-	}
-
-	@Benchmark
-	public Field declaredFieldNotExistFetch() throws Exception {
+	public Field testFetchDeclaredFieldDoesNotExist() throws Exception {
 		return ReflectionUtil.fetchDeclaredField(TestClass.class, "_sx");
 	}
 
 	@Benchmark
-	public Field declaredFieldNotExistGet() throws Exception {
+	public Field testFetchDeclaredFieldExistsAccessibleFalse()
+		throws Exception {
+
+		return ReflectionUtil.fetchDeclaredField(false, TestClass.class, "_s");
+	}
+
+	@Benchmark
+	public Field testFetchDeclaredFieldExistss() throws Exception {
+		return ReflectionUtil.fetchDeclaredField(TestClass.class, "_s");
+	}
+
+	@Benchmark
+	public Method testFetchDeclaredMethodExistAccessibleFalse()
+		throws Exception {
+
+		return ReflectionUtil.fetchDeclaredMethod(
+			false, TestClass.class, "_method", String.class);
+	}
+
+	@Benchmark
+	public Method testFetchDeclaredMethodExists() throws Exception {
+		return ReflectionUtil.fetchDeclaredMethod(
+			TestClass.class, "_method", String.class);
+	}
+
+	@Benchmark
+	public Method testFetchDeclaredMethodNotExists() {
+		return ReflectionUtil.fetchDeclaredMethod(
+			TestClass.class, "_methodX", String.class);
+	}
+
+	@Benchmark
+	public Field testFetchFieldDoesNotExist() {
+		return ReflectionUtil.fetchField(TestClass.class, "ix");
+	}
+
+	@Benchmark
+	public Field testFetchFieldExistsAccessibleFalse() throws Exception {
+		return ReflectionUtil.fetchField(false, TestClass.class, "i");
+	}
+
+	@Benchmark
+	public Field testFetchFieldExistss() throws Exception {
+		return ReflectionUtil.fetchField(TestClass.class, "i");
+	}
+
+	@Benchmark
+	public Method testFetchMethodExistAccessibleFalse() throws Exception {
+		return ReflectionUtil.fetchMethod(
+			false, TestClass.class, "method", int.class);
+	}
+
+	@Benchmark
+	public Method testFetchMethodExists() throws Exception {
+		return ReflectionUtil.fetchMethod(TestClass.class, "method", int.class);
+	}
+
+	@Benchmark
+	public Method testFetchMethodNotExists() {
+		return ReflectionUtil.fetchMethod(
+			TestClass.class, "methodX", int.class);
+	}
+
+	@Benchmark
+	public Field testGetDeclaredFieldDoesNotExist() throws Exception {
 		try {
 			Field field = TestClass.class.getDeclaredField("_sx");
 
@@ -71,25 +121,33 @@ public class ReflectionUtilBenchmark {
 	}
 
 	@Benchmark
-	public Method declaredMethodExistFetch() throws Exception {
-		return ReflectionUtil.fetchDeclaredMethod(
-			TestClass.class, "_method", String.class);
+	public Field testGetDeclaredFieldExistsAccessibleFalse() throws Exception {
+		return TestClass.class.getDeclaredField("_s");
 	}
 
 	@Benchmark
-	public Method declaredMethodExistGet() throws Exception {
+	public Field testGetDeclaredFieldExistss() throws Exception {
+		Field field = TestClass.class.getDeclaredField("_s");
+
+		field.setAccessible(true);
+
+		return field;
+	}
+
+	@Benchmark
+	public Method testGetDeclaredMethodExistAccessibleFalse() throws Exception {
+		return ReflectionUtil.getDeclaredMethod(
+			false, TestClass.class, "_method", String.class);
+	}
+
+	@Benchmark
+	public Method testGetDeclaredMethodExists() throws Exception {
 		return ReflectionUtil.getDeclaredMethod(
 			TestClass.class, "_method", String.class);
 	}
 
 	@Benchmark
-	public Method declaredMethodNotExistFetch() {
-		return ReflectionUtil.fetchDeclaredMethod(
-			TestClass.class, "_methodX", String.class);
-	}
-
-	@Benchmark
-	public Method declaredMethodNotExistGet() {
+	public Method testGetDeclaredMethodNotExists() {
 		try {
 			return ReflectionUtil.getDeclaredMethod(
 				TestClass.class, "_methodX", String.class);
@@ -100,26 +158,7 @@ public class ReflectionUtilBenchmark {
 	}
 
 	@Benchmark
-	public Field publicFieldExistFetch() throws Exception {
-		return ReflectionUtil.fetchField(TestClass.class, "i");
-	}
-
-	@Benchmark
-	public Field publicFieldExistGet() throws Exception {
-		Field field = TestClass.class.getField("i");
-
-		field.setAccessible(true);
-
-		return field;
-	}
-
-	@Benchmark
-	public Field publicFieldNotExistFetch() {
-		return ReflectionUtil.fetchField(TestClass.class, "ix");
-	}
-
-	@Benchmark
-	public Field publicFieldNotExistGet() {
+	public Field testGetFieldDoesNotExist() {
 		try {
 			Field field = TestClass.class.getField("ix");
 
@@ -133,12 +172,26 @@ public class ReflectionUtilBenchmark {
 	}
 
 	@Benchmark
-	public Method publicMethodExistFetch() throws Exception {
-		return ReflectionUtil.fetchMethod(TestClass.class, "method", int.class);
+	public Field testGetFieldExistsAccessibleFalse() throws Exception {
+		return TestClass.class.getField("i");
 	}
 
 	@Benchmark
-	public Method publicMethodExistGet() throws Exception {
+	public Field testGetFieldExistss() throws Exception {
+		Field field = TestClass.class.getField("i");
+
+		field.setAccessible(true);
+
+		return field;
+	}
+
+	@Benchmark
+	public Method testGetMethodExistAccessibleFalse() throws Exception {
+		return TestClass.class.getMethod("method", int.class);
+	}
+
+	@Benchmark
+	public Method testGetMethodExists() throws Exception {
 		Method method = TestClass.class.getMethod("method", int.class);
 
 		method.setAccessible(true);
@@ -147,13 +200,7 @@ public class ReflectionUtilBenchmark {
 	}
 
 	@Benchmark
-	public Method publicMethodNotExistFetch() {
-		return ReflectionUtil.fetchMethod(
-			TestClass.class, "methodX", int.class);
-	}
-
-	@Benchmark
-	public Method publicMethodNotExistGet() {
+	public Method testGetMethodNotExists() {
 		try {
 			Method method = TestClass.class.getMethod("methodX", int.class);
 

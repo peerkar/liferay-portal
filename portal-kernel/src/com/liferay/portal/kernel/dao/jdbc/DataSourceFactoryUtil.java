@@ -14,6 +14,7 @@ import com.liferay.portal.kernel.jndi.JNDIUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.JavaDetector;
 import com.liferay.portal.kernel.util.PropertiesUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
@@ -44,7 +45,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -167,10 +167,10 @@ public class DataSourceFactoryUtil {
 		Properties properties = new Properties();
 
 		properties.setProperty("driverClassName", driverClassName);
+		properties.setProperty("jndi.name", jndiName);
+		properties.setProperty("password", password);
 		properties.setProperty("url", url);
 		properties.setProperty("username", userName);
-		properties.setProperty("password", password);
-		properties.setProperty("jndi.name", jndiName);
 
 		return initDataSource(properties);
 	}
@@ -349,86 +349,137 @@ public class DataSourceFactoryUtil {
 		}
 	}
 
-	private static String _rewriteJDBCURL(String url) {
-		if (!url.startsWith("jdbc:mariadb://") &&
-			!url.startsWith("jdbc:mysql://")) {
+	private static String _rewriteJDBCURL(
+		Map<String, String> defaultParameters, char parameterDelimiter,
+		String url, char urlDelimiter) {
 
-			return url;
-		}
+		Map<String, String> existingParameters = new TreeMap<>();
 
-		Map<String, String> existingParameterValues = new TreeMap<>();
+		String baseURL = url;
 
-		int index = url.indexOf(CharPool.QUESTION);
+		int index = url.indexOf(urlDelimiter, url.indexOf("://") + 3);
 
 		if (index != -1) {
+			baseURL = url.substring(0, index);
+
 			String queryString = url.substring(index + 1);
 
-			for (String parameterString :
-					StringUtil.split(queryString, CharPool.AMPERSAND)) {
+			if (!queryString.isEmpty()) {
+				for (String parameter :
+						StringUtil.split(queryString, parameterDelimiter)) {
 
-				String[] parameter = StringUtil.split(
-					parameterString, CharPool.EQUAL);
+					String[] parts = StringUtil.split(
+						parameter, CharPool.EQUAL);
 
-				if (parameter.length == 2) {
-					existingParameterValues.put(parameter[0], parameter[1]);
-				}
-				else {
-					existingParameterValues.put(
-						parameterString, _MALFORMED_PARAMETER_PLACE_HOLDER);
+					if (parts.length == 2) {
+						existingParameters.put(parts[0], parts[1]);
+					}
+					else {
+						existingParameters.put(
+							parameter, _MALFORMED_PARAMETER_PLACE_HOLDER);
+					}
 				}
 			}
 		}
 
-		for (String[] parameter : _MYSQL_DEFAULT_PARAMETERS) {
-			if (existingParameterValues.containsKey(parameter[0])) {
+		for (Map.Entry<String, String> entry : defaultParameters.entrySet()) {
+			if (existingParameters.containsKey(entry.getKey())) {
 				if (_log.isDebugEnabled()) {
-					_log.debug("Skipped " + Arrays.toString(parameter));
+					_log.debug("Skipped " + entry.getKey());
 				}
 			}
 			else {
-				existingParameterValues.put(parameter[0], parameter[1]);
+				existingParameters.put(entry.getKey(), entry.getValue());
 			}
 		}
 
-		StringBundler sb = new StringBundler(
-			(existingParameterValues.size() * 4) + 2);
+		String newURL = baseURL;
 
-		if (index == -1) {
-			sb.append(url);
-			sb.append(CharPool.QUESTION);
-		}
-		else {
-			sb.append(url.substring(0, index + 1));
-		}
+		if (!existingParameters.isEmpty()) {
+			StringBundler sb = new StringBundler();
 
-		for (Map.Entry<String, String> entry :
-				existingParameterValues.entrySet()) {
+			sb.append(baseURL);
+			sb.append(urlDelimiter);
 
-			sb.append(entry.getKey());
+			for (Map.Entry<String, String> entry :
+					existingParameters.entrySet()) {
 
-			String value = entry.getValue();
+				sb.append(entry.getKey());
 
-			if (!_MALFORMED_PARAMETER_PLACE_HOLDER.equals(value)) {
-				sb.append(CharPool.EQUAL);
-				sb.append(value);
+				if (!_MALFORMED_PARAMETER_PLACE_HOLDER.equals(
+						entry.getValue())) {
+
+					sb.append(CharPool.EQUAL);
+					sb.append(entry.getValue());
+				}
+
+				sb.append(parameterDelimiter);
 			}
 
-			sb.append(CharPool.AMPERSAND);
-		}
-
-		if (!existingParameterValues.isEmpty()) {
 			sb.setIndex(sb.index() - 1);
-		}
 
-		String newURL = sb.toString();
+			newURL = sb.toString();
+		}
 
 		if (!Objects.equals(url, newURL) && _log.isInfoEnabled()) {
 			_log.info(
 				StringBundler.concat(
-					"Rewrite JDBC URL from ", url, " to ", newURL));
+					"Rewrote JDBC URL from ", url, " to ", newURL));
 		}
 
 		return newURL;
+	}
+
+	private static String _rewriteJDBCURL(String url) {
+		if (url.startsWith("jdbc:mariadb://") ||
+			url.startsWith("jdbc:mysql://")) {
+
+			return _rewriteJDBCURL(
+				HashMapBuilder.put(
+					"cachePrepStmts", "true"
+				).put(
+					"characterEncoding", "UTF-8"
+				).put(
+					"dontTrackOpenResources", "true"
+				).put(
+					"holdResultsOpenOverStatementClose", "true"
+				).put(
+					"prepStmtCacheSize", "1000"
+				).put(
+					"prepStmtCacheSqlLimit", "2048"
+				).put(
+					"rewriteBatchedStatements", "true"
+				).put(
+					"serverTimezone", "GMT"
+				).put(
+					"useFastDateParsing", "false"
+				).put(
+					"useLocalSessionState", "true"
+				).put(
+					"useLocalTransactionState", "true"
+				).put(
+					"useUnicode", "true"
+				).build(),
+				CharPool.AMPERSAND, url, CharPool.QUESTION);
+		}
+
+		if (url.startsWith("jdbc:postgresql://")) {
+			return _rewriteJDBCURL(
+				HashMapBuilder.put(
+					"reWriteBatchedInserts", "true"
+				).build(),
+				CharPool.AMPERSAND, url, CharPool.QUESTION);
+		}
+
+		if (url.startsWith("jdbc:sqlserver://")) {
+			return _rewriteJDBCURL(
+				HashMapBuilder.put(
+					"useBulkCopyForBatchInsert", "true"
+				).build(),
+				CharPool.SEMICOLON, url, CharPool.SEMICOLON);
+		}
+
+		return url;
 	}
 
 	private static void _setProperty(
@@ -542,16 +593,6 @@ public class DataSourceFactoryUtil {
 
 	private static final String _MALFORMED_PARAMETER_PLACE_HOLDER =
 		"_MALFORMED_PARAMETER_PLACE_HOLDER";
-
-	private static final String[][] _MYSQL_DEFAULT_PARAMETERS = {
-		{"cachePrepStmts", "true"}, {"characterEncoding", "UTF-8"},
-		{"dontTrackOpenResources", "true"},
-		{"holdResultsOpenOverStatementClose", "true"},
-		{"prepStmtCacheSize", "1000"}, {"prepStmtCacheSqlLimit", "2048"},
-		{"rewriteBatchedStatements", "true"}, {"serverTimezone", "GMT"},
-		{"useFastDateParsing", "false"}, {"useLocalSessionState", "true"},
-		{"useLocalTransactionState", "true"}, {"useUnicode", "true"}
-	};
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		DataSourceFactoryUtil.class);

@@ -10,23 +10,18 @@ import purchasedAppIcon from '../../../assets/icons/purchased_app_icon.svg';
 import OrderStatus from '../../../components/OrderStatus';
 import {OrderTypes} from '../../../enums/Order';
 
-enum OrderAppTypeEnum {
-	DXPAPP = 'DXP APP',
-	CLOUDAPP = 'CLOUD APP',
-}
-
 type OrderDetailsStatusDescriptionProps = {
 	order?: Cart;
 	productOwner?: string;
 };
 
 const getOrderDetailsType = (orderTypeExternalReferenceCode: string) => {
-	if (orderTypeExternalReferenceCode === OrderTypes.DXPAPP) {
-		return OrderAppTypeEnum.DXPAPP;
+	if (orderTypeExternalReferenceCode === OrderTypes.DXP_APP) {
+		return 'DXP APP';
 	}
 
-	if (orderTypeExternalReferenceCode === OrderTypes.CLOUDAPP) {
-		return OrderAppTypeEnum.CLOUDAPP;
+	if (orderTypeExternalReferenceCode === OrderTypes.CLOUD_APP) {
+		return 'CLOUD APP';
 	}
 };
 

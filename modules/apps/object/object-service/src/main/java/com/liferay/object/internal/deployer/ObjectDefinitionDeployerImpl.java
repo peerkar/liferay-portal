@@ -42,6 +42,7 @@ import com.liferay.object.internal.workflow.ObjectEntryWorkflowHandler;
 import com.liferay.object.model.ObjectAction;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
+import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.ObjectLayout;
 import com.liferay.object.model.ObjectRelationship;
 import com.liferay.object.related.models.ObjectRelatedModelsPredicateProvider;
@@ -90,7 +91,6 @@ import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.workflow.WorkflowHandler;
-import com.liferay.portal.language.override.service.PLOEntryLocalService;
 import com.liferay.portal.search.batch.DynamicQueryBatchIndexingActionableFactory;
 import com.liferay.portal.search.localization.SearchLocalizationHelper;
 import com.liferay.portal.search.ml.embedding.text.TextEmbeddingDocumentContributor;
@@ -149,8 +149,7 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 		ObjectRelationshipLocalService objectRelationshipLocalService,
 		ObjectScopeProviderRegistry objectScopeProviderRegistry,
 		ObjectViewLocalService objectViewLocalService,
-		OrganizationLocalService organizationLocalService,
-		PLOEntryLocalService ploEntryLocalService, Portal portal,
+		OrganizationLocalService organizationLocalService, Portal portal,
 		PortletLocalService portletLocalService,
 		ResourceActions resourceActions, UserLocalService userLocalService,
 		ResourcePermissionLocalService resourcePermissionLocalService,
@@ -188,7 +187,6 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 		_objectScopeProviderRegistry = objectScopeProviderRegistry;
 		_objectViewLocalService = objectViewLocalService;
 		_organizationLocalService = organizationLocalService;
-		_ploEntryLocalService = ploEntryLocalService;
 		_portal = portal;
 		_portletLocalService = portletLocalService;
 		_resourceActions = resourceActions;
@@ -216,10 +214,6 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 		Map<String, List<ServiceRegistration<?>>> serviceRegistrationsMap =
 			new ConcurrentHashMap<>();
 
-		Map<Long, List<ObjectAction>> objectActionsMap =
-			_objectActionLocalService.getObjectActionsMap(
-				companyId, true, ObjectActionTriggerConstants.KEY_STANDALONE);
-
 		if (FeatureFlagManagerUtil.isEnabled(companyId, "LPD-34594")) {
 			ObjectDefinitionTreeUtil.populateRootObjectDefinitionIds(
 				objectDefinitions,
@@ -230,6 +224,11 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 							NAME_ROOT_OBJECT_DEFINITION_IDS));
 		}
 
+		Map<Long, List<ObjectAction>> objectActionsMap =
+			_objectActionLocalService.getObjectActionsMap(
+				companyId, true, ObjectActionTriggerConstants.KEY_STANDALONE);
+		Map<Long, List<ObjectField>> objectFieldsMap =
+			_objectFieldLocalService.getObjectFieldsMap(companyId);
 		Map<Long, List<ObjectLayout>> objectLayoutsMap =
 			_objectLayoutLocalService.getObjectLayoutsMap(companyId);
 		Map<Long, List<ObjectRelationship>> objectRelationshipsMap =
@@ -242,12 +241,14 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 			serviceRegistrationsMap.put(
 				DBPartitionUtil.getPartitionKey(objectDefinitionId),
 				_deploy(
+					objectActionsMap.getOrDefault(
+						objectDefinitionId, Collections.emptyList()),
 					objectDefinition,
+					objectFieldsMap.getOrDefault(
+						objectDefinitionId, Collections.emptyList()),
 					objectLayoutsMap.getOrDefault(
 						objectDefinitionId, Collections.emptyList()),
-					objectRelationshipsMap,
-					objectActionsMap.getOrDefault(
-						objectDefinitionId, Collections.emptyList())));
+					objectRelationshipsMap));
 		}
 
 		return serviceRegistrationsMap;
@@ -257,7 +258,7 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 	public List<ServiceRegistration<?>> deploy(
 		ObjectDefinition objectDefinition) {
 
-		return _deploy(objectDefinition, null, null, null);
+		return _deploy(null, objectDefinition, null, null, null);
 	}
 
 	@Override
@@ -275,9 +276,9 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 	}
 
 	private List<ServiceRegistration<?>> _deploy(
-		ObjectDefinition objectDefinition, List<ObjectLayout> objectLayouts,
-		Map<Long, List<ObjectRelationship>> objectRelationshipsMap,
-		List<ObjectAction> standaloneObjectActions) {
+		List<ObjectAction> objectActions, ObjectDefinition objectDefinition,
+		List<ObjectField> objectFields, List<ObjectLayout> objectLayouts,
+		Map<Long, List<ObjectRelationship>> objectRelationshipsMap) {
 
 		if (objectDefinition.isUnmodifiableSystemObject()) {
 			return Collections.emptyList();
@@ -285,9 +286,9 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 
 		try {
 			ObjectDefinitionResourcePermissionUtil.populateResourceActions(
-				_objectActionLocalService, objectDefinition,
-				_portletLocalService, _resourceActions,
-				standaloneObjectActions);
+				_objectActionLocalService, objectActions, objectDefinition,
+				_objectFieldLocalService, objectFields, _portletLocalService,
+				_resourceActions);
 		}
 		catch (Exception exception) {
 			return ReflectionUtil.throwException(exception);
@@ -300,7 +301,7 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 				objectEntryModelIndexerWriterContributor =
 					new ObjectEntryModelIndexerWriterContributor(
 						_dynamicQueryBatchIndexingActionableFactory,
-						objectDefinition.getObjectDefinitionId(),
+						objectDefinition, _objectDefinitionLocalService,
 						_objectEntryLocalService);
 			ObjectEntryModelSummaryContributor
 				objectEntryModelSummaryContributor =
@@ -663,7 +664,6 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 	private final ObjectScopeProviderRegistry _objectScopeProviderRegistry;
 	private final ObjectViewLocalService _objectViewLocalService;
 	private final OrganizationLocalService _organizationLocalService;
-	private final PLOEntryLocalService _ploEntryLocalService;
 	private final Portal _portal;
 	private final PortletLocalService _portletLocalService;
 	private final ResourceActions _resourceActions;

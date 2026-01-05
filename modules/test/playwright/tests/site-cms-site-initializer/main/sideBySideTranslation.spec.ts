@@ -28,6 +28,18 @@ async function getSampleStructureDefinition(apiHelpers: ApiHelpers) {
 		({assetLibraryKey}) => assetLibraryKey === 'Default'
 	).externalReferenceCode;
 
+	const listTypeDefinition =
+		await apiHelpers.listTypeAdmin.postRandomListTypeDefinition();
+
+	for (const option of ['Banana', 'Apple']) {
+		await apiHelpers.listTypeAdmin.postListTypeEntry({
+			key: option,
+			listTypeDefinitionExternalReferenceCode:
+				listTypeDefinition.externalReferenceCode,
+			name_i18n: {en_US: option},
+		});
+	}
+
 	const SAMPLE_STRUCTURE_DEFINITION: ObjectDefinition = {
 		enableComments: true,
 		enableFriendlyURLCustomization: true,
@@ -107,6 +119,22 @@ async function getSampleStructureDefinition(apiHelpers: ApiHelpers) {
 				objectFieldSettings: [],
 				required: false,
 			},
+			{
+				DBType: 'String',
+				businessType: 'Picklist',
+				externalReferenceCode: '8f678eeb-ac9b-46fd-85e5-f3541dbc8385',
+				indexed: true,
+				indexedAsKeyword: false,
+				label: {
+					en_US: 'Picklist',
+				},
+				listTypeDefinitionExternalReferenceCode:
+					listTypeDefinition.externalReferenceCode,
+				listTypeDefinitionId: listTypeDefinition.id,
+				localized: true,
+				name: 'picklist',
+				required: false,
+			},
 		],
 		objectFolderExternalReferenceCode: 'L_CMS_CONTENT_STRUCTURES',
 		objectRelationships: [],
@@ -128,7 +156,6 @@ const test = mergeTests(
 	dataApiHelpersTest,
 	featureFlagsTest({
 		'LPD-17564': {enabled: true},
-		'LPD-32050': {enabled: true},
 	}),
 	loginTest()
 );
@@ -167,6 +194,7 @@ test(
 			{label: 'Long Text', value: 'This is a fruit'},
 			{label: 'Date', value: '2025-08-08'},
 			{label: 'Boolean', type: 'Checkbox', value: true},
+			{label: 'Picklist', type: 'Picklist', value: 'Banana'},
 		]);
 
 		await contentsPage.saveContent();
@@ -191,6 +219,9 @@ test(
 		await expect(page.getByLabel('Boolean').first()).toHaveAttribute(
 			'readonly'
 		);
+		await expect(page.getByLabel('Picklist').first()).toHaveAttribute(
+			'readonly'
+		);
 
 		await expect(page.getByLabel('Title').nth(1)).not.toHaveAttribute(
 			'readonly'
@@ -204,12 +235,23 @@ test(
 		await expect(page.getByLabel('Boolean').nth(1)).not.toHaveAttribute(
 			'readonly'
 		);
+		await expect(page.getByLabel('Picklist').nth(1)).not.toHaveAttribute(
+			'readonly'
+		);
 
-		// Change right side language and translate
+		// Change right side language
 
 		const rightLocalizationSelectPage = new LocalizationSelectPage(page, 1);
 
 		await rightLocalizationSelectPage.switchLanguage('es-ES');
+
+		// Check left side language does not change
+
+		const localizationSelectPage = new LocalizationSelectPage(page);
+
+		await expect(localizationSelectPage.trigger).toHaveText('en-US');
+
+		// Translate in right side
 
 		const spanishTitle = `Spanish ${contentTitle}`;
 
@@ -218,11 +260,10 @@ test(
 			{label: 'Long Text', nth: 1, value: 'This is a vegetable'},
 			{label: 'Date', nth: 1, value: '2025-08-15'},
 			{label: 'Boolean', nth: 1, type: 'Checkbox', value: false},
+			{label: 'Picklist', nth: 1, type: 'Picklist', value: 'Apple'},
 		]);
 
 		// Change left side language and check it shows persisted values
-
-		const localizationSelectPage = new LocalizationSelectPage(page);
 
 		await localizationSelectPage.switchLanguage('es-ES');
 
@@ -235,6 +276,8 @@ test(
 
 		await expect(page.getByLabel('Date').first()).toHaveValue('2025-08-08');
 
+		await expect(page.getByLabel('Picklist').first()).toHaveValue('Banana');
+
 		// Save and check translation is persisted
 
 		await contentsPage.saveContent();
@@ -246,5 +289,7 @@ test(
 		await localizationSelectPage.switchLanguage('es-ES');
 
 		await expect(page.getByLabel('Title')).toHaveValue(spanishTitle);
+
+		await expect(page.getByLabel('Picklist')).toHaveValue('Apple');
 	}
 );

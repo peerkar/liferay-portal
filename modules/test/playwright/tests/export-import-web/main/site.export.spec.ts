@@ -17,34 +17,39 @@ import getRandomString from '../../../utils/getRandomString';
 import {getTempDir} from '../../../utils/temp';
 import {exportImportPagesTest} from './fixtures/exportImportPagesTest';
 
-export const test = mergeTests(
+export const baseTest = mergeTests(
 	dataApiHelpersTest,
 	exportImportPagesTest,
-	featureFlagsTest({
-		'LPD-35914': {enabled: false},
-	}),
+	isolatedSiteTest,
 	loginTest(),
 	productMenuPageTest,
 	uiElementsPageTest
 );
 
-export const testWithExportImportAtInstanceLevelFF = mergeTests(
-	test,
+export const test = mergeTests(
+	baseTest,
 	featureFlagsTest({
+		'LPD-35443': {enabled: false},
+		'LPD-35914': {enabled: false},
+	})
+);
+
+export const testWithExportImportAtInstanceLevelFF = mergeTests(
+	baseTest,
+	featureFlagsTest({
+		'LPD-35443': {enabled: true},
 		'LPD-35914': {enabled: true},
 	})
 );
 
 export const testWithHeadlessContentPagesFF = mergeTests(
-	testWithExportImportAtInstanceLevelFF,
+	baseTest,
 	featureFlagsTest({
 		'LPD-35443': {enabled: true},
+		'LPD-35914': {enabled: true},
 	}),
-	isolatedSiteTest,
 	masterPagesPagesTest,
-	pageTemplatesPagesTest,
-	productMenuPageTest,
-	uiElementsPageTest
+	pageTemplatesPagesTest
 );
 
 async function expectExportName(exportImportPage, taskName: string) {
@@ -53,14 +58,6 @@ async function expectExportName(exportImportPage, taskName: string) {
 	await exportImportPage.newExportButton.click();
 
 	await exportImportPage.exportButton.click();
-
-	await expect(
-		exportImportPage.page
-			.locator('//h2[span[normalize-space()="' + taskName + '"]]')
-			.first()
-			.locator('../..')
-			.getByText('Successful')
-	).toBeVisible();
 
 	const exportFilePath =
 		await exportImportPage.downloadExportProcess(taskName);
@@ -75,18 +72,7 @@ test('can export at site level with custom export task name', async ({
 
 	const taskName = 'MyExport-' + getRandomString();
 
-	await exportImportPage.export(taskName);
-
-	await expect(
-		exportImportPage.page
-			.locator('//h2[span[normalize-space()="' + taskName + '"]]')
-			.first()
-			.locator('../..')
-			.getByText('Successful')
-	).toBeVisible();
-
-	const exportFilePath =
-		await exportImportPage.downloadExportProcess(taskName);
+	const exportFilePath = await exportImportPage.export({taskName});
 
 	expect(exportFilePath).toMatch(new RegExp(`^${getTempDir()}MyExport-`));
 });
@@ -177,5 +163,20 @@ testWithHeadlessContentPagesFF(
 		expect(
 			exportImportPage.page.getByText('Master Pages (2)', {exact: true})
 		).toBeVisible();
+	}
+);
+
+testWithHeadlessContentPagesFF(
+	'cannot see Site Pages checkbox',
+	async ({exportImportPage, productMenuPage}) => {
+		await productMenuPage.openProductMenuIfClosed();
+		await productMenuPage.goToPublishingExport();
+		await productMenuPage.page
+			.getByRole('link', {name: 'Custom Export'})
+			.click();
+
+		await expect(
+			exportImportPage.page.getByLabel(/Site Pages\s+\d+\s+Items/)
+		).not.toBeVisible();
 	}
 );

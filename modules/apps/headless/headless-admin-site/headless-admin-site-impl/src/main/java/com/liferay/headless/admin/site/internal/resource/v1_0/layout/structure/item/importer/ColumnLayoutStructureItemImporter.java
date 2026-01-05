@@ -20,7 +20,6 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.GetterUtil;
 
 import java.util.Objects;
 
@@ -53,9 +52,6 @@ public class ColumnLayoutStructureItemImporter
 			return columnLayoutStructureItem;
 		}
 
-		columnLayoutStructureItem.setSize(
-			GetterUtil.getInteger(modulePageElementDefinition.getSize()));
-
 		ModuleViewport[] moduleViewports =
 			modulePageElementDefinition.getModuleViewports();
 
@@ -65,13 +61,16 @@ public class ColumnLayoutStructureItemImporter
 				JSONUtil.put("size", 12));
 		}
 		else {
-			_setViewportConfiguration(
+			_updateItemConfig(
+				columnLayoutStructureItem, JSONUtil.put("size", 4),
+				ModuleViewport.Id.DESKTOP, moduleViewports);
+			_updateItemConfig(
 				columnLayoutStructureItem, JSONUtil.put("size", 12),
 				ModuleViewport.Id.LANDSCAPE_MOBILE, moduleViewports);
-			_setViewportConfiguration(
+			_updateItemConfig(
 				columnLayoutStructureItem, JSONFactoryUtil.createJSONObject(),
 				ModuleViewport.Id.PORTRAIT_MOBILE, moduleViewports);
-			_setViewportConfiguration(
+			_updateItemConfig(
 				columnLayoutStructureItem, JSONFactoryUtil.createJSONObject(),
 				ModuleViewport.Id.TABLET, moduleViewports);
 		}
@@ -91,27 +90,6 @@ public class ColumnLayoutStructureItemImporter
 		return null;
 	}
 
-	private void _setViewportConfiguration(
-		ColumnLayoutStructureItem columnLayoutStructureItem,
-		JSONObject defaultViewportJSONObject,
-		ModuleViewport.Id moduleViewportId, ModuleViewport[] moduleViewports) {
-
-		ModuleViewport moduleViewport = _getModuleViewport(
-			moduleViewportId, moduleViewports);
-
-		String viewportId = ViewportIdUtil.toInternalValue(
-			moduleViewportId.getValue());
-
-		if (moduleViewport != null) {
-			columnLayoutStructureItem.setViewportConfiguration(
-				viewportId, _toViewportJSONObject(moduleViewport));
-		}
-		else {
-			columnLayoutStructureItem.setViewportConfiguration(
-				viewportId, defaultViewportJSONObject);
-		}
-	}
-
 	private JSONObject _toViewportJSONObject(ModuleViewport moduleViewport) {
 		if (moduleViewport == null) {
 			return JSONFactoryUtil.createJSONObject();
@@ -125,6 +103,29 @@ public class ColumnLayoutStructureItemImporter
 		}
 
 		return JSONUtil.put("size", moduleViewportDefinition.getSize());
+	}
+
+	private void _updateItemConfig(
+		ColumnLayoutStructureItem columnLayoutStructureItem,
+		JSONObject defaultViewportJSONObject,
+		ModuleViewport.Id moduleViewportId, ModuleViewport[] moduleViewports) {
+
+		ModuleViewport moduleViewport = _getModuleViewport(
+			moduleViewportId, moduleViewports);
+
+		JSONObject viewportJSONObject = defaultViewportJSONObject;
+
+		if (moduleViewport != null) {
+			viewportJSONObject = _toViewportJSONObject(moduleViewport);
+		}
+
+		if (!Objects.equals(moduleViewportId, ModuleViewport.Id.DESKTOP)) {
+			viewportJSONObject = JSONUtil.put(
+				ViewportIdUtil.toInternalValue(moduleViewportId.getValue()),
+				viewportJSONObject);
+		}
+
+		columnLayoutStructureItem.updateItemConfig(viewportJSONObject);
 	}
 
 }

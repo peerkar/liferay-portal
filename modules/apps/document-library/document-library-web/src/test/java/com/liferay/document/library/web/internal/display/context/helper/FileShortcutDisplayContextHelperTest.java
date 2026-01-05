@@ -46,6 +46,67 @@ public class FileShortcutDisplayContextHelperTest {
 
 		Assert.assertFalse(
 			fileShortcutDisplayContextHelper.isCopyActionAvailable());
+
+		Mockito.when(
+			permissionChecker.isSignedIn()
+		).thenReturn(
+			true
+		);
+
+		Assert.assertTrue(
+			fileShortcutDisplayContextHelper.isHistoryActionAvailable());
+	}
+
+	@Test
+	public void testIsHistoryActionAvailableWhenGuestUser()
+		throws PortalException {
+
+		PermissionChecker permissionChecker = Mockito.mock(
+			PermissionChecker.class);
+
+		Mockito.when(
+			permissionChecker.isSignedIn()
+		).thenReturn(
+			false
+		);
+
+		FileShortcut fileShortcut = Mockito.mock(FileShortcut.class);
+
+		FileShortcutDisplayContextHelper fileShortcutDisplayContextHelper =
+			new FileShortcutDisplayContextHelper(
+				permissionChecker, fileShortcut);
+
+		Assert.assertFalse(
+			fileShortcutDisplayContextHelper.isHistoryActionAvailable());
+	}
+
+	@Test
+	public void testIsViewUsagesActionAvailable() throws PortalException {
+		FileShortcut fileShortcut = Mockito.mock(FileShortcut.class);
+		PermissionChecker permissionChecker = Mockito.mock(
+			PermissionChecker.class);
+
+		Mockito.when(
+			permissionChecker.isGroupAdmin(fileShortcut.getGroupId())
+		).thenReturn(
+			false
+		);
+
+		FileShortcutDisplayContextHelper fileShortcutDisplayContextHelper =
+			new FileShortcutDisplayContextHelper(
+				permissionChecker, fileShortcut);
+
+		Assert.assertFalse(
+			fileShortcutDisplayContextHelper.isViewUsagesActionAvailable());
+
+		Mockito.when(
+			permissionChecker.isGroupAdmin(fileShortcut.getGroupId())
+		).thenReturn(
+			true
+		);
+
+		Assert.assertTrue(
+			fileShortcutDisplayContextHelper.isViewUsagesActionAvailable());
 	}
 
 }

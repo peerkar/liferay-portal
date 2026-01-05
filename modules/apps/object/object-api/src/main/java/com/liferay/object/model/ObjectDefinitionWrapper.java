@@ -61,7 +61,6 @@ public class ObjectDefinitionWrapper
 			"enableFriendlyURLCustomization",
 			isEnableFriendlyURLCustomization());
 		attributes.put("enableIndexSearch", isEnableIndexSearch());
-		attributes.put("enableLocalization", isEnableLocalization());
 		attributes.put("enableObjectEntryDraft", isEnableObjectEntryDraft());
 		attributes.put(
 			"enableObjectEntryHistory", isEnableObjectEntryHistory());
@@ -232,13 +231,6 @@ public class ObjectDefinitionWrapper
 
 		if (enableIndexSearch != null) {
 			setEnableIndexSearch(enableIndexSearch);
-		}
-
-		Boolean enableLocalization = (Boolean)attributes.get(
-			"enableLocalization");
-
-		if (enableLocalization != null) {
-			setEnableLocalization(enableLocalization);
 		}
 
 		Boolean enableObjectEntryDraft = (Boolean)attributes.get(
@@ -525,16 +517,6 @@ public class ObjectDefinitionWrapper
 	}
 
 	/**
-	 * Returns the enable localization of this object definition.
-	 *
-	 * @return the enable localization of this object definition
-	 */
-	@Override
-	public boolean getEnableLocalization() {
-		return model.getEnableLocalization();
-	}
-
-	/**
 	 * Returns the enable object entry draft of this object definition.
 	 *
 	 * @return the enable object entry draft of this object definition
@@ -745,6 +727,11 @@ public class ObjectDefinitionWrapper
 		getObjectDefinitionSettings() {
 
 		return model.getObjectDefinitionSettings();
+	}
+
+	@Override
+	public com.liferay.object.model.bag.ObjectFieldBag getObjectFieldBag() {
+		return model.getObjectFieldBag();
 	}
 
 	@Override
@@ -1069,6 +1056,11 @@ public class ObjectDefinitionWrapper
 	}
 
 	@Override
+	public boolean isCMS() {
+		return model.isCMS();
+	}
+
+	@Override
 	public boolean isDefaultStorageType() {
 		return model.isDefaultStorageType();
 	}
@@ -1121,16 +1113,6 @@ public class ObjectDefinitionWrapper
 	@Override
 	public boolean isEnableIndexSearch() {
 		return model.isEnableIndexSearch();
-	}
-
-	/**
-	 * Returns <code>true</code> if this object definition is enable localization.
-	 *
-	 * @return <code>true</code> if this object definition is enable localization; <code>false</code> otherwise
-	 */
-	@Override
-	public boolean isEnableLocalization() {
-		return model.isEnableLocalization();
 	}
 
 	/**
@@ -1241,6 +1223,11 @@ public class ObjectDefinitionWrapper
 	@Override
 	public boolean isUnmodifiableSystemObject() {
 		return model.isUnmodifiableSystemObject();
+	}
+
+	@Override
+	public boolean isVisible() {
+		return model.isVisible();
 	}
 
 	@Override
@@ -1396,16 +1383,6 @@ public class ObjectDefinitionWrapper
 	@Override
 	public void setEnableIndexSearch(boolean enableIndexSearch) {
 		model.setEnableIndexSearch(enableIndexSearch);
-	}
-
-	/**
-	 * Sets whether this object definition is enable localization.
-	 *
-	 * @param enableLocalization the enable localization of this object definition
-	 */
-	@Override
-	public void setEnableLocalization(boolean enableLocalization) {
-		model.setEnableLocalization(enableLocalization);
 	}
 
 	/**
@@ -1603,6 +1580,13 @@ public class ObjectDefinitionWrapper
 		java.util.List<ObjectDefinitionSetting> objectDefinitionSettings) {
 
 		model.setObjectDefinitionSettings(objectDefinitionSettings);
+	}
+
+	@Override
+	public void setObjectFieldBag(
+		com.liferay.object.model.bag.ObjectFieldBag objectFieldBag) {
+
+		model.setObjectFieldBag(objectFieldBag);
 	}
 
 	/**

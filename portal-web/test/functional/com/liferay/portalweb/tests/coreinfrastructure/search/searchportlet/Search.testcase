@@ -1,6 +1,7 @@
 @component-name = "portal-search"
 definition {
 
+	property browser.chrome.version = "139.0";
 	property portal.release = "false";
 	property portal.suite.search.engine = "elasticsearch7,opensearch2";
 	property portal.upstream = "true";
@@ -1946,13 +1947,13 @@ definition {
 
 		SearchPage.searchEmbedded(searchTerm = "apple");
 
-		var objectEntryId = JSONObject.getObjectEntryId(
+		var objectEntryERC = JSONObject.getObjectEntryERC(
 			entryValue = "apple",
 			fieldName = "title",
 			objectName = "CustomObject500");
 
 		SearchResults.viewSearchResults(
-			searchAssetTitle = ${objectEntryId},
+			searchAssetTitle = ${objectEntryERC},
 			searchAssetType = "Custom Object 500");
 
 		Portlet.gotoPortletOptions(
@@ -1972,7 +1973,7 @@ definition {
 			facetTerm = "Custom Object 500");
 
 		SearchResults.viewSearchResults(
-			searchAssetTitle = ${objectEntryId},
+			searchAssetTitle = ${objectEntryERC},
 			searchAssetType = "Custom Object 500");
 	}
 

@@ -5,6 +5,7 @@
 
 package com.liferay.layout.internal.model.listener;
 
+import com.liferay.batch.engine.thread.local.BatchEngineThreadLocal;
 import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.friendly.url.service.FriendlyURLEntryLocalService;
 import com.liferay.layout.friendly.url.LayoutFriendlyURLEntryHelper;
@@ -13,6 +14,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.BaseModelListener;
 import com.liferay.portal.kernel.model.LayoutFriendlyURL;
 import com.liferay.portal.kernel.model.ModelListener;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.staging.StagingGroupHelper;
 
@@ -32,9 +34,7 @@ public class LayoutFriendlyURLModelListener
 	public void onAfterCreate(LayoutFriendlyURL layoutFriendlyURL)
 		throws ModelListenerException {
 
-		if (!ExportImportThreadLocal.isImportInProcess()) {
-			_addFriendlyURLEntry(layoutFriendlyURL);
-		}
+		_addFriendlyURLEntry(layoutFriendlyURL);
 	}
 
 	@Override
@@ -43,29 +43,48 @@ public class LayoutFriendlyURLModelListener
 			LayoutFriendlyURL layoutFriendlyURL)
 		throws ModelListenerException {
 
-		if (!ExportImportThreadLocal.isImportInProcess()) {
-			_addFriendlyURLEntry(layoutFriendlyURL);
-		}
+		_addFriendlyURLEntry(layoutFriendlyURL);
 	}
 
 	private void _addFriendlyURLEntry(LayoutFriendlyURL layoutFriendlyURL) {
-		try {
-			if (!_stagingGroupHelper.isLiveGroup(
-					layoutFriendlyURL.getGroupId())) {
+		if (!BatchEngineThreadLocal.isBatchImportInProcess() &&
+			(ExportImportThreadLocal.isImportInProcess() ||
+			 _stagingGroupHelper.isLiveGroup(layoutFriendlyURL.getGroupId()))) {
 
-				_friendlyURLEntryLocalService.addFriendlyURLEntry(
-					layoutFriendlyURL.getGroupId(),
-					_layoutFriendlyURLEntryHelper.getClassNameId(
-						layoutFriendlyURL.isPrivateLayout()),
-					layoutFriendlyURL.getPlid(),
-					Collections.singletonMap(
-						layoutFriendlyURL.getLanguageId(),
-						layoutFriendlyURL.getFriendlyURL()),
-					ServiceContextThreadLocal.getServiceContext());
-			}
+			return;
+		}
+
+		ServiceContext serviceContext =
+			ServiceContextThreadLocal.getServiceContext();
+		String uuid = null;
+
+		if (serviceContext == null) {
+			serviceContext = new ServiceContext();
+		}
+		else {
+			uuid = serviceContext.getUuid();
+
+			serviceContext.setUuid(null);
+		}
+
+		try {
+			_friendlyURLEntryLocalService.addFriendlyURLEntry(
+				layoutFriendlyURL.getGroupId(),
+				_layoutFriendlyURLEntryHelper.getClassNameId(
+					layoutFriendlyURL.isPrivateLayout()),
+				layoutFriendlyURL.getPlid(),
+				Collections.singletonMap(
+					layoutFriendlyURL.getLanguageId(),
+					layoutFriendlyURL.getFriendlyURL()),
+				serviceContext);
 		}
 		catch (PortalException portalException) {
 			throw new ModelListenerException(portalException);
+		}
+		finally {
+			if (serviceContext != null) {
+				serviceContext.setUuid(uuid);
+			}
 		}
 	}
 

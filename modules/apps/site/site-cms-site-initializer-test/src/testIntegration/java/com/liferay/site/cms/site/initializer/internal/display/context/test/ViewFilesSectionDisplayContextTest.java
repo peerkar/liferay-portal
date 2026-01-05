@@ -38,13 +38,13 @@ import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.test.rule.FeatureFlag;
-import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,9 +59,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 /**
  * @author Eudaldo Alonso
  */
-@FeatureFlags(
-	featureFlags = {@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-32050")}
-)
+@FeatureFlag("LPD-17564")
 @RunWith(Arquillian.class)
 @Sync
 public class ViewFilesSectionDisplayContextTest
@@ -73,6 +71,17 @@ public class ViewFilesSectionDisplayContextTest
 		new AggregateTestRule(
 			new LiferayIntegrationTestRule(),
 			PermissionCheckerMethodTestRule.INSTANCE);
+
+	@Override
+	public HashMap<String, Object> getBaseAdditionalProps()
+		throws PortalException {
+
+		return new HashMapBuilder<>().putAll(
+			super.getBaseAdditionalProps()
+		).put(
+			"galleryViewEnabled", true
+		).build();
+	}
 
 	@Test
 	public void testGetCreationMenuWithAddEntryPermission() throws Exception {
@@ -136,7 +145,7 @@ public class ViewFilesSectionDisplayContextTest
 		).put(
 			"folder", StringPool.BLANK
 		).put(
-			"external-video-shortcut", getRedirect("L_CMS_EXTERNAL_VIDEO")
+			"external-video", getRedirect("L_CMS_EXTERNAL_VIDEO")
 		).build();
 	}
 

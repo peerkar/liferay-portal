@@ -243,19 +243,19 @@ public interface ExportImportReportEntryModel
 	public void setErrorStacktrace(String errorStacktrace);
 
 	/**
-	 * Returns the model name of this export import report entry.
+	 * Returns the model name language key of this export import report entry.
 	 *
-	 * @return the model name of this export import report entry
+	 * @return the model name language key of this export import report entry
 	 */
 	@AutoEscape
-	public String getModelName();
+	public String getModelNameLanguageKey();
 
 	/**
-	 * Sets the model name of this export import report entry.
+	 * Sets the model name language key of this export import report entry.
 	 *
-	 * @param modelName the model name of this export import report entry
+	 * @param modelNameLanguageKey the model name language key of this export import report entry
 	 */
-	public void setModelName(String modelName);
+	public void setModelNameLanguageKey(String modelNameLanguageKey);
 
 	/**
 	 * Returns the origin of this export import report entry.
@@ -270,36 +270,6 @@ public interface ExportImportReportEntryModel
 	 * @param origin the origin of this export import report entry
 	 */
 	public void setOrigin(int origin);
-
-	/**
-	 * Returns the scope of this export import report entry.
-	 *
-	 * @return the scope of this export import report entry
-	 */
-	@AutoEscape
-	public String getScope();
-
-	/**
-	 * Sets the scope of this export import report entry.
-	 *
-	 * @param scope the scope of this export import report entry
-	 */
-	public void setScope(String scope);
-
-	/**
-	 * Returns the scope key of this export import report entry.
-	 *
-	 * @return the scope key of this export import report entry
-	 */
-	@AutoEscape
-	public String getScopeKey();
-
-	/**
-	 * Sets the scope key of this export import report entry.
-	 *
-	 * @param scopeKey the scope key of this export import report entry
-	 */
-	public void setScopeKey(String scopeKey);
 
 	/**
 	 * Returns the type of this export import report entry.

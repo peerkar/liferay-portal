@@ -201,8 +201,49 @@ long usedMemory = totalMemory - runtime.freeMemory();
 			</ul>
 		</aui:fieldset>
 
-		<aui:fieldset collapsed="<%= false %>" collapsible="<%= true %>" label="clean-up-actions">
+		<aui:fieldset collapsed="<%= false %>" collapsible="<%= true %>" label="system-cleanup-actions">
 			<ul class="list-group system-action-group">
+				<li class="list-group-item list-group-item-flex">
+					<div class="autofit-col autofit-col-expand">
+						<p class="list-group-title text-truncate">
+							<liferay-ui:message key="clean-up-all-system-data" />
+						</p>
+					</div>
+
+					<div class="autofit-col">
+						<aui:button cssClass="save-server-button" data-cmd="cleanUpAllSystemData" value="execute" />
+					</div>
+				</li>
+
+				<%
+				for (DataCleanup systemDataCleanup : DataCleanupUtil.getSystemDataCleanups()) {
+					if (systemDataCleanup.isEnabled() && (ReleaseLocalServiceUtil.fetchRelease(systemDataCleanup.getServletContextName()) == null)) {
+						continue;
+					}
+				%>
+
+					<li class="list-group-item list-group-item-flex">
+						<div class="autofit-col autofit-col-expand">
+							<p class="list-group-title text-truncate">
+								<liferay-ui:message key="<%= systemDataCleanup.getLabel() %>" />
+
+								<span aria-label="<%= LanguageUtil.get(request, systemDataCleanup.getHelpLabel()) %>" class="lfr-portal-tooltip" tabindex="0" title="<%= LanguageUtil.get(request, systemDataCleanup.getHelpLabel()) %>">
+									<clay:icon
+										symbol="question-circle-full"
+									/>
+								</span>
+							</p>
+						</div>
+
+						<div class="autofit-col">
+							<aui:button cssClass="save-server-button" data-cmd="<%= systemDataCleanup.getLabel() %>" disabled="<%= !systemDataCleanup.isEnabled() %>" value="execute" />
+						</div>
+					</li>
+
+				<%
+				}
+				%>
+
 				<li class="list-group-item list-group-item-flex">
 					<div class="autofit-col autofit-col-expand">
 						<p class="list-group-title text-truncate">
@@ -273,6 +314,58 @@ long usedMemory = totalMemory - runtime.freeMemory();
 				</li>
 			</ul>
 		</aui:fieldset>
+
+		<%
+		List<DataCleanup> moduleDataCleanups = DataCleanupUtil.getModuleDataCleanups();
+		%>
+
+		<c:if test="<%= ListUtil.isNotEmpty(moduleDataCleanups) %>">
+			<aui:fieldset collapsed="<%= false %>" collapsible="<%= true %>" label="module-cleanup-actions">
+				<ul class="list-group system-action-group">
+					<li class="list-group-item list-group-item-flex">
+						<div class="autofit-col autofit-col-expand">
+							<p class="list-group-title text-truncate">
+								<liferay-ui:message key="clean-up-all-module-data" />
+							</p>
+						</div>
+
+						<div class="autofit-col">
+							<aui:button cssClass="save-server-button" data-cmd="cleanUpAllModuleData" value="execute" />
+						</div>
+					</li>
+
+					<%
+					for (DataCleanup moduleDataCleanup : moduleDataCleanups) {
+						if (moduleDataCleanup.isEnabled() && (ReleaseLocalServiceUtil.fetchRelease(moduleDataCleanup.getServletContextName()) == null)) {
+							continue;
+						}
+					%>
+
+						<li class="list-group-item list-group-item-flex">
+							<div class="autofit-col autofit-col-expand">
+								<p class="list-group-title text-truncate">
+									<liferay-ui:message key="<%= moduleDataCleanup.getLabel() %>" />
+
+									<span aria-label="<%= LanguageUtil.get(request, moduleDataCleanup.getHelpLabel()) %>" class="lfr-portal-tooltip" tabindex="0" title="<%= LanguageUtil.get(request, moduleDataCleanup.getHelpLabel()) %>">
+										<clay:icon
+											symbol="question-circle-full"
+										/>
+									</span>
+								</p>
+							</div>
+
+							<div class="autofit-col">
+								<aui:button cssClass="save-server-button" data-cmd="<%= moduleDataCleanup.getLabel() %>" disabled="<%= !moduleDataCleanup.isEnabled() %>" value="execute" />
+							</div>
+						</li>
+
+					<%
+					}
+					%>
+
+				</ul>
+			</aui:fieldset>
+		</c:if>
 
 		<aui:fieldset collapsed="<%= false %>" collapsible="<%= true %>" label="regeneration-actions">
 			<ul class="list-group system-action-group">

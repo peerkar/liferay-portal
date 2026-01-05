@@ -1831,6 +1831,15 @@ public class DLFileEntryLocalServiceTest {
 			ServiceContextTestUtil.getServiceContext(_group.getGroupId()));
 
 		Assert.assertNotNull("2.1", dlFileEntry.getVersion());
+
+		// No version increment on scheduled file entry
+
+		dlFileEntry = updateDLFileEntryWithStatus(
+			dlFileEntry, new ByteArrayInputStream(new byte[0]), new HashMap<>(),
+			ServiceContextTestUtil.getServiceContext(_group.getGroupId()),
+			WorkflowConstants.STATUS_SCHEDULED);
+
+		Assert.assertNotNull("2.1", dlFileEntry.getVersion());
 	}
 
 	@Test
@@ -2395,9 +2404,8 @@ public class DLFileEntryLocalServiceTest {
 
 		ddmFormValues.addAvailableLocale(LocaleUtil.US);
 
-		DDMFormFieldValue ddmFormFieldValue = new DDMFormFieldValue();
+		DDMFormFieldValue ddmFormFieldValue = new DDMFormFieldValue("baga");
 
-		ddmFormFieldValue.setInstanceId("baga");
 		ddmFormFieldValue.setName("Text1");
 		ddmFormFieldValue.setValue(new UnlocalizedValue("Text 1 Value"));
 

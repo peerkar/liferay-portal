@@ -154,9 +154,6 @@ public class RootProjectConfigurator implements Plugin<Project> {
 
 	public static final String DOWNLOAD_BUNDLE_TASK_NAME = "downloadBundle";
 
-	public static final String FORMAT_SOURCE_UPGRADE_TASK_NAME =
-		"formatSourceUpgrade";
-
 	public static final String INIT_BUNDLE_TASK_NAME = "initBundle";
 
 	public static final String LIFERAY_CONFIGS_DIR_NAME = "configs";
@@ -189,6 +186,9 @@ public class RootProjectConfigurator implements Plugin<Project> {
 	public static final String TAG_DOCKER_IMAGE_TASK_NAME = "tagDockerImage";
 
 	public static final String UPGRADE_JAKARTA_TASK_NAME = "upgradeJakarta";
+
+	public static final String UPGRADE_SOURCE_CODE_TASK_NAME =
+		"upgradeSourceCode";
 
 	public static final String VERIFY_BUNDLE_TASK_NAME = "verifyBundle";
 
@@ -274,9 +274,9 @@ public class RootProjectConfigurator implements Plugin<Project> {
 			project, workspaceExtension, providedModulesConfiguration,
 			verifyProductTask);
 
-		_addTaskUpgradeJakarta(project);
+		_addTaskUpgradeSourceCode(project);
 
-		_addTaskFormatSourceUpgrade(project);
+		_addTaskUpgradeJakarta(project);
 	}
 
 	public boolean isDefaultRepositoryEnabled() {
@@ -413,7 +413,7 @@ public class RootProjectConfigurator implements Plugin<Project> {
 		}
 
 		dockerBuildImage.setDescription(
-			"Builds a child docker image from Liferay base image with all " +
+			"Builds a child Docker image from Liferay base image with all " +
 				"configs deployed.");
 		dockerBuildImage.setGroup(DOCKER_GROUP);
 
@@ -849,7 +849,7 @@ public class RootProjectConfigurator implements Plugin<Project> {
 
 		copy.setDescription(
 			"Copy the Liferay configs and provided configurations to the " +
-				"docker build directory.");
+				"Docker build directory.");
 		copy.setGroup(DOCKER_GROUP);
 
 		copy.setDestinationDir(workspaceExtension.getDockerDir());
@@ -1039,19 +1039,6 @@ public class RootProjectConfigurator implements Plugin<Project> {
 			});
 
 		return download;
-	}
-
-	private FormatSourceTask _addTaskFormatSourceUpgrade(Project project) {
-		FormatSourceTask formatSourceTask = GradleUtil.addTask(
-			project, FORMAT_SOURCE_UPGRADE_TASK_NAME, FormatSourceTask.class);
-
-		formatSourceTask.onlyIf(_skipIfExecutingParentTaskSpec);
-		formatSourceTask.setCheckCategoryNames("Upgrade");
-		formatSourceTask.setDescription(
-			"Runs Liferay Source Formatter to perform Upgrade SF checks.");
-		formatSourceTask.setGroup("formatting");
-
-		return formatSourceTask;
 	}
 
 	private InitBundleTask _addTaskInitBundle(
@@ -1531,6 +1518,20 @@ public class RootProjectConfigurator implements Plugin<Project> {
 			"Runs the Jakarta source code upgrade.");
 		formatSourceTask.setGroup("build");
 		formatSourceTask.setJavaParserEnabled(false);
+
+		return formatSourceTask;
+	}
+
+	private FormatSourceTask _addTaskUpgradeSourceCode(Project project) {
+		FormatSourceTask formatSourceTask = GradleUtil.addTask(
+			project, UPGRADE_SOURCE_CODE_TASK_NAME, FormatSourceTask.class);
+
+		formatSourceTask.onlyIf(_skipIfExecutingParentTaskSpec);
+		formatSourceTask.setCheckCategoryNames("Upgrade");
+		formatSourceTask.setDescription(
+			"Runs source code upgrade for breaking changes in the new " +
+				"Liferay version.");
+		formatSourceTask.setGroup("build");
 
 		return formatSourceTask;
 	}

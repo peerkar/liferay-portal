@@ -5,6 +5,7 @@
 
 import {expect, mergeTests} from '@playwright/test';
 
+import {countriesManagementPageTest} from '../../../fixtures/CountriesManagementPageTest';
 import {apiHelpersTest} from '../../../fixtures/apiHelpersTest';
 import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
 import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
@@ -12,12 +13,15 @@ import {loginTest} from '../../../fixtures/loginTest';
 import {usersAndOrganizationsPagesTest} from '../../../fixtures/usersAndOrganizationsPagesTest';
 import {createCategories} from '../../../helpers/CreateCategories';
 import {getRandomInt} from '../../../utils/getRandomInt';
+import getRandomString from '../../../utils/getRandomString';
 import {waitForAlert} from '../../../utils/waitForAlert';
 
 export const test = mergeTests(
 	apiHelpersTest,
+	countriesManagementPageTest,
 	dataApiHelpersTest,
 	featureFlagsTest({
+		'LPD-35443': {enabled: true},
 		'LPD-35914': {enabled: true},
 	}),
 	loginTest(),
@@ -26,7 +30,7 @@ export const test = mergeTests(
 
 test(
 	'Add multiple suborganizations to parent organization',
-	{tag: '@LPD-57824'},
+	{tag: ['@LPD-57824', '@LPD-70012']},
 	async ({apiHelpers, usersAndOrganizationsPage}) => {
 		const parentOrganization =
 			await apiHelpers.headlessAdminUser.postOrganization({
@@ -61,6 +65,10 @@ test(
 				)
 			).toBeVisible();
 		}
+
+		await expect(
+			usersAndOrganizationsPage.organizationsTable.cell('Approved')
+		).toBeVisible();
 
 		await usersAndOrganizationsPage.goToOrganizations();
 
@@ -277,5 +285,171 @@ test(
 		await expect(editOrganizationPage.regionSelect).not.toHaveAttribute(
 			'required'
 		);
+	}
+);
+
+test(
+	'User should not be able to trigger stored XSS using organization name via info panel',
+	{tag: ['@LPD-70029']},
+	async ({
+		editOrganizationPage,
+		page,
+		sitesAdminPage,
+		usersAndOrganizationsPage,
+	}) => {
+		await usersAndOrganizationsPage.goToOrganizations();
+
+		await usersAndOrganizationsPage.organizationsLink.click();
+		await usersAndOrganizationsPage.addOrganizationButton.click();
+
+		const organizationName =
+			'"><img src=x onerror=prompt(document.cookie)></img>';
+
+		await editOrganizationPage.nameInput.fill(organizationName);
+		await editOrganizationPage.saveButton.click();
+
+		await waitForAlert(page);
+
+		try {
+			await editOrganizationPage.organizationSiteLink.click();
+			await editOrganizationPage.createSiteToggle.click();
+			await editOrganizationPage.organizationSiteSaveButton.click();
+
+			await waitForAlert(page);
+
+			await sitesAdminPage.goto();
+			await sitesAdminPage.searchSite(organizationName);
+
+			await sitesAdminPage.infoPanelButton.click();
+
+			await page.getByTitle('Select', {exact: true}).check();
+
+			let dialogTriggered = false;
+
+			await page
+				.waitForEvent('dialog', {timeout: 500})
+				.then(async (dialog) => {
+					dialogTriggered = true;
+					await dialog.dismiss();
+				})
+				.catch(() => {});
+
+			await expect(sitesAdminPage.componentTitle).toContainText(
+				organizationName
+			);
+
+			expect(dialogTriggered).toBe(false);
+		}
+		finally {
+			page.once('dialog', async (dialog) => {
+				await dialog.accept();
+			});
+
+			await usersAndOrganizationsPage.goToOrganizations();
+
+			await (
+				await usersAndOrganizationsPage.organizationsTable.rowActions(
+					organizationName
+				)
+			).click();
+			await usersAndOrganizationsPage.deleteOrganizationMenuItem.click();
+		}
+	}
+);
+
+test(
+	'Text XSS vulnerability in country and region key value',
+	{tag: '@LPD-72270'},
+	async ({
+		countriesManagementPage,
+		editCountryPage,
+		editOrganizationPage,
+		page,
+		usersAndOrganizationsPage,
+	}) => {
+		const xssString = `AnyName<img src=x onerror="alert('xssCountry')">`;
+
+		await countriesManagementPage.goto();
+
+		const country = {
+			key: `${xssString}`,
+			number: String(getRandomInt()),
+			priority: '0',
+			threeLetterIsocode: getRandomString().substring(0, 3),
+			title: '',
+			twoLetterIsocode: getRandomString().substring(0, 2),
+		};
+
+		await expect(async () => {
+			await expect(
+				countriesManagementPage.countriesTable.searchInput
+			).toBeEditable();
+
+			await countriesManagementPage.countriesTable.newButton.click();
+
+			await expect(editCountryPage.titleInput).toBeVisible();
+		}).toPass();
+
+		await editCountryPage.editCountry(country);
+
+		await usersAndOrganizationsPage.goToOrganizations();
+		await usersAndOrganizationsPage.addOrganizationButton.click();
+
+		const xssOrgName = `AnyName<img src=x onerror="alert('xssOrg')">`;
+
+		await editOrganizationPage.nameInput.fill(xssOrgName);
+		await editOrganizationPage.countrySelect.selectOption(`${country.key}`);
+		await editOrganizationPage.saveButton.click();
+
+		try {
+			await usersAndOrganizationsPage.goToOrganizations();
+
+			await usersAndOrganizationsPage.changeView('List');
+
+			page.on('dialog', async (dialog) => {
+				if (dialog.type() === 'alert') {
+					throw new Error('XSS');
+				}
+			});
+
+			await expect(
+				page.getByText(xssOrgName, {exact: true})
+			).toBeVisible();
+			await expect(
+				page.getByText(xssString, {exact: true})
+			).toBeVisible();
+		}
+		finally {
+			page.on('dialog', async (dialog) => await dialog.accept());
+
+			await countriesManagementPage.goto();
+
+			await expect(async () => {
+				await countriesManagementPage.countriesTable.search(
+					country.key
+				);
+				await (
+					await countriesManagementPage.countriesTable.rowActions(
+						country.key
+					)
+				).click();
+				await countriesManagementPage.deleteButton.click({
+					timeout: 500,
+				});
+
+				await waitForAlert(page);
+			}).toPass();
+
+			await usersAndOrganizationsPage.goToOrganizations();
+			await usersAndOrganizationsPage.changeView('Table');
+			await (
+				await usersAndOrganizationsPage.organizationsTable.rowCheckbox(
+					xssOrgName
+				)
+			).check();
+			await usersAndOrganizationsPage.deleteButton.click();
+
+			await waitForAlert(page);
+		}
 	}
 );

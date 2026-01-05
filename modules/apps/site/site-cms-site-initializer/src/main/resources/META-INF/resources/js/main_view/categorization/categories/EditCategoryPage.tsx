@@ -4,7 +4,6 @@
  */
 
 import ClayButton from '@clayui/button';
-import {openModal} from 'frontend-js-components-web';
 import {navigate, sub} from 'frontend-js-web';
 import React, {useEffect, useState} from 'react';
 
@@ -13,6 +12,7 @@ import VerticalNavLayout from '../../../common/components/VerticalNavLayout';
 import {IPermissionItem} from '../../../common/components/forms/PermissionsTable';
 import CategorizationPermissionService from '../../../common/services/CategorizationPermissionService';
 import CategoryService from '../../../common/services/CategoryService';
+import {openCMSModal} from '../../../common/utils/openCMSModal';
 import {
 	displayCreateSuccessToast,
 	displayEditSuccessToast,
@@ -104,16 +104,20 @@ const EditCategoryPage = ({
 	}
 
 	function validateForm() {
-		if (category.name.trim() === '') {
+		if (!category.name.trim().length) {
 			setNameInputError(
 				sub(
 					Liferay.Language.get('the-x-field-is-required'),
 					Liferay.Language.get('name')
 				)
 			);
+
+			return false;
 		}
 		else {
 			setNameInputError('');
+
+			return true;
 		}
 	}
 
@@ -124,9 +128,7 @@ const EditCategoryPage = ({
 	}
 
 	async function handleSave() {
-		validateForm();
-
-		if (nameInputError !== '') {
+		if (!validateForm()) {
 			return;
 		}
 
@@ -190,7 +192,7 @@ const EditCategoryPage = ({
 			displayCreateSuccessToast(category.name);
 		}
 		else {
-			openModal({
+			openCMSModal({
 				bodyHTML: Liferay.Language.get('edit-category-confirmation'),
 				buttons: [
 					{
@@ -202,7 +204,11 @@ const EditCategoryPage = ({
 					{
 						displayType: 'primary',
 						label: Liferay.Language.get('save'),
-						onClick: async ({processClose}) => {
+						onClick: async ({
+							processClose,
+						}: {
+							processClose: () => void;
+						}) => {
 							processClose();
 
 							const {error} =
@@ -241,9 +247,7 @@ const EditCategoryPage = ({
 	}
 
 	async function handleSaveAndAddAnother() {
-		validateForm();
-
-		if (nameInputError !== '') {
+		if (!validateForm()) {
 			return;
 		}
 
@@ -294,7 +298,7 @@ const EditCategoryPage = ({
 			}
 		}
 
-		window.location.reload();
+		resetForm();
 
 		displayCreateSuccessToast(category.name);
 	}
@@ -368,6 +372,7 @@ const EditCategoryPage = ({
 						{isCreateNew && (
 							<ClayButton
 								data-testid="save-and-add-another-button"
+								disabled={!category.name.trim()}
 								displayType="secondary"
 								onClick={handleSaveAndAddAnother}
 								size="sm"
@@ -379,6 +384,7 @@ const EditCategoryPage = ({
 						<ClayButton
 							className="inline-item-after"
 							data-testid="save-button"
+							disabled={!category.name.trim()}
 							displayType="primary"
 							onClick={handleSave}
 							size="sm"

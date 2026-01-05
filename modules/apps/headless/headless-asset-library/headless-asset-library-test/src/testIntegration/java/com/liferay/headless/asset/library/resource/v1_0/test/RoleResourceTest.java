@@ -6,7 +6,6 @@
 package com.liferay.headless.asset.library.resource.v1_0.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-import com.liferay.depot.model.DepotEntry;
 import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.headless.asset.library.client.dto.v1_0.Role;
 import com.liferay.headless.asset.library.client.pagination.Page;
@@ -29,7 +28,6 @@ import com.liferay.portal.kernel.test.util.RoleTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserGroupTestUtil;
 import com.liferay.portal.test.rule.FeatureFlag;
-import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
@@ -48,9 +46,7 @@ import org.junit.runner.RunWith;
 /**
  * @author Roberto Díaz
  */
-@FeatureFlags(
-	featureFlags = {@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-32050")}
-)
+@FeatureFlag("LPD-17564")
 @RunWith(Arquillian.class)
 public class RoleResourceTest extends BaseRoleResourceTestCase {
 
@@ -74,45 +70,16 @@ public class RoleResourceTest extends BaseRoleResourceTestCase {
 
 	@Override
 	@Test
-	public void testPutAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeUserAccountByExternalReferenceCodeUserAccountExternalReferenceCodeRolesPage()
-		throws Exception {
-
+	public void testPutAssetLibraryUserAccountRolesPage() throws Exception {
 		User user = TestPropsValues.getUser();
 
 		_testPutRolesPage(
 			() -> roleResource.getAssetLibraryUserAccountRolesPage(
-				testDepotEntry.getDepotEntryId(), TestPropsValues.getUserId()),
-			roles ->
-				roleResource.
-					putAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeUserAccountByExternalReferenceCodeUserAccountExternalReferenceCodeRolesPage(
-						testDepotEntryGroup.getExternalReferenceCode(),
-						user.getExternalReferenceCode(), roles));
-	}
-
-	@Override
-	@Test
-	public void testPutAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeUserGroupByExternalReferenceCodeUserGroupExternalReferenceCodeRolesPage()
-		throws Exception {
-
-		_testPutRolesPage(
-			() -> roleResource.getAssetLibraryUserGroupRolesPage(
-				testDepotEntry.getDepotEntryId(), _userGroup.getUserGroupId()),
-			roles ->
-				roleResource.
-					putAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeUserGroupByExternalReferenceCodeUserGroupExternalReferenceCodeRolesPage(
-						testDepotEntryGroup.getExternalReferenceCode(),
-						_userGroup.getExternalReferenceCode(), roles));
-	}
-
-	@Override
-	@Test
-	public void testPutAssetLibraryUserAccountRolesPage() throws Exception {
-		_testPutRolesPage(
-			() -> roleResource.getAssetLibraryUserAccountRolesPage(
-				testDepotEntry.getDepotEntryId(), TestPropsValues.getUserId()),
+				testDepotEntryGroup.getExternalReferenceCode(),
+				user.getExternalReferenceCode()),
 			roles -> roleResource.putAssetLibraryUserAccountRolesPage(
-				testDepotEntry.getDepotEntryId(), TestPropsValues.getUserId(),
-				roles));
+				testDepotEntryGroup.getExternalReferenceCode(),
+				user.getExternalReferenceCode(), roles));
 	}
 
 	@Override
@@ -120,10 +87,11 @@ public class RoleResourceTest extends BaseRoleResourceTestCase {
 	public void testPutAssetLibraryUserGroupRolesPage() throws Exception {
 		_testPutRolesPage(
 			() -> roleResource.getAssetLibraryUserGroupRolesPage(
-				testDepotEntry.getDepotEntryId(), _userGroup.getUserGroupId()),
+				testDepotEntryGroup.getExternalReferenceCode(),
+				_userGroup.getExternalReferenceCode()),
 			roles -> roleResource.putAssetLibraryUserGroupRolesPage(
-				testDepotEntryGroup.getGroupId(), _userGroup.getUserGroupId(),
-				roles));
+				testDepotEntryGroup.getExternalReferenceCode(),
+				_userGroup.getExternalReferenceCode(), roles));
 	}
 
 	@Override
@@ -146,10 +114,9 @@ public class RoleResourceTest extends BaseRoleResourceTestCase {
 	}
 
 	@Override
-	protected Role
-			testGetAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeUserAccountByExternalReferenceCodeUserAccountExternalReferenceCodeRolesPage_addRole(
-				String assetLibraryExternalReferenceCode,
-				String userAccountExternalReferenceCode, Role role)
+	protected Role testGetAssetLibraryUserAccountRolesPage_addRole(
+			String assetLibraryExternalReferenceCode,
+			String userAccountExternalReferenceCode, Role role)
 		throws Exception {
 
 		Group group = _groupLocalService.getGroupByExternalReferenceCode(
@@ -165,7 +132,7 @@ public class RoleResourceTest extends BaseRoleResourceTestCase {
 
 	@Override
 	protected String
-			testGetAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeUserAccountByExternalReferenceCodeUserAccountExternalReferenceCodeRolesPage_getUserAccountExternalReferenceCode()
+			testGetAssetLibraryUserAccountRolesPage_getUserAccountExternalReferenceCode()
 		throws Exception {
 
 		User user = TestPropsValues.getUser();
@@ -174,10 +141,9 @@ public class RoleResourceTest extends BaseRoleResourceTestCase {
 	}
 
 	@Override
-	protected Role
-			testGetAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeUserGroupByExternalReferenceCodeUserGroupExternalReferenceCodeRolesPage_addRole(
-				String assetLibraryExternalReferenceCode,
-				String userGroupExternalReferenceCode, Role role)
+	protected Role testGetAssetLibraryUserGroupRolesPage_addRole(
+			String assetLibraryExternalReferenceCode,
+			String userGroupExternalReferenceCode, Role role)
 		throws Exception {
 
 		Group group = _groupLocalService.getGroupByExternalReferenceCode(
@@ -195,52 +161,10 @@ public class RoleResourceTest extends BaseRoleResourceTestCase {
 
 	@Override
 	protected String
-			testGetAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeUserGroupByExternalReferenceCodeUserGroupExternalReferenceCodeRolesPage_getUserGroupExternalReferenceCode()
+			testGetAssetLibraryUserGroupRolesPage_getUserGroupExternalReferenceCode()
 		throws Exception {
 
 		return _userGroup.getExternalReferenceCode();
-	}
-
-	@Override
-	protected Role testGetAssetLibraryUserAccountRolesPage_addRole(
-			Long assetLibraryId, Long userAccountId, Role role)
-		throws Exception {
-
-		DepotEntry depotEntry = _depotEntryLocalService.getDepotEntry(
-			assetLibraryId);
-
-		_userGroupRoleService.addUserGroupRoles(
-			userAccountId, depotEntry.getGroupId(), new long[] {role.getId()});
-
-		return role;
-	}
-
-	@Override
-	protected Long testGetAssetLibraryUserAccountRolesPage_getUserAccountId()
-		throws Exception {
-
-		return TestPropsValues.getUserId();
-	}
-
-	@Override
-	protected Role testGetAssetLibraryUserGroupRolesPage_addRole(
-			Long assetLibraryId, Long userGroupId, Role role)
-		throws Exception {
-
-		DepotEntry depotEntry = _depotEntryLocalService.getDepotEntry(
-			assetLibraryId);
-
-		_userGroupGroupRoleLocalService.addUserGroupGroupRoles(
-			userGroupId, depotEntry.getGroupId(), new long[] {role.getId()});
-
-		return role;
-	}
-
-	@Override
-	protected Long testGetAssetLibraryUserGroupRolesPage_getUserGroupId()
-		throws Exception {
-
-		return _userGroup.getUserGroupId();
 	}
 
 	private void _assertRolesPage(

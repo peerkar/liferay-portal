@@ -21,6 +21,7 @@ const AllTagsDropdown: React.FC<IAllFiltersDropdown> = ({
 	onSelectItem,
 }) => {
 	const {
+		constants: {cmsGroupId},
 		filters: {space},
 	} = useContext(ViewDashboardContext);
 
@@ -34,7 +35,7 @@ const AllTagsDropdown: React.FC<IAllFiltersDropdown> = ({
 			search,
 		});
 
-		const endpoint = `/o/headless-admin-taxonomy/v1.0/keywords${queryParams}`;
+		const endpoint = `/o/headless-admin-taxonomy/v1.0/sites/${cmsGroupId}/keywords${queryParams}`;
 
 		const {data, error} = await ApiHelper.get<{
 			items: {assetLibraries: {id: number}[]; id: string; name: string}[];
@@ -70,7 +71,7 @@ const AllTagsDropdown: React.FC<IAllFiltersDropdown> = ({
 			icon="tag"
 			items={tags}
 			loading={loading}
-			onActiveChange={() => setDropdownActive(!dropdownActive)}
+			onActiveChange={() => setDropdownActive((prevState) => !prevState)}
 			onSearch={async (value) => {
 				setLoading(true);
 

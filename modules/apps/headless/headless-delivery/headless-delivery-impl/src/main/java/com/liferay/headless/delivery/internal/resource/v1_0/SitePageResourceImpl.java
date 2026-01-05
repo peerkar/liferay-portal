@@ -39,8 +39,6 @@ import com.liferay.layout.util.LayoutServiceContextHelper;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.events.ServicePreAction;
-import com.liferay.portal.events.ThemeServicePreAction;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -69,7 +67,6 @@ import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.TeamLocalService;
 import com.liferay.portal.kernel.service.permission.ModelPermissions;
 import com.liferay.portal.kernel.service.permission.ModelPermissionsFactory;
-import com.liferay.portal.kernel.servlet.DummyHttpServletResponse;
 import com.liferay.portal.kernel.servlet.DynamicServletRequest;
 import com.liferay.portal.kernel.servlet.ServletContextPool;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -77,6 +74,7 @@ import com.liferay.portal.kernel.theme.ThemeUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -104,8 +102,6 @@ import com.liferay.segments.model.SegmentsExperience;
 import com.liferay.segments.processor.SegmentsExperienceRequestProcessorRegistry;
 import com.liferay.segments.service.SegmentsExperienceLocalService;
 import com.liferay.segments.service.SegmentsExperienceService;
-
-import jakarta.servlet.http.HttpServletResponse;
 
 import jakarta.ws.rs.core.MultivaluedMap;
 
@@ -146,7 +142,7 @@ public class SitePageResourceImpl
 
 	@Override
 	public SitePage getItem(Long id) throws Exception {
-		Layout layout = _layoutLocalService.getLayout(id);
+		Layout layout = _layoutService.getLayout(id);
 
 		return getSiteSitePage(layout.getGroupId(), layout.getFriendlyURL());
 	}
@@ -155,7 +151,7 @@ public class SitePageResourceImpl
 	public SitePage getSiteSitePage(Long siteId, String friendlyUrlPath)
 		throws Exception {
 
-		return _toSitePage(true, _getLayout(siteId, friendlyUrlPath), null);
+		return _toSitePage(true, _getLayout(siteId, friendlyUrlPath));
 	}
 
 	@Override
@@ -163,8 +159,12 @@ public class SitePageResourceImpl
 			Long siteId, String friendlyUrlPath, String experienceKey)
 		throws Exception {
 
+		Layout layout = _getLayout(siteId, friendlyUrlPath);
+
 		return _toSitePage(
-			true, _getLayout(siteId, friendlyUrlPath), experienceKey);
+			true, layout,
+			_segmentsExperienceService.fetchSegmentsExperience(
+				layout.getGroupId(), experienceKey, layout.getPlid()));
 	}
 
 	@Override
@@ -194,8 +194,7 @@ public class SitePageResourceImpl
 			transform(
 				_getSegmentsExperiences(layout),
 				segmentsExperience -> _toSitePage(
-					_isEmbeddedPageDefinition(), layout,
-					segmentsExperience.getSegmentsExperienceKey())));
+					_isEmbeddedPageDefinition(), layout, segmentsExperience)));
 	}
 
 	@Override
@@ -255,7 +254,7 @@ public class SitePageResourceImpl
 
 				return _toSitePage(
 					_isEmbeddedPageDefinition(),
-					_layoutLocalService.getLayout(plid), null);
+					_layoutService.getLayout(plid));
 			});
 	}
 
@@ -438,46 +437,48 @@ public class SitePageResourceImpl
 			null, siteId, false, parentLayoutId, nameMap, titleMap,
 			descriptionMap, keywordsMap, robotsMap,
 			LayoutConstants.TYPE_CONTENT,
-			typeSettingsUnicodeProperties.toString(), hidden, friendlyUrlMap, 0,
-			serviceContext);
+			typeSettingsUnicodeProperties.toString(), hidden, friendlyUrlMap,
+			null, serviceContext);
 
-		_importPageDefinition(
-			layout, sitePage.getPageDefinition(), serviceContext);
+		ServiceContextThreadLocal.pushServiceContext(serviceContext);
 
-		layout = _layoutLocalService.getLayout(layout.getPlid());
+		try (AutoCloseable autoCloseable =
+				_layoutServiceContextHelper.getServiceContextAutoCloseable(
+					layout, contextUser)) {
 
-		PageDefinition pageDefinition = sitePage.getPageDefinition();
+			_importPageDefinition(layout, sitePage.getPageDefinition());
 
-		if (pageDefinition != null) {
-			Settings settings = pageDefinition.getSettings();
+			layout = _layoutService.getLayout(layout.getPlid());
 
-			if (settings != null) {
-				ServiceContextThreadLocal.pushServiceContext(serviceContext);
+			PageDefinition pageDefinition = sitePage.getPageDefinition();
 
-				try {
+			if (pageDefinition != null) {
+				Settings settings = pageDefinition.getSettings();
+
+				if (settings != null) {
 					layout = _layoutsImporter.importLayoutSettings(
 						contextUser.getUserId(), layout, settings.toString());
 				}
-				finally {
-					ServiceContextThreadLocal.popServiceContext();
-				}
 			}
+
+			Layout draftLayout = _updateDraftLayout(layout);
+
+			layout.setModifiedDate(draftLayout.getModifiedDate());
+
+			layout.setStatus(WorkflowConstants.STATUS_APPROVED);
+
+			layout = _layoutLocalService.updateLayout(layout);
+
+			_updateModelResourcePermissions(
+				layout.getCompanyId(), siteId, layout.getPlid(), sitePage);
+
+			_updateSEOEntry(siteId, layout.getLayoutId(), sitePage);
+
+			return layout;
 		}
-
-		Layout draftLayout = _updateDraftLayout(layout);
-
-		layout.setModifiedDate(draftLayout.getModifiedDate());
-
-		layout.setStatus(WorkflowConstants.STATUS_APPROVED);
-
-		layout = _layoutLocalService.updateLayout(layout);
-
-		_updateModelResourcePermissions(
-			layout.getCompanyId(), siteId, layout.getPlid(), sitePage);
-
-		_updateSEOEntry(siteId, layout.getLayoutId(), sitePage);
-
-		return layout;
+		finally {
+			ServiceContextThreadLocal.popServiceContext();
+		}
 	}
 
 	private ServiceContext _createServiceContext(
@@ -581,24 +582,38 @@ public class SitePageResourceImpl
 		String resourceName = ResourceActionsUtil.getCompositeModelName(
 			Layout.class.getName(), "false");
 
+		long classNameId = _portal.getClassNameId(resourceName);
+
 		if (!StringUtil.startsWith(friendlyUrlPath, StringPool.FORWARD_SLASH)) {
 			friendlyUrlPath = StringPool.FORWARD_SLASH + friendlyUrlPath;
 		}
 
 		FriendlyURLEntryLocalization friendlyURLEntryLocalization =
-			_friendlyURLEntryLocalService.getFriendlyURLEntryLocalization(
-				groupId, _portal.getClassNameId(resourceName), friendlyUrlPath);
+			_friendlyURLEntryLocalService.fetchFriendlyURLEntryLocalization(
+				groupId, classNameId,
+				contextAcceptLanguage.getPreferredLanguageId(),
+				friendlyUrlPath);
 
-		return _layoutLocalService.getLayout(
+		if (friendlyURLEntryLocalization == null) {
+			friendlyURLEntryLocalization =
+				_friendlyURLEntryLocalService.getFriendlyURLEntryLocalization(
+					groupId, classNameId,
+					LocaleUtil.toLanguageId(
+						_portal.getSiteDefaultLocale(groupId)),
+					friendlyUrlPath);
+		}
+
+		return _layoutService.getLayout(
 			friendlyURLEntryLocalization.getClassPK());
 	}
 
 	private SegmentsExperience _getSegmentsExperience(
-			Layout layout, String segmentsExperienceKey)
+			Layout layout, String segmentsExperienceKey,
+			ThemeDisplay themeDisplay)
 		throws Exception {
 
 		if (Validator.isNull(segmentsExperienceKey)) {
-			return _getUserSegmentsExperience(layout);
+			return _getUserSegmentsExperience(layout, themeDisplay);
 		}
 
 		return _segmentsExperienceService.fetchSegmentsExperience(
@@ -616,38 +631,12 @@ public class SitePageResourceImpl
 			layout.getGroupId(), layout.getPlid(), true);
 	}
 
-	private ThemeDisplay _getThemeDisplay(Layout layout) throws Exception {
-		ServicePreAction servicePreAction = new ServicePreAction();
-
-		HttpServletResponse httpServletResponse =
-			new DummyHttpServletResponse();
-
-		servicePreAction.servicePre(
-			contextHttpServletRequest, httpServletResponse, false);
-
-		ThemeServicePreAction themeServicePreAction =
-			new ThemeServicePreAction();
-
-		themeServicePreAction.run(
-			contextHttpServletRequest, httpServletResponse);
-
-		ThemeDisplay themeDisplay =
-			(ThemeDisplay)contextHttpServletRequest.getAttribute(
-				WebKeys.THEME_DISPLAY);
-
-		themeDisplay.setLayout(layout);
-		themeDisplay.setResponse(httpServletResponse);
-		themeDisplay.setScopeGroupId(layout.getGroupId());
-		themeDisplay.setSiteGroupId(layout.getGroupId());
-
-		return themeDisplay;
-	}
-
-	private SegmentsExperience _getUserSegmentsExperience(Layout layout)
+	private SegmentsExperience _getUserSegmentsExperience(
+			Layout layout, ThemeDisplay themeDisplay)
 		throws Exception {
 
 		contextHttpServletRequest.setAttribute(
-			WebKeys.THEME_DISPLAY, _getThemeDisplay(layout));
+			WebKeys.THEME_DISPLAY, themeDisplay);
 
 		long[] segmentsEntryIds = _segmentsEntryRetriever.getSegmentsEntryIds(
 			layout.getGroupId(), contextUser.getUserId(),
@@ -670,8 +659,7 @@ public class SitePageResourceImpl
 	}
 
 	private void _importPageDefinition(
-			Layout layout, PageDefinition pageDefinition,
-			ServiceContext serviceContext)
+			Layout layout, PageDefinition pageDefinition)
 		throws Exception {
 
 		if (pageDefinition == null) {
@@ -692,21 +680,9 @@ public class SitePageResourceImpl
 			return;
 		}
 
-		contextHttpServletRequest.setAttribute(
-			WebKeys.THEME_DISPLAY, _getThemeDisplay(layout));
-
-		serviceContext.setRequest(contextHttpServletRequest);
-
-		ServiceContextThreadLocal.pushServiceContext(serviceContext);
-
-		try {
-			_layoutsImporter.importPageElement(
-				layout, layoutStructure, layoutStructure.getMainItemId(),
-				pageElement.toString(), 0, true);
-		}
-		finally {
-			ServiceContextThreadLocal.popServiceContext();
-		}
+		_layoutsImporter.importPageElement(
+			layout, layoutStructure, layoutStructure.getMainItemId(),
+			pageElement.toString(), 0, true);
 	}
 
 	private boolean _isEmbeddedPageDefinition() {
@@ -786,18 +762,22 @@ public class SitePageResourceImpl
 		contextHttpServletRequest = DynamicServletRequest.addQueryString(
 			contextHttpServletRequest, "p_l_id=" + layout.getPlid(), false);
 
-		SegmentsExperience segmentsExperience = _getSegmentsExperience(
-			layout, segmentsExperienceKey);
-
-		if (segmentsExperience != null) {
-			contextHttpServletRequest.setAttribute(
-				SegmentsWebKeys.SEGMENTS_EXPERIENCE_IDS,
-				new long[] {segmentsExperience.getSegmentsExperienceId()});
-		}
-
 		try (AutoCloseable autoCloseable =
 				_layoutServiceContextHelper.getServiceContextAutoCloseable(
 					layout, contextUser)) {
+
+			ServiceContext serviceContext =
+				ServiceContextThreadLocal.getServiceContext();
+
+			SegmentsExperience segmentsExperience = _getSegmentsExperience(
+				layout, segmentsExperienceKey,
+				serviceContext.getThemeDisplay());
+
+			if (segmentsExperience != null) {
+				contextHttpServletRequest.setAttribute(
+					SegmentsWebKeys.SEGMENTS_EXPERIENCE_IDS,
+					new long[] {segmentsExperience.getSegmentsExperienceId()});
+			}
 
 			layout.includeLayoutContent(
 				contextHttpServletRequest, contextHttpServletResponse);
@@ -822,41 +802,57 @@ public class SitePageResourceImpl
 		}
 	}
 
-	private SitePage _toSitePage(
-			boolean embeddedPageDefinition, Layout layout,
-			String segmentsExperienceKey)
+	private SitePage _toSitePage(boolean embeddedPageDefinition, Layout layout)
 		throws Exception {
 
-		Map<String, Map<String, String>> actions = null;
+		try (AutoCloseable autoCloseable =
+				_layoutServiceContextHelper.getServiceContextAutoCloseable(
+					layout, contextUser)) {
 
-		if (Validator.isNotNull(segmentsExperienceKey)) {
-			actions = _getExperienceActions(layout);
+			DefaultDTOConverterContext dtoConverterContext =
+				new DefaultDTOConverterContext(
+					contextAcceptLanguage.isAcceptAllLanguages(),
+					_getBasicActions(layout), _dtoConverterRegistry,
+					contextHttpServletRequest, layout.getPlid(),
+					contextAcceptLanguage.getPreferredLocale(), contextUriInfo,
+					contextUser);
+
+			dtoConverterContext.setAttribute(
+				"embeddedPageDefinition", embeddedPageDefinition);
+			dtoConverterContext.setAttribute("groupId", layout.getGroupId());
+
+			ServiceContext serviceContext =
+				ServiceContextThreadLocal.getServiceContext();
+
+			dtoConverterContext.setAttribute(
+				"segmentsExperience",
+				_getUserSegmentsExperience(
+					layout, serviceContext.getThemeDisplay()));
+
+			return _sitePageDTOConverter.toDTO(dtoConverterContext, layout);
 		}
-		else {
-			actions = _getBasicActions(layout);
-		}
+	}
+
+	private SitePage _toSitePage(
+			boolean embeddedPageDefinition, Layout layout,
+			SegmentsExperience segmentsExperience)
+		throws Exception {
 
 		DefaultDTOConverterContext dtoConverterContext =
 			new DefaultDTOConverterContext(
-				contextAcceptLanguage.isAcceptAllLanguages(), actions,
-				_dtoConverterRegistry, contextHttpServletRequest,
-				layout.getPlid(), contextAcceptLanguage.getPreferredLocale(),
-				contextUriInfo, contextUser);
+				contextAcceptLanguage.isAcceptAllLanguages(),
+				_getExperienceActions(layout), _dtoConverterRegistry,
+				contextHttpServletRequest, layout.getPlid(),
+				contextAcceptLanguage.getPreferredLocale(), contextUriInfo,
+				contextUser);
 
 		dtoConverterContext.setAttribute(
 			"embeddedPageDefinition", embeddedPageDefinition);
 		dtoConverterContext.setAttribute("groupId", layout.getGroupId());
 
-		if (Validator.isNotNull(segmentsExperienceKey)) {
-			dtoConverterContext.setAttribute(
-				"segmentsExperience",
-				_getSegmentsExperience(layout, segmentsExperienceKey));
-			dtoConverterContext.setAttribute("showExperience", Boolean.TRUE);
-		}
-		else {
-			dtoConverterContext.setAttribute(
-				"segmentsExperience", _getUserSegmentsExperience(layout));
-		}
+		dtoConverterContext.setAttribute(
+			"segmentsExperience", segmentsExperience);
+		dtoConverterContext.setAttribute("showExperience", Boolean.TRUE);
 
 		return _sitePageDTOConverter.toDTO(dtoConverterContext, layout);
 	}

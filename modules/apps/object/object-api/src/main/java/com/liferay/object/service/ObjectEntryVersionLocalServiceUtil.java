@@ -382,6 +382,14 @@ public class ObjectEntryVersionLocalServiceUtil {
 		return getService().getObjectEntryVersions(objectEntryId, start, end);
 	}
 
+	public static List<ObjectEntryVersion> getObjectEntryVersions(
+		long objectEntryId, int start, int end,
+		OrderByComparator<ObjectEntryVersion> orderByComparator) {
+
+		return getService().getObjectEntryVersions(
+			objectEntryId, start, end, orderByComparator);
+	}
+
 	/**
 	 * Returns the number of object entry versions.
 	 *
@@ -425,6 +433,14 @@ public class ObjectEntryVersionLocalServiceUtil {
 		throws PortalException {
 
 		return getService().updateLatestObjectEntryVersion(objectEntry);
+	}
+
+	public static ObjectEntryVersion updateLatestObjectEntryVersionModifiedDate(
+			java.util.Date modifiedDate, long objectEntryId)
+		throws PortalException {
+
+		return getService().updateLatestObjectEntryVersionModifiedDate(
+			modifiedDate, objectEntryId);
 	}
 
 	/**

@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
+import {ClayButtonWithIcon} from '@clayui/button';
 import {ClayDropDownWithItems} from '@clayui/drop-down';
 import React, {useState} from 'react';
 
 import {useSelector, useStateDispatch} from '../contexts/StateContext';
 import selectStructureUuid from '../selectors/selectStructureUuid';
-import {ReferencedStructure} from '../types/Structure';
+import {ReferencedStructure, RepeatableGroup} from '../types/Structure';
 import {
 	FIELD_TYPES,
 	FIELD_TYPE_ICON,
@@ -27,9 +27,13 @@ type Item = {
 };
 
 export default function AddChildDropdown({
-	triggerType = 'text',
+	className,
+	displayType = 'secondary',
+	parentUuid,
 }: {
-	triggerType?: 'text' | 'icon';
+	className?: string;
+	displayType?: 'secondary' | 'unstyled';
+	parentUuid?: RepeatableGroup['uuid'];
 }) {
 	const dispatch = useStateDispatch();
 	const structureUuid = useSelector(selectStructureUuid);
@@ -39,6 +43,7 @@ export default function AddChildDropdown({
 	const addField = (type: Field['type']) =>
 		dispatch({
 			field: getDefaultField({parent: structureUuid, type}),
+			parentUuid,
 			type: 'add-field',
 		});
 
@@ -81,19 +86,14 @@ export default function AddChildDropdown({
 				menuElementAttrs={{className: 'dropdown-menu-cms'}}
 				menuHeight="auto"
 				trigger={
-					triggerType === 'text' ? (
-						<ClayButton displayType="secondary" size="sm">
-							{Liferay.Language.get('add-field')}
-						</ClayButton>
-					) : (
-						<ClayButtonWithIcon
-							aria-label={Liferay.Language.get('add-field')}
-							displayType="secondary"
-							size="sm"
-							symbol="plus"
-							title={Liferay.Language.get('add-field')}
-						/>
-					)
+					<ClayButtonWithIcon
+						aria-label={Liferay.Language.get('add-field')}
+						className={className}
+						displayType={displayType}
+						size="sm"
+						symbol="plus"
+						title={Liferay.Language.get('add-field')}
+					/>
 				}
 			/>
 		</>

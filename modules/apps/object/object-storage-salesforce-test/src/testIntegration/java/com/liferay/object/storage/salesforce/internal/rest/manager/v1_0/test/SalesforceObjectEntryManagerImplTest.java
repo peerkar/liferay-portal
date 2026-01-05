@@ -29,6 +29,7 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.SortFactoryUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsUtil;
@@ -157,12 +158,13 @@ public class SalesforceObjectEntryManagerImplTest
 						Collections.singletonMap(LocaleUtil.US, "Queued")),
 					ListTypeEntryUtil.createListTypeEntry(
 						"Started", "started",
-						Collections.singletonMap(LocaleUtil.US, "Started"))));
+						Collections.singletonMap(LocaleUtil.US, "Started"))),
+				new ServiceContext());
 
 		_objectDefinition =
 			objectDefinitionLocalService.addCustomObjectDefinition(
 				null, adminUser.getUserId(), 0, null, false, true, false, true,
-				false, false, false, false, false, null,
+				false, false, false, false, null,
 				LocalizedMapUtil.getLocalizedMap("Ticket"), "Ticket", null,
 				null, LocalizedMapUtil.getLocalizedMap("Tickets"), true,
 				ObjectDefinitionConstants.SCOPE_COMPANY,
@@ -237,7 +239,7 @@ public class SalesforceObjectEntryManagerImplTest
 					).name(
 						"customStatus"
 					).build()),
-				Collections.emptyList());
+				Collections.emptyList(), new ServiceContext());
 
 		ObjectField objectField = ObjectFieldUtil.addCustomObjectField(
 			new TextObjectFieldBuilder(
@@ -411,7 +413,7 @@ public class SalesforceObjectEntryManagerImplTest
 					" or ",
 					_buildNotEqualsExpressionFilterString("title", title1), ")")
 			).build(),
-			objectEntry2, objectEntry3, objectEntry4);
+			objectEntry2, objectEntry3, objectEntry4, objectEntry5);
 
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(
 			"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -429,7 +431,7 @@ public class SalesforceObjectEntryManagerImplTest
 						"startDate ne ", dateTimeString1, " or startDate eq ",
 						dateTimeString2))
 			).build(),
-			objectEntry1, objectEntry3, objectEntry4);
+			objectEntry1, objectEntry3, objectEntry4, objectEntry5);
 
 		// Equals/not equals expression
 
@@ -488,7 +490,7 @@ public class SalesforceObjectEntryManagerImplTest
 					_buildNotEqualsExpressionFilterString(
 						"startDate", localDateTime2))
 			).build(),
-			objectEntry1, objectEntry2, objectEntry4);
+			objectEntry1, objectEntry2, objectEntry4, objectEntry5);
 
 		testGetObjectEntries(
 			HashMapBuilder.put(
@@ -504,7 +506,7 @@ public class SalesforceObjectEntryManagerImplTest
 				filterString.concat(
 					_buildNotEqualsExpressionFilterString("title", title1))
 			).build(),
-			objectEntry2, objectEntry3, objectEntry4);
+			objectEntry2, objectEntry3, objectEntry4, objectEntry5);
 
 		// Range expression
 
@@ -592,7 +594,7 @@ public class SalesforceObjectEntryManagerImplTest
 
 		return _objectEntryManager.getObjectEntries(
 			companyId, _objectDefinition, null, null, dtoConverterContext,
-			context.get("filter"), Pagination.of(1, 3), context.get("search"),
+			context.get("filter"), Pagination.of(1, 4), context.get("search"),
 			sorts);
 	}
 

@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.site.navigation.admin.constants.SiteNavigationAdminPortletKeys;
 
@@ -50,12 +51,26 @@ public class GetAssetVocabularyDetailsMVCResourceCommand
 		ThemeDisplay themeDisplay = (ThemeDisplay)resourceRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		long assetVocabularyId = ParamUtil.getLong(
-			resourceRequest, "assetVocabularyId");
+		Group group;
+		String scopeExternalReferenceCode = ParamUtil.getString(
+			resourceRequest, "scopeExternalReferenceCode");
+
+		if (Validator.isNull(scopeExternalReferenceCode)) {
+			group = themeDisplay.getScopeGroup();
+		}
+		else {
+			group = _groupLocalService.getGroupByExternalReferenceCode(
+				scopeExternalReferenceCode, themeDisplay.getCompanyId());
+		}
+
+		String externalReferenceCode = ParamUtil.getString(
+			resourceRequest, "externalReferenceCode");
 
 		try {
 			AssetVocabulary assetVocabulary =
-				_assetVocabularyLocalService.getVocabulary(assetVocabularyId);
+				_assetVocabularyLocalService.
+					getAssetVocabularyByExternalReferenceCode(
+						externalReferenceCode, group.getGroupId());
 
 			JSONPortletResponseUtil.writeJSON(
 				resourceRequest, resourceResponse,
@@ -71,9 +86,6 @@ public class GetAssetVocabularyDetailsMVCResourceCommand
 								_portal.getHttpServletRequest(resourceRequest),
 								"global");
 						}
-
-						Group group = _groupLocalService.getGroup(
-							assetVocabulary.getGroupId());
 
 						return group.getDescriptiveName(
 							themeDisplay.getLocale());

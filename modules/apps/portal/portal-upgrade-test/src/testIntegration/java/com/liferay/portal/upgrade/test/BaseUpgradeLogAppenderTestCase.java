@@ -20,9 +20,13 @@ import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.ClassName;
 import com.liferay.portal.kernel.model.Release;
 import com.liferay.portal.kernel.model.ReleaseConstants;
+import com.liferay.portal.kernel.module.util.BundleUtil;
+import com.liferay.portal.kernel.module.util.SystemBundleUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.ReleaseLocalService;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
@@ -59,7 +63,9 @@ import java.io.Writer;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 import java.net.URI;
 
@@ -94,6 +100,8 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import org.osgi.framework.Bundle;
 
 /**
  * @author Sam Ziemer
@@ -305,7 +313,7 @@ public abstract class BaseUpgradeLogAppenderTestCase {
 			upgradeProcess.upgrade();
 
 			OrphanReferencesDataCleanupUtil.cleanUpTable(
-				connection, null, "companyId", "Portlet",
+				connection, null, null, "companyId", "Portlet",
 				new String[] {"companyId"}, "Company");
 
 			_appender.stop();
@@ -733,6 +741,45 @@ public abstract class BaseUpgradeLogAppenderTestCase {
 			"upgrade_report_diagnostics.txt");
 
 		Assert.assertTrue(!file.exists());
+	}
+
+	@Test
+	public void testPostUpgradeDataCleanupMessages() throws Exception {
+		Thread currentThread = Thread.currentThread();
+
+		ClassName className = null;
+
+		try (AutoCloseable autoCloseable =
+				ReflectionTestUtil.setFieldValueWithAutoCloseable(
+					PortalClassLoaderUtil.class, "_classLoader",
+					currentThread.getContextClassLoader());
+			Connection connection = DataAccess.getConnection()) {
+
+			String value = "com.liferay.test." + RandomTestUtil.randomString();
+
+			className = _classNameLocalService.addClassName(value);
+
+			_appender.start();
+
+			_runClassNamePostUpgradeDataCleanUpProcess(connection);
+
+			_appender.stop();
+
+			DBInspector dbInspector = new DBInspector(connection);
+
+			_assertLogContextDiagnostics(
+				"upgrade.report.data.clean.up",
+				StringBundler.concat(
+					"Table ", dbInspector.normalizeName("ClassName_"),
+					", 1 row deleted because \"", value,
+					"\" is not defined in any deployed module and is not in ",
+					"use"));
+		}
+		finally {
+			if (className != null) {
+				_classNameLocalService.deleteClassName(className);
+			}
+		}
 	}
 
 	@Test
@@ -1284,6 +1331,27 @@ public abstract class BaseUpgradeLogAppenderTestCase {
 		return new File(reportsDir, reportFileName);
 	}
 
+	private void _runClassNamePostUpgradeDataCleanUpProcess(
+			Connection connection)
+		throws Exception {
+
+		Bundle bundle = BundleUtil.getBundle(
+			SystemBundleUtil.getBundleContext(),
+			"com.liferay.data.cleanup.impl");
+
+		Class<?> clazz = bundle.loadClass(
+			"com.liferay.data.cleanup.internal.verify." +
+				"ClassNamePostUpgradeDataCleanupProcess");
+
+		Method method = clazz.getMethod("cleanUp");
+
+		Constructor<?> constructor = clazz.getConstructor(
+			ClassNameLocalService.class, Connection.class);
+
+		method.invoke(
+			constructor.newInstance(_classNameLocalService, connection));
+	}
+
 	private void _setEnv(String key, String value) throws Exception {
 		Map<String, String> env = System.getenv();
 
@@ -1339,6 +1407,9 @@ public abstract class BaseUpgradeLogAppenderTestCase {
 
 	@Inject(filter = "appender.name=UpgradeLogAppender")
 	private Appender _appender;
+
+	@Inject
+	private ClassNameLocalService _classNameLocalService;
 
 	private String _diagnosticsReportContent;
 

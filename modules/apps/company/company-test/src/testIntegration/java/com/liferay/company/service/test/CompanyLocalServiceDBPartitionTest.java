@@ -13,6 +13,7 @@ import com.liferay.counter.kernel.service.persistence.CounterFinder;
 import com.liferay.counter.model.CounterRegister;
 import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.test.util.ObjectDefinitionTestUtil;
 import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.string.StringBundler;
@@ -39,8 +40,10 @@ import com.liferay.portal.kernel.repository.registry.RepositoryDefiner;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.CompanyLocalService;
+import com.liferay.portal.kernel.service.PortletLocalService;
 import com.liferay.portal.kernel.service.RepositoryLocalService;
 import com.liferay.portal.kernel.service.ResourceActionLocalService;
+import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.service.VirtualHostLocalService;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
@@ -53,6 +56,7 @@ import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.ProxyUtil;
@@ -516,15 +520,52 @@ public class CompanyLocalServiceDBPartitionTest
 
 			_addCopyDBPartitionCompanyCache(copiedCompanyId);
 
-			Collection<ServiceReference<Portlet>> serviceReferences =
-				_bundleContext.getServiceReferences(
-					Portlet.class,
-					StringBundler.concat(
-						"(&(com.liferay.portlet.company=",
-						copiedCompany.getCompanyId(), ")(jakarta.portlet.name=",
-						objectDefinition.getPortletId(), "))"));
+			try (SafeCloseable safeCloseable2 =
+					CompanyThreadLocal.setCompanyIdWithSafeCloseable(
+						copiedCompanyId)) {
 
-			Assert.assertFalse(serviceReferences.isEmpty());
+				ObjectDefinition copiedObjectDefinition =
+					_objectDefinitionLocalService.fetchObjectDefinition(
+						objectDefinition.getObjectDefinitionId());
+
+				Assert.assertNotEquals(
+					copiedObjectDefinition.getClassName(),
+					objectDefinition.getClassName());
+
+				Collection<ServiceReference<Portlet>> serviceReferences =
+					_bundleContext.getServiceReferences(
+						Portlet.class,
+						StringBundler.concat(
+							"(&(com.liferay.portlet.company=",
+							copiedObjectDefinition.getCompanyId(),
+							")(jakarta.portlet.name=",
+							copiedObjectDefinition.getPortletId(), "))"));
+
+				Assert.assertFalse(serviceReferences.isEmpty());
+
+				Assert.assertNotNull(
+					_classNameLocalService.fetchClassName(
+						copiedObjectDefinition.getClassName()));
+				Assert.assertNotNull(
+					_portletLocalService.getPortletById(
+						copiedObjectDefinition.getPortletId()));
+				Assert.assertTrue(
+					ListUtil.isNotEmpty(
+						_resourceActionLocalService.getResourceActions(
+							copiedObjectDefinition.getClassName())));
+				Assert.assertTrue(
+					ListUtil.isNotEmpty(
+						_resourceActionLocalService.getResourceActions(
+							copiedObjectDefinition.getPortletId())));
+				Assert.assertTrue(
+					ListUtil.isNotEmpty(
+						_resourcePermissionLocalService.getResourcePermissions(
+							copiedObjectDefinition.getClassName())));
+				Assert.assertTrue(
+					ListUtil.isNotEmpty(
+						_resourcePermissionLocalService.getResourcePermissions(
+							copiedObjectDefinition.getPortletId())));
+			}
 
 			companyLocalService.deleteCompany(copiedCompany);
 
@@ -826,7 +867,7 @@ public class CompanyLocalServiceDBPartitionTest
 
 	private void _assertCompanyConfiguration(
 			long companyId, Configuration configuration)
-		throws SQLException {
+		throws Exception {
 
 		try (PreparedStatement preparedStatement = connection.prepareStatement(
 				StringBundler.concat(
@@ -980,9 +1021,7 @@ public class CompanyLocalServiceDBPartitionTest
 		}
 	}
 
-	private void _checkPartitionDoesNotExist(long companyId)
-		throws SQLException {
-
+	private void _checkPartitionDoesNotExist(long companyId) throws Exception {
 		List<String> partitionNames = new ArrayList<>();
 
 		DatabaseMetaData databaseMetaData = connection.getMetaData();
@@ -1061,7 +1100,7 @@ public class CompanyLocalServiceDBPartitionTest
 		}
 	}
 
-	private int _getDBPartitionsCount() throws SQLException {
+	private int _getDBPartitionsCount() throws Exception {
 		DatabaseMetaData databaseMetaData = connection.getMetaData();
 
 		try (ResultSet resultSet = databaseMetaData.getSchemas()) {
@@ -1079,7 +1118,7 @@ public class CompanyLocalServiceDBPartitionTest
 		throw new SQLException("At least one database partition is required");
 	}
 
-	private int _getRulesCount(String partitionName) throws SQLException {
+	private int _getRulesCount(String partitionName) throws Exception {
 		if (db.getDBType() != DBType.POSTGRESQL) {
 			return 0;
 		}
@@ -1161,10 +1200,16 @@ public class CompanyLocalServiceDBPartitionTest
 	private CounterFinder _counterFinder;
 
 	@Inject
+	private ObjectDefinitionLocalService _objectDefinitionLocalService;
+
+	@Inject
 	private PersistenceManager _persistenceManager;
 
 	@Inject
 	private Portal _portal;
+
+	@Inject
+	private PortletLocalService _portletLocalService;
 
 	@Inject
 	private RepositoryFactory _repositoryFactory;
@@ -1174,6 +1219,9 @@ public class CompanyLocalServiceDBPartitionTest
 
 	@Inject
 	private ResourceActionLocalService _resourceActionLocalService;
+
+	@Inject
+	private ResourcePermissionLocalService _resourcePermissionLocalService;
 
 	private ServiceRegistration<RepositoryDefiner> _serviceRegistration;
 

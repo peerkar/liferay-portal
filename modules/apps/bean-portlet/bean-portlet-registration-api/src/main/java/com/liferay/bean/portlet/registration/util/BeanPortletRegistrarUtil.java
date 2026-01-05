@@ -34,6 +34,7 @@ import com.liferay.bean.portlet.registration.portlet.util.RegistrationUtil;
 import com.liferay.bean.portlet.registration.portlet.xml.DisplayDescriptorParser;
 import com.liferay.bean.portlet.registration.portlet.xml.LiferayDescriptorParser;
 import com.liferay.bean.portlet.registration.portlet.xml.PortletDescriptorParser;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.log.Log;
@@ -157,16 +158,17 @@ public class BeanPortletRegistrarUtil {
 
 		for (Class<?> discoveredClass : discoveredClasses) {
 			for (Method method : discoveredClass.getMethods()) {
-				for (BeanPortletMethodType beanPortletMethodType :
-						BeanPortletMethodType.values()) {
+				discoveredBeanMethods.addAll(
+					TransformUtil.transformToList(
+						BeanPortletMethodType.values(),
+						beanPortletMethodType -> {
+							if (!beanPortletMethodType.isMatch(method)) {
+								return null;
+							}
 
-					if (beanPortletMethodType.isMatch(method)) {
-						discoveredBeanMethods.add(
-							new DiscoveredBeanMethod(
-								discoveredClass, beanPortletMethodType,
-								method));
-					}
-				}
+							return new DiscoveredBeanMethod(
+								discoveredClass, beanPortletMethodType, method);
+						}));
 			}
 		}
 
@@ -482,27 +484,26 @@ public class BeanPortletRegistrarUtil {
 
 		List<Event> events = new ArrayList<>(beanApp.getEvents());
 
-		for (EventDefinition eventDefinition : portletApplication.events()) {
-			String valueType = null;
+		events.addAll(
+			TransformUtil.transformToList(
+				portletApplication.events(),
+				eventDefinition -> {
+					String valueType = null;
 
-			Class<?> payloadClass = eventDefinition.payloadType();
+					Class<?> payloadClass = eventDefinition.payloadType();
 
-			if (payloadClass != null) {
-				valueType = payloadClass.getName();
-			}
+					if (payloadClass != null) {
+						valueType = payloadClass.getName();
+					}
 
-			List<QName> aliasQNames = new ArrayList<>();
-
-			for (PortletQName portletQName : eventDefinition.alias()) {
-				aliasQNames.add(PortletQNameUtil.toQName(portletQName));
-			}
-
-			events.add(
-				new EventImpl(
-					aliasQNames,
-					PortletQNameUtil.toQName(eventDefinition.qname()),
-					valueType));
-		}
+					return new EventImpl(
+						TransformUtil.transformToList(
+							eventDefinition.alias(),
+							portletQName -> PortletQNameUtil.toQName(
+								portletQName)),
+						PortletQNameUtil.toQName(eventDefinition.qname()),
+						valueType);
+				}));
 
 		Map<String, PublicRenderParameter> publicRenderParameters =
 			new HashMap<>();

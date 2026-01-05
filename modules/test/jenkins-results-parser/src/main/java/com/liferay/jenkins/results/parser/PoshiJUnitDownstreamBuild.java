@@ -17,7 +17,7 @@ import org.json.JSONObject;
 /**
  * @author Michael Hashimoto
  */
-public class PoshiJUnitDownstreamBuild extends BaseDownstreamBuild {
+public class PoshiJUnitDownstreamBuild extends JUnitDownstreamBuild {
 
 	@Override
 	public List<TestResult> getTestResults() {
@@ -78,9 +78,10 @@ public class PoshiJUnitDownstreamBuild extends BaseDownstreamBuild {
 	}
 
 	protected PoshiJUnitDownstreamBuild(
-		String url, TopLevelBuild topLevelBuild) {
+		String buildURL, DownstreamBuildReport cachedDownstreamBuildReport,
+		TopLevelBuild topLevelBuild) {
 
-		super(url, topLevelBuild);
+		super(buildURL, cachedDownstreamBuildReport, topLevelBuild);
 	}
 
 	private List<String> _getPoshiTestNames() {

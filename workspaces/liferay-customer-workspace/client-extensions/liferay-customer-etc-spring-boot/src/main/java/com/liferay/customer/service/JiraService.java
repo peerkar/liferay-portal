@@ -62,6 +62,18 @@ public class JiraService extends BaseService {
 		return (page - 1) * pageSize;
 	}
 
+	public String getAccountObjectKey(String externalKey) throws Exception {
+		JSONObject accountResponseJSONObject = _searchAccountByExternalKey(
+			externalKey);
+
+		JSONArray valuesJSONArray = accountResponseJSONObject.getJSONArray(
+			"values");
+
+		JSONObject accountJSONObject = valuesJSONArray.getJSONObject(0);
+
+		return accountJSONObject.getString("objectKey");
+	}
+
 	@Cacheable("affectedVersions")
 	public JSONArray getAffectedVersionsJSONArray() throws Exception {
 		try {
@@ -528,23 +540,18 @@ public class JiraService extends BaseService {
 			labelsJSONArray.put(removeLabelJSONObject);
 		}
 
-		JSONObject updateJSONObject = new JSONObject();
-
-		updateJSONObject.put("labels", labelsJSONArray);
-
-		if (Validator.isNotNull(businessEvents)) {
-			updateJSONObject.put(
-				_jiraSupportHCFieldBusinessEvent,
-				_transformADFTextArea(businessEvents));
-		}
-
-		JSONObject jsonObject = new JSONObject(
-		).put(
-			"update", updateJSONObject
-		);
-
 		put(
-			jsonObject.toString(),
+			new JSONObject(
+			).put(
+				"update",
+				new JSONObject(
+				).put(
+					_jiraSupportHCFieldBusinessEvent,
+					_transformADFTextArea(businessEvents)
+				).put(
+					"labels", labelsJSONArray
+				)
+			).toString(),
 			HashMapBuilder.put(
 				HttpHeaders.AUTHORIZATION, _getCredentials()
 			).put(

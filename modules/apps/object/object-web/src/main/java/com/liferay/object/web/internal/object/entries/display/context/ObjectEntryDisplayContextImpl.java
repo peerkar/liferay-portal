@@ -183,19 +183,30 @@ public class ObjectEntryDisplayContextImpl
 	}
 
 	public String getAPIURL() throws PortalException {
-		ObjectRelationship objectRelationship =
-			_objectRelationshipLocalService.fetchObjectRelationship(
-				ParamUtil.getLong(
-					_objectRequestHelper.getRequest(), "objectRelationshipId"));
-
 		String externalReferenceCode = null;
 
 		if (_objectEntry != null) {
 			externalReferenceCode = _objectEntry.getExternalReferenceCode();
 		}
 
+		ObjectRelationship objectRelationship =
+			_objectRelationshipLocalService.fetchObjectRelationship(
+				ParamUtil.getLong(
+					_objectRequestHelper.getRequest(), "objectRelationshipId"));
+
 		if ((objectRelationship == null) || !objectRelationship.isEdge()) {
-			return _getAPIURL(externalReferenceCode, getObjectDefinition1());
+			ObjectDefinition objectDefinition = getObjectDefinition1();
+
+			if (Objects.equals(
+					objectDefinition.getScope(),
+					ObjectDefinitionConstants.SCOPE_DEPOT)) {
+
+				ObjectEntry objectEntry = _getObjectEntry();
+
+				externalReferenceCode = objectEntry.getExternalReferenceCode();
+			}
+
+			return _getAPIURL(externalReferenceCode, objectDefinition);
 		}
 
 		String parentObjectEntryAPIURL = _getAPIURL(
@@ -822,8 +833,6 @@ public class ObjectEntryDisplayContextImpl
 
 		ddmFormRenderingContext.setContainerId("editObjectEntry");
 
-		Locale locale = _themeDisplay.getSiteDefaultLocale();
-
 		if (objectEntry != null) {
 			ddmFormRenderingContext.addProperty(
 				"objectEntryId", objectEntry.getId());
@@ -834,9 +843,6 @@ public class ObjectEntryDisplayContextImpl
 			if (ddmFormValues != null) {
 				ddmFormRenderingContext.setDDMFormValues(ddmFormValues);
 			}
-
-			locale = LocaleUtil.fromLanguageId(
-				objectEntry.getDefaultLanguageId());
 		}
 
 		ddmFormRenderingContext.setGroupId(_getGroupId());
@@ -845,7 +851,9 @@ public class ObjectEntryDisplayContextImpl
 		ddmFormRenderingContext.setHttpServletResponse(
 			PipingServletResponseFactory.createPipingServletResponse(
 				pageContext));
-		ddmFormRenderingContext.setLocale(locale);
+		ddmFormRenderingContext.setLocale(
+			getDefaultLocale(
+				_themeDisplay.getSiteDefaultLocale(), objectEntry));
 
 		LiferayPortletResponse liferayPortletResponse =
 			_objectRequestHelper.getLiferayPortletResponse();
@@ -926,6 +934,24 @@ public class ObjectEntryDisplayContextImpl
 					setShowLabel(true);
 				}
 			});
+	}
+
+	protected Locale getDefaultLocale(Locale locale, ObjectEntry objectEntry) {
+		if (objectEntry != null) {
+			return LocaleUtil.fromLanguageId(
+				objectEntry.getDefaultLanguageId());
+		}
+
+		ObjectDefinition objectDefinition = getObjectDefinition1();
+
+		if (Objects.equals(
+				objectDefinition.getScope(),
+				ObjectDefinitionConstants.SCOPE_COMPANY)) {
+
+			return LocaleUtil.getDefault();
+		}
+
+		return locale;
 	}
 
 	private void _addDDMFormField(
@@ -1019,6 +1045,9 @@ public class ObjectEntryDisplayContextImpl
 
 		if (Objects.equals(
 				objectDefinition.getScope(),
+				ObjectDefinitionConstants.SCOPE_DEPOT) ||
+			Objects.equals(
+				objectDefinition.getScope(),
 				ObjectDefinitionConstants.SCOPE_SITE)) {
 
 			apiURL += "/scopes/" + _themeDisplay.getScopeGroupId();
@@ -1086,12 +1115,8 @@ public class ObjectEntryDisplayContextImpl
 
 		DDMForm ddmForm = new DDMForm();
 
-		Locale defaultLocale = _objectRequestHelper.getDefaultLocale();
-
-		if (objectEntry != null) {
-			defaultLocale = LocaleUtil.fromLanguageId(
-				objectEntry.getDefaultLanguageId());
-		}
+		Locale defaultLocale = getDefaultLocale(
+			_objectRequestHelper.getDefaultLocale(), objectEntry);
 
 		ddmForm.addAvailableLocale(defaultLocale);
 		ddmForm.setDefaultLocale(defaultLocale);
@@ -1482,6 +1507,7 @@ public class ObjectEntryDisplayContextImpl
 
 		ObjectEntryManager objectEntryManager =
 			_objectEntryManagerRegistry.getObjectEntryManager(
+				objectDefinition.getCompanyId(),
 				objectDefinition.getStorageType());
 
 		String externalReferenceCode = ParamUtil.getString(

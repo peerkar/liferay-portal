@@ -12,7 +12,6 @@ import {accountSettingsPagesTest} from '../../../fixtures/accountSettingsPagesTe
 import {apiHelpersTest} from '../../../fixtures/apiHelpersTest';
 import {changeTrackingPagesTest} from '../../../fixtures/changeTrackingPagesTest';
 import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
-import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {isolatedSiteTest} from '../../../fixtures/isolatedSiteTest';
 import {pageEditorPagesTest} from '../../../fixtures/pageEditorPagesTest';
 import {pagesAdminPagesTest} from '../../../fixtures/pagesAdminPagesTest';
@@ -35,10 +34,7 @@ export const test = mergeTests(
 	journalPagesTest,
 	pagesAdminPagesTest,
 	pageEditorPagesTest,
-	workflowPagesTest,
-	featureFlagsTest({
-		'LPD-20131': {enabled: true},
-	})
+	workflowPagesTest
 );
 
 test('LPD-61649 Assert structure content fields are shown in the data tab', async ({
@@ -512,20 +508,20 @@ test('User time zone from theme display is applied to publication FDS', async ({
 	await test.step('Check date in different time zone', async () => {
 		await accountSettingsPage.goToDisplaySettings();
 
-		await accountSettingsPage.setTimeZone('Europe/Lisbon');
+		await accountSettingsPage.setTimeZone('Asia/Shanghai');
 
 		await changeTrackingPage.goto();
 
 		const utcTime = moment.utc();
 
-		// Add 1 hour offset to the UTC time
+		// Add 8 hour offset to the UTC time
 
-		const timeZoneTime = utcTime.add(1, 'hours');
+		const timeZoneTime = utcTime.add(8, 'hours');
 
 		await expect(
 			page
 				.locator('[data-id*="dateCreated"]')
-				.getByText(timeZoneTime.format('MMM D, YYYY, h:mm'))
+				.getByText(timeZoneTime.format('MMM D, YYYY, h'))
 				.first()
 		).toBeVisible();
 	});

@@ -7,7 +7,11 @@ package com.liferay.site.cms.site.initializer.internal.display.context;
 
 import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.document.library.configuration.DLConfiguration;
+import com.liferay.frontend.data.set.SystemFDSEntry;
+import com.liferay.frontend.data.set.action.FDSCreationMenu;
+import com.liferay.frontend.data.set.action.FDSItemsActions;
 import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.object.model.ObjectEntryFolder;
 import com.liferay.object.service.ObjectDefinitionService;
@@ -18,9 +22,8 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.HashMapBuilder;
-import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.site.cms.site.initializer.internal.util.ActionUtil;
+import com.liferay.translation.exporter.TranslationInfoItemFieldValuesExporterRegistry;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -40,26 +43,30 @@ public class ViewAllSectionDisplayContext extends BaseSectionDisplayContext {
 		ObjectDefinitionSettingLocalService objectDefinitionSettingLocalService,
 		ModelResourcePermission<ObjectEntryFolder>
 			objectEntryFolderModelResourcePermission,
-		Portal portal) {
+		Portal portal, FDSCreationMenu viewAllSectionFDSCreationMenu,
+		FDSItemsActions viewAllSectionFDSItemsActions,
+		SystemFDSEntry viewAllSectionSystemFDSEntry,
+		TranslationInfoItemFieldValuesExporterRegistry
+			translationInfoItemFieldValuesExporterRegistry) {
 
 		super(
 			depotEntryLocalService, dlConfiguration, groupLocalService,
 			httpServletRequest, language, objectDefinitionService,
 			objectDefinitionSettingLocalService,
-			objectEntryFolderModelResourcePermission, portal);
+			objectEntryFolderModelResourcePermission, portal,
+			translationInfoItemFieldValuesExporterRegistry);
 
 		_httpServletRequest = httpServletRequest;
+
+		_viewAllSectionFDSCreationMenu = viewAllSectionFDSCreationMenu;
+		_viewAllSectionFDSItemsActions = viewAllSectionFDSItemsActions;
+		_viewAllSectionSystemFDSEntry = viewAllSectionSystemFDSEntry;
 	}
 
 	@Override
-	public String getAPIURL() {
-		if (_httpServletRequest.getParameter("q") != null) {
-			return HttpComponentsUtil.addParameters(
-				super.getAPIURL(), "search",
-				_httpServletRequest.getParameter("q"));
-		}
-
-		return super.getAPIURL();
+	public String getAdditionalAPIURLParameters() {
+		return _viewAllSectionSystemFDSEntry.getAdditionalAPIURLParameters(
+			httpServletRequest);
 	}
 
 	@Override
@@ -77,14 +84,41 @@ public class ViewAllSectionDisplayContext extends BaseSectionDisplayContext {
 				StringPool.BLANK, "password-policies", "permissions",
 				LanguageUtil.get(_httpServletRequest, "permissions"), null,
 				null, null));
+		fdsBulkActionDropdownItems.add(
+			new FDSActionDropdownItem(
+				StringPool.BLANK, "password-policies",
+				"edit-default-permissions-by-role",
+				LanguageUtil.get(
+					httpServletRequest, "edit-default-permissions-by-role"),
+				null, null, null));
+		fdsBulkActionDropdownItems.add(
+			new FDSActionDropdownItem(
+				StringPool.BLANK, "password-policies",
+				"edit-permissions-by-role",
+				LanguageUtil.get(
+					httpServletRequest, "edit-permissions-by-role"),
+				null, null, null));
+		fdsBulkActionDropdownItems.add(
+			new FDSActionDropdownItem(
+				StringPool.BLANK, "password-policies",
+				"reset-to-default-permissions",
+				LanguageUtil.get(
+					httpServletRequest, "reset-to-default-permissions"),
+				null, null, null));
 
 		return fdsBulkActionDropdownItems;
 	}
 
 	@Override
-	public List<DropdownItem> getCreationMenuDropdownItems() {
-		return ActionUtil.getAllSectionCreationMenuDropdownItems(
+	public CreationMenu getCreationMenu() {
+		return _viewAllSectionFDSCreationMenu.getCreationMenu(
 			httpServletRequest);
+	}
+
+	@Override
+	public List<DropdownItem> getCreationMenuDropdownItems() {
+		throw new UnsupportedOperationException(
+			"ViewAllSectionCreationMenu must calculate this");
 	}
 
 	@Override
@@ -103,32 +137,19 @@ public class ViewAllSectionDisplayContext extends BaseSectionDisplayContext {
 
 	@Override
 	public List<FDSActionDropdownItem> getFDSActionDropdownItems() {
-		List<FDSActionDropdownItem> fdsActionDropdownItems =
-			super.getFDSActionDropdownItems();
-
-		fdsActionDropdownItems.add(
-			1,
-			new FDSActionDropdownItem(
-				"{embedded.file.link.href}", "download", "download",
-				LanguageUtil.get(httpServletRequest, "download"), "get", null,
-				"link"));
-		fdsActionDropdownItems.add(
-			2,
-			new FDSActionDropdownItem(
-				StringPool.BLANK, "info-circle-open", "show-details",
-				LanguageUtil.get(httpServletRequest, "show-details"), null,
-				null, "infoPanel"));
-
-		return fdsActionDropdownItems;
+		return _viewAllSectionFDSItemsActions.getFDSActionDropdownItems(
+			httpServletRequest);
 	}
 
 	@Override
 	protected String getCMSSectionFilterString() {
-		return appendStatus(
-			"cmsKind eq 'object' and (cmsSection eq 'contents' or cmsSection " +
-				"eq 'files')");
+		throw new UnsupportedOperationException(
+			"ViewAllSectionSystemFDSEntry must calculate this");
 	}
 
 	private final HttpServletRequest _httpServletRequest;
+	private final FDSCreationMenu _viewAllSectionFDSCreationMenu;
+	private final FDSItemsActions _viewAllSectionFDSItemsActions;
+	private final SystemFDSEntry _viewAllSectionSystemFDSEntry;
 
 }

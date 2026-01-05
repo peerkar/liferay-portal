@@ -68,6 +68,7 @@ import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Portal;
@@ -175,9 +176,13 @@ public class JournalTransformerTest {
 	@Test
 	public void testCreateTemplateNode() {
 		_testCreateTemplateNodeDocumentLibraryDDMFormField();
-		_testCreateTemplateNodeSelectTypeDDMFormFieldWithNoOptions();
-		_testCreateTemplateNodeSelectTypeDDMFormFieldWithOptions();
-		_testCreateTemplateNodeSelectTypeDDMFormFieldWithoutOptions();
+		_testCreateTemplateNodeNumericDDMFormFieldWithTrailingZero(
+			"2,3", LocaleUtil.SPAIN, "2,30");
+		_testCreateTemplateNodeNumericDDMFormFieldWithTrailingZero(
+			"2.3", LocaleUtil.US, "2.30");
+		_testCreateTemplateNodeMultipleSelectTypeDDMFormFieldWithOptions();
+		_testCreateTemplateNodeMultipleSelectTypeDDMFormFieldWithoutOptions();
+		_testCreateTemplateNodeSingleSelectTypeDDMFormFieldWithOptions();
 		_testCreateTemplateNodeTextDDMFormFieldWithHTML();
 		_testCreateTemplateNodeTextDDMFormFieldWithPlainText();
 	}
@@ -763,41 +768,7 @@ public class JournalTransformerTest {
 			templateNode.getAttribute("groupId"));
 	}
 
-	private void _testCreateTemplateNodeSelectTypeDDMFormFieldWithNoOptions() {
-		DDMFormField ddmFormField = new DDMFormField(
-			"name", DDMFormFieldTypeConstants.SELECT);
-
-		ddmFormField.setDataType("string");
-		ddmFormField.setMultiple(true);
-
-		Document document = SAXReaderUtil.createDocument();
-
-		Element rootElement = document.addElement("root");
-
-		rootElement.addElement("dynamic-content");
-
-		TemplateNode templateNode = ReflectionTestUtil.invoke(
-			_journalTransformer, "_createTemplateNode",
-			new Class<?>[] {
-				DDMFormField.class, Element.class, Locale.class,
-				ThemeDisplay.class
-			},
-			ddmFormField, rootElement, LocaleUtil.getDefault(),
-			new ThemeDisplay());
-
-		Assert.assertTrue(MapUtil.isEmpty(templateNode.getAttributes()));
-		Assert.assertEquals(StringPool.BLANK, templateNode.getData());
-		Assert.assertEquals("name", templateNode.getName());
-		Assert.assertEquals("select", templateNode.getType());
-
-		List<String> options = templateNode.getOptions();
-
-		Assert.assertEquals(options.toString(), 0, options.size());
-
-		Assert.assertTrue(MapUtil.isEmpty(templateNode.getOptionsMap()));
-	}
-
-	private void _testCreateTemplateNodeSelectTypeDDMFormFieldWithOptions() {
+	private void _testCreateTemplateNodeMultipleSelectTypeDDMFormFieldWithOptions() {
 		DDMFormField ddmFormField = new DDMFormField(
 			"name", DDMFormFieldTypeConstants.SELECT);
 
@@ -846,7 +817,7 @@ public class JournalTransformerTest {
 		Assert.assertTrue(MapUtil.isEmpty(templateNode.getOptionsMap()));
 	}
 
-	private void _testCreateTemplateNodeSelectTypeDDMFormFieldWithoutOptions() {
+	private void _testCreateTemplateNodeMultipleSelectTypeDDMFormFieldWithoutOptions() {
 		DDMFormField ddmFormField = new DDMFormField(
 			"name", DDMFormFieldTypeConstants.SELECT);
 
@@ -874,6 +845,80 @@ public class JournalTransformerTest {
 		Assert.assertEquals("select", templateNode.getType());
 		Assert.assertTrue(ListUtil.isEmpty(templateNode.getOptions()));
 		Assert.assertTrue(MapUtil.isEmpty(templateNode.getOptionsMap()));
+	}
+
+	private void _testCreateTemplateNodeNumericDDMFormFieldWithTrailingZero(
+		String expectedValue, Locale locale, String text) {
+
+		DDMFormField ddmFormField = new DDMFormField(
+			"numeric", DDMFormFieldTypeConstants.NUMERIC);
+
+		ddmFormField.setDataType("double");
+
+		Document document = SAXReaderUtil.createDocument();
+
+		Element rootElement = document.addElement("root");
+
+		Element dynamicContentElement = rootElement.addElement(
+			"dynamic-content");
+
+		dynamicContentElement.setText(text);
+
+		Locale originalThemeDisplayLocale =
+			LocaleThreadLocal.getThemeDisplayLocale();
+
+		try {
+			LocaleThreadLocal.setThemeDisplayLocale(locale);
+
+			TemplateNode templateNode = ReflectionTestUtil.invoke(
+				_journalTransformer, "_createTemplateNode",
+				new Class<?>[] {
+					DDMFormField.class, Element.class, Locale.class,
+					ThemeDisplay.class
+				},
+				ddmFormField, rootElement, locale, new ThemeDisplay());
+
+			Assert.assertEquals(expectedValue, templateNode.getData());
+		}
+		finally {
+			LocaleThreadLocal.setThemeDisplayLocale(originalThemeDisplayLocale);
+		}
+	}
+
+	private void _testCreateTemplateNodeSingleSelectTypeDDMFormFieldWithOptions() {
+		DDMFormField ddmFormField = new DDMFormField(
+			"name", DDMFormFieldTypeConstants.SELECT);
+
+		ddmFormField.setDataType("string");
+		ddmFormField.setMultiple(false);
+
+		Document document = SAXReaderUtil.createDocument();
+
+		Element rootElement = document.addElement("root");
+
+		Element dynamicContentElement = rootElement.addElement(
+			"dynamic-content");
+
+		Element optionElement = dynamicContentElement.addElement("option");
+
+		optionElement.setText("value");
+
+		TemplateNode templateNode = ReflectionTestUtil.invoke(
+			_journalTransformer, "_createTemplateNode",
+			new Class<?>[] {
+				DDMFormField.class, Element.class, Locale.class,
+				ThemeDisplay.class
+			},
+			ddmFormField, rootElement, LocaleUtil.getDefault(),
+			new ThemeDisplay());
+
+		Assert.assertTrue(MapUtil.isEmpty(templateNode.getAttributes()));
+		Assert.assertEquals("value", templateNode.getData());
+
+		List<String> options = templateNode.getOptions();
+
+		Assert.assertEquals(options.toString(), 1, options.size());
+		Assert.assertEquals("value", options.get(0));
 	}
 
 	private void _testCreateTemplateNodeTextDDMFormField(String text) {

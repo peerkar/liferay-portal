@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {ClayButtonWithIcon} from '@clayui/button';
 import ClayDropDown, {Align} from '@clayui/drop-down';
 import React, {useState} from 'react';
 import {KeyedMutator} from 'swr';
 
+import ButtonWithIcon from '../../components/ButtonWithIcon';
 import i18n from '../../i18n';
 import {Action} from '../../utils/constants';
 import DropDownAction from './DropDownAction';
@@ -42,7 +42,7 @@ const DropDown: React.FC<DropDownProps> = ({
 			onActiveChange={setActive}
 			trigger={
 				trigger || (
-					<ClayButtonWithIcon
+					<ButtonWithIcon
 						aria-label={i18n.translate('more-actions')}
 						className="page-link"
 						displayType="unstyled"

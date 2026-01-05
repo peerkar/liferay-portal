@@ -4,6 +4,7 @@
  */
 
 import {EventInfo} from '@ckeditor/ckeditor5-utils/dist/index.js';
+import {useControlledState} from '@clayui/shared';
 import {loadEditorClientExtensions} from 'frontend-js-web';
 import React, {useEffect, useRef, useState} from 'react';
 
@@ -20,6 +21,8 @@ const BaseEditor = ({
 	data,
 	disabled,
 	editor,
+	formInputEnabled = false,
+	formInputName,
 	onBlur,
 	onChange,
 	onFocus,
@@ -30,15 +33,24 @@ const BaseEditor = ({
 	data?: string;
 	disabled?: boolean;
 	editor: any;
+	formInputEnabled?: boolean;
+	formInputName?: string;
 	onBlur?: (event: EventInfo, editor: TEditor) => void;
 	onChange?: (event: EventInfo, editor: TEditor) => void;
 	onFocus?: (event: EventInfo, editor: TEditor) => void;
 	onReady?: (editor: TEditor) => void;
 }) => {
-	const [loading, setLoading] = useState(true);
-	const firstRenderRef = useRef(true);
-
 	const [editorConfig, setEditorConfig] = useState(config);
+	const [formInputValue, setFormInputValue] = useControlledState({
+		defaultName: 'data',
+		defaultValue: config?.initialData ?? '',
+		handleName: '',
+		name: 'data',
+		value: data,
+	});
+	const [loading, setLoading] = useState(true);
+
+	const firstRenderRef = useRef(true);
 
 	useEffect(() => {
 		if (firstRenderRef.current) {
@@ -83,10 +95,24 @@ const BaseEditor = ({
 				disabled={disabled}
 				editor={editor}
 				onBlur={onBlur}
-				onChange={onChange}
+				onChange={(event, editor) => {
+					setFormInputValue(editor.getData());
+
+					if (onChange) {
+						onChange(event, editor);
+					}
+				}}
 				onFocus={onFocus}
 				onReady={onReady}
 			/>
+
+			{formInputEnabled && formInputName && (
+				<input
+					name={formInputName}
+					type="hidden"
+					value={formInputValue ? String(formInputValue) : ''}
+				/>
+			)}
 		</div>
 	);
 };

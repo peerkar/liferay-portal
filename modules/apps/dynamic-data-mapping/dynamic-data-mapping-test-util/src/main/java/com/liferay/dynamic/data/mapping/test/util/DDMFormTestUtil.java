@@ -11,6 +11,7 @@ import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
 import com.liferay.dynamic.data.mapping.model.DDMFormRule;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -28,10 +29,8 @@ public class DDMFormTestUtil {
 	public static void addDDMFormFields(
 		DDMForm ddmForm, DDMFormField... ddmFormFieldsArray) {
 
-		List<DDMFormField> ddmFormFields = ddmForm.getDDMFormFields();
-
 		for (DDMFormField ddmFormField : ddmFormFieldsArray) {
-			ddmFormFields.add(ddmFormField);
+			ddmForm.addDDMFormField(ddmFormField);
 		}
 	}
 
@@ -73,10 +72,10 @@ public class DDMFormTestUtil {
 		List<DDMFormField> nestedDDMFormFields =
 			ddmFormField.getNestedDDMFormFields();
 
-		for (String fieldName : fieldNames) {
-			nestedDDMFormFields.add(
-				createLocalizableTextDDMFormField(fieldName));
-		}
+		nestedDDMFormFields.addAll(
+			TransformUtil.transformToList(
+				fieldNames,
+				fieldName -> createLocalizableTextDDMFormField(fieldName)));
 	}
 
 	public static void addTextDDMFormFields(

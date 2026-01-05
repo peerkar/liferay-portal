@@ -11,6 +11,7 @@ import {PropertyTypes} from '../utils/constants';
 const TYPE_ICON_MAP = {
 	[PropertyTypes.Behavior]: 'web-content',
 	[PropertyTypes.Boolean]: 'check',
+	[PropertyTypes.AccountDate]: 'date',
 	[PropertyTypes.AccountNumber]: 'integer',
 	[PropertyTypes.AccountText]: 'text',
 	[PropertyTypes.Date]: 'date',

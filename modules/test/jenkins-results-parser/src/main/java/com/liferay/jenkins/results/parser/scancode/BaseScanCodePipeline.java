@@ -420,7 +420,12 @@ public abstract class BaseScanCodePipeline implements ScanCodePipeline {
 		if (_cloudBucketURL != null) {
 			sb.append("\n*Cloud Bucket tar.gz:* ");
 			sb.append("<");
-			sb.append(_cloudBucketURL);
+
+			String fileName = _cloudBucketURL.substring(
+				_cloudBucketURL.lastIndexOf("/") + 1);
+
+			sb.append("https://scancode-results.liferay.com/inbox/" + fileName);
+
 			sb.append("|");
 			sb.append(_projectNameFromURL + ".tar.gz");
 			sb.append(">");

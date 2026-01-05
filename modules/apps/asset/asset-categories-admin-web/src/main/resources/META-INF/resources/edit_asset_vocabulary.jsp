@@ -41,6 +41,7 @@ renderResponse.setTitle((vocabulary == null) ? LanguageUtil.get(request, "add-vo
 
 	<liferay-frontend:edit-form-body>
 		<liferay-ui:error exception="<%= DuplicateVocabularyException.class %>" message="please-enter-a-unique-name" />
+		<liferay-ui:error exception="<%= DuplicateVocabularyExternalReferenceCodeException.class %>" message="please-enter-a-unique-external-reference-code" />
 		<liferay-ui:error exception="<%= VocabularyNameException.class %>" message="please-enter-a-valid-name" />
 
 		<aui:model-context bean="<%= vocabulary %>" model="<%= AssetVocabulary.class %>" />
@@ -51,6 +52,8 @@ renderResponse.setTitle((vocabulary == null) ? LanguageUtil.get(request, "add-vo
 			label="details"
 		>
 			<aui:input label="name" name="title" placeholder="name" />
+
+			<aui:input disabled='<%= (vocabulary != null) && !FeatureFlagManagerUtil.isEnabled("LPD-31228") %>' label="external-reference-code" name="externalReferenceCode" placeholder="external-reference-code" />
 
 			<aui:input name="description" placeholder="description" />
 

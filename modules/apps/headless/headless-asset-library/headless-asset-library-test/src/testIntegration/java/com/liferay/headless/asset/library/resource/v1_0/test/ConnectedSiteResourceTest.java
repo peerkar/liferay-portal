@@ -11,7 +11,6 @@ import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.test.rule.FeatureFlag;
-import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 
 import java.util.ArrayList;
@@ -25,9 +24,7 @@ import org.junit.runner.RunWith;
 /**
  * @author Roberto Díaz
  */
-@FeatureFlags(
-	featureFlags = {@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-32050")}
-)
+@FeatureFlag("LPD-17564")
 @RunWith(Arquillian.class)
 public class ConnectedSiteResourceTest
 	extends BaseConnectedSiteResourceTestCase {
@@ -58,73 +55,17 @@ public class ConnectedSiteResourceTest
 
 	@Override
 	protected ConnectedSite
-			testDeleteAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeConnectedSiteByExternalReferenceCodeConnectedSiteExternalReferenceCode_addConnectedSite()
-		throws Exception {
-
-		return connectedSiteResource.putAssetLibraryConnectedSite(
-			testDepotEntry.getGroupId(), _testConnectedSite.getId(),
-			new ConnectedSite());
-	}
-
-	@Override
-	protected String
-			testDeleteAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeConnectedSiteByExternalReferenceCodeConnectedSiteExternalReferenceCode_getAssetLibraryExternalReferenceCode()
-		throws Exception {
-
-		Group group = testDepotEntry.getGroup();
-
-		return group.getExternalReferenceCode();
-	}
-
-	@Override
-	protected ConnectedSite
 			testDeleteAssetLibraryConnectedSite_addConnectedSite()
 		throws Exception {
 
 		return connectedSiteResource.putAssetLibraryConnectedSite(
-			testDepotEntry.getGroupId(), _testConnectedSite.getId(),
-			new ConnectedSite());
-	}
-
-	@Override
-	protected Long testDeleteAssetLibraryConnectedSite_getAssetLibraryId() {
-		return testDepotEntry.getGroupId();
-	}
-
-	@Override
-	protected ConnectedSite
-			testGetAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeConnectedSiteByExternalReferenceCodeConnectedSiteExternalReferenceCode_addConnectedSite()
-		throws Exception {
-
-		return connectedSiteResource.putAssetLibraryConnectedSite(
-			testDepotEntry.getGroupId(), _testConnectedSite.getId(),
-			new ConnectedSite());
+			testDeleteAssetLibraryConnectedSite_getAssetLibraryExternalReferenceCode(),
+			_testConnectedSite.getExternalReferenceCode(), new ConnectedSite());
 	}
 
 	@Override
 	protected String
-			testGetAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeConnectedSiteByExternalReferenceCodeConnectedSiteExternalReferenceCode_getAssetLibraryExternalReferenceCode()
-		throws Exception {
-
-		Group group = testDepotEntry.getGroup();
-
-		return group.getExternalReferenceCode();
-	}
-
-	@Override
-	protected ConnectedSite
-			testGetAssetLibraryByExternalReferenceCodeConnectedSitesPage_addConnectedSite(
-				String externalReferenceCode, ConnectedSite connectedSite)
-		throws Exception {
-
-		return connectedSiteResource.putAssetLibraryConnectedSite(
-			testDepotEntry.getGroupId(), connectedSite.getId(),
-			new ConnectedSite());
-	}
-
-	@Override
-	protected String
-			testGetAssetLibraryByExternalReferenceCodeConnectedSitesPage_getExternalReferenceCode()
+			testDeleteAssetLibraryConnectedSite_getAssetLibraryExternalReferenceCode()
 		throws Exception {
 
 		Group group = testDepotEntry.getGroup();
@@ -137,37 +78,35 @@ public class ConnectedSiteResourceTest
 		throws Exception {
 
 		return connectedSiteResource.putAssetLibraryConnectedSite(
-			testDepotEntry.getGroupId(), _testConnectedSite.getId(),
-			new ConnectedSite());
+			testGetAssetLibraryConnectedSite_getAssetLibraryExternalReferenceCode(),
+			_testConnectedSite.getExternalReferenceCode(), new ConnectedSite());
 	}
 
 	@Override
-	protected Long testGetAssetLibraryConnectedSite_getAssetLibraryId()
+	protected String
+			testGetAssetLibraryConnectedSite_getAssetLibraryExternalReferenceCode()
 		throws Exception {
 
-		return testDepotEntry.getGroupId();
+		Group group = testDepotEntry.getGroup();
+
+		return group.getExternalReferenceCode();
 	}
 
 	@Override
 	protected ConnectedSite
 			testGetAssetLibraryConnectedSitesPage_addConnectedSite(
-				Long assetLibraryId, ConnectedSite connectedSite)
+				String assetLibraryExternalReferenceCode,
+				ConnectedSite connectedSite)
 		throws Exception {
 
 		return connectedSiteResource.putAssetLibraryConnectedSite(
-			assetLibraryId, connectedSite.getId(), new ConnectedSite());
-	}
-
-	@Override
-	protected ConnectedSite
-		testPutAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeConnectedSiteByExternalReferenceCodeConnectedSiteExternalReferenceCode_addConnectedSite() {
-
-		return _testConnectedSite;
+			assetLibraryExternalReferenceCode,
+			connectedSite.getExternalReferenceCode(), connectedSite);
 	}
 
 	@Override
 	protected String
-			testPutAssetLibraryByExternalReferenceCodeAssetLibraryExternalReferenceCodeConnectedSiteByExternalReferenceCodeConnectedSiteExternalReferenceCode_getAssetLibraryExternalReferenceCode()
+			testGetAssetLibraryConnectedSitesPage_getAssetLibraryExternalReferenceCode()
 		throws Exception {
 
 		Group group = testDepotEntry.getGroup();
@@ -183,8 +122,13 @@ public class ConnectedSiteResourceTest
 	}
 
 	@Override
-	protected Long testPutAssetLibraryConnectedSite_getAssetLibraryId() {
-		return testDepotEntry.getGroupId();
+	protected String
+			testPutAssetLibraryConnectedSite_getAssetLibraryExternalReferenceCode()
+		throws Exception {
+
+		Group group = testDepotEntry.getGroup();
+
+		return group.getExternalReferenceCode();
 	}
 
 	private ConnectedSite _addConnectedSite() throws Exception {

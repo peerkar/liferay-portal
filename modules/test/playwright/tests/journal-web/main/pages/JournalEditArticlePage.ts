@@ -28,12 +28,12 @@ export class JournalEditArticlePage {
 	readonly historyButton: Locator;
 	readonly inputPermissionsViewRole: Locator;
 	readonly journalPage: JournalPage;
+	readonly previewButton: Locator;
 	readonly propertiesTab: Locator;
 	readonly publishDropdown: Locator;
 	readonly publishButton: Locator;
 	readonly redoButton: Locator;
 	readonly selectButton: Locator;
-	readonly selectAndConfirmPublishButton: Locator;
 	readonly titleInput: Locator;
 	readonly undoButton: Locator;
 	readonly alertErrorMessage: Locator;
@@ -65,19 +65,17 @@ export class JournalEditArticlePage {
 			'#_com_liferay_journal_web_portlet_JournalPortlet_inputPermissionsViewRole'
 		);
 		this.journalPage = new JournalPage(page);
+		this.previewButton = page.getByLabel('A draft will be saved before');
 		this.propertiesTab = page.getByRole('tab', {
 			name: /properties|propriétés/i,
 		});
 		this.publishDropdown = page.getByRole('button', {
-			name: /select and confirm publish settings|sélectionnez et confirmez les/i,
+			name: /publish options|options de publication/i,
 		});
-		this.publishButton = page.locator(
-			'#_com_liferay_journal_web_portlet_JournalPortlet_publishButton'
+		this.publishButton = page.getByTitle(
+			/publish article|submit article for workflow|publier article|envoyer article pour le flux de travail/i
 		);
 		this.redoButton = page.getByTitle('Redo', {exact: true});
-		this.selectAndConfirmPublishButton = page.getByLabel(
-			'Select and Confirm Publish Settings'
-		);
 		this.selectButton = page.getByRole('button', {
 			exact: true,
 			name: 'Select',
@@ -115,14 +113,7 @@ export class JournalEditArticlePage {
 					? 'Schedule Publication and Submit for Workflow'
 					: 'Schedule Publication',
 			}),
-			trigger: this.page.getByLabel(
-				workflow
-					? 'Select and Confirm Submit for Workflow Settings'
-					: 'Select and Confirm Publish Settings',
-				{
-					exact: true,
-				}
-			),
+			trigger: this.publishDropdown,
 		});
 
 		if (expirationDate) {
@@ -374,13 +365,7 @@ export class JournalEditArticlePage {
 		viewableBy?: 'Site Members' | 'Owner'
 	) {
 		if (existingArticle) {
-			await clickAndExpectToBeVisible({
-				autoClick: true,
-				target: this.page.getByRole('menuitem', {
-					name: /publish|publier/i,
-				}),
-				trigger: this.publishDropdown,
-			});
+			await this.publishButton.click();
 
 			return;
 		}
@@ -462,14 +447,7 @@ export class JournalEditArticlePage {
 					? 'Schedule Publication and Submit for Workflow'
 					: 'Schedule Publication',
 			}),
-			trigger: this.page.getByLabel(
-				workflow
-					? 'Select and Confirm Submit for Workflow Settings'
-					: 'Select and Confirm Publish Settings',
-				{
-					exact: true,
-				}
-			),
+			trigger: this.publishDropdown,
 		});
 
 		await this.page.getByPlaceholder('YYYY-MM-DD HH:mm').fill(publishDate);
@@ -587,9 +565,7 @@ export class JournalEditArticlePage {
 				target: this.page.getByRole('menuitem', {
 					name: /submit for workflow with permissions/i,
 				}),
-				trigger: this.page.getByRole('button', {
-					name: /select and confirm submit for workflow settings/i,
-				}),
+				trigger: this.publishDropdown,
 			});
 
 			await expect(this.page.getByLabel('Viewable By')).toBeVisible({

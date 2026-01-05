@@ -30,7 +30,6 @@ import com.liferay.portal.kernel.trash.TrashHandler;
 import com.liferay.portal.kernel.trash.TrashHandlerRegistryUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.test.rule.FeatureFlag;
-import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
@@ -50,9 +49,7 @@ import org.junit.runner.RunWith;
 /**
  * @author Petteri Karttunen
  */
-@FeatureFlags(
-	featureFlags = {@FeatureFlag("LPD-17564"), @FeatureFlag("LPD-32050")}
-)
+@FeatureFlag("LPD-17564")
 @RunWith(Arquillian.class)
 public class ObjectEntryTrashHandlerTest extends BaseTrashHandlerTestCase {
 
@@ -106,6 +103,24 @@ public class ObjectEntryTrashHandlerTest extends BaseTrashHandlerTestCase {
 			ServiceContextTestUtil.getServiceContext(group.getGroupId()));
 
 		_testAddDeletionSystemEvent(group.getGroupId(), (ObjectEntry)baseModel);
+	}
+
+	@Override
+	@Test
+	public void testMoveBaseModelToTrash() throws Exception {
+		super.testMoveBaseModelToTrash();
+
+		BaseModel<?> baseModel1 = addBaseModel(
+			group,
+			ServiceContextTestUtil.getServiceContext(group.getGroupId()));
+
+		moveBaseModelToTrash((Long)baseModel1.getPrimaryKeyObj());
+
+		TrashHandler trashHandler = TrashHandlerRegistryUtil.getTrashHandler(
+			getBaseModelClassName());
+
+		Assert.assertTrue(
+			trashHandler.isInTrash((Long)baseModel1.getPrimaryKeyObj()));
 	}
 
 	@Override

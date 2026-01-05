@@ -41,8 +41,6 @@ const test = mergeTests(
 	featureFlagsTest({
 		'LPD-11235': {enabled: true},
 		'LPD-17564': {enabled: true},
-		'LPD-21926': {enabled: true},
-		'LPD-32050': {enabled: true},
 		'LPD-60546': {enabled: true},
 		'LPS-178052': {enabled: true},
 	}),
@@ -473,10 +471,18 @@ test.describe('Edit mode form errors', () => {
 				key: 'INPUTS-submit-button',
 			});
 
+			const lastNextButton = getFragmentDefinition({
+				fragmentConfig: {
+					type: 'next',
+				},
+				id: getRandomString(),
+				key: 'INPUTS-submit-button',
+			});
+
 			const formDefinition = getFormContainerDefinition({
 				id: getRandomString(),
 				objectDefinitionClassName,
-				steps: [[nextButton], [previousButton], [], [nextButton]],
+				steps: [[nextButton], [previousButton], [], [lastNextButton]],
 			});
 
 			const layout = await apiHelpers.headlessDelivery.createSitePage({
@@ -547,7 +553,8 @@ test.describe('Edit mode form errors', () => {
 
 			const layout = await apiHelpers.jsonWebServicesLayout.addLayout({
 				groupId: pageManagementSite.id,
-				masterLayoutPlid: masterPage.plid,
+				masterLayoutPageTemplateEntryERC:
+					masterPage.externalReferenceCode,
 				options: {type: 'content'},
 				title: getRandomString(),
 			});

@@ -28,8 +28,6 @@ const test = mergeTests(
 	featureFlagsTest({
 		'LPD-11235': {enabled: true},
 		'LPD-17564': {enabled: true},
-		'LPD-21926': {enabled: true},
-		'LPD-32050': {enabled: true},
 		'LPD-60546': {enabled: true},
 		'LPS-178052': {enabled: true},
 	}),
@@ -408,5 +406,69 @@ test(
 			expect(updatedObjectEntry.text).toBe('300');
 			expect(updatedObjectEntry.status.label).toBe('approved');
 		});
+	}
+);
+
+test(
+	'Submit button is disabled when clicking it',
+	{tag: '@LPD-71271'},
+	async ({apiHelpers, page, pageEditorPage, pageManagementSite}) => {
+		const formId = getRandomString();
+
+		const formDefinition = getFormContainerDefinition({
+			id: formId,
+		});
+
+		const layout = await apiHelpers.headlessDelivery.createSitePage({
+			pageDefinition: getPageDefinition([formDefinition]),
+			siteId: pageManagementSite.id,
+			title: getRandomString(),
+		});
+
+		await pageEditorPage.goto(layout, pageManagementSite.friendlyUrlPath);
+
+		await pageEditorPage.mapFormFragment(formId, 'Lemon', ['Lemon Size']);
+
+		await pageEditorPage.publishPage();
+
+		// Go to view mode of page
+
+		await page.goto(
+			`/web${pageManagementSite.friendlyUrlPath}${layout.friendlyUrlPath}`
+		);
+
+		await page.getByText('Submit').waitFor();
+
+		// Emulate slow network conditions
+
+		await page.evaluate(() => {
+			const form = document.querySelector<HTMLFormElement>(
+				'.lfr-layout-structure-item-form'
+			);
+
+			if (!form) {
+				return;
+			}
+
+			form.addEventListener(
+				'submit',
+				(event) => {
+					event.preventDefault();
+
+					setTimeout(() => form.submit(), 5000);
+				},
+				{once: true}
+			);
+		});
+
+		// Submit form and check button is disabled
+
+		await expect(async () => {
+			await page.getByText('Submit').click({timeout: 1000});
+
+			await expect(page.getByText('Submit')).toHaveClass(/disabled/, {
+				timeout: 1000,
+			});
+		}).toPass();
 	}
 );

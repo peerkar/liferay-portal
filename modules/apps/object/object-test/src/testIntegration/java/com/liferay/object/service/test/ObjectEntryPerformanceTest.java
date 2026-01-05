@@ -105,7 +105,6 @@ public class ObjectEntryPerformanceTest {
 	public void testGetObjectEntries() throws Exception {
 		_customObjectDefinition =
 			ObjectDefinitionTestUtil.addCustomObjectDefinition(
-				false,
 				Collections.singletonList(
 					ObjectFieldUtil.createObjectField(
 						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
@@ -119,6 +118,7 @@ public class ObjectEntryPerformanceTest {
 
 		ObjectEntryManager objectEntryManager =
 			_objectEntryManagerRegistry.getObjectEntryManager(
+				_customObjectDefinition.getCompanyId(),
 				_customObjectDefinition.getStorageType());
 
 		DTOConverterContext dtoConverterContext =

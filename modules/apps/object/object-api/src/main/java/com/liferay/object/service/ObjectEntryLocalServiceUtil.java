@@ -392,6 +392,13 @@ public class ObjectEntryLocalServiceUtil {
 		return getService().getIndexableActionableDynamicQuery();
 	}
 
+	public static Map<String, Serializable> getIndexedValues(
+			ObjectEntry objectEntry)
+		throws PortalException {
+
+		return getService().getIndexedValues(objectEntry);
+	}
+
 	public static List<ObjectEntry> getManyToManyObjectEntries(
 			long groupId, long objectRelationshipId, long primaryKey,
 			boolean related, boolean reverse, String search, int start, int end)
@@ -500,13 +507,13 @@ public class ObjectEntryLocalServiceUtil {
 	}
 
 	public static long getObjectEntriesCount(
-			long groupId,
+			long groupId, String languageId,
 			com.liferay.object.model.ObjectDefinition objectDefinition,
 			com.liferay.petra.sql.dsl.expression.Predicate predicate)
 		throws PortalException {
 
 		return getService().getObjectEntriesCount(
-			groupId, objectDefinition, predicate);
+			groupId, languageId, objectDefinition, predicate);
 	}
 
 	/**
@@ -799,6 +806,13 @@ public class ObjectEntryLocalServiceUtil {
 		getService().updateAsset(
 			userId, objectEntry, assetCategoryIds, assetTagNames,
 			assetLinkEntryIds, priority);
+	}
+
+	public static ObjectEntry updateModifiedDate(
+			long objectEntryId, java.util.Date modifiedDate)
+		throws PortalException {
+
+		return getService().updateModifiedDate(objectEntryId, modifiedDate);
 	}
 
 	public static ObjectEntry updateObjectEntry(

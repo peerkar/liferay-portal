@@ -6,12 +6,21 @@
 import {expect, mergeTests} from '@playwright/test';
 import fs from 'fs/promises';
 
+import {OBJECT_ENTRY_FOLDER_CLASS_NAME} from '../../../../../apps/site/site-cms-site-initializer/src/main/resources/META-INF/resources/js/common/utils/constants';
 import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
 import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import getRandomString from '../../../utils/getRandomString';
+import performLogin, {
+	performLoginViaApi,
+	performLogout,
+	userData,
+} from '../../../utils/performLogin';
 import {PORTLET_URLS} from '../../../utils/portletUrls';
 import {cmsPagesTest} from './fixtures/cmsPagesTest';
+
+const validImageFileBase64 =
+	'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';
 
 const test = mergeTests(
 	cmsPagesTest,
@@ -20,6 +29,172 @@ const test = mergeTests(
 		'LPD-17564': {enabled: true},
 	}),
 	loginTest()
+);
+
+test(
+	'Opens in Gallery View by default',
+	{tag: '@LPD-68467'},
+	async ({apiHelpers, assetsPage, page}) => {
+		const applicationName = 'cms/basic-documents';
+		const fileName = getRandomString();
+
+		const objectEntry = await apiHelpers.objectEntry.postObjectEntry(
+			{
+				file: {
+					fileBase64: validImageFileBase64,
+					name: `file_${fileName}.png`,
+				},
+				objectEntryFolderExternalReferenceCode: 'L_FILES',
+				title: `title ${fileName}`,
+			},
+			applicationName,
+			'Default'
+		);
+
+		try {
+			apiHelpers.data.push({
+				id: objectEntry.file.id,
+				type: 'document',
+			});
+
+			await assetsPage.gotoFiles();
+
+			await expect(
+				page.getByRole('combobox', {name: 'Gallery View Selected'})
+			).toBeVisible();
+
+			await expect(
+				assetsPage.galleryPreview.getByRole('img', {
+					name: `file_${fileName}.png`,
+				})
+			).toBeVisible();
+
+			await expect(
+				assetsPage.galleryNavigation.getByRole('button', {
+					name: 'Previous',
+				})
+			).toBeDisabled();
+
+			await expect(
+				assetsPage.galleryNavigation.getByRole('button', {name: 'Next'})
+			).toBeDisabled();
+
+			await expect(
+				assetsPage.galleryThumbnails.locator('.card')
+			).toHaveCount(1);
+		}
+		finally {
+			await apiHelpers.objectEntry.deleteObjectEntry(
+				applicationName,
+				String(objectEntry.id)
+			);
+		}
+	}
+);
+
+test(
+	'Navigates between items in Gallery View',
+	{tag: '@LPD-68467'},
+	async ({apiHelpers, assetsPage}) => {
+		const applicationName = 'cms/basic-documents';
+
+		const image1 = `image_${getRandomString()}`;
+		const image2 = `image_${getRandomString()}`;
+		const folder = `folder_${getRandomString()}`;
+
+		const objectEntry1 = await apiHelpers.objectEntry.postObjectEntry(
+			{
+				file: {
+					fileBase64: validImageFileBase64,
+					name: `${image1}.png`,
+				},
+				objectEntryFolderExternalReferenceCode: 'L_FILES',
+				title: `title ${image1}`,
+			},
+			applicationName,
+			'Default'
+		);
+
+		const objectEntry2 = await apiHelpers.objectEntry.postObjectEntry(
+			{
+				file: {
+					fileBase64: validImageFileBase64,
+					name: `${image2}.png`,
+				},
+				objectEntryFolderExternalReferenceCode: 'L_FILES',
+				title: `title ${image1}`,
+			},
+			applicationName,
+			'Default'
+		);
+
+		const folderData =
+			await apiHelpers.objectFolder.createObjectEntryFolder({
+				scopeKey: 'Default',
+				title: folder,
+			});
+
+		try {
+			apiHelpers.data.push({
+				id: objectEntry1.file.id,
+				type: 'document',
+			});
+
+			apiHelpers.data.push({
+				id: objectEntry2.file.id,
+				type: 'document',
+			});
+
+			await assetsPage.gotoFiles();
+
+			await expect(
+				assetsPage.galleryPreview.getByRole('img', {
+					name: `${image1}.png`,
+				})
+			).toBeVisible();
+
+			await assetsPage.navigateByGalleryArrows('Next');
+
+			await expect(
+				assetsPage.galleryPreview.getByRole('img', {
+					name: `${image2}.png`,
+				})
+			).toBeVisible();
+
+			await assetsPage.navigateByGalleryArrows('Next');
+
+			await expect(
+				assetsPage.galleryPreview.getByText(folder)
+			).toBeVisible();
+
+			await assetsPage.navigateByGalleryArrows('Next');
+
+			await expect(
+				assetsPage.galleryPreview.getByRole('img', {
+					name: `${image1}.png`,
+				})
+			).toBeVisible();
+
+			await assetsPage.navigateByGalleryArrows('Previous');
+
+			await expect(
+				assetsPage.galleryPreview.getByText(folder)
+			).toBeVisible();
+		}
+		finally {
+			await apiHelpers.objectEntry.deleteObjectEntry(
+				applicationName,
+				String(objectEntry1.id)
+			);
+			await apiHelpers.objectEntry.deleteObjectEntry(
+				applicationName,
+				String(objectEntry2.id)
+			);
+			await apiHelpers.objectFolder.deleteObjectEntryFolder(
+				folderData.id
+			);
+		}
+	}
 );
 
 test(
@@ -47,10 +222,9 @@ test(
 			});
 
 			await assetsPage.gotoFiles();
-			await assetsPage.changeVisualizationMode('Table');
 
 			const downloadPromise = page.waitForEvent('download');
-			await assetsPage.execItemAction({
+			await assetsPage.execCardItemAction({
 				action: 'Download',
 				filter: objectEntry.title,
 			});
@@ -111,7 +285,7 @@ test(
 		await test.step('Remove draft file created', async () => {
 			await assetsPage.gotoFiles();
 
-			await assetsPage.execItemAction({
+			await assetsPage.execCardItemAction({
 				action: 'Delete',
 				filter: 'Untitled Asset',
 			});
@@ -154,7 +328,7 @@ test(
 		await test.step('Check the Space selector dialog', async () => {
 			await page.getByRole('dialog').waitFor();
 
-			await page.getByLabel('SpaceRequired').click();
+			await page.getByLabel('SpaceMandatory').click();
 
 			await page.getByRole('option', {name: assetLibraryName}).click();
 
@@ -211,7 +385,7 @@ test(
 		await test.step('Navigate into the folder', async () => {
 			const className =
 				await apiHelpers.jsonWebServicesClassName.fetchClassName(
-					'com.liferay.object.model.ObjectEntryFolder'
+					OBJECT_ENTRY_FOLDER_CLASS_NAME
 				);
 
 			await page.goto(
@@ -269,7 +443,7 @@ test(
 
 			await assetsPage.gotoFiles();
 
-			await assetsPage.execItemAction({
+			await assetsPage.execCardItemAction({
 				action: 'View',
 				filter: objectEntry.title,
 			});
@@ -281,7 +455,9 @@ test(
 				page.getByRole('link', {name: 'Download'})
 			).toBeVisible();
 
-			await expect(page.getByText('No preview available')).toBeVisible();
+			await expect(
+				assetsPage.modal.body.getByText('No preview available')
+			).toBeVisible();
 		}
 		finally {
 			await apiHelpers.objectEntry.deleteObjectEntry(
@@ -347,7 +523,7 @@ test(
 
 			await assetsPage.gotoFiles();
 
-			await assetsPage.execItemAction({
+			await assetsPage.execCardItemAction({
 				action: 'View',
 				filter: image2,
 			});
@@ -360,7 +536,7 @@ test(
 				await expect(
 					page.locator('.modal-title').getByText(image2)
 				).toBeVisible();
-				await page.getByLabel('Next').click();
+				await assetsPage.modal.body.getByLabel('Next').click();
 				await expect(
 					page.locator('.modal-title').getByText(image1)
 				).toBeVisible();
@@ -394,7 +570,9 @@ test(
 				);
 
 				const commentText = getRandomString();
-				await page.getByRole('paragraph').fill(commentText);
+				await assetsPage.modal.body
+					.getByRole('paragraph')
+					.fill(commentText);
 				await page.getByRole('button', {name: 'Save'}).click();
 
 				await expect(page.getByText(commentText)).toBeVisible();
@@ -458,7 +636,90 @@ test(
 			);
 
 			await page.getByLabel('Back').click();
-			await assetsPage.changeVisualizationMode('Table');
+			await assetsPage.changeVisualizationMode('Gallery');
+		}
+	}
+);
+
+test(
+	'Space Member can preview image files',
+	{tag: '@LPD-70422'},
+	async ({apiHelpers, assetsPage, page, spaceSummaryPage}) => {
+		const applicationName = 'cms/basic-documents';
+		const fileTitle = getRandomString();
+		const spaceName = 'Default';
+
+		const objectEntry = await apiHelpers.objectEntry.postObjectEntry(
+			{
+				file: {
+					fileBase64: validImageFileBase64,
+					name: `file_${fileTitle}.png`,
+				},
+				objectEntryFolderExternalReferenceCode: 'L_FILES',
+				title: fileTitle,
+			},
+			applicationName,
+			spaceName
+		);
+
+		try {
+			apiHelpers.data.push({
+				id: objectEntry.file.id,
+				type: 'document',
+			});
+
+			let user;
+
+			await test.step('Create an user and add to the Space', async () => {
+				user = await apiHelpers.headlessAdminUser.postUserAccount();
+
+				userData[user.alternateName] = {
+					name: user.givenName,
+					password: 'test',
+					surname: user.familyName,
+				};
+
+				await spaceSummaryPage.goto(spaceName);
+
+				await spaceSummaryPage.addUserOrUserGroup(user.name, 'users');
+			});
+
+			await test.step('Login as a space member and go to Files tab', async () => {
+				await performLogout(page);
+
+				await performLogin(page, user.alternateName);
+
+				await assetsPage.gotoFiles();
+			});
+
+			await test.step('Check that a space member can preview image files', async () => {
+				await assetsPage.changeVisualizationMode('Table');
+
+				await assetsPage.execItemAction({
+					action: 'View',
+					filter: objectEntry.title,
+				});
+
+				await expect(page.getByRole('dialog')).toBeVisible();
+
+				await expect(page.getByText(fileTitle)).toBeVisible();
+
+				const imgageSrc = await page
+					.getByRole('img', {name: fileTitle})
+					.getAttribute('src');
+
+				expect(imgageSrc.includes(fileTitle)).toBeTruthy();
+			});
+		}
+		finally {
+			await performLogout(page);
+
+			await performLoginViaApi({page, screenName: 'test'});
+
+			await apiHelpers.objectEntry.deleteObjectEntry(
+				applicationName,
+				String(objectEntry.id)
+			);
 		}
 	}
 );

@@ -18,12 +18,10 @@
 		<field name="errorStacktrace" type="String">
 			<hint-collection name="CLOB" />
 		</field>
-		<field name="modelName" type="String">
+		<field name="modelNameLanguageKey" type="String">
 			<hint name="max-length">255</hint>
 		</field>
 		<field name="origin" type="int" />
-		<field name="scope" type="String" />
-		<field name="scopeKey" type="String" />
 		<field name="type" type="int" />
 		<field name="status" type="int" />
 	</model>

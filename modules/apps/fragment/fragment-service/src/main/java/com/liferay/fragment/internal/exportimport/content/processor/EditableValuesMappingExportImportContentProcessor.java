@@ -14,6 +14,8 @@ import com.liferay.exportimport.content.processor.ExportImportContentProcessor;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.fragment.entry.processor.constants.FragmentEntryProcessorConstants;
+import com.liferay.fragment.util.exportimport.content.processor.ExportImportContentProcessorUtil;
+import com.liferay.info.item.ERCInfoItemIdentifier;
 import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
@@ -256,11 +258,14 @@ public class EditableValuesMappingExportImportContentProcessor
 		long classPK = editableJSONObject.getLong("classPK");
 		String collectionFieldId = editableJSONObject.getString(
 			"collectionFieldId", null);
+		String externalReferenceCode = editableJSONObject.getString(
+			"externalReferenceCode", null);
 		String mappedField = editableJSONObject.getString("mappedField", null);
 
 		if (((classNameId == 0) || (classPK == 0)) &&
 			Validator.isNull(collectionFieldId) &&
-			Validator.isNull(mappedField)) {
+			Validator.isNull(mappedField) &&
+			Validator.isNull(externalReferenceCode)) {
 
 			return;
 		}
@@ -287,16 +292,34 @@ public class EditableValuesMappingExportImportContentProcessor
 				mappedField, portletDataContext, stagedModel);
 		}
 
-		if ((classNameId == 0) || (classPK == 0)) {
+		String className = editableJSONObject.getString("className", null);
+
+		if (classNameId > 0) {
+			className = _portal.fetchClassName(classNameId);
+
+			editableJSONObject.put("className", className);
+		}
+
+		if (Validator.isNull(className) ||
+			((classPK <= 0) && Validator.isNull(externalReferenceCode))) {
+
 			return;
 		}
 
-		String className = _portal.fetchClassName(classNameId);
+		if (classPK > 0) {
+			ExportImportContentProcessorUtil.exportContentReference(
+				className, classPK, exportReferencedContent,
+				_infoItemServiceRegistry, portletDataContext, stagedModel);
 
-		editableJSONObject.put("className", className);
+			return;
+		}
 
 		ExportImportContentProcessorUtil.exportContentReference(
-			className, classPK, exportReferencedContent,
+			className, exportReferencedContent,
+			new ERCInfoItemIdentifier(
+				externalReferenceCode,
+				editableJSONObject.getString(
+					"scopeExternalReferenceCode", null)),
 			_infoItemServiceRegistry, portletDataContext, stagedModel);
 	}
 

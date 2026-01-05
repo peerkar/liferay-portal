@@ -7,8 +7,27 @@ package com.liferay.frontend.data.set.internal.serializer;
 
 import com.liferay.frontend.data.set.internal.url.FDSAPIURLBuilder;
 import com.liferay.frontend.data.set.url.FDSAPIURLResolverRegistry;
+import com.liferay.object.entry.util.ObjectEntryThreadLocal;
+import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.rest.dto.v1_0.ObjectEntry;
+import com.liferay.object.rest.manager.v1_0.DefaultObjectEntryManagerProvider;
+import com.liferay.object.rest.manager.v1_0.ObjectEntryManager;
+import com.liferay.object.rest.manager.v1_0.ObjectEntryManagerRegistry;
+import com.liferay.object.service.ObjectDefinitionLocalService;
+import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
+import com.liferay.portal.vulcan.pagination.Page;
 
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.util.Collection;
+import java.util.Map;
 
 import org.osgi.service.component.annotations.Reference;
 
@@ -26,7 +45,71 @@ public abstract class BaseFDSSerializer {
 			restEndpoint, restSchema);
 	}
 
+	protected JSONArray serializeSnapshots(
+			String fdsName, HttpServletRequest httpServletRequest,
+			ObjectDefinitionLocalService objectDefinitionLocalService,
+			ObjectEntryManagerRegistry objectEntryManagerRegistry)
+		throws Exception {
+
+		ObjectEntryThreadLocal.setSkipObjectEntryResourcePermission(true);
+
+		try {
+			ObjectDefinition objectDefinition =
+				objectDefinitionLocalService.
+					fetchObjectDefinitionByExternalReferenceCode(
+						"L_DATA_SET_SNAPSHOT",
+						PortalUtil.getCompanyId(httpServletRequest));
+
+			ObjectEntryManager objectEntryManager =
+				DefaultObjectEntryManagerProvider.provide(
+					objectEntryManagerRegistry.getObjectEntryManager(
+						objectDefinition.getCompanyId(),
+						objectDefinition.getStorageType()));
+
+			Page<ObjectEntry> page = objectEntryManager.getObjectEntries(
+				PortalUtil.getCompanyId(httpServletRequest), objectDefinition,
+				null, null,
+				new DefaultDTOConverterContext(
+					false, null, null, null, null,
+					LocaleUtil.getMostRelevantLocale(), null, null),
+				StringBundler.concat(
+					"(fdsName eq '", fdsName, "' and creatorId eq ",
+					PortalUtil.getUserId(httpServletRequest), ")"),
+				null, null, null);
+
+			Collection<ObjectEntry> objectEntries = page.getItems();
+
+			return JSONUtil.toJSONArray(
+				objectEntries,
+				(ObjectEntry objectEntry) -> {
+					Map<String, Object> properties =
+						objectEntry.getProperties();
+
+					return JSONUtil.put(
+						"configuration", properties.get("viewConfig")
+					).put(
+						"erc", objectEntry.getExternalReferenceCode()
+					).put(
+						"label", String.valueOf(properties.get("label"))
+					);
+				});
+		}
+		catch (Exception exception) {
+			if (_log.isWarnEnabled()) {
+				_log.warn("Unable to serialize snapshots", exception);
+			}
+
+			return JSONUtil.putAll();
+		}
+		finally {
+			ObjectEntryThreadLocal.setSkipObjectEntryResourcePermission(false);
+		}
+	}
+
 	@Reference
 	protected FDSAPIURLResolverRegistry fdsAPIURLResolverRegistry;
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		BaseFDSSerializer.class);
 
 }

@@ -4,6 +4,7 @@
  */
 
 import ClayButton from '@clayui/button';
+import ClayForm from '@clayui/form';
 import ClayModal from '@clayui/modal';
 import {useFormik} from 'formik';
 import {openToast} from 'frontend-js-components-web';
@@ -47,6 +48,7 @@ export default function CreateTagsModalContent({
 		handleBlur,
 		handleChange,
 		handleSubmit,
+		isSubmitting,
 		resetForm,
 		touched,
 		values,
@@ -137,6 +139,9 @@ export default function CreateTagsModalContent({
 		},
 	});
 
+	const shouldDisableSaveBtn =
+		isSubmitting || !values.tagName || !!spaceInputError;
+
 	const errorMessage = sub(
 		Liferay.Language.get('the-x-field-is-required'),
 		Liferay.Language.get('name')
@@ -147,7 +152,11 @@ export default function CreateTagsModalContent({
 			return nameInputError;
 		}
 
-		if (values.tagName.length !== 0 || !touched.tagName) {
+		if (
+			values.tagName.length !== 0 ||
+			!touched.tagName ||
+			!values.tagName.trim().length
+		) {
 			return errors.tagName;
 		}
 
@@ -155,60 +164,67 @@ export default function CreateTagsModalContent({
 	};
 
 	return (
-		<form onSubmit={handleSubmit}>
-			<ClayModal.Header
-				closeButtonAriaLabel={Liferay.Language.get('close')}
-			>
-				{Liferay.Language.get('new-tag')}
-			</ClayModal.Header>
+		<ClayForm onSubmit={handleSubmit}>
+			<div className="categorization-modal">
+				<ClayModal.Header
+					closeButtonAriaLabel={Liferay.Language.get('close')}
+				>
+					{Liferay.Language.get('new-tag')}
+				</ClayModal.Header>
 
-			<ClayModal.Body>
-				<FieldText
-					errorMessage={handleNameInputErrorMessage()}
-					label={Liferay.Language.get('name')}
-					name="tagName"
-					onBlur={handleBlur}
-					onChange={(event) => {
-						setNameInputError('');
-						handleChange(event);
-					}}
-					required
-					value={values.tagName}
+				<ClayModal.Body>
+					<FieldText
+						errorMessage={handleNameInputErrorMessage()}
+						label={Liferay.Language.get('name')}
+						name="tagName"
+						onBlur={handleBlur}
+						onChange={(event) => {
+							setNameInputError('');
+							handleChange(event);
+						}}
+						required
+						value={values.tagName}
+					/>
+
+					<CategorizationSpaces
+						checkboxText="tag"
+						setSelectedSpaces={setSelectedSpaces}
+						setSpaceInputError={setSpaceInputError}
+						spaceInputError={spaceInputError}
+					/>
+				</ClayModal.Body>
+
+				<ClayModal.Footer
+					last={
+						<ClayButton.Group spaced>
+							<ClayButton
+								displayType="secondary"
+								onClick={closeModal}
+								type="button"
+							>
+								{Liferay.Language.get('cancel')}
+							</ClayButton>
+
+							<ClayButton
+								disabled={shouldDisableSaveBtn}
+								displayType="secondary"
+								type="submit"
+							>
+								{Liferay.Language.get('save-and-add-another')}
+							</ClayButton>
+
+							<ClayButton
+								disabled={shouldDisableSaveBtn}
+								displayType="primary"
+								onClick={() => setClose(true)}
+								type="submit"
+							>
+								{Liferay.Language.get('save')}
+							</ClayButton>
+						</ClayButton.Group>
+					}
 				/>
-
-				<CategorizationSpaces
-					checkboxText="tag"
-					setSelectedSpaces={setSelectedSpaces}
-					setSpaceInputError={setSpaceInputError}
-					spaceInputError={spaceInputError}
-				/>
-			</ClayModal.Body>
-
-			<ClayModal.Footer
-				last={
-					<ClayButton.Group spaced>
-						<ClayButton
-							displayType="secondary"
-							onClick={closeModal}
-							type="button"
-						>
-							{Liferay.Language.get('cancel')}
-						</ClayButton>
-
-						<ClayButton displayType="secondary" type="submit">
-							{Liferay.Language.get('save-and-add-another')}
-						</ClayButton>
-
-						<ClayButton
-							displayType="primary"
-							onClick={() => setClose(true)}
-							type="submit"
-						>
-							{Liferay.Language.get('save')}
-						</ClayButton>
-					</ClayButton.Group>
-				}
-			/>
-		</form>
+			</div>
+		</ClayForm>
 	);
 }

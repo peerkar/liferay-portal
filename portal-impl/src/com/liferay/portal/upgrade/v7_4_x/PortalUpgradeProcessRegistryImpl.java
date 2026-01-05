@@ -600,18 +600,27 @@ public class PortalUpgradeProcessRegistryImpl
 				"Address", "subtype VARCHAR(75) null"));
 
 		upgradeVersionTreeMap.put(
-			new Version(32, 0, 0),
+			new Version(32, 0, 0, "step-1"),
 			new DeleteDuplicateUniqueFinderRowsUpgradeProcess(
 				"PortalPreferences", new String[] {"ownerType", "ownerId"},
-				"portalPreferencesId asc"),
+				"portalPreferencesId asc"));
+
+		upgradeVersionTreeMap.put(
+			new Version(32, 0, 0, "step-2"),
 			new DeleteDuplicateUniqueFinderRowsUpgradeProcess(
 				"PortletItem",
 				new String[] {"groupId", "classNameId", "portletId", "name"},
-				"portletItemId asc"),
+				"portletItemId asc"));
+
+		upgradeVersionTreeMap.put(
+			new Version(32, 0, 0, "step-3"),
 			new DeleteDuplicateUniqueFinderRowsUpgradeProcess(
 				"SocialActivitySetting",
 				new String[] {"groupId", "classNameId", "activityType", "name"},
-				"activitySettingId asc"),
+				"activitySettingId asc"));
+
+		upgradeVersionTreeMap.put(
+			new Version(32, 0, 0),
 			new DeleteDuplicateUniqueFinderRowsUpgradeProcess(
 				"Ticket", new String[] {"key_"}, "ticketId asc"));
 
@@ -681,6 +690,26 @@ public class PortalUpgradeProcessRegistryImpl
 			new Version(35, 1, 0),
 			UpgradeProcessFactory.addColumns(
 				"Layout", "styleBookEntryERC VARCHAR(75) null"));
+
+		upgradeVersionTreeMap.put(
+			new Version(36, 0, 0),
+			UpgradeProcessFactory.addColumns(
+				"Layout", "masterLPTEERC VARCHAR(75) null"));
+
+		upgradeVersionTreeMap.put(
+			new Version(36, 0, 1), new ClassNameUpgradeProcess());
+
+		upgradeVersionTreeMap.put(
+			new Version(37, 0, 0),
+			UpgradeProcessFactory.addColumns(
+				"Layout", "faviconFileEntryERC VARCHAR(75) null",
+				"faviconFileEntryScopeERC VARCHAR(75) null"));
+
+		upgradeVersionTreeMap.put(
+			new Version(37, 0, 1),
+			UpgradeProcessFactory.runSQL(
+				"delete from Release_ where servletContextName = " +
+					"'com.liferay.data.cleanup'"));
 	}
 
 }

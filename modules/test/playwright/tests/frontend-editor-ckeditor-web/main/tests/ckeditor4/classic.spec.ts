@@ -5,38 +5,22 @@
 
 import {expect, mergeTests} from '@playwright/test';
 
-import {apiHelpersTest} from '../../../../../fixtures/apiHelpersTest';
 import {featureFlagsTest} from '../../../../../fixtures/featureFlagsTest';
-import {isolatedSiteTest} from '../../../../../fixtures/isolatedSiteTest';
 import {loginTest} from '../../../../../fixtures/loginTest';
-import {EEditorType, waitForEditor} from '../../../../../utils/waitFor';
-import {ckeditor4PageTest} from '../../fixtures/ckeditor4PageTest';
-import {ckeditorSamplePageTest} from '../../fixtures/ckeditorSamplePageTest';
+import {classicPageTest} from '../../../../frontend-editor-ckeditor-sample-web/fixtures/ckeditor4/classicPageTest';
 
 export const test = mergeTests(
-	apiHelpersTest,
-	ckeditor4PageTest,
-	ckeditorSamplePageTest,
+	classicPageTest,
 	featureFlagsTest({
 		'LPS-178052': {enabled: true},
 	}),
-	loginTest(),
-	isolatedSiteTest
+	loginTest()
 );
-
-test.beforeEach(async ({ckeditorSamplePage, page, site}) => {
-	await ckeditorSamplePage.createAndGotoSitePage({site});
-
-	await ckeditorSamplePage.selectTab('CKEditor 4');
-	await ckeditorSamplePage.selectTab('Classic');
-
-	await waitForEditor({editorType: EEditorType.CKEDITOR4, page});
-});
 
 test(
 	'Dropdown and context menus are visible when maximized',
 	{tag: ['@LPD-33712', '@LPD-38600']},
-	async ({page}) => {
+	async ({classicPage: _classicPage, page}) => {
 		await test.step('Select Maximized toolbar control', async () => {
 			await page.getByRole('button', {name: 'Maximize'}).click();
 		});
@@ -84,8 +68,8 @@ test(
 test(
 	'Able to drag and drop images with the right width',
 	{tag: ['@LPD-41443', '@LPD-42473', '@LPD-53880']},
-	async ({ckeditor4Page, page}) => {
-		const editableFrame = ckeditor4Page.editableFrame;
+	async ({classicPage, page}) => {
+		const editableFrame = classicPage.editableFrame;
 
 		await test.step('Drag and drop image', async () => {
 			const ckeditorEditorBody = editableFrame.getByRole('heading', {
@@ -98,7 +82,7 @@ test(
 
 			await page.getByLabel('Image', {exact: true}).click();
 
-			await ckeditor4Page.selectImageWithItemSelector({
+			await classicPage.selectImageWithItemSelector({
 				cardTitle: 'astronaut.png',
 			});
 
@@ -148,29 +132,29 @@ test(
 test(
 	'Change image from context menu, in editor without "adaptivemedia" plugin',
 	{tag: ['@LPD-53880']},
-	async ({ckeditor4Page}) => {
-		await ckeditor4Page.insertHTML(
+	async ({classicPage}) => {
+		await classicPage.insertHTML(
 			'<img src="/documents/d/guest/moon-png" />'
 		);
 
-		await ckeditor4Page.editableFrame
+		await classicPage.editableFrame
 			.locator('img[src="/documents/d/guest/moon-png"]')
 			.dblclick();
 
-		await ckeditor4Page.contextMenu.getByText('Browse Server').click();
+		await classicPage.contextMenu.getByText('Browse Server').click();
 
-		await ckeditor4Page.selectImageWithItemSelector({
+		await classicPage.selectImageWithItemSelector({
 			cardTitle: 'satellite.png',
 		});
 
-		await expect(ckeditor4Page.contextMenu.getByLabel('URL')).toHaveValue(
+		await expect(classicPage.contextMenu.getByLabel('URL')).toHaveValue(
 			/satellite-png/
 		);
 
-		await ckeditor4Page.contextMenu.getByText('OK').click();
+		await classicPage.contextMenu.getByText('OK').click();
 
 		await expect(
-			ckeditor4Page.editableFrame.locator('img[src*="satellite-png"]')
+			classicPage.editableFrame.locator('img[src*="satellite-png"]')
 		).toBeVisible();
 	}
 );
@@ -178,7 +162,7 @@ test(
 test(
 	'Editor voice label is human readable',
 	{tag: ['@LPD-53923']},
-	async ({page}) => {
+	async ({classicPage: _classicPage, page}) => {
 		const ckeVoiceLabel = page.locator('span.cke_voice_label').first();
 
 		await expect(ckeVoiceLabel).toHaveText('Rich Text Editor');
@@ -188,7 +172,7 @@ test(
 test(
 	'Check focus does not move when interacting with scrollbar',
 	{tag: ['@LPD-53923']},
-	async ({page}) => {
+	async ({classicPage: _classicPage, page}) => {
 		const dragButton = page.locator(
 			'.cke_resizer.cke_resizer_vertical.cke_resizer_ltr'
 		);
@@ -225,5 +209,68 @@ test(
 		});
 
 		expect(ckeditorElementRect).toEqual(ckeditorElementRectChange);
+	}
+);
+
+test(
+	'Pasting HTML content works',
+	{tag: '@LPD-65963'},
+	async ({classicPage, context}) => {
+		const newPage = await context.newPage();
+
+		await newPage.goto(
+			'http://www.standards-schmandards.com/exhibits/wysiwyg/sampledoc.htm'
+		);
+
+		await newPage.locator('body').focus();
+		await newPage.locator('html').press('ControlOrMeta+a');
+		await newPage.locator('html').press('ControlOrMeta+c');
+
+		const body = classicPage.editableFrame.locator('body');
+
+		await body.focus();
+		await body.press('ControlOrMeta+a');
+		await body.press('ControlOrMeta+v');
+
+		await expect(
+			body.getByRole('img', {name: 'A beautiful redheaded man'})
+		).toBeVisible();
+
+		await expect(
+			body.locator(
+				'table[summary="Sweden was the top importing country by far in 1998."]'
+			)
+		).toBeVisible();
+	}
+);
+
+test(
+	'Verify source content can be previewed',
+	{tag: '@LRQA-67229'},
+	async ({classicPage, context}) => {
+		const newPage = await context.newPage();
+
+		await newPage.goto(
+			'http://www.standards-schmandards.com/exhibits/wysiwyg/sampledoc.htm'
+		);
+
+		await newPage.locator('body').focus();
+		await newPage.locator('html').press('ControlOrMeta+a');
+		await newPage.locator('html').press('ControlOrMeta+c');
+
+		const body = classicPage.editableFrame.locator('body');
+
+		await body.focus();
+		await body.press('ControlOrMeta+a');
+		await body.press('ControlOrMeta+v');
+
+		await classicPage.toolbarButton('Source').click();
+		await classicPage.toolbarButton('Preview').click();
+
+		await expect(
+			classicPage.previewFrame.getByRole('heading', {
+				name: 'Sample document for editor',
+			})
+		).toBeVisible();
 	}
 );

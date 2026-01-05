@@ -6,9 +6,9 @@
 if (!themeDisplay.isSignedIn()) {
 	document.addEventListener('DOMContentLoaded', () => {
 		document
-			.querySelector('.icon-x-lesson')
+			.querySelector('#banner-icon-close')
 			.addEventListener('click', () => {
-				document.querySelector('.banner-sign-in-lesson').style.display =
+				document.querySelector('#sign-in-banner').style.display =
 					'none';
 			});
 	});
