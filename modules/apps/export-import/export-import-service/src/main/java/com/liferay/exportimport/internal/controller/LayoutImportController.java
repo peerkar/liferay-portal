@@ -5,6 +5,8 @@
 
 package com.liferay.exportimport.internal.controller;
 
+import com.liferay.asset.kernel.model.AssetCategory;
+import com.liferay.asset.kernel.model.AssetVocabulary;
 import com.liferay.asset.link.model.adapter.StagedAssetLink;
 import com.liferay.exportimport.configuration.ExportImportServiceConfiguration;
 import com.liferay.exportimport.constants.ExportImportConstants;
@@ -18,6 +20,7 @@ import com.liferay.exportimport.kernel.exception.LayoutImportException;
 import com.liferay.exportimport.kernel.exception.MissingPortletDataHandlerException;
 import com.liferay.exportimport.kernel.exception.MissingReferenceException;
 import com.liferay.exportimport.kernel.lar.ExportImportHelper;
+import com.liferay.exportimport.kernel.lar.ExportImportHelperUtil;
 import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.exportimport.kernel.lar.ManifestSummary;
 import com.liferay.exportimport.kernel.lar.MissingReference;
@@ -94,7 +97,9 @@ import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -200,6 +205,8 @@ public class LayoutImportController implements ImportController {
 				portletDataContext = getPortletDataContext(
 					exportImportConfiguration, zipReader);
 
+				ExportImportThreadLocal.setDataStrategy(portletDataContext.getDataStrategy());
+
 				_exportImportLifecycleManager.fireExportImportLifecycleEvent(
 					ExportImportLifecycleConstants.EVENT_LAYOUT_IMPORT_STARTED,
 					getProcessFlag(),
@@ -286,7 +293,29 @@ public class LayoutImportController implements ImportController {
 
 			if (!dependencyMissingReferences.isEmpty()) {
 				if (isValidateMissingReferences()) {
-					throw new MissingReferenceException(missingReferences);
+
+					for (
+						Iterator<Map.Entry<String, MissingReference>> iterator =
+						dependencyMissingReferences.entrySet().iterator();
+						iterator.hasNext();) {
+
+						Map.Entry<String, MissingReference> missingReference =
+							iterator.next();
+
+						String className =
+							missingReference.getValue().getClassName();
+
+						if (className.equals(AssetVocabulary.class.getName()) ||
+							className.equals(AssetCategory.class.getName())) {
+
+							iterator.remove();
+						}
+					}
+
+					if (!dependencyMissingReferences.isEmpty()) {
+						throw new MissingReferenceException(
+								missingReferences);
+					}
 				}
 
 				if (_log.isWarnEnabled()) {

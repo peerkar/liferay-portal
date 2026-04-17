@@ -27,6 +27,7 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.Portlet;
+import com.liferay.portal.kernel.model.PortletPreferences;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.portlet.PortletIdCodec;
 import com.liferay.portal.kernel.service.PortletLocalServiceUtil;
@@ -228,7 +229,7 @@ public class WidgetInstanceLayoutStructureItemImporter
 	private String _getInstanceId(String widgetInstanceId, String widgetName) {
 		Portlet portlet = PortletLocalServiceUtil.getPortletById(widgetName);
 
-		if (portlet.isInstanceable()) {
+		if ((portlet != null) && portlet.isInstanceable()) {
 			return widgetInstanceId;
 		}
 
@@ -272,10 +273,16 @@ public class WidgetInstanceLayoutStructureItemImporter
 
 			Layout layout = layoutStructureItemImporterContext.getLayout();
 
-			PortletPreferencesLocalServiceUtil.deletePortletPreferences(
-				PortletKeys.PREFS_OWNER_ID_DEFAULT,
-				PortletKeys.PREFS_OWNER_TYPE_LAYOUT, layout.getPlid(),
-				fragmentEntryLinkPortletId);
+			PortletPreferences portletPreferences =
+				PortletPreferencesLocalServiceUtil.fetchPortletPreferences(
+					PortletKeys.PREFS_OWNER_ID_DEFAULT,
+					PortletKeys.PREFS_OWNER_TYPE_LAYOUT, layout.getPlid(),
+					fragmentEntryLinkPortletId);
+
+			if (portletPreferences != null) {
+				PortletPreferencesLocalServiceUtil.deletePortletPreferences(
+					portletPreferences);
+			}
 
 			ResourcePermissionLocalServiceUtil.deleteResourcePermissions(
 				layout.getCompanyId(),

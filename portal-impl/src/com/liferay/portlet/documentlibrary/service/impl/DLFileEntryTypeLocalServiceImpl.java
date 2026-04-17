@@ -790,6 +790,11 @@ public class DLFileEntryTypeLocalServiceImpl
 			String fileEntryTypeKey, long[] ddmStructureIds)
 		throws NoSuchMetadataSetException {
 
+		// TODO
+	//	if (ExportImportThreadLocal.isImportInProcess()) {
+	//		return;
+	//	}
+
 		if (ddmStructureIds.length == 0) {
 			throw new NoSuchMetadataSetException(
 				"DDM structure IDs is empty for file entry type " +

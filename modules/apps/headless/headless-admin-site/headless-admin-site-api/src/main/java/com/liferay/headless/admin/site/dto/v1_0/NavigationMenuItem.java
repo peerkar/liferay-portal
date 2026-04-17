@@ -238,7 +238,7 @@ public class NavigationMenuItem implements Serializable {
 	}
 
 	@GraphQLField(description = "The navigation menu item's creation date.")
-	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Date dateCreated;
 
 	@JsonIgnore
@@ -283,7 +283,7 @@ public class NavigationMenuItem implements Serializable {
 	@GraphQLField(
 		description = "The last time the navigation menu item changed."
 	)
-	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Date dateModified;
 
 	@JsonIgnore
@@ -771,6 +771,47 @@ public class NavigationMenuItem implements Serializable {
 	@JsonIgnore
 	private Supplier<Boolean> _useCustomNameSupplier;
 
+	@io.swagger.v3.oas.annotations.media.Schema(
+		description = "The UUID of the navigation menu item."
+	)
+	public String getUuid() {
+		if (_uuidSupplier != null) {
+			uuid = _uuidSupplier.get();
+
+			_uuidSupplier = null;
+		}
+
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+
+		_uuidSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setUuid(UnsafeSupplier<String, Exception> uuidUnsafeSupplier) {
+		_uuidSupplier = () -> {
+			try {
+				return uuidUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField(description = "The UUID of the navigation menu item.")
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected String uuid;
+
+	@JsonIgnore
+	private Supplier<String> _uuidSupplier;
+
 	@Override
 	public boolean equals(Object object) {
 		if (this == object) {
@@ -1066,6 +1107,22 @@ public class NavigationMenuItem implements Serializable {
 			sb.append("\"useCustomName\": ");
 
 			sb.append(useCustomName);
+		}
+
+		String uuid = getUuid();
+
+		if (uuid != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"uuid\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(uuid));
+
+			sb.append("\"");
 		}
 
 		sb.append("}");

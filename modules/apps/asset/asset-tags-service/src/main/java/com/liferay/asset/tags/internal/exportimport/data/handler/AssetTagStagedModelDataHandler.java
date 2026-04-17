@@ -173,7 +173,6 @@ public class AssetTagStagedModelDataHandler
 		AssetTag importedAssetTag = null;
 
 		if (existingAssetTag == null) {
-			serviceContext.setUuid(assetTag.getUuid());
 
 			importedAssetTag = _assetTagLocalService.addTag(
 				assetTag.getExternalReferenceCode(), userId,
@@ -226,6 +225,7 @@ public class AssetTagStagedModelDataHandler
 		serviceContext.setCreateDate(assetTag.getCreateDate());
 		serviceContext.setModifiedDate(assetTag.getModifiedDate());
 		serviceContext.setScopeGroupId(portletDataContext.getScopeGroupId());
+		serviceContext.setUuid(assetTag.getUuid());
 
 		return serviceContext;
 	}

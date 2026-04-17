@@ -587,6 +587,15 @@ public class LayoutPageTemplateEntryLocalServiceUtil {
 			uuid, groupId);
 	}
 
+	public static LayoutPageTemplateEntry getOrAddEmptyLayoutPageTemplateEntry(
+			String externalReferenceCode, long groupId, int type, long userId,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws PortalException {
+
+		return getService().getOrAddEmptyLayoutPageTemplateEntry(
+			externalReferenceCode, groupId, type, userId, serviceContext);
+	}
+
 	/**
 	 * Returns the OSGi service identifier.
 	 *
@@ -699,4 +708,4 @@ public class LayoutPageTemplateEntryLocalServiceUtil {
 			LayoutPageTemplateEntryLocalService.class);
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1391057017
+// LIFERAY-SERVICE-BUILDER-HASH:1924409254

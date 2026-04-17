@@ -7,6 +7,8 @@ package com.liferay.exportimport.kernel.lar;
 
 import com.liferay.petra.lang.CentralizedThreadLocal;
 
+import java.util.Objects;
+
 /**
  * @author Michael C. Han
  */
@@ -127,11 +129,20 @@ public class ExportImportThreadLocal {
 	}
 
 	public static void setLayoutImportInProcess(boolean layoutImportInProcess) {
+
+		if (!layoutImportInProcess) {
+			_dataStrategy.remove();
+		}
+
 		_layoutImportInProcess.set(layoutImportInProcess);
 	}
 
 	public static void setLayoutStagingInProcess(
 		boolean layoutStagingInProcess) {
+
+		if (!layoutStagingInProcess) {
+			_dataStrategy.remove();
+		}
 
 		_layoutStagingInProcess.set(layoutStagingInProcess);
 	}
@@ -149,14 +160,25 @@ public class ExportImportThreadLocal {
 			portletDataDeletionImportInProcess);
 	}
 
+	public static boolean isPreserveModificationDate() {
+		String dataStrategy = getDataStrategy();
+
+		return (isImportInProcess() || isStagingInProcess()) &&
+			   (Objects.equals(dataStrategy, PortletDataHandlerKeys.DATA_STRATEGY_MIRROR) ||
+				Objects.equals(dataStrategy, PortletDataHandlerKeys.DATA_STRATEGY_MIRROR_OVERWRITE));
+	}
+
 	public static void setPortletExportInProcess(
 		boolean portletExportInProcess) {
-
 		_portletExportInProcess.set(portletExportInProcess);
 	}
 
 	public static void setPortletImportInProcess(
 		boolean portletImportInProcess) {
+
+		if (!portletImportInProcess) {
+			_dataStrategy.remove();
+		}
 
 		_portletImportInProcess.set(portletImportInProcess);
 	}
@@ -164,6 +186,9 @@ public class ExportImportThreadLocal {
 	public static void setPortletStagingInProcess(
 		boolean portletStagingInProcess) {
 
+		if (!portletStagingInProcess) {
+			_dataStrategy.remove();
+		}
 		_portletStagingInProcess.set(portletStagingInProcess);
 	}
 
@@ -173,11 +198,24 @@ public class ExportImportThreadLocal {
 		_portletValidationInProcess.set(portletValidationInProcess);
 	}
 
+	public static void setDataStrategy(String dataStrategy) {
+		_dataStrategy.set(dataStrategy);
+	}
+
+	public static String getDataStrategy() {
+		return _dataStrategy.get();
+	}
+
 	public static void setStagingInProcessOnRemoteLive(
 		boolean stagingInProcessOnRemoteLive) {
 
 		_stagingInProcessOnRemoteLive.set(stagingInProcessOnRemoteLive);
 	}
+
+	private static final ThreadLocal<String> _dataStrategy =
+		new CentralizedThreadLocal<>(
+			ExportImportThreadLocal.class + "._dataStrategy",
+			() -> null);
 
 	private static final ThreadLocal<Long> _exportImportConfigurationId =
 		new CentralizedThreadLocal<>(

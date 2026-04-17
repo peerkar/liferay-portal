@@ -201,6 +201,7 @@ public abstract class BaseNavigationMenuResourceTestCase {
 		navigationMenu.setExternalReferenceCode(regex);
 		navigationMenu.setName(regex);
 		navigationMenu.setSiteExternalReferenceCode(regex);
+		navigationMenu.setUuid(regex);
 
 		String json = NavigationMenuSerDes.toJSON(navigationMenu);
 
@@ -212,6 +213,7 @@ public abstract class BaseNavigationMenuResourceTestCase {
 		Assert.assertEquals(regex, navigationMenu.getName());
 		Assert.assertEquals(
 			regex, navigationMenu.getSiteExternalReferenceCode());
+		Assert.assertEquals(regex, navigationMenu.getUuid());
 	}
 
 	@Test
@@ -1138,6 +1140,14 @@ public abstract class BaseNavigationMenuResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("uuid", additionalAssertFieldName)) {
+				if (navigationMenu.getUuid() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			throw new IllegalArgumentException(
 				"Invalid additional assert field name " +
 					additionalAssertFieldName);
@@ -1389,6 +1399,16 @@ public abstract class BaseNavigationMenuResourceTestCase {
 				if (!Objects.deepEquals(
 						navigationMenu1.getSiteExternalReferenceCode(),
 						navigationMenu2.getSiteExternalReferenceCode())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("uuid", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						navigationMenu1.getUuid(), navigationMenu2.getUuid())) {
 
 					return false;
 				}
@@ -1735,6 +1755,52 @@ public abstract class BaseNavigationMenuResourceTestCase {
 			return sb.toString();
 		}
 
+		if (entityFieldName.equals("uuid")) {
+			Object object = navigationMenu.getUuid();
+
+			String value = String.valueOf(object);
+
+			if (operator.equals("contains")) {
+				sb = new StringBundler();
+
+				sb.append("contains(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 2)) {
+					sb.append(value.substring(1, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else if (operator.equals("startswith")) {
+				sb = new StringBundler();
+
+				sb.append("startswith(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 1)) {
+					sb.append(value.substring(0, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else {
+				sb.append("'");
+				sb.append(value);
+				sb.append("'");
+			}
+
+			return sb.toString();
+		}
+
 		throw new IllegalArgumentException(
 			"Invalid entity field " + entityFieldName);
 	}
@@ -1789,6 +1855,7 @@ public abstract class BaseNavigationMenuResourceTestCase {
 				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
 				siteExternalReferenceCode =
 					testGroup.getExternalReferenceCode();
+				uuid = StringUtil.toLowerCase(RandomTestUtil.randomString());
 			}
 		};
 	}

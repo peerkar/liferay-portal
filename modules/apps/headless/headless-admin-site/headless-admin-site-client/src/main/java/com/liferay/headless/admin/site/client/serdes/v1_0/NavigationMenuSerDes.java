@@ -222,6 +222,20 @@ public class NavigationMenuSerDes {
 			sb.append("\"");
 		}
 
+		if (navigationMenu.getUuid() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"uuid\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(navigationMenu.getUuid()));
+
+			sb.append("\"");
+		}
+
 		sb.append("}");
 
 		return sb.toString();
@@ -343,6 +357,13 @@ public class NavigationMenuSerDes {
 				String.valueOf(navigationMenu.getSiteExternalReferenceCode()));
 		}
 
+		if (navigationMenu.getUuid() == null) {
+			map.put("uuid", null);
+		}
+		else {
+			map.put("uuid", String.valueOf(navigationMenu.getUuid()));
+		}
+
 		return map;
 	}
 
@@ -401,6 +422,9 @@ public class NavigationMenuSerDes {
 			else if (Objects.equals(
 						jsonParserFieldName, "siteExternalReferenceCode")) {
 
+				return false;
+			}
+			else if (Objects.equals(jsonParserFieldName, "uuid")) {
 				return false;
 			}
 
@@ -513,6 +537,11 @@ public class NavigationMenuSerDes {
 				if (jsonParserFieldValue != null) {
 					navigationMenu.setSiteExternalReferenceCode(
 						(String)jsonParserFieldValue);
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "uuid")) {
+				if (jsonParserFieldValue != null) {
+					navigationMenu.setUuid((String)jsonParserFieldValue);
 				}
 			}
 		}

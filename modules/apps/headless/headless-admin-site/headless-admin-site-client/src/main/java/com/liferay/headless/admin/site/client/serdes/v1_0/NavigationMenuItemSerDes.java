@@ -297,6 +297,20 @@ public class NavigationMenuItemSerDes {
 			sb.append(navigationMenuItem.getUseCustomName());
 		}
 
+		if (navigationMenuItem.getUuid() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"uuid\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(navigationMenuItem.getUuid()));
+
+			sb.append("\"");
+		}
+
 		sb.append("}");
 
 		return sb.toString();
@@ -459,6 +473,13 @@ public class NavigationMenuItemSerDes {
 				String.valueOf(navigationMenuItem.getUseCustomName()));
 		}
 
+		if (navigationMenuItem.getUuid() == null) {
+			map.put("uuid", null);
+		}
+		else {
+			map.put("uuid", String.valueOf(navigationMenuItem.getUuid()));
+		}
+
 		return map;
 	}
 
@@ -531,6 +552,9 @@ public class NavigationMenuItemSerDes {
 				return false;
 			}
 			else if (Objects.equals(jsonParserFieldName, "useCustomName")) {
+				return false;
+			}
+			else if (Objects.equals(jsonParserFieldName, "uuid")) {
 				return false;
 			}
 
@@ -668,6 +692,11 @@ public class NavigationMenuItemSerDes {
 				if (jsonParserFieldValue != null) {
 					navigationMenuItem.setUseCustomName(
 						(Boolean)jsonParserFieldValue);
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "uuid")) {
+				if (jsonParserFieldValue != null) {
+					navigationMenuItem.setUuid((String)jsonParserFieldValue);
 				}
 			}
 		}

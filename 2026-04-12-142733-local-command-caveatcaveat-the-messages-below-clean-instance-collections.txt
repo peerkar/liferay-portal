@@ -1,0 +1,664 @@
+ ▐▛███▜▌   Claude Code v2.1.101
+▝▜█████▛▘  Opus 4.6 (1M context) · Claude Team
+  ▘▘ ▝▝    /opt/projects/liferay-portal/liferay-portal
+
+❯ /clear                                                                        
+  ⎿  (no content)
+
+❯ When importing Collections (AssetListEntry) the import fails because of       
+  referenced file entries requiring  Expando fields, which are missing because  
+  they should be on the global site. This is expected, but we need to change    
+  this so that calling non-existent expandos creates an empty shell and does    
+  not fail the process. The same way as for example Navigation menu import      
+  (NavigationMenuResourceImpl) creates empty expando shells                     
+
+● Let me explore the relevant code to understand both the current AssetListEntry
+   import behavior and how NavigationMenuResourceImpl handles expando shells.
+
+● 2 Explore agents finished (ctrl+o to expand)
+   ├─ Find NavigationMenu expando handling · 15 tool uses · 46.2k tokens
+   │  ⎿  Done
+   └─ Find AssetListEntry import code · 65 tool uses · 87.0k tokens
+      ⎿  Done
+
+● Let me look more closely at the actual import flow and the specific failure
+  point.
+
+● Explore(Find headless Collection import flow)
+  ⎿  Done (36 tool uses · 80.8k tokens · 1m 39s)
+  (ctrl+o to expand)
+
+  Read 2 files (ctrl+o to expand)
+
+● Let me look at the key files more closely - the CustomFieldsUtil and how the
+  import chain processes expandos.
+
+  Searched for 2 patterns, read 1 file (ctrl+o to expand)
+
+● Let me see the current changes on the branch and look at the specific import
+  flow.
+
+● Bash(git diff HEAD --
+      modules/apps/headless/headless-admin-site/headless-admin-site-impl/src/mai
+      n/java/com/liferay/headless/admin/site/internal/resource/v1_0/SitePag…)
+  ⎿  diff --git a/modules/apps/headless/headless-admin-site/headless-admin-
+     site-impl/src/main/java/com/liferay/headless/admin/site/internal/resou
+     rce/v1_0/SitePageResourceImpl.java b/modules/apps/headless/headless-ad
+     … +29 lines (ctrl+o to expand)
+
+● Bash(git diff HEAD --
+      modules/apps/portal-vulcan/portal-vulcan-api/src/main/java/com/liferay/por
+      tal/vulcan/jackson/databind/ObjectMapperProviderUtil.java)
+  ⎿  diff --git a/modules/apps/portal-vulcan/portal-vulcan-api/src/main/jav
+     a/com/liferay/portal/vulcan/jackson/databind/ObjectMapperProviderUtil.
+     java b/modules/apps/portal-vulcan/portal-vulcan-api/src/main/java/com/
+     … +71 lines (ctrl+o to expand)
+
+● Let me find the actual Collection import code path and where the expando
+  failure occurs.
+
+● Explore(Find Collection headless import flow)
+  ⎿  Read(modules/apps/portal-vulcan/portal-vulcan-api/src/main/java/com/liferay
+         /portal/vulcan/custom/field/CustomFieldsUtil.java)
+     Read(modules/apps/headless/headless-batch-engine/headless-batch-engine-impl
+         /src/main/java/com/liferay/headless/batch/engine/internal/resource/v1_0
+         /ImportTaskResourceImpl.java)
+     Bash(find /opt/projects/liferay-portal/liferay-portal/modules -type f -name
+          "*VulcanBatchEngineTaskItemDelegate*" | grep -v build | grep -v
+         ".class" | head -10)
+     +35 more tool uses (ctrl+o to expand)
+  ⎿  Interrupted · What should Claude do instead?
+
+  Searched for 1 pattern (ctrl+o to expand)
+
+❯ This is the error when this happens: 2026-04-12 10:53:43.513 ERROR            
+  [liferay/background_task-10][LoggerExportImportLifecycleListener:104] Layout  
+  import failed for group 80309                                                 
+  com.liferay.exportimport.kernel.lar.PortletDataException: No ExpandoTable     
+  exists with the key {companyId=18679853331605, classNameId=20011,             
+  name=CUSTOM_FIELDS}                                                           
+      at com.liferay.exportimport.kernel.lar.BaseStagedModelDataHandler.importS 
+  tagedModel(BaseStagedModelDataHandler.java:431) ~[portal-kernel.jar:?]        
+      at com.liferay.document.library.internal.exportimport.data.handler.FileEn 
+  tryStagedModelDataHandler.importStagedModel(FileEntryStagedModelDataHandler.j 
+  ava:202) ~[?:?]                                                               
+      at com.liferay.document.library.internal.exportimport.data.handler.FileEn 
+  tryStagedModelDataHandler.importStagedModel(FileEntryStagedModelDataHandler.j 
+  ava:107) ~[?:?]                                                               
+      at com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil.importS 
+  tagedModel(StagedModelDataHandlerUtil.java:397) ~[portal-kernel.jar:?]        
+      at com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil.importS 
+  tagedModel(StagedModelDataHandlerUtil.java:382) ~[portal-kernel.jar:?]        
+      at com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil.doImpor 
+  tReferenceStagedModel(StagedModelDataHandlerUtil.java:477)                    
+  ~[portal-kernel.jar:?]                                                        
+      at com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil.importR 
+  eferenceStagedModel(StagedModelDataHandlerUtil.java:311)                      
+  ~[portal-kernel.jar:?]                                                        
+      at com.liferay.exportimport.kernel.lar.BaseStagedModelDataHandler.importR 
+  eferenceStagedModels(BaseStagedModelDataHandler.java:909)                     
+  ~[portal-kernel.jar:?]                                                        
+      at com.liferay.exportimport.kernel.lar.BaseStagedModelDataHandler.importS 
+  tagedModel(BaseStagedModelDataHandler.java:388) ~[portal-kernel.jar:?]        
+      at com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil.importS 
+  tagedModel(StagedModelDataHandlerUtil.java:397) ~[portal-kernel.jar:?]        
+      at com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil.importS 
+  tagedModel(StagedModelDataHandlerUtil.java:382) ~[portal-kernel.jar:?]        
+      at com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil.doImpor 
+  tReferenceStagedModel(StagedModelDataHandlerUtil.java:477)                    
+  ~[portal-kernel.jar:?]                                                        
+      at com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil.importR 
+  eferenceStagedModel(StagedModelDataHandlerUtil.java:259)                      
+  ~[portal-kernel.jar:?]                                                        
+      at com.liferay.asset.list.internal.exportimport.data.handler.AssetListEnt 
+  ryStagedModelDataHandler._importAssetObjects(AssetListEntryStagedModelD       
+  … +81 lines …                                                                 
+  m.liferay.portal.repository.util.LocalRepositoryWrapper.addFileEntry(LocalRep 
+  ositoryWrapper.java:59) ~[portal-impl.jar:?]                                  
+      at com.liferay.portal.repository.util.LocalRepositoryWrapper.addFileEntry 
+  (LocalRepositoryWrapper.java:59) ~[portal-impl.jar:?]                         
+      at com.liferay.portal.repository.capabilities.CapabilityLocalRepository.a 
+  ddFileEntry(CapabilityLocalRepository.java:77) ~[portal-impl.jar:?]           
+      at com.liferay.portlet.documentlibrary.service.impl.DLAppLocalServiceImpl 
+  .addFileEntry(DLAppLocalServiceImpl.java:368) ~[portal-impl.jar:?]            
+      at com.liferay.document.library.kernel.service.DLAppLocalServiceWrapper.a 
+  ddFileEntry(DLAppLocalServiceWrapper.java:248) ~[portal-kernel.jar:?]         
+      at com.liferay.document.library.internal.service.SubscriptionDLAppLocalSe 
+  rviceWrapper.addFileEntry(SubscriptionDLAppLocalServiceWrapper.java:106)      
+  ~[?:?]                                                                        
+      at jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)   
+  ~[?:?]                                                                        
+      at jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAcces 
+  sorImpl.java:77) ~[?:?]                                                       
+      at jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMet 
+  hodAccessorImpl.java:43) ~[?:?]                                               
+      at java.lang.reflect.Method.invoke(Method.java:569) ~[?:?]                
+      at com.liferay.portal.spring.aop.AopMethodInvocationImpl.proceed(AopMetho 
+  dInvocationImpl.java:41) ~[portal-impl.jar:?]                                 
+      at com.liferay.portal.spring.transaction.TransactionInterceptor.invoke(Tr 
+  ansactionInterceptor.java:68) ~[portal-impl.jar:?]                            
+      at com.liferay.portal.spring.aop.AopMethodInvocationImpl.proceed(AopMetho 
+  dInvocationImpl.java:48) ~[portal-impl.jar:?]                                 
+      at com.liferay.portal.service.ServiceContextAdvice.invoke(ServiceContextA 
+  dvice.java:51) ~[portal-impl.jar:?]                                           
+      at com.liferay.portal.spring.aop.AopMethodInvocationImpl.proceed(AopMetho 
+  dInvocationImpl.java:48) ~[portal-impl.jar:?]                                 
+      at com.liferay.portal.spring.aop.AopInvocationHandler.invoke(AopInvocatio 
+  nHandler.java:40) ~[portal-impl.jar:?]                                        
+      at jdk.proxy3.$Proxy151.addFileEntry(Unknown Source) ~[?:?]               
+      at com.liferay.document.library.internal.exportimport.data.handler.FileEn 
+  tryStagedModelDataHandler.doImportStagedModel(FileEntryStagedModelDataHandler 
+  .java:499) ~[?:?]                                                             
+      at com.liferay.document.library.internal.exportimport.data.handler.FileEn 
+  tryStagedModelDataHandler.doImportStagedModel(FileEntryStagedModelDataHandler 
+  .java:107) ~[?:?]                                                             
+      at com.liferay.exportimport.kernel.lar.BaseStagedModelDataHandler.importS 
+  tagedModel(BaseStagedModelDataHandler.java:390) ~[portal-kernel.jar:?]        
+      ... 57 more                                                               
+                                                                                
+
+● Now I can see the exact error chain. The NoSuchTableException happens in
+  ExpandoValueLocalServiceImpl.addValues when FileEntryStagedModelDataHandler
+  imports a DLFileEntry referenced by the AssetListEntry. The ExpandoTable for
+  DLFileEntry doesn't exist on the target system.
+
+  Let me read the key files in the chain.
+
+  Read 3 files (ctrl+o to expand)
+
+● Now I understand the full error chain. Let me look at the critical pieces -
+  the ExpandoBridgeImpl.setAttributes and
+  FileEntryStagedModelDataHandler.doImportStagedModel where the ServiceContext
+  is built.
+
+  Read 1 file (ctrl+o to expand)
+
+● Let me look at how the ExpandoBridge sets attributes and how the
+  ServiceContext is created during import.
+
+  Searched for 2 patterns, read 2 files (ctrl+o to expand)
+
+● Let me look at how ExpandoBridgeUtil works and check if there's a place to
+  create the table.
+
+  Read 2 files (ctrl+o to expand)
+● Let me check how ExpandoBridge.addAttribute creates the table and how other
+  data handlers deal with this.
+
+  Searched for 5 patterns, read 1 file (ctrl+o to expand)
+
+● Let me check the full imports and structure of ExpandoBridgeImpl.
+
+  Read 1 file (ctrl+o to expand)
+
+● Good, ExportImportThreadLocal is already imported. Now let me plan the fix.
+  Let me also check how the addValues method at line 872 calls line 760.
+
+  Read 1 file (ctrl+o to expand)
+
+● Now I have a complete understanding of the problem and the fix. Let me
+  summarize:
+
+  Root cause: ExpandoBridgeImpl.setAttributes(Map, boolean) calls
+  ExpandoValueLocalServiceUtil.addValues() which does
+  _expandoTablePersistence.findByC_C_N() and throws NoSuchTableException when
+  the ExpandoTable doesn't exist for DLFileEntry on the target system.
+
+  Fix: In ExpandoBridgeImpl.setAttributes(Map, boolean), call getTable() during
+  import to ensure the ExpandoTable exists (creating an empty shell if needed).
+  The getTable() method already exists and creates the table if missing. When
+  the table exists but columns don't, addValues simply sets no values - which is
+   the desired behavior.
+
+  Read 1 file (ctrl+o to expand)
+
+● Update(modules/apps/expando/expando-impl/src/main/java/com/liferay/expando/int
+        ernal/ExpandoBridgeImpl.java)
+  ⎿  User rejected     modules/apps/expando/expando-impl/src/main/java/com/lifer
+     update to         ay/expando/internal/ExpandoBridgeImpl.java
+
+❯ why does creating empty expando shells succeed with navigation menus then?    
+
+● Because the code paths are different:
+
+  NavigationMenu goes through CustomFieldsUtil.toMap() which calls
+  expandoBridge.addAttribute(name, type) for each custom field. addAttribute()
+  internally calls getTable():
+
+  // ExpandoBridgeImpl.addAttribute() → line 132
+  ExpandoTable table = getTable();
+
+  And getTable() creates the table if missing:
+
+  // ExpandoBridgeImpl.getTable() → line 641
+  ExpandoTable table =
+  ExpandoTableLocalServiceUtil.fetchDefaultTable(_companyId, _className);
+  if (table == null) {
+      table = ExpandoTableLocalServiceUtil.addDefaultTable(_companyId,
+  _className);
+  }
+
+  So by the time values are set, both the table and columns already exist.
+
+  FileEntry staging import skips that entirely. The ServiceContext already has
+  serialized expandoBridgeAttributes from the export data (set by
+  PortletDataContextImpl.createServiceContext at line 1960). Then
+  DLFileEntryLocalServiceImpl._addFileVersion calls
+  ExpandoBridgeImpl.setAttributes(Map, boolean) which goes straight to
+  ExpandoValueLocalServiceUtil.addValues() →
+  _expandoTablePersistence.findByC_C_N() — no getTable(), no table creation,
+  just a hard findByC_C_N that throws NoSuchTableException.
+
+  So the difference is: addAttribute → creates table first. setAttributes →
+  assumes table exists.
+
+❯ Could we use the same approach with file entries?                             
+
+● Not directly with CustomFieldsUtil.toMap(), because the data shapes are
+  different:
+
+  - NavigationMenu (headless API): has CustomField[] DTOs with name and
+  attributeType → can call expandoBridge.addAttribute(name, type) to create both
+   table and columns
+  - FileEntry (staging import): has a serialized Map<String, Serializable> from
+  the export zip → no attribute type info available to create columns
+
+  But we could use the same underlying mechanism. The
+  FileEntryStagedModelDataHandler.doImportStagedModel already creates the
+  ServiceContext at line 400:
+
+  ServiceContext serviceContext = portletDataContext.createServiceContext(
+      fileEntry, DLFileEntry.class);
+
+  We could get an ExpandoBridge and call addAttribute() for each expando entry
+  before the file entry is added. The challenge is we'd need to infer the column
+   type from the serialized value.
+
+  Alternatively, the simplest version is just ensuring the ExpandoTable exists
+  (the table is what's missing, not the columns — missing columns are already
+  handled gracefully by addValues). That could be done in the
+  FileEntryStagedModelDataHandler directly, or more generally wherever the
+  ServiceContext's expandoBridgeAttributes get applied.
+
+  What approach would you prefer?
+
+❯ what do you recommend?                                                        
+
+● I'd go with the fix in ExpandoBridgeImpl.setAttributes(Map, boolean) — the one
+   I proposed earlier. Here's why:
+
+  1. It's the right level of abstraction. The bug is that setAttributes assumes
+  the table exists while addAttribute doesn't. Making them consistent by adding
+  the same getTable() call fixes the asymmetry.
+  2. It's general. Any staged model with expandos hitting a system without the
+  table will benefit — not just FileEntry, not just AssetListEntry imports. You
+  won't need to patch individual data handlers one by one.
+  3. It's minimal. Four lines, using an existing method that's already called by
+   addAttribute() in the same class.
+  4. Missing columns are already handled. Once the table exists, addValues
+  queries for columns by name, gets an empty list, and sets nothing — that's
+  already the "empty shell" behavior without any further changes.
+  5. The cost is negligible. getTable() calls fetchDefaultTable which hits the
+  entity cache. It only runs during import
+  (ExportImportThreadLocal.isImportInProcess()), so normal runtime is untouched.
+
+  Should I go ahead and apply it?
+
+❯ yes                                                                           
+
+  Read 1 file (ctrl+o to expand)
+
+● Update(modules/apps/expando/expando-impl/src/main/java/com/liferay/expando/int
+        ernal/ExpandoBridgeImpl.java)
+  ⎿  Added 4 lines
+      515      }
+      516  
+      517      try {
+      518 +      if (ExportImportThreadLocal.isImportInProcess()) {      
+      519 +        getTable();                                           
+      520 +      }                                                       
+      521 +                                                              
+      522        if (secure) {
+      523          ExpandoValueServiceUtil.addValues(
+      524            _companyId, _className,
+
+● The fix is applied. During import, getTable() ensures the ExpandoTable exists
+  (creating it if missing) before addValues is called. If the table has no
+  columns, addValues simply sets nothing — the import proceeds without error.
+
+❯ Now I'm getting a different error when importing collections: 2026-04-12      
+  11:19:59.398 ERROR                                                            
+  [liferay/background_task-10][LoggerExportImportLifecycleListener:390] Staged  
+  model {class: com.liferay.site.model.adapter.StagedGroup, uuid:               
+  5a66a7aa-a297-4a44-8d2d-db7dde86cd98} import failed                           
+  com.liferay.exportimport.kernel.lar.PortletDataException: {ddmStructureId=0}  
+      at com.liferay.exportimport.kernel.lar.BaseStagedModelDataHandler.importS 
+  tagedModel(BaseStagedModelDataHandler.java:431) ~[portal-kernel.jar:?]        
+      at com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil.importS 
+  tagedModel(StagedModelDataHandlerUtil.java:397) ~[portal-kernel.jar:?]        
+      at com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil.importS 
+  tagedModel(StagedModelDataHandlerUtil.java:382) ~[portal-kernel.jar:?]        
+      at com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil.doImpor 
+  tReferenceStagedModel(StagedModelDataHandlerUtil.java:477)                    
+  ~[portal-kernel.jar:?]                                                        
+      at com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil.importR 
+  eferenceStagedModel(StagedModelDataHandlerUtil.java:311)                      
+  ~[portal-kernel.jar:?]                                                        
+      at com.liferay.exportimport.kernel.lar.BaseStagedModelDataHandler.importR 
+  eferenceStagedModels(BaseStagedModelDataHandler.java:909)                     
+  ~[portal-kernel.jar:?]                                                        
+      at com.liferay.exportimport.kernel.lar.BaseStagedModelDataHandler.importS 
+  tagedModel(BaseStagedModelDataHandler.java:388) ~[portal-kernel.jar:?]        
+      at com.liferay.document.library.internal.exportimport.data.handler.FileEn 
+  tryStagedModelDataHandler.importStagedModel(FileEntryStagedModelDataHandler.j 
+  ava:202) ~[?:?]                                                               
+      at com.liferay.document.library.internal.exportimport.data.handler.FileEn 
+  tryStagedModelDataHandler.importStagedModel(FileEntryStagedModelDataHandler.j 
+  ava:107) ~[?:?]                                                               
+      at com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil.importS 
+  tagedModel(StagedModelDataHandlerUtil.java:397) ~[portal-kernel.jar:?]        
+      at com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil.importS 
+  tagedModel(StagedModelDataHandlerUtil.java:382) ~[portal-kernel.jar:?]        
+      at com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil.doImpor 
+  tReferenceStagedModel(StagedModelDataHandlerUtil.java:477)                    
+  ~[portal-kernel.jar:?]                                                        
+      at com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil.importR 
+  eferenceStagedModel(StagedModelDataHandlerUtil.java:311)                      
+  ~[portal-kernel.jar:?]                                                        
+      at com.liferay.exportimport.kernel.lar.BaseStagedModelDataHandler.importR 
+  eferenceStagedModels(BaseStagedModelDataHan                                   
+  … +37 lines …                                                                 
+  vokerImpl.invoke(TransactionInvokerImpl.java:30) [portal-impl.jar:?]          
+      at com.liferay.portal.kernel.transaction.TransactionInvokerUtil.invoke(Tr 
+  ansactionInvokerUtil.java:19) [portal-kernel.jar:?]                           
+      at com.liferay.exportimport.internal.background.task.LayoutImportBackgrou 
+  ndTaskExecutor.execute(LayoutImportBackgroundTaskExecutor.java:78)            
+  [bundleFile:?]                                                                
+      at com.liferay.portal.background.task.internal.SerialBackgroundTaskExecut 
+  or.execute(SerialBackgroundTaskExecutor.java:54) [bundleFile:?]               
+      at com.liferay.portal.kernel.backgroundtask.DelegatingBackgroundTaskExecu 
+  tor.execute(DelegatingBackgroundTaskExecutor.java:32) [portal-kernel.jar:?]   
+      at com.liferay.portal.background.task.internal.ThreadLocalAwareBackground 
+  TaskExecutor.execute(ThreadLocalAwareBackgroundTaskExecutor.java:66)          
+  [bundleFile:?]                                                                
+      at com.liferay.portal.background.task.internal.messaging.BackgroundTaskMe 
+  ssageListener.doReceive(BackgroundTaskMessageListener.java:115)               
+  [bundleFile:?]                                                                
+      at com.liferay.portal.kernel.messaging.BaseMessageListener.doReceive(Base 
+  MessageListener.java:39) [portal-kernel.jar:?]                                
+      at com.liferay.portal.kernel.messaging.BaseMessageListener.receive(BaseMe 
+  ssageListener.java:25) [portal-kernel.jar:?]                                  
+      at com.liferay.portal.kernel.messaging.InvokerMessageListener.receive(Inv 
+  okerMessageListener.java:62) [portal-kernel.jar:?]                            
+      at com.liferay.portal.messaging.internal.ParallelDestination$1.run(Parall 
+  elDestination.java:47) [bundleFile:?]                                         
+      at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.j 
+  ava:1136) [?:?]                                                               
+      at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor. 
+  java:635) [?:?]                                                               
+      at java.lang.Thread.run(Thread.java:840) [?:?]                            
+  Caused by:                                                                    
+  com.liferay.document.library.kernel.exception.NoSuchMetadataSetException:     
+  {ddmStructureId=0}                                                            
+      at com.liferay.document.library.internal.exportimport.data.handler.DLFile 
+  EntryTypeStagedModelDataHandler._validateDDMStructures(DLFileEntryTypeStagedM 
+  odelDataHandler.java:460) ~[?:?]                                              
+      at com.liferay.document.library.internal.exportimport.data.handler.DLFile 
+  EntryTypeStagedModelDataHandler.doImportStagedModel(DLFileEntryTypeStagedMode 
+  lDataHandler.java:307) ~[?:?]                                                 
+      at com.liferay.document.library.internal.exportimport.data.handler.DLFile 
+  EntryTypeStagedModelDataHandler.doImportStagedModel(DLFileEntryTypeStagedMode 
+  lDataHandler.java:47) ~[?:?]                                                  
+      at com.liferay.exportimport.kernel.lar.BaseStagedModelDataHandler.importS 
+  tagedModel(BaseStagedModelDataHandler.java:390) ~[portal-kernel.jar:?]        
+                                                                                
+
+● Good news — the ExpandoTable fix worked (we got past that error). This is a
+  new one: DLFileEntryTypeStagedModelDataHandler._validateDDMStructures fails
+  because a DDM structure referenced by the DLFileEntryType maps to ID 0 (not
+  found on the target system). Same root pattern — global site dependency
+  missing during import.
+
+  Let me look at the failing code.
+
+  Read 1 file (ctrl+o to expand)
+
+● This is a different dependency in the same import chain. The flow is:
+
+  AssetListEntry → FileEntry → DLFileEntryType → DDMStructure (on global site,
+  not imported)
+
+  At line 282, MapUtil.getLong(ddmStructureIds, ddmStructureId) returns 0
+  because the DDMStructure from the source system wasn't mapped (it's on the
+  global site, not included in the import). Then _validateDDMStructures at line
+  459 fetches ddmStructureId=0 and gets null → throws.
+
+  This is the same class of problem — global site dependency missing during
+  import. How would you like to handle this? The options I see:
+
+  1. Filter out unmapped (0) DDM structure IDs from the array before validation,
+   and skip the DLFileEntryType creation if no valid structures remain
+  2. Create the DLFileEntryType as an empty shell without DDM structure links
+  (similar pattern to the expando fix)
+  3. Skip the entire DLFileEntryType import when structures are missing, and let
+   the FileEntry import proceed without the type
+
+  Which approach fits your intent?
+
+✻ Churned for 1m 6s
+
+❯ 2                                                                             
+
+  Read 1 file (ctrl+o to expand)
+● Let me check what addFileEntryType does with the ddmStructureId parameter, so
+  I know how to handle the empty shell case.
+
+  Searched for 2 patterns, read 1 file (ctrl+o to expand)
+
+● I see — addFileEntryType also calls its own _validateDDMStructures at line
+  129. So the fix needs to handle both levels. Let me check addDDMStructureLinks
+   too.
+
+  Searched for 2 patterns (ctrl+o to expand)
+
+● Now I have the full picture. The fix needs two files:
+
+  1. DLFileEntryTypeStagedModelDataHandler — filter out unmapped (0) IDs and
+  handle empty arrays
+  2. DLFileEntryTypeLocalServiceImpl — skip DDM structure validation during
+  import (since addFileEntryType also validates internally)
+
+  Let me check imports in the service impl first.
+
+  Searched for 1 pattern, read 1 file (ctrl+o to expand)
+
+● Now let me apply all the changes. I'll start with the service implementation,
+  then the data handler.
+
+● Update(portal-impl/src/com/liferay/portlet/documentlibrary/service/impl/DLFile
+        EntryTypeLocalServiceImpl.java)
+  ⎿  Added 1 line
+      27  import com.liferay.document.library.kernel.service.persistence.
+          DLFolderPersistence;
+      28  import com.liferay.document.library.kernel.util.DLUtil;
+      29  import com.liferay.dynamic.data.mapping.kernel.DDMStructure;
+      30 +import com.liferay.exportimport.kernel.lar.ExportImportThreadLo
+         +cal;                                                           
+      31  import com.liferay.dynamic.data.mapping.kernel.DDMStructureLink
+          ;
+      32  import com.liferay.dynamic.data.mapping.kernel.DDMStructureLink
+          ManagerUtil;
+      33  import com.liferay.dynamic.data.mapping.kernel.DDMStructureMana
+          gerUtil;
+
+● Update(portal-impl/src/com/liferay/portlet/documentlibrary/service/impl/DLFile
+        EntryTypeLocalServiceImpl.java)
+  ⎿  Added 4 lines
+      791        String fileEntryTypeKey, long[] ddmStructureIds)
+      792      throws NoSuchMetadataSetException {
+      793  
+      794 +    if (ExportImportThreadLocal.isImportInProcess()) {        
+      795 +      return;                                                 
+      796 +    }                                                         
+      797 +                                                              
+      798      if (ddmStructureIds.length == 0) {
+      799        throw new NoSuchMetadataSetException(
+      800          "DDM structure IDs is empty for file entry type " +
+
+● Now the data handler. Let me apply the changes to
+  DLFileEntryTypeStagedModelDataHandler.
+
+  Read 1 file (ctrl+o to expand)
+
+● Update(modules/apps/document-library/document-library-service/src/main/java/co
+        m/liferay/document/library/internal/exportimport/data/handler/DLFileEntr
+        yTypeStagedModelDataHandler.java)
+  ⎿  Added 1 line
+      35  import com.liferay.portal.kernel.util.SetUtil;
+      36  import com.liferay.portal.kernel.xml.Element;
+      37  
+      38 +import java.util.Arrays;                                       
+      39  import java.util.List;
+      40  import java.util.Map;
+      41  
+
+● Now filter out unmapped (0) IDs after the array is built:
+
+● Update(modules/apps/document-library/document-library-service/src/main/java/co
+        m/liferay/document/library/internal/exportimport/data/handler/DLFileEntr
+        yTypeStagedModelDataHandler.java)
+  ⎿  Added 6 lines
+      284          ddmStructureIds, ddmStructureId);
+      285      }
+      286  
+      287 +    ddmStructureIdsArray = Arrays.stream(                     
+      288 +      ddmStructureIdsArray                                    
+      289 +    ).filter(                                                 
+      290 +      ddmStructureId -> ddmStructureId > 0                    
+      291 +    ).toArray();                                              
+      292 +                                                              
+      293      ServiceContext serviceContext = portletDataContext.createS
+           erviceContext(
+      294        fileEntryType);
+      295  
+
+● Now handle the three code paths — ddmStructureIdsArray[0] when array might be
+  empty, and conditional addDDMStructureLinks/updateDDMStructureLinks:
+
+● Update(modules/apps/document-library/document-library-service/src/main/java/co
+        m/liferay/document/library/internal/exportimport/data/handler/DLFileEntr
+        yTypeStagedModelDataHandler.java)
+  ⎿  Added 25 lines, removed 11 lines
+      314          _validateDDMStructures(
+      315            fileEntryType.getFileEntryTypeKey(), ddmStructureIds
+           Array);
+      316  
+      317 +        long dataDefinitionId =                               
+      318 +          (ddmStructureIdsArray.length > 0) ?                 
+      319 +            ddmStructureIdsArray[0] : 0;                      
+      320 +                                                              
+      321          importedDLFileEntryType =
+      322            _dlFileEntryTypeLocalService.addFileEntryType(
+      323              null, userId, portletDataContext.getScopeGroupId()
+           ,
+      320 -            ddmStructureIdsArray[0],                          
+      324 +            dataDefinitionId,                                 
+      325              fileEntryType.getFileEntryTypeKey(),
+      326              fileEntryType.getNameMap(),
+      327              fileEntryType.getDescriptionMap(),
+      328              fileEntryType.getScope(), serviceContext);
+      329  
+      326 -        _dlFileEntryTypeLocalService.addDDMStructureLinks(    
+      327 -          importedDLFileEntryType.getFileEntryTypeId(),       
+      328 -          SetUtil.fromArray(ddmStructureIdsArray));           
+      330 +        if (ddmStructureIdsArray.length > 0) {                
+      331 +          _dlFileEntryTypeLocalService.addDDMStructureLinks(  
+      332 +            importedDLFileEntryType.getFileEntryTypeId(),     
+      333 +            SetUtil.fromArray(ddmStructureIdsArray));         
+      334 +        }                                                     
+      335        }
+      336        else {
+      337          _validateDDMStructures(
+     ...
+      347            _dlFileEntryTypeLocalService.fetchDLFileEntryType(
+      348              existingDLFileEntryType.getFileEntryTypeId());
+      349  
+      344 -        _dlFileEntryTypeLocalService.updateDDMStructureLinks( 
+      345 -          importedDLFileEntryType.getFileEntryTypeId(),       
+      346 -          SetUtil.fromArray(ddmStructureIdsArray));           
+      350 +        if (ddmStructureIdsArray.length > 0) {                
+      351 +          _dlFileEntryTypeLocalService.updateDDMStructureLinks
+          +(                                                             
+      352 +            importedDLFileEntryType.getFileEntryTypeId(),     
+      353 +            SetUtil.fromArray(ddmStructureIdsArray));         
+      354 +        }                                                     
+      355        }
+      356      }
+      357      else {
+      358        _validateDDMStructures(
+      359          fileEntryType.getFileEntryTypeKey(), ddmStructureIdsAr
+           ray);
+      360  
+      361 +      long dataDefinitionId =                                 
+      362 +        (ddmStructureIdsArray.length > 0) ?                   
+      363 +          ddmStructureIdsArray[0] : 0;                        
+      364 +                                                              
+      365        importedDLFileEntryType =
+      366          _dlFileEntryTypeLocalService.addFileEntryType(
+      367            null, userId, portletDataContext.getScopeGroupId(),
+      356 -          ddmStructureIdsArray[0],                            
+      368 +          dataDefinitionId,                                   
+      369            fileEntryType.getFileEntryTypeKey(),
+      370            fileEntryType.getNameMap(),
+      371            fileEntryType.getDescriptionMap(), fileEntryType.get
+           Scope(),
+      372            serviceContext);
+      373  
+      362 -      _dlFileEntryTypeLocalService.addDDMStructureLinks(      
+      363 -        importedDLFileEntryType.getFileEntryTypeId(),         
+      364 -        SetUtil.fromArray(ddmStructureIdsArray));             
+      374 +      if (ddmStructureIdsArray.length > 0) {                  
+      375 +        _dlFileEntryTypeLocalService.addDDMStructureLinks(    
+      376 +          importedDLFileEntryType.getFileEntryTypeId(),       
+      377 +          SetUtil.fromArray(ddmStructureIdsArray));           
+      378 +      }                                                       
+      379      }
+      380  
+      381      portletDataContext.importClassedModel(
+
+● Now update the data handler's _validateDDMStructures to accept empty arrays:
+
+● Update(modules/apps/document-library/document-library-service/src/main/java/co
+        m/liferay/document/library/internal/exportimport/data/handler/DLFileEntr
+        yTypeStagedModelDataHandler.java)
+  ⎿  Removed 6 lines
+      467        String fileEntryTypeKey, long[] ddmStructureIds)
+      468      throws Exception {
+      469  
+      470 -    if (ddmStructureIds.length == 0) {                        
+      471 -      throw new NoSuchMetadataSetException(                   
+      472 -        "DDM structure IDs is empty for file entry type " +   
+      473 -          fileEntryTypeKey);                                  
+      474 -    }                                                         
+      475 -                                                              
+      470      for (long ddmStructureId : ddmStructureIds) {
+      471        DDMStructure ddmStructure =
+      472          _ddmStructureLocalService.fetchStructure(ddmStructureI
+           d);
+
+● Done. Here's a summary of all changes:
+
+  DLFileEntryTypeLocalServiceImpl._validateDDMStructures — returns early during
+  import (ExportImportThreadLocal.isImportInProcess()), allowing
+  addFileEntryType to create the type with dataDefinitionId=0.
+
+  DLFileEntryTypeStagedModelDataHandler.doImportStagedModel — three changes:
+  1. Filters out unmapped (0) DDM structure IDs from the array after building it
+  2. Passes 0 as dataDefinitionId when the filtered array is empty (empty shell)
+  3. Skips addDDMStructureLinks/updateDDMStructureLinks when no valid IDs exist
+
+  DLFileEntryTypeStagedModelDataHandler._validateDDMStructures — removed the
+  empty-array check (the filtered array now only contains valid IDs, so the loop
+   handles it naturally).
+
+✻ Baked for 3m 56s

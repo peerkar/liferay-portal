@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /opt/projects/liferay-portal/liferay-portal/modules/apps/portal-search-elasticsearch8 -type f -name \"*.java\" -exec grep -l \"bulk\" {})"
+    ]
+  }
+}

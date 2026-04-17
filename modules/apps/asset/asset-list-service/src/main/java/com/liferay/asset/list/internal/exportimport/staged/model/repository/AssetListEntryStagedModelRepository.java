@@ -44,6 +44,7 @@ public class AssetListEntryStagedModelRepository
 			assetListEntry);
 
 		if (portletDataContext.isDataStrategyMirror()) {
+			serviceContext.setAttribute("assetListEntryKey", assetListEntry.getAssetListEntryKey());
 			serviceContext.setUuid(assetListEntry.getUuid());
 		}
 

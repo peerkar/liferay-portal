@@ -80,9 +80,10 @@ import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 import com.liferay.segments.constants.SegmentsExperienceConstants;
 import com.liferay.segments.model.SegmentsExperience;
 import com.liferay.segments.service.SegmentsExperienceLocalServiceUtil;
-import com.liferay.segments.service.SegmentsExperienceServiceUtil;
 import com.liferay.style.book.model.StyleBookEntry;
 import com.liferay.style.book.service.StyleBookEntryLocalServiceUtil;
+
+import java.io.Serializable;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -897,13 +898,46 @@ public class LayoutUtil {
 
 		if (pageSpecification == null) {
 			serviceContext.setExpandoBridgeAttributes(null);
+
+			return;
 		}
-		else {
-			serviceContext.setExpandoBridgeAttributes(
-				CustomFieldsUtil.toMap(
-					Layout.class.getName(), serviceContext.getCompanyId(),
-					pageSpecification.getCustomFields(), null));
+
+		Map<String, Serializable> expandoBridgeAttributes =
+			CustomFieldsUtil.toMap(
+				Layout.class.getName(), serviceContext.getCompanyId(),
+				pageSpecification.getCustomFields(),
+				LocaleUtil.getSiteDefault());
+
+		if (expandoBridgeAttributes != null) {
+			Locale siteDefaultLocale = LocaleUtil.getSiteDefault();
+
+			for (Map.Entry<String, Serializable> entry :
+					expandoBridgeAttributes.entrySet()) {
+
+				if (!(entry.getValue() instanceof Map)) {
+					continue;
+				}
+
+				Map<Locale, String> localizedMap =
+					(Map<Locale, String>)entry.getValue();
+
+				if (localizedMap.isEmpty() ||
+					Validator.isNotNull(localizedMap.get(siteDefaultLocale))) {
+
+					continue;
+				}
+
+				for (String value : localizedMap.values()) {
+					if (Validator.isNotNull(value)) {
+						localizedMap.put(siteDefaultLocale, value);
+
+						break;
+					}
+				}
+			}
 		}
+
+		serviceContext.setExpandoBridgeAttributes(expandoBridgeAttributes);
 	}
 
 	private static void _updateClientExtensionEntryRel(
@@ -1181,7 +1215,7 @@ public class LayoutUtil {
 				new HashMap<>();
 
 			for (SegmentsExperience segmentsExperience :
-					SegmentsExperienceServiceUtil.getSegmentsExperiences(
+					SegmentsExperienceLocalServiceUtil.getSegmentsExperiences(
 						layout.getGroupId(), layout.getPlid(), true)) {
 
 				originalSegmentsExperiencesMap.put(
@@ -1207,6 +1241,19 @@ public class LayoutUtil {
 						SegmentsExperienceConstants.KEY_DEFAULT)) {
 
 					priority = minPriority++;
+				}
+				else if (oldSegmentsExperience == null) {
+					SegmentsExperience defaultSegmentsExperience =
+						SegmentsExperienceLocalServiceUtil.
+							fetchDefaultSegmentsExperience(layout.getPlid());
+
+					if (defaultSegmentsExperience != null) {
+						originalSegmentsExperiencesMap.remove(
+							defaultSegmentsExperience.
+								getExternalReferenceCode());
+
+						oldSegmentsExperience = defaultSegmentsExperience;
+					}
 				}
 
 				if (oldSegmentsExperience == null) {
@@ -1239,11 +1286,12 @@ public class LayoutUtil {
 					actualSegmentsExperiencesMap.get(
 						pageExperience.getExternalReferenceCode());
 
-				SegmentsExperienceServiceUtil.updateSegmentsExperiencePriority(
-					actualSegmentsExperience.getSegmentsExperienceId(),
-					SegmentsExperienceUtil.getPriority(
-						pageExperience.getKey(), layout,
-						pageExperience.getPriority()));
+				SegmentsExperienceLocalServiceUtil.
+					updateSegmentsExperiencePriority(
+						actualSegmentsExperience.getSegmentsExperienceId(),
+						SegmentsExperienceUtil.getPriority(
+							pageExperience.getKey(), layout,
+							pageExperience.getPriority()));
 			}
 		}
 	}

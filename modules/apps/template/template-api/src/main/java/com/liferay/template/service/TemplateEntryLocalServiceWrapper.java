@@ -486,6 +486,16 @@ public class TemplateEntryLocalServiceWrapper
 			externalReferenceCode, groupId);
 	}
 
+	@Override
+	public TemplateEntry updateTemplateEntry(
+			String externalReferenceCode, long groupId,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _templateEntryLocalService.updateTemplateEntry(
+			externalReferenceCode, groupId, serviceContext);
+	}
+
 	/**
 	 * Updates the template entry in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *
@@ -541,4 +551,4 @@ public class TemplateEntryLocalServiceWrapper
 	private TemplateEntryLocalService _templateEntryLocalService;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-2105821859
+// LIFERAY-SERVICE-BUILDER-HASH:-610171999

@@ -2410,14 +2410,12 @@ components:
                     description:
                         The navigation menu's creation date.
                     format: date-time
-                    readOnly: true
                     type: string
                 dateModified:
                     # @review
                     description:
                         The last time the navigation menu changed.
                     format: date-time
-                    readOnly: true
                     type: string
                 externalReferenceCode:
                     description:
@@ -2456,6 +2454,10 @@ components:
                     description:
                         The external reference code of the site to which this navigation menu is scoped.
                     readOnly: true
+                    type: string
+                uuid:
+                    description:
+                        The UUID of the navigation menu.
                     type: string
         NavigationMenuFragmentConfigurationFieldValue:
             allOf:
@@ -2509,14 +2511,12 @@ components:
                     description:
                         The navigation menu item's creation date.
                     format: date-time
-                    readOnly: true
                     type: string
                 dateModified:
                     # @review
                     description:
                         The last time the navigation menu item changed.
                     format: date-time
-                    readOnly: true
                     type: string
                 defaultLanguageId:
                     example: en_US
@@ -2577,6 +2577,10 @@ components:
                     type: string
                 useCustomName:
                     type: boolean
+                uuid:
+                    description:
+                        The UUID of the navigation menu item.
+                    type: string
         NavigationMenuValue:
             # @review
             description:
@@ -4784,7 +4788,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.headless.admin.site.client', and version '1.0.27'."
+        'com.liferay.headless.admin.site.client', and version '1.0.28'."
     license:
         name: Apache 2.0
         url: http://www.apache.org/licenses/LICENSE-2.0.html

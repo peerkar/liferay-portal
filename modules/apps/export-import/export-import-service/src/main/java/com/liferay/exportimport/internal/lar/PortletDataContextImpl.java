@@ -79,6 +79,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.TeamLocalServiceUtil;
 import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalServiceUtil;
 import com.liferay.portal.kernel.util.AggregateClassLoader;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.DateRange;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -1953,6 +1954,9 @@ public class PortletDataContextImpl implements PortletDataContext {
 					(Map<String, Serializable>)getZipEntryAsObject(expandoPath);
 
 				if (expandoBridgeAttributes != null) {
+					_fillDefaultLocaleExpandoBridgeAttributes(
+						expandoBridgeAttributes);
+
 					serviceContext.setExpandoBridgeAttributes(
 						expandoBridgeAttributes);
 				}
@@ -2419,6 +2423,37 @@ public class PortletDataContextImpl implements PortletDataContext {
 		}
 
 		return null;
+	}
+
+	private void _fillDefaultLocaleExpandoBridgeAttributes(
+		Map<String, Serializable> expandoBridgeAttributes) {
+
+		Locale siteDefaultLocale = LocaleUtil.getSiteDefault();
+
+		for (Map.Entry<String, Serializable> entry :
+				expandoBridgeAttributes.entrySet()) {
+
+			if (!(entry.getValue() instanceof Map)) {
+				continue;
+			}
+
+			Map<Locale, String> localizedMap =
+				(Map<Locale, String>)entry.getValue();
+
+			if (localizedMap.isEmpty() ||
+				Validator.isNotNull(localizedMap.get(siteDefaultLocale))) {
+
+				continue;
+			}
+
+			for (String value : localizedMap.values()) {
+				if (Validator.isNotNull(value)) {
+					localizedMap.put(siteDefaultLocale, value);
+
+					break;
+				}
+			}
+		}
 	}
 
 	private Element _getDataElement(

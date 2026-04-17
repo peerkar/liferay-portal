@@ -6,6 +6,7 @@
 package com.liferay.site.navigation.service.impl;
 
 import com.liferay.batch.engine.thread.local.BatchEngineThreadLocal;
+import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -423,6 +424,11 @@ public class SiteNavigationMenuItemLocalServiceImpl
 		siteNavigationMenuItem.setTypeSettings(typeSettings);
 		siteNavigationMenuItem.setOrder(order);
 
+		if (ExportImportThreadLocal.isPreserveModificationDate()) {
+			siteNavigationMenuItem.setModifiedDate(
+				siteNavigationMenuItem.getModifiedDate());
+		}
+
 		return siteNavigationMenuItemPersistence.update(siteNavigationMenuItem);
 	}
 
@@ -453,8 +459,12 @@ public class SiteNavigationMenuItemLocalServiceImpl
 
 		siteNavigationMenuItem.setUserId(userId);
 		siteNavigationMenuItem.setUserName(user.getFullName());
-		siteNavigationMenuItem.setModifiedDate(
-			serviceContext.getModifiedDate(new Date()));
+
+		if (!ExportImportThreadLocal.isPreserveModificationDate()) {
+			siteNavigationMenuItem.setModifiedDate(
+				serviceContext.getModifiedDate(new Date()));
+		}
+
 		siteNavigationMenuItem.setName(name);
 		siteNavigationMenuItem.setTypeSettings(typeSettings);
 		siteNavigationMenuItem.setExpandoBridgeAttributes(serviceContext);

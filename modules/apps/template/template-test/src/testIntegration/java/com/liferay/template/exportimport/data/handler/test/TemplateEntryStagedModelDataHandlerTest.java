@@ -192,8 +192,14 @@ public class TemplateEntryStagedModelDataHandlerTest
 			templateEntry.getUuid(), liveGroup);
 
 		Assert.assertEquals(
+			templateEntry.getCreateDate(),
+			importedTemplateEntry.getCreateDate());
+		Assert.assertEquals(
 			expectedInfoItemFormVariationKey,
 			importedTemplateEntry.getInfoItemFormVariationKey());
+		Assert.assertEquals(
+			templateEntry.getModifiedDate(),
+			importedTemplateEntry.getModifiedDate());
 	}
 
 	private long _classNameId;

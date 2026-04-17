@@ -150,8 +150,12 @@ public class TemplateEntryStagedModelRepository
 		existingTemplateEntry.setInfoItemFormVariationKey(
 			templateEntry.getInfoItemFormVariationKey());
 
-		return _templateEntryLocalService.updateTemplateEntry(
+		ServiceContext serviceContext = portletDataContext.createServiceContext(
 			existingTemplateEntry);
+
+		return _templateEntryLocalService.updateTemplateEntry(
+			existingTemplateEntry.getExternalReferenceCode(),
+			existingTemplateEntry.getGroupId(), serviceContext);
 	}
 
 	@Reference

@@ -359,6 +359,11 @@ public interface TemplateEntryLocalService
 			String externalReferenceCode, long groupId)
 		throws PortalException;
 
+	public TemplateEntry updateTemplateEntry(
+			String externalReferenceCode, long groupId,
+			ServiceContext serviceContext)
+		throws PortalException;
+
 	/**
 	 * Updates the template entry in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *
@@ -388,4 +393,4 @@ public interface TemplateEntryLocalService
 		throws E;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1176070065
+// LIFERAY-SERVICE-BUILDER-HASH:484202435

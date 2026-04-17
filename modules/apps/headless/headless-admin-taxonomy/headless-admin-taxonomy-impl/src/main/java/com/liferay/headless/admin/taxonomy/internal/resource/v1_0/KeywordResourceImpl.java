@@ -13,6 +13,7 @@ import com.liferay.asset.tags.constants.AssetTagsAdminPortletKeys;
 import com.liferay.depot.constants.DepotConstants;
 import com.liferay.depot.model.DepotEntry;
 import com.liferay.depot.service.DepotEntryService;
+import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.exportimport.vulcan.batch.engine.ExportImportVulcanBatchEngineTaskItemDelegate;
 import com.liferay.headless.admin.taxonomy.dto.v1_0.Keyword;
 import com.liferay.headless.admin.taxonomy.internal.odata.entity.v1_0.KeywordEntityModel;
@@ -322,7 +323,7 @@ public class KeywordResourceImpl
 			return _toKeyword(
 				_assetTagService.updateTag(
 					externalReferenceCode, assetTag.getTagId(),
-					keyword.getName(), null));
+					keyword.getName(), _createServiceContext(keyword)));
 		}
 
 		return _postSiteKeyword(externalReferenceCode, keyword, assetLibraryId);
@@ -334,7 +335,7 @@ public class KeywordResourceImpl
 
 		AssetTag assetTag = _assetTagService.updateTag(
 			keyword.getExternalReferenceCode(), keywordId, keyword.getName(),
-			null);
+			_createServiceContext(keyword));
 
 		if (FeatureFlagManagerUtil.isEnabled(
 				assetTag.getCompanyId(), "LPD-17564")) {
@@ -395,7 +396,7 @@ public class KeywordResourceImpl
 			return _toKeyword(
 				_assetTagService.updateTag(
 					externalReferenceCode, assetTag.getTagId(),
-					keyword.getName(), null));
+					keyword.getName(), _createServiceContext(keyword)));
 		}
 
 		return _postSiteKeyword(externalReferenceCode, keyword, siteId);
@@ -524,7 +525,7 @@ public class KeywordResourceImpl
 
 		assetTag = _assetTagService.updateTag(
 			externalReferenceCode, assetTag.getTagId(), keyword.getName(),
-			new ServiceContext());
+			_createServiceContext(keyword));
 
 		Group group = _groupLocalService.getGroup(siteId);
 
@@ -548,13 +549,25 @@ public class KeywordResourceImpl
 		return _toKeyword(assetTag);
 	}
 
+	private ServiceContext _createServiceContext(Keyword keyword) {
+
+		ServiceContext serviceContext = new ServiceContext();
+
+
+		// TODO PK: check whether modification date should be updated on patch endpoint
+		serviceContext.setCreateDate(keyword.getDateCreated());
+		serviceContext.setModifiedDate(keyword.getDateModified());
+		serviceContext.setUuid(keyword.getUuid());
+
+		return serviceContext;
+	}
+
 	private Keyword _postSiteKeyword(
 			String externalReferenceCode, Keyword keyword, Long siteId)
 		throws Exception {
 
 		AssetTag assetTag = _assetTagService.addTag(
-			externalReferenceCode, siteId, keyword.getName(),
-			new ServiceContext());
+			externalReferenceCode, siteId, keyword.getName(), _createServiceContext(keyword));
 
 		Group group = _groupLocalService.getGroup(siteId);
 

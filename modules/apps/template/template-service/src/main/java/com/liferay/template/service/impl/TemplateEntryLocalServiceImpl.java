@@ -14,6 +14,7 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.template.model.TemplateEntry;
 import com.liferay.template.service.base.TemplateEntryLocalServiceBaseImpl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
@@ -150,6 +151,21 @@ public class TemplateEntryLocalServiceImpl
 
 		return templateEntryLocalService.updateTemplateEntry(
 			templateEntry.getTemplateEntryId());
+	}
+
+	@Override
+	public TemplateEntry updateTemplateEntry(
+			String externalReferenceCode, long groupId,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		TemplateEntry templateEntry = templateEntryPersistence.findByERC_G(
+			externalReferenceCode, groupId);
+
+		templateEntry.setModifiedDate(
+			serviceContext.getModifiedDate(new Date()));
+
+		return templateEntryPersistence.update(templateEntry);
 	}
 
 	@Reference

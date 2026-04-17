@@ -140,6 +140,7 @@ public class NavigationMenuDTOConverter
 
 						return StringPool.BLANK;
 					});
+				setUuid(siteNavigationMenu::getUuid);
 			}
 		};
 	}

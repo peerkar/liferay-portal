@@ -177,6 +177,7 @@ public class AssetListEntryStagedModelDataHandler
 			_getAssetEntrySubtype(assetListEntry, portletDataContext));
 		importedAssetListEntry.setAssetEntryType(
 			assetListEntry.getAssetEntryType());
+		importedAssetListEntry.setModifiedDate(assetListEntry.getModifiedDate());
 
 		_assetListEntryLocalService.updateAssetListEntry(
 			importedAssetListEntry);

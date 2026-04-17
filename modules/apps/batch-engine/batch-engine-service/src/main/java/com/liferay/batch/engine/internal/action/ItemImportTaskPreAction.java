@@ -14,6 +14,7 @@ import com.liferay.batch.engine.action.ImportTaskPreAction;
 import com.liferay.batch.engine.constants.BatchEngineImportTaskConstants;
 import com.liferay.batch.engine.context.ImportTaskContext;
 import com.liferay.batch.engine.model.BatchEngineImportTask;
+import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
@@ -28,6 +29,7 @@ import com.liferay.portal.vulcan.jackson.databind.ser.VulcanPropertyFilter;
 
 import java.util.Set;
 
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTThickness;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -73,7 +75,7 @@ public class ItemImportTaskPreAction implements ImportTaskPreAction {
 			return;
 		}
 
-		PrincipalThreadLocal.setName(user.getUserId());
+		PrincipalThreadLocal.setName(user.getUserId(), false);
 
 		batchEngineTaskItemDelegate.setContextUser(user);
 

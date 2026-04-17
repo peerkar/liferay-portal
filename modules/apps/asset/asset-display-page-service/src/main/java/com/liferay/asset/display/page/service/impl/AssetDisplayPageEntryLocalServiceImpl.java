@@ -79,10 +79,6 @@ public class AssetDisplayPageEntryLocalServiceImpl
 		assetDisplayPageEntry.setCompanyId(user.getCompanyId());
 		assetDisplayPageEntry.setUserId(user.getUserId());
 		assetDisplayPageEntry.setUserName(user.getFullName());
-		assetDisplayPageEntry.setCreateDate(
-			serviceContext.getCreateDate(new Date()));
-		assetDisplayPageEntry.setModifiedDate(
-			serviceContext.getModifiedDate(new Date()));
 		assetDisplayPageEntry.setClassNameId(classNameId);
 		assetDisplayPageEntry.setClassPK(classPK);
 		assetDisplayPageEntry.setLayoutPageTemplateEntryId(

@@ -5,6 +5,7 @@
 
 package com.liferay.site.navigation.service.impl;
 
+import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.dao.orm.custom.sql.CustomSQL;
 import com.liferay.portal.kernel.dao.orm.WildcardMode;
@@ -279,6 +280,11 @@ public class SiteNavigationMenuLocalServiceImpl
 		siteNavigationMenu.setType(type);
 		siteNavigationMenu.setAuto(auto);
 
+		if (ExportImportThreadLocal.isPreserveModificationDate()) {
+			siteNavigationMenu.setModifiedDate(
+				siteNavigationMenu.getModifiedDate());
+		}
+
 		return siteNavigationMenuPersistence.update(siteNavigationMenu);
 	}
 
@@ -301,8 +307,12 @@ public class SiteNavigationMenuLocalServiceImpl
 
 		siteNavigationMenu.setUserId(userId);
 		siteNavigationMenu.setUserName(user.getFullName());
-		siteNavigationMenu.setModifiedDate(
-			serviceContext.getModifiedDate(new Date()));
+
+		if (!ExportImportThreadLocal.isPreserveModificationDate()) {
+			siteNavigationMenu.setModifiedDate(
+				serviceContext.getModifiedDate(new Date()));
+		}
+
 		siteNavigationMenu.setName(name);
 
 		return siteNavigationMenuPersistence.update(siteNavigationMenu);

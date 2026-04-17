@@ -915,6 +915,8 @@ public class TaxonomyCategoryResourceImpl
 			taxonomyCategory.getViewableByAsString()
 		).build();
 
+		serviceContext.setCreateDate(taxonomyCategory.getDateCreated());
+		serviceContext.setModifiedDate(taxonomyCategory.getDateModified());
 		serviceContext.setUuid(taxonomyCategory.getUuid());
 
 		return serviceContext;

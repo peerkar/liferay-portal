@@ -6,6 +6,8 @@
 package com.liferay.style.book.service.impl;
 
 import com.liferay.document.library.kernel.service.DLAppLocalService;
+import com.liferay.exportimport.kernel.lar.ExportImportHelperUtil;
+import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
@@ -481,11 +483,12 @@ public class StyleBookEntryLocalServiceImpl
 		}
 
 		styleBookEntry.setUserId(userId);
-		styleBookEntry.setModifiedDate(new Date());
 		styleBookEntry.setFrontendTokensValues(frontendTokensValues);
 		styleBookEntry.setName(name);
 		styleBookEntry.setPreviewFileEntryId(previewFileEntryId);
 		styleBookEntry.setStyleBookEntryKey(styleBookEntryKey);
+
+		_updateModificationDate(styleBookEntry);
 
 		if (defaultStylebookEntry) {
 			StyleBookEntry oldDefaultStyleBookEntry =
@@ -503,6 +506,12 @@ public class StyleBookEntryLocalServiceImpl
 		return styleBookEntryPersistence.update(styleBookEntry);
 	}
 
+	private void _updateModificationDate(StyleBookEntry styleBookEntry) {
+		if (ExportImportThreadLocal.isPreserveModificationDate()) {
+			styleBookEntry.setModifiedDate(styleBookEntry.getModifiedDate());
+		}
+	}
+
 	@Override
 	public StyleBookEntry updateStyleBookEntry(
 			long styleBookEntryId, String frontendTokensValues, String name)
@@ -513,9 +522,10 @@ public class StyleBookEntryLocalServiceImpl
 
 		_validate(styleBookEntry.getGroupId(), name, styleBookEntryId);
 
-		styleBookEntry.setModifiedDate(new Date());
 		styleBookEntry.setFrontendTokensValues(frontendTokensValues);
 		styleBookEntry.setName(name);
+
+		_updateModificationDate(styleBookEntry);
 
 		StyleBookEntry draftStyleBookEntry = fetchDraft(styleBookEntry);
 

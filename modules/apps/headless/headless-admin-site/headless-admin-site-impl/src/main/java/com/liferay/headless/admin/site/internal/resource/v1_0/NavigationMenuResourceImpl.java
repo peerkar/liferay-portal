@@ -6,6 +6,7 @@
 package com.liferay.headless.admin.site.internal.resource.v1_0;
 
 import com.liferay.batch.engine.thread.local.BatchEngineThreadLocal;
+import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.exportimport.vulcan.batch.engine.ExportImportVulcanBatchEngineTaskItemDelegate;
 import com.liferay.headless.admin.site.dto.v1_0.NavigationMenu;
 import com.liferay.headless.admin.site.dto.v1_0.NavigationMenuItem;
@@ -39,6 +40,7 @@ import com.liferay.site.navigation.constants.SiteNavigationConstants;
 import com.liferay.site.navigation.menu.item.layout.constants.SiteNavigationMenuItemTypeConstants;
 import com.liferay.site.navigation.model.SiteNavigationMenu;
 import com.liferay.site.navigation.model.SiteNavigationMenuItem;
+import com.liferay.site.navigation.service.SiteNavigationMenuItemLocalService;
 import com.liferay.site.navigation.service.SiteNavigationMenuItemService;
 import com.liferay.site.navigation.service.SiteNavigationMenuLocalService;
 import com.liferay.site.navigation.service.SiteNavigationMenuService;
@@ -243,14 +245,19 @@ public class NavigationMenuResourceImpl
 			NavigationMenu navigationMenu)
 		throws Exception {
 
+		ServiceContext serviceContext = ServiceContextBuilder.create(
+			groupId, contextHttpServletRequest, null
+		).build();
+
+		serviceContext.setCreateDate(navigationMenu.getDateCreated());
+		serviceContext.setModifiedDate(navigationMenu.getDateModified());
+		serviceContext.setUuid(navigationMenu.getUuid());
+
 		SiteNavigationMenu siteNavigationMenu =
 			_siteNavigationMenuService.addSiteNavigationMenu(
 				externalReferenceCode, groupId, navigationMenu.getName(),
 				_getNavigationMenuType(navigationMenu),
-				_isAuto(navigationMenu.getAuto()),
-				ServiceContextBuilder.create(
-					groupId, contextHttpServletRequest, null
-				).build());
+				_isAuto(navigationMenu.getAuto()), serviceContext);
 
 		_createNavigationMenuItems(
 			groupId, navigationMenu.getNavigationMenuItems(), 0,
@@ -263,6 +270,20 @@ public class NavigationMenuResourceImpl
 			long groupId, NavigationMenuItem navigationMenuItem,
 			long parentNavigationMenuId, long siteNavigationMenuId)
 		throws Exception {
+
+		ServiceContext serviceContext = ServiceContextBuilder.create(
+			groupId, contextHttpServletRequest, null
+		).expandoBridgeAttributes(
+			CustomFieldsUtil.toMap(
+				SiteNavigationMenuItem.class.getName(),
+				contextCompany.getCompanyId(),
+				navigationMenuItem.getCustomFields(),
+				contextAcceptLanguage.getPreferredLocale())
+		).build();
+
+		serviceContext.setCreateDate(navigationMenuItem.getDateCreated());
+		serviceContext.setModifiedDate(navigationMenuItem.getDateModified());
+		serviceContext.setUuid(navigationMenuItem.getUuid());
 
 		UnicodeProperties unicodeProperties = UnicodePropertiesBuilder.fastLoad(
 			_getTypeSettings(navigationMenuItem)
@@ -279,16 +300,7 @@ public class NavigationMenuResourceImpl
 				navigationMenuItem.getExternalReferenceCode(), groupId,
 				siteNavigationMenuId, parentNavigationMenuId,
 				navigationMenuItem.getType(),
-				_getTypeSettings(navigationMenuItem),
-				ServiceContextBuilder.create(
-					groupId, contextHttpServletRequest, null
-				).expandoBridgeAttributes(
-					CustomFieldsUtil.toMap(
-						SiteNavigationMenuItem.class.getName(),
-						contextCompany.getCompanyId(),
-						navigationMenuItem.getCustomFields(),
-						contextAcceptLanguage.getPreferredLocale())
-				).build());
+				_getTypeSettings(navigationMenuItem), serviceContext);
 
 		_createNavigationMenuItems(
 			groupId, navigationMenuItem.getNavigationMenuItems(),
@@ -641,6 +653,10 @@ public class NavigationMenuResourceImpl
 			siteNavigationMenu.getGroupId(), contextHttpServletRequest, null
 		).build();
 
+		if (ExportImportThreadLocal.isPreserveModificationDate()) {
+			serviceContext.setModifiedDate(navigationMenu.getDateModified());
+		}
+
 		_siteNavigationMenuService.updateSiteNavigationMenu(
 			siteNavigationMenu.getSiteNavigationMenuId(),
 			_getNavigationMenuType(navigationMenu),
@@ -658,7 +674,7 @@ public class NavigationMenuResourceImpl
 		throws Exception {
 
 		List<SiteNavigationMenuItem> siteNavigationMenuItems = new ArrayList<>(
-			_siteNavigationMenuItemService.getSiteNavigationMenuItems(
+			_siteNavigationMenuItemLocalService.getSiteNavigationMenuItems(
 				siteNavigationMenuId, parentSiteNavigationMenuItemId));
 
 		if (navigationMenuItems == null) {
@@ -701,19 +717,25 @@ public class NavigationMenuResourceImpl
 								navigationMenuItemExternalReferenceCode);
 				}
 
+				ServiceContext serviceContext = ServiceContextBuilder.create(
+					groupId, contextHttpServletRequest, null
+				).expandoBridgeAttributes(
+					CustomFieldsUtil.toMap(
+						SiteNavigationMenuItem.class.getName(),
+						contextCompany.getCompanyId(),
+						navigationMenuItem.getCustomFields(),
+						contextAcceptLanguage.getPreferredLocale())
+				).build();
+
+				if (ExportImportThreadLocal.isPreserveModificationDate()) {
+					serviceContext.setModifiedDate(
+						siteNavigationMenuItem.getModifiedDate());
+				}
+
 				SiteNavigationMenuItem updatedSiteNavigationMenuItem =
 					_siteNavigationMenuItemService.updateSiteNavigationMenuItem(
 						siteNavigationMenuItem.getSiteNavigationMenuItemId(),
-						_getTypeSettings(navigationMenuItem),
-						ServiceContextBuilder.create(
-							groupId, contextHttpServletRequest, null
-						).expandoBridgeAttributes(
-							CustomFieldsUtil.toMap(
-								SiteNavigationMenuItem.class.getName(),
-								contextCompany.getCompanyId(),
-								navigationMenuItem.getCustomFields(),
-								contextAcceptLanguage.getPreferredLocale())
-						).build());
+						_getTypeSettings(navigationMenuItem), serviceContext);
 
 				_updateNavigationMenuItems(
 					groupId, navigationMenuItem.getNavigationMenuItems(),
@@ -746,6 +768,10 @@ public class NavigationMenuResourceImpl
 	)
 	private DTOConverter<SiteNavigationMenu, NavigationMenu>
 		_navigationMenuDTOConverter;
+
+	@Reference
+	private SiteNavigationMenuItemLocalService
+		_siteNavigationMenuItemLocalService;
 
 	@Reference
 	private SiteNavigationMenuItemService _siteNavigationMenuItemService;

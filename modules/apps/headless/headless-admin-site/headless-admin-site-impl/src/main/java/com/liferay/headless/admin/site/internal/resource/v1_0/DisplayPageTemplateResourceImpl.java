@@ -619,7 +619,7 @@ public class DisplayPageTemplateResourceImpl
 				0L, layout.getPlid(), 0L,
 				PageSpecificationUtil.getPublishedStatus(
 					displayPageTemplate.getPageSpecifications()),
-				serviceContext);
+				_getServiceContext(displayPageTemplate, groupId));
 
 		return _displayPageTemplateDTOConverter.toDTO(
 			DTOConverterContextUtil.getDTOConverterContext(

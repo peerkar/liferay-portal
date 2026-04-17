@@ -373,6 +373,25 @@ public class NavigationMenuItem implements Cloneable, Serializable {
 
 	protected Boolean useCustomName;
 
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public void setUuid(UnsafeSupplier<String, Exception> uuidUnsafeSupplier) {
+		try {
+			uuid = uuidUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected String uuid;
+
 	@Override
 	public NavigationMenuItem clone() throws CloneNotSupportedException {
 		return (NavigationMenuItem)super.clone();

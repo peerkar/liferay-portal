@@ -834,6 +834,8 @@ public class TaxonomyVocabularyResourceImpl
 			taxonomyVocabulary.getViewableByAsString()
 		).build();
 
+		serviceContext.setCreateDate(taxonomyVocabulary.getDateCreated());
+		serviceContext.setModifiedDate(taxonomyVocabulary.getDateModified());
 		serviceContext.setUuid(taxonomyVocabulary.getUuid());
 
 		return serviceContext;

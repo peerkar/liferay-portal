@@ -144,7 +144,7 @@ public class AssetListEntryLocalServiceImpl
 
 		// Asset list entry
 
-		assetListEntry.setModifiedDate(new Date());
+		_updateModifiedDate(assetListEntry);
 
 		if (Validator.isNull(assetListEntry.getAssetEntryType())) {
 			String assetEntryType = _getManualAssetEntryType(assetListEntryId);
@@ -195,8 +195,18 @@ public class AssetListEntryLocalServiceImpl
 		assetListEntry.setCreateDate(serviceContext.getCreateDate(new Date()));
 		assetListEntry.setModifiedDate(
 			serviceContext.getModifiedDate(new Date()));
-		assetListEntry.setAssetListEntryKey(
-			_generateAssetListEntryKey(groupId, title));
+
+		String assetListEntryKey = GetterUtil.getString(serviceContext.getAttribute("assetListEntryKey"));
+
+		if (Validator.isNotNull(assetListEntryKey) && (ExportImportThreadLocal.isImportInProcess() ||
+													   ExportImportThreadLocal.isStagingInProcess())) {
+			assetListEntry.setAssetListEntryKey(assetListEntryKey);
+		}
+		else {
+			assetListEntry.setAssetListEntryKey(
+				_generateAssetListEntryKey(groupId, title));
+		}
+
 		assetListEntry.setTitle(title);
 		assetListEntry.setType(type);
 
@@ -423,7 +433,7 @@ public class AssetListEntryLocalServiceImpl
 		AssetListEntry assetListEntry =
 			assetListEntryPersistence.findByPrimaryKey(assetListEntryId);
 
-		assetListEntry.setModifiedDate(new Date());
+		_updateModifiedDate(assetListEntry);
 
 		if (assetListEntry.getType() ==
 				AssetListEntryTypeConstants.TYPE_DYNAMIC) {
@@ -477,12 +487,19 @@ public class AssetListEntryLocalServiceImpl
 
 		_validateTitle(assetListEntry.getGroupId(), title);
 
-		assetListEntry.setModifiedDate(new Date());
+		_updateModifiedDate(assetListEntry);
+
 		assetListEntry.setAssetListEntryKey(
 			_generateAssetListEntryKey(assetListEntry.getGroupId(), title));
 		assetListEntry.setTitle(title);
 
 		return assetListEntryPersistence.update(assetListEntry);
+	}
+
+	private void _updateModifiedDate(AssetListEntry assetListEntry) {
+		if (!ExportImportThreadLocal.isPreserveModificationDate()) {
+			assetListEntry.setModifiedDate(new Date());
+		}
 	}
 
 	@Override
@@ -510,7 +527,7 @@ public class AssetListEntryLocalServiceImpl
 		AssetListEntry assetListEntry =
 			assetListEntryPersistence.findByPrimaryKey(assetListEntryId);
 
-		assetListEntry.setModifiedDate(new Date());
+		_updateModifiedDate(assetListEntry);
 
 		String assetEntryType = _getSegmentsAssetEntryType(
 			assetListEntryId, segmentsEntryId, typeSettings);

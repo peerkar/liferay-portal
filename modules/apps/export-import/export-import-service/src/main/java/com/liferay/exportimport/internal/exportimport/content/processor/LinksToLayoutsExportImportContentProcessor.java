@@ -130,7 +130,8 @@ public class LinksToLayoutsExportImportContentProcessor
 
 				portletDataContext.addReferenceElement(
 					stagedModel, entityElement, layout,
-					PortletDataContext.REFERENCE_TYPE_DEPENDENCY, true);
+					PortletDataContext.REFERENCE_TYPE_DEPENDENCY_DISPOSABLE,
+					true);
 			}
 			catch (Exception exception) {
 				if (_log.isDebugEnabled() || _log.isWarnEnabled()) {

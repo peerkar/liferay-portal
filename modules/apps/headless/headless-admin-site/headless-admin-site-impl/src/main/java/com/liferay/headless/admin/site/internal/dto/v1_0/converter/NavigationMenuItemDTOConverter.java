@@ -200,6 +200,7 @@ public class NavigationMenuItemDTOConverter
 				setUseCustomName(
 					() -> Boolean.valueOf(
 						unicodeProperties.getProperty("useCustomName")));
+				setUuid(siteNavigationMenuItem::getUuid);
 			}
 		};
 	}
