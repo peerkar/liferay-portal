@@ -24,7 +24,6 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.StagedModel;
-import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Element;
@@ -93,14 +92,6 @@ public class AssetDisplayPageStagedModelDataHandler
 			"layoutPageTemplateEntryERC");
 
 		if (Validator.isNotNull(layoutPageTemplateEntryERC)) {
-			ServiceContext serviceContext = new ServiceContext();
-
-			serviceContext.setCreateDate(assetDisplayPageEntry.getCreateDate());
-			serviceContext.setModifiedDate(
-				assetDisplayPageEntry.getModifiedDate());
-			serviceContext.setScopeGroupId(
-				portletDataContext.getScopeGroupId());
-
 			LayoutPageTemplateEntry layoutPageTemplateEntry =
 				_layoutPageTemplateEntryLocalService.
 					getOrAddEmptyLayoutPageTemplateEntry(
@@ -109,7 +100,8 @@ public class AssetDisplayPageStagedModelDataHandler
 						LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE,
 						portletDataContext.getUserId(
 							assetDisplayPageEntry.getUserUuid()),
-						serviceContext);
+						portletDataContext.createServiceContext(
+							assetDisplayPageEntry));
 
 			layoutPageTemplateEntryId =
 				layoutPageTemplateEntry.getLayoutPageTemplateEntryId();
