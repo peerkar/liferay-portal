@@ -5,6 +5,7 @@
 
 package com.liferay.fragment.service.impl;
 
+import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.fragment.exception.DuplicateFragmentCollectionKeyException;
 import com.liferay.fragment.exception.FragmentCollectionNameException;
 import com.liferay.fragment.model.FragmentCollection;
@@ -296,7 +297,10 @@ public class FragmentCollectionLocalServiceImpl
 
 		_validate(name);
 
-		fragmentCollection.setModifiedDate(new Date());
+		if (!ExportImportThreadLocal.isImportInProcess() && !ExportImportThreadLocal.isStagingInProcess())
+		{
+			fragmentCollection.setModifiedDate(new Date());
+		}
 		fragmentCollection.setName(name);
 		fragmentCollection.setDescription(description);
 

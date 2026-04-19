@@ -17,13 +17,17 @@ import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandler;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.exportimport.staged.model.repository.StagedModelRepository;
+import com.liferay.layout.page.template.constants.LayoutPageTemplateConstants;
+import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.StagedModel;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.staging.StagingGroupHelper;
@@ -91,16 +95,24 @@ public class AssetDisplayPageStagedModelDataHandler
 			"layoutPageTemplateEntryERC");
 
 		if (Validator.isNotNull(layoutPageTemplateEntryERC)) {
+
+			ServiceContext serviceContext = new ServiceContext();
+
+			serviceContext.setCreateDate(assetDisplayPageEntry.getCreateDate());
+			serviceContext.setModifiedDate(assetDisplayPageEntry.getModifiedDate());
+			serviceContext.setScopeGroupId(portletDataContext.getScopeGroupId());
+
+
 			LayoutPageTemplateEntry layoutPageTemplateEntry =
-				_layoutPageTemplateEntryLocalService.
-					getLayoutPageTemplateEntryByExternalReferenceCode(
-						layoutPageTemplateEntryERC,
-						portletDataContext.getGroupId());
+
+				_layoutPageTemplateEntryLocalService.getOrAddEmptyLayoutPageTemplateEntry(
+					layoutPageTemplateEntryERC, portletDataContext.getGroupId(),
+						LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE,
+						portletDataContext.getUserId(assetDisplayPageEntry.getUserUuid()), serviceContext);
 
 			layoutPageTemplateEntryId =
 				layoutPageTemplateEntry.getLayoutPageTemplateEntryId();
 		}
-
 		AssetDisplayPageEntry importedAssetDisplayPageEntry =
 			(AssetDisplayPageEntry)assetDisplayPageEntry.clone();
 

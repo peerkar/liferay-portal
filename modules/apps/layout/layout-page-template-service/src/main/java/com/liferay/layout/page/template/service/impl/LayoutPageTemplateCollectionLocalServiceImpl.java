@@ -434,13 +434,15 @@ public class LayoutPageTemplateCollectionLocalServiceImpl
 			layoutPageTemplateCollectionPersistence.findByPrimaryKey(
 				layoutPageTemplateCollectionId);
 
-		if (!Objects.equals(layoutPageTemplateCollection.getName(), name)) {
-			_validate(
-				layoutPageTemplateCollection.getGroupId(), name,
-				layoutPageTemplateCollection.
-					getParentLayoutPageTemplateCollectionId(),
-				layoutPageTemplateCollection.getType());
+		if (Objects.equals(layoutPageTemplateCollection.getName(), name)) {
+			return layoutPageTemplateCollection;
 		}
+
+		_validate(
+			layoutPageTemplateCollection.getGroupId(), name,
+			layoutPageTemplateCollection.
+				getParentLayoutPageTemplateCollectionId(),
+			layoutPageTemplateCollection.getType());
 
 		layoutPageTemplateCollection.setLayoutPageTemplateCollectionKey(
 			_generateLayoutPageTemplateCollectionKey(
@@ -463,13 +465,18 @@ public class LayoutPageTemplateCollectionLocalServiceImpl
 			layoutPageTemplateCollectionPersistence.findByPrimaryKey(
 				layoutPageTemplateCollectionId);
 
-		if (!Objects.equals(layoutPageTemplateCollection.getName(), name)) {
-			_validate(
-				layoutPageTemplateCollection.getGroupId(), name,
-				layoutPageTemplateCollection.
-					getParentLayoutPageTemplateCollectionId(),
-				layoutPageTemplateCollection.getType());
+		if (Objects.equals(layoutPageTemplateCollection.getName(), name) &&
+			Objects.equals(
+				layoutPageTemplateCollection.getDescription(), description)) {
+
+			return layoutPageTemplateCollection;
 		}
+
+		_validate(
+			layoutPageTemplateCollection.getGroupId(), name,
+			layoutPageTemplateCollection.
+				getParentLayoutPageTemplateCollectionId(),
+			layoutPageTemplateCollection.getType());
 
 		layoutPageTemplateCollection.setModifiedDate(new Date());
 		layoutPageTemplateCollection.setLayoutPageTemplateCollectionKey(

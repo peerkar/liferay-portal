@@ -2198,6 +2198,13 @@ public class DDMStructureLocalServiceImpl
 			return structure;
 		}
 
+		// TOOO: putting it to servicecontext pollutes
+		// the service context for form instance
+
+		if (ExportImportThreadLocal.isPreserveModificationDate()) {
+			structure.setModifiedDate(structure.getModifiedDate());
+		}
+
 		structure = ddmStructurePersistence.update(structure);
 
 		// Structure templates

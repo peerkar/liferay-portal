@@ -20,6 +20,7 @@ import com.liferay.fragment.configuration.FragmentServiceConfiguration;
 import com.liferay.fragment.constants.FragmentConstants;
 import com.liferay.fragment.constants.FragmentPortletKeys;
 import com.liferay.fragment.model.FragmentCollection;
+import com.liferay.fragment.model.FragmentComposition;
 import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.layout.util.LayoutServiceContextHelper;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
@@ -76,6 +77,7 @@ public class FragmentPortletDataHandler extends BasePortletDataHandler {
 	protected void activate() {
 		setDeletionSystemEventStagedModelTypes(
 			new StagedModelType(FragmentCollection.class),
+			new StagedModelType(FragmentComposition.class),
 			new StagedModelType(FragmentEntry.class));
 		setExportPortletDataHandlerControls(
 			new PortletDataHandlerBoolean(
@@ -99,6 +101,8 @@ public class FragmentPortletDataHandler extends BasePortletDataHandler {
 		}
 
 		_fragmentEntryStagedModelRepository.deleteStagedModels(
+			portletDataContext);
+		_fragmentCompositionStagedModelRepository.deleteStagedModels(
 			portletDataContext);
 		_fragmentCollectionStagedModelRepository.deleteStagedModels(
 			portletDataContext);
@@ -129,6 +133,13 @@ public class FragmentPortletDataHandler extends BasePortletDataHandler {
 				getExportActionableDynamicQuery(portletDataContext);
 
 		fragmentCollectionExportActionableDynamicQuery.performActions();
+
+		ActionableDynamicQuery
+			fragmentCompositionExportActionableDynamicQuery =
+				_fragmentCompositionStagedModelRepository.
+					getExportActionableDynamicQuery(portletDataContext);
+
+		fragmentCompositionExportActionableDynamicQuery.performActions();
 
 		ActionableDynamicQuery fragmentEntryActionableDynamicQuery =
 			_fragmentEntryStagedModelRepository.getExportActionableDynamicQuery(
@@ -164,12 +175,28 @@ public class FragmentPortletDataHandler extends BasePortletDataHandler {
 				portletDataContext, fragmentCollectionElement);
 		}
 
+		Element fragmentCompositionsElement =
+			portletDataContext.getImportDataGroupElement(
+				FragmentComposition.class);
+
+		List<Element> fragmentCompositionElements =
+			fragmentCompositionsElement.elements();
+
+		for (Element fragmentCompositionElement :
+				fragmentCompositionElements) {
+
+			StagedModelDataHandlerUtil.importStagedModel(
+				portletDataContext, fragmentCompositionElement);
+		}
+
 		Element fragmentEntriesElement =
 			portletDataContext.getImportDataGroupElement(FragmentEntry.class);
 
 		List<Element> fragmentEntryElements = fragmentEntriesElement.elements();
 
-		if (ListUtil.isEmpty(fragmentEntryElements)) {
+		if (ListUtil.isEmpty(fragmentEntryElements) &&
+			ListUtil.isEmpty(fragmentCompositionElements)) {
+
 			return null;
 		}
 
@@ -219,6 +246,8 @@ public class FragmentPortletDataHandler extends BasePortletDataHandler {
 				portletDataContext,
 				new StagedModelType[] {
 					new StagedModelType(FragmentCollection.class.getName()),
+					new StagedModelType(
+						FragmentComposition.class.getName()),
 					new StagedModelType(FragmentEntry.class.getName())
 				});
 
@@ -230,6 +259,13 @@ public class FragmentPortletDataHandler extends BasePortletDataHandler {
 				getExportActionableDynamicQuery(portletDataContext);
 
 		fragmentCollectionExportActionableDynamicQuery.performCount();
+
+		ActionableDynamicQuery
+			fragmentCompositionExportActionableDynamicQuery =
+				_fragmentCompositionStagedModelRepository.
+					getExportActionableDynamicQuery(portletDataContext);
+
+		fragmentCompositionExportActionableDynamicQuery.performCount();
 
 		ActionableDynamicQuery fragmentEntryExportActionableDynamicQuery =
 			_fragmentEntryStagedModelRepository.getExportActionableDynamicQuery(
@@ -250,6 +286,13 @@ public class FragmentPortletDataHandler extends BasePortletDataHandler {
 	)
 	private StagedModelRepository<FragmentCollection>
 		_fragmentCollectionStagedModelRepository;
+
+	@Reference(
+		target = "(model.class.name=com.liferay.fragment.model.FragmentComposition)",
+		unbind = "-"
+	)
+	private StagedModelRepository<FragmentComposition>
+		_fragmentCompositionStagedModelRepository;
 
 	@Reference(
 		target = "(model.class.name=com.liferay.fragment.model.FragmentEntry)",

@@ -86,7 +86,7 @@ public class FragmentInstancePageElementDefinitionDTOConverter
 				fragmentStyledLayoutStructureItem.getFragmentEntryLinkId());
 
 		if (fragmentEntryLink == null) {
-			throw new UnsupportedOperationException();
+			return null;
 		}
 
 		JSONObject editableValuesJSONObject =

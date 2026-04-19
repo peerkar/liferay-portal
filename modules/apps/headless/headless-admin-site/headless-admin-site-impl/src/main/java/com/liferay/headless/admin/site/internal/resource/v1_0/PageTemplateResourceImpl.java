@@ -373,6 +373,27 @@ public class PageTemplateResourceImpl
 					pageTemplateExternalReferenceCode, groupId);
 
 		if (layoutPageTemplateEntry == null) {
+			long layoutPageTemplateCollectionId =
+				LayoutPageTemplateConstants.
+					PARENT_LAYOUT_PAGE_TEMPLATE_COLLECTION_ID_DEFAULT;
+
+			LayoutPageTemplateCollection layoutPageTemplateCollection =
+				_getOrAddLayoutPageTemplateCollection(groupId, pageTemplate);
+
+			if (layoutPageTemplateCollection != null) {
+				layoutPageTemplateCollectionId =
+					layoutPageTemplateCollection.
+						getLayoutPageTemplateCollectionId();
+			}
+
+			layoutPageTemplateEntry =
+				_layoutPageTemplateEntryService.fetchLayoutPageTemplateEntry(
+					groupId, layoutPageTemplateCollectionId,
+					pageTemplate.getName(),
+					_toLayoutPageTemplateEntryType(pageTemplate.getType()));
+		}
+
+		if (layoutPageTemplateEntry == null) {
 			return _addPageTemplate(groupId, pageTemplate);
 		}
 
@@ -528,7 +549,7 @@ public class PageTemplateResourceImpl
 				_getLayoutPlid(contentPageTemplate, groupId, serviceContext), 0,
 				PageSpecificationUtil.getPublishedStatus(
 					contentPageTemplate.getPageSpecifications()),
-				serviceContext);
+				_getServiceContext(groupId, contentPageTemplate));
 
 		return _toPageTemplate(layoutPageTemplateEntry);
 	}
@@ -838,6 +859,14 @@ public class PageTemplateResourceImpl
 			existingWidgetPageTemplate.setPageTemplateSettings(
 				widgetPageTemplate::getPageTemplateSettings);
 		}
+	}
+
+	private int _toLayoutPageTemplateEntryType(PageTemplate.Type type) {
+		if (type == PageTemplate.Type.WIDGET_PAGE_TEMPLATE) {
+			return LayoutPageTemplateEntryTypeConstants.WIDGET_PAGE;
+		}
+
+		return LayoutPageTemplateEntryTypeConstants.BASIC;
 	}
 
 	private PageTemplate _toPageTemplate(

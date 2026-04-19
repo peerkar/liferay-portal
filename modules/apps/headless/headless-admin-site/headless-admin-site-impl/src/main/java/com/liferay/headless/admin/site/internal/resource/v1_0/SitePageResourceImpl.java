@@ -413,6 +413,16 @@ public class SitePageResourceImpl
 					"privacy");
 		}
 
+		String sitePageUuid = sitePage.getUuid();
+
+		if (Validator.isNotNull(sitePageUuid) &&
+			!Objects.equals(layout.getUuid(), sitePageUuid)) {
+
+			layout.setUuid(sitePageUuid);
+
+			layout = _layoutLocalService.updateLayout(layout);
+		}
+
 		ServiceContext serviceContext = _getServiceContext(
 			layout.getGroupId(), sitePage);
 
@@ -535,7 +545,8 @@ public class SitePageResourceImpl
 				false,
 				LocalizedMapUtil.getLocalizedMap(
 					sitePage.getFriendlyUrlPath_i18n()),
-				WorkflowConstants.STATUS_APPROVED, serviceContext);
+				WorkflowConstants.STATUS_APPROVED,
+				_getServiceContext(groupId, sitePage));
 		}
 		else if (Objects.equals(
 					sitePage.getType(), SitePage.Type.EMBEDDED_PAGE) ||
@@ -558,7 +569,7 @@ public class SitePageResourceImpl
 					sitePage.getFriendlyUrlPath_i18n()),
 				PageSpecificationUtil.getPageSpecification(
 					sitePage.getPageSpecifications()),
-				serviceContext);
+				_getServiceContext(groupId, sitePage));
 		}
 		else {
 			layout = LayoutUtil.addPortletLayout(
@@ -572,7 +583,7 @@ public class SitePageResourceImpl
 				_isHiddenFromNavigation(false, sitePage.getPageSettings()),
 				LocalizedMapUtil.getLocalizedMap(
 					sitePage.getFriendlyUrlPath_i18n()),
-				serviceContext,
+				_getServiceContext(groupId, sitePage),
 				PageSpecificationUtil.getWidgetPageSpecification(
 					sitePage.getPageSpecifications()));
 		}
@@ -644,17 +655,26 @@ public class SitePageResourceImpl
 			return LayoutConstants.DEFAULT_PARENT_LAYOUT_ID;
 		}
 
-		Layout layout = _layoutService.getOrAddEmptyLayout(
-			parentSitePageExternalReferenceCode, groupId, privateLayout,
-			serviceContext);
+		String uuid = serviceContext.getUuidWithoutReset();
 
-		if (layout.isPrivateLayout() != privateLayout) {
-			throw new IllegalArgumentException(
-				"The private page setting does not match the target page's " +
-					"privacy");
+		serviceContext.setUuid(null);
+
+		try {
+			Layout layout = _layoutService.getOrAddEmptyLayout(
+				parentSitePageExternalReferenceCode, groupId, privateLayout,
+				serviceContext);
+
+			if (layout.isPrivateLayout() != privateLayout) {
+				throw new IllegalArgumentException(
+					"The private page setting does not match the target " +
+						"page's privacy");
+			}
+
+			return layout.getLayoutId();
 		}
-
-		return layout.getLayoutId();
+		finally {
+			serviceContext.setUuid(uuid);
+		}
 	}
 
 	private SEOSettings _getSEOSettings(PageSettings pageSettings) {

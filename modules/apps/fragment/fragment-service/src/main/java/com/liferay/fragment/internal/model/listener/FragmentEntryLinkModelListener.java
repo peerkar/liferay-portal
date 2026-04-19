@@ -5,6 +5,7 @@
 
 package com.liferay.fragment.internal.model.listener;
 
+import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.fragment.entry.processor.constants.FragmentEntryProcessorConstants;
 import com.liferay.fragment.entry.processor.helper.FragmentEntryProcessorHelper;
 import com.liferay.fragment.model.FragmentEntryLink;
@@ -42,6 +43,10 @@ public class FragmentEntryLinkModelListener
 	public void onBeforeCreate(FragmentEntryLink fragmentEntryLink)
 		throws ModelListenerException {
 
+		if (ExportImportThreadLocal.isImportInProcess()) {
+			return;
+		}
+
 		_processInfoFields(fragmentEntryLink);
 	}
 
@@ -50,6 +55,10 @@ public class FragmentEntryLinkModelListener
 			FragmentEntryLink originalFragmentEntryLink,
 			FragmentEntryLink fragmentEntryLink)
 		throws ModelListenerException {
+
+		if (ExportImportThreadLocal.isImportInProcess()) {
+			return;
+		}
 
 		if (Objects.equals(
 				originalFragmentEntryLink.getEditableValues(),
