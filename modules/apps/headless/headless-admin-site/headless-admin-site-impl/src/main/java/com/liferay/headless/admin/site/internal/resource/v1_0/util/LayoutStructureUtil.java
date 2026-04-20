@@ -25,6 +25,10 @@ public class LayoutStructureUtil {
 			PageElement pageElement)
 		throws Exception {
 
+		if (pageElement.getPageElementDefinition() == null) {
+			return null;
+		}
+
 		LayoutStructureItemImporter layoutStructureItemImporter =
 			LayoutStructureItemImporterUtil.getLayoutStructureItemImporter(
 				pageElement.getPageElementDefinition());
