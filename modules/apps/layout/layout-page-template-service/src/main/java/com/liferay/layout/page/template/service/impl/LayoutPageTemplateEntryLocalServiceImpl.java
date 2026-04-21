@@ -7,6 +7,8 @@ package com.liferay.layout.page.template.service.impl;
 
 import com.liferay.asset.kernel.NoSuchClassTypeException;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLinkLocalService;
+import com.liferay.exportimport.kernel.empty.model.EmptyModelManagerUtil;
+import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.info.item.InfoItemFormVariation;
 import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.info.item.provider.InfoItemFormProvider;
@@ -141,10 +143,12 @@ public class LayoutPageTemplateEntryLocalServiceImpl
 
 		User user = _userLocalService.getUser(userId);
 
-		_validate(
-			groupId, layoutPageTemplateCollectionId, name, type,
-			defaultTemplate, status);
-		_validate(groupId, layoutPageTemplateCollectionId, type);
+		if (!EmptyModelManagerUtil.isEmptyModel()) {
+			_validate(
+				groupId, layoutPageTemplateCollectionId, name, type,
+				defaultTemplate, status);
+			_validate(groupId, layoutPageTemplateCollectionId, type);
+		}
 
 		if (Validator.isNull(layoutPageTemplateEntryKey)) {
 			layoutPageTemplateEntryKey = _generateLayoutPageTemplateEntryKey(
@@ -236,7 +240,13 @@ public class LayoutPageTemplateEntryLocalServiceImpl
 
 		layoutPageTemplateEntry.setPlid(plid);
 
-		layoutPageTemplateEntry.setStatus(status);
+		if (EmptyModelManagerUtil.isEmptyModel()) {
+			layoutPageTemplateEntry.setStatus(WorkflowConstants.STATUS_EMPTY);
+		}
+		else {
+			layoutPageTemplateEntry.setStatus(status);
+		}
+
 		layoutPageTemplateEntry.setStatusByUserId(userId);
 		layoutPageTemplateEntry.setStatusByUserName(user.getScreenName());
 		layoutPageTemplateEntry.setStatusDate(new Date());
@@ -693,6 +703,25 @@ public class LayoutPageTemplateEntryLocalServiceImpl
 	}
 
 	@Override
+	public LayoutPageTemplateEntry getOrAddEmptyLayoutPageTemplateEntry(
+			String externalReferenceCode, long groupId, int type, long userId,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		return EmptyModelManagerUtil.getOrAddEmptyModel(
+			LayoutPageTemplateEntry.class,
+			() ->
+				layoutPageTemplateEntryLocalService.addLayoutPageTemplateEntry(
+					externalReferenceCode, userId, groupId, 0L, null,
+					StringUtil.randomString(), type, 0L,
+					WorkflowConstants.STATUS_APPROVED, serviceContext),
+			externalReferenceCode,
+			this::fetchLayoutPageTemplateEntryByExternalReferenceCode,
+			this::getLayoutPageTemplateEntryByExternalReferenceCode, groupId,
+			LayoutPageTemplateEntry.class.getName());
+	}
+
+	@Override
 	public String getUniqueLayoutPageTemplateEntryName(
 		long groupId, long layoutPageTemplateCollectionId, String name,
 		int type) {
@@ -833,7 +862,11 @@ public class LayoutPageTemplateEntryLocalServiceImpl
 			throw new LockedLayoutException();
 		}
 
-		layoutPageTemplateEntry.setModifiedDate(new Date());
+		if (ExportImportThreadLocal.isPreserveModificationDate()) {
+			layoutPageTemplateEntry.setModifiedDate(layoutPageTemplateEntry.getModifiedDate());
+		} else {
+			layoutPageTemplateEntry.setModifiedDate(new Date());
+		}
 		layoutPageTemplateEntry.setClassNameId(classNameId);
 		layoutPageTemplateEntry.setClassTypeId(
 			layoutPageTemplateEntry.getClassTypeId());
@@ -865,7 +898,12 @@ public class LayoutPageTemplateEntryLocalServiceImpl
 				layoutPageTemplateEntry.isDefaultTemplate(), status);
 		}
 
-		layoutPageTemplateEntry.setModifiedDate(new Date());
+		if (ExportImportThreadLocal.isPreserveModificationDate()) {
+			layoutPageTemplateEntry.setModifiedDate(layoutPageTemplateEntry.getModifiedDate());
+		} else {
+			layoutPageTemplateEntry.setModifiedDate(new Date());
+		}
+
 		layoutPageTemplateEntry.setLayoutPageTemplateEntryKey(
 			_generateLayoutPageTemplateEntryKey(
 				layoutPageTemplateEntry.getGroupId(), name));
@@ -898,7 +936,11 @@ public class LayoutPageTemplateEntryLocalServiceImpl
 			layoutPageTemplateEntry.getLayoutPageTemplateCollectionId(), name,
 			layoutPageTemplateEntry.getType());
 
-		layoutPageTemplateEntry.setModifiedDate(new Date());
+		if (ExportImportThreadLocal.isPreserveModificationDate()) {
+			layoutPageTemplateEntry.setModifiedDate(layoutPageTemplateEntry.getModifiedDate());
+		} else {
+			layoutPageTemplateEntry.setModifiedDate(new Date());
+		}
 		layoutPageTemplateEntry.setLayoutPageTemplateEntryKey(
 			_generateLayoutPageTemplateEntryKey(
 				layoutPageTemplateEntry.getGroupId(), name));
@@ -972,7 +1014,12 @@ public class LayoutPageTemplateEntryLocalServiceImpl
 
 		User user = _userLocalService.getUser(userId);
 
-		layoutPageTemplateEntry.setModifiedDate(new Date());
+		if (ExportImportThreadLocal.isPreserveModificationDate()) {
+			layoutPageTemplateEntry.setModifiedDate(layoutPageTemplateEntry.getModifiedDate());
+		} else {
+			layoutPageTemplateEntry.setModifiedDate(new Date());
+		}
+
 		layoutPageTemplateEntry.setStatus(status);
 		layoutPageTemplateEntry.setStatusByUserId(userId);
 		layoutPageTemplateEntry.setStatusByUserName(user.getScreenName());

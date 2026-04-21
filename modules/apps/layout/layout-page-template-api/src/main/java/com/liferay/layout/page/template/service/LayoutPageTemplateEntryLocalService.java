@@ -452,6 +452,12 @@ public interface LayoutPageTemplateEntryLocalService
 			String uuid, long groupId)
 		throws PortalException;
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public LayoutPageTemplateEntry getOrAddEmptyLayoutPageTemplateEntry(
+			String externalReferenceCode, long groupId, int type, long userId,
+			ServiceContext serviceContext)
+		throws PortalException;
+
 	/**
 	 * Returns the OSGi service identifier.
 	 *
@@ -534,4 +540,4 @@ public interface LayoutPageTemplateEntryLocalService
 		throws E;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1640562115
+// LIFERAY-SERVICE-BUILDER-HASH:-1246587407
