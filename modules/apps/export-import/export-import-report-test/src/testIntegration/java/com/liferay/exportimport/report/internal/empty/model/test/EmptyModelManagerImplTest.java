@@ -13,6 +13,7 @@ import com.liferay.exportimport.report.model.ExportImportReportEntry;
 import com.liferay.exportimport.report.service.ExportImportReportEntryLocalService;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
+import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
@@ -24,8 +25,6 @@ import com.liferay.portal.kernel.transaction.TransactionInvokerUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
-
-import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -53,7 +52,10 @@ public class EmptyModelManagerImplTest {
 	}
 
 	@Test
-	public void testReportMissingReferenceDuringImport() throws Throwable {
+	@TestInfo("LPD-94090")
+	public void testReportMissingReferenceJoinsImportTransaction()
+		throws Throwable {
+
 		long exportImportConfigurationId = RandomTestUtil.randomLong();
 
 		ExportImportThreadLocal.setExportImportConfigurationId(
@@ -67,13 +69,23 @@ public class EmptyModelManagerImplTest {
 		// transaction. When the report entry was written in a separate
 		// REQUIRES_NEW transaction it deadlocked against the lock the import
 		// transaction already held on the report entry table under HSQLDB's
-		// table level locking, hanging the import.
+		// table level locking, hanging the import. To expose this, the
+		// surrounding transaction must already hold that lock, so an empty
+		// report entry is written first to mirror an import that has already
+		// reported entries.
 
 		try {
 			TransactionInvokerUtil.invoke(
 				TransactionConfig.Factory.create(
 					Propagation.REQUIRED, new Class<?>[] {Exception.class}),
 				() -> {
+					_exportImportReportEntryLocalService.
+						addEmptyExportImportReportEntry(
+							_group.getGroupId(), TestPropsValues.getCompanyId(),
+							RandomTestUtil.randomString(),
+							_classNameLocalService.getClassNameId(Group.class),
+							exportImportConfigurationId, Group.class.getName());
+
 					EmptyModelManagerUtil.reportMissingReference(
 						Group.class.getName(), externalReferenceCode,
 						_group.getGroupId());
@@ -81,18 +93,10 @@ public class EmptyModelManagerImplTest {
 					return null;
 				});
 
-			List<ExportImportReportEntry> exportImportReportEntries =
-				_exportImportReportEntryLocalService.
-					getExportImportReportEntries(
-						TestPropsValues.getCompanyId(),
-						exportImportConfigurationId);
-
-			Assert.assertEquals(
-				exportImportReportEntries.toString(), 1,
-				exportImportReportEntries.size());
-
 			ExportImportReportEntry exportImportReportEntry =
-				exportImportReportEntries.get(0);
+				_getExportImportReportEntry(
+					exportImportConfigurationId,
+					ExportImportReportEntryConstants.TYPE_MISSING_REFERENCE);
 
 			Assert.assertEquals(
 				externalReferenceCode,
@@ -102,14 +106,29 @@ public class EmptyModelManagerImplTest {
 				exportImportReportEntry.getClassNameId());
 			Assert.assertEquals(
 				_group.getGroupId(), exportImportReportEntry.getGroupId());
-			Assert.assertEquals(
-				ExportImportReportEntryConstants.TYPE_MISSING_REFERENCE,
-				exportImportReportEntry.getType());
 		}
 		finally {
 			ExportImportThreadLocal.setExportImportConfigurationId(0);
 			ExportImportThreadLocal.setPortletImportInProcess(false);
 		}
+	}
+
+	private ExportImportReportEntry _getExportImportReportEntry(
+			long exportImportConfigurationId, int type)
+		throws Exception {
+
+		for (ExportImportReportEntry exportImportReportEntry :
+				_exportImportReportEntryLocalService.
+					getExportImportReportEntries(
+						TestPropsValues.getCompanyId(),
+						exportImportConfigurationId)) {
+
+			if (exportImportReportEntry.getType() == type) {
+				return exportImportReportEntry;
+			}
+		}
+
+		return null;
 	}
 
 	@Inject
