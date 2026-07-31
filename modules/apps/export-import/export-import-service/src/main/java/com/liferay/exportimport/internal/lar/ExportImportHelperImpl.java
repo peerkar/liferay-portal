@@ -14,6 +14,7 @@ import com.liferay.exportimport.kernel.lar.DataLevel;
 import com.liferay.exportimport.kernel.lar.DefaultConfigurationPortletDataHandler;
 import com.liferay.exportimport.kernel.lar.ExportImportHelper;
 import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
+import com.liferay.exportimport.kernel.lar.LARSite;
 import com.liferay.exportimport.kernel.lar.ManifestSummary;
 import com.liferay.exportimport.kernel.lar.MissingReference;
 import com.liferay.exportimport.kernel.lar.MissingReferences;
@@ -562,13 +563,15 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 
 		ElementHandler elementHandler = new ElementHandler(
 			new ManifestSummaryElementProcessor(group, manifestSummary),
-			new String[] {"header", "portlet", "staged-model"});
+			new String[] {"header", "portlet", "site", "staged-model"});
 
 		xmlReader.setContentHandler(elementHandler);
 
 		xmlReader.parse(
 			new InputSource(
-				portletDataContext.getZipEntryAsInputStream("/manifest.xml")));
+				portletDataContext.getZipEntryAsInputStream(
+					LARManifestPathUtil.getImportManifestXmlFilePath(
+						portletDataContext))));
 
 		return manifestSummary;
 	}
@@ -1064,7 +1067,9 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 
 		xmlReader.parse(
 			new InputSource(
-				portletDataContext.getZipEntryAsInputStream("/manifest.xml")));
+				portletDataContext.getZipEntryAsInputStream(
+					LARManifestPathUtil.getImportManifestXmlFilePath(
+						portletDataContext))));
 
 		return missingReferences;
 	}
@@ -1722,6 +1727,26 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 					_manifestSummary.addLayoutPortlet(
 						portlet, configurationPortletOptions);
 				}
+			}
+			else if (elementName.equals("site")) {
+				String externalReferenceCode = element.attributeValue(
+					"external-reference-code");
+
+				if (Validator.isNull(externalReferenceCode)) {
+					return;
+				}
+
+				_manifestSummary.addSite(
+					new LARSite(
+						GetterUtil.getInteger(
+							element.attributeValue("child-site-count")),
+						externalReferenceCode,
+						element.attributeValue("friendly-url"),
+						GetterUtil.getLong(element.attributeValue("group-id")),
+						element.attributeValue("hierarchy"),
+						element.attributeValue("name"),
+						GetterUtil.getBoolean(
+							element.attributeValue("global"))));
 			}
 			else if (elementName.equals("staged-model")) {
 				String manifestSummaryKey = element.attributeValue(
