@@ -110,10 +110,24 @@ public class BlankSiteInitializer implements SiteInitializer {
 	private void _importPageElement(Layout layout, String pageElementJSON)
 		throws Exception {
 
+		if (layout == null) {
+			return;
+		}
+
 		LayoutPageTemplateStructure layoutPageTemplateStructure =
 			_layoutPageTemplateStructureLocalService.
 				fetchLayoutPageTemplateStructure(
 					layout.getGroupId(), layout.getPlid());
+
+		if (layoutPageTemplateStructure == null) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(
+					"Unable to import page element because layout " +
+						layout.getPlid() + " has no page template structure");
+			}
+
+			return;
+		}
 
 		LayoutStructure layoutStructure = LayoutStructure.of(
 			layoutPageTemplateStructure.getDefaultSegmentsExperienceData());
