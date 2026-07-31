@@ -9,6 +9,9 @@ import com.liferay.asset.link.model.adapter.StagedAssetLink;
 import com.liferay.exportimport.configuration.ExportImportServiceConfiguration;
 import com.liferay.exportimport.constants.ExportImportConstants;
 import com.liferay.exportimport.controller.PortletImportController;
+import com.liferay.exportimport.internal.site.SiteExportImportParameters;
+import com.liferay.exportimport.internal.site.SiteImporter;
+import com.liferay.exportimport.internal.site.SiteReporter;
 import com.liferay.exportimport.kernel.controller.ExportImportController;
 import com.liferay.exportimport.kernel.controller.ImportController;
 import com.liferay.exportimport.kernel.exception.LARFileException;
@@ -37,6 +40,8 @@ import com.liferay.exportimport.lar.PermissionImporter;
 import com.liferay.exportimport.portlet.data.handler.provider.PortletDataHandlerProvider;
 import com.liferay.exportimport.portlet.element.handler.PortletElementHandler;
 import com.liferay.exportimport.portlet.element.handler.PortletElementHandlerFactory;
+import com.liferay.exportimport.report.service.ExportImportReportEntryLocalService;
+import com.liferay.exportimport.site.ExportImportSiteProvider;
 import com.liferay.layout.admin.kernel.visibility.LayoutVisibilityManager;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.exception.LayoutPrototypeException;
@@ -56,6 +61,7 @@ import com.liferay.portal.kernel.model.LayoutSetPrototype;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.plugin.Version;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutPrototypeLocalService;
 import com.liferay.portal.kernel.service.LayoutSetLocalService;
@@ -96,6 +102,7 @@ import java.util.function.BiPredicate;
 
 import org.apache.commons.lang.time.StopWatch;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -304,6 +311,15 @@ public class LayoutImportController implements ImportController {
 		finally {
 			ExportImportThreadLocal.setLayoutValidationInProcess(false);
 		}
+	}
+
+	@Activate
+	protected void activate() {
+		_siteImporter = new SiteImporter(
+			_exportImportSiteProvider, _groupLocalService,
+			_portletDataContextFactory,
+			new SiteReporter(
+				_classNameLocalService, _exportImportReportEntryLocalService));
 	}
 
 	protected void deletePortletData(PortletDataContext portletDataContext)
@@ -761,9 +777,11 @@ public class LayoutImportController implements ImportController {
 
 		// LAR validation
 
-		validateFile(
-			companyId, portletDataContext.getGroupId(), parameterMap,
-			portletDataContext.getZipReader());
+		if (!SiteExportImportParameters.isSitePass(portletDataContext)) {
+			validateFile(
+				companyId, portletDataContext.getGroupId(), parameterMap,
+				portletDataContext.getZipReader());
+		}
 
 		// Source and target group id
 
@@ -962,6 +980,13 @@ public class LayoutImportController implements ImportController {
 		if (_log.isInfoEnabled()) {
 			_log.info("Importing layouts takes " + stopWatch.getTime() + " ms");
 		}
+
+		// Whole sites the LAR carries. This runs after the company level pass
+		// so that the site settings it brings in have already created any site
+		// the target instance was missing.
+
+		_siteImporter.importSites(
+			portletDataContext, userId, this::_importFile);
 	}
 
 	private void _validateLayoutPrototypes(
@@ -1064,6 +1089,9 @@ public class LayoutImportController implements ImportController {
 		LayoutImportController.class);
 
 	@Reference
+	private ClassNameLocalService _classNameLocalService;
+
+	@Reference
 	private ConfigurationProvider _configurationProvider;
 
 	@Reference
@@ -1074,6 +1102,13 @@ public class LayoutImportController implements ImportController {
 
 	@Reference
 	private ExportImportLifecycleManager _exportImportLifecycleManager;
+
+	@Reference
+	private ExportImportReportEntryLocalService
+		_exportImportReportEntryLocalService;
+
+	@Reference
+	private ExportImportSiteProvider _exportImportSiteProvider;
 
 	@Reference
 	private GroupLocalService _groupLocalService;
@@ -1110,6 +1145,8 @@ public class LayoutImportController implements ImportController {
 
 	@Reference
 	private PortletLocalService _portletLocalService;
+
+	private SiteImporter _siteImporter;
 
 	@Reference
 	private Staging _staging;
