@@ -111,6 +111,29 @@ public class PortletDataHandlerKeys {
 
 	public static final String SELECTED_LAYOUTS = "SELECTED_LAYOUTS";
 
+	/**
+	 * The external reference code of the site a nested per-site export or
+	 * import pass is processing. Set only on the per-site portlet data
+	 * contexts created while exporting or importing whole sites, never on the
+	 * company level context that owns the LAR. Its presence is what tells the
+	 * LAR writers and readers to use the site's own <code>manifest.xml</code>
+	 * under <code>/group/{groupId}</code> instead of the one at the root.
+	 *
+	 * @see PortletDataHandlerKeys#SITE_EXTERNAL_REFERENCE_CODES
+	 */
+	public static final String SITE_EXTERNAL_REFERENCE_CODE =
+		"SITE_EXTERNAL_REFERENCE_CODE";
+
+	/**
+	 * The external reference codes of the sites the user selected to export or
+	 * import as whole sites. Set on the company level portlet data context
+	 * that owns the LAR.
+	 *
+	 * @see PortletDataHandlerKeys#SITE_EXTERNAL_REFERENCE_CODE
+	 */
+	public static final String SITE_EXTERNAL_REFERENCE_CODES =
+		"SITE_EXTERNAL_REFERENCE_CODES";
+
 	public static final String THEME_REFERENCE = "THEME_REFERENCE";
 
 	public static final String UPDATE_LAST_PUBLISH_DATE =

@@ -116,6 +116,15 @@ public class ManifestSummary implements Serializable {
 		_manifestSummaryKeys.add(manifestSummaryKey);
 	}
 
+	/**
+	 * Records a site the LAR carries as a whole unit.
+	 *
+	 * @see LARSite
+	 */
+	public void addSite(LARSite larSite) {
+		_larSites.add(larSite);
+	}
+
 	@Override
 	public Object clone() {
 		ManifestSummary manifestSummary = new ManifestSummary();
@@ -124,6 +133,7 @@ public class ManifestSummary implements Serializable {
 			manifestSummary._configurationPortletOptions);
 		manifestSummary._dataPortlets = new ArrayList<>(_dataPortlets);
 		manifestSummary._layoutPortlets = new ArrayList<>(_layoutPortlets);
+		manifestSummary._larSites = new ArrayList<>(_larSites);
 
 		if (_exportDate != null) {
 			manifestSummary.setExportDate(new Date(_exportDate.getTime()));
@@ -257,6 +267,16 @@ public class ManifestSummary implements Serializable {
 
 	public Map<String, LongWrapper> getModelDeletionCounters() {
 		return _modelDeletionCounters;
+	}
+
+	/**
+	 * Returns the sites the LAR carries as whole units, in export order, or an
+	 * empty list when the LAR carries none.
+	 *
+	 * @see LARSite
+	 */
+	public List<LARSite> getSites() {
+		return _larSites;
 	}
 
 	public String getStagedModelAssetTitle(String manifestSummaryKey) {
@@ -420,6 +440,7 @@ public class ManifestSummary implements Serializable {
 		new HashMap<>();
 	private List<Portlet> _dataPortlets = new ArrayList<>();
 	private Date _exportDate;
+	private List<LARSite> _larSites = new ArrayList<>();
 	private List<Portlet> _layoutPortlets = new ArrayList<>();
 	private Set<String> _manifestSummaryKeys = new HashSet<>();
 	private Map<String, LongWrapper> _modelAdditionCounters = new HashMap<>();
