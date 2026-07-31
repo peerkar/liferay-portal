@@ -5,6 +5,28 @@
 
 import {PreviewPortletDataHandlerSection} from './portletDataHandler';
 
+export const PREVIEW_SITE_TYPES = {
+	GLOBAL: 'GLOBAL',
+	SITE: 'SITE',
+} as const;
+
+export type PreviewSiteType =
+	(typeof PREVIEW_SITE_TYPES)[keyof typeof PREVIEW_SITE_TYPES];
+
+export interface PreviewSite {
+	childSiteCount?: number;
+	existing?: boolean;
+	externalReferenceCode: string;
+	friendlyUrlPath?: string;
+
+	/**
+	 * Where the site sits, ready to be shown, as in "Global / My Site / Child".
+	 */
+	hierarchy?: string;
+	name?: string;
+	type?: PreviewSiteType;
+}
+
 export interface ExportPreview {
 	additionCount: number;
 	deletionCount: number;
@@ -19,4 +41,5 @@ export interface ImportPreview {
 	fileName: string;
 	fileSize: number;
 	previewPortletDataHandlerSections: PreviewPortletDataHandlerSection[];
+	previewSites?: PreviewSite[];
 }
