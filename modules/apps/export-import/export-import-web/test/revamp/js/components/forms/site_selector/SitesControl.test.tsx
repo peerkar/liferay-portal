@@ -1,0 +1,368 @@
+/**
+ * SPDX-FileCopyrightText: (c) 2026 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
+
+// eslint-disable-next-line @liferay/portal/no-cross-module-deep-import
+import {checkAccessibility} from '@liferay/layout-js-components-web/test/__lib__/index';
+import {render, screen, waitFor, within} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import fetch from 'jest-fetch-mock';
+import React from 'react';
+
+import '@testing-library/jest-dom';
+
+import SitesControl from '../../../../../../src/main/resources/META-INF/resources/revamp/js/components/forms/site_selector/SitesControl';
+import {PreviewSite} from '../../../../../../src/main/resources/META-INF/resources/revamp/js/types/exportImportPreview';
+
+const PREVIEW_SITES: PreviewSite[] = [
+	{
+		childSiteCount: 1,
+		existing: true,
+		externalReferenceCode: 'erc-marketing',
+		hierarchy: 'Global / Marketing',
+		name: 'Marketing',
+		type: 'SITE',
+	},
+	{
+		childSiteCount: 0,
+		existing: false,
+		externalReferenceCode: 'erc-support',
+		hierarchy: 'Global / Marketing / Support',
+		name: 'Support',
+		type: 'SITE',
+	},
+];
+
+const renderControl = (
+	props: Partial<React.ComponentProps<typeof SitesControl>> = {}
+) => {
+	const onChange = jest.fn();
+
+	const renderResult = render(
+		<SitesControl
+			onChange={onChange}
+			previewSites={PREVIEW_SITES}
+			selectedExternalReferenceCodes={[]}
+			totalCount={PREVIEW_SITES.length}
+			{...props}
+		/>
+	);
+
+	return {...renderResult, onChange};
+};
+
+describe('SitesControl', () => {
+	it('shows the total number of sites available', () => {
+		renderControl();
+
+		expect(screen.getByText('sites')).toBeInTheDocument();
+
+		// The shared mock substitutes into keys shaped like "x-"
+
+		expect(screen.getByText('2-items')).toBeInTheDocument();
+	});
+
+	it('says nothing is selected when nothing is selected', () => {
+		renderControl();
+
+		expect(screen.getByText('no-sites-are-selected')).toBeInTheDocument();
+	});
+
+	it('names the selected sites', () => {
+		renderControl({selectedExternalReferenceCodes: ['erc-support']});
+
+		expect(screen.getByText('selected-Support')).toBeInTheDocument();
+	});
+
+	it('counts the selected sites when they cannot be named', () => {
+		renderControl({
+			previewSites: undefined,
+			selectedExternalReferenceCodes: ['erc-marketing', 'erc-support'],
+		});
+
+		expect(screen.getByText('2-sites-are-selected')).toBeInTheDocument();
+	});
+
+	it('offers no way to select sites other than the dialog', () => {
+		renderControl();
+
+		expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
+	});
+
+	it('opens the dialog from the link', async () => {
+		renderControl();
+
+		await userEvent.click(
+			screen.getByRole('button', {name: 'select-sites'})
+		);
+
+		expect(await screen.findByRole('dialog')).toBeInTheDocument();
+	});
+
+	it('hands the picked sites back to the row', async () => {
+		const {onChange} = renderControl();
+
+		await userEvent.click(
+			screen.getByRole('button', {name: 'select-sites'})
+		);
+
+		const row = await screen.findByText('Support');
+
+		const checkbox = within(row.closest('tr') as HTMLElement).getByRole(
+			'checkbox'
+		);
+
+		await userEvent.click(checkbox);
+
+		await userEvent.click(screen.getByRole('button', {name: 'select'}));
+
+		expect(onChange).toHaveBeenCalledWith(['erc-support']);
+	});
+
+	it('reopening keeps what was already picked', async () => {
+		renderControl({selectedExternalReferenceCodes: ['erc-support']});
+
+		await userEvent.click(
+			screen.getByRole('button', {name: 'select-sites'})
+		);
+
+		const row = await screen.findByText('Support');
+
+		expect(
+			within(row.closest('tr') as HTMLElement).getByRole('checkbox')
+		).toBeChecked();
+	});
+
+	it('names the kind of each site', async () => {
+		renderControl();
+
+		await userEvent.click(
+			screen.getByRole('button', {name: 'select-sites'})
+		);
+
+		const row = (await screen.findByText('Support')).closest(
+			'tr'
+		) as HTMLElement;
+
+		expect(within(row).getByText('site')).toBeInTheDocument();
+	});
+
+	it('says whether the site is one the instance already has', async () => {
+		renderControl({showExisting: true});
+
+		await userEvent.click(
+			screen.getByRole('button', {name: 'select-sites'})
+		);
+
+		const existingRow = (await screen.findByText('Marketing')).closest(
+			'tr'
+		) as HTMLElement;
+
+		expect(within(existingRow).getByText('existing')).toBeInTheDocument();
+
+		const newRow = screen.getByText('Support').closest('tr') as HTMLElement;
+
+		expect(within(newRow).getByText('new')).toBeInTheDocument();
+	});
+
+	it('shows where each site sits below its name', async () => {
+		renderControl();
+
+		await userEvent.click(
+			screen.getByRole('button', {name: 'select-sites'})
+		);
+
+		const row = (await screen.findByText('Support')).closest(
+			'tr'
+		) as HTMLElement;
+
+		// A child and its parent are listed side by side, so the path is what
+		// tells them apart
+
+		expect(
+			within(row).getByText('Global / Marketing / Support')
+		).toBeInTheDocument();
+	});
+
+	describe('reading the sites from the API', () => {
+		const API_URL = '/o/export-import/v1.0/export-preview/sites';
+
+		beforeEach(() => {
+
+			// The shared mock does not provide this, and the data set builds
+			// its request URL with it
+
+			(Liferay.ThemeDisplay as any).isImpersonated = jest.fn(() => false);
+
+			fetch.resetMocks();
+			fetch.mockResponse(
+				JSON.stringify({
+					items: PREVIEW_SITES,
+					lastPage: 1,
+					page: 1,
+					pageSize: 20,
+					totalCount: PREVIEW_SITES.length,
+				})
+			);
+		});
+
+		it('hands the picked sites back to the row', async () => {
+			const {onChange} = renderControl({
+				apiURL: API_URL,
+				previewSites: undefined,
+			});
+
+			await userEvent.click(
+				screen.getByRole('button', {name: 'select-sites'})
+			);
+
+			const row = await screen.findByText('Support');
+
+			await userEvent.click(
+				within(row.closest('tr') as HTMLElement).getByRole('checkbox')
+			);
+
+			await userEvent.click(screen.getByRole('button', {name: 'select'}));
+
+			expect(onChange).toHaveBeenCalledWith(['erc-support']);
+		});
+
+		it('names the sites after they are picked', async () => {
+			const {rerender} = renderControl({
+				apiURL: API_URL,
+				previewSites: undefined,
+			});
+
+			await userEvent.click(
+				screen.getByRole('button', {name: 'select-sites'})
+			);
+
+			const row = await screen.findByText('Support');
+
+			await userEvent.click(
+				within(row.closest('tr') as HTMLElement).getByRole('checkbox')
+			);
+
+			await userEvent.click(screen.getByRole('button', {name: 'select'}));
+
+			rerender(
+				<SitesControl
+					apiURL={API_URL}
+					onChange={jest.fn()}
+					selectedExternalReferenceCodes={['erc-support']}
+					totalCount={2}
+				/>
+			);
+
+			expect(
+				await screen.findByText('selected-Support')
+			).toBeInTheDocument();
+		});
+
+		it('reopening keeps what was already picked', async () => {
+			renderControl({
+				apiURL: API_URL,
+				previewSites: undefined,
+				selectedExternalReferenceCodes: ['erc-support'],
+			});
+
+			await userEvent.click(
+				screen.getByRole('button', {name: 'select-sites'})
+			);
+
+			const row = await screen.findByText('Support');
+
+			expect(
+				within(row.closest('tr') as HTMLElement).getByRole('checkbox')
+			).toBeChecked();
+		});
+
+		it('fills the columns the API does not label', async () => {
+			renderControl({apiURL: API_URL, previewSites: undefined});
+
+			await userEvent.click(
+				screen.getByRole('button', {name: 'select-sites'})
+			);
+
+			const row = (await screen.findByText('Support')).closest(
+				'tr'
+			) as HTMLElement;
+
+			// The API answers with the site as it is, so a column showing
+			// anything other than the value has to render it
+
+			expect(within(row).getByText('site')).toBeInTheDocument();
+			expect(
+				within(row).getByText('Global / Marketing / Support')
+			).toBeInTheDocument();
+		});
+
+		it('asks the API for the sites in ascending order', async () => {
+			renderControl({apiURL: API_URL, previewSites: undefined});
+
+			await userEvent.click(
+				screen.getByRole('button', {name: 'select-sites'})
+			);
+
+			await screen.findByText('Support');
+
+			expect(fetch.mock.calls[0][0]).toContain('sort=name%3Aasc');
+		});
+
+		it('offers the order of the sites to be changed', async () => {
+			renderControl({apiURL: API_URL, previewSites: undefined});
+
+			await userEvent.click(
+				screen.getByRole('button', {name: 'select-sites'})
+			);
+
+			expect(
+				await screen.findByRole('button', {name: /order\[sort\]/})
+			).toBeInTheDocument();
+		});
+
+		it('asks the API for the sites in descending order', async () => {
+			renderControl({apiURL: API_URL, previewSites: undefined});
+
+			await userEvent.click(
+				screen.getByRole('button', {name: 'select-sites'})
+			);
+
+			await userEvent.click(
+				await screen.findByRole('button', {name: /order\[sort\]/})
+			);
+
+			await userEvent.click(screen.getByText('descending'));
+
+			await waitFor(() =>
+				expect(
+					fetch.mock.calls[fetch.mock.calls.length - 1][0]
+				).toContain('sort=name%3Adesc')
+			);
+		});
+	});
+
+	it('leaves the order alone when the sites come from the file', async () => {
+		renderControl();
+
+		await userEvent.click(
+			screen.getByRole('button', {name: 'select-sites'})
+		);
+
+		await screen.findByText('Support');
+
+		// The data set cannot sort a list handed to it, so offering the control
+		// would be offering something that does nothing
+
+		expect(
+			screen.queryByRole('button', {name: /order\[sort\]/})
+		).not.toBeInTheDocument();
+	});
+
+	it('has no accessibility violations', async () => {
+		const {container} = renderControl();
+
+		await checkAccessibility({bestPractices: true, context: container});
+	});
+});
