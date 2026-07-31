@@ -13,15 +13,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 
-import com.liferay.depot.constants.DepotConstants;
-import com.liferay.depot.model.DepotEntry;
-import com.liferay.depot.service.DepotEntryLocalServiceUtil;
-import com.liferay.exportimport.rest.client.dto.v1_0.ImportPreview;
+import com.liferay.exportimport.rest.client.dto.v1_0.PreviewSite;
 import com.liferay.exportimport.rest.client.dto.v1_0.Type;
 import com.liferay.exportimport.rest.client.http.HttpInvoker;
 import com.liferay.exportimport.rest.client.pagination.Page;
-import com.liferay.exportimport.rest.client.resource.v1_0.ImportPreviewResource;
-import com.liferay.exportimport.rest.client.serdes.v1_0.ImportPreviewSerDes;
+import com.liferay.exportimport.rest.client.pagination.Pagination;
+import com.liferay.exportimport.rest.client.resource.v1_0.PreviewSiteResource;
+import com.liferay.exportimport.rest.client.serdes.v1_0.PreviewSiteSerDes;
+import com.liferay.petra.function.UnsafeTriConsumer;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.petra.string.StringBundler;
@@ -30,13 +29,12 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
-import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
-import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsValues;
@@ -51,8 +49,6 @@ import com.liferay.portal.vulcan.resource.EntityModelResource;
 import jakarta.annotation.Generated;
 
 import jakarta.ws.rs.core.MultivaluedHashMap;
-
-import java.io.File;
 
 import java.lang.reflect.Method;
 
@@ -82,7 +78,7 @@ import org.junit.Test;
  * @generated
  */
 @Generated("")
-public abstract class BaseImportPreviewResourceTestCase {
+public abstract class BasePreviewSiteResourceTestCase {
 
 	@ClassRule
 	@Rule
@@ -103,35 +99,12 @@ public abstract class BaseImportPreviewResourceTestCase {
 		testCompany = CompanyLocalServiceUtil.getCompany(
 			testGroup.getCompanyId());
 
-		irrelevantDepotEntry = DepotEntryLocalServiceUtil.addDepotEntry(
-			Collections.singletonMap(
-				LocaleUtil.getDefault(), RandomTestUtil.randomString()),
-			null, DepotConstants.TYPE_ASSET_LIBRARY,
-			new ServiceContext() {
-				{
-					setCompanyId(testCompany.getCompanyId());
-					setUserId(TestPropsValues.getUserId());
-				}
-			});
-		irrelevantDepotEntryGroup = irrelevantDepotEntry.getGroup();
-		testDepotEntry = DepotEntryLocalServiceUtil.addDepotEntry(
-			Collections.singletonMap(
-				LocaleUtil.getDefault(), RandomTestUtil.randomString()),
-			null, DepotConstants.TYPE_ASSET_LIBRARY,
-			new ServiceContext() {
-				{
-					setCompanyId(testCompany.getCompanyId());
-					setUserId(TestPropsValues.getUserId());
-				}
-			});
-		testDepotEntryGroup = testDepotEntry.getGroup();
-
-		_importPreviewResource.setContextCompany(testCompany);
+		_previewSiteResource.setContextCompany(testCompany);
 
 		_testCompanyAdminUser = UserTestUtil.getAdminUser(
 			testCompany.getCompanyId());
 
-		importPreviewResource = ImportPreviewResource.builder(
+		previewSiteResource = PreviewSiteResource.builder(
 		).authentication(
 			_testCompanyAdminUser.getEmailAddress(),
 			PropsValues.DEFAULT_ADMIN_PASSWORD
@@ -145,9 +118,6 @@ public abstract class BaseImportPreviewResourceTestCase {
 
 	@After
 	public void tearDown() throws Exception {
-		DepotEntryLocalServiceUtil.deleteDepotEntry(irrelevantDepotEntry);
-		DepotEntryLocalServiceUtil.deleteDepotEntry(testDepotEntry);
-
 		GroupTestUtil.deleteGroup(irrelevantGroup);
 		GroupTestUtil.deleteGroup(testGroup);
 	}
@@ -156,23 +126,23 @@ public abstract class BaseImportPreviewResourceTestCase {
 	public void testClientSerDesToDTO() throws Exception {
 		ObjectMapper objectMapper = getClientSerDesObjectMapper();
 
-		ImportPreview importPreview1 = randomImportPreview();
+		PreviewSite previewSite1 = randomPreviewSite();
 
-		String json = objectMapper.writeValueAsString(importPreview1);
+		String json = objectMapper.writeValueAsString(previewSite1);
 
-		ImportPreview importPreview2 = ImportPreviewSerDes.toDTO(json);
+		PreviewSite previewSite2 = PreviewSiteSerDes.toDTO(json);
 
-		Assert.assertTrue(equals(importPreview1, importPreview2));
+		Assert.assertTrue(equals(previewSite1, previewSite2));
 	}
 
 	@Test
 	public void testClientSerDesToJSON() throws Exception {
 		ObjectMapper objectMapper = getClientSerDesObjectMapper();
 
-		ImportPreview importPreview = randomImportPreview();
+		PreviewSite previewSite = randomPreviewSite();
 
-		String json1 = objectMapper.writeValueAsString(importPreview);
-		String json2 = ImportPreviewSerDes.toJSON(importPreview);
+		String json1 = objectMapper.writeValueAsString(previewSite);
+		String json2 = PreviewSiteSerDes.toJSON(previewSite);
 
 		Assert.assertEquals(
 			objectMapper.readTree(json1), objectMapper.readTree(json2));
@@ -200,136 +170,285 @@ public abstract class BaseImportPreviewResourceTestCase {
 	public void testEscapeRegexInStringFields() throws Exception {
 		String regex = "^[0-9]+(\\.[0-9]{1,2})\"?";
 
-		ImportPreview importPreview = randomImportPreview();
+		PreviewSite previewSite = randomPreviewSite();
 
-		importPreview.setAuthor(regex);
-		importPreview.setFileName(regex);
+		previewSite.setExternalReferenceCode(regex);
+		previewSite.setFriendlyUrlPath(regex);
+		previewSite.setHierarchy(regex);
+		previewSite.setName(regex);
 
-		String json = ImportPreviewSerDes.toJSON(importPreview);
+		String json = PreviewSiteSerDes.toJSON(previewSite);
 
 		Assert.assertFalse(json.contains(regex));
 
-		importPreview = ImportPreviewSerDes.toDTO(json);
+		previewSite = PreviewSiteSerDes.toDTO(json);
 
-		Assert.assertEquals(regex, importPreview.getAuthor());
-		Assert.assertEquals(regex, importPreview.getFileName());
+		Assert.assertEquals(regex, previewSite.getExternalReferenceCode());
+		Assert.assertEquals(regex, previewSite.getFriendlyUrlPath());
+		Assert.assertEquals(regex, previewSite.getHierarchy());
+		Assert.assertEquals(regex, previewSite.getName());
 	}
 
 	@Test
-	public void testPostAssetLibraryImportPreview() throws Exception {
-		ImportPreview randomImportPreview = randomImportPreview();
+	public void testGetExportPreviewSitesPage() throws Exception {
+		Page<PreviewSite> page = previewSiteResource.getExportPreviewSitesPage(
+			null, Pagination.of(1, 10), null);
 
-		Map<String, File> multipartFiles = getMultipartFiles();
+		long totalCount = page.getTotalCount();
 
-		ImportPreview postImportPreview =
-			testPostAssetLibraryImportPreview_addImportPreview(
-				randomImportPreview, multipartFiles);
+		PreviewSite previewSite1 = testGetExportPreviewSitesPage_addPreviewSite(
+			randomPreviewSite());
 
-		assertEquals(randomImportPreview, postImportPreview);
-		assertValid(postImportPreview);
+		PreviewSite previewSite2 = testGetExportPreviewSitesPage_addPreviewSite(
+			randomPreviewSite());
 
-		assertValid(postImportPreview, multipartFiles);
+		page = previewSiteResource.getExportPreviewSitesPage(
+			null, Pagination.of(1, 10), null);
+
+		Assert.assertEquals(totalCount + 2, page.getTotalCount());
+
+		assertContains(previewSite1, (List<PreviewSite>)page.getItems());
+		assertContains(previewSite2, (List<PreviewSite>)page.getItems());
+		assertValid(page, testGetExportPreviewSitesPage_getExpectedActions());
 	}
 
-	protected ImportPreview testPostAssetLibraryImportPreview_addImportPreview(
-			ImportPreview importPreview, Map<String, File> multipartFiles)
+	protected Map<String, Map<String, String>>
+			testGetExportPreviewSitesPage_getExpectedActions()
 		throws Exception {
 
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
+		Map<String, Map<String, String>> expectedActions = new HashMap<>();
+
+		return expectedActions;
 	}
 
 	@Test
-	public void testPostAssetLibraryPortletImportPreview() throws Exception {
-		ImportPreview randomImportPreview = randomImportPreview();
+	public void testGetExportPreviewSitesPageWithPagination() throws Exception {
+		Page<PreviewSite> previewSitesPage =
+			previewSiteResource.getExportPreviewSitesPage(null, null, null);
 
-		Map<String, File> multipartFiles = getMultipartFiles();
+		int totalCount = GetterUtil.getInteger(
+			previewSitesPage.getTotalCount());
 
-		ImportPreview postImportPreview =
-			testPostAssetLibraryPortletImportPreview_addImportPreview(
-				randomImportPreview, multipartFiles);
+		PreviewSite previewSite1 = testGetExportPreviewSitesPage_addPreviewSite(
+			randomPreviewSite());
 
-		assertEquals(randomImportPreview, postImportPreview);
-		assertValid(postImportPreview);
+		PreviewSite previewSite2 = testGetExportPreviewSitesPage_addPreviewSite(
+			randomPreviewSite());
 
-		assertValid(postImportPreview, multipartFiles);
+		PreviewSite previewSite3 = testGetExportPreviewSitesPage_addPreviewSite(
+			randomPreviewSite());
+
+		// See com.liferay.portal.vulcan.internal.configuration.HeadlessAPICompanyConfiguration#pageSizeLimit
+
+		int pageSizeLimit = 500;
+
+		if (totalCount >= (pageSizeLimit - 2)) {
+			Page<PreviewSite> page1 =
+				previewSiteResource.getExportPreviewSitesPage(
+					null,
+					Pagination.of(
+						(int)Math.ceil((totalCount + 1.0) / pageSizeLimit),
+						pageSizeLimit),
+					null);
+
+			Assert.assertEquals(totalCount + 3, page1.getTotalCount());
+
+			assertContains(previewSite1, (List<PreviewSite>)page1.getItems());
+
+			Page<PreviewSite> page2 =
+				previewSiteResource.getExportPreviewSitesPage(
+					null,
+					Pagination.of(
+						(int)Math.ceil((totalCount + 2.0) / pageSizeLimit),
+						pageSizeLimit),
+					null);
+
+			assertContains(previewSite2, (List<PreviewSite>)page2.getItems());
+
+			Page<PreviewSite> page3 =
+				previewSiteResource.getExportPreviewSitesPage(
+					null,
+					Pagination.of(
+						(int)Math.ceil((totalCount + 3.0) / pageSizeLimit),
+						pageSizeLimit),
+					null);
+
+			assertContains(previewSite3, (List<PreviewSite>)page3.getItems());
+		}
+		else {
+			Page<PreviewSite> page1 =
+				previewSiteResource.getExportPreviewSitesPage(
+					null, Pagination.of(1, totalCount + 2), null);
+
+			List<PreviewSite> previewSites1 =
+				(List<PreviewSite>)page1.getItems();
+
+			Assert.assertEquals(
+				previewSites1.toString(), totalCount + 2, previewSites1.size());
+
+			Page<PreviewSite> page2 =
+				previewSiteResource.getExportPreviewSitesPage(
+					null, Pagination.of(2, totalCount + 2), null);
+
+			Assert.assertEquals(totalCount + 3, page2.getTotalCount());
+
+			List<PreviewSite> previewSites2 =
+				(List<PreviewSite>)page2.getItems();
+
+			Assert.assertEquals(
+				previewSites2.toString(), 1, previewSites2.size());
+
+			Page<PreviewSite> page3 =
+				previewSiteResource.getExportPreviewSitesPage(
+					null, Pagination.of(1, (int)totalCount + 3), null);
+
+			assertContains(previewSite1, (List<PreviewSite>)page3.getItems());
+			assertContains(previewSite2, (List<PreviewSite>)page3.getItems());
+			assertContains(previewSite3, (List<PreviewSite>)page3.getItems());
+		}
 	}
 
-	protected ImportPreview
-			testPostAssetLibraryPortletImportPreview_addImportPreview(
-				ImportPreview importPreview, Map<String, File> multipartFiles)
+	@Test
+	public void testGetExportPreviewSitesPageWithSortDateTime()
 		throws Exception {
 
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
+		testGetExportPreviewSitesPageWithSort(
+			EntityField.Type.DATE_TIME,
+			(entityField, previewSite1, previewSite2) -> {
+				BeanTestUtil.setProperty(
+					previewSite1, entityField.getName(),
+					new Date(System.currentTimeMillis() - (2 * Time.MINUTE)));
+			});
 	}
 
 	@Test
-	public void testPostImportPreview() throws Exception {
-		ImportPreview randomImportPreview = randomImportPreview();
-
-		Map<String, File> multipartFiles = getMultipartFiles();
-
-		ImportPreview postImportPreview =
-			testPostImportPreview_addImportPreview(
-				randomImportPreview, multipartFiles);
-
-		assertEquals(randomImportPreview, postImportPreview);
-		assertValid(postImportPreview);
-
-		assertValid(postImportPreview, multipartFiles);
+	public void testGetExportPreviewSitesPageWithSortDouble() throws Exception {
+		testGetExportPreviewSitesPageWithSort(
+			EntityField.Type.DOUBLE,
+			(entityField, previewSite1, previewSite2) -> {
+				BeanTestUtil.setProperty(
+					previewSite1, entityField.getName(), 0.1);
+				BeanTestUtil.setProperty(
+					previewSite2, entityField.getName(), 0.5);
+			});
 	}
 
-	protected ImportPreview testPostImportPreview_addImportPreview(
-			ImportPreview importPreview, Map<String, File> multipartFiles)
+	@Test
+	public void testGetExportPreviewSitesPageWithSortInteger()
 		throws Exception {
 
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
+		testGetExportPreviewSitesPageWithSort(
+			EntityField.Type.INTEGER,
+			(entityField, previewSite1, previewSite2) -> {
+				BeanTestUtil.setProperty(
+					previewSite1, entityField.getName(), 0);
+				BeanTestUtil.setProperty(
+					previewSite2, entityField.getName(), 1);
+			});
 	}
 
 	@Test
-	public void testPostSiteImportPreview() throws Exception {
-		ImportPreview randomImportPreview = randomImportPreview();
+	public void testGetExportPreviewSitesPageWithSortString() throws Exception {
+		testGetExportPreviewSitesPageWithSort(
+			EntityField.Type.STRING,
+			(entityField, previewSite1, previewSite2) -> {
+				Class<?> clazz = previewSite1.getClass();
 
-		Map<String, File> multipartFiles = getMultipartFiles();
+				String entityFieldName = entityField.getName();
 
-		ImportPreview postImportPreview =
-			testPostSiteImportPreview_addImportPreview(
-				randomImportPreview, multipartFiles);
+				Method method = clazz.getMethod(
+					"get" + StringUtil.upperCaseFirstLetter(entityFieldName));
 
-		assertEquals(randomImportPreview, postImportPreview);
-		assertValid(postImportPreview);
+				Class<?> returnType = method.getReturnType();
 
-		assertValid(postImportPreview, multipartFiles);
+				if (returnType.isAssignableFrom(Map.class)) {
+					BeanTestUtil.setProperty(
+						previewSite1, entityFieldName,
+						Collections.singletonMap("Aaa", "Aaa"));
+					BeanTestUtil.setProperty(
+						previewSite2, entityFieldName,
+						Collections.singletonMap("Bbb", "Bbb"));
+				}
+				else if (entityFieldName.contains("email")) {
+					BeanTestUtil.setProperty(
+						previewSite1, entityFieldName,
+						"aaa" +
+							StringUtil.toLowerCase(
+								RandomTestUtil.randomString()) +
+									"@liferay.com");
+					BeanTestUtil.setProperty(
+						previewSite2, entityFieldName,
+						"bbb" +
+							StringUtil.toLowerCase(
+								RandomTestUtil.randomString()) +
+									"@liferay.com");
+				}
+				else {
+					BeanTestUtil.setProperty(
+						previewSite1, entityFieldName,
+						"aaa" +
+							StringUtil.toLowerCase(
+								RandomTestUtil.randomString()));
+					BeanTestUtil.setProperty(
+						previewSite2, entityFieldName,
+						"bbb" +
+							StringUtil.toLowerCase(
+								RandomTestUtil.randomString()));
+				}
+			});
 	}
 
-	protected ImportPreview testPostSiteImportPreview_addImportPreview(
-			ImportPreview importPreview, Map<String, File> multipartFiles)
+	protected void testGetExportPreviewSitesPageWithSort(
+			EntityField.Type type,
+			UnsafeTriConsumer<EntityField, PreviewSite, PreviewSite, Exception>
+				unsafeTriConsumer)
 		throws Exception {
 
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
+		List<EntityField> entityFields = getEntityFields(type);
+
+		if (entityFields.isEmpty()) {
+			return;
+		}
+
+		PreviewSite previewSite1 = randomPreviewSite();
+		PreviewSite previewSite2 = randomPreviewSite();
+
+		for (EntityField entityField : entityFields) {
+			unsafeTriConsumer.accept(entityField, previewSite1, previewSite2);
+		}
+
+		previewSite1 = testGetExportPreviewSitesPage_addPreviewSite(
+			previewSite1);
+
+		previewSite2 = testGetExportPreviewSitesPage_addPreviewSite(
+			previewSite2);
+
+		Page<PreviewSite> page = previewSiteResource.getExportPreviewSitesPage(
+			null, null, null);
+
+		for (EntityField entityField : entityFields) {
+			Page<PreviewSite> ascPage =
+				previewSiteResource.getExportPreviewSitesPage(
+					null, Pagination.of(1, (int)page.getTotalCount() + 1),
+					entityField.getName() + ":asc");
+
+			assertContains(previewSite1, (List<PreviewSite>)ascPage.getItems());
+			assertContains(previewSite2, (List<PreviewSite>)ascPage.getItems());
+
+			Page<PreviewSite> descPage =
+				previewSiteResource.getExportPreviewSitesPage(
+					null, Pagination.of(1, (int)page.getTotalCount() + 1),
+					entityField.getName() + ":desc");
+
+			assertContains(
+				previewSite2, (List<PreviewSite>)descPage.getItems());
+			assertContains(
+				previewSite1, (List<PreviewSite>)descPage.getItems());
+		}
 	}
 
-	@Test
-	public void testPostSitePortletImportPreview() throws Exception {
-		ImportPreview randomImportPreview = randomImportPreview();
-
-		Map<String, File> multipartFiles = getMultipartFiles();
-
-		ImportPreview postImportPreview =
-			testPostSitePortletImportPreview_addImportPreview(
-				randomImportPreview, multipartFiles);
-
-		assertEquals(randomImportPreview, postImportPreview);
-		assertValid(postImportPreview);
-
-		assertValid(postImportPreview, multipartFiles);
-	}
-
-	protected ImportPreview testPostSitePortletImportPreview_addImportPreview(
-			ImportPreview importPreview, Map<String, File> multipartFiles)
+	protected PreviewSite testGetExportPreviewSitesPage_addPreviewSite(
+			PreviewSite previewSite)
 		throws Exception {
 
 		throw new UnsupportedOperationException(
@@ -342,12 +461,12 @@ public abstract class BaseImportPreviewResourceTestCase {
 	}
 
 	protected void assertContains(
-		ImportPreview importPreview, List<ImportPreview> importPreviews) {
+		PreviewSite previewSite, List<PreviewSite> previewSites) {
 
 		boolean contains = false;
 
-		for (ImportPreview item : importPreviews) {
-			if (equals(importPreview, item)) {
+		for (PreviewSite item : previewSites) {
+			if (equals(previewSite, item)) {
 				contains = true;
 
 				break;
@@ -355,7 +474,7 @@ public abstract class BaseImportPreviewResourceTestCase {
 		}
 
 		Assert.assertTrue(
-			importPreviews + " does not contain " + importPreview, contains);
+			previewSites + " does not contain " + previewSite, contains);
 	}
 
 	protected void assertHttpResponseStatusCode(
@@ -367,38 +486,36 @@ public abstract class BaseImportPreviewResourceTestCase {
 	}
 
 	protected void assertEquals(
-		ImportPreview importPreview1, ImportPreview importPreview2) {
+		PreviewSite previewSite1, PreviewSite previewSite2) {
 
 		Assert.assertTrue(
-			importPreview1 + " does not equal " + importPreview2,
-			equals(importPreview1, importPreview2));
+			previewSite1 + " does not equal " + previewSite2,
+			equals(previewSite1, previewSite2));
 	}
 
 	protected void assertEquals(
-		List<ImportPreview> importPreviews1,
-		List<ImportPreview> importPreviews2) {
+		List<PreviewSite> previewSites1, List<PreviewSite> previewSites2) {
 
-		Assert.assertEquals(importPreviews1.size(), importPreviews2.size());
+		Assert.assertEquals(previewSites1.size(), previewSites2.size());
 
-		for (int i = 0; i < importPreviews1.size(); i++) {
-			ImportPreview importPreview1 = importPreviews1.get(i);
-			ImportPreview importPreview2 = importPreviews2.get(i);
+		for (int i = 0; i < previewSites1.size(); i++) {
+			PreviewSite previewSite1 = previewSites1.get(i);
+			PreviewSite previewSite2 = previewSites2.get(i);
 
-			assertEquals(importPreview1, importPreview2);
+			assertEquals(previewSite1, previewSite2);
 		}
 	}
 
 	protected void assertEqualsIgnoringOrder(
-		List<ImportPreview> importPreviews1,
-		List<ImportPreview> importPreviews2) {
+		List<PreviewSite> previewSites1, List<PreviewSite> previewSites2) {
 
-		Assert.assertEquals(importPreviews1.size(), importPreviews2.size());
+		Assert.assertEquals(previewSites1.size(), previewSites2.size());
 
-		for (ImportPreview importPreview1 : importPreviews1) {
+		for (PreviewSite previewSite1 : previewSites1) {
 			boolean contains = false;
 
-			for (ImportPreview importPreview2 : importPreviews2) {
-				if (equals(importPreview1, importPreview2)) {
+			for (PreviewSite previewSite2 : previewSites2) {
+				if (equals(previewSite1, previewSite2)) {
 					contains = true;
 
 					break;
@@ -406,59 +523,26 @@ public abstract class BaseImportPreviewResourceTestCase {
 			}
 
 			Assert.assertTrue(
-				importPreviews2 + " does not contain " + importPreview1,
-				contains);
+				previewSites2 + " does not contain " + previewSite1, contains);
 		}
 	}
 
-	protected void assertValid(ImportPreview importPreview) throws Exception {
+	protected void assertValid(PreviewSite previewSite) throws Exception {
 		boolean valid = true;
 
 		for (String additionalAssertFieldName :
 				getAdditionalAssertFieldNames()) {
 
-			if (Objects.equals("additionCount", additionalAssertFieldName)) {
-				if (importPreview.getAdditionCount() == null) {
+			if (Objects.equals("childSiteCount", additionalAssertFieldName)) {
+				if (previewSite.getChildSiteCount() == null) {
 					valid = false;
 				}
 
 				continue;
 			}
 
-			if (Objects.equals("author", additionalAssertFieldName)) {
-				if (importPreview.getAuthor() == null) {
-					valid = false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals("deletionCount", additionalAssertFieldName)) {
-				if (importPreview.getDeletionCount() == null) {
-					valid = false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals("exportDate", additionalAssertFieldName)) {
-				if (importPreview.getExportDate() == null) {
-					valid = false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals("fileName", additionalAssertFieldName)) {
-				if (importPreview.getFileName() == null) {
-					valid = false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals("fileSize", additionalAssertFieldName)) {
-				if (importPreview.getFileSize() == null) {
+			if (Objects.equals("existing", additionalAssertFieldName)) {
+				if (previewSite.getExisting() == null) {
 					valid = false;
 				}
 
@@ -466,20 +550,41 @@ public abstract class BaseImportPreviewResourceTestCase {
 			}
 
 			if (Objects.equals(
-					"previewPortletDataHandlerSections",
-					additionalAssertFieldName)) {
+					"externalReferenceCode", additionalAssertFieldName)) {
 
-				if (importPreview.getPreviewPortletDataHandlerSections() ==
-						null) {
-
+				if (previewSite.getExternalReferenceCode() == null) {
 					valid = false;
 				}
 
 				continue;
 			}
 
-			if (Objects.equals("previewSites", additionalAssertFieldName)) {
-				if (importPreview.getPreviewSites() == null) {
+			if (Objects.equals("friendlyUrlPath", additionalAssertFieldName)) {
+				if (previewSite.getFriendlyUrlPath() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("hierarchy", additionalAssertFieldName)) {
+				if (previewSite.getHierarchy() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("name", additionalAssertFieldName)) {
+				if (previewSite.getName() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("type", additionalAssertFieldName)) {
+				if (previewSite.getType() == null) {
 					valid = false;
 				}
 
@@ -494,27 +599,19 @@ public abstract class BaseImportPreviewResourceTestCase {
 		Assert.assertTrue(valid);
 	}
 
-	protected void assertValid(
-			ImportPreview importPreview, Map<String, File> multipartFiles)
-		throws Exception {
-
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
-	}
-
-	protected void assertValid(Page<ImportPreview> page) {
+	protected void assertValid(Page<PreviewSite> page) {
 		assertValid(page, Collections.emptyMap());
 	}
 
 	protected void assertValid(
-		Page<ImportPreview> page,
+		Page<PreviewSite> page,
 		Map<String, Map<String, String>> expectedActions) {
 
 		boolean valid = false;
 
-		java.util.Collection<ImportPreview> importPreviews = page.getItems();
+		java.util.Collection<PreviewSite> previewSites = page.getItems();
 
-		int size = importPreviews.size();
+		int size = previewSites.size();
 
 		if ((page.getLastPage() > 0) && (page.getPage() > 0) &&
 			(page.getPageSize() > 0) && (page.getTotalCount() > 0) &&
@@ -552,10 +649,11 @@ public abstract class BaseImportPreviewResourceTestCase {
 	protected List<GraphQLField> getGraphQLFields() throws Exception {
 		List<GraphQLField> graphQLFields = new ArrayList<>();
 
+		graphQLFields.add(new GraphQLField("externalReferenceCode"));
+
 		for (java.lang.reflect.Field field :
 				getDeclaredFields(
-					com.liferay.exportimport.rest.dto.v1_0.ImportPreview.
-						class)) {
+					com.liferay.exportimport.rest.dto.v1_0.PreviewSite.class)) {
 
 			if (!ArrayUtil.contains(
 					getAdditionalAssertFieldNames(), field.getName())) {
@@ -604,19 +702,19 @@ public abstract class BaseImportPreviewResourceTestCase {
 	}
 
 	protected boolean equals(
-		ImportPreview importPreview1, ImportPreview importPreview2) {
+		PreviewSite previewSite1, PreviewSite previewSite2) {
 
-		if (importPreview1 == importPreview2) {
+		if (previewSite1 == previewSite2) {
 			return true;
 		}
 
 		for (String additionalAssertFieldName :
 				getAdditionalAssertFieldNames()) {
 
-			if (Objects.equals("additionCount", additionalAssertFieldName)) {
+			if (Objects.equals("childSiteCount", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
-						importPreview1.getAdditionCount(),
-						importPreview2.getAdditionCount())) {
+						previewSite1.getChildSiteCount(),
+						previewSite2.getChildSiteCount())) {
 
 					return false;
 				}
@@ -624,54 +722,10 @@ public abstract class BaseImportPreviewResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals("author", additionalAssertFieldName)) {
+			if (Objects.equals("existing", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
-						importPreview1.getAuthor(),
-						importPreview2.getAuthor())) {
-
-					return false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals("deletionCount", additionalAssertFieldName)) {
-				if (!Objects.deepEquals(
-						importPreview1.getDeletionCount(),
-						importPreview2.getDeletionCount())) {
-
-					return false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals("exportDate", additionalAssertFieldName)) {
-				if (!Objects.deepEquals(
-						importPreview1.getExportDate(),
-						importPreview2.getExportDate())) {
-
-					return false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals("fileName", additionalAssertFieldName)) {
-				if (!Objects.deepEquals(
-						importPreview1.getFileName(),
-						importPreview2.getFileName())) {
-
-					return false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals("fileSize", additionalAssertFieldName)) {
-				if (!Objects.deepEquals(
-						importPreview1.getFileSize(),
-						importPreview2.getFileSize())) {
+						previewSite1.getExisting(),
+						previewSite2.getExisting())) {
 
 					return false;
 				}
@@ -680,13 +734,11 @@ public abstract class BaseImportPreviewResourceTestCase {
 			}
 
 			if (Objects.equals(
-					"previewPortletDataHandlerSections",
-					additionalAssertFieldName)) {
+					"externalReferenceCode", additionalAssertFieldName)) {
 
 				if (!Objects.deepEquals(
-						importPreview1.getPreviewPortletDataHandlerSections(),
-						importPreview2.
-							getPreviewPortletDataHandlerSections())) {
+						previewSite1.getExternalReferenceCode(),
+						previewSite2.getExternalReferenceCode())) {
 
 					return false;
 				}
@@ -694,10 +746,41 @@ public abstract class BaseImportPreviewResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals("previewSites", additionalAssertFieldName)) {
+			if (Objects.equals("friendlyUrlPath", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
-						importPreview1.getPreviewSites(),
-						importPreview2.getPreviewSites())) {
+						previewSite1.getFriendlyUrlPath(),
+						previewSite2.getFriendlyUrlPath())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("hierarchy", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						previewSite1.getHierarchy(),
+						previewSite2.getHierarchy())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("name", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						previewSite1.getName(), previewSite2.getName())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("type", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						previewSite1.getType(), previewSite2.getType())) {
 
 					return false;
 				}
@@ -761,13 +844,13 @@ public abstract class BaseImportPreviewResourceTestCase {
 	protected java.util.Collection<EntityField> getEntityFields()
 		throws Exception {
 
-		if (!(_importPreviewResource instanceof EntityModelResource)) {
+		if (!(_previewSiteResource instanceof EntityModelResource)) {
 			throw new UnsupportedOperationException(
 				"Resource is not an instance of EntityModelResource");
 		}
 
 		EntityModelResource entityModelResource =
-			(EntityModelResource)_importPreviewResource;
+			(EntityModelResource)_previewSiteResource;
 
 		EntityModel entityModel = entityModelResource.getEntityModel(
 			new MultivaluedHashMap());
@@ -800,7 +883,7 @@ public abstract class BaseImportPreviewResourceTestCase {
 	}
 
 	protected String getFilterString(
-		EntityField entityField, String operator, ImportPreview importPreview) {
+		EntityField entityField, String operator, PreviewSite previewSite) {
 
 		StringBundler sb = new StringBundler();
 
@@ -812,13 +895,19 @@ public abstract class BaseImportPreviewResourceTestCase {
 		sb.append(operator);
 		sb.append(" ");
 
-		if (entityFieldName.equals("additionCount")) {
+		if (entityFieldName.equals("childSiteCount")) {
+			sb.append(String.valueOf(previewSite.getChildSiteCount()));
+
+			return sb.toString();
+		}
+
+		if (entityFieldName.equals("existing")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
 		}
 
-		if (entityFieldName.equals("author")) {
-			Object object = importPreview.getAuthor();
+		if (entityFieldName.equals("externalReferenceCode")) {
+			Object object = previewSite.getExternalReferenceCode();
 
 			String value = String.valueOf(object);
 
@@ -863,42 +952,8 @@ public abstract class BaseImportPreviewResourceTestCase {
 			return sb.toString();
 		}
 
-		if (entityFieldName.equals("deletionCount")) {
-			throw new IllegalArgumentException(
-				"Invalid entity field " + entityFieldName);
-		}
-
-		if (entityFieldName.equals("exportDate")) {
-			if (operator.equals("between")) {
-				Date date = importPreview.getExportDate();
-
-				sb = new StringBundler();
-
-				sb.append("(");
-				sb.append(entityFieldName);
-				sb.append(" gt ");
-				sb.append(_format.format(date.getTime() - (2 * Time.SECOND)));
-				sb.append(" and ");
-				sb.append(entityFieldName);
-				sb.append(" lt ");
-				sb.append(_format.format(date.getTime() + (2 * Time.SECOND)));
-				sb.append(")");
-			}
-			else {
-				sb.append(entityFieldName);
-
-				sb.append(" ");
-				sb.append(operator);
-				sb.append(" ");
-
-				sb.append(_format.format(importPreview.getExportDate()));
-			}
-
-			return sb.toString();
-		}
-
-		if (entityFieldName.equals("fileName")) {
-			Object object = importPreview.getFileName();
+		if (entityFieldName.equals("friendlyUrlPath")) {
+			Object object = previewSite.getFriendlyUrlPath();
 
 			String value = String.valueOf(object);
 
@@ -943,28 +998,105 @@ public abstract class BaseImportPreviewResourceTestCase {
 			return sb.toString();
 		}
 
-		if (entityFieldName.equals("fileSize")) {
-			throw new IllegalArgumentException(
-				"Invalid entity field " + entityFieldName);
+		if (entityFieldName.equals("hierarchy")) {
+			Object object = previewSite.getHierarchy();
+
+			String value = String.valueOf(object);
+
+			if (operator.equals("contains")) {
+				sb = new StringBundler();
+
+				sb.append("contains(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 2)) {
+					sb.append(value.substring(1, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else if (operator.equals("startswith")) {
+				sb = new StringBundler();
+
+				sb.append("startswith(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 1)) {
+					sb.append(value.substring(0, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else {
+				sb.append("'");
+				sb.append(value);
+				sb.append("'");
+			}
+
+			return sb.toString();
 		}
 
-		if (entityFieldName.equals("previewPortletDataHandlerSections")) {
-			throw new IllegalArgumentException(
-				"Invalid entity field " + entityFieldName);
+		if (entityFieldName.equals("name")) {
+			Object object = previewSite.getName();
+
+			String value = String.valueOf(object);
+
+			if (operator.equals("contains")) {
+				sb = new StringBundler();
+
+				sb.append("contains(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 2)) {
+					sb.append(value.substring(1, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else if (operator.equals("startswith")) {
+				sb = new StringBundler();
+
+				sb.append("startswith(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 1)) {
+					sb.append(value.substring(0, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else {
+				sb.append("'");
+				sb.append(value);
+				sb.append("'");
+			}
+
+			return sb.toString();
 		}
 
-		if (entityFieldName.equals("previewSites")) {
+		if (entityFieldName.equals("type")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
 		}
 
 		throw new IllegalArgumentException(
 			"Invalid entity field " + entityFieldName);
-	}
-
-	protected Map<String, File> getMultipartFiles() throws Exception {
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
 	}
 
 	protected String invoke(String query) throws Exception {
@@ -1007,37 +1139,35 @@ public abstract class BaseImportPreviewResourceTestCase {
 			invoke(queryGraphQLField.toString()));
 	}
 
-	protected ImportPreview randomImportPreview() throws Exception {
-		return new ImportPreview() {
+	protected PreviewSite randomPreviewSite() throws Exception {
+		return new PreviewSite() {
 			{
-				additionCount = RandomTestUtil.randomLong();
-				author = StringUtil.toLowerCase(RandomTestUtil.randomString());
-				deletionCount = RandomTestUtil.randomLong();
-				exportDate = RandomTestUtil.nextDate();
-				fileName = StringUtil.toLowerCase(
+				childSiteCount = RandomTestUtil.randomInt();
+				existing = RandomTestUtil.randomBoolean();
+				externalReferenceCode = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
-				fileSize = RandomTestUtil.randomLong();
+				friendlyUrlPath = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
+				hierarchy = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
+				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
 			}
 		};
 	}
 
-	protected ImportPreview randomIrrelevantImportPreview() throws Exception {
-		ImportPreview randomIrrelevantImportPreview = randomImportPreview();
+	protected PreviewSite randomIrrelevantPreviewSite() throws Exception {
+		PreviewSite randomIrrelevantPreviewSite = randomPreviewSite();
 
-		return randomIrrelevantImportPreview;
+		return randomIrrelevantPreviewSite;
 	}
 
-	protected ImportPreview randomPatchImportPreview() throws Exception {
-		return randomImportPreview();
+	protected PreviewSite randomPatchPreviewSite() throws Exception {
+		return randomPreviewSite();
 	}
 
-	protected ImportPreviewResource importPreviewResource;
+	protected PreviewSiteResource previewSiteResource;
 	protected com.liferay.portal.kernel.model.Group irrelevantGroup;
 	protected com.liferay.portal.kernel.model.Company testCompany;
-	protected DepotEntry irrelevantDepotEntry;
-	protected com.liferay.portal.kernel.model.Group irrelevantDepotEntryGroup;
-	protected DepotEntry testDepotEntry;
-	protected com.liferay.portal.kernel.model.Group testDepotEntryGroup;
 	protected com.liferay.portal.kernel.model.Group testGroup;
 
 	protected static class BeanTestUtil {
@@ -1234,15 +1364,15 @@ public abstract class BaseImportPreviewResourceTestCase {
 	}
 
 	private static final com.liferay.portal.kernel.log.Log _log =
-		LogFactoryUtil.getLog(BaseImportPreviewResourceTestCase.class);
+		LogFactoryUtil.getLog(BasePreviewSiteResourceTestCase.class);
 
 	private static Format _format;
 
 	private com.liferay.portal.kernel.model.User _testCompanyAdminUser;
 
 	@Inject
-	private com.liferay.exportimport.rest.resource.v1_0.ImportPreviewResource
-		_importPreviewResource;
+	private com.liferay.exportimport.rest.resource.v1_0.PreviewSiteResource
+		_previewSiteResource;
 
 }
-// LIFERAY-REST-BUILDER-HASH:392099240
+// LIFERAY-REST-BUILDER-HASH:-1283054215
