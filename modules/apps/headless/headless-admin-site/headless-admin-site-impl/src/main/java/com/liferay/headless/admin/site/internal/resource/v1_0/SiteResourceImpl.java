@@ -417,6 +417,18 @@ public class SiteResourceImpl
 				groups,
 				group -> ArrayUtil.contains(
 					externalReferenceCodes, group.getExternalReferenceCode()));
+
+			// A site has to come before the sites below it, because whoever
+			// recreates them works through this list in order. A child
+			// recreated first has no parent to be attached to and is left at
+			// the top level for good: the parent it asked for is not recorded
+			// anywhere, so nothing puts it right afterwards. Sorting is stable,
+			// so sites of the same depth stay in name order.
+
+			groups = ListUtil.sort(
+				groups,
+				(group1, group2) -> Integer.compare(
+					_getDepth(group1), _getDepth(group2)));
 		}
 
 		if (ArrayUtil.isNotEmpty(excludedExternalReferenceCodes)) {
@@ -620,6 +632,15 @@ public class SiteResourceImpl
 		}
 
 		return group;
+	}
+
+	/**
+	 * Returns how far below the top level the given site sits.
+	 */
+	private int _getDepth(Group group) {
+		List<Group> ancestors = group.getAncestors();
+
+		return ancestors.size();
 	}
 
 	private Map<Locale, String> _getDescriptionMap(Site site) {
