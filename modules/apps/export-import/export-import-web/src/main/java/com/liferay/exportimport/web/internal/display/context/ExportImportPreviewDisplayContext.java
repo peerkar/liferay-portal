@@ -224,7 +224,7 @@ public class ExportImportPreviewDisplayContext {
 	public boolean isSitesEnabled() {
 		if ((getScope() == Scope.COMPANY) &&
 			FeatureFlagManagerUtil.isEnabled(
-				_group.getCompanyId(), "LPD-94243")) {
+				_group.getCompanyId(), "LPD-85946")) {
 
 			return true;
 		}
