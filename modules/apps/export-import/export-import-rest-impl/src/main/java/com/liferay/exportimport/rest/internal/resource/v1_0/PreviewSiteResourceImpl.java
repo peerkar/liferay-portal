@@ -58,7 +58,7 @@ public class PreviewSiteResourceImpl extends BasePreviewSiteResourceImpl {
 			contextCompany.getCompanyId(), companyGroup.getGroupId());
 
 		if (!FeatureFlagManagerUtil.isEnabled(
-				contextCompany.getCompanyId(), "LPD-94243")) {
+				contextCompany.getCompanyId(), "LPD-85946")) {
 
 			return Page.of(Collections.emptyList());
 		}

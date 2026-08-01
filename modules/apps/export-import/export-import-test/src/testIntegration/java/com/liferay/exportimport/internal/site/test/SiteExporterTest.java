@@ -56,7 +56,7 @@ import org.junit.runner.RunWith;
  */
 @FeatureFlags(
 	featureFlags = {
-		@FeatureFlag(value = "LPD-57655"), @FeatureFlag(value = "LPD-94243")
+		@FeatureFlag(value = "LPD-57655"), @FeatureFlag(value = "LPD-85946")
 	}
 )
 @RunWith(Arquillian.class)
@@ -79,7 +79,7 @@ public class SiteExporterTest {
 	}
 
 	@Test
-	@TestInfo("LPD-94243")
+	@TestInfo("LPD-85946")
 	public void testExportCarriesNoSitesWhenNoneAreSelected() throws Exception {
 		File file = _exportCompanyLayouts();
 
@@ -97,7 +97,7 @@ public class SiteExporterTest {
 	}
 
 	@Test
-	@TestInfo("LPD-94243")
+	@TestInfo("LPD-85946")
 	public void testExportCarriesTheSelectedSite() throws Exception {
 		File file = _exportCompanyLayouts(_group);
 
@@ -122,7 +122,7 @@ public class SiteExporterTest {
 	}
 
 	@Test
-	@TestInfo("LPD-94243")
+	@TestInfo("LPD-85946")
 	public void testExportedSiteIsReadBackFromTheManifest() throws Exception {
 		File file = _exportCompanyLayouts(_group);
 
@@ -161,7 +161,7 @@ public class SiteExporterTest {
 	}
 
 	@Test
-	@TestInfo("LPD-94243")
+	@TestInfo("LPD-85946")
 	public void testExportedSitesAreCountedAsWholeUnits() throws Exception {
 		File file = _exportCompanyLayouts(_group, _otherGroup);
 
@@ -178,7 +178,7 @@ public class SiteExporterTest {
 	}
 
 	@Test
-	@TestInfo("LPD-94243")
+	@TestInfo("LPD-85946")
 	public void testExportLeavesOutTheUnselectedSite() throws Exception {
 		File file = _exportCompanyLayouts(_group);
 

@@ -163,7 +163,7 @@ public class SiteResourceImpl
 			@Override
 			public boolean isActive(PortletDataContext portletDataContext) {
 				if (!FeatureFlagManagerUtil.isEnabled(
-						portletDataContext.getCompanyId(), "LPD-94243")) {
+						portletDataContext.getCompanyId(), "LPD-85946")) {
 
 					return false;
 				}

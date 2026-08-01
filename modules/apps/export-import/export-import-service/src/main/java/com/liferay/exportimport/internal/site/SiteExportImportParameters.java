@@ -33,7 +33,7 @@ import java.util.Set;
  */
 public class SiteExportImportParameters {
 
-	public static final String FEATURE_FLAG_KEY = "LPD-94243";
+	public static final String FEATURE_FLAG_KEY = "LPD-85946";
 
 	public static String[] getSelectedSiteERCs(
 		Map<String, String[]> parameterMap) {
