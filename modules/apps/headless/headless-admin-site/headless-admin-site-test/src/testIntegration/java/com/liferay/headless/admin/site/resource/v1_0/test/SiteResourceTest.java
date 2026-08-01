@@ -500,7 +500,7 @@ public class SiteResourceTest extends BaseSiteResourceTestCase {
 		throws Exception {
 
 		Page<Site> page = siteResource.getSitesPage(
-			null, null, null, Pagination.of(1, 100));
+			null, null, null, null, Pagination.of(1, 100));
 
 		long totalCount = page.getTotalCount();
 
@@ -511,7 +511,7 @@ public class SiteResourceTest extends BaseSiteResourceTestCase {
 		testGetSitesPage_addSite(site);
 
 		page = siteResource.getSitesPage(
-			null, null, null, Pagination.of(1, 100));
+			null, null, null, null, Pagination.of(1, 100));
 
 		Assert.assertEquals(totalCount + 1, page.getTotalCount());
 	}
@@ -521,7 +521,7 @@ public class SiteResourceTest extends BaseSiteResourceTestCase {
 		throws Exception {
 
 		Page<Site> sitesPage = siteResource.getSitesPage(
-			true, null, null, Pagination.of(1, 100));
+			true, null, null, null, Pagination.of(1, 100));
 
 		List<Site> originalItems = (List<Site>)sitesPage.getItems();
 
@@ -535,7 +535,7 @@ public class SiteResourceTest extends BaseSiteResourceTestCase {
 		_groupLocalService.updateGroup(group);
 
 		sitesPage = siteResource.getSitesPage(
-			true, null, null, Pagination.of(1, 100));
+			true, null, null, null, Pagination.of(1, 100));
 
 		List<Site> existingItems = (List<Site>)sitesPage.getItems();
 
@@ -548,21 +548,21 @@ public class SiteResourceTest extends BaseSiteResourceTestCase {
 				_addDepotEntry(), DepotRolesConstants.ASSET_LIBRARY_MEMBER));
 
 		Page<Site> sitesPage1 = siteResource.getSitesPage(
-			null, null, null, Pagination.of(1, 1));
+			null, null, null, null, Pagination.of(1, 1));
 
 		long totalCount = sitesPage1.getTotalCount();
 
 		_testPostSite_addSite(randomSite());
 
 		Page<Site> sitesPage2 = siteResource.getSitesPage(
-			null, null, null, Pagination.of(1, 1));
+			null, null, null, null, Pagination.of(1, 1));
 
 		Assert.assertEquals(totalCount, sitesPage2.getTotalCount());
 	}
 
 	private void _testGetSitesPageWithDepotEntry() throws Exception {
 		Page<Site> sitesPage = siteResource.getSitesPage(
-			true, null, null, Pagination.of(1, 100));
+			true, null, null, null, Pagination.of(1, 100));
 
 		List<Site> originalItems = (List<Site>)sitesPage.getItems();
 
@@ -574,7 +574,7 @@ public class SiteResourceTest extends BaseSiteResourceTestCase {
 			ServiceContextTestUtil.getServiceContext());
 
 		sitesPage = siteResource.getSitesPage(
-			true, null, null, Pagination.of(1, 100));
+			true, null, null, null, Pagination.of(1, 100));
 
 		List<Site> existingItems = (List<Site>)sitesPage.getItems();
 
@@ -601,7 +601,7 @@ public class SiteResourceTest extends BaseSiteResourceTestCase {
 
 		Page<Site> sitesPage = siteResource.getSitesPage(
 			true, new String[] {postExcludedSite.getExternalReferenceCode()},
-			null, Pagination.of(1, 100));
+			null, null, Pagination.of(1, 100));
 
 		for (Site site : sitesPage.getItems()) {
 			String externalReferenceCode = site.getExternalReferenceCode();
@@ -624,7 +624,7 @@ public class SiteResourceTest extends BaseSiteResourceTestCase {
 
 	private void _testGetSitesPageWithInactiveSites() throws Exception {
 		Page<Site> page = siteResource.getSitesPage(
-			false, null, null, Pagination.of(1, 100));
+			false, null, null, null, Pagination.of(1, 100));
 
 		long totalCount = page.getTotalCount();
 
@@ -635,7 +635,7 @@ public class SiteResourceTest extends BaseSiteResourceTestCase {
 		testGetSitesPage_addSite(site1);
 
 		page = siteResource.getSitesPage(
-			false, null, null, Pagination.of(1, 100));
+			false, null, null, null, Pagination.of(1, 100));
 
 		Assert.assertEquals(totalCount + 1, page.getTotalCount());
 
@@ -652,7 +652,8 @@ public class SiteResourceTest extends BaseSiteResourceTestCase {
 		SiteResource siteResource = builder.build();
 
 		try {
-			siteResource.getSitesPage(true, null, null, Pagination.of(1, 1));
+			siteResource.getSitesPage(
+				true, null, null, null, Pagination.of(1, 1));
 
 			Assert.fail();
 		}
@@ -683,7 +684,7 @@ public class SiteResourceTest extends BaseSiteResourceTestCase {
 		).build();
 
 		Page<Site> page = siteResource.getSitesPage(
-			null, null, null, Pagination.of(1, 100));
+			null, null, null, null, Pagination.of(1, 100));
 
 		Collection<Site> sites = page.getItems();
 
@@ -701,7 +702,7 @@ public class SiteResourceTest extends BaseSiteResourceTestCase {
 		Site postSite = _testPostSite_addSite(randomSite);
 
 		Page<Site> sitesPage = siteResource.getSitesPage(
-			true, null, name, Pagination.of(1, 10));
+			true, null, null, name, Pagination.of(1, 10));
 
 		List<Site> items = (List<Site>)sitesPage.getItems();
 
@@ -716,7 +717,7 @@ public class SiteResourceTest extends BaseSiteResourceTestCase {
 		SiteResource siteResource = _getSiteResource(user);
 
 		Page<Site> sitesPage = siteResource.getSitesPage(
-			null, null, null, Pagination.of(1, 500));
+			null, null, null, null, Pagination.of(1, 500));
 
 		assertContains(site, (List<Site>)sitesPage.getItems());
 	}
