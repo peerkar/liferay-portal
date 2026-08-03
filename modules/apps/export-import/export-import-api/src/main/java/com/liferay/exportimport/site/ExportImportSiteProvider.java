@@ -32,6 +32,18 @@ public interface ExportImportSiteProvider {
 	public int getChildSiteCount(Group group);
 
 	/**
+	 * Returns the name of the given site as it should be shown.
+	 *
+	 * <p>
+	 * The name a site is stored under is not always the name it goes by. The
+	 * Global site is stored under the ID of its company, and the site an
+	 * instance starts life with is stored as <code>Guest</code> while it goes by
+	 * a name of its own.
+	 * </p>
+	 */
+	public String getDisplayName(Group group, Locale locale);
+
+	/**
 	 * Returns where the given site sits, as a path ready to be shown, such as
 	 * <code>Global / My Site / Child</code>.
 	 *
