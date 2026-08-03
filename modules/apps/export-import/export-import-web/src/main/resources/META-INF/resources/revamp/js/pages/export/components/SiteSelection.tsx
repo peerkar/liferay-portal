@@ -6,7 +6,7 @@
 import React, {useEffect, useState} from 'react';
 
 import {FormikFieldSites} from '../../../components/forms/formik';
-import {getExportPreviewSitesCount} from '../../../services/getExportPreviewSites';
+import {getExportPreviewSitesCount} from '../../../services/getExportPreviewSitesCount';
 
 /**
  * The Sites row of the export form. The sites of the instance are read by the

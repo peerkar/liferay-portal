@@ -7,6 +7,7 @@ package com.liferay.exportimport.web.internal.display.context;
 
 import com.liferay.exportimport.rest.dto.v1_0.ExportPreview;
 import com.liferay.exportimport.rest.resource.v1_0.ExportPreviewResource;
+import com.liferay.exportimport.site.constants.SiteExportImportConstants;
 import com.liferay.exportimport.vulcan.batch.engine.ExportImportVulcanBatchEngineTaskItemDelegate.Scope;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -224,7 +225,8 @@ public class ExportImportPreviewDisplayContext {
 	public boolean isSitesEnabled() {
 		if ((getScope() == Scope.COMPANY) &&
 			FeatureFlagManagerUtil.isEnabled(
-				_group.getCompanyId(), "LPD-85946")) {
+				_group.getCompanyId(),
+				SiteExportImportConstants.FEATURE_FLAG_KEY)) {
 
 			return true;
 		}

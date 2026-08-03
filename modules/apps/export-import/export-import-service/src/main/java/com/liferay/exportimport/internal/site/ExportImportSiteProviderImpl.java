@@ -17,6 +17,7 @@ import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.GroupService;
 import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -106,19 +107,21 @@ public class ExportImportSiteProviderImpl implements ExportImportSiteProvider {
 
 	@Override
 	public List<Group> getSupportedSites(
-			long companyId, String search, boolean ascending, int start,
-			int end)
+			long companyId, String search, int start, int end,
+			OrderByComparator<Group> orderByComparator)
 		throws PortalException {
 
 		return ListUtil.subList(
-			_getSupportedSites(companyId, search, ascending), start, end);
+			_getSupportedSites(companyId, search, orderByComparator), start,
+			end);
 	}
 
 	@Override
 	public int getSupportedSitesCount(long companyId, String search)
 		throws PortalException {
 
-		List<Group> groups = _getSupportedSites(companyId, search, true);
+		List<Group> groups = _getSupportedSites(
+			companyId, search, new GroupNameComparator());
 
 		return groups.size();
 	}
@@ -158,7 +161,8 @@ public class ExportImportSiteProviderImpl implements ExportImportSiteProvider {
 	}
 
 	private List<Group> _getSupportedSites(
-			long companyId, String search, boolean ascending)
+			long companyId, String search,
+			OrderByComparator<Group> orderByComparator)
 		throws PortalException {
 
 		List<Group> groups = _groupService.search(
@@ -173,8 +177,7 @@ public class ExportImportSiteProviderImpl implements ExportImportSiteProvider {
 			).put(
 				"site", Boolean.TRUE
 			).build(),
-			true, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-			new GroupNameComparator(ascending));
+			true, QueryUtil.ALL_POS, QueryUtil.ALL_POS, orderByComparator);
 
 		// The unsupported sites go before the range is applied, so that a page
 		// of results is a page of sites the caller can act on

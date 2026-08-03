@@ -10,10 +10,13 @@ import com.liferay.exportimport.rest.internal.odata.entity.v1_0.PreviewSiteEntit
 import com.liferay.exportimport.rest.internal.util.PermissionUtil;
 import com.liferay.exportimport.rest.resource.v1_0.PreviewSiteResource;
 import com.liferay.exportimport.site.ExportImportSiteProvider;
+import com.liferay.exportimport.site.constants.SiteExportImportConstants;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.comparator.GroupNameComparator;
 import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
@@ -58,7 +61,8 @@ public class PreviewSiteResourceImpl extends BasePreviewSiteResourceImpl {
 			contextCompany.getCompanyId(), companyGroup.getGroupId());
 
 		if (!FeatureFlagManagerUtil.isEnabled(
-				contextCompany.getCompanyId(), "LPD-85946")) {
+				contextCompany.getCompanyId(),
+				SiteExportImportConstants.FEATURE_FLAG_KEY)) {
 
 			return Page.of(Collections.emptyList());
 		}
@@ -66,8 +70,9 @@ public class PreviewSiteResourceImpl extends BasePreviewSiteResourceImpl {
 		return Page.of(
 			transform(
 				_exportImportSiteProvider.getSupportedSites(
-					contextCompany.getCompanyId(), search, _isAscending(sorts),
-					pagination.getStartPosition(), pagination.getEndPosition()),
+					contextCompany.getCompanyId(), search,
+					pagination.getStartPosition(), pagination.getEndPosition(),
+					_getOrderByComparator(sorts)),
 				group -> new PreviewSite() {
 					{
 						setChildSiteCount(
@@ -109,14 +114,14 @@ public class PreviewSiteResourceImpl extends BasePreviewSiteResourceImpl {
 	 * nothing else. Anything the caller did not ask for reads as ascending,
 	 * which is the order the sites are listed in to begin with.
 	 */
-	private boolean _isAscending(Sort[] sorts) {
+	private OrderByComparator<Group> _getOrderByComparator(Sort[] sorts) {
 		if (ArrayUtil.isEmpty(sorts)) {
-			return true;
+			return new GroupNameComparator();
 		}
 
 		Sort sort = sorts[0];
 
-		return !sort.isReverse();
+		return new GroupNameComparator(!sort.isReverse());
 	}
 
 	private static final EntityModel _entityModel =

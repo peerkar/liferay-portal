@@ -5,7 +5,7 @@
 
 package com.liferay.exportimport.internal.lar;
 
-import com.liferay.exportimport.internal.site.SiteExportImportParameters;
+import com.liferay.exportimport.internal.site.SiteExportImportParameterUtil;
 import com.liferay.exportimport.kernel.lar.ExportImportPathUtil;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.petra.string.StringBundler;
@@ -32,7 +32,7 @@ import com.liferay.petra.string.StringPool;
  *
  * <p>
  * A pass is a per-site pass when its portlet data context carries {@link
- * PortletDataHandlerKeys#SITE_EXTERNAL_REFERENCE_CODE}. That parameter is set
+ * PortletDataHandlerKeys#CURRENT_SITE_EXTERNAL_REFERENCE_CODE}. That parameter is set
  * once, when the per-site context is created, and is never mutated afterwards.
  * </p>
  *
@@ -90,7 +90,7 @@ public class LARManifestPathUtil {
 	}
 
 	private static boolean _isSitePass(PortletDataContext portletDataContext) {
-		return SiteExportImportParameters.isSitePass(portletDataContext);
+		return SiteExportImportParameterUtil.isSitePass(portletDataContext);
 	}
 
 }

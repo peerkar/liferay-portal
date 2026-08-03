@@ -11,6 +11,8 @@ import com.liferay.portal.odata.entity.StringEntityField;
 
 import java.util.Map;
 
+import org.osgi.service.component.annotations.Component;
+
 /**
  * Declares the fields a site preview can be sorted on.
  *
@@ -22,7 +24,13 @@ import java.util.Map;
  *
  * @author Petteri Karttunen
  */
+@Component(
+	property = "entity.model.name=" + PreviewSiteEntityModel.NAME,
+	service = EntityModel.class
+)
 public class PreviewSiteEntityModel implements EntityModel {
+
+	public static final String NAME = "PreviewSite";
 
 	public PreviewSiteEntityModel() {
 		_entityFieldsMap = EntityModel.toEntityFieldsMap(

@@ -74,8 +74,8 @@ public class SiteImporter {
 				importSiteUnsafeBiConsumer)
 		throws Exception {
 
-		if (SiteExportImportParameters.isSitePass(portletDataContext) ||
-			!SiteExportImportParameters.isEnabled(
+		if (SiteExportImportParameterUtil.isSitePass(portletDataContext) ||
+			!SiteExportImportParameterUtil.isEnabled(
 				portletDataContext.getCompanyId())) {
 
 			return;
@@ -88,7 +88,8 @@ public class SiteImporter {
 		}
 
 		String[] selectedSiteExternalReferenceCodes =
-			SiteExportImportParameters.getSelectedSiteERCs(portletDataContext);
+			SiteExportImportParameterUtil.getSelectedSiteExternalReferenceCodes(
+				portletDataContext);
 
 		// A file is imported for everything it carries, and the whole sites it
 		// carries are only a part of that, so selecting none of them is an
@@ -176,7 +177,7 @@ public class SiteImporter {
 		PortletDataContext sitePortletDataContext =
 			_portletDataContextFactory.createImportPortletDataContext(
 				portletDataContext.getCompanyId(), group.getGroupId(),
-				SiteExportImportParameters.toSiteImportParameterMap(
+				SiteExportImportParameterUtil.toSiteImportParameterMap(
 					portletDataContext.getParameterMap(),
 					larSite.getExternalReferenceCode()),
 				portletDataContext.getUserIdStrategy(),

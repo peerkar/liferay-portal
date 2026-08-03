@@ -9,7 +9,7 @@ import com.liferay.asset.link.model.adapter.StagedAssetLink;
 import com.liferay.exportimport.configuration.ExportImportServiceConfiguration;
 import com.liferay.exportimport.constants.ExportImportConstants;
 import com.liferay.exportimport.controller.PortletImportController;
-import com.liferay.exportimport.internal.site.SiteExportImportParameters;
+import com.liferay.exportimport.internal.site.SiteExportImportParameterUtil;
 import com.liferay.exportimport.internal.site.SiteImporter;
 import com.liferay.exportimport.internal.site.SiteReporter;
 import com.liferay.exportimport.kernel.controller.ExportImportController;
@@ -777,7 +777,7 @@ public class LayoutImportController implements ImportController {
 
 		// LAR validation
 
-		if (!SiteExportImportParameters.isSitePass(portletDataContext)) {
+		if (!SiteExportImportParameterUtil.isSitePass(portletDataContext)) {
 			validateFile(
 				companyId, portletDataContext.getGroupId(), parameterMap,
 				portletDataContext.getZipReader());

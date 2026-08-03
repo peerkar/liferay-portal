@@ -7,6 +7,7 @@ package com.liferay.exportimport.internal.site;
 
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.exportimport.kernel.lar.PortletDataHandlerKeys;
+import com.liferay.exportimport.site.constants.SiteExportImportConstants;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -31,11 +32,9 @@ import java.util.Set;
  *
  * @author Petteri Karttunen
  */
-public class SiteExportImportParameters {
+public class SiteExportImportParameterUtil {
 
-	public static final String FEATURE_FLAG_KEY = "LPD-85946";
-
-	public static String[] getSelectedSiteERCs(
+	public static String[] getSelectedSiteExternalReferenceCodes(
 		Map<String, String[]> parameterMap) {
 
 		if (parameterMap == null) {
@@ -65,19 +64,23 @@ public class SiteExportImportParameters {
 	 * Returns the external reference codes of the sites the user selected,
 	 * without blanks or duplicates.
 	 */
-	public static String[] getSelectedSiteERCs(
+	public static String[] getSelectedSiteExternalReferenceCodes(
 		PortletDataContext portletDataContext) {
 
-		return getSelectedSiteERCs(portletDataContext.getParameterMap());
+		return getSelectedSiteExternalReferenceCodes(
+			portletDataContext.getParameterMap());
 	}
 
-	public static String getSiteERC(Map<String, String[]> parameterMap) {
+	public static String getSiteExternalReferenceCode(
+		Map<String, String[]> parameterMap) {
+
 		if (parameterMap == null) {
 			return null;
 		}
 
 		String siteExternalReferenceCode = MapUtil.getString(
-			parameterMap, PortletDataHandlerKeys.SITE_EXTERNAL_REFERENCE_CODE);
+			parameterMap,
+			PortletDataHandlerKeys.CURRENT_SITE_EXTERNAL_REFERENCE_CODE);
 
 		if (Validator.isNull(siteExternalReferenceCode)) {
 			return null;
@@ -91,16 +94,20 @@ public class SiteExportImportParameters {
 	 * processing, or <code>null</code> when it is the company level pass that
 	 * owns the LAR.
 	 */
-	public static String getSiteERC(PortletDataContext portletDataContext) {
-		return getSiteERC(portletDataContext.getParameterMap());
+	public static String getSiteExternalReferenceCode(
+		PortletDataContext portletDataContext) {
+
+		return getSiteExternalReferenceCode(
+			portletDataContext.getParameterMap());
 	}
 
 	public static boolean isEnabled(long companyId) {
-		return FeatureFlagManagerUtil.isEnabled(companyId, FEATURE_FLAG_KEY);
+		return FeatureFlagManagerUtil.isEnabled(
+			companyId, SiteExportImportConstants.FEATURE_FLAG_KEY);
 	}
 
 	public static boolean isSitePass(Map<String, String[]> parameterMap) {
-		if (getSiteERC(parameterMap) != null) {
+		if (getSiteExternalReferenceCode(parameterMap) != null) {
 			return true;
 		}
 
@@ -210,7 +217,7 @@ public class SiteExportImportParameters {
 			PortletDataHandlerKeys.SITE_EXTERNAL_REFERENCE_CODES);
 
 		siteParameterMap.put(
-			PortletDataHandlerKeys.SITE_EXTERNAL_REFERENCE_CODE,
+			PortletDataHandlerKeys.CURRENT_SITE_EXTERNAL_REFERENCE_CODE,
 			new String[] {siteExternalReferenceCode});
 
 		// Permissions and deletions of elements inside a site are out of scope

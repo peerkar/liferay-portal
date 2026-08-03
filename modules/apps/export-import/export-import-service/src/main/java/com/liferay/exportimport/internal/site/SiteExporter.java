@@ -57,7 +57,8 @@ public class SiteExporter {
 		PortletDataContext portletDataContext, Element headerElement) {
 
 		String siteExternalReferenceCode =
-			SiteExportImportParameters.getSiteERC(portletDataContext);
+			SiteExportImportParameterUtil.getSiteExternalReferenceCode(
+				portletDataContext);
 
 		if (siteExternalReferenceCode != null) {
 			headerElement.addAttribute(
@@ -66,14 +67,15 @@ public class SiteExporter {
 			return;
 		}
 
-		if (!SiteExportImportParameters.isEnabled(
+		if (!SiteExportImportParameterUtil.isEnabled(
 				portletDataContext.getCompanyId())) {
 
 			return;
 		}
 
 		String[] siteExternalReferenceCodes =
-			SiteExportImportParameters.getSelectedSiteERCs(portletDataContext);
+			SiteExportImportParameterUtil.getSelectedSiteExternalReferenceCodes(
+				portletDataContext);
 
 		if (siteExternalReferenceCodes.length == 0) {
 			return;
@@ -155,15 +157,16 @@ public class SiteExporter {
 				exportSiteUnsafeConsumer)
 		throws Exception {
 
-		if (SiteExportImportParameters.isSitePass(portletDataContext) ||
-			!SiteExportImportParameters.isEnabled(
+		if (SiteExportImportParameterUtil.isSitePass(portletDataContext) ||
+			!SiteExportImportParameterUtil.isEnabled(
 				portletDataContext.getCompanyId())) {
 
 			return;
 		}
 
 		String[] siteExternalReferenceCodes =
-			SiteExportImportParameters.getSelectedSiteERCs(portletDataContext);
+			SiteExportImportParameterUtil.getSelectedSiteExternalReferenceCodes(
+				portletDataContext);
 
 		for (String siteExternalReferenceCode : siteExternalReferenceCodes) {
 			Group group = _fetchSite(
@@ -192,7 +195,7 @@ public class SiteExporter {
 		PortletDataContext sitePortletDataContext =
 			_portletDataContextFactory.createExportPortletDataContext(
 				portletDataContext.getCompanyId(), group.getGroupId(),
-				SiteExportImportParameters.toSiteExportParameterMap(
+				SiteExportImportParameterUtil.toSiteExportParameterMap(
 					portletDataContext.getParameterMap(),
 					group.getExternalReferenceCode()),
 				portletDataContext.getStartDate(),
