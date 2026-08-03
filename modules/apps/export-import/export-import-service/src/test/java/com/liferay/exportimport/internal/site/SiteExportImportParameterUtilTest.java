@@ -7,7 +7,6 @@ package com.liferay.exportimport.internal.site;
 
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.exportimport.kernel.lar.PortletDataHandlerKeys;
-import com.liferay.exportimport.site.constants.SiteExportImportConstants;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -126,8 +125,7 @@ public class SiteExportImportParameterUtilTest {
 					FeatureFlagManagerUtil.class)) {
 
 			featureFlagManagerUtilMockedStatic.when(
-				() -> FeatureFlagManagerUtil.isEnabled(
-					companyId, SiteExportImportConstants.FEATURE_FLAG_KEY)
+				() -> FeatureFlagManagerUtil.isEnabled(companyId, "LPD-85946")
 			).thenReturn(
 				true
 			);

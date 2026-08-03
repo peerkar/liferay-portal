@@ -15,7 +15,6 @@ import com.liferay.exportimport.kernel.lar.PortletDataHandlerKeys;
 import com.liferay.exportimport.kernel.service.ExportImportConfigurationLocalServiceUtil;
 import com.liferay.exportimport.kernel.service.ExportImportLocalServiceUtil;
 import com.liferay.exportimport.site.ExportImportSiteProvider;
-import com.liferay.exportimport.site.constants.SiteExportImportConstants;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.repository.model.FileEntry;
@@ -59,8 +58,7 @@ import org.junit.runner.RunWith;
  */
 @FeatureFlags(
 	featureFlags = {
-		@FeatureFlag(value = "LPD-57655"),
-		@FeatureFlag(SiteExportImportConstants.FEATURE_FLAG_KEY)
+		@FeatureFlag(value = "LPD-57655"), @FeatureFlag("LPD-85946")
 	}
 )
 @RunWith(Arquillian.class)
@@ -83,7 +81,7 @@ public class SiteExporterTest {
 	}
 
 	@Test
-	@TestInfo(SiteExportImportConstants.FEATURE_FLAG_KEY)
+	@TestInfo("LPD-85946")
 	public void testExportCarriesNoSitesWhenNoneAreSelected() throws Exception {
 		File file = _exportCompanyLayouts();
 
@@ -101,7 +99,7 @@ public class SiteExporterTest {
 	}
 
 	@Test
-	@TestInfo(SiteExportImportConstants.FEATURE_FLAG_KEY)
+	@TestInfo("LPD-85946")
 	public void testExportCarriesTheSelectedSite() throws Exception {
 		File file = _exportCompanyLayouts(_group);
 
@@ -126,7 +124,7 @@ public class SiteExporterTest {
 	}
 
 	@Test
-	@TestInfo(SiteExportImportConstants.FEATURE_FLAG_KEY)
+	@TestInfo("LPD-85946")
 	public void testExportedSiteIsReadBackFromTheManifest() throws Exception {
 		File file = _exportCompanyLayouts(_group);
 
@@ -173,7 +171,7 @@ public class SiteExporterTest {
 	}
 
 	@Test
-	@TestInfo(SiteExportImportConstants.FEATURE_FLAG_KEY)
+	@TestInfo("LPD-85946")
 	public void testExportedSitesAreCountedAsWholeUnits() throws Exception {
 		File file = _exportCompanyLayouts(_group, _otherGroup);
 
@@ -190,7 +188,7 @@ public class SiteExporterTest {
 	}
 
 	@Test
-	@TestInfo(SiteExportImportConstants.FEATURE_FLAG_KEY)
+	@TestInfo("LPD-85946")
 	public void testExportLeavesOutTheUnselectedSite() throws Exception {
 		File file = _exportCompanyLayouts(_group);
 

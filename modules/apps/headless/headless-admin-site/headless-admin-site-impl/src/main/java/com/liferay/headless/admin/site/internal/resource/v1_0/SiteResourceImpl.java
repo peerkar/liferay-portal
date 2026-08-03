@@ -7,7 +7,6 @@ package com.liferay.headless.admin.site.internal.resource.v1_0;
 
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.exportimport.kernel.lar.PortletDataHandlerKeys;
-import com.liferay.exportimport.site.constants.SiteExportImportConstants;
 import com.liferay.exportimport.vulcan.batch.engine.ExportImportVulcanBatchEngineTaskItemDelegate;
 import com.liferay.google.places.constants.GooglePlacesWebKeys;
 import com.liferay.headless.admin.site.dto.v1_0.AnalyticsConfiguration;
@@ -165,8 +164,7 @@ public class SiteResourceImpl
 			@Override
 			public boolean isActive(PortletDataContext portletDataContext) {
 				if (!FeatureFlagManagerUtil.isEnabled(
-						portletDataContext.getCompanyId(),
-						SiteExportImportConstants.FEATURE_FLAG_KEY)) {
+						portletDataContext.getCompanyId(), "LPD-85946")) {
 
 					return false;
 				}

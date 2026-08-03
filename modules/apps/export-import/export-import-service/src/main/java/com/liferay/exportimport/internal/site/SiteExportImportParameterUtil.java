@@ -7,7 +7,6 @@ package com.liferay.exportimport.internal.site;
 
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.exportimport.kernel.lar.PortletDataHandlerKeys;
-import com.liferay.exportimport.site.constants.SiteExportImportConstants;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -102,8 +101,7 @@ public class SiteExportImportParameterUtil {
 	}
 
 	public static boolean isEnabled(long companyId) {
-		return FeatureFlagManagerUtil.isEnabled(
-			companyId, SiteExportImportConstants.FEATURE_FLAG_KEY);
+		return FeatureFlagManagerUtil.isEnabled(companyId, "LPD-85946");
 	}
 
 	public static boolean isSitePass(Map<String, String[]> parameterMap) {

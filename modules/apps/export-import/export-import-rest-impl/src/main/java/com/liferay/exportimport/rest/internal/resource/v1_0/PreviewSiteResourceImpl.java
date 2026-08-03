@@ -10,7 +10,6 @@ import com.liferay.exportimport.rest.internal.odata.entity.v1_0.PreviewSiteEntit
 import com.liferay.exportimport.rest.internal.util.PermissionUtil;
 import com.liferay.exportimport.rest.resource.v1_0.PreviewSiteResource;
 import com.liferay.exportimport.site.ExportImportSiteProvider;
-import com.liferay.exportimport.site.constants.SiteExportImportConstants;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.search.Sort;
@@ -61,8 +60,7 @@ public class PreviewSiteResourceImpl extends BasePreviewSiteResourceImpl {
 			contextCompany.getCompanyId(), companyGroup.getGroupId());
 
 		if (!FeatureFlagManagerUtil.isEnabled(
-				contextCompany.getCompanyId(),
-				SiteExportImportConstants.FEATURE_FLAG_KEY)) {
+				contextCompany.getCompanyId(), "LPD-85946")) {
 
 			return Page.of(Collections.emptyList());
 		}
