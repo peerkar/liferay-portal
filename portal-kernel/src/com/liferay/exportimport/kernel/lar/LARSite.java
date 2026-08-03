@@ -24,7 +24,8 @@ public class LARSite implements Serializable {
 
 	public LARSite(
 		int childSiteCount, String externalReferenceCode, String friendlyURL,
-		long groupId, String hierarchy, String name, boolean global) {
+		long groupId, String hierarchy, String name,
+		String parentExternalReferenceCode, boolean global) {
 
 		_childSiteCount = childSiteCount;
 		_externalReferenceCode = externalReferenceCode;
@@ -32,6 +33,7 @@ public class LARSite implements Serializable {
 		_groupId = groupId;
 		_hierarchy = hierarchy;
 		_name = name;
+		_parentExternalReferenceCode = parentExternalReferenceCode;
 		_global = global;
 	}
 
@@ -75,6 +77,21 @@ public class LARSite implements Serializable {
 	}
 
 	/**
+	 * Returns the external reference code of the site this one sat below, or
+	 * <code>null</code> when it sat at the top level.
+	 *
+	 * <p>
+	 * The code identifies the parent across instances, so an import can tell
+	 * whether the parent is one the file carries, one the instance already has,
+	 * or one that exists nowhere. A site whose parent exists nowhere is imported
+	 * at the top level, because there is nothing for it to sit below.
+	 * </p>
+	 */
+	public String getParentExternalReferenceCode() {
+		return _parentExternalReferenceCode;
+	}
+
+	/**
 	 * Returns <code>true</code> when this is the site an instance keeps for
 	 * content shared across its sites.
 	 */
@@ -89,5 +106,6 @@ public class LARSite implements Serializable {
 	private final long _groupId;
 	private final String _hierarchy;
 	private final String _name;
+	private final String _parentExternalReferenceCode;
 
 }
