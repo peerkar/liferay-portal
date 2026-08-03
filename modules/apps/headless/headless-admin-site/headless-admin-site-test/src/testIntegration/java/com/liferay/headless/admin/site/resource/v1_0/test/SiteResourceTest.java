@@ -185,6 +185,7 @@ public class SiteResourceTest extends BaseSiteResourceTestCase {
 		_testGetSitesPageWithAssetLibraryMember();
 		_testGetSitesPageWithDepotEntry();
 		_testGetSitesPageWithExcludedExternalReferenceCodes();
+		_testGetSitesPageWithExternalReferenceCodesOrdersParentsFirst();
 		_testGetSitesPageWithInactiveSites();
 		_testGetSitesPageWithoutAuthentication();
 		_testGetSitesPageWithoutSiteMembership();
@@ -620,6 +621,46 @@ public class SiteResourceTest extends BaseSiteResourceTestCase {
 
 		Assert.assertFalse(excludedSiteFound);
 		Assert.assertTrue(includedSiteFound);
+	}
+
+	private void _testGetSitesPageWithExternalReferenceCodesOrdersParentsFirst()
+		throws Exception {
+
+		// Whoever recreates these sites works through the list in order, so a
+		// child listed before its parent is recreated with no parent to be
+		// attached to. The name of the child sorts first on purpose.
+
+		Site parentSite = randomSite();
+
+		parentSite.setName("ZZZ " + RandomTestUtil.randomString());
+
+		Site postParentSite = _testPostSite_addSite(parentSite);
+
+		Site childSite = randomSite();
+
+		childSite.setName("AAA " + RandomTestUtil.randomString());
+		childSite.setParentSiteExternalReferenceCode(
+			postParentSite.getExternalReferenceCode());
+
+		Site postChildSite = _testPostSite_addSite(childSite);
+
+		Page<Site> sitesPage = siteResource.getSitesPage(
+			null, null,
+			new String[] {
+				postChildSite.getExternalReferenceCode(),
+				postParentSite.getExternalReferenceCode()
+			},
+			null, Pagination.of(1, 100));
+
+		List<Site> sites = (List<Site>)sitesPage.getItems();
+
+		Assert.assertEquals(sites.toString(), 2, sites.size());
+
+		Site firstSite = sites.get(0);
+
+		Assert.assertEquals(
+			sites.toString(), postParentSite.getExternalReferenceCode(),
+			firstSite.getExternalReferenceCode());
 	}
 
 	private void _testGetSitesPageWithInactiveSites() throws Exception {

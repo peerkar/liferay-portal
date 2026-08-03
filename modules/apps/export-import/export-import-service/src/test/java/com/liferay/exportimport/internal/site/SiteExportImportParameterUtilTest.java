@@ -7,6 +7,7 @@ package com.liferay.exportimport.internal.site;
 
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.exportimport.kernel.lar.PortletDataHandlerKeys;
+import com.liferay.exportimport.site.constants.SiteExportImportConstants;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -26,7 +27,7 @@ import org.mockito.Mockito;
 /**
  * @author Petteri Karttunen
  */
-public class SiteExportImportParametersTest {
+public class SiteExportImportParameterUtilTest {
 
 	@ClassRule
 	@Rule
@@ -34,10 +35,10 @@ public class SiteExportImportParametersTest {
 		LiferayUnitTestRule.INSTANCE;
 
 	@Test
-	public void testGetSelectedSiteERCsWhenBlank() {
+	public void testGetSelectedSiteExternalReferenceCodesWhenBlank() {
 		Assert.assertArrayEquals(
 			new String[0],
-			SiteExportImportParameters.getSelectedSiteERCs(
+			SiteExportImportParameterUtil.getSelectedSiteExternalReferenceCodes(
 				HashMapBuilder.put(
 					PortletDataHandlerKeys.SITE_EXTERNAL_REFERENCE_CODES,
 					new String[] {"", null, "   "}
@@ -45,13 +46,13 @@ public class SiteExportImportParametersTest {
 	}
 
 	@Test
-	public void testGetSelectedSiteERCsWhenDuplicated() {
+	public void testGetSelectedSiteExternalReferenceCodesWhenDuplicated() {
 
 		// The same site picked twice is still one site to export
 
 		Assert.assertArrayEquals(
 			new String[] {"erc1", "erc2"},
-			SiteExportImportParameters.getSelectedSiteERCs(
+			SiteExportImportParameterUtil.getSelectedSiteExternalReferenceCodes(
 				HashMapBuilder.put(
 					PortletDataHandlerKeys.SITE_EXTERNAL_REFERENCE_CODES,
 					new String[] {"erc1", "erc2", "erc1"}
@@ -59,10 +60,10 @@ public class SiteExportImportParametersTest {
 	}
 
 	@Test
-	public void testGetSelectedSiteERCsWhenMissing() {
+	public void testGetSelectedSiteExternalReferenceCodesWhenMissing() {
 		Assert.assertArrayEquals(
 			new String[0],
-			SiteExportImportParameters.getSelectedSiteERCs(
+			SiteExportImportParameterUtil.getSelectedSiteExternalReferenceCodes(
 				HashMapBuilder.put(
 					PortletDataHandlerKeys.PORTLET_DATA,
 					new String[] {Boolean.TRUE.toString()}
@@ -70,17 +71,18 @@ public class SiteExportImportParametersTest {
 	}
 
 	@Test
-	public void testGetSelectedSiteERCsWhenNull() {
+	public void testGetSelectedSiteExternalReferenceCodesWhenNull() {
 		Assert.assertArrayEquals(
 			new String[0],
-			SiteExportImportParameters.getSelectedSiteERCs((Map)null));
+			SiteExportImportParameterUtil.getSelectedSiteExternalReferenceCodes(
+				(Map)null));
 	}
 
 	@Test
-	public void testGetSelectedSiteERCsWhenPadded() {
+	public void testGetSelectedSiteExternalReferenceCodesWhenPadded() {
 		Assert.assertArrayEquals(
 			new String[] {"erc1"},
-			SiteExportImportParameters.getSelectedSiteERCs(
+			SiteExportImportParameterUtil.getSelectedSiteExternalReferenceCodes(
 				HashMapBuilder.put(
 					PortletDataHandlerKeys.SITE_EXTERNAL_REFERENCE_CODES,
 					new String[] {"  erc1  "}
@@ -88,27 +90,29 @@ public class SiteExportImportParametersTest {
 	}
 
 	@Test
-	public void testGetSiteERCWhenBlank() {
+	public void testGetSiteExternalReferenceCodeWhenBlank() {
 		Assert.assertNull(
-			SiteExportImportParameters.getSiteERC(
+			SiteExportImportParameterUtil.getSiteExternalReferenceCode(
 				HashMapBuilder.put(
-					PortletDataHandlerKeys.SITE_EXTERNAL_REFERENCE_CODE,
+					PortletDataHandlerKeys.CURRENT_SITE_EXTERNAL_REFERENCE_CODE,
 					new String[] {""}
 				).build()));
 	}
 
 	@Test
-	public void testGetSiteERCWhenNull() {
-		Assert.assertNull(SiteExportImportParameters.getSiteERC((Map)null));
+	public void testGetSiteExternalReferenceCodeWhenNull() {
+		Assert.assertNull(
+			SiteExportImportParameterUtil.getSiteExternalReferenceCode(
+				(Map)null));
 	}
 
 	@Test
-	public void testGetSiteERCWhenSet() {
+	public void testGetSiteExternalReferenceCodeWhenSet() {
 		Assert.assertEquals(
 			"erc1",
-			SiteExportImportParameters.getSiteERC(
+			SiteExportImportParameterUtil.getSiteExternalReferenceCode(
 				HashMapBuilder.put(
-					PortletDataHandlerKeys.SITE_EXTERNAL_REFERENCE_CODE,
+					PortletDataHandlerKeys.CURRENT_SITE_EXTERNAL_REFERENCE_CODE,
 					new String[] {"erc1"}
 				).build()));
 	}
@@ -123,19 +127,20 @@ public class SiteExportImportParametersTest {
 
 			featureFlagManagerUtilMockedStatic.when(
 				() -> FeatureFlagManagerUtil.isEnabled(
-					companyId, SiteExportImportParameters.FEATURE_FLAG_KEY)
+					companyId, SiteExportImportConstants.FEATURE_FLAG_KEY)
 			).thenReturn(
 				true
 			);
 
-			Assert.assertTrue(SiteExportImportParameters.isEnabled(companyId));
+			Assert.assertTrue(
+				SiteExportImportParameterUtil.isEnabled(companyId));
 		}
 	}
 
 	@Test
 	public void testIsSitePassWhenCompanyLevel() {
 		Assert.assertFalse(
-			SiteExportImportParameters.isSitePass(
+			SiteExportImportParameterUtil.isSitePass(
 				HashMapBuilder.put(
 					PortletDataHandlerKeys.SITE_EXTERNAL_REFERENCE_CODES,
 					new String[] {"erc1"}
@@ -150,11 +155,11 @@ public class SiteExportImportParametersTest {
 		Mockito.when(
 			portletDataContext.getParameterMap()
 		).thenReturn(
-			SiteExportImportParameters.toSiteExportParameterMap(null, "erc1")
+			SiteExportImportParameterUtil.toSiteExportParameterMap(null, "erc1")
 		);
 
 		Assert.assertTrue(
-			SiteExportImportParameters.isSitePass(portletDataContext));
+			SiteExportImportParameterUtil.isSitePass(portletDataContext));
 	}
 
 	@Test
@@ -165,7 +170,7 @@ public class SiteExportImportParametersTest {
 		// well have been left with
 
 		Map<String, String[]> siteParameterMap =
-			SiteExportImportParameters.toSiteExportParameterMap(
+			SiteExportImportParameterUtil.toSiteExportParameterMap(
 				HashMapBuilder.put(
 					PortletDataHandlerKeys.PORTLET_DATA,
 					new String[] {Boolean.FALSE.toString()}
@@ -200,7 +205,7 @@ public class SiteExportImportParametersTest {
 		// per-site passes of its own
 
 		Map<String, String[]> siteParameterMap =
-			SiteExportImportParameters.toSiteExportParameterMap(
+			SiteExportImportParameterUtil.toSiteExportParameterMap(
 				HashMapBuilder.put(
 					PortletDataHandlerKeys.SITE_EXTERNAL_REFERENCE_CODES,
 					new String[] {"erc1", "erc2"}
@@ -209,17 +214,20 @@ public class SiteExportImportParametersTest {
 
 		Assert.assertArrayEquals(
 			new String[0],
-			SiteExportImportParameters.getSelectedSiteERCs(siteParameterMap));
+			SiteExportImportParameterUtil.getSelectedSiteExternalReferenceCodes(
+				siteParameterMap));
 		Assert.assertEquals(
-			"erc1", SiteExportImportParameters.getSiteERC(siteParameterMap));
+			"erc1",
+			SiteExportImportParameterUtil.getSiteExternalReferenceCode(
+				siteParameterMap));
 		Assert.assertTrue(
-			SiteExportImportParameters.isSitePass(siteParameterMap));
+			SiteExportImportParameterUtil.isSitePass(siteParameterMap));
 	}
 
 	@Test
 	public void testToSiteExportParameterMapKeepsWhatItDoesNotDecide() {
 		Map<String, String[]> siteParameterMap =
-			SiteExportImportParameters.toSiteExportParameterMap(
+			SiteExportImportParameterUtil.toSiteExportParameterMap(
 				HashMapBuilder.put(
 					PortletDataHandlerKeys.COMMENTS,
 					new String[] {Boolean.TRUE.toString()}
@@ -240,7 +248,7 @@ public class SiteExportImportParametersTest {
 	@Test
 	public void testToSiteExportParameterMapLeavesOutOfScopeOff() {
 		Map<String, String[]> siteParameterMap =
-			SiteExportImportParameters.toSiteExportParameterMap(
+			SiteExportImportParameterUtil.toSiteExportParameterMap(
 				HashMapBuilder.put(
 					PortletDataHandlerKeys.DELETIONS,
 					new String[] {Boolean.TRUE.toString()}
@@ -272,7 +280,7 @@ public class SiteExportImportParametersTest {
 	@Test
 	public void testToSiteImportParameterMapMirrors() {
 		Map<String, String[]> siteParameterMap =
-			SiteExportImportParameters.toSiteImportParameterMap(
+			SiteExportImportParameterUtil.toSiteImportParameterMap(
 				HashMapBuilder.put(
 					PortletDataHandlerKeys.DATA_STRATEGY,
 					new String[] {
@@ -298,7 +306,7 @@ public class SiteExportImportParametersTest {
 		// an import should decide on its own
 
 		Map<String, String[]> siteParameterMap =
-			SiteExportImportParameters.toSiteImportParameterMap(
+			SiteExportImportParameterUtil.toSiteImportParameterMap(
 				HashMapBuilder.put(
 					PortletDataHandlerKeys.DELETE_MISSING_LAYOUTS,
 					new String[] {Boolean.TRUE.toString()}

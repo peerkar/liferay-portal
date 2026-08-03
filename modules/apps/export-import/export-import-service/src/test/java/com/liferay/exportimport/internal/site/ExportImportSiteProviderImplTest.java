@@ -5,8 +5,11 @@
 
 package com.liferay.exportimport.internal.site;
 
+import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 import com.liferay.staging.StagingGroupHelper;
 
@@ -37,6 +40,56 @@ public class ExportImportSiteProviderImplTest {
 		ReflectionTestUtil.setFieldValue(
 			_exportImportSiteProviderImpl, "_stagingGroupHelper",
 			_stagingGroupHelper);
+	}
+
+	@Test
+	public void testGetDisplayNameWhenGroupIsNull() {
+		Assert.assertEquals(
+			StringPool.BLANK,
+			_exportImportSiteProviderImpl.getDisplayName(null, LocaleUtil.US));
+	}
+
+	@Test
+	public void testGetDisplayNameWhenNameIsNotWhatItGoesBy() throws Exception {
+
+		// The name a site is stored under is not always the name it goes by.
+		// The site an instance starts life with is stored as Guest and the
+		// Global site under the ID of its company.
+
+		Group group = _mockSite();
+
+		Mockito.when(
+			group.getDescriptiveName(LocaleUtil.US)
+		).thenReturn(
+			"Liferay DXP Site"
+		);
+
+		Assert.assertEquals(
+			"Liferay DXP Site",
+			_exportImportSiteProviderImpl.getDisplayName(group, LocaleUtil.US));
+	}
+
+	@Test
+	public void testGetDisplayNameWhenThereIsNoDescriptiveName()
+		throws Exception {
+
+		Group group = _mockSite();
+
+		Mockito.when(
+			group.getDescriptiveName(LocaleUtil.US)
+		).thenThrow(
+			new PortalException()
+		);
+
+		Mockito.when(
+			group.getName(LocaleUtil.US)
+		).thenReturn(
+			"Guest"
+		);
+
+		Assert.assertEquals(
+			"Guest",
+			_exportImportSiteProviderImpl.getDisplayName(group, LocaleUtil.US));
 	}
 
 	@Test
