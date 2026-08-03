@@ -121,15 +121,15 @@ public class PortletDataHandlerKeys {
 	 *
 	 * @see PortletDataHandlerKeys#SITE_EXTERNAL_REFERENCE_CODES
 	 */
-	public static final String SITE_EXTERNAL_REFERENCE_CODE =
-		"SITE_EXTERNAL_REFERENCE_CODE";
+	public static final String CURRENT_SITE_EXTERNAL_REFERENCE_CODE =
+		"CURRENT_SITE_EXTERNAL_REFERENCE_CODE";
 
 	/**
 	 * The external reference codes of the sites the user selected to export or
 	 * import as whole sites. Set on the company level portlet data context
 	 * that owns the LAR.
 	 *
-	 * @see PortletDataHandlerKeys#SITE_EXTERNAL_REFERENCE_CODE
+	 * @see PortletDataHandlerKeys#CURRENT_SITE_EXTERNAL_REFERENCE_CODE
 	 */
 	public static final String SITE_EXTERNAL_REFERENCE_CODES =
 		"SITE_EXTERNAL_REFERENCE_CODES";
