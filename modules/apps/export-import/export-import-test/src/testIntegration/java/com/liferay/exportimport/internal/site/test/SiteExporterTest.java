@@ -14,6 +14,7 @@ import com.liferay.exportimport.kernel.lar.ManifestSummary;
 import com.liferay.exportimport.kernel.lar.PortletDataHandlerKeys;
 import com.liferay.exportimport.kernel.service.ExportImportConfigurationLocalServiceUtil;
 import com.liferay.exportimport.kernel.service.ExportImportLocalServiceUtil;
+import com.liferay.exportimport.site.ExportImportSiteProvider;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.repository.model.FileEntry;
@@ -28,6 +29,7 @@ import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.zip.ZipReader;
 import com.liferay.portal.kernel.zip.ZipReaderFactory;
 import com.liferay.portal.test.rule.FeatureFlag;
@@ -142,7 +144,9 @@ public class SiteExporterTest {
 				_group.getFriendlyURL(), larSite.getFriendlyURL());
 			Assert.assertEquals(_group.getGroupId(), larSite.getGroupId());
 			Assert.assertEquals(
-				_group.getNameCurrentValue(), larSite.getName());
+				_exportImportSiteProvider.getDisplayName(
+					_group, LocaleUtil.getSiteDefault()),
+				larSite.getName());
 			Assert.assertFalse(larSite.isGlobal());
 
 			// The path describes the instance the LAR is leaving, and every
@@ -152,7 +156,8 @@ public class SiteExporterTest {
 				larSite.getHierarchy(),
 				larSite.getHierarchy(
 				).endsWith(
-					_group.getNameCurrentValue()
+					_exportImportSiteProvider.getDisplayName(
+						_group, LocaleUtil.getSiteDefault())
 				));
 		}
 		finally {
@@ -298,6 +303,9 @@ public class SiteExporterTest {
 
 	@Inject
 	private ExportImportHelper _exportImportHelper;
+
+	@Inject
+	private ExportImportSiteProvider _exportImportSiteProvider;
 
 	@DeleteAfterTestRun
 	private Group _group;

@@ -80,7 +80,10 @@ public class PreviewSiteResourceImpl extends BasePreviewSiteResourceImpl {
 							() -> _exportImportSiteProvider.getHierarchy(
 								group,
 								contextAcceptLanguage.getPreferredLocale()));
-						setName(group::getNameCurrentValue);
+						setName(
+							() -> _exportImportSiteProvider.getDisplayName(
+								group,
+								contextAcceptLanguage.getPreferredLocale()));
 
 						// The only supported site whose class name is Company
 						// is the site an instance keeps for content shared
