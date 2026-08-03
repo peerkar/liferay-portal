@@ -7,6 +7,7 @@ package com.liferay.headless.admin.site.internal.resource.v1_0;
 
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.exportimport.kernel.lar.PortletDataHandlerKeys;
+import com.liferay.exportimport.site.constants.SiteExportImportConstants;
 import com.liferay.exportimport.vulcan.batch.engine.ExportImportVulcanBatchEngineTaskItemDelegate;
 import com.liferay.google.places.constants.GooglePlacesWebKeys;
 import com.liferay.headless.admin.site.dto.v1_0.AnalyticsConfiguration;
@@ -16,6 +17,7 @@ import com.liferay.headless.admin.site.dto.v1_0.Site;
 import com.liferay.headless.admin.site.resource.v1_0.SiteResource;
 import com.liferay.layout.util.LayoutServiceContextHelper;
 import com.liferay.petra.function.UnsafeFunction;
+import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.events.ServicePreAction;
 import com.liferay.portal.events.ThemeServicePreAction;
@@ -163,7 +165,8 @@ public class SiteResourceImpl
 			@Override
 			public boolean isActive(PortletDataContext portletDataContext) {
 				if (!FeatureFlagManagerUtil.isEnabled(
-						portletDataContext.getCompanyId(), "LPD-85946")) {
+						portletDataContext.getCompanyId(),
+						SiteExportImportConstants.FEATURE_FLAG_KEY)) {
 
 					return false;
 				}
@@ -636,11 +639,16 @@ public class SiteResourceImpl
 
 	/**
 	 * Returns how far below the top level the given site sits.
+	 *
+	 * <p>
+	 * The tree path is <code>/parentGroupId/…/groupId/</code>, so counting its
+	 * separators answers this from a column the site already carries. Walking
+	 * the parents instead would cost a query per level per site.
+	 * </p>
 	 */
 	private int _getDepth(Group group) {
-		List<Group> ancestors = group.getAncestors();
-
-		return ancestors.size();
+		return StringUtil.count(
+			GetterUtil.getString(group.getTreePath()), CharPool.SLASH);
 	}
 
 	private Map<Locale, String> _getDescriptionMap(Site site) {
