@@ -7,6 +7,7 @@ package com.liferay.exportimport.site;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.util.OrderByComparator;
 
 import java.util.List;
 import java.util.Locale;
@@ -62,15 +63,10 @@ public interface ExportImportSiteProvider {
 	 * The unsupported sites are left out before the range is applied, so the
 	 * range counts only sites the caller can act on.
 	 * </p>
-	 *
-	 * <p>
-	 * The name is the only dimension the sites are ordered on, so the caller
-	 * chooses the direction rather than the field.
-	 * </p>
 	 */
 	public List<Group> getSupportedSites(
-			long companyId, String search, boolean ascending, int start,
-			int end)
+			long companyId, String search, int start, int end,
+			OrderByComparator<Group> orderByComparator)
 		throws PortalException;
 
 	public int getSupportedSitesCount(long companyId, String search)
