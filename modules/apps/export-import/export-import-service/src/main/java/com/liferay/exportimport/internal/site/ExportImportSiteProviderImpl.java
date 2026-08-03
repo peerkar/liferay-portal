@@ -43,6 +43,24 @@ public class ExportImportSiteProviderImpl implements ExportImportSiteProvider {
 	}
 
 	@Override
+	public String getDisplayName(Group group, Locale locale) {
+		if (group == null) {
+			return StringPool.BLANK;
+		}
+
+		try {
+			return group.getDescriptiveName(locale);
+		}
+		catch (PortalException portalException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(portalException);
+			}
+
+			return group.getName(locale);
+		}
+	}
+
+	@Override
 	public String getHierarchy(Group group, Locale locale) {
 		if (group == null) {
 			return StringPool.BLANK;
@@ -54,7 +72,7 @@ public class ExportImportSiteProviderImpl implements ExportImportSiteProvider {
 		String globalName = StringPool.BLANK;
 
 		if (companyGroup != null) {
-			globalName = _getDescriptiveName(companyGroup, locale);
+			globalName = getDisplayName(companyGroup, locale);
 		}
 
 		// The Global site is the head of every path, so it is the whole path
@@ -78,10 +96,10 @@ public class ExportImportSiteProviderImpl implements ExportImportSiteProvider {
 		List<Group> ancestors = group.getAncestors();
 
 		for (int i = ancestors.size() - 1; i >= 0; i--) {
-			names.add(_getDescriptiveName(ancestors.get(i), locale));
+			names.add(getDisplayName(ancestors.get(i), locale));
 		}
 
-		names.add(_getDescriptiveName(group, locale));
+		names.add(getDisplayName(group, locale));
 
 		return StringUtil.merge(names, _HIERARCHY_SEPARATOR);
 	}
@@ -137,23 +155,6 @@ public class ExportImportSiteProviderImpl implements ExportImportSiteProvider {
 		}
 
 		return true;
-	}
-
-	/**
-	 * The Global site has no name of its own, so only the descriptive name
-	 * answers with something worth showing for it.
-	 */
-	private String _getDescriptiveName(Group group, Locale locale) {
-		try {
-			return group.getDescriptiveName(locale);
-		}
-		catch (PortalException portalException) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(portalException);
-			}
-
-			return group.getName(locale);
-		}
 	}
 
 	private List<Group> _getSupportedSites(

@@ -118,7 +118,10 @@ public class SiteExporter {
 				_exportImportSiteProvider.getHierarchy(
 					group, LocaleUtil.getSiteDefault()));
 
-			siteElement.addAttribute("name", group.getNameCurrentValue());
+			siteElement.addAttribute(
+				"name",
+				_exportImportSiteProvider.getDisplayName(
+					group, LocaleUtil.getSiteDefault()));
 			siteElement.addAttribute("uuid", group.getUuid());
 		}
 	}
