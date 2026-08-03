@@ -122,6 +122,19 @@ public class SiteExporter {
 				"name",
 				_exportImportSiteProvider.getDisplayName(
 					group, LocaleUtil.getSiteDefault()));
+
+			// The code the parent is known by across instances, so that an
+			// import can look for it rather than for a group ID that means
+			// nothing outside the instance the LAR came from
+
+			Group parentGroup = group.getParentGroup();
+
+			if (parentGroup != null) {
+				siteElement.addAttribute(
+					"parent-external-reference-code",
+					parentGroup.getExternalReferenceCode());
+			}
+
 			siteElement.addAttribute("uuid", group.getUuid());
 		}
 	}

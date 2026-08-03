@@ -133,6 +133,13 @@ public class SiteImporter {
 				continue;
 			}
 
+			// The company level pass has already run, so every site the file
+			// carries exists by now. A parent still missing here is one this
+			// instance does not have and the file does not carry, which leaves
+			// the site at the top level.
+
+			_reportMissingParentSite(portletDataContext, larSite);
+
 			if (_log.isInfoEnabled()) {
 				_log.info(
 					StringBundler.concat(
@@ -284,6 +291,27 @@ public class SiteImporter {
 			throw new LARFileException(
 				LARFileException.TYPE_INVALID_MANIFEST, exception);
 		}
+	}
+
+	private void _reportMissingParentSite(
+		PortletDataContext portletDataContext, LARSite larSite) {
+
+		String parentExternalReferenceCode =
+			larSite.getParentExternalReferenceCode();
+
+		if (Validator.isNull(parentExternalReferenceCode)) {
+			return;
+		}
+
+		Group parentGroup =
+			_groupLocalService.fetchGroupByExternalReferenceCode(
+				parentExternalReferenceCode, portletDataContext.getCompanyId());
+
+		if (parentGroup != null) {
+			return;
+		}
+
+		_siteReporter.reportMissingParentSite(portletDataContext, larSite);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(SiteImporter.class);

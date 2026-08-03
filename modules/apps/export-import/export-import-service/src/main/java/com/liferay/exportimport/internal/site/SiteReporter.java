@@ -6,6 +6,7 @@
 package com.liferay.exportimport.internal.site;
 
 import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
+import com.liferay.exportimport.kernel.lar.LARSite;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.exportimport.report.constants.ExportImportReportEntryConstants;
 import com.liferay.exportimport.report.service.ExportImportReportEntryLocalService;
@@ -37,6 +38,30 @@ public class SiteReporter {
 		_classNameLocalService = classNameLocalService;
 		_exportImportReportEntryLocalService =
 			exportImportReportEntryLocalService;
+	}
+
+	/**
+	 * Reports a site whose parent this instance does not have, which leaves the
+	 * site at the top level.
+	 *
+	 * <p>
+	 * Not an error, because importing one site out of a hierarchy is a fair thing
+	 * to do, but the site does not end up where it sat in the instance it came
+	 * from and nothing else says so.
+	 * </p>
+	 */
+	public void reportMissingParentSite(
+		PortletDataContext portletDataContext, LARSite larSite) {
+
+		_addReportEntry(
+			portletDataContext, larSite.getExternalReferenceCode(),
+			ExportImportReportEntryConstants.TYPE_WARNING,
+			StringBundler.concat(
+				"The site ", larSite.getName(), " sat below the site with ",
+				"external reference code ",
+				larSite.getParentExternalReferenceCode(),
+				", which this instance does not have and the file does not ",
+				"carry, so it was imported at the top level"));
 	}
 
 	/**

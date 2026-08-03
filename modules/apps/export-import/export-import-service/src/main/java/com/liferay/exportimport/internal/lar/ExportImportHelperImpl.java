@@ -1745,6 +1745,8 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 						GetterUtil.getLong(element.attributeValue("group-id")),
 						element.attributeValue("hierarchy"),
 						element.attributeValue("name"),
+						element.attributeValue(
+							"parent-external-reference-code"),
 						GetterUtil.getBoolean(
 							element.attributeValue("global"))));
 			}

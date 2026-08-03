@@ -149,6 +149,11 @@ public class SiteExporterTest {
 				larSite.getName());
 			Assert.assertFalse(larSite.isGlobal());
 
+			// A site at the top level sat below nothing, so there is no parent
+			// for an import to look for
+
+			Assert.assertNull(larSite.getParentExternalReferenceCode());
+
 			// The path describes the instance the LAR is leaving, and every
 			// path starts at the Global site
 
