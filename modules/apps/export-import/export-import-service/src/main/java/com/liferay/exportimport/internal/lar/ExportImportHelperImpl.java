@@ -568,7 +568,9 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 
 		xmlReader.parse(
 			new InputSource(
-				portletDataContext.getZipEntryAsInputStream("/manifest.xml")));
+				portletDataContext.getZipEntryAsInputStream(
+					LARManifestPathUtil.getImportManifestXmlFilePath(
+						portletDataContext))));
 
 		return manifestSummary;
 	}
@@ -1064,7 +1066,9 @@ public class ExportImportHelperImpl implements ExportImportHelper {
 
 		xmlReader.parse(
 			new InputSource(
-				portletDataContext.getZipEntryAsInputStream("/manifest.xml")));
+				portletDataContext.getZipEntryAsInputStream(
+					LARManifestPathUtil.getImportManifestXmlFilePath(
+						portletDataContext))));
 
 		return missingReferences;
 	}
