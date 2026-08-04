@@ -70,6 +70,9 @@ public class ParameterMapUtil {
 				new String[] {ratings.toString()});
 		}
 
+		_addSiteExternalReferenceCodes(
+			exportProcessRequest.getSiteExternalReferenceCodes(), parameterMap);
+
 		Boolean sitePagesSettings = exportProcessRequest.getSitePagesSettings();
 
 		if (sitePagesSettings != null) {
@@ -154,6 +157,9 @@ public class ParameterMapUtil {
 				PortletDataHandlerKeys.RATINGS,
 				new String[] {ratings.toString()});
 		}
+
+		_addSiteExternalReferenceCodes(
+			importProcessRequest.getSiteExternalReferenceCodes(), parameterMap);
 
 		Boolean sitePagesSettings = importProcessRequest.getSitePagesSettings();
 
@@ -248,6 +254,19 @@ public class ParameterMapUtil {
 					getRequestPortletDataHandlerControls(),
 				parameterMap);
 		}
+	}
+
+	private static void _addSiteExternalReferenceCodes(
+		String[] siteExternalReferenceCodes,
+		Map<String, String[]> parameterMap) {
+
+		if (ArrayUtil.isEmpty(siteExternalReferenceCodes)) {
+			return;
+		}
+
+		parameterMap.put(
+			PortletDataHandlerKeys.SITE_EXTERNAL_REFERENCE_CODES,
+			siteExternalReferenceCodes);
 	}
 
 	private static Map<String, String[]> _getDefaultParameterMap(

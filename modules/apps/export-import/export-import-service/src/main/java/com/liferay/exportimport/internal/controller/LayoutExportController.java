@@ -8,7 +8,9 @@ package com.liferay.exportimport.internal.controller;
 import com.liferay.asset.link.model.adapter.StagedAssetLink;
 import com.liferay.exportimport.constants.ExportImportConstants;
 import com.liferay.exportimport.controller.PortletExportController;
+import com.liferay.exportimport.internal.lar.LARManifestPathUtil;
 import com.liferay.exportimport.internal.lar.PermissionExporter;
+import com.liferay.exportimport.internal.site.SiteExporter;
 import com.liferay.exportimport.kernel.controller.ExportController;
 import com.liferay.exportimport.kernel.controller.ExportImportController;
 import com.liferay.exportimport.kernel.lar.ExportImportDateUtil;
@@ -23,6 +25,7 @@ import com.liferay.exportimport.kernel.lifecycle.ExportImportLifecycleManager;
 import com.liferay.exportimport.kernel.lifecycle.constants.ExportImportLifecycleConstants;
 import com.liferay.exportimport.kernel.model.ExportImportConfiguration;
 import com.liferay.exportimport.lar.DeletionSystemEventExporter;
+import com.liferay.exportimport.site.ExportImportSiteProvider;
 import com.liferay.portal.background.task.model.BackgroundTask;
 import com.liferay.portal.background.task.service.BackgroundTaskLocalService;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskThreadLocal;
@@ -67,6 +70,7 @@ import java.util.Objects;
 
 import org.apache.commons.lang.time.StopWatch;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -136,6 +140,13 @@ public class LayoutExportController implements ExportController {
 
 			throw throwable;
 		}
+	}
+
+	@Activate
+	protected void activate() {
+		_siteExporter = new SiteExporter(
+			_exportImportHelper, _exportImportSiteProvider, _groupLocalService,
+			_portletDataContextFactory);
 	}
 
 	protected File doExport(PortletDataContext portletDataContext)
@@ -273,6 +284,9 @@ public class LayoutExportController implements ExportController {
 
 		headerElement.addAttribute("type", type);
 		portletDataContext.setType(type);
+
+		_siteExporter.addSiteElements(portletDataContext, headerElement);
+
 		portletDataContext.setMissingReferencesElement(
 			rootElement.addElement("missing-references"));
 
@@ -341,7 +355,14 @@ public class LayoutExportController implements ExportController {
 		}
 
 		portletDataContext.addZipEntry(
-			"/manifest.xml", document.formattedString());
+			LARManifestPathUtil.getExportManifestXmlFilePath(
+				portletDataContext),
+			document.formattedString());
+
+		// Whole sites go into the same archive, each one under its own group
+		// folder with a manifest of its own
+
+		_siteExporter.exportSites(portletDataContext, this::doExport);
 
 		ZipWriter zipWriter = portletDataContext.getZipWriter();
 
@@ -422,6 +443,9 @@ public class LayoutExportController implements ExportController {
 	private ExportImportLifecycleManager _exportImportLifecycleManager;
 
 	@Reference
+	private ExportImportSiteProvider _exportImportSiteProvider;
+
+	@Reference
 	private GroupLocalService _groupLocalService;
 
 	@Reference
@@ -444,6 +468,8 @@ public class LayoutExportController implements ExportController {
 
 	@Reference
 	private PortletExportController _portletExportController;
+
+	private SiteExporter _siteExporter;
 
 	@Reference
 	private UserLocalService _userLocalService;

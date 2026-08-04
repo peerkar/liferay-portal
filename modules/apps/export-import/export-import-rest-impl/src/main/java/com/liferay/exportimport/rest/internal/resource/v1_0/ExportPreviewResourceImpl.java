@@ -167,6 +167,15 @@ public class ExportPreviewResourceImpl extends BaseExportPreviewResourceImpl {
 				continue;
 			}
 
+			// A hidden data handler is one the user does not pick with a
+			// checkbox, because something else in the UI decides what it
+			// carries. Offering it as a section of its own would be offering
+			// the same choice twice.
+
+			if (portletDataHandler.isHidden()) {
+				continue;
+			}
+
 			PortletDataContext portletDataContext =
 				_portletDataContextFactory.createPreparePortletDataContext(
 					contextCompany.getCompanyId(), groupId, range, startDate,

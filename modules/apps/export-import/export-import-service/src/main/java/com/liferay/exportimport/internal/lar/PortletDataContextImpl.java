@@ -556,7 +556,8 @@ public class PortletDataContextImpl implements PortletDataContext {
 
 			if (classedModel instanceof Layout) {
 				missingReferenceElement.addAttribute(
-					"element-path", "/manifest.xml");
+					"element-path",
+					LARManifestPathUtil.getExportManifestXmlFilePath(this));
 			}
 			else {
 				missingReferenceElement.addAttribute(

@@ -6,6 +6,7 @@
 import ClayAlert from '@clayui/alert';
 import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
+import ClayLayout from '@clayui/layout';
 import {Form, Formik, FormikValues} from 'formik';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 
@@ -33,23 +34,28 @@ import {toRequestPortletDataHandlers} from '../../utils/toRequestPortletDataHand
 import DataSelection from './components/DataSelection';
 import {PageTreeModalConfiguration} from './components/PageTreeModal';
 import Setup from './components/Setup';
+import SiteSelection from './components/SiteSelection';
 
 export function NewExport({
 	backURL,
 	commentsAndRatingsEnabled = false,
 	exportPreview,
 	exportPreviewAPIURL,
+	exportPreviewSitesAPIURL,
 	exportProcessAPIURL,
 	lookAndFeelEnabled = false,
 	pageTreeModalConfiguration,
+	sitesEnabled = false,
 }: {
 	backURL: string;
 	commentsAndRatingsEnabled?: boolean;
 	exportPreview?: ExportPreview;
 	exportPreviewAPIURL: string;
+	exportPreviewSitesAPIURL?: string;
 	exportProcessAPIURL: string;
 	lookAndFeelEnabled?: boolean;
 	pageTreeModalConfiguration: PageTreeModalConfiguration;
+	sitesEnabled?: boolean;
 }) {
 	const [preview, setPreview] = useState<ExportPreview | undefined>(
 		exportPreview
@@ -123,6 +129,7 @@ export function NewExport({
 				deletions: false,
 				name: '',
 				permissions: false,
+				siteExternalReferenceCodes: [],
 			}}
 			onSubmit={async (values) => {
 				const contentSelection = values.contentSelection as
@@ -141,6 +148,8 @@ export function NewExport({
 								previewPortletDataHandlerSections,
 								values.contentSelection
 							),
+						siteExternalReferenceCodes:
+							values.siteExternalReferenceCodes,
 					},
 					url: exportProcessAPIURL,
 				});
@@ -165,10 +174,27 @@ export function NewExport({
 					);
 				}
 
-				if (!values?.contentSelection) {
-					errors.contentSelection = Liferay.Language.get(
-						'please-select-at-least-one-entity-type-to-continue'
-					);
+				if (
+					!values?.contentSelection &&
+					!values?.siteExternalReferenceCodes?.length
+				) {
+
+					// Where sites are on offer the requirement is satisfied by
+					// an entity type or by a site, so it belongs to the form
+					// and is shown below both selectors. Where they are not,
+					// the content selector is the one thing left incomplete,
+					// so the error stays on it.
+
+					if (sitesEnabled) {
+						errors.selection = Liferay.Language.get(
+							'please-select-at-least-one-entity-type-or-site-to-continue'
+						);
+					}
+					else {
+						errors.contentSelection = Liferay.Language.get(
+							'please-select-at-least-one-entity-type-to-continue'
+						);
+					}
 				}
 
 				return errors;
@@ -179,6 +205,13 @@ export function NewExport({
 				const contentSelection = formik.values.contentSelection as
 					| ContentSelection
 					| undefined;
+
+				// Only set where sites are on offer, so it is not keyed to a
+				// field of its own
+
+				const {selection: selectionError} = formik.errors as {
+					selection?: string;
+				};
 
 				return (
 					<Form noValidate>
@@ -209,6 +242,26 @@ export function NewExport({
 								contentSelection
 							)}
 						/>
+
+						{sitesEnabled && exportPreviewSitesAPIURL && (
+							<ClayLayout.Sheet className="mt-4 option-group">
+								<SiteSelection
+									exportPreviewSitesAPIURL={
+										exportPreviewSitesAPIURL
+									}
+								/>
+							</ClayLayout.Sheet>
+						)}
+
+						{formik.touched.contentSelection && selectionError && (
+							<ClayAlert
+								className="mt-4"
+								displayType="danger"
+								title={Liferay.Language.get('error-colon')}
+							>
+								{selectionError}
+							</ClayAlert>
+						)}
 
 						<Footer
 							actionButton={
