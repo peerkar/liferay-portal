@@ -174,10 +174,6 @@ public class SiteResourceImpl
 
 			@Override
 			public boolean isHidden() {
-
-				// The sites to export are picked in the Sites section of the
-				// export UI, not with a data handler checkbox
-
 				return true;
 			}
 
