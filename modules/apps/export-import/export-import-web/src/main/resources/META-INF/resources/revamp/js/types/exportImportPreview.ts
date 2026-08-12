@@ -5,6 +5,14 @@
 
 import {PreviewPortletDataHandlerSection} from './portletDataHandler';
 
+export interface PreviewSite {
+	childSiteCount?: number;
+	descriptiveName?: string;
+	existsInInstance?: boolean;
+	externalReferenceCode: string;
+	path?: string;
+}
+
 export interface ExportPreview {
 	additionCount: number;
 	deletionCount: number;
@@ -19,4 +27,5 @@ export interface ImportPreview {
 	fileName: string;
 	fileSize: number;
 	previewPortletDataHandlerSections: PreviewPortletDataHandlerSection[];
+	previewSites?: PreviewSite[];
 }
