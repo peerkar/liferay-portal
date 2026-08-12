@@ -130,6 +130,16 @@ public class ExportImportPreviewDisplayContext {
 		return _exportPreviewJSONObject;
 	}
 
+	public String getExportPreviewSitesAPIURL() {
+		if (_exportPreviewSitesAPIURL != null) {
+			return _exportPreviewSitesAPIURL;
+		}
+
+		_exportPreviewSitesAPIURL = _getResourceAPIURL("/export-preview/sites");
+
+		return _exportPreviewSitesAPIURL;
+	}
+
 	public String getExportProcessAPIURL() {
 		if (_exportProcessAPIURL != null) {
 			return _exportProcessAPIURL;
@@ -199,6 +209,17 @@ public class ExportImportPreviewDisplayContext {
 		if ((getScope() != Scope.PORTLET) &&
 			GroupCapabilityUtil.isSupportsPages(_group) &&
 			!_group.isCompany() && !_group.isLayoutPrototype()) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean isSitesEnabled() {
+		if ((getScope() == Scope.COMPANY) &&
+			FeatureFlagManagerUtil.isEnabled(
+				_group.getCompanyId(), "LPD-85946")) {
 
 			return true;
 		}
@@ -327,6 +348,7 @@ public class ExportImportPreviewDisplayContext {
 	private String _exportPreviewAPIURL;
 	private JSONObject _exportPreviewJSONObject;
 	private final ExportPreviewResource.Factory _exportPreviewResourceFactory;
+	private String _exportPreviewSitesAPIURL;
 	private String _exportProcessAPIURL;
 	private final Group _group;
 	private final long _groupId;
