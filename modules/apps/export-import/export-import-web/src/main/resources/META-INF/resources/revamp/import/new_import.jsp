@@ -45,6 +45,8 @@ renderResponse.setTitle(exportImportPreviewDisplayContext.getImportTitle());
 				"lookAndFeelEnabled", exportImportPreviewDisplayContext.isLookAndFeelEnabled()
 			).put(
 				"scope", exportImportPreviewDisplayContext.getScope()
+			).put(
+				"sitesEnabled", exportImportPreviewDisplayContext.isSitesEnabled()
 			).build()
 		%>'
 	/>
