@@ -9,6 +9,7 @@ import com.liferay.mcp.server.rest.dto.v1_0.Tool;
 import com.liferay.mcp.server.rest.internal.util.ToolSetUtil;
 import com.liferay.mcp.server.rest.resource.v1_0.ToolResource;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 
 import jakarta.ws.rs.core.Response;
 
@@ -25,12 +26,16 @@ import org.osgi.service.component.annotations.ServiceScope;
 public class ToolResourceImpl extends BaseToolResourceImpl {
 
 	@Override
-	public Tool getToolSetToolSetNameTool(String toolSetName, String toolName) {
+	public Tool getToolSetToolSetNameTool(
+		String toolSetName, String toolName, Boolean requiredInputSchemaOnly) {
+
 		FeatureFlagManagerUtil.checkEnabled(
 			contextCompany.getCompanyId(), "LPD-63311");
 
 		return ToolSetUtil.getTool(
-			contextHttpServletRequest, toolName, toolSetName);
+			contextHttpServletRequest,
+			GetterUtil.getBoolean(requiredInputSchemaOnly), toolName,
+			toolSetName);
 	}
 
 	@Override
