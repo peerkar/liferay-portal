@@ -82,7 +82,8 @@ public class OpenAPIUtil {
 						"\" tool requires the request payload nested under a ",
 						"\"body\" property. Pass any path or query parameters ",
 						"as siblings of \"body\" rather than flattening the ",
-						"payload into the input map."));
+						"payload into the input map. This tool accepts: ",
+						_getInputPropertyNames(operation), "."));
 			}
 
 			String bodyString = StringPool.BLANK;
@@ -566,6 +567,34 @@ public class OpenAPIUtil {
 
 		return new LinkedHashSet<>(
 			Arrays.asList(StringUtil.split((String)value)));
+	}
+
+	private static String _getInputPropertyNames(Operation operation) {
+		Set<String> names = new TreeSet<>();
+
+		names.add("body");
+
+		JSONArray parametersJSONArray =
+			operation._operationJSONObject.getJSONArray("parameters");
+
+		if (parametersJSONArray != null) {
+			for (int i = 0; i < parametersJSONArray.length(); i++) {
+				JSONObject parameterJSONObject =
+					parametersJSONArray.getJSONObject(i);
+
+				if (parameterJSONObject == null) {
+					continue;
+				}
+
+				String name = parameterJSONObject.getString("name");
+
+				if (Validator.isNotNull(name)) {
+					names.add(name);
+				}
+			}
+		}
+
+		return StringUtil.merge(names, ", ");
 	}
 
 	private static Map<String, Object> _getInputSchema(
