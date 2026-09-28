@@ -17,6 +17,7 @@ import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.test.AssertUtils;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.odata.filter.InvalidFilterException;
 import com.liferay.portal.odata.sort.InvalidSortException;
@@ -32,6 +33,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUpload;
@@ -65,6 +67,102 @@ public class OpenAPIUtilTest {
 	}
 
 	@Test
+	public void testGetLastPathParameter() {
+		Assert.assertEquals(
+			"blogPostingId",
+			OpenAPIUtil.getLastPathParameter(
+				"/sites/{siteId}/blog-postings/{blogPostingId}"));
+		Assert.assertEquals(
+			"siteId",
+			OpenAPIUtil.getLastPathParameter("/sites/{siteId}/blog-postings"));
+		Assert.assertNull(OpenAPIUtil.getLastPathParameter("/sites"));
+		Assert.assertNull(OpenAPIUtil.getLastPathParameter(StringPool.BLANK));
+	}
+
+	@Test
+	public void testGetPathParameter() {
+		Assert.assertEquals("siteId", OpenAPIUtil.getPathParameter("{siteId}"));
+		Assert.assertNull(OpenAPIUtil.getPathParameter("sites"));
+		Assert.assertNull(OpenAPIUtil.getPathParameter("{}"));
+		Assert.assertNull(OpenAPIUtil.getPathParameter("{siteId"));
+	}
+
+	@Test
+	public void testGetProperties() {
+		JSONObject openAPIJSONObject = JSONUtil.put(
+			"components",
+			JSONUtil.put(
+				"schemas",
+				JSONUtil.put(
+					"Child",
+					JSONUtil.put(
+						"allOf",
+						JSONUtil.putAll(
+							JSONUtil.put("$ref", "#/components/schemas/Parent"),
+							JSONUtil.put(
+								"properties",
+								JSONUtil.put(
+									"childName",
+									JSONUtil.put("type", "string"))))
+					).put(
+						"type", "object"
+					)
+				).put(
+					"Parent",
+					JSONUtil.put(
+						"properties",
+						JSONUtil.put(
+							"child",
+							JSONUtil.put("$ref", "#/components/schemas/Child")
+						).put(
+							"parentName", JSONUtil.put("type", "string")
+						)
+					).put(
+						"type", "object"
+					)
+				)));
+
+		Map<String, JSONObject> properties = OpenAPIUtil.getProperties(
+			openAPIJSONObject,
+			JSONUtil.put("$ref", "#/components/schemas/Child"));
+
+		Assert.assertEquals(properties.toString(), 3, properties.size());
+		Assert.assertTrue(
+			properties.toString(), properties.containsKey("child"));
+		Assert.assertTrue(
+			properties.toString(), properties.containsKey("childName"));
+		Assert.assertTrue(
+			properties.toString(), properties.containsKey("parentName"));
+
+		properties = OpenAPIUtil.getProperties(
+			openAPIJSONObject,
+			JSONUtil.put(
+				"properties",
+				JSONUtil.put(
+					"items",
+					JSONUtil.put(
+						"items",
+						JSONUtil.put("$ref", "#/components/schemas/Parent")
+					).put(
+						"type", "array"
+					)
+				).put(
+					"pageSize", JSONUtil.put("type", "integer")
+				)
+			).put(
+				"type", "object"
+			));
+
+		Assert.assertEquals(properties.toString(), 2, properties.size());
+		Assert.assertTrue(
+			properties.toString(), properties.containsKey("parentName"));
+
+		Assert.assertTrue(
+			MapUtil.isEmpty(
+				OpenAPIUtil.getProperties(openAPIJSONObject, null)));
+	}
+
+	@Test
 	public void testGetRequest() throws Exception {
 		_testGetRequest(
 			null, null, "GET",
@@ -80,8 +178,8 @@ public class OpenAPIUtilTest {
 			JSONUtil.put("itemId", "123"), "getItem");
 		_testGetRequest(
 			null, null, "GET",
-			"/v1.0/items?fields=name%2Cinteger&restrictFields=actions",
-			JSONUtil.put("fields", JSONUtil.putAll("name", "integer")),
+			"/v1.0/items?fields=integer%2Cname&restrictFields=actions",
+			JSONUtil.put("fields", JSONUtil.putAll("integer", "name")),
 			"getItems");
 		_testGetRequest(
 			null, null, "GET",
@@ -316,6 +414,118 @@ public class OpenAPIUtilTest {
 	}
 
 	@Test
+	public void testGetRequestBodySchemaJSONObject() {
+		JSONObject schemaJSONObject =
+			OpenAPIUtil.getRequestBodySchemaJSONObject(
+				JSONUtil.put(
+					"requestBody",
+					JSONUtil.put(
+						"content",
+						JSONUtil.put(
+							"application/json",
+							JSONUtil.put(
+								"schema", JSONUtil.put("type", "object"))
+						).put(
+							"multipart/form-data",
+							JSONUtil.put(
+								"schema", JSONUtil.put("type", "string"))
+						))));
+
+		Assert.assertEquals("object", schemaJSONObject.getString("type"));
+
+		schemaJSONObject = OpenAPIUtil.getRequestBodySchemaJSONObject(
+			JSONUtil.put(
+				"requestBody",
+				JSONUtil.put(
+					"content",
+					JSONUtil.put(
+						"multipart/form-data",
+						JSONUtil.put(
+							"schema", JSONUtil.put("type", "string"))))));
+
+		Assert.assertEquals("string", schemaJSONObject.getString("type"));
+
+		Assert.assertNull(
+			OpenAPIUtil.getRequestBodySchemaJSONObject(
+				JSONUtil.put("responses", JSONUtil.put("200", "ok"))));
+	}
+
+	@Test
+	public void testGetRequiredPropertyNames() {
+		JSONObject openAPIJSONObject = JSONUtil.put(
+			"components",
+			JSONUtil.put(
+				"schemas",
+				JSONUtil.put(
+					"Parent",
+					JSONUtil.put(
+						"required", JSONUtil.putAll("parentName")
+					).put(
+						"type", "object"
+					))));
+
+		Set<String> requiredPropertyNames =
+			OpenAPIUtil.getRequiredPropertyNames(
+				openAPIJSONObject,
+				JSONUtil.put(
+					"allOf",
+					JSONUtil.putAll(
+						JSONUtil.put("$ref", "#/components/schemas/Parent"),
+						JSONUtil.put("required", JSONUtil.putAll("childName")))
+				).put(
+					"type", "object"
+				));
+
+		Assert.assertEquals(
+			requiredPropertyNames.toString(), 2, requiredPropertyNames.size());
+		Assert.assertTrue(
+			requiredPropertyNames.toString(),
+			requiredPropertyNames.contains("childName"));
+		Assert.assertTrue(
+			requiredPropertyNames.toString(),
+			requiredPropertyNames.contains("parentName"));
+	}
+
+	@Test
+	public void testGetResponseSchemaJSONObject() {
+		Assert.assertEquals(
+			"accepted",
+			_getResponseSchemaType(
+				JSONUtil.put(
+					"202", _getResponseJSONObject("accepted")
+				).put(
+					"500", _getResponseJSONObject("error")
+				)));
+		Assert.assertEquals(
+			"ok",
+			_getResponseSchemaType(
+				JSONUtil.put(
+					"200", _getResponseJSONObject("ok")
+				).put(
+					"204", _getResponseJSONObject("no content")
+				)));
+		Assert.assertEquals(
+			"default",
+			_getResponseSchemaType(
+				JSONUtil.put(
+					"404", _getResponseJSONObject("not found")
+				).put(
+					"default", _getResponseJSONObject("default")
+				)));
+		Assert.assertNull(
+			OpenAPIUtil.getResponseSchemaJSONObject(
+				JSONUtil.put(
+					"responses",
+					JSONUtil.put("404", _getResponseJSONObject("not found")))));
+		Assert.assertNull(
+			OpenAPIUtil.getResponseSchemaJSONObject(
+				JSONUtil.put("responses", JSONUtil.put("200", "ok"))));
+		Assert.assertNull(
+			OpenAPIUtil.getResponseSchemaJSONObject(
+				JSONUtil.put("description", "no responses")));
+	}
+
+	@Test
 	public void testGetTool() throws Exception {
 		AssertUtils.assertFailure(
 			IllegalArgumentException.class,
@@ -472,6 +682,62 @@ public class OpenAPIUtilTest {
 				JSONFactoryUtil.createJSONObject()));
 	}
 
+	@Test
+	public void testIsCollectionSchema() {
+		JSONObject openAPIJSONObject = JSONUtil.put(
+			"components",
+			JSONUtil.put(
+				"schemas",
+				JSONUtil.put(
+					"Item", JSONUtil.put("type", "object")
+				).put(
+					"PageItem",
+					JSONUtil.put(
+						"properties",
+						JSONUtil.put(
+							"items",
+							JSONUtil.put(
+								"items",
+								JSONUtil.put(
+									"$ref", "#/components/schemas/Item")
+							).put(
+								"type", "array"
+							)
+						).put(
+							"totalCount", JSONUtil.put("type", "integer")
+						)
+					).put(
+						"type", "object"
+					)
+				)));
+
+		Assert.assertTrue(
+			OpenAPIUtil.isCollectionSchema(
+				openAPIJSONObject,
+				JSONUtil.put("$ref", "#/components/schemas/PageItem")));
+		Assert.assertTrue(
+			OpenAPIUtil.isCollectionSchema(
+				openAPIJSONObject,
+				JSONUtil.put(
+					"items", JSONUtil.put("$ref", "#/components/schemas/Item")
+				).put(
+					"type", "array"
+				)));
+		Assert.assertFalse(
+			OpenAPIUtil.isCollectionSchema(
+				openAPIJSONObject,
+				JSONUtil.put("$ref", "#/components/schemas/Item")));
+		Assert.assertFalse(
+			OpenAPIUtil.isCollectionSchema(openAPIJSONObject, null));
+	}
+
+	@Test
+	public void testIsPathParameter() {
+		Assert.assertTrue(OpenAPIUtil.isPathParameter("{siteId}"));
+		Assert.assertFalse(
+			OpenAPIUtil.isPathParameter("by-external-reference-code"));
+	}
+
 	private void _assertMultipartContentType(
 		VulcanRequestForwarder.Request request) {
 
@@ -558,6 +824,21 @@ public class OpenAPIUtilTest {
 
 	private Map<String, ?> _getOutputSchema(String toolName) {
 		return OpenAPIUtil.getOutputSchema(_openAPIJSONObject, toolName);
+	}
+
+	private JSONObject _getResponseJSONObject(String type) {
+		return JSONUtil.put(
+			"content",
+			JSONUtil.put(
+				"application/json",
+				JSONUtil.put("schema", JSONUtil.put("type", type))));
+	}
+
+	private String _getResponseSchemaType(JSONObject responsesJSONObject) {
+		JSONObject schemaJSONObject = OpenAPIUtil.getResponseSchemaJSONObject(
+			JSONUtil.put("responses", responsesJSONObject));
+
+		return schemaJSONObject.getString("type");
 	}
 
 	private String _read(String fileName) throws Exception {

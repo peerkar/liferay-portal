@@ -28,6 +28,8 @@ import com.liferay.portal.odata.filter.InvalidFilterException;
 import com.liferay.portal.odata.sort.InvalidSortException;
 import com.liferay.portal.vulcan.http.VulcanRequestForwarder;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.nio.charset.StandardCharsets;
 
 import java.util.ArrayList;
@@ -58,12 +60,30 @@ import org.apache.http.util.EntityUtils;
  */
 public class OpenAPIUtil {
 
+	public static final String[] METHODS = {
+		"delete", "get", "head", "options", "patch", "post", "put"
+	};
+
+	public static String getLastPathParameter(String path) {
+		String[] segments = StringUtil.split(path, CharPool.SLASH);
+
+		for (int i = segments.length - 1; i >= 0; i--) {
+			String pathParameter = getPathParameter(segments[i]);
+
+			if (pathParameter != null) {
+				return pathParameter;
+			}
+		}
+
+		return null;
+	}
+
 	public static Map<String, ?> getOutputSchema(
 		JSONObject openAPIJSONObject, String toolName) {
 
 		Operation operation = _getOperation(openAPIJSONObject, toolName);
 
-		JSONObject responseSchemaJSONObject = _getResponseSchemaJSONObject(
+		JSONObject responseSchemaJSONObject = getResponseSchemaJSONObject(
 			operation._operationJSONObject);
 
 		if (responseSchemaJSONObject == null) {
@@ -73,6 +93,30 @@ public class OpenAPIUtil {
 		return (Map<String, Object>)_getSchemaObject(
 			"writeOnly", openAPIJSONObject, responseSchemaJSONObject,
 			new HashSet<>());
+	}
+
+	public static String getPathParameter(String segment) {
+		if ((segment.length() > 2) &&
+			(segment.charAt(0) == CharPool.OPEN_CURLY_BRACE) &&
+			(segment.charAt(segment.length() - 1) ==
+				CharPool.CLOSE_CURLY_BRACE)) {
+
+			return segment.substring(1, segment.length() - 1);
+		}
+
+		return null;
+	}
+
+	public static Map<String, JSONObject> getProperties(
+		JSONObject openAPIJSONObject, JSONObject schemaJSONObject) {
+
+		Map<String, JSONObject> properties = new LinkedHashMap<>();
+
+		_collectSchema(
+			openAPIJSONObject, properties, null, schemaJSONObject,
+			new HashSet<>());
+
+		return properties;
 	}
 
 	public static VulcanRequestForwarder.Request getRequest(
@@ -173,6 +217,66 @@ public class OpenAPIUtil {
 		};
 	}
 
+	public static JSONObject getRequestBodySchemaJSONObject(
+		JSONObject operationJSONObject) {
+
+		JSONObject contentJSONObject = JSONUtil.getValueAsJSONObject(
+			operationJSONObject, "JSONObject/requestBody",
+			"JSONObject/content");
+
+		if (contentJSONObject == null) {
+			return null;
+		}
+
+		JSONObject mediaTypeJSONObject = _getMediaTypeJSONObject(
+			contentJSONObject);
+
+		if (mediaTypeJSONObject == null) {
+			return null;
+		}
+
+		return mediaTypeJSONObject.getJSONObject("schema");
+	}
+
+	public static Set<String> getRequiredPropertyNames(
+		JSONObject openAPIJSONObject, JSONObject schemaJSONObject) {
+
+		Set<String> requiredPropertyNames = new LinkedHashSet<>();
+
+		_collectSchema(
+			openAPIJSONObject, null, requiredPropertyNames, schemaJSONObject,
+			new HashSet<>());
+
+		return requiredPropertyNames;
+	}
+
+	public static JSONObject getResponseSchemaJSONObject(
+		JSONObject operationJSONObject) {
+
+		JSONObject responseJSONObject = _getSuccessResponseJSONObject(
+			operationJSONObject.getJSONObject("responses"));
+
+		if (responseJSONObject == null) {
+			return null;
+		}
+
+		JSONObject contentJSONObject = responseJSONObject.getJSONObject(
+			"content");
+
+		if (contentJSONObject == null) {
+			return null;
+		}
+
+		JSONObject mediaTypeJSONObject = contentJSONObject.getJSONObject(
+			"application/json");
+
+		if (mediaTypeJSONObject == null) {
+			return null;
+		}
+
+		return mediaTypeJSONObject.getJSONObject("schema");
+	}
+
 	public static Tool getTool(
 		boolean injectVulcanParameters, JSONObject openAPIJSONObject,
 		String restrictFields, String toolName) {
@@ -211,7 +315,7 @@ public class OpenAPIUtil {
 		for (String path : pathsJSONObject.keySet()) {
 			JSONObject pathItemJSONObject = pathsJSONObject.getJSONObject(path);
 
-			for (String method : _METHODS) {
+			for (String method : METHODS) {
 				JSONObject operationJSONObject =
 					pathItemJSONObject.getJSONObject(method);
 
@@ -234,6 +338,45 @@ public class OpenAPIUtil {
 		}
 
 		return toolSummaries;
+	}
+
+	public static boolean isCollectionSchema(
+		JSONObject openAPIJSONObject, JSONObject schemaJSONObject) {
+
+		if (schemaJSONObject == null) {
+			return false;
+		}
+
+		if (schemaJSONObject.has("$ref")) {
+			return isCollectionSchema(
+				openAPIJSONObject,
+				_getRefJSONObject(
+					schemaJSONObject.getString("$ref"), openAPIJSONObject));
+		}
+
+		if (Objects.equals(schemaJSONObject.getString("type"), "array")) {
+			return true;
+		}
+
+		JSONObject itemsPropertyJSONObject = JSONUtil.getValueAsJSONObject(
+			schemaJSONObject, "JSONObject/properties", "JSONObject/items");
+
+		if ((itemsPropertyJSONObject != null) &&
+			Objects.equals(
+				itemsPropertyJSONObject.getString("type"), "array")) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public static boolean isPathParameter(String segment) {
+		if (getPathParameter(segment) != null) {
+			return true;
+		}
+
+		return false;
 	}
 
 	private static void _addMultipartParts(
@@ -344,6 +487,83 @@ public class OpenAPIUtil {
 		sb.append(URLCodec.encodeURL(name));
 		sb.append(CharPool.EQUAL);
 		sb.append(URLCodec.encodeURL(stringValue));
+	}
+
+	private static void _collectSchema(
+		JSONObject openAPIJSONObject, Map<String, JSONObject> properties,
+		Set<String> requiredPropertyNames, JSONObject schemaJSONObject,
+		Set<String> visitedRefs) {
+
+		if (schemaJSONObject == null) {
+			return;
+		}
+
+		if (schemaJSONObject.has("$ref")) {
+			String ref = schemaJSONObject.getString("$ref");
+
+			if (!visitedRefs.add(ref)) {
+				return;
+			}
+
+			_collectSchema(
+				openAPIJSONObject, properties, requiredPropertyNames,
+				_getRefJSONObject(ref, openAPIJSONObject), visitedRefs);
+
+			return;
+		}
+
+		if (Objects.equals(schemaJSONObject.getString("type"), "array")) {
+			_collectSchema(
+				openAPIJSONObject, properties, requiredPropertyNames,
+				schemaJSONObject.getJSONObject("items"), visitedRefs);
+
+			return;
+		}
+
+		JSONObject propertiesJSONObject = schemaJSONObject.getJSONObject(
+			"properties");
+
+		if (propertiesJSONObject != null) {
+			JSONObject itemsPropertyJSONObject =
+				propertiesJSONObject.getJSONObject("items");
+
+			if ((itemsPropertyJSONObject != null) &&
+				Objects.equals(
+					itemsPropertyJSONObject.getString("type"), "array")) {
+
+				_collectSchema(
+					openAPIJSONObject, properties, requiredPropertyNames,
+					itemsPropertyJSONObject.getJSONObject("items"),
+					visitedRefs);
+
+				return;
+			}
+
+			if (properties != null) {
+				for (String propertyName : propertiesJSONObject.keySet()) {
+					properties.put(
+						propertyName,
+						propertiesJSONObject.getJSONObject(propertyName));
+				}
+			}
+		}
+
+		if (requiredPropertyNames != null) {
+			Collections.addAll(
+				requiredPropertyNames,
+				JSONUtil.toStringArray(
+					schemaJSONObject.getJSONArray("required")));
+		}
+
+		JSONArray allOfJSONArray = schemaJSONObject.getJSONArray("allOf");
+
+		if (allOfJSONArray != null) {
+			for (int i = 0; i < allOfJSONArray.length(); i++) {
+				_collectSchema(
+					openAPIJSONObject, properties, requiredPropertyNames,
+					allOfJSONArray.getJSONObject(i), visitedRefs);
+			}
+		}
 	}
 
 	private static void _filterProperties(
@@ -532,19 +752,8 @@ public class OpenAPIUtil {
 				"Request body has no \"content\"");
 		}
 
-		JSONObject mediaTypeJSONObject = contentJSONObject.getJSONObject(
-			"application/json");
-
-		if (mediaTypeJSONObject == null) {
-			for (String mediaType : contentJSONObject.keySet()) {
-				mediaTypeJSONObject = contentJSONObject.getJSONObject(
-					mediaType);
-
-				if (mediaTypeJSONObject != null) {
-					break;
-				}
-			}
-		}
+		JSONObject mediaTypeJSONObject = _getMediaTypeJSONObject(
+			contentJSONObject);
 
 		if (mediaTypeJSONObject == null) {
 			throw new IllegalArgumentException("Request body has no content");
@@ -727,6 +936,27 @@ public class OpenAPIUtil {
 		return new String(chars);
 	}
 
+	private static JSONObject _getMediaTypeJSONObject(
+		JSONObject contentJSONObject) {
+
+		JSONObject mediaTypeJSONObject = contentJSONObject.getJSONObject(
+			"application/json");
+
+		if (mediaTypeJSONObject != null) {
+			return mediaTypeJSONObject;
+		}
+
+		for (String mediaType : contentJSONObject.keySet()) {
+			mediaTypeJSONObject = contentJSONObject.getJSONObject(mediaType);
+
+			if (mediaTypeJSONObject != null) {
+				return mediaTypeJSONObject;
+			}
+		}
+
+		return null;
+	}
+
 	private static HttpEntity _getMultipartHttpEntity(
 		JSONObject inputJSONObject, JSONObject openAPIJSONObject,
 		Operation operation) {
@@ -907,7 +1137,7 @@ public class OpenAPIUtil {
 		for (String path : pathsJSONObject.keySet()) {
 			JSONObject pathJSONObject = pathsJSONObject.getJSONObject(path);
 
-			for (String method : _METHODS) {
+			for (String method : METHODS) {
 				JSONObject operationJSONObject = pathJSONObject.getJSONObject(
 					method);
 
@@ -936,8 +1166,6 @@ public class OpenAPIUtil {
 		).put(
 			"items",
 			LinkedHashMapBuilder.<String, Object>put(
-				"type", "string"
-			).put(
 				"enum",
 				() -> {
 					if ((enumFieldNames == null) || enumFieldNames.isEmpty()) {
@@ -946,6 +1174,8 @@ public class OpenAPIUtil {
 
 					return new ArrayList<>(enumFieldNames);
 				}
+			).put(
+				"type", "string"
 			).build()
 		).put(
 			"type", "array"
@@ -1093,128 +1323,25 @@ public class OpenAPIUtil {
 	private static Collection<String> _getResponseFieldNames(
 		JSONObject openAPIJSONObject, JSONObject operationJSONObject) {
 
-		return _getResponseFieldNames(
-			openAPIJSONObject,
-			_getResponseSchemaJSONObject(operationJSONObject), new HashSet<>());
-	}
-
-	private static Set<String> _getResponseFieldNames(
-		JSONObject openAPIJSONObject, JSONObject schemaJSONObject,
-		Set<String> visitedRefs) {
-
 		Set<String> responseFieldNames = new TreeSet<>();
 
-		if (schemaJSONObject == null) {
-			return responseFieldNames;
-		}
+		Map<String, JSONObject> properties = getProperties(
+			openAPIJSONObject,
+			getResponseSchemaJSONObject(operationJSONObject));
 
-		if (schemaJSONObject.has("$ref")) {
-			String ref = schemaJSONObject.getString("$ref");
+		for (Map.Entry<String, JSONObject> entry : properties.entrySet()) {
+			JSONObject propertyJSONObject = entry.getValue();
 
-			if (!visitedRefs.add(ref)) {
-				return responseFieldNames;
+			if ((propertyJSONObject != null) &&
+				GetterUtil.getBoolean(propertyJSONObject.get("writeOnly"))) {
+
+				continue;
 			}
 
-			return _getResponseFieldNames(
-				openAPIJSONObject, _getRefJSONObject(ref, openAPIJSONObject),
-				visitedRefs);
-		}
-
-		if (Objects.equals(schemaJSONObject.getString("type"), "array")) {
-			return _getResponseFieldNames(
-				openAPIJSONObject, schemaJSONObject.getJSONObject("items"),
-				visitedRefs);
-		}
-
-		JSONObject propertiesJSONObject = schemaJSONObject.getJSONObject(
-			"properties");
-
-		if (propertiesJSONObject != null) {
-			JSONObject itemsPropertyJSONObject =
-				propertiesJSONObject.getJSONObject("items");
-
-			if ((itemsPropertyJSONObject != null) &&
-				Objects.equals(
-					itemsPropertyJSONObject.getString("type"), "array")) {
-
-				return _getResponseFieldNames(
-					openAPIJSONObject,
-					itemsPropertyJSONObject.getJSONObject("items"),
-					visitedRefs);
-			}
-
-			for (String propertyName : propertiesJSONObject.keySet()) {
-				JSONObject propertyJSONObject =
-					propertiesJSONObject.getJSONObject(propertyName);
-
-				if ((propertyJSONObject != null) &&
-					GetterUtil.getBoolean(
-						propertyJSONObject.get("writeOnly"))) {
-
-					continue;
-				}
-
-				responseFieldNames.add(propertyName);
-			}
-		}
-
-		JSONArray allOfJSONArray = schemaJSONObject.getJSONArray("allOf");
-
-		if (allOfJSONArray != null) {
-			for (int i = 0; i < allOfJSONArray.length(); i++) {
-				responseFieldNames.addAll(
-					_getResponseFieldNames(
-						openAPIJSONObject, allOfJSONArray.getJSONObject(i),
-						visitedRefs));
-			}
+			responseFieldNames.add(entry.getKey());
 		}
 
 		return responseFieldNames;
-	}
-
-	private static JSONObject _getResponseSchemaJSONObject(
-		JSONObject operationJSONObject) {
-
-		JSONObject responsesJSONObject = operationJSONObject.getJSONObject(
-			"responses");
-
-		if (responsesJSONObject == null) {
-			return null;
-		}
-
-		JSONObject responseJSONObject = null;
-
-		for (String code : responsesJSONObject.keySet()) {
-			if (code.startsWith("2")) {
-				responseJSONObject = responsesJSONObject.getJSONObject(code);
-
-				break;
-			}
-		}
-
-		if (responseJSONObject == null) {
-			responseJSONObject = responsesJSONObject.getJSONObject("default");
-		}
-
-		if (responseJSONObject == null) {
-			return null;
-		}
-
-		JSONObject contentJSONObject = responseJSONObject.getJSONObject(
-			"content");
-
-		if (contentJSONObject == null) {
-			return null;
-		}
-
-		JSONObject mediaTypeJSONObject = contentJSONObject.getJSONObject(
-			"application/json");
-
-		if (mediaTypeJSONObject == null) {
-			return null;
-		}
-
-		return mediaTypeJSONObject.getJSONObject("schema");
 	}
 
 	private static Object _getSchemaObject(
@@ -1311,6 +1438,33 @@ public class OpenAPIUtil {
 		return fieldPaths;
 	}
 
+	private static JSONObject _getSuccessResponseJSONObject(
+		JSONObject responsesJSONObject) {
+
+		if (responsesJSONObject == null) {
+			return null;
+		}
+
+		int successStatus = HttpServletResponse.SC_MULTIPLE_CHOICES;
+
+		for (String status : responsesJSONObject.keySet()) {
+			int statusCode = GetterUtil.getInteger(status);
+
+			if ((statusCode >= HttpServletResponse.SC_OK) &&
+				(statusCode < successStatus)) {
+
+				successStatus = statusCode;
+			}
+		}
+
+		if (successStatus < HttpServletResponse.SC_MULTIPLE_CHOICES) {
+			return responsesJSONObject.getJSONObject(
+				String.valueOf(successStatus));
+		}
+
+		return responsesJSONObject.getJSONObject("default");
+	}
+
 	private static boolean _isBinary(Map<String, Object> schemaMap) {
 		if (schemaMap == null) {
 			return false;
@@ -1403,10 +1557,6 @@ public class OpenAPIUtil {
 	private static final String _DESCRIPTION =
 		"Fields to include in the response. Pass only the fields the user " +
 			"actually needs.";
-
-	private static final String[] _METHODS = {
-		"delete", "get", "head", "options", "patch", "post", "put"
-	};
 
 	private static final Set<String> _excludedSchemaKeys = Set.of(
 		"actions", "example", "exclusiveMaximum", "exclusiveMinimum", "xml");
