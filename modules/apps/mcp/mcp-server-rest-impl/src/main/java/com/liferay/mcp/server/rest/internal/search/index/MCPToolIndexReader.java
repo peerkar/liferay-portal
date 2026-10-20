@@ -186,7 +186,7 @@ public class MCPToolIndexReader {
 				"202 with an import task, not a result: nothing is written ",
 				"yet and 202 is not success. Before reporting the work done, ",
 				"read executeStatus and failedItems by invoking getImportTask ",
-				"in headless-batch-engine-v1.0, passing the id this returned.");
+				"in headless-batch-engine-v1.0, passing the ID this returned.");
 		}
 
 		if (hint == null) {
@@ -744,28 +744,28 @@ public class MCPToolIndexReader {
 		HashMapBuilder.put(
 			"postObjectDefinition",
 			StringBundler.concat(
-				"Once published, this object's entries get their own tools, ",
-				"named after the object rather than after Liferay: to add ",
-				"one, search for the object's own name, as in \"create a pet ",
-				"store\", not \"create an object entry\".")
+				"Once published, this object definition exposes its entries ",
+				"as a tool set named after the definition. To create an ",
+				"entry, search for the definition's name, as in \"create a ",
+				"pet store\", not \"create an object entry\".")
 		).put(
 			"postObjectDefinitionPublish",
 			StringBundler.concat(
-				"Publishing registers a tool set for this object's entries, ",
-				"named after the object. To add one, search for the object's ",
-				"own name, as in \"create a pet store\", not \"create an ",
-				"object entry\".")
+				"Publishing this object definition registers a tool set for ",
+				"its entries, named after the definition. To create an entry, ",
+				"search for the definition's name, as in \"create a pet ",
+				"store\", not \"create an object entry\".")
 		).build();
 	private static final Map<String, String> _parameterHints =
 		HashMapBuilder.put(
 			"assetLibraryId",
 			StringBundler.concat(
-				"The asset library's key, its numeric id or its external ",
+				"The asset library's key, its numeric ID or its external ",
 				"reference code. The key is case sensitive.")
 		).put(
 			"siteId",
 			StringBundler.concat(
-				"The site's key, its numeric id or its external reference ",
+				"The site's key, its numeric ID or its external reference ",
 				"code. The key is usually the site's name and is case ",
 				"sensitive, so try it before listing sites.")
 		).build();
