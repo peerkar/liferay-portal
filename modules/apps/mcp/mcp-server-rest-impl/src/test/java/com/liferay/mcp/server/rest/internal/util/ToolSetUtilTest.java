@@ -40,7 +40,9 @@ public class ToolSetUtilTest {
 
 		List<HeadlessApplicationProvider.Application> applications =
 			Arrays.asList(
+				_mockApplication("/c/petstores", "v1.0"),
 				_mockApplication("/headless-admin-user", "v1.0"),
+				_mockApplication("/headless-admin-user-workflow", "v1.0"),
 				_mockApplication(
 					"/headless-commerce-admin-pricing", "v1.0", "v2.0",
 					"v10.0"));
@@ -72,9 +74,43 @@ public class ToolSetUtilTest {
 
 		Assert.assertEquals(
 			Arrays.asList(
-				"headless-admin-user-v1.0",
+				"c-petstores-v1.0", "headless-admin-user-v1.0",
+				"headless-admin-user-workflow-v1.0",
 				"headless-commerce-admin-pricing-v10.0"),
 			new ArrayList<>(openAPIDocuments.keySet()));
+	}
+
+	@Test
+	public void testGetToolSetName() {
+		Assert.assertEquals(
+			"c-petstores-v1.0", ToolSetUtil.getToolSetName("/c/petstores"));
+		Assert.assertEquals(
+			"headless-admin-user-v1.0",
+			ToolSetUtil.getToolSetName(
+				"/headless-admin-user/v1.0/user-accounts"));
+	}
+
+	@Test
+	public void testGetToolSetNameWhenBasePathIsPrefixOfAnotherBasePath() {
+		Assert.assertEquals(
+			"headless-admin-user-workflow-v1.0",
+			ToolSetUtil.getToolSetName(
+				"/headless-admin-user-workflow/v1.0/tasks"));
+	}
+
+	@Test
+	public void testGetToolSetNameWhenNoApplicationMatches() {
+		Assert.assertNull(ToolSetUtil.getToolSetName(null));
+		Assert.assertNull(ToolSetUtil.getToolSetName("/c/petstore"));
+		Assert.assertNull(ToolSetUtil.getToolSetName("/headless-admin"));
+	}
+
+	@Test
+	public void testGetToolSetNameWhenRESTContextPathVersionIsSuperseded() {
+		Assert.assertEquals(
+			"headless-commerce-admin-pricing-v10.0",
+			ToolSetUtil.getToolSetName(
+				"/headless-commerce-admin-pricing/v1.0/discounts"));
 	}
 
 	private HeadlessApplicationProvider.Application _mockApplication(
