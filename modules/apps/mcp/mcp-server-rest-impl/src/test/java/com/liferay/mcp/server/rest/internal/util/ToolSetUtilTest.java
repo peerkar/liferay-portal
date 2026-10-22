@@ -6,13 +6,16 @@
 package com.liferay.mcp.server.rest.internal.util;
 
 import com.liferay.mcp.server.rest.internal.search.exception.ToolSearchUnavailableException;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.module.service.Snapshot;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.search.capabilities.SearchCapabilities;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 import com.liferay.portal.vulcan.application.HeadlessApplicationProvider;
@@ -158,6 +161,33 @@ public class ToolSetUtilTest {
 			"headless-commerce-admin-pricing-v10.0",
 			ToolSetUtil.getToolSetName(
 				"/headless-commerce-admin-pricing/v1.0/discounts"));
+	}
+
+	@Test
+	public void testInvokeToolWhenToolIsNotInProfile() throws Exception {
+		try {
+			ToolSetUtil.invokeTool(
+				SetUtil.fromArray(
+					"headless-delivery-v1.0#getSiteBlogPostingsPage"),
+				null, _httpServletRequest,
+				HashMapBuilder.<String, Object>put(
+					"toolName", "postSiteDocument"
+				).put(
+					"toolSetName", "headless-delivery-v1.0"
+				).build(),
+				null, "postToolSetToolSetNameToolInvoke",
+				ToolSetUtil.TOOL_SET_NAME);
+
+			Assert.fail();
+		}
+		catch (IllegalArgumentException illegalArgumentException) {
+			Assert.assertEquals(
+				StringBundler.concat(
+					"Tool \"postSiteDocument\" of tool set ",
+					"\"headless-delivery-v1.0\" is not in this MCP server ",
+					"profile"),
+				illegalArgumentException.getMessage());
+		}
 	}
 
 	private HeadlessApplicationProvider.Application _mockApplication(
