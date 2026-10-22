@@ -29,6 +29,7 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.kernel.version.Version;
 import com.liferay.portal.vulcan.application.HeadlessApplicationProvider;
 import com.liferay.portal.vulcan.http.VulcanRequestForwarder;
 import com.liferay.portal.vulcan.jackson.databind.ObjectMapperProviderUtil;
@@ -38,6 +39,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import jakarta.ws.rs.core.Response;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -56,6 +58,20 @@ public class ToolSetUtil {
 		Set<String> keys = _openAPIJSONObjects.keySet();
 
 		keys.removeIf(key -> key.startsWith(companyId + StringPool.POUND));
+	}
+
+	public static Map<String, HeadlessApplicationProvider.OpenAPIDocument>
+		getLatestOpenAPIDocuments() {
+
+		Map<String, HeadlessApplicationProvider.OpenAPIDocument>
+			openAPIDocuments = _getOpenAPIDocuments();
+
+		Collection<HeadlessApplicationProvider.OpenAPIDocument> values =
+			openAPIDocuments.values();
+
+		values.removeIf(ToolSetUtil::_isSuperseded);
+
+		return openAPIDocuments;
 	}
 
 	public static JSONObject getOpenAPIJSONObject(
@@ -349,6 +365,32 @@ public class ToolSetUtil {
 		}
 
 		return restrictFieldsMap.get(getToolKey(toolName, toolSetName));
+	}
+
+	private static Version _getVersion(
+		HeadlessApplicationProvider.OpenAPIDocument openAPIDocument) {
+
+		return Version.parseVersion(
+			StringUtil.removeFirst(openAPIDocument.getVersion(), "v"));
+	}
+
+	private static boolean _isSuperseded(
+		HeadlessApplicationProvider.OpenAPIDocument openAPIDocument) {
+
+		Version version = _getVersion(openAPIDocument);
+
+		HeadlessApplicationProvider.Application application =
+			openAPIDocument.getApplication();
+
+		for (HeadlessApplicationProvider.OpenAPIDocument
+				siblingOpenAPIDocument : application.getOpenAPIDocuments()) {
+
+			if (version.compareTo(_getVersion(siblingOpenAPIDocument)) < 0) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(ToolSetUtil.class);
